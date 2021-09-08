@@ -10,7 +10,9 @@ All builders run against the same source tree.
 
 DEPS = [
     'cros_release',
+    'cros_tags',
     'orch_menu',
+    'recipe_engine/buildbucket',
 ]
 
 from google.protobuf.json_format import MessageToDict
@@ -38,6 +40,11 @@ def DoRunSteps(api):
         CrosSourceProperties(sync_to_manifest=api.cros_release.releasespec))
   elif api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['commit_overlay_binhost'] = True
+
+  if api.orch_menu.chromium_src_ref_cl_tag:
+    extra_child_props[
+        '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()
+
   api.orch_menu.plan_and_run_children(extra_child_props=extra_child_props)
 
   # Run any HW tests.
@@ -72,6 +79,15 @@ def GenTests(api):
                            annealing_builds=data.annealing_builds,
                            collect_builds=data.builds, with_history=True,
                            with_manifest_refs=True)
+
+  yield api.orch_menu.test(
+      'chromium-src-ref-cq-cl-tag', data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      api.buildbucket.ci_build(
+          project='chromeos', bucket='postsubmit',
+          builder='postsubmit-orchestrator',
+          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
+      collect_builds=data.builds)
 
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name

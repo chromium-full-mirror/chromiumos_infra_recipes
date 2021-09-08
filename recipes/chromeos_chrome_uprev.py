@@ -25,6 +25,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/time',
+    'chrome',
     'git',
     'git_cl',
     'gitiles',
@@ -37,7 +38,9 @@ _CHROMEOS_OVERLAY_REPO = 'https://chromium.googlesource.com/%s' % _CHROMEOS_OVER
 _CHROMEOS_CHROME_EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
 _UPREV_CL_REVIEWERS = ['chrome-os-gardeners-reviews@google.com']
-_CQ_CL_TAG = 'swiftr:chrome-uprev-dry-run'
+# TODO(b/189226376): Change tag from 'swiftr' codename to something with
+#  an intrinsic meaning.
+_INFO_UPREV_TAG = 'swiftr:chrome-uprev-dry-run'
 
 _FAKE_GERRIT_CHANGE_ID = '12341234'
 
@@ -54,8 +57,15 @@ def RunSteps(api):
         test_output_data={'branch': {
             'revision': 'public5678revision'
         }})
-    rev_info = '# chrome-internal rev: %s\n# chromium rev: %s' % (
-        internal_revision, public_revision)
+    public_src_revision = api.gitiles.fetch_revision(
+        'chromium', 'chromium/src', 'main',
+        test_output_data={'branch': {
+            'revision': 'publicsrc9012revision'
+        }})
+    rev_info = '# chrome-internal rev: %s\n' \
+               '# chromium rev: %s\n' \
+               '# chromium/src rev: %s' % (
+                 internal_revision, public_revision, public_src_revision)
 
   with api.context(cwd=api.path.mkdtemp()):
     with api.step.nest('clone %s' % _CHROMEOS_OVERLAY_PROJECT):
@@ -71,12 +81,13 @@ def RunSteps(api):
     with api.step.nest('commit changes'):
       api.git.add([_CHROMEOS_CHROME_EBUILD_PATH])
       message = 'chromeos-chrome uprev dry-run with Chrome ToT' \
-          '\n\n%s\n\nCq-Cl-Tag: %s' % (rev_info, _CQ_CL_TAG)
+          '\n\n%s\n\nCq_Cl_Tag: %s\nCq_Cl_Tag: chromium_src_ref:%s' % (
+            rev_info, _INFO_UPREV_TAG, public_src_revision)
       api.git.commit(message, files=[_CHROMEOS_CHROME_EBUILD_PATH])
 
     with api.step.nest('upload CL and trigger CQ dry run') as step:
       api.git_cl.upload(reviewers=_UPREV_CL_REVIEWERS, dry_run=True,
-                        hashtags=[_CQ_CL_TAG])
+                        hashtags=[_INFO_UPREV_TAG])
 
       gerrit_change_url = api.git_cl.status(
           field='url', fast=True, step_test_data=functools.partial(

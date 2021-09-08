@@ -3439,14 +3439,18 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#83)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#58)(self):**
+&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#58)(self, cl_tag_key, tags):**
+
+Returns the value for the given cq_cl_tag, if it is found.
+
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#66)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
@@ -3468,7 +3472,7 @@ Args:
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#92)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#100)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
@@ -5608,39 +5612,43 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 API providing a menu for orchestrator steps
 
-#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#90)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#129)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#132)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#109)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#148)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#235)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#144)(self):**
+
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#112)(self):**
+
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#249)(self):**
 
 Create the correct return value for RunSteps.
 
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#117)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#120)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#121)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#124)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#113)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#116)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#105)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#108)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#125)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#128)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#137)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#140)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#133)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#136)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#347)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#361)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -5654,7 +5662,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#611)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#625)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 
@@ -5667,11 +5675,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#540)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#554)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#546)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#560)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -5688,7 +5696,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#161)(self, missing_ok=False, test_footers=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#172)(self, missing_ok=False, test_footers=None):**
 
 Initial setup steps for the orchestrator.
 
@@ -7597,7 +7605,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#26)(api):**
 ### *recipes* / [chromeos\_chrome\_uprev](/recipes/chromeos_chrome_uprev.py)
 
-[DEPS](/recipes/chromeos_chrome_uprev.py#20): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/chromeos_chrome_uprev.py#20): [chrome](#recipe_modules-chrome), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -7607,7 +7615,7 @@ Triggers a passive uprev attempt against current Chrome ToT by generating a CL
 that touches chromeos-chrome-9999.ebuild, adding the gardeners as reviewers,
 and triggering a CQ dry-run.
 
-&mdash; **def [RunSteps](/recipes/chromeos_chrome_uprev.py#45)(api):**
+&mdash; **def [RunSteps](/recipes/chromeos_chrome_uprev.py#48)(api):**
 ### *recipes* / [chromite:examples/full](/recipe_modules/chromite/examples/full.py)
 
 [DEPS](/recipe_modules/chromite/examples/full.py#7): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -9171,7 +9179,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#20)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_release](#recipe_modules-cros_release), [orch\_menu](#recipe_modules-orch_menu)
+[DEPS](/recipes/orchestrator.py#11): [cros\_release](#recipe_modules-cros_release), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -9179,9 +9187,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#31)(api):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#33)(api):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#24)(api):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#26)(api):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

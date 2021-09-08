@@ -69,6 +69,10 @@ def RunSteps(api, properties):
     api.assertions.assertTrue(
         api.cros_tags.has_entry(tag.key, tag.value, tags2))
 
+  tags3 = api.buildbucket.tags(baz='foo:bar', cq_cl_tag='ha:lol')
+  api.assertions.assertEqual(api.cros_tags.cq_cl_tag_value('foo', tags3), None)
+  api.assertions.assertEqual(api.cros_tags.cq_cl_tag_value('ha', tags3), 'lol')
+
 
 def GenTests(api):
   equiv = u'01f806668b9e02978b40f699340d5ad7c0da85fb4446d3421c41e790'

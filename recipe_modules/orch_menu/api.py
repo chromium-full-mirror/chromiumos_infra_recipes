@@ -10,9 +10,11 @@ from __future__ import division
 from collections import defaultdict, namedtuple
 import contextlib
 
+from google.protobuf.json_format import MessageToDict
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
@@ -101,6 +103,7 @@ class OrchMenuApi(RecipeApi):
     self._builds_status = BuildsStatus([], [], {})
     self._is_release_orchestrator = False
     self._is_postsubmit_orchestrator = False
+    self._chromium_src_ref_cl_tag = None
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -137,6 +140,14 @@ class OrchMenuApi(RecipeApi):
   @property
   def is_postsubmit_orchestrator(self):
     return self._is_postsubmit_orchestrator
+
+  @property
+  def chromium_src_ref_cl_tag(self):
+    return self._chromium_src_ref_cl_tag
+
+  def chrome_module_child_props(self):
+    return MessageToDict(
+        ChromeProperties(version=self._chromium_src_ref_cl_tag))
 
   def _get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -217,6 +228,9 @@ class OrchMenuApi(RecipeApi):
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
+
+        self._chromium_src_ref_cl_tag = self.m.cros_tags.cq_cl_tag_value(
+            'chromium_src_ref', self.m.buildbucket.build.tags)
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.

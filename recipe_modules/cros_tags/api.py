@@ -55,6 +55,14 @@ class CrosTagsApi(recipe_api.RecipeApi):
         return True
     return False
 
+  def cq_cl_tag_value(self, cl_tag_key, tags):
+    """Returns the value for the given cq_cl_tag, if it is found."""
+    tag_prefix = cl_tag_key + ':'
+    for t in tags:
+      if t.key == 'cq_cl_tag' and t.value.startswith(tag_prefix):
+        return t.value[len(tag_prefix):]
+    return None
+
   @property
   def cq_equivalent_cl_group_key(self):
     """Return the cq_equivalent_cl_group_key, if any.

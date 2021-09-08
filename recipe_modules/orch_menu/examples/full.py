@@ -60,6 +60,11 @@ def RunSteps(api, properties):
         api.cq.active and api.cq.run_mode == api.cq.DRY_RUN,
     )
 
+    if api.orch_menu.chromium_src_ref_cl_tag:
+      api.assertions.assertEqual(
+          api.orch_menu.chrome_module_child_props()['version'],
+          api.orch_menu.chromium_src_ref_cl_tag)
+
     # It's hard to set buildbucket properties for these tests so we
     # get coverage by creating a dict that returns multiple items with the
     # same key, knowing that the impl of this module calls dict.items().
@@ -313,3 +318,12 @@ def GenTests(api):
           FullProperties(expected_completed_builds=data.non_crit_fail)),
       collect_builds=data.non_crit_fail, history_builds=data.history_builds,
       with_manifest_refs=True, with_history=True)
+
+  yield api.orch_menu.test(
+      'chromium_src_ref_cq_cl_tag', data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      api.buildbucket.ci_build(
+          project='chromeos', bucket='postsubmit',
+          builder='postsubmit-orchestrator',
+          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
+      collect_builds=data.builds)
