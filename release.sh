@@ -17,6 +17,12 @@ no_changes="No changes pending."
 infra_recipes_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 bundle=infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes
 
+if ! type jq >/dev/null; then
+  echo "Please install jq, on debian:"
+  printf "\tsudo apt install jq\n"
+  exit 1
+fi
+
 function usage() {
   echo "Usage: $0 [-i instanceid] [-f]" >&2
   echo "-f bypasses the prompt" >&2
