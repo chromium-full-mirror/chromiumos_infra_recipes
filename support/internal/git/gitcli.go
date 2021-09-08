@@ -106,7 +106,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	// We exclude binary files from the apply because of b/198542075.
 	// This tool should probably be rewritten anyways.
 	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", "apply", "--3way", "--ignore-whitespace", patchFile,
-		"--exclude", "*.bin", "--exclude", "*.hex"); err != nil {
+		"--exclude", "*.bin", "--exclude", "*.hex", "--exclude", "*.dv"); err != nil {
 		errStr := stderrBuf.String()
 		if strings.Contains(errStr, "information is lacking or useless") {
 			log.Printf("This looks like a case of https://crbug.com/1031306, in which something in the diff represents a non-existent file. Aborting...")
