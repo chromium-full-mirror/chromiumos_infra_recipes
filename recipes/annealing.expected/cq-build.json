@@ -1835,6 +1835,14 @@
   },
   {
     "cmd": [],
+    "name": "uprev packages.set compressed_uprev_response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_uprev_response@\"eJzLzU/JTMtMTYlPTSrNzEkpVqjmUlAoSCzJsFJQinb2cXX0Cw2I1U/OKMrPzSzNzS+OL88vyi4u\\nSExO1S8uStbPL0stykms1E/Lz9eDmKDEVcuVS5mhBUWZZYklqboww5MSi5AMBwoWZ+bnAY0y1DPS\\nM1biAgDIQkSO\\n\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "push uprevs",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@Passed Uprevs@src/overlay@@@",
