@@ -186,6 +186,35 @@ class BotScalingApi(recipe_api.RecipeApi):
 
     return demand
 
+  def _make_swarming_calls(self, policy):
+    """Makes the individual Swarming calls via CLI
+
+    Args:
+      policy(BotPolicy): individual bot policy config
+
+    Returns:
+      results(dict): Dict containing bot and task stats
+    """
+    dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
+    bot_stats_hold = None
+    task_stats_hold = []
+    for dim in dimensions:
+      # Bot counts get duplicated, due to the way dimensions are associated,
+      # therefore we only need to count the first returned count.
+      if not bot_stats_hold:
+        bot_stats_hold = self._bot_swarming_stats(
+            policy.bot_group,
+            self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
+            policy.scaling_restriction.bot_floor,
+            policy.scaling_restriction.bot_ceiling)
+      for state in TASK_STATES:
+        task_stats_hold = self._task_swarming_stats(
+            policy.bot_group, state, task_stats_hold,
+            self.m.swarming_cli.get_task_counts(dim, state,
+                                                policy.lookback_hours,
+                                                policy.swarming_instance))
+    return {'bot_stats': bot_stats_hold, 'task_stats': task_stats_hold}
+
   def get_swarming_stats(self, bot_policy_config):
     """Determines the current Swarming stats per bot group.
 
@@ -196,29 +225,16 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       SwarmingStats:  bot and task stats named tuple.
     """
+    futures = {}
+    for policy in bot_policy_config.bot_policies:
+      fut = self.m.futures.spawn(self._make_swarming_calls, policy=policy)
+      futures[fut] = policy
     bot_stats = []
     task_stats = []
-    for policy in bot_policy_config.bot_policies:
-      dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
-      bot_stats_hold = None
-      task_stats_hold = []
-      for dim in dimensions:
-        # Bot counts get duplicated, due to the way dimensions are associated,
-        # therefore we only need to count the first returned count.
-        if not bot_stats_hold:
-          bot_stats_hold = self._bot_swarming_stats(
-              policy.bot_group,
-              self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
-              policy.scaling_restriction.bot_floor,
-              policy.scaling_restriction.bot_ceiling)
-        for state in TASK_STATES:
-          task_stats_hold = self._task_swarming_stats(
-              policy.bot_group, state, task_stats_hold,
-              self.m.swarming_cli.get_task_counts(dim, state,
-                                                  policy.lookback_hours,
-                                                  policy.swarming_instance))
-      bot_stats.append(bot_stats_hold)
-      task_stats.extend(task_stats_hold)
+    for fut in self.m.futures.iwait(futures.keys()):
+      stats = fut.result()
+      bot_stats.append(stats['bot_stats'])
+      task_stats.extend(stats['task_stats'])
     return SwarmingStats(bot_stats, task_stats)
 
   def get_current_gce_config(self, bot_policy_config):
@@ -359,14 +375,18 @@ class BotScalingApi(recipe_api.RecipeApi):
     """
     gce_configs = []
     gce_map = self._get_prefix_to_gce_config(configs)
+    futures = {}
     for scaling_action in robocrop_actions.scaling_actions:
       if scaling_action.actionable == ScalingAction.YES:
         for action in scaling_action.regional_actions:
           config = gce_map.get(action.prefix, None)
           if config is not None:
             config.current_amount = action.bots_requested
-            gce_configs.append(
-                self.m.gce_provider.update_gce_config(action.prefix, config))
+            fut = self.m.futures.spawn(self.m.gce_provider.update_gce_config,
+                                       bid=action.prefix, config=config)
+            futures[fut] = scaling_action
+    for fut in self.m.futures.iwait(futures.keys()):
+      gce_configs.append(fut.result())
     return Configs(vms=gce_configs)
 
   def unpack_policy_dimensions(self, dimensions):

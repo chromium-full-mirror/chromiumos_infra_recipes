@@ -4,5 +4,6 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/futures',
     'easy',
 ]

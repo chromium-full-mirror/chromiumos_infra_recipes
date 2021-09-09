@@ -43,6 +43,20 @@ class GceProvider(recipe_api.RecipeApi):
         test_stdout=lambda: self.test_api.get_update_config_data(config))
     return json_format.ParseDict(step, Config(), ignore_unknown_fields=True)
 
+  def _make_gce_config_call(self, prefix):
+    """Function to make the GCE Provider call for Config
+
+    Args:
+      prefix (str): The bot prefix to make to GCE Provider configs.
+
+    Returns:
+      Step, the result of the call to GCE Provider
+    """
+    req = {'id': prefix}
+    step = self._run(
+        'Get', req, test_stdout=self.test_api.get_current_config_step_test_data)
+    return step
+
   def get_current_config(self, ids):
     """Function to retrieve the current config from GCE Provider.
 
@@ -53,13 +67,14 @@ class GceProvider(recipe_api.RecipeApi):
       Configs, list of GCE Provide Config objects.
     """
     configs = []
+    futures = {}
     for prefix in ids:
-      req = {'id': prefix}
-      step = self._run(
-          'Get', req,
-          test_stdout=self.test_api.get_current_config_step_test_data)
+      fut = self.m.futures.spawn(self._make_gce_config_call, prefix=prefix)
+      futures[fut] = prefix
+    for fut in self.m.futures.iwait(futures.keys()):
       configs.append(
-          json_format.ParseDict(step, Config(), ignore_unknown_fields=True))
+          json_format.ParseDict(fut.result(), Config(),
+                                ignore_unknown_fields=True))
     return Configs(vms=configs)
 
   def _run(self, method, stdin_json, step_name=None, test_stdout=None):
