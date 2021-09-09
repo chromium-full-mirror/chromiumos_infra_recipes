@@ -8,7 +8,7 @@ from datetime import datetime
 
 from recipe_engine import recipe_api
 
-_PKG_INSTANCE = "rwv6c0O12emItRR5j8EA8-wMOwg_yAQRpZKB4wurRgkC"
+_PKG_DEFAULT_REF = "latest"
 
 
 class SwarmingCli(recipe_api.RecipeApi):
@@ -22,7 +22,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     """Ensures the CIPD swarming client is installed."""
     if not self._cipd_bin:
       pkg_name = "infra/tools/luci/swarming/${platform}"
-      pkg_ref = _PKG_INSTANCE
+      pkg_ref = _PKG_DEFAULT_REF
       with self.m.step.nest('ensure swarming bin from CIPD'):
         with self.m.context(infra_steps=True):
           cipd_dir = self.m.path['start_dir'].join('cipd')
