@@ -38,6 +38,7 @@ DEPS = [
     'cros_cq_depends',
     'cros_infra_config',
     'cros_source',
+    'cros_tags',
     'easy',
     'gcloud',
     'gerrit',
@@ -249,6 +250,9 @@ def RunSteps(api, properties):
         # Set output.properties.commit, this will also set the commit as the
         # build output.
         api.src_state.gitiles_commit = internal_snapshot_commit
+        snapshot_commit_tags = api.cros_tags.tags(**dict(
+            published_snapshot_id=internal_snapshot_commit.id))
+        api.buildbucket.add_tags_to_current_build(snapshot_commit_tags)
 
       if jobs and not properties.dry_run:
         _schedule_triggered_builds(api, internal_snapshot_commit, jobs)

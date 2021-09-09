@@ -2765,6 +2765,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "publish internal snapshot.buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"published_snapshot_id\": [\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"]}@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",

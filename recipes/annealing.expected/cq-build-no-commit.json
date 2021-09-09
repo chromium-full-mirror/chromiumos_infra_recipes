@@ -2684,6 +2684,14 @@
   },
   {
     "cmd": [],
+    "name": "publish internal snapshot.buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"published_snapshot_id\": [\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
