@@ -1883,7 +1883,7 @@
     "name": "uprev packages.set compressed_uprev_response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_uprev_response@\"eJzLzU/JTMtMTYlPTSrNzEkpVqjmUlAoSCzJsFJQinb2cXX0Cw2I1U/OKMrPzSzNzS+OL88vyi4u\\nSExO1S8uStbPL0stykms1E/Lz9eDmKDEVcuVS5mhBUWZZYklqboww5MSi5AMBwoWZ+bnAY0y1DPS\\nM1biAgDIQkSO\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_uprev_response@\"eJzjMucyjXb2cXX0Cw2I1U/OKMrPzSzNzS+OL88vyi4uSExO1S8uStbPL0stykms1E/Lz9dLTSrN\\nzEnhsueyJUJjQVFmWWJJqi7MgKTEIqgBQqyGekZ6xgCJkS11\\n\"@@@"
     ]
   },
   {

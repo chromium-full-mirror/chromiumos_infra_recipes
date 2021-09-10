@@ -320,8 +320,8 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
   uprev_info = []
   with api.step.nest('uprev packages'):
     response = api.cros_source.uprev_packages(workspace_path)
-    compressed_response = str(response).encode('zlib_codec').encode(
-        'base64_codec')
+    compressed_response = response.SerializeToString().encode(
+        'zlib_codec').encode('base64_codec')
     api.easy.set_properties_step(compressed_uprev_response=compressed_response)
     for ebuild in response.modified_ebuilds:
       # TODO(b/192099206): When recipes moves to python3 clean this up with
