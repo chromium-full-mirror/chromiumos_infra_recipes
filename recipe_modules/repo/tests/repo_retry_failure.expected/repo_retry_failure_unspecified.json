@@ -13,8 +13,10 @@
     "infra_step": true,
     "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
@@ -33,14 +35,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"snapshot\", \n\"manifest_url\": \"http://manifest_url\"\n}",
+      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"http://manifest_url\"\n}",
       "[CLEANUP]/ensure/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },

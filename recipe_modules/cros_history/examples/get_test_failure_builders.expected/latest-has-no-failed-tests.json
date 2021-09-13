@@ -27,8 +27,8 @@
     "name": "find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"FAILURE\", \"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"1970-01-01T03:25:45Z\", \"startTime\": \"1970-01-01T03:25:46Z\", \"output\": {\"properties\": {\"test_summary\": [{\"status\": \"FAILURE\", \"critical\": true, \"name\": \"my-little-builder.type.suite\"}, {\"status\": \"FAILURE\", \"critical\": true, \"name\": \"your-little-builder.type.suite\"}]}}, \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"endTime\": \"1970-01-01T03:25:47Z\", \"id\": \"2\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"FAILURE\", \"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"1970-01-01T03:25:46Z\", \"startTime\": \"1970-01-01T03:25:47Z\", \"output\": {\"properties\": {\"test_summary\": []}}, \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"endTime\": \"1970-01-01T03:25:48Z\", \"id\": \"1\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"1970-01-01T03:25:45Z\", \"endTime\": \"1970-01-01T03:25:47Z\", \"id\": \"2\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"output\": {\"properties\": {\"test_summary\": [{\"critical\": true, \"name\": \"my-little-builder.type.suite\", \"status\": \"FAILURE\"}, {\"critical\": true, \"name\": \"your-little-builder.type.suite\", \"status\": \"FAILURE\"}]}}, \"startTime\": \"1970-01-01T03:25:46Z\", \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"1970-01-01T03:25:46Z\", \"endTime\": \"1970-01-01T03:25:48Z\", \"id\": \"1\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"output\": {\"properties\": {\"test_summary\": []}}, \"startTime\": \"1970-01-01T03:25:47Z\", \"status\": \"FAILURE\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/1@@@"
     ]

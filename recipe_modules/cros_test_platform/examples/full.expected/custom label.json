@@ -160,6 +160,7 @@
     "name": "callsite-execute-luciexe.call binary.write input",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.json@{}@@@",
       "@@@STEP_LOG_END@input.json@@@"
     ]
   },
@@ -207,7 +208,7 @@
     "name": "callsite-execute-luciexe.call binary.read output",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@output.json@@@@",
+      "@@@STEP_LOG_LINE@output.json@{}@@@",
       "@@@STEP_LOG_END@output.json@@@"
     ]
   },

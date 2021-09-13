@@ -313,16 +313,18 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
@@ -601,16 +603,18 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
@@ -746,9 +750,11 @@
     "name": "sync cached directory (2).Read proto from [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
@@ -768,16 +774,18 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_DIRTY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
@@ -989,16 +997,18 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n\"manifest_branch\": \"main\", \n\"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \n\"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "infra_step": true,
     "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_CLEAN@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"main\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
@@ -1121,8 +1131,8 @@
     "name": "get latest build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"id\": \"1\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"id\": \"2\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
@@ -1154,8 +1164,8 @@
     "name": "get latest build version.query-tael.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"id\": \"1\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"status\": \"SUCCESS\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"id\": \"2\", \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9.0-9.0\"}, \"chromeos_version\": \"R80-1.2.9.0\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"

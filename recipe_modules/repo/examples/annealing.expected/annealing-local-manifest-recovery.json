@@ -14,9 +14,11 @@
     "infra_step": true,
     "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@.recipes_state.json@state: STATE_RECOVERY@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_branch: \"snapshot\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@manifest_url: \"http://manifest_url\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"http://manifest_url\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_RECOVERY\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
   },
