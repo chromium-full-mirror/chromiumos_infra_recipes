@@ -6,6 +6,7 @@
 """Recipe for building an AFDO benchmark profile."""
 
 DEPS = [
+    'recipe_engine/swarming',
     'build_menu',
     'cros_sdk',
     'sysroot_util',
@@ -63,7 +64,10 @@ def GenTests(api):
       ret += api.build_menu.set_build_api_return(
           'prepare artifacts', 'ArtifactsService/BuildSetup',
           '{"build_relevance": "POINTLESS"}')
-    return api.test(name, ret)
+    return api.test(
+        name,
+        api.swarming.properties(
+            bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), ret)
 
   input_artifact = ArtifactsByService.Toolchain.ArtifactInfo(
       artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],

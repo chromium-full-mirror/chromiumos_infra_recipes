@@ -43,6 +43,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'cros_cq_depends',
     'cros_source',
     'easy',
@@ -474,6 +475,8 @@ TEST=CQ
 
   yield api.test(
       'with_diff',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -489,6 +492,8 @@ TEST=CQ
 
   yield api.test(
       'set_source_depends',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -504,6 +509,8 @@ TEST=CQ
 
   yield api.test(
       'without_diff',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -520,6 +527,8 @@ TEST=CQ
 
   yield api.test(
       'with_replace_strings',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -542,6 +551,8 @@ TEST=CQ
   # specified.
   yield api.test(
       'no_gerrit_changes_specified',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(changes=False),
       api.properties(
           ClFactoryProperties(
@@ -562,6 +573,8 @@ TEST=CQ
 
   yield api.test(
       'with_full_sync',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -578,6 +591,8 @@ TEST=CQ
   # that determines repos to sync in a partial sync.
   yield api.test(
       'with_partial_sync_set_logic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -599,6 +614,8 @@ TEST=CQ
   # a regex that didn't match anything.
   yield api.test(
       'bad_regex',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -617,6 +634,8 @@ TEST=CQ
 
   yield api.test(
       'invalid_message_template_interpolation',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -630,6 +649,8 @@ TEST=CQ
 
   yield api.test(
       'no_repos_specified',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(
@@ -645,6 +666,8 @@ TEST=CQ
 
   yield api.test(
       'no_message_template_specified',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       build(),
       api.properties(
           ClFactoryProperties(

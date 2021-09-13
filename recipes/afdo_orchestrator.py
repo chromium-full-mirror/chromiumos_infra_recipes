@@ -10,6 +10,7 @@ All builders run against the same source tree.
 
 DEPS = [
     'recipe_engine/properties',
+    'recipe_engine/swarming',
     'orch_menu',
 ]
 
@@ -79,35 +80,46 @@ def GenTests(api):
               files_by_artifact={"CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]},
               gs_bucket="chromeos-image-archive", gs_path="GS_PATH/DIR")))
 
-  yield api.orch_menu.test('basic', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
-                           with_history=True, collect_builds=data.builds)
+  yield api.orch_menu.test(
+      'basic', data.ctp_normal,
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess), with_history=True,
+      collect_builds=data.builds)
 
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
-      'join_if_inflight_orchs', data.ctp_normal,
+      'join_if_inflight_orchs',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
       cq=True, with_history=True)
 
   yield api.orch_menu.test(
-      'runs_if_no_inflight_orchs', data.ctp_normal,
+      'runs_if_no_inflight_orchs',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, find_inflight_name),
       api.post_check(post_process.DoesNotRun,
                      wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
 
-  yield api.orch_menu.test('dry_run',
-                           api.post_check(post_process.DoesNotRun, 'run tests'),
-                           api.post_check(post_process.StatusSuccess), cq=True,
-                           dry_run=True, collect_builds=data.builds,
-                           with_history=True, git_footers=[])
+  yield api.orch_menu.test(
+      'dry_run',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.DoesNotRun, 'run tests'),
+      api.post_check(post_process.StatusSuccess), cq=True, dry_run=True,
+      collect_builds=data.builds, with_history=True, git_footers=[])
 
   yield api.orch_menu.test(
-      'orchestrator_with_process_child_and_followon', data.ctp_normal,
+      'orchestrator_with_process_child_and_followon',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=data.builds, process_child=data.process_child,

@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'cros_source',
     'cros_tags',
     'gerrit',
@@ -113,7 +114,10 @@ def GenTests(api):
     return {'$chromeos/orch_menu': kwargs}
 
   yield api.orch_menu.test(
-      'basic', data.ctp_normal, api.post_check(post_process.StatusSuccess),
+      'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
@@ -122,7 +126,9 @@ def GenTests(api):
       with_history=True)
 
   yield api.orch_menu.test(
-      'release-orchestrator', data.ctp_normal,
+      'release-orchestrator',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(is_release_orchestrator=True, use_extra_props=True)),
       api.post_check(post_process.StatusSuccess),
@@ -134,7 +140,10 @@ def GenTests(api):
       with_history=True, bot_size='medium')
 
   yield api.orch_menu.test(
-      'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
+      'branch',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
       api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/test.git push'),
@@ -147,7 +156,10 @@ def GenTests(api):
   summary = ('2 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:')
   yield api.orch_menu.test(
-      'test-failure', data.ctp_failure,
+      'test-failure',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      data.ctp_failure,
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
@@ -161,6 +173,8 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'bad-ref',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(missing_ok=True, expect_missing_config=True)),
       input_properties=orch_menu_properties(
@@ -168,6 +182,8 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'bad-failure-ratio',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(missing_ok=True, expect_missing_config=True)),
       input_properties=orch_menu_properties(
@@ -175,23 +191,31 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'required-missing-config',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(FullProperties(expect_missing_config=True)),
       builder='no-config', with_manifest_refs=True)
 
   yield api.orch_menu.test(
       'forgiven-missing-config',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(missing_ok=True, expect_missing_config=True)),
       builder='no-config', with_manifest_refs=True)
 
   yield api.orch_menu.test(
       'fails-if-changes-not-submittable',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.gerrit.simulated_changes_are_submittable(submittable=False), cq=True,
       with_history=True)
 
   # Annealing builds.
   yield api.orch_menu.test(
-      'existing-annealing-builds', data.ctp_normal,
+      'existing-annealing-builds',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.builds,
                          expected_enable_history=True)),
@@ -201,7 +225,9 @@ def GenTests(api):
 
   # Joins an inflight orchestrator run.
   yield api.orch_menu.test(
-      'inflight-orchestrator', data.ctp_normal,
+      'inflight-orchestrator',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.post_check(post_process.MustRun, 'find inflight orchestrator'),
       api.post_check(
           post_process.MustRun,
@@ -216,7 +242,9 @@ def GenTests(api):
 
   # Runs when there is no inflight orchestrator.
   yield api.orch_menu.test(
-      'no-inflight-orchestrator', data.ctp_normal,
+      'no-inflight-orchestrator',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + data.after_builds,
@@ -226,21 +254,26 @@ def GenTests(api):
       inflight_orch=[])
 
   # Collect times out
-  yield api.orch_menu.test('collect-children-timeout', data.ctp_normal,
-                           api.step_data('run builds.collect.wait',
-                                         retcode=1), collect_builds=data.builds,
-                           history_builds=data.history_builds,
-                           collect_timeout=True, with_manifest_refs=True,
-                           with_history=True)
+  yield api.orch_menu.test(
+      'collect-children-timeout',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
+      api.step_data('run builds.collect.wait', retcode=1),
+      collect_builds=data.builds, history_builds=data.history_builds,
+      collect_timeout=True, with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'quota-scheduler-override', data.ctp_normal, collect_builds=data.builds,
-      history_builds=data.history_builds, cq=True, with_history=True,
-      git_footers=[],
+      'quota-scheduler-override',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
+      collect_builds=data.builds, history_builds=data.history_builds, cq=True,
+      with_history=True, git_footers=[],
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'))
 
   yield api.orch_menu.test(
-      'lts-pupr-noop', data.ctp_normal,
+      'lts-pupr-noop',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.post_check(post_process.DoesNotRun, 'run builds|schedule new builds'),
       builder='lts-cq-release-R90-13816.B-orchestrator', cq=True,
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'))
@@ -248,6 +281,8 @@ def GenTests(api):
   # Bisection
   yield api.orch_menu.test(
       'with-test-bisection',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(expected_completed_builds=data.bisect_builds)),
       data.bisect_properties, data.ctp_bisect,
@@ -256,7 +291,9 @@ def GenTests(api):
 
   # Process-child
   yield api.orch_menu.test(
-      'with-process-child', data.ctp_normal,
+      'with-process-child',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + [data.process_child],
@@ -268,7 +305,9 @@ def GenTests(api):
 
   # Process-child times out.
   yield api.orch_menu.test(
-      'with-process-child-timeout', data.ctp_normal,
+      'with-process-child-timeout',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + [data.process_child],
@@ -280,7 +319,9 @@ def GenTests(api):
 
   # Follow-on orchestrator.
   yield api.orch_menu.test(
-      'with-follow-on', data.ctp_normal,
+      'with-follow-on',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.builds +
                          [data.follow_on_orchestrator])),
@@ -290,7 +331,9 @@ def GenTests(api):
 
   # Follow-on orchestrator times out.
   yield api.orch_menu.test(
-      'with-follow-on-timeout', data.ctp_normal,
+      'with-follow-on-timeout',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.builds +
                          [data.follow_on_orchestrator])),
@@ -303,6 +346,8 @@ def GenTests(api):
       'cr-buildbucket.appspot.com/build/8922054662172514000)')
   yield api.orch_menu.test(
       'critical_child_builder_fails',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StatusAnyFailure),
       api.properties(
           FullProperties(
@@ -313,14 +358,18 @@ def GenTests(api):
       with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'non-critical_child_builder_fails', data.ctp_normal,
+      'non-critical_child_builder_fails',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.non_crit_fail)),
       collect_builds=data.non_crit_fail, history_builds=data.history_builds,
       with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'chromium_src_ref_cq_cl_tag', data.ctp_normal,
+      'chromium_src_ref_cq_cl_tag',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',

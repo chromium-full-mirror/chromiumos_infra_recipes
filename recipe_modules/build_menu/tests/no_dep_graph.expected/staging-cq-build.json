@@ -644,7 +644,7 @@
     "cmd": [],
     "name": "set snapshot_mount",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@{\"name\": \"amd64-generic\"}@@@"
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@true@@@"
     ]
   },
   {

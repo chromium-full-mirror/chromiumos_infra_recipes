@@ -8,6 +8,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'build_menu',
     'cros_infra_config',
     'cros_history',
@@ -108,6 +109,8 @@ def GenTests(api):
   # Slim CQ build, with one gerrit_change.
   yield api.build_menu.test(
       'slim-cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -121,6 +124,8 @@ def GenTests(api):
   # This covers the Relevance check.
   yield api.build_menu.test(
       'prepare-for-build-pointless',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -133,6 +138,8 @@ def GenTests(api):
   # This covers the env_info.pointless check.
   yield api.build_menu.test(
       'pointless-cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -147,6 +154,8 @@ def GenTests(api):
   # Install toolchain failure.
   yield api.build_menu.test(
       'install-toolchain-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'install packages'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -164,6 +173,8 @@ def GenTests(api):
   # Failure to resolve package list.
   yield api.build_menu.test(
       'resolve-packages-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -180,6 +191,8 @@ def GenTests(api):
   # Retry.
   yield api.build_menu.test(
       'cq-retry',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cros_history.is_retry(True),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(
@@ -198,6 +211,8 @@ def GenTests(api):
   # Install packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -214,6 +229,8 @@ def GenTests(api):
   # Ebuild test failure.
   yield api.build_menu.test(
       'ebuild-tests-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -231,6 +248,8 @@ def GenTests(api):
   # Toolchain CLs applied.
   yield api.build_menu.test(
       'toolchain-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cros_relevance.toolchain_cls_applied(True),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'build images'),

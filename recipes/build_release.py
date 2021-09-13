@@ -8,6 +8,7 @@
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/properties',
+    'recipe_engine/swarming',
     'build_menu',
     'build_reporting',
     'cros_release',
@@ -69,6 +70,8 @@ def GenTests(api):
   # Normal release build.
   yield api.build_menu.test(
       'release-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               '$chromeos/cros_source':
@@ -88,6 +91,8 @@ def GenTests(api):
   # Release build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
@@ -101,7 +106,10 @@ def GenTests(api):
 
   # Release build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail', api.post_check(post_process.StatusAnyFailure),
+      'bundle-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
@@ -112,6 +120,8 @@ def GenTests(api):
   # Release build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),

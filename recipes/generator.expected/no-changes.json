@@ -225,6 +225,348 @@
   },
   {
     "cmd": [],
+    "name": "get swarming hostname"
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "create and attach disk.set gcloud project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk.retrieve image version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk.retrieve image version from storage.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk.create disk from snapshot image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create and attach disk.create disk from snapshot image.set snapshot_version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--image=",
+      "--quiet",
+      "--type=pd-standard"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "lsblk",
+      "--json",
+      "--output",
+      "name"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.pull the blk ids attached",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"blockdevices\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop3\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop4\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop5\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"children\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@        {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"children\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@            {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"children\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@                {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }, @@@",
+      "@@@STEP_LOG_LINE@json.output@                {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-chroot\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              ], @@@",
+      "@@@STEP_LOG_LINE@json.output@              \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool-tpool\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          ], @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool_tmeta\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"children\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@            {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"children\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@                {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }, @@@",
+      "@@@STEP_LOG_LINE@json.output@                {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-chroot\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              ], @@@",
+      "@@@STEP_LOG_LINE@json.output@              \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool-tpool\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          ], @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool_tdata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      ], @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop6\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"children\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@        {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda14\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda15\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      ], @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sda\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.set disk to autodelete",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "mkdir",
+      "-p",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.ensure mount directory exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-o",
+      "discard,defaults",
+      "/dev/sdb",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.mount disk chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "create and attach disk.create disk from snapshot image.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set snapshot_mount",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@snapshot_mount@true@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "mount overlay chromiumos"
   },
   {
@@ -297,7 +639,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "lowerdir=/snapshot_mounts/chromiumos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
       "overlay",
       "[CACHE]/chromiumos"
     ],
@@ -1593,6 +1935,67 @@
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up mounted compute disk"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up mounted compute disk.unmount disk chromiumos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up gce disk"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
