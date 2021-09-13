@@ -8,6 +8,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.chromite.api.packages import UprevPackagesResponse
 
 from recipe_engine import recipe_api
 
@@ -15,6 +16,7 @@ from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 PASSED_TESTS_KEY = 'passed_tests'
+UPREV_RESPONSE_KEY = 'compressed_uprev_response'
 SNAPSHOT_BUCKET = 'postsubmit'
 TEST_SUMMARY_KEY = 'test_summary'
 TERMINAL_STATUSES = [
@@ -37,6 +39,39 @@ class CrosHistoryApi(recipe_api.RecipeApi):
   def start_time_in_seconds(self):
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_seconds
+
+  def get_annealing_from_snapshot(self, snapshot_id):
+    """Find the annealing build that created snapshot with given ID.
+
+    Args:
+      snapshot_id (str): Manifest snapshot commit ID.
+
+    Returns:
+      build_pb2.Build of the annealing build or None.
+    """
+    tags = self.m.cros_tags.tags(**dict(published_snapshot_id=snapshot_id))
+    # Not searching based on builder because we want to find both Annealing
+    # staging-Annealing builds. Tags are indexed by Buildbucket so this
+    # should be fast.
+    predicate = builds_service_pb2.BuildPredicate(tags=tags)
+    return self.m.buildbucket.search(predicate, limit=1,
+                                     url_title_fn=self.m.naming.get_build_title)
+
+  def get_upreved_pkgs(self, annealing_build):
+    """Retrieve the packages upreved by the annealing build.
+
+    Args:
+      annealing_build (build_pb2.Build): Annealing Build.
+
+    Returns:
+      list(PackageCPV) of upreved packages.
+    """
+    build_output = json_format.MessageToDict(annealing_build.output.properties)
+    compressed_response = build_output.get(UPREV_RESPONSE_KEY, '')
+    response_str = compressed_response.decode('base64_codec').decode(
+        'zlib_codec')
+    uprev_response = UprevPackagesResponse.FromString(response_str)
+    return uprev_response.packages
 
   def get_passed_builds(self, tags=None):
     """Retrieve passed builds with the same patches as current build.

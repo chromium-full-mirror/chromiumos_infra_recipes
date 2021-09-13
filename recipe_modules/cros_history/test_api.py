@@ -11,6 +11,21 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import timestamp_pb2
 
+COMPRESSED_UPREV_RESPONSE = """
+eJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\n
+TGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\n
+GFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\n
+8OWiqFIpDlmg8UzE4ZTPZ0xWgCX6CNM0w1MukyWVf76wqF7/ce2ki23SxV9IfyL4ftGkh0znR81o\n
+UnXWmRaaqbLj+lFVfmDBfdcGww8E3xoAHvPJudzr9wbbG4zHBvsNgleXjh1oLubKjAZr6Hojg/UR\n
+wftLx0rxkksWM6XKtt21UZH5nxF8qgEv0jpVWDGZz91+NpiDns2ltwhOaqDk86mk1rDb5/o26F4j\n
+OK4BbM70ZiigXL/mkFMsyCTXq7Jt8byivnxA8K4GvJCy5DRXrXkKN8By3Ov3DdwLBM//EU5HXIYH\n
+KZX5FhROhpWoVc4ihCYhS3UURFTOWNm2Ye/1BobmGYKn/4cmZAucaR6TKAy0ELGyRnGXFUWsUarF\n
+q10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\n
+3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\n
+Vtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\n
+eQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\n
+"""
+
 
 class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the cros_history module."""
@@ -80,4 +95,16 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     })
 
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
+    return build
+
+  def build_with_uprev_response(self):
+    """Generate a test build with the uprev response in the output.
+
+    Returns:
+      Build: Containing the expected 'compressed_uprev_response' property.
+    """
+    build = build_pb2.Build(id=123,
+                            builder=builder_pb2.BuilderID(builder='Annealing'))
+    build.output.properties.update(
+        {'compressed_uprev_response': COMPRESSED_UPREV_RESPONSE})
     return build

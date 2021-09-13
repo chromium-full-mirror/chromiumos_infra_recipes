@@ -184,11 +184,13 @@
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
+  * [cros_history:examples/get_annealing_from_snapshot](#recipes-cros_history_examples_get_annealing_from_snapshot)
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
   * [cros_history:examples/get_passed_tests](#recipes-cros_history_examples_get_passed_tests)
   * [cros_history:examples/get_snapshot_builds](#recipes-cros_history_examples_get_snapshot_builds)
   * [cros_history:examples/get_test_failure_builders](#recipes-cros_history_examples_get_test_failure_builders)
+  * [cros_history:examples/get_upreved_pkgs](#recipes-cros_history_examples_get_upreved_pkgs)
   * [cros_history:examples/is_retry](#recipes-cros_history_examples_is_retry)
   * [cros_history:examples/set_passed_tests](#recipes-cros_history_examples_set_passed_tests)
   * [cros_infra_config:examples/builder](#recipes-cros_infra_config_examples_builder)
@@ -2009,11 +2011,21 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#189)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#43)(self, snapshot_id):**
+
+Find the annealing build that created snapshot with given ID.
+
+Args:
+  snapshot_id (str): Manifest snapshot commit ID.
+
+Returns:
+  build_pb2.Build of the annealing build or None.
+
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#224)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -2026,7 +2038,7 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#41)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#76)(self, tags=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -2036,14 +2048,14 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with the most recent build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#112)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#147)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#150)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#185)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -2059,21 +2071,31 @@ Args:
 Returns:
   list[Build] builds with the same snapshot and additional filtering.
 
-&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#82)(self):**
+&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#117)(self):**
 
 Get builders with the given patches that failed tests in the last run.
 
 Returns:
   set[str]: Names of builders with HW or VM testing failures, if any.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#217)(self):**
+&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#60)(self, annealing_build):**
+
+Retrieve the packages upreved by the annealing build.
+
+Args:
+  annealing_build (build_pb2.Build): Annealing Build.
+
+Returns:
+  list(PackageCPV) of upreved packages.
+
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#252)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#136)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#171)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -2083,7 +2105,7 @@ have passed and which have not.
 Args:
   tests (sequence[str]): (Unique) names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#36)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#38)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
@@ -8019,6 +8041,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#12)(api):**
+### *recipes* / [cros\_history:examples/get\_annealing\_from\_snapshot](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py)
+
+[DEPS](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#7): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#14)(api):**
 ### *recipes* / [cros\_history:examples/get\_matching\_builds](/recipe_modules/cros_history/examples/get_matching_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_matching_builds.py#9): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
@@ -8054,6 +8083,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_test_failure_builders.py#25)(api, expected_builder_names):**
+### *recipes* / [cros\_history:examples/get\_upreved\_pkgs](/recipe_modules/cros_history/examples/get_upreved_pkgs.py)
+
+[DEPS](/recipe_modules/cros_history/examples/get_upreved_pkgs.py#7): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_upreved_pkgs.py#13)(api):**
 ### *recipes* / [cros\_history:examples/is\_retry](/recipe_modules/cros_history/examples/is_retry.py)
 
 [DEPS](/recipe_modules/cros_history/examples/is_retry.py#7): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
