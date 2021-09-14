@@ -62,6 +62,16 @@ def RunSteps(api, properties):
 
       api.step("run manifest_doctor", cmd)
 
+  if len(properties.buildspec_watch_paths_legacy) > 0:
+    with api.step.nest("create external buildspecs (legacy)"):
+      cmd = [manifest_doctor_path, "public-buildspec"]
+      cmd += ["--paths", ",".join(properties.buildspec_watch_paths_legacy)]
+      cmd += ["--legacy"]
+      if properties.push:
+        cmd += ["--push"]
+
+      api.step("run manifest_doctor", cmd)
+
   if len(properties.project_buildspec_watch_paths) > 0:
     with api.step.nest("create partner buildspecs"):
       cmd = [manifest_doctor_path, "project-buildspec"]
@@ -115,6 +125,7 @@ def GenTests(api):
           **{
               "min_milestone": 90,
               "buildspec_watch_paths": ["release/", "test/"],
+              "buildspec_watch_paths_legacy": ["buildspecs/"],
               "project_buildspec_watch_paths":
                   ["full/buildspecs/", "buildspecs/"],
               "project_buildspec_min_milestone": 90,
@@ -131,6 +142,9 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'create external buildspecs.run manifest_doctor',
                      ['--paths', 'release/,test/']),
+      api.post_check(post_process.StepCommandContains,
+                     'create external buildspecs (legacy).run manifest_doctor',
+                     ['--paths', 'buildspecs/']),
       api.post_check(
           post_process.StepCommandContains,
           'create partner buildspecs.run manifest_doctor', [
@@ -155,6 +169,7 @@ def GenTests(api):
               "push": True,
               "min_milestone": 90,
               "buildspec_watch_paths": ["release/", "test/"],
+              "buildspec_watch_paths_legacy": ["buildspecs/"],
               "project_buildspec_watch_paths":
                   ["full/buildspecs/", "buildspecs/"],
               "project_buildspec_min_milestone": 90,
@@ -170,6 +185,9 @@ def GenTests(api):
           ]),
       api.post_check(post_process.StepCommandContains,
                      'create external buildspecs.run manifest_doctor',
+                     ['--push']),
+      api.post_check(post_process.StepCommandContains,
+                     'create external buildspecs (legacy).run manifest_doctor',
                      ['--push']),
       api.post_check(post_process.StepCommandContains,
                      'create partner buildspecs.run manifest_doctor',

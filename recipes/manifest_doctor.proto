@@ -26,6 +26,10 @@ message ManifestDoctorProperties {
     // buildspec bucket.
     repeated string buildspec_watch_paths = 5;
 
+    // Paths within the internal manifest-versions repo to mirror to external
+    // buildspec bucket.
+    repeated string buildspec_watch_paths_legacy = 9;
+
     // Programs/projects to consider for project buildspec creation, e.g.
     // galaxy/milkyway. Supports wildcards, e.g. galaxy/*.
     repeated string project_buildspecs = 6;

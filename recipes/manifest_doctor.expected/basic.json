@@ -55,6 +55,23 @@
   },
   {
     "cmd": [],
+    "name": "create external buildspecs (legacy)"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/manifest_doctor",
+      "public-buildspec",
+      "--paths",
+      "buildspecs/",
+      "--legacy"
+    ],
+    "name": "create external buildspecs (legacy).run manifest_doctor",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create partner buildspecs"
   },
   {
