@@ -10,7 +10,6 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 DEPS = [
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
@@ -61,22 +60,12 @@ def GenTests(api):
     build = api.test_util.test_child_build(None, **kwargs).build
     return api.test(name, build, *args)
 
-  yield test(
-      'postsubmit',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-  )
+  yield test('postsubmit')
 
-  yield test(
-      'cq',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True,
-      builder='fw-ec-cq')
+  yield test('cq', cq=True, builder='fw-ec-cq')
 
   yield test(
       'upload_fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cros_build_api.set_api_return(
           'try to upload artifacts.upload artifacts',
           'FirmwareService/BundleFirmwareArtifacts', retcode=1),
@@ -84,8 +73,6 @@ def GenTests(api):
 
   yield test(
       'working_upload_fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1), api.post_check(post_process.StatusAnyFailure),

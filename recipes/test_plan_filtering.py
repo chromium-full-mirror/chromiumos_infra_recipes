@@ -41,7 +41,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'cros_infra_config',
     'cros_source',
     'gerrit',
@@ -268,7 +267,8 @@ Cr-Automation-Id: {}""" \
   # END INTERNAL METHOD DEFINITIONS
 
   api.cros_source.configure_builder()
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+  with api.cros_source.checkout_overlays_context(
+      snapshot_mount=api.cros_infra_config.is_staging):
     api.cros_source.ensure_synced_cache(
         projects=[INFRA_CONFIG_PATH, CONFIG_PATH, CONFIG_INTERNAL_PATH])
     api.cros_source.checkout_tip_of_tree()
@@ -286,8 +286,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',
@@ -307,8 +305,6 @@ def GenTests(api):
   yield api.test(
       'no_changes_produced_in_diff_causes_no_push',
       # Mocking to make it seem there are 3 star files
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'update ref.gerrit transaction.find test plans',
           stdout=api.raw_io.output("\n".join([

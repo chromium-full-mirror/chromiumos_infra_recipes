@@ -9,7 +9,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'cros_branch',
     'cros_release_config',
     'cros_source',
@@ -64,8 +63,6 @@ def GenTests(api):
 
   yield api.test(
       'release-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'create branch.'
           'create branch from buildspec manifest 89/13729.0.0.xml',
@@ -81,8 +78,6 @@ def GenTests(api):
 
   yield api.test(
       'stabilize-branch-descriptor',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'create branch'
           '.create branch from buildspec manifest 89/13729.0.0.xml',
@@ -103,8 +98,6 @@ def GenTests(api):
 
   yield api.test(
       'no-source-version',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           BrancherProperties(branch_info=Branch(type=Branch.RELEASE))),
       api.post_check(post_process.StepFailure, 'validate properties'),
@@ -112,8 +105,6 @@ def GenTests(api):
 
   yield api.test(
       'bad-branch-type',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.FACTORY))),
@@ -122,8 +113,6 @@ def GenTests(api):
 
   yield api.test(
       'bad-branch_util-run',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.RELEASE))),

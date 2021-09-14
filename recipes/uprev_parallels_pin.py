@@ -268,7 +268,8 @@ def commit_pin_uprev(api, properties, package, new_version_pin):
     new_version_pin (VersionPin): the new version pin data.
   """
   with api.step.nest('update VERSION-PIN') as presentation:
-    with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+    with api.cros_source.checkout_overlays_context(
+        snapshot_mount=api.cros_infra_config.is_staging):
       api.cros_source.ensure_synced_cache()
       set_version_pin(api, properties, new_version_pin)
 
@@ -486,8 +487,6 @@ def GenTests(api):
   # Test missing recipe parameters.
   yield api.build_menu.test(
       'no-package', api.properties(**props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.StatusFailure))
@@ -496,8 +495,6 @@ def GenTests(api):
   del props['upstream_gs_bucket']
   yield api.build_menu.test(
       'no-upstream-bucket', api.properties(**props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.StatusFailure))
@@ -506,8 +503,6 @@ def GenTests(api):
   del props['upstream_gs_path']
   yield api.build_menu.test(
       'no-upstream-path', api.properties(**props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.StatusFailure))
@@ -516,8 +511,6 @@ def GenTests(api):
   del props['version_file']
   yield api.build_menu.test(
       'no-version-file', api.properties(**props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.StatusFailure))
@@ -526,8 +519,6 @@ def GenTests(api):
   del props['test_image_gs_bucket']
   yield api.build_menu.test(
       'no-test-image-bucket', api.properties(**props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.StatusFailure))
@@ -543,8 +534,6 @@ def GenTests(api):
   # Upstream version cannot be found.
   yield api.build_menu.test(
       'no-upstream-version', api.properties(**good_props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data('find latest upstream version.gsutil list',
                     stdout=api.raw_io.output('')),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
@@ -552,16 +541,12 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'snapshot-not-found', api.properties(**good_props), bad_snapshot_search,
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure))
 
   # Upstream version is the same as in Chrome OS (nothing to do).
   yield api.build_menu.test(
       'uprev-not-required', api.properties(**good_props), good_snapshot_search,
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.step_data(
           _BUILD_STEP_NAME + '.read pinned version file.VERSION-PIN',
@@ -575,8 +560,6 @@ def GenTests(api):
   # Various build errors
   yield api.build_menu.test(
       'install-packages-fail', api.properties(**good_props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       good_snapshot_search, api.git.diff_check(True),
       api.post_check(post_process.DoesNotRun,
                      _BUILD_STEP_NAME + '.build images'),
@@ -594,8 +577,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'bundle-fail', api.properties(**good_props), api.git.diff_check(True),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       good_snapshot_search,
       api.post_check(post_process.MustRun, _BUILD_STEP_NAME + '.build images'),
       api.post_check(post_process.MustRun,
@@ -610,8 +591,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'install-packages-and-bundle-fail', api.properties(**good_props),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       good_snapshot_search, api.git.diff_check(True),
       api.post_check(post_process.DoesNotRun,
                      _BUILD_STEP_NAME + '.build images'),
@@ -631,8 +610,6 @@ def GenTests(api):
   # Build image fails to schedule (infra failure)
   yield api.build_menu.test(
       'build-image-schedule-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**good_props),
       good_snapshot_search,
       api.git.diff_check(True),
@@ -650,8 +627,6 @@ def GenTests(api):
   # Build image fails
   yield api.build_menu.test(
       'build-image-collect-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**good_props),
       good_snapshot_search,
       api.git.diff_check(True),
@@ -689,8 +664,6 @@ def GenTests(api):
   })
   yield api.build_menu.test(
       'uprev-success', api.properties(**good_props), api.git.diff_check(True),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       good_snapshot_search,
       api.buildbucket.simulated_collect_output(
           [build_success],

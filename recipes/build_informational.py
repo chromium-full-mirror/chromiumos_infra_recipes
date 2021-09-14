@@ -9,7 +9,6 @@ This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles."""
 
 DEPS = [
-    'recipe_engine/swarming',
     'build_menu',
     'test_util',
 ]
@@ -24,10 +23,6 @@ def RunSteps(api):
 def GenTests(api):
 
   def test(name, **kwargs):
-    return api.test(
-        name,
-        api.swarming.properties(
-            bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-        api.test_util.test_child_build(None, **kwargs).build)
+    return api.test(name, api.test_util.test_child_build(None, **kwargs).build)
 
   yield test('basic', builder='amd64-generic-asan')

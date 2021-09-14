@@ -454,7 +454,8 @@ def RunSteps(api, properties):
   api.cros_source.configure_builder()
 
   # setup overlays, sync projects and move to tip-of-tree
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+  with api.cros_source.checkout_overlays_context(
+      snapshot_mount=api.cros_infra_config.is_staging):
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
 
@@ -526,8 +527,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               'dest_repo': 'https://example.com/some/project/repo',
@@ -572,8 +571,6 @@ def GenTests(api):
 
   yield api.test(
       'backfill_error',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               'configs': [{
@@ -626,8 +623,6 @@ def GenTests(api):
 
   yield api.test(
       'not_in_manifest',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               'configs': [{
@@ -656,8 +651,6 @@ def GenTests(api):
 
   yield api.test(
       'not_checked_out',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               'configs': [{
@@ -681,8 +674,6 @@ def GenTests(api):
 
   yield api.test(
       'no_changed_files',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               'configs': [{
@@ -706,8 +697,6 @@ def GenTests(api):
 
   yield api.test(
       'changed_files',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               'configs': [{

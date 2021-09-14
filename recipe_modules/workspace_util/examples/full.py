@@ -9,7 +9,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/properties',
-    'recipe_engine/swarming',
     'cros_source',
     'src_state',
     'test_util',
@@ -95,38 +94,16 @@ def GenTests(api):
     return api.test(name, ret, *args)
 
   # The default Postsubmit build.
-  yield test(
-      'has_commit_and_no_changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-  )
+  yield test('has_commit_and_no_changes')
 
   # The default CQ build.
-  yield test(
-      'has_changes_and_no_commit',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True)
+  yield test('has_changes_and_no_commit', cq=True)
 
-  yield test(
-      'ignore_missing_projects',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True,
-      ignore_missing_projects=True)
+  yield test('ignore_missing_projects', cq=True, ignore_missing_projects=True)
 
-  yield test(
-      'has_no_commit_and_no_changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), revision=None)
+  yield test('has_no_commit_and_no_changes', revision=None)
 
-  yield test(
-      'has_toolchain_changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True,
-      toolchain_cls_applied=True)
+  yield test('has_toolchain_changes', cq=True, toolchain_cls_applied=True)
 
-  yield test(
-      'release',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      git_repo=api.src_state.external_manifest.url,
-      git_ref='refs/heads/release-R86.13421.B')
+  yield test('release', git_repo=api.src_state.external_manifest.url,
+             git_ref='refs/heads/release-R86.13421.B')

@@ -24,7 +24,8 @@ PROPERTIES = CheckoutBranchProperties
 def RunSteps(api, properties):
 
   api.cros_source.configure_builder(default_main=False)
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+  with api.cros_source.checkout_overlays_context(
+      snapshot_mount=properties.is_staging):
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=properties.is_staging)
       branch_name = 'staging-snapshot' if properties.is_staging else 'snapshot'
@@ -46,8 +47,6 @@ def GenTests(api):
   branch = 'release-R86-13421.B'
   yield api.cros_source.test(
       'basic', 'snapshot',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           CheckoutBranchProperties(branch_name=branch, is_staging=False)),
       api.post_check(post_process.StatusSuccess),

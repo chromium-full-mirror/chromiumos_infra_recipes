@@ -12,7 +12,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'depot_tools/depot_tools',
     'cros_branch',
     'cros_infra_config',
@@ -41,7 +40,8 @@ def RunSteps(api, properties):
     # This will set up api.src_state properties for us.
     api.cros_source.configure_builder(api.src_state.gitiles_commit)
 
-    with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+    with api.cros_source.checkout_overlays_context(
+        snapshot_mount=api.cros_infra_config.is_staging):
       api.cros_source.ensure_synced_cache()
       api.cros_source.sync_to_gitiles_commit(api.src_state.gitiles_commit)
       with api.context(cwd=api.src_state.workspace_path):
@@ -103,15 +103,10 @@ def GenTests(api):
       post_process.DoesNotRun,
       'test branch_util for chromeos/manifest-internal')
 
-  yield api.test(
-      'without-gerrit-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'))
+  yield api.test('without-gerrit-changes')
 
   yield api.test(
       'with-manifest-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.try_build(project='chromiumos/manifest'),
       api.path.exists(
           api.src_state.workspace_path.join(
@@ -119,16 +114,12 @@ def GenTests(api):
 
   yield api.test(
       'with-manifest-internal-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['chromeos/manifest-internal']),
       internal_exists, tests_internal, *common_args)
 
   yield api.test(
       'with-manifest-internal-changes-no-cros-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['no-tests']), internal_exists,
       no_tests_internal, *common_args)

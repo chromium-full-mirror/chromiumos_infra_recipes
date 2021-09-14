@@ -31,7 +31,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
@@ -104,8 +103,6 @@ def DoRunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'with-tast',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.test_util.test_child_build('amd64-generic', cq=True,
                                      builder='amd64-generic-autotest-vm').build,
       api.properties(
@@ -117,8 +114,6 @@ def GenTests(api):
 
   yield api.test(
       'with-autotest',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.test_util.test_child_build('amd64-generic', cq=True,
                                      builder='amd64-generic-autotest-vm').build,
       api.properties(

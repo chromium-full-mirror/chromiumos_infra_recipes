@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'recipe_engine/tricium',
     'depot_tools/depot_tools',
     'bot_cost',
@@ -161,11 +160,7 @@ def GenTests(api):
       },
   }
 
-  yield api.test(
-      'no-changes-given',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(revision=None, cq=False))
+  yield api.test('no-changes-given', test_builder(revision=None, cq=False))
 
   two_changes = [
       GerritChange(change=1, project='chromium/src',
@@ -173,18 +168,11 @@ def GenTests(api):
       GerritChange(change=2, project='chromium/src',
                    host='chromium-review.googlesource.com'),
   ]
-  yield api.test(
-      'too-many-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(gerrit_changes=two_changes),
-      api.post_check(post_process.StepFailure, 'validate inputs'))
+  yield api.test('too-many-changes', test_builder(gerrit_changes=two_changes),
+                 api.post_check(post_process.StepFailure, 'validate inputs'))
 
   yield api.test(
-      'success',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(gerrit_changes=changes),
+      'success', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
               dict(project='chromium/src', remote='cros-internal',
@@ -196,10 +184,7 @@ def GenTests(api):
                                                    value_dict))
 
   yield api.test(
-      'no-matching-project',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(gerrit_changes=changes),
+      'no-matching-project', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
               dict(project='chromium/src', remote='cros-internal',
@@ -223,10 +208,7 @@ def GenTests(api):
   }
 
   yield api.test(
-      'success-release-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(gerrit_changes=changes),
+      'success-release-branch', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
               dict(project='chromium/src', remote='cros-internal',
@@ -254,10 +236,7 @@ def GenTests(api):
   }
 
   yield api.test(
-      'success-release-branch-extended',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(gerrit_changes=changes),
+      'success-release-branch-extended', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
               dict(project='chromium/src', remote='cros-internal',
@@ -285,9 +264,6 @@ def GenTests(api):
   }
 
   yield api.test(
-      'old-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      test_builder(gerrit_changes=changes),
+      'old-branch', test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
                                                    value_dict))
