@@ -73,7 +73,7 @@ def RunSteps(api):
     with api.step.nest('commit changes'):
       api.git.add([_CHROMEOS_CHROME_EBUILD_PATH])
       message = 'chromeos-chrome uprev dry-run with Chrome ToT' \
-          '\n\n%s\n\nCq_Cl_Tag: %s\nCq_Cl_Tag: chromium_src_ref:%s' % (
+          '\n\n%s\n\nCq-Cl-Tag: %s\nCq-Cl-Tag: chromium_src_ref:%s' % (
             rev_info, _INFO_UPREV_TAG, public_src_revision)
       api.git.commit(message, files=[_CHROMEOS_CHROME_EBUILD_PATH])
 

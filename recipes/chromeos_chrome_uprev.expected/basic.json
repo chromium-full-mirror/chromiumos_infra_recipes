@@ -194,7 +194,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromeos-chrome uprev dry-run with Chrome ToT\n\n# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n# chromium/src rev: publicsrc9012revision\n\nCq_Cl_Tag: swiftr:chrome-uprev-dry-run\nCq_Cl_Tag: chromium_src_ref:publicsrc9012revision",
+      "chromeos-chrome uprev dry-run with Chrome ToT\n\n# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n# chromium/src rev: publicsrc9012revision\n\nCq-Cl-Tag: swiftr:chrome-uprev-dry-run\nCq-Cl-Tag: chromium_src_ref:publicsrc9012revision",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -208,8 +208,8 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium rev: public5678revision@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium/src rev: publicsrc9012revision@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq_Cl_Tag: swiftr:chrome-uprev-dry-run@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq_Cl_Tag: chromium_src_ref:publicsrc9012revision@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: swiftr:chrome-uprev-dry-run@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: chromium_src_ref:publicsrc9012revision@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
