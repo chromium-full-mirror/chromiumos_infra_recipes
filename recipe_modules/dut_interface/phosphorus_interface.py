@@ -25,7 +25,7 @@ class MatchDutException(Exception):
 
 class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
 
-  def __init__(self, interface, test_id, test):
+  def __init__(self, interface, test_id, test, image_storage_server=''):
     """Specific constructor for Phosphorus subclass of DUTTestMetadata
 
     Args:
@@ -33,8 +33,11 @@ class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
     * test_id (str): The id for a specific test
     * test (skylab_test_runner.Request.Test): The actual test request.
     """
-    super(PhosphorusTestMetadata, self).__init__(test_id=test_id, test=test,
-                                                 gs_url=interface.logs_gs_url())
+    super(PhosphorusTestMetadata,
+          self).__init__(test_id=test_id, test=test,
+                         gs_url=interface.logs_gs_url(),
+                         image_storage_server=image_storage_server)
+
     self.load_response = interface.load_skylab_local_state(
         test_id=self.passthrough_test_id)
     self.phosphorus_config = interface.build_config(
@@ -167,6 +170,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
           autotest=phosphorus.runtest.RunTestRequest.Autotest(
               name=metadata.test.autotest.name,
               test_args=metadata.test.autotest.test_args,
+              image_storage_server=metadata.image_storage_server,
               display_name=metadata.test.autotest.display_name,
               keyvals=self._with_gs_logs_keyval(metadata),
               is_client_test=metadata.test.autotest.is_client_test,
@@ -384,8 +388,22 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
   def get_results_directory(self, metadata):
     return metadata.load_response.results_dir
 
+  def _get_image_storage_server(self):
+    """Extract the first chromeos_build_gcs_bucket from requet's prejob or ''.
+    """
+    iss = ''
+    sw_deps = self._properties.request.prejob.software_dependencies
+    for sw_dep in sw_deps:
+      if sw_dep.WhichOneof('dep') == 'chromeos_build_gcs_bucket':
+        iss = sw_dep.chromeos_build_gcs_bucket
+        break
+    if iss and not iss.startswith('gs://'):
+      iss = 'gs://' + iss
+    return iss
+
   def build_test_metadata(self, test_id, test):
-    metadata = PhosphorusTestMetadata(self, test_id, test)
+    metadata = PhosphorusTestMetadata(self, test_id, test,
+                                      self._get_image_storage_server())
     try:
       metadata.build_dut_topology(self._properties.request.prejob)
     except MatchDutException:

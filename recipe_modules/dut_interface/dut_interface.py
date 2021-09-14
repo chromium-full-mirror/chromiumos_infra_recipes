@@ -13,13 +13,15 @@ class DUTTestMetadata(object):  # pragma: no cover
 
   DUMMY_TEST_ID = 'original_test'
 
-  def __init__(self, test_id, test, gs_url):
+  def __init__(self, test_id, test, gs_url, image_storage_server=''):
     """Holds metadata relevant to one specific test. Passable to DutInterface
 
     Args:
     * test_id (str): The id for a specific test
     * test (skylab_test_runner.Request.Test): The actual test request.
     * gs_url (str): The url to google cloud storage for this test.
+    * image_storage_server (str): The url for the image storage for the test.
+        e.g. gs://chromeos-releases-test
     """
     self.test_id = test_id
     # TODO: Remove this once all tests have IDs
@@ -31,6 +33,7 @@ class DUTTestMetadata(object):  # pragma: no cover
     self.test = test
     self.gs_url = gs_url
     self.stainless_logs_url = self._parse_stainless_logs_url(self.gs_url)
+    self.image_storage_server = image_storage_server
 
   @staticmethod
   def _parse_stainless_logs_url(gs_dir):
