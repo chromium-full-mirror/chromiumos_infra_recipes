@@ -17,7 +17,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']"
+      "humanReason": "Invalid package invalid-package - only the following packages are allowed: ['infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes', 'infra/tools/result_adapter/linux-amd64', 'chromiumos/infra/cros_test_platform/linux-amd64', 'chromiumos/infra/phosphorus/linux-amd64']"
     },
     "name": "$result"
   }

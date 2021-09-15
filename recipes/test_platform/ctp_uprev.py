@@ -20,6 +20,7 @@ _RECIPE_CIPD_PACKAGE = (
     'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes')
 _GO_BINARY_CIPD_PACKAGE_PATTERN = 'chromiumos/infra/%s/linux-amd64'
 _GO_BINARIES = ['cros_test_platform', 'phosphorus']
+_GO_INFRA_BINARIES = 'infra/tools/result_adapter/linux-amd64'
 _RELEASE_VERSION_TAG = 'ctp_release_version'
 
 
@@ -52,7 +53,7 @@ def _package_passlist():
   Returns:
     list[str]
   """
-  return ([_RECIPE_CIPD_PACKAGE] +
+  return ([_RECIPE_CIPD_PACKAGE] + [_GO_INFRA_BINARIES] +
           [_GO_BINARY_CIPD_PACKAGE_PATTERN % name for name in _GO_BINARIES])
 
 

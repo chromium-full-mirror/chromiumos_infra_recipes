@@ -9763,9 +9763,9 @@ Recipe that triggers cros_test_platform runs.
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#104)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#105)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#59)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#60)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -9777,7 +9777,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#78)(api, instruction, package_tags=None):**
+&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#79)(api, instruction, package_tags=None):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -9790,7 +9790,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#26)(api, instruction):**
+&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#27)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 
