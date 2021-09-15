@@ -4,9 +4,10 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/raw_io',
+    'recipe_engine/swarming',
     'build_menu',
     'code_coverage',
-    'recipe_engine/raw_io',
 ]
 
 from recipe_engine import post_process
@@ -26,12 +27,16 @@ def RunSteps(api):
 def GenTests(api):
   yield api.build_menu.test(
       'code-coverage-ensures-binaries',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.MustRun,
                      'upload code coverage data.ensure binaries'),
   )
 
   yield api.build_menu.test(
       'code-coverage-upload-failure',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'upload code coverage data.ensure binaries.ensure_installed',
           retcode=2, stdout=api.raw_io.output('lol')),

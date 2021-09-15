@@ -271,26 +271,6 @@
   },
   {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "set-disk-auto-delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-disk",
-      "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-disk-cros",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "create and attach disk.create disk from snapshot image.set disk to autodelete",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos"
@@ -628,26 +608,6 @@
     },
     "infra_step": true,
     "name": "create and attach disk (2).create disk from snapshot image.attach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "set-disk-auto-delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-disk",
-      "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "create and attach disk (2).create disk from snapshot image.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

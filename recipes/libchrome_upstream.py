@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'repo',
 ]
 
@@ -75,6 +76,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'script success',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
           stdout=api.raw_io.output(
@@ -85,6 +88,8 @@ def GenTests(api):
 
   yield api.test(
       'script unexpected',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
           stdout=api.raw_io.output('Unexpected Result')),

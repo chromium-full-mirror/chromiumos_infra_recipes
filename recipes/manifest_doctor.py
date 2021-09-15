@@ -15,6 +15,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'bot_cost',
     'cros_infra_config',
     'cros_source',
@@ -116,11 +117,15 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'no-min_milestone',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepFailure, 'validate properties'),
   )
 
   yield api.test(
       'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               "min_milestone": 90,
@@ -164,6 +169,8 @@ def GenTests(api):
 
   yield api.test(
       'push',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               "push": True,
@@ -202,6 +209,8 @@ def GenTests(api):
 
   yield api.test(
       'with-ref',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{
               "min_milestone":

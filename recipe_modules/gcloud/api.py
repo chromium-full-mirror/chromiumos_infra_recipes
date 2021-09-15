@@ -270,7 +270,6 @@ class GcloudApi(recipe_api.RecipeApi):
       # Increment the device reference; /dev/sda is root device.
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
-      self.set_disk_autodelete(instance=instance, disk=disk, zone=zone)
 
   def sync_disk_cache(self, name):
     """Force a local disk cache sync before snapshotting.
@@ -586,30 +585,6 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.step('delete image {}'.format(image),
                     ['gcloud', 'compute', 'images', 'delete', image, '--quiet'],
                     infra_step=True)
-
-  def set_disk_autodelete(self, instance, disk, zone):
-    """Set a disk to autodelete when a GCE instance is deleted.
-
-    GCE disks are not default to delete when the instance is
-    deleted, thus to ensure cleanup we can flip the metadata
-    to ensure the disks are deleted when the instance is removed.
-
-    Args:
-      instance(str): GCE instance on which disk is attached.
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
-    """
-    with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('set disk to autodelete', [
-          'gcloud',
-          'compute',
-          'instances',
-          'set-disk-auto-delete',
-          instance,
-          '--auto-delete',
-          '--disk={}'.format(disk),
-          '--zone={}'.format(zone),
-      ], infra_step=True)
 
   def _determine_disk_suffix(self, cache, branch):
     """Determine the name of the disk to create.

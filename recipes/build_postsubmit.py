@@ -6,6 +6,7 @@
 """Recipe for building a BuildTarget image for Postsubmit."""
 
 DEPS = [
+    'recipe_engine/swarming',
     'build_menu',
     'test_util',
 ]
@@ -53,7 +54,10 @@ def GenTests(api):
 
   # Normal postsubmit build.
   yield api.build_menu.test(
-      'postsubmit-build', api.post_check(post_process.MustRun, 'build images'),
+      'postsubmit-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -62,6 +66,8 @@ def GenTests(api):
   # Postsubmit build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
@@ -75,7 +81,10 @@ def GenTests(api):
 
   # Postsubmit build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail', api.post_check(post_process.StatusAnyFailure),
+      'bundle-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
@@ -86,6 +95,8 @@ def GenTests(api):
   # Postsubmit build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
@@ -98,8 +109,10 @@ def GenTests(api):
                                           'ArtifactsService/Get', retcode=1))
 
   yield api.build_menu.test(
-      'run-exit-install', api.post_check(post_process.DoesNotRun,
-                                         'build images'),
+      'run-exit-install',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -109,7 +122,10 @@ def GenTests(api):
   # This builder has no output artifacts, and builds no images. (In the test
   # data...)
   yield api.build_menu.test(
-      'no-run-tests', api.post_check(post_process.DoesNotRun, 'build images'),
+      'no-run-tests',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),

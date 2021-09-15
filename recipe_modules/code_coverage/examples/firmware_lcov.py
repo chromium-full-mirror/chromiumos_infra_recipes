@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
 ]
@@ -21,6 +22,8 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'

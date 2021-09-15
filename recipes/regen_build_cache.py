@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
@@ -55,4 +56,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+  )

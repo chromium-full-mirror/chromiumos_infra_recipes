@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'recipe_engine/swarming',
     'build_menu',
     'cros_bisect',
     'cros_build_api',
@@ -62,6 +63,8 @@ def GenTests(api):
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(
       'cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **api.test_util.build_menu_properties(
             build_target_name='atlas',
@@ -73,14 +76,24 @@ def GenTests(api):
   )
 
   # Slim CQ build, with one gerrit_change.
-  yield api.build_menu.test('slim-cq-build', cq=True, build_target='atlas-slim')
+  yield api.build_menu.test(
+      'slim-cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True,
+      build_target='atlas-slim')
 
   # This covers the env_info.pointless check.
-  yield api.build_menu.test('pointless-cq-build', cq=True, pointless=True)
+  yield api.build_menu.test(
+      'pointless-cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True,
+      pointless=True)
 
   # Release build.
   yield api.build_menu.test(
       'release-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**api.test_util.build_menu_properties(
           build_target_name='cloudready-release-R90-13816.B')),
       build_target='cloudready-release-R90-13816.B', bucket='release')
@@ -88,6 +101,8 @@ def GenTests(api):
   # Run the other tests that we only run in the module.
   yield api.build_menu.test(
       'postsubmit-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.build_menu.set_build_api_return('prepare artifacts',
                                           'ArtifactsService/BuildSetup',
                                           '{"build_relevance": "UNKNOWN"}'),
@@ -95,19 +110,30 @@ def GenTests(api):
           FullProperties(artifact_build=True, upload_prebuilts=True)),
       input_properties={'$chromeos/build_menu': dict(artifact_build=True)})
 
-  yield api.build_menu.test('toolchain-cq-build',
-                            api.build_menu.set_toolchain_cls_return(True),
-                            cq=True)
-
-  yield api.build_menu.test('has-no-artifacts', build_target='arm-generic')
+  yield api.build_menu.test(
+      'toolchain-cq-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.build_menu.set_toolchain_cls_return(True), cq=True)
 
   yield api.build_menu.test(
-      'postsubmit-with-changes', api.post_check(post_process.StatusFailure),
+      'has-no-artifacts',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      build_target='arm-generic')
+
+  yield api.build_menu.test(
+      'postsubmit-with-changes',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'cherry-pick gerrit changes'),
       build_target='arm-generic', cq=True, bucket='postsubmit')
 
   yield api.build_menu.test(
       'postsubmit-with-snapshot-prebuilts',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)),
       input_properties={
@@ -120,6 +146,8 @@ def GenTests(api):
   for forced in False, True:
     yield api.build_menu.test(
         ('forced-' if forced else '') + 'pointless-artifact-build',
+        api.swarming.properties(
+            bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
         api.properties(
             FullProperties(
                 build_target=common.BuildTarget(name='chell'),
@@ -133,13 +161,22 @@ def GenTests(api):
                 dict(artifact_build=True, force_relevant_build=forced)
         })
 
-  yield api.build_menu.test('no-sysroot',
-                            api.properties(FullProperties(no_sysroot=True)))
+  yield api.build_menu.test(
+      'no-sysroot',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(FullProperties(no_sysroot=True)))
 
-  yield api.build_menu.test('no-config', builder='no-config')
+  yield api.build_menu.test(
+      'no-config',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      builder='no-config')
 
   yield api.build_menu.test(
       'with-findit-bisect',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(expected_packages=[
               common.PackageInfo(category='cat1', package_name='foo',
@@ -167,19 +204,26 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'missing-ok-config',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           FullProperties(missing_config_ok=True, expect_missing_config=True)),
       builder='no-config')
 
   yield api.build_menu.test(
-      'code-coverage-build', builder='sarien-code-coverage-postsubmit',
-      build_target='sarien', input_properties={
+      'code-coverage-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      builder='sarien-code-coverage-postsubmit', build_target='sarien',
+      input_properties={
           '$chromeos/build_menu': dict(test_with_code_coverage=True)
       })
 
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
     'bad-container-version-format',
+    api.swarming.properties(
+        bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
     api.properties(
       **api.test_util.build_menu_properties(
         container_version_format=\
@@ -198,6 +242,8 @@ def GenTests(api):
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
     'bad-container-version-characters',
+    api.swarming.properties(
+        bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
     api.properties(
       **api.test_util.build_menu_properties(
         build_target_name='atlas',
@@ -217,6 +263,8 @@ def GenTests(api):
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
     'bad-container-version-len',
+    api.swarming.properties(
+        bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
     api.properties(
       **api.test_util.build_menu_properties(
         container_version_format=\
@@ -235,6 +283,8 @@ def GenTests(api):
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
     'no-container-endpoint',
+    api.swarming.properties(
+        bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
     api.properties(
       **api.test_util.build_menu_properties(
         build_target_name='atlas',
@@ -251,6 +301,8 @@ def GenTests(api):
   # Cq build with bad container version string, should throw exception
   yield api.build_menu.test(
     'container-build-error',
+    api.swarming.properties(
+        bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
     api.properties(
       **api.test_util.build_menu_properties(
         build_target_name='atlas',

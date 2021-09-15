@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'repo',
     'workspace_util',
 ]
@@ -38,6 +39,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'failing apply changes.apply gerrit patch sets.repo forall',
           retcode=1,
@@ -69,6 +72,8 @@ def GenTests(api):
 
   yield api.test(
       'all-changes-discarded',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'failing apply changes.apply gerrit patch sets.repo forall',
           retcode=1,

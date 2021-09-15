@@ -3,7 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-DEPS = ['build_menu', 'code_coverage', 'recipe_engine/cq']
+DEPS = [
+    'recipe_engine/swarming',
+    'build_menu',
+    'code_coverage',
+    'recipe_engine/cq',
+]
 
 from recipe_engine import post_process
 
@@ -22,6 +27,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.build_menu.test(
       'cq-only-uploads-incremental',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.MustRun,
           'upload code coverage data (firmware lcov).upload incremental coverage to gerrit'
@@ -39,6 +46,8 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'cq-should-not-filter-coverage-file-for-incremental',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only'
@@ -48,6 +57,8 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'non-cq-does-not-upload-anything',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (firmware lcov).upload incremental coverage to gerrit'

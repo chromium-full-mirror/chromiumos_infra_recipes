@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'depot_tools/depot_tools',
     'bot_cost',
     'cros_infra_config',
@@ -133,21 +134,47 @@ def GenTests(api):
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_build(**kwargs).build
 
-  yield api.test('basic', test_builder(gerrit_changes=mock_CLs))
+  yield api.test(
+      'basic',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(gerrit_changes=mock_CLs))
 
-  yield api.test('missing',
-                 test_builder(builder='missing', gerrit_changes=mock_CLs))
+  yield api.test(
+      'missing',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(builder='missing', gerrit_changes=mock_CLs))
 
-  yield api.test('no-gitiles-given',
-                 test_builder(revision=None, gerrit_changes=mock_CLs))
+  yield api.test(
+      'no-gitiles-given',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(revision=None, gerrit_changes=mock_CLs))
 
-  yield api.test('no-changes-given', test_builder(revision=None, cq=False))
+  yield api.test(
+      'no-changes-given',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(revision=None, cq=False))
 
-  yield api.test('excluded-change', test_builder(gerrit_changes=mock_CLs),
-                 api.properties(project_names=['p1']))
+  yield api.test(
+      'excluded-change',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(gerrit_changes=mock_CLs),
+      api.properties(project_names=['p1']))
 
-  yield api.test('has-PRESUBMIT.py', test_builder(gerrit_changes=mock_CLs),
-                 api.properties(test_filename='PRESUBMIT.py'))
+  yield api.test(
+      'has-PRESUBMIT.py',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(gerrit_changes=mock_CLs),
+      api.properties(test_filename='PRESUBMIT.py'))
 
-  yield api.test('has-PRESUBMIT.cfg', test_builder(gerrit_changes=mock_CLs),
-                 api.properties(test_filename='PRESUBMIT.cfg'))
+  yield api.test(
+      'has-PRESUBMIT.cfg',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      test_builder(gerrit_changes=mock_CLs),
+      api.properties(test_filename='PRESUBMIT.cfg'))
