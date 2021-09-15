@@ -13,4 +13,5 @@ message SkylabProperties {
   string skylab_qs_account = 3;
   int32 skylab_priority = 4;
   bool enable_retries = 6;
+  bool add_resultdb_settings = 7;
 }

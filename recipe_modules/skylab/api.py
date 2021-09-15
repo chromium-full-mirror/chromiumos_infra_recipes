@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
+
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -11,6 +13,7 @@ from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.lab import license as license_pb2
+from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.taskstate import TaskState
@@ -28,6 +31,12 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
+    self._add_resultdb_settings = properties.add_resultdb_settings
+
+  def initialize(self):
+    # TODO(b/196956525): Remove once uploading to rdb is stable.
+    self._add_resultdb_settings |= ('chromeos.skylab.add_resultdb_settings' in
+                                    self.m.cros_infra_config.experiments)
 
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
@@ -113,6 +122,17 @@ class SkylabApi(recipe_api.RecipeApi):
             '{}:{}'.format(key, value) for key, value in tags.items()
         ]
         req.params.decorations.tags.extend(request_tags)
+        # TODO(b/196956525): Remove check for experiment once uploading to rdb
+        # is stable. Initially we will also only add the settings to
+        # non-critical test suites.
+        if (self._add_resultdb_settings and
+            uht.hw_test.hw_test_suite_type == HwTestCfg.TAST and
+            not uht.hw_test.common.critical.value):
+          resultdb_settings = self.m.json.dumps({
+              'result_format': 'tast',
+          })
+          req.params.decorations.autotest_keyvals[
+              'resultdb_settings'] = base64.b64encode(resultdb_settings)
         if self._enable_retries:
           self._enable_test_retries(req)
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
