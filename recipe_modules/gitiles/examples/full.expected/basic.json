@@ -114,36 +114,10 @@
     ]
   },
   {
-    "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "-X",
-      "POST",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Code-Review\": 2, \"Verified\": 1}}",
-      "https://chromium-review.googlesource.com/changes/snap/revisions/1/review"
-    ],
-    "name": "curl https://chromium-review.googlesource.com/changes/snap/revisions/1/review"
-  },
-  {
-    "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "-X",
-      "POST",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Not-A-Label\": 2}}",
-      "https://chromium-review.googlesource.com/changes/snap/revisions/1/review"
-    ],
-    "name": "curl https://chromium-review.googlesource.com/changes/snap/revisions/1/review (2)"
-  },
-  {
+    "failure": {
+      "failure": {},
+      "humanReason": "non base64 data returned from gitiles"
+    },
     "name": "$result"
   }
 ]

@@ -1151,32 +1151,119 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123",
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/infra/recipes",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1}@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123@@@"
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/infra/recipes|src/chromiumos/infra/recipes|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "-X",
-      "POST",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Bot-Commit\": 1}}",
-      "https://chromium-review.googlesource.com/changes/123/revisions/1/review"
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/1/review",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_TEXT@Bot-Commit+1@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromiumos/infra/recipes",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/infra/recipes|src/chromiumos/infra/recipes|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase",
+      "--force-rebase",
+      "cros/staging"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/recipes",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.git rebase",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/refs/heads/staging%l=Bot-Commit+1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/recipes",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git checkout (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1184,7 +1271,7 @@
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.submit CL 123",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123@@@"
     ]
   },
   {

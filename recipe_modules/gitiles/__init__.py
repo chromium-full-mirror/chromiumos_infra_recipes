@@ -8,5 +8,4 @@ DEPS = [
     'recipe_engine/step',
     'easy',
     'support',
-    'recipe_engine/json',
 ]

@@ -367,7 +367,7 @@
     "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -448,9 +448,8 @@
     "name": "create CLs.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite/+/1@@@"
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -569,7 +568,7 @@
     "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -650,9 +649,8 @@
     "name": "create CLs.set labels on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/+/1@@@"
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/+/1@@@"
     ]
   },
   {

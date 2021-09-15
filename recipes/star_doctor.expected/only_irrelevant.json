@@ -2484,7 +2484,7 @@
     "name": "commit changes.abandon CL 91827",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
   {
@@ -2632,7 +2632,7 @@
     "name": "commit changes.abandon CL 91827 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
   {

@@ -15,7 +15,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/1234@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/1234@@@"
     ]
   },
   {
@@ -148,7 +148,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/5678@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/5678@@@"
     ]
   },
   {

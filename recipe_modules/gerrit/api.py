@@ -448,14 +448,15 @@ class GerritApi(RecipeApi):
             field='url', fast=True, step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_url()))
-        pres.links['gerrit change'] = gerrit_change_url
+        pres.links['link to change'] = gerrit_change_url
 
         # The URL does not always include the project name, so always set it.
         change = self.parse_gerrit_change(gerrit_change_url)
         change.project = project_info.name
         return change
 
-  def set_change_labels_remote(self, gerrit_change, labels):
+  def set_change_labels_remote(self, gerrit_change, labels, fetch_ref=None,
+                               dest_ref=None, branch=None):
     """Set the given labels for the given Gerrit change.
       set_change_labels only works when the change exists in the local checkout.
       This function should be used in other cases.
@@ -463,25 +464,52 @@ class GerritApi(RecipeApi):
     Args:
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
+      fetch_ref (str): The ref at which the change can be fetched.
+      dest_ref (str): The ref at which the change can be pushed.
+      branch (str): The remote branch to update.
 
     Returns:
-      str: The applied labels (primarily for testing).
+      str: The new label ref (primarily for testing).
     """
-    # Convert Labels to strs so labels can be easily used outside of gerrit module
-    labels = {label.key: value for label, value in labels.items()}
-    with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
-      pres.logs['labels'] = self.m.json.dumps(labels)
-      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
-      change_num = gerrit_change.change
-      applied_labels = self.m.gitiles.set_change_labels(change_num, labels)
-      return applied_labels
+    with self.m.context(cwd=self.m.src_state.workspace_path):
+      project_info = self.m.repo.project_info(gerrit_change.project)
 
-  def set_change_labels(self, gerrit_change, labels, branch=None, ref=None):
+    with self.m.git.head_context():
+      # If no fetch_ref is provided we assume the checkout work has been handled
+      # outside this method
+      if fetch_ref:
+        # Fetch the the given Gerrit change.
+        self.m.git.fetch(project_info.remote, [fetch_ref], timeout_sec=60)
+        # Temporarily checkout the fetched ref.
+        self.m.git.checkout("FETCH_HEAD")
+
+      ref = self._set_change_labels(gerrit_change, labels,
+                                    rebase_from_remote=True, branch=branch,
+                                    ref=dest_ref)
+
+      return ref
+
+  def set_change_labels(self, gerrit_change, labels):
     """Set the given labels for the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
       labels (dict): Mapping from label (Label) to value (int).
+
+    Returns:
+      str: The new label ref (primarily for testing).
+    """
+    return self._set_change_labels(gerrit_change, labels)
+
+  def _set_change_labels(self, gerrit_change, labels, rebase_from_remote=False,
+                         branch=None, ref=None):
+    """Set the given labels for the given Gerrit change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+      labels (dict): Mapping from label (Label) to value (int).
+      rebase_from_remote (bool): If true, sets the rebase branch to the
+        the remote and branch for the project.
       branch (str): The remote branch to update.
       ref (str): The remote ref to update.
 
@@ -491,8 +519,8 @@ class GerritApi(RecipeApi):
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
       full_labels = sorted(
           ['%s+%d' % (label.key, value) for label, value in labels.iteritems()])
-      pres.logs['labels'] = ','.join(full_labels)
-      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      pres.step_text = ','.join(full_labels)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
       with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
@@ -506,7 +534,10 @@ class GerritApi(RecipeApi):
         ref = 'HEAD:%s' % ref
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(project_info.path)):
-        self.m.git.rebase(force=True)
+        # Rebase before pushing so Gerrit does not complain there was no change.
+        rebase_branch = branch = "%s/%s" % (
+            project_info.remote, branch) if rebase_from_remote else None
+        self.m.git.rebase(force=True, branch=rebase_branch)
         self.m.git.push(project_info.remote, ref)
       return ref
 
@@ -522,7 +553,7 @@ class GerritApi(RecipeApi):
     """
     with self.m.step.nest('comment on CL %d' % gerrit_change.change) as pres:
       pres.logs['comment text'] = [comment]
-      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
       with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
@@ -547,7 +578,7 @@ class GerritApi(RecipeApi):
     with self.m.step.nest('get CL %d description' %
                           gerrit_change.change) as pres:
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
-      pres.links['gerrit change'] = gerrit_change_url
+      pres.links['link to change'] = gerrit_change_url
       patch_set = self.fetch_patch_sets([gerrit_change],
                                         include_commit_info=True)[0]
       description = patch_set.commit_info.get('message')
@@ -576,7 +607,7 @@ class GerritApi(RecipeApi):
       description = (
           description if description.endswith('\n') else description + '\n')
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
-      pres.links['gerrit change'] = gerrit_change_url
+      pres.links['link to change'] = gerrit_change_url
       pres.logs['description text'] = [description]
 
       with self.m.context(cwd=self.m.src_state.workspace_path):
@@ -596,7 +627,7 @@ class GerritApi(RecipeApi):
       message (str): Optional message to post to change.
     """
     with self.m.step.nest('abandon CL %d' % gerrit_change.change) as pres:
-      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
 
       self.m.depot_tools_gerrit.abandon_change(
           self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
@@ -609,7 +640,7 @@ class GerritApi(RecipeApi):
       gerrit_change (GerritChange): The change to submit.
     """
     with self.m.step.nest('submit CL %d' % gerrit_change.change) as pres:
-      pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+      pres.links['link to change'] = self.parse_gerrit_change_url(gerrit_change)
       with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 

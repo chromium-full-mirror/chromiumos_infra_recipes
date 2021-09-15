@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "create gerrit change for project",
     "~followup_annotations": [
-      "@@@STEP_LINK@gerrit change@https://host-review.googlesource.com/c/project/+/123@@@"
+      "@@@STEP_LINK@link to change@https://host-review.googlesource.com/c/project/+/123@@@"
     ]
   },
   {

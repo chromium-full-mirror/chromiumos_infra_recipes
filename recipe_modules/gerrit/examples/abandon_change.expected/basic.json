@@ -65,7 +65,7 @@
     "cmd": [],
     "name": "abandon CL 123",
     "~followup_annotations": [
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project/+/123@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/project/+/123@@@"
     ]
   },
   {

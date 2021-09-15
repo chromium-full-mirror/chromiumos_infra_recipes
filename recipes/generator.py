@@ -349,6 +349,7 @@ def RunSteps(api, properties):
                     api.gerrit.set_change_labels_remote(
                         retry_cl,
                         labels,
+                        fetch_ref=retry_ci.git_fetch_ref,
                     )
     if not retry_only_run:
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,

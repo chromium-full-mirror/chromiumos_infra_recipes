@@ -12,7 +12,6 @@ DEPS = {
     'raw_io': 'recipe_engine/raw_io',
     'step': 'recipe_engine/step',
     'git': 'git',
-    'gitiles': 'gitiles',
     'git_cl': 'git_cl',
     'repo': 'repo',
     'src_state': 'src_state',

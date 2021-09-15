@@ -114,37 +114,3 @@ class GitilesApi(recipe_api.RecipeApi):
         raise StepFailure('non base64 data returned from gitiles')
       pres.logs['data'] = decoded_data
       return decoded_data
-
-  def set_change_labels(self, change_num, labels, base_url=None,
-                        credential_cookie_location=None, test_output_data=None):
-    """Set the labels on a gerrit change using Gerrit and Gitiles REST API.
-
-    Args:
-      change_num (int): The number of the change to label.
-      labels (dict): Mapping from label (Label) to value (int).
-      base_url (str): Base URL to curl against.
-      credential_cookie_location (str): Path to git credential cookie.
-      test_output_data (dict): Test output for set_change_labels.
-
-    Returns:
-      str: The applied labels (primarily for testing).
-    """
-    base_url = base_url or 'https://chromium-review.googlesource.com'
-    post_url = '%s/changes/%s/revisions/1/review' % (base_url, change_num)
-    post_json = {'labels': labels}
-
-    credential_cookie_location = (
-        credential_cookie_location or
-        self.m.path.join(self.m.path['home'], '.git-credential-cache/cookie'))
-    curl_params = [
-        '-b', credential_cookie_location, '-X', 'POST', '-H',
-        'Content-Type: application/json', '-d',
-        self.m.json.dumps(post_json)
-    ]
-    test_output_data = test_output_data or self.m.json.dumps(post_json)
-
-    post_json = {'labels': labels}
-    data = self.m.easy.stdout_step('curl %s' % post_url,
-                                   ['curl'] + curl_params + [post_url],
-                                   ok_ret={0}, test_stdout=test_output_data)
-    return data

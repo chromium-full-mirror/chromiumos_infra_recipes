@@ -1289,7 +1289,7 @@
     "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -1419,9 +1419,8 @@
     "name": "Do regenerate_suite_scheduler_configs and create CL.send to CQ.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/config-internal/+/1@@@"
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/config-internal/+/1@@@"
     ]
   },
   {
@@ -2024,7 +2023,7 @@
     "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -2154,9 +2153,8 @@
     "name": "Do replicate_public_config and create CL.send to CQ.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/project_public/+/1@@@"
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/project_public/+/1@@@"
     ]
   },
   {
@@ -2336,7 +2334,7 @@
     "name": "Do regenerate_test_plan and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/config-internal/test/plans",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -2466,9 +2464,8 @@
     "name": "Do regenerate_test_plan and create CL.send to CQ.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/config-internal/test/plans/+/1@@@"
+      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+2@@@",
+      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/config-internal/test/plans/+/1@@@"
     ]
   },
   {
