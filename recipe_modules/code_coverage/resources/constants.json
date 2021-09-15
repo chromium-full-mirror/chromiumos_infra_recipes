@@ -305,6 +305,10 @@
       "prefix": "tmp/portage/chromeos-base/smbprovider-[^/]*/work/smbprovider-[^/]*/smbprovider"
     },
     {
+      "src_path": "spaced",
+      "prefix":"tmp/portage/chromeos-base/spaced-[^/]*/work/spaced-[^/]*/spaced"
+    },
+    {
       "src_path": "system-proxy",
       "prefix": "tmp/portage/chromeos-base/system-proxy-[^/]*/work/system-proxy-[^/]*/system-proxy"
     },
