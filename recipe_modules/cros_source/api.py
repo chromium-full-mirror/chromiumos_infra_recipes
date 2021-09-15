@@ -745,6 +745,16 @@ class CrosSourceApi(RecipeApi):
                                               dry_run=False)
           lower_dir = '{}/chromiumos'.format(self.m.gcloud.snapshot_mount_path)
           self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
+        # TODO(mikenichols): Remove once source cache lands and is not reverted.
+        if lower_dir == self.preload_path and len(
+            self.m.file.listdir('check for existing verison file',
+                                self.m.gcloud.snapshot_version_path)) > 0:
+          self.m.overlayfs.cleanup_overlay_directories(
+              cache_name='chromiumos'
+          )  # pragma: nocover, no way to simulate in tests.
+          self.m.file.rmcontents(
+              'removing version files', self.m.gcloud.snapshot_version_path
+          )  # pragma: nocover, no way to simulate in tests.
         self.m.overlayfs.mount('chromiumos', lower_dir, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))

@@ -296,6 +296,22 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CACHE]/infra_versions"
+    ],
+    "infra_step": true,
+    "name": "check for existing verison file",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "mount overlay chromiumos"
   },
