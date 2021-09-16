@@ -405,7 +405,6 @@
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
-  * [test_platform/ctp_uprev](#recipes-test_platform_ctp_uprev)
   * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser)
   * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower)
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader)
@@ -9744,48 +9743,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 Recipe that triggers cros_test_platform runs.
 
 &mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#34)(api, properties):**
-### *recipes* / [test\_platform/ctp\_uprev](/recipes/test_platform/ctp_uprev.py)
-
-[DEPS](/recipes/test_platform/ctp_uprev.py#10): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
-
-PYTHON_VERSION_COMPATIBILITY: PY2
-
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_uprev.py#105)(api, properties):**
-
-&mdash; **def [get\_current\_instance](/recipes/test_platform/ctp_uprev.py#60)(api, instruction):**
-
-Get the current version of the ref.
-
-Args:
-  * instruction (ctp_uprev.Instruction): A complete set of args for
-    `cipd set-ref`.
-Returns:
-  ctp_uprev.Instance
-Raises:
-  A StepFailure if the CIPD tool call fails.
-
-&mdash; **def [uprev\_package](/recipes/test_platform/ctp_uprev.py#79)(api, instruction, package_tags=None):**
-
-Change CIPD ref of a package according to the instructions.
-
-Args:
-  * instruction (ctp_uprev.Instruction): A complete set of args for
-    `cipd set-ref`.
-  * package_tags: Tags to add to the package.
-Returns:
-  ctp_uprev.Instance
-Raises:
-  A StepFailure if the CIPD tool call fails.
-
-&mdash; **def [validate](/recipes/test_platform/ctp_uprev.py#27)(api, instruction):**
-
-Validate instructions for uprevving a specific package.
-
-Args:
-  * instruction (ctp_uprev.Instruction): A complete set of args for
-    `cipd set-ref`.
-Raises:
-  A StepFailure if validation fails.
 ### *recipes* / [test\_platform/dut\_leaser](/recipes/test_platform/dut_leaser.py)
 
 [DEPS](/recipes/test_platform/dut_leaser.py#13): [phosphorus](#recipe_modules-phosphorus), [service\_version](#recipe_modules-service_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
