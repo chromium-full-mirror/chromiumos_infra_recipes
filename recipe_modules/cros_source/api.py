@@ -662,7 +662,7 @@ class CrosSourceApi(RecipeApi):
     """Check out the tip-of-tree in the workspace."""
     self._sync_target = dict(call='checkout_tip_of_tree',
                              branch=self.m.src_state.internal_manifest.branch)
-    self.ensure_synced_cache(init_opts={'manifest_branch': 'main'})
+    self.ensure_synced_cache(manifest_branch_override='main')
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
     """Return snapshot SHAs for the manifest.
