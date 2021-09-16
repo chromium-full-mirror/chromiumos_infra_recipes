@@ -2177,7 +2177,7 @@
     "name": "act on outdated CLs with policy: OUTDATED_ABANDON.abandon CL 91827",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
   {
@@ -2230,7 +2230,7 @@
     "name": "act on outdated CLs with policy: OUTDATED_ABANDON.abandon CL 91827 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
+      "@@@STEP_LINK@gerrit change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
     ]
   },
   {
@@ -2287,7 +2287,7 @@
     "name": "generate CLs.create gerrit change for src/overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -2372,7 +2372,7 @@
     "name": "generate CLs.create gerrit change for src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
     ]
   },
   {
@@ -2472,7 +2472,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2542,7 +2542,7 @@
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2649,7 +2649,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {
@@ -2719,7 +2719,7 @@
       "@@@STEP_LOG_LINE@description text@Cq-Depend: chromium:1@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {
@@ -2825,7 +2825,7 @@
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DRY_RUN.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+1@@@",
       "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2883,8 +2883,9 @@
     "name": "update CL labels.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
+      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+1@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/overlay/+/1@@@"
     ]
   },
   {
@@ -2950,7 +2951,7 @@
       "@@@STEP_LOG_LINE@comment text@Send-to-cq policy for this case is DRY_RUN.@@@",
       "@@@STEP_LOG_LINE@comment text@Therefore, marking CL as CQ+1@@@",
       "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {
@@ -3008,8 +3009,9 @@
     "name": "update CL labels.set labels on CL 1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Bot-Commit+1,Commit-Queue+1@@@",
-      "@@@STEP_LINK@link to change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
+      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+1@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/private-overlay/+/1@@@"
     ]
   },
   {

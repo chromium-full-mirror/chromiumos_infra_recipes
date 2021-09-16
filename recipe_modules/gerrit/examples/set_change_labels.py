@@ -33,10 +33,10 @@ def RunSteps(api):
   api.assertions.assertEqual(ref,
                              'HEAD:refs/for/main%l=Code-Review+2,l=Verified+1')
 
-  ref = api.gerrit.set_change_labels_remote(gerrit_change_remote, labels,
-                                            fetch_ref='refs/change/78/123/3')
-  api.assertions.assertEqual(ref,
-                             'HEAD:refs/for/main%l=Code-Review+2,l=Verified+1')
+  applied_labels = api.gerrit.set_change_labels_remote(gerrit_change_remote,
+                                                       labels)
+  api.assertions.assertEqual(applied_labels,
+                             '{"labels": {"Code-Review": 2, "Verified": 1}}')
 
 
 def GenTests(api):

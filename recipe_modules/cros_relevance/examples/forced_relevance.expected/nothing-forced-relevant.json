@@ -17,7 +17,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://cr.googlesource.com/123@@@"
+      "@@@STEP_LINK@gerrit change@https://cr.googlesource.com/123@@@"
     ]
   },
   {
@@ -150,7 +150,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@link to change@https://cr.googlesource.com/456@@@"
+      "@@@STEP_LINK@gerrit change@https://cr.googlesource.com/456@@@"
     ]
   },
   {

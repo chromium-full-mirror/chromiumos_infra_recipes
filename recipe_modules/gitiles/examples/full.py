@@ -31,12 +31,32 @@ def RunSteps(api):
                            'chromite/api/somefile.txt',
                            ref='refs/heads/coolref'), '{"abc":123}')
 
-  api.assertions.assertRaises(
-      StepFailure,
-      api.gitiles.get_file('testgerrit', 'my/project',
-                           'chromite/api/somefile.txt',
-                           ref='refs/heads/coolref',
-                           test_output_data='not base64 yo'))
+  api.assertions.assertRaises(StepFailure, api.gitiles.get_file,
+                              host='testgerrit', project='my/project',
+                              path='chromite/api/somefile.txt',
+                              ref='refs/heads/coolref',
+                              test_output_data='not base64 yo')
+
+  labels = {
+      'labels': {
+          'Code-Review': 2,
+          'Verified': 1,
+      }
+  }
+  api.assertions.assertEqual(
+      api.gitiles.set_change_labels(commit.id, labels['labels'],
+                                    'chromium-review.googlesource.com'),
+      '{"labels": {"Code-Review": 2, "Verified": 1}}')
+
+  labels = {
+      'Not-A-Label': 2,
+  }
+  api.assertions.assertEqual(
+      'label "Not-A-Label" is not a configured label',
+      api.gitiles.set_change_labels(
+          change_num=commit.id, labels=labels,
+          gerrit_host='chromium-review.googlesource.com',
+          test_output_data='label "Not-A-Label" is not a configured label'))
 
 
 def GenTests(api):
