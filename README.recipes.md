@@ -7640,9 +7640,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipes/cipd_uprev.py#130)(api, properties):**
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#131)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#77)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#78)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -7654,7 +7654,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#104)(api, instruction, package_tags=None):**
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#105)(api, instruction, package_tags=None):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -7667,7 +7667,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/cipd_uprev.py#37)(api, instruction):**
+&mdash; **def [validate](/recipes/cipd_uprev.py#38)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 
