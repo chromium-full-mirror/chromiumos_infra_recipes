@@ -765,3 +765,15 @@ class GitApi(recipe_api.RecipeApi):
         stdout=self.m.raw_io.output())
 
     return result
+
+  def author_email(self, commit_id):
+    """Returns the email of the author of the given commit.
+
+    Args:
+      * commit_id (str): The commit sha.
+
+    Returns: (str): commit author email.
+    """
+    return self._step(['log', '--format=%aE', '-n', '-1', commit_id],
+                      stdout=self.m.raw_io.output(), test_stdout='%s\n' %
+                      self.test_api.test_author_email).stdout.strip()

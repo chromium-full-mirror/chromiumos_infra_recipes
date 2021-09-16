@@ -544,6 +544,18 @@
     "name": "git log (2)"
   },
   {
+    "cmd": [
+      "git",
+      "log",
+      "--format=%aE",
+      "-n",
+      "-1",
+      "HEAD"
+    ],
+    "infra_step": true,
+    "name": "git log (3)"
+  },
+  {
     "name": "$result"
   }
 ]

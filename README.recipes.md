@@ -4917,6 +4917,15 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
+&mdash; **def [author\_email](/recipe_modules/git/api.py#769)(self, commit_id):**
+
+Returns the email of the author of the given commit.
+
+Args:
+  * commit_id (str): The commit sha.
+
+Returns: (str): commit author email.
+
 &mdash; **def [checkout](/recipe_modules/git/api.py#253)(self, commit, force=False, branch=None):**
 
 Runs 'git checkout'.

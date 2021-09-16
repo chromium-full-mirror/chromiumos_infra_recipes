@@ -99,6 +99,8 @@ def RunSteps(api):
 
   api.assertions.assertEqual(api.git.is_merge_commit(commit_id), False)
 
+  api.assertions.assertEqual(api.git.author_email('HEAD'), 'foo@example.com')
+
 
 def GenTests(api):
   yield api.test('basic')

@@ -9,6 +9,8 @@ class GitTestApi(recipe_test_api.RecipeTestApi):
 
   test_commit_id = 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
 
+  test_author_email = 'foo@example.com'
+
   def generate_test_ids(self, count):
     """Return a list of test commit IDs.
 
