@@ -451,12 +451,11 @@ def format_output_markdown(commits, errors, nmissing):
 
 
 def RunSteps(api, properties):
-  api.cros_source.configure_builder()
+  api.cros_source.configure_builder(default_main=True)
 
   # setup overlays, sync projects and move to tip-of-tree
   with api.cros_source.checkout_overlays_context(snapshot_mount=True):
     api.cros_source.ensure_synced_cache()
-    api.cros_source.checkout_tip_of_tree()
 
     with api.context(cwd=api.cros_source.workspace_path):
       with api.step.nest("create portage workaround symlinks"):
@@ -720,7 +719,8 @@ def GenTests(api):
                   'project_name': 'test_project',
                   'program_name': 'test_program',
               }]
-          }), mock_workspace_path('src/project/test_program/test_project'),
+          }),
+      mock_workspace_path('src/project/test_program/test_project'),
       api.step_data(
           'processing test_program/test_project'
           '.update ref.git transaction'
@@ -730,4 +730,5 @@ def GenTests(api):
           'processing test_program/test_project.update ref.git transaction'
           '.git push', stdout=api.raw_io.output(
               ('remote:   https://example.com/c/some/project/repo/+/123 '
-               'config_backfill: test'))))
+               'config_backfill: test'))),
+  )
