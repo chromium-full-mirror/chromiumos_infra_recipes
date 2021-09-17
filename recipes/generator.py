@@ -131,8 +131,7 @@ def RunSteps(api, properties):
 
   with api.cros_source.checkout_overlays_context(snapshot_mount=True), \
       api.cros_sdk.cleanup_context():
-    api.cros_source.ensure_synced_cache()
-    api.cros_source.checkout_tip_of_tree()
+    api.cros_source.ensure_synced_cache(manifest_branch_override='main')
 
     # Check out the appropriate branch, and use the appropriate policy.
     # If gitiles_info is given to us then we will determine the branch based on
