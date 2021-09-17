@@ -5,8 +5,10 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_test_plan',
+    'git_footers',
     'skylab',
 ]
 
@@ -69,3 +71,12 @@ def GenTests(api):
                   SkylabProperties(enable_retries=True,
                                    add_resultdb_settings=True)
           }))
+
+  build = api.buildbucket.try_build_message(project='chromeos',
+                                            bucket='chromeos',
+                                            builder='cq-orchestrator',
+                                            experiments={'chromeos.a.b': True})
+  yield api.test(
+      'experiments', api.buildbucket.build(build),
+      api.git_footers.simulated_get_footers(['chromeos.c.d', 'chromeos.e.f'],
+                                            'schedule skylab tests v2'))

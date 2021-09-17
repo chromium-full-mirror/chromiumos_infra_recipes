@@ -6375,6 +6375,21 @@
   },
   {
     "cmd": [
+      "python",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Cros-Experiments"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
       "bb",
       "batch",
       "-host",

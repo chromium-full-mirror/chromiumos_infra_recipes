@@ -16,7 +16,6 @@ DEPS = [
     'test_util',
     'easy',
     'git',
-    'failures',
     'src_state',
 ]
 

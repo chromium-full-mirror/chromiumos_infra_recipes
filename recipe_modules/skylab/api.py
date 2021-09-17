@@ -38,6 +38,10 @@ class SkylabApi(recipe_api.RecipeApi):
     self._add_resultdb_settings |= ('chromeos.skylab.add_resultdb_settings' in
                                     self.m.cros_infra_config.experiments)
 
+  # A Git footer that can be included in commit messages to tell the CQ run to
+  # enable an experiment.
+  CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
+
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
@@ -61,6 +65,14 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     bb_tags = self.m.cros_tags.tags(
         **bb_tags) if isinstance(bb_tags, dict) else bb_tags
+    # TODO(b/200175693): This logic also exists in build plan. Consider moving
+    # to a common source.
+    exps = self.m.cros_infra_config.experiments_for_child_build
+    footer_exps = self.m.git_footers.get_footer_values(
+        self.m.src_state.gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
+        step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
+    exps.update({x: True for x in footer_exps})
+
     bb_request = self.m.buildbucket.schedule_request(
         self._ctp_builder,
         bucket='testplatform',
@@ -68,6 +80,7 @@ class SkylabApi(recipe_api.RecipeApi):
             'requests': tagged_requests,
         },
         tags=bb_tags if bb_tags else [],
+        experiments=exps,
         # TODO(b/186217519,b/186218358): Pass in gerrit_changes and
         # gitiles_commit from src_state to create CTP tile. Relying on buildset
         # tags here is incorrect according to buildbucket V2.
