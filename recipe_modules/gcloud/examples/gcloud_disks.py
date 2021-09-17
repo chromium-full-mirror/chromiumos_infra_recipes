@@ -69,6 +69,12 @@ def RunSteps(api):
         'staging-chromeos-cache-snapshot-16258902',
     ], image_list)
     api.gcloud.delete_images(images=image_list)
+    disk_list = api.gcloud.list_all_disks()
+    instance_list = api.gcloud.list_all_instances()
+    disks_to_delete = api.gcloud.determine_disks_to_delete(
+        disks=disk_list, instances=instance_list)
+    api.assertions.assertEqual(disks_to_delete,
+                               {'chromeos-ci-disk-to-delete': 'us-central1-b'})
 
   # Empty context
   with api.gcloud.cleanup_gce_disks(), \

@@ -8,6 +8,7 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/futures',
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/swarming',
@@ -110,6 +111,17 @@ def RunSteps(api, properties):
           protected_images=properties.protected_images)
       api.easy.set_properties_step(expired_images=image_delete_list)
       api.gcloud.delete_images(images=image_delete_list)
+      with api.step.nest('delete orphaned disks'):
+        disks_to_delete = api.gcloud.determine_disks_to_delete(
+            disks=api.gcloud.list_all_disks(),
+            instances=api.gcloud.list_all_instances())
+        api.easy.set_properties_step(orphaned_disks=disks_to_delete)
+        if not is_staging:
+          futures = []
+          for disk, zone in disks_to_delete.items():
+            futures.append(
+                api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
+          api.futures.wait(futures)
 
 
 def GenTests(api):

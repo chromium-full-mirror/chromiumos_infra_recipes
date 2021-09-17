@@ -237,6 +237,21 @@ class GcloudApi(recipe_api.RecipeApi):
           '--zone={}'.format(zone), '--project={}'.format(project)
       ])
 
+  def list_all_instances(self):
+    """Pulls a list of all disks that exist."""
+    list_cmd = [
+        'gcloud',
+        'compute',
+        'instances',
+        'list',
+        '--format',
+        'json(name)',
+    ]
+    output = self.m.easy.stdout_json_step(
+        'get a list of all instances', list_cmd,
+        test_stdout=self.test_api.instances_data, infra_step=True)
+    return [instance['name'] for instance in output]
+
   def _determine_dev_id(self):
     """Determine which dev ids are in use."""
     blkid_cmd = ['lsblk', '--json', '--output', 'name']
@@ -466,6 +481,30 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
+  def list_all_disks(self):
+    """Pulls a list of all disks that exist.
+
+    Returns:
+      A dictionary containing disk name and zone.
+    """
+    list_cmd = [
+        'gcloud',
+        'compute',
+        'disks',
+        'list',
+        '--filter',
+        'name~chromeos-*',
+        '--format',
+        'json(name,zone)',
+    ]
+    output = self.m.easy.stdout_json_step(
+        'get a list of all disks', list_cmd,
+        test_stdout=self.test_api.disk_list_data, infra_step=True)
+    disks = {}
+    for gce_disk in output:
+      disks[gce_disk['name']] = gce_disk['zone'].rsplit('/', 1)[1]
+    return disks
+
   def disk_attached(self, instance, disk, zone):
     """Check whether a disk is attached to an instance.
 
@@ -608,6 +647,22 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.step('delete image {}'.format(image),
                     ['gcloud', 'compute', 'images', 'delete', image, '--quiet'],
                     infra_step=True)
+
+  def determine_disks_to_delete(self, disks, instances):
+    """Determines the list of orphaned disks to delete.
+
+    Args:
+      disks(dict): List of all GCE disks and zone
+      instances(list|str): List of all GCE instances.
+
+    Returns:
+      Dictionary containing disk name and zone to delete.
+    """
+    disks_to_delete = {}
+    for disk, zone in disks.items():
+      if disk.rsplit('-', 1)[0] not in instances:
+        disks_to_delete[disk] = zone
+    return disks_to_delete
 
   def _determine_disk_suffix(self, cache, branch):
     """Determine the name of the disk to create.

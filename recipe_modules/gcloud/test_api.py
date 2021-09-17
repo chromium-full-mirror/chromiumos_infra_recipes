@@ -9,6 +9,21 @@ from recipe_engine import recipe_test_api
 class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the gcloud module."""
 
+  def instances_data(self):
+    """Returns list of instances in json format."""
+    disk_list = [{
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-disk",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }]
+    return disk_list
+
   def snapshot_list_data(self):
     """Returns list of snapshots in json format."""
     snapshot_list = [{
@@ -134,6 +149,36 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90"
     }, {
         "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-cros"
+    }]
+    return disk_list
+
+  def disk_list_data(self):
+    """Returns list of disks in json format."""
+    disk_list = [{
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-disk-cros",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-disk-to-delete",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
     }]
     return disk_list
 
