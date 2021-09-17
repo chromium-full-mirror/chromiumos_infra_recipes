@@ -472,7 +472,7 @@
       "--image-project=chromeos-bot",
       "--image=",
       "--quiet",
-      "--type=pd-standard"
+      "--type=pd-ssd"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

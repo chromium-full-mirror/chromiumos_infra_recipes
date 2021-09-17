@@ -16,6 +16,7 @@ RAW_IMAGE_NAME = 'disk.raw'
 TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
+SSD_ZONES = ['us-central1-b', 'us-east1-d']
 
 _SWARMING_HOST_REGEXP = (r'^chromeos-\w*-'
                          r'(?P<role>\w*)-'
@@ -756,6 +757,12 @@ class GcloudApi(recipe_api.RecipeApi):
               self.detach_disk(instance=infra_host, disk=self._disk,
                                zone=self._zone)
             self.delete_disk(disk=self._disk, zone=self._zone)
+          # Roll out SSD disks in waves to validate quota usage and ensure
+          # no widespread impacts.
+          if self._zone in SSD_ZONES:
+            disk_type = 'pd-ssd'
+          # Create the disk but in the event of a stockout of SSD, catch the
+          # exception and create a standard spinning disk.
           try:
             self.create_disk_from_image(disk=self._disk, zone=self._zone,
                                         image=snapshot, disk_type=disk_type)

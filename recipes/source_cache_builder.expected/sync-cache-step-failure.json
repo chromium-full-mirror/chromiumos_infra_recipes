@@ -1119,9 +1119,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired images.delete orphaned disks",
+    "name": "source cache update.delete orphaned disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1136,9 +1136,9 @@
       "json(name,zone)"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.delete orphaned disks.get a list of all disks",
+    "name": "source cache update.delete orphaned disks.get a list of all disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\", @@@",
@@ -1174,9 +1174,9 @@
       "json(name)"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.delete orphaned disks.get a list of all instances",
+    "name": "source cache update.delete orphaned disks.get a list of all instances",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj\", @@@",
@@ -1192,9 +1192,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired images.delete orphaned disks.set orphaned_disks",
+    "name": "source cache update.delete orphaned disks.set orphaned_disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-disk-to-delete\": \"us-central1-b\"}@@@"
     ]
   },
@@ -1212,9 +1212,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.delete orphaned disks.delete disk",
+    "name": "source cache update.delete orphaned disks.delete disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
