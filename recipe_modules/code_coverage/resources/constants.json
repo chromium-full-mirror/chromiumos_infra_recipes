@@ -9,6 +9,10 @@
       "prefix": "tmp/portage/chromeos-base/arc-appfuse-[^/]*/work/arc-appfuse-[^/]*/arc/appfuse"
     },
     {
+      "src_path": "arc/data-snapshotd",
+      "prefix": "tmp/portage/chromeos-base/arc-data-snapshotd-[^/]*/work/arc-data-snapshotd-[^/]*/arc/data-snapshotd"
+    },
+    {
       "src_path": "arc/obb-mounter",
       "prefix": "tmp/portage/chromeos-base/arc-obb-mounter-[^/]*/work/arc-obb-mounter-[^/]*/arc/obb-mounter"
     },
@@ -19,6 +23,10 @@
     {
       "src_path": "arc/vm/boot_notification_server",
       "prefix": "tmp/portage/chromeos-base/arcvm-boot-notification-server-[^/]*/work/arcvm-boot-notification-server-[^/]*/arc/vm/boot_notification_server"
+    },
+    {
+      "src_path": "arc/vm/mojo_proxy",
+      "prefix":  "tmp/portage/chromeos-base/arcvm-mojo-proxy-[^/]*/work/arcvm-mojo-proxy-[^/]*/arc/vm/mojo_proxy"
     },
     {
       "src_path": "attestation",
@@ -69,6 +77,10 @@
       "prefix": "tmp/portage/chromeos-base/chaps-[^/]*/work/chaps-[^/]*/chaps"
     },
     {
+      "src_path": "chromeos-config",
+      "prefix":  "tmp/portage/chromeos-base/chromeos-config-tools-[^/]*/work/chromeos-config-tools-[^/]*/platform2/chromeos-config"
+    },
+    {
       "src_path": "chromeos-dbus-bindings",
       "prefix": "tmp/portage/chromeos-base/chromeos-dbus-bindings-[^/]*/work/chromeos-dbus-bindings-[^/]*/chromeos-dbus-bindings"
     },
@@ -113,6 +125,14 @@
       "prefix": "tmp/portage/chromeos-base/dlcservice-[^/]*/work/dlcservice-[^/]*/dlcservice"
     },
     {
+      "src_path": "dlp",
+      "prefix":  "tmp/portage/chromeos-base/dlp-[^/]*/work/dlp-[^/]*/dlp"
+    },
+    {
+      "src_path": "dns-proxy",
+      "prefix":  "tmp/portage/chromeos-base/dns-proxy-[^/]*/work/dns-proxy-[^/]*/dns-proxy"
+    },
+    {
       "src_path": "easy-unlock",
       "prefix": "tmp/portage/chromeos-base/easy-unlock-[^/]*/work/easy-unlock-[^/]*/easy-unlock"
     },
@@ -123,6 +143,10 @@
     {
       "src_path": "foomatic_shell",
       "prefix": "tmp/portage/chromeos-base/foomatic_shell-[^/]*/work/foomatic_shell-[^/]*/foomatic_shell"
+    },
+    {
+      "src_path": "u2fd/g2f_tools",
+      "prefix":  "tmp/portage/chromeos-base/g2f_tools-[^/]*/work/g2f_tools-[^/]*/u2fd/g2f_tools"
     },
     {
       "src_path": "glib-bridge",
@@ -145,8 +169,16 @@
       "prefix": "tmp/portage/chromeos-base/hermes-[^/]*/work/hermes-[^/]*/hermes"
     },
     {
+      "src_path": "hps",
+      "prefix":  "tmp/portage/chromeos-base/hpsd-[^/]*/work/hpsd-[^/]*/hps"
+    },
+    {
       "src_path": "hwsec-test-utils",
       "prefix": "tmp/portage/chromeos-base/hwsec-test-utils-[^/]*/work/hwsec-test-utils-[^/]*/hwsec-test-utils"
+    },
+    {
+      "src_path": "iioservice",
+      "prefix":  "tmp/portage/chromeos-base/iioservice-[^/]*/work/iioservice-[^/]*/platform2/iioservice"
     },
     {
       "src_path": "image-burner",
@@ -181,6 +213,10 @@
       "prefix": "tmp/portage/chromeos-base/libcontainer-[^/]*/work/libcontainer-[^/]*/libcontainer"
     },
     {
+      "src_path": "libec",
+      "prefix":  "tmp/portage/chromeos-base/libec-[^/]*/work/libec-[^/]*/libec"
+    },
+    {
       "src_path": "libhwsec",
       "prefix": "tmp/portage/chromeos-base/libhwsec-[^/]*/work/libhwsec-[^/]*/libhwsec"
     },
@@ -205,6 +241,10 @@
       "prefix": "tmp/portage/chromeos-base/libvda-[^/]*/work/libvda-[^/]*/arc/vm/libvda"
     },
     {
+      "src_path": "login_manager",
+      "prefix":  "tmp/portage/chromeos-base/chromeos-login-[^/]*/work/chromeos-login-[^/]*/login_manager"
+    },
+    {
       "src_path": "lorgnette",
       "prefix": "tmp/portage/chromeos-base/lorgnette-[^/]*/work/lorgnette-[^/]*/lorgnette"
     },
@@ -223,6 +263,10 @@
     {
       "src_path": "mist",
       "prefix": "tmp/portage/chromeos-base/mist-[^/]*/work/mist-[^/]*/mist"
+    },
+    {
+      "src_path": "missive",
+      "prefix":  "tmp/portage/chromeos-base/missive-[^/]*/work/missive-[^/]*/platform2/missive"
     },
     {
       "src_path": "ml",
@@ -265,6 +309,10 @@
       "prefix": "tmp/portage/chromeos-base/patchpanel-client-[^/]*/work/patchpanel-client-[^/]*/patchpanel"
     },
     {
+      "src_path": "pciguard",
+      "prefix":  "tmp/portage/chromeos-base/pciguard-[^/]*/work/pciguard-[^/]*/platform2/pciguard"
+    },
+    {
       "src_path": "permission_broker",
       "prefix": "tmp/portage/chromeos-base/permission_broker-[^/]*/work/permission_broker-[^/]*/permission_broker"
     },
@@ -277,6 +325,10 @@
       "prefix": "tmp/portage/chromeos-base/power_manager-[^/]*/work/power_manager-[^/]*/power_manager"
     },
     {
+      "src_path": "rmad",
+      "prefix":  "tmp/portage/chromeos-base/rmad-[^/]*/work/rmad-[^/]*/rmad"
+    },
+    {
       "src_path": "run_oci",
       "prefix": "tmp/portage/chromeos-base/run_oci-[^/]*/work/run_oci-[^/]*/run_oci"
     },
@@ -285,8 +337,16 @@
       "prefix": "tmp/portage/chromeos-base/runtime_probe-[^/]*/work/runtime_probe-[^/]*/runtime_probe"
     },
     {
+      "src_path": "screen-capture-utils",
+      "prefix":  "tmp/portage/chromeos-base/screen-capture-utils-[^/]*/work/screen-capture-utils-[^/]*/screen-capture-utils"
+    },
+    {
       "src_path": "sealed_storage",
       "prefix": "tmp/portage/chromeos-base/sealed_storage-[^/]*/work/sealed_storage-[^/]*/sealed_storage"
+    },
+    {
+      "src_path": "secanomalyd",
+      "prefix":  "tmp/portage/chromeos-base/secanomalyd-[^/]*/work/secanomalyd-[^/]*/secanomalyd"
     },
     {
       "src_path": "shill/cli",
@@ -307,6 +367,10 @@
     {
       "src_path": "spaced",
       "prefix":"tmp/portage/chromeos-base/spaced-[^/]*/work/spaced-[^/]*/spaced"
+    },
+    {
+      "src_path": "syslog-cat",
+      "prefix":  "tmp/portage/chromeos-base/syslog-cat-[^/]*/work/syslog-cat-[^/]*/syslog-cat"
     },
     {
       "src_path": "system-proxy",
