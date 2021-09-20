@@ -1133,6 +1133,14 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-lmno\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
@@ -1146,10 +1154,6 @@
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-disk-cros\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-disk-to-delete\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
@@ -1187,7 +1191,7 @@
     "name": "source cache update.delete orphaned disks.set orphaned_disks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-disk-to-delete\": \"us-central1-b\"}@@@"
+      "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros\": \"us-central1-b\"}@@@"
     ]
   },
   {
@@ -1196,7 +1200,7 @@
       "compute",
       "disks",
       "delete",
-      "chromeos-ci-disk-to-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-lmno-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],

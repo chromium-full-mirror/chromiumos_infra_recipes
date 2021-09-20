@@ -156,6 +156,16 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     """Returns list of disks in json format."""
     disk_list = [{
         "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-lmno",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-lmno-cros",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
             "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
         "zone":
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
@@ -172,11 +182,6 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }, {
         "name":
             "chromeos-ci-infra-us-central1-b-x16-0-disk-cros",
-        "zone":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
-    }, {
-        "name":
-            "chromeos-ci-disk-to-delete",
         "zone":
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
     }]

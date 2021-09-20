@@ -4148,21 +4148,21 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [branch](/recipe_modules/gcloud/api.py#77)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#782)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#786)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#826)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#830)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_and\_mount\_disk](/recipe_modules/gcloud/api.py#690)(self, cache_name, branch='main', disk_type='pd-standard', recipe_mount=False, dry_run=False):**
+&mdash; **def [create\_and\_mount\_disk](/recipe_modules/gcloud/api.py#694)(self, cache_name, branch='main', disk_type='pd-standard', recipe_mount=False, dry_run=False):**
 
 Determine the disk to create and mount from snapshot.
 
