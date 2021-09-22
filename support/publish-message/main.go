@@ -1,3 +1,7 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package main
 
 import (
@@ -13,9 +17,11 @@ import (
 // Publish a message containing `data` to projects/`projectId`/topics/`topic-id`. `data` must be
 // base64 encoded.
 type input struct {
-	ProjectID string `json:"project_id"`
-	TopicID   string `json:"topic_id"`
-	Data      string `json:"data"`
+	ProjectID   string `json:"project_id"`
+	TopicID     string `json:"topic_id"`
+	Data        string `json:"data"`
+	OrderingKey string `json:"ordering_key"`
+	EndPoint    string `json:"endpoint"`
 }
 
 type output struct {
@@ -44,7 +50,14 @@ func main() {
 		log.Fatalf("Failed to decode data: %v", err)
 	}
 
-	id, err := pubsub.PublishMessage(input.ProjectID, input.TopicID, decodedData, option.WithTokenSource(tokenSource))
+	id, err := pubsub.PublishMessage(
+		input.ProjectID,
+		input.TopicID,
+		input.OrderingKey,
+		input.EndPoint,
+		decodedData,
+		option.WithTokenSource(tokenSource),
+	)
 
 	if err != nil {
 		log.Fatalf("Failed to publish message: %v", err)
