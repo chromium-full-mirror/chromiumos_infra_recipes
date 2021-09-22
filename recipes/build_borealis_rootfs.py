@@ -38,7 +38,8 @@ def DoRunSteps(api):
         "uprev_dlc.py --bucket_url=gs://chromeos-localmirror-private/borealis/",
         [
             "./tools/uprev_dlc.py",
-            "--bucket_url=gs://chromeos-localmirror-private/borealis/"
+            "--bucket_url=gs://chromeos-localmirror-private/borealis/",
+            "--nouprev"
         ])
 
 

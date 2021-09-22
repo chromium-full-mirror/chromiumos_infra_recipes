@@ -1975,7 +1975,8 @@
   {
     "cmd": [
       "./tools/uprev_dlc.py",
-      "--bucket_url=gs://chromeos-localmirror-private/borealis/"
+      "--bucket_url=gs://chromeos-localmirror-private/borealis/",
+      "--nouprev"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
