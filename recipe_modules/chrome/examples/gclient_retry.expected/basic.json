@@ -226,7 +226,7 @@
     },
     "infra_step": true,
     "name": "internal checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCcmludGVybmFsIGNoZWNrb3V0IHBhc3NlcyByZXRyeXxz\\neW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJz\\naW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCcmludGVybmFsIGNoZWNrb3V0IHBhc3NlcyByZXRyeXxz\\neW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJz\\naW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -607,7 +607,7 @@
     },
     "infra_step": true,
     "name": "external checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCcmV4dGVybmFsIGNoZWNrb3V0IHBhc3NlcyByZXRyeXxz\\neW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJz\\naW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCcmV4dGVybmFsIGNoZWNrb3V0IHBhc3NlcyByZXRyeXxz\\neW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJz\\naW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3ZlcnNpb24=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -988,7 +988,7 @@
     },
     "infra_step": true,
     "name": "internal checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIyYDE/QQiDAjKgMT9BBCAyrXuAdoCcWludGVybmFsIGNoZWNrb3V0IGZhaWxzIHJldHJ5fHN5\\nbmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNp\\nb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIyYDE/QQiDAjKgMT9BBCAyrXuAdoCcWludGVybmFsIGNoZWNrb3V0IGZhaWxzIHJldHJ5fHN5\\nbmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNp\\nb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lvbg==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1370,7 +1370,7 @@
     },
     "infra_step": true,
     "name": "external checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdoCcWV4dGVybmFsIGNoZWNrb3V0IGZhaWxzIHJldHJ5fHN5\\nbmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNp\\nb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lvbg==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdoCcWV4dGVybmFsIGNoZWNrb3V0IGZhaWxzIHJldHJ5fHN5\\nbmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNp\\nb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lvbg==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

@@ -98,7 +98,7 @@
     ],
     "infra_step": true,
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBHRwdXQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBHRwdXQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

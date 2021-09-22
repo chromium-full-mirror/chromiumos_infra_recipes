@@ -192,7 +192,7 @@
     },
     "infra_step": true,
     "name": "call chromite.api.ArtifactsService/BundleFirmware.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BCoKCggKBnRhcmdldDIjCiEKH1tTVEFSVF9ESVJdL3RtcC9h\\ncnRpZmFjdC50YXIuZ3raAkdjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRs\\nZUZpcm13YXJlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BCoKCggKBnRhcmdldDIjCiEKH1tTVEFSVF9ESVJdL3RtcC9h\\ncnRpZmFjdC50YXIuZ3raAkdjYWxsIGNocm9taXRlLmFwaS5BcnRpZmFjdHNTZXJ2aWNlL0J1bmRs\\nZUZpcm13YXJlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

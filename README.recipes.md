@@ -1045,27 +1045,27 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#81)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#84)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#104)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#107)(self):**
 
-&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#188)(self):**
+&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#193)(self):**
 
 Create a BuildConfig instance that can be .published().
 
 Return:
    _MessageDelegate wrapping BuildConfig instance
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#176)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#181)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#244)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#249)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1078,9 +1078,9 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#108)(self):**
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#111)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#138)(self, build_report):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#141)(self, build_report):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1093,7 +1093,7 @@ Args:
 Return:
   Reference to input message
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#208)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#213)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish information about a created artifact.
 
@@ -1109,23 +1109,23 @@ Throws:
 Return:
   Nothing
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#200)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#205)(self, status):**
 
 Publish build status.
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#96)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#99)(self):**
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#100)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#103)(self):**
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#112)(self, build_type):**
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#115)(self, build_type):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#90)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#93)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#283)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#288)(self, step_name):**
 
 Create a context manager to automatically send out step status.
 
@@ -1409,15 +1409,22 @@ APIs for using Cloud Pub/Sub
 
 A module for Cloud Pub/Sub
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#17)(self, project_id, topic_id, data):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#17)(self, project_id, topic_id, data, ordering_key=None, endpoint=None):**
 
 Publish a message to Cloud Pub/Sub
+
+When specifying an ordering key to ensure message ordering, an explicit
+endpoint needs to be specified, and only messages going through the same
+endpoint are guaranteed to be ordered.
 
 Args:
   * project_id (str): The project name.
   * topic_id (str): The topic name.
   * data (str): The data to put in the message. The input must be encodable
     with utf8, as it will be sent to the publish-message binary via JSON.
+  * ordering_key (str): ordering key to be sent with message
+  * endpoint (str): specific pub/sub endpoint to use
+      eg: "us-east1-pubsub.googleapis.com"
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
 [DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

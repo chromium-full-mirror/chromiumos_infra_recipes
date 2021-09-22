@@ -272,7 +272,7 @@
     },
     "infra_step": true,
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAeIBKwoFCgNldmUSBAgBEAEiHAoaW0NBQ0hFXS9jcm9zX2No\\ncm9vdC9jaHJvb3TqARUKEwoKL2J1aWxkL2V2ZRIFCgNldmXaAkxjcmVhdGUgc3lzcm9vdHxjYWxs\\nIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAeIBKwoFCgNldmUSBAgBEAEiHAoaW0NBQ0hFXS9jcm9zX2No\\ncm9vdC9jaHJvb3TqARUKEwoKL2J1aWxkL2V2ZRIFCgNldmXaAkxjcmVhdGUgc3lzcm9vdHxjYWxs\\nIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -434,7 +434,7 @@
     },
     "infra_step": true,
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAfIBNQoTCgovYnVpbGQvZXZlEgUKA2V2ZRIAGhwKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290+gEA2gJZaW5zdGFsbCB0b29sY2hhaW58Y2FsbCBjaHJvbWl0\\nZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFRvb2xjaGFpbnxjYWxsIGJ1aWxkIEFQSSBzY3Jp\\ncHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAfIBNQoTCgovYnVpbGQvZXZlEgUKA2V2ZRIAGhwKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290+gEA2gJZaW5zdGFsbCB0b29sY2hhaW58Y2FsbCBjaHJvbWl0\\nZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFRvb2xjaGFpbnxjYWxsIGJ1aWxkIEFQSSBzY3Jp\\ncHQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

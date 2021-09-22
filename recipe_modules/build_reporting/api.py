@@ -30,6 +30,9 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 
+# TODO(b/200713946): Lookup the builder region and use that endpoint
+PUBSUB_ENDPOINT = "us-central1-pubsub.googleapis.com"
+
 
 def default_project(staging):
   """Default cloud project containing the pubsub topic to send to."""
@@ -166,6 +169,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
           # The publish-message binary requires that messages be base64 encoded to
           # avoid issues with binary data and strings.
           build_report.SerializeToString().encode('base64'),
+          ordering_key=self.m.buildbucket.build.id,
+          endpoint=PUBSUB_ENDPOINT,
       )
 
     # Aggregate sent messages so we have a copy of the final status on our side.

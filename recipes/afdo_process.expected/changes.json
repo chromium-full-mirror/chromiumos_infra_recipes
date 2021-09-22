@@ -2093,7 +2093,7 @@
     },
     "infra_step": true,
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BNAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gIC\\nGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28u\\nZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVy\\nbGF5L2Jhci5lYnVpbGQSBTEuMi4z\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BNAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gIC\\nGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28u\\nZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVy\\nbGF5L2Jhci5lYnVpbGQSBTEuMi4z\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2349,7 +2349,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BMIBNwoCGAESMQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzKAQQKAgh70ALQ7IDZrvG1knzaAkJpbml0IHNka3xjYWxs\\nIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BMIBNwoCGAESMQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzKAQQKAgh70ALQ7IDZrvG1knzaAkJpbml0IHNka3xjYWxs\\nIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2861,7 +2861,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI04DE/QQQgMq17gEiBgjVgMT9BNIBPgoAEgcKBWNoZWxsGjEKGltDQUNIRV0vY3Jvc19jaHJv\\nb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFs2gEECgIIe9AC0OyA2a7xtZJ82gJEdXBkYXRl\\nIHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI04DE/QQQgMq17gEiBgjVgMT9BNIBPgoAEgcKBWNoZWxsGjEKGltDQUNIRV0vY3Jvc19jaHJv\\nb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFs2gEECgIIe9AC0OyA2a7xtZJ82gJEdXBkYXRl\\nIHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3986,7 +3986,7 @@
     },
     "infra_step": true,
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAZIBMxIxChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoT\\nChEKD2Nocm9tZV9pbnRlcm5hbJoBOwo5EjcSIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoF\\nMS1yNTIaEQoPc29tZS9zb3VyY2UvZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNh\\nbGN1bGF0aW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVw\\nZW5kZW5jeUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAZIBMxIxChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoT\\nChEKD2Nocm9tZV9pbnRlcm5hbJoBOwo5EjcSIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoF\\nMS1yNTIaEQoPc29tZS9zb3VyY2UvZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNh\\nbGN1bGF0aW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVw\\nZW5kZW5jeUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

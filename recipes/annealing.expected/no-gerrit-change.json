@@ -1781,7 +1781,7 @@
     },
     "infra_step": true,
     "name": "uprev packages.uprev ebuilds.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCWXVwcmV2IHBhY2thZ2VzfHVwcmV2IGVidWlsZHN8Y2Fs\\nbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n4gICGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9m\\nb28uZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1v\\ndmVybGF5L2Jhci5lYnVpbGQSBTEuMi4z\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCWXVwcmV2IHBhY2thZ2VzfHVwcmV2IGVidWlsZHN8Y2Fs\\nbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n4gICGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9m\\nb28uZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1v\\ndmVybGF5L2Jhci5lYnVpbGQSBTEuMi4z\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

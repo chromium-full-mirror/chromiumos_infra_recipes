@@ -192,7 +192,7 @@
     },
     "infra_step": true,
     "name": "call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"ChIaEAoOYV90ZXN0X3BhY2thZ2USABoMCMGAxP0EEIDKte4BIgYIw4DE/QTaAkZjYWxsIGNocm9t\\naXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2Ny\\naXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"ChIaEAoOYV90ZXN0X3BhY2thZ2USABoMCMGAxP0EEIDKte4BIgYIw4DE/QTaAkZjYWxsIGNocm9t\\naXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2Ny\\naXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

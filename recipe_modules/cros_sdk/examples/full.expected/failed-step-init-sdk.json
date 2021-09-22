@@ -278,7 +278,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBIAoAEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nygEA2gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8Y2FsbCBi\\ndWlsZCBBUEkgc2NyaXB0ogMCCAE=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBIAoAEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nygEA2gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8Y2FsbCBi\\ndWlsZCBBUEkgc2NyaXB0ogMCCAE=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

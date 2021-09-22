@@ -98,7 +98,7 @@
     ],
     "infra_step": true,
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDC1Rlc3Qgb3V0cHV0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDC1Rlc3Qgb3V0cHV0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -158,7 +158,7 @@
     ],
     "infra_step": true,
     "name": "publish event (2).publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhhBIHRlc3Qg\\nc3RlcCB3aXRoIHJldGNvZGWiAwIIBQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhhBIHRlc3Qg\\nc3RlcCB3aXRoIHJldGNvZGWiAwIIBQ==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -219,7 +219,7 @@
     ],
     "infra_step": true,
     "name": "publish event (3).publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhhBIHRlc3Qg\\nc3RlcCB3aXRoIHRpbWVvdXSiAwIQAQ==\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhhBIHRlc3Qg\\nc3RlcCB3aXRoIHRpbWVvdXSiAwIQAQ==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

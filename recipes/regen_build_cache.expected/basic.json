@@ -1704,7 +1704,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BMIBIgoCGAESHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3TKAQQKAgh72gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8\\nY2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BMIBIgoCGAESHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3TKAQQKAgh72gJCaW5pdCBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9DcmVhdGV8\\nY2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1917,7 +1917,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BNIBIAoAGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\n2gEECgIIe9oCRHVwZGF0ZSBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9VcGRhdGV8\\nY2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BNIBIAoAGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\n2gEECgIIe9oCRHVwZGF0ZSBzZGt8Y2FsbCBjaHJvbWl0ZS5hcGkuU2RrU2VydmljZS9VcGRhdGV8\\nY2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2070,7 +2070,7 @@
     },
     "infra_step": true,
     "name": "update metadata.call chromite.api.BinhostService/RegenBuildCache.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BIIBIAgBEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nigEuCiwKKltDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxhedoCVnVwZGF0\\nZSBtZXRhZGF0YXxjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9SZWdlbkJ1aWxkQ2Fj\\naGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BIIBIAgBEhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nigEuCiwKKltDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxhedoCVnVwZGF0\\nZSBtZXRhZGF0YXxjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9SZWdlbkJ1aWxkQ2Fj\\naGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

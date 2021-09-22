@@ -240,7 +240,7 @@
     },
     "infra_step": true,
     "name": "upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuASpTCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190\\nbXBfMRoRCg8vcGF0aC90by9jaHJvb3QiGQoNL2J1aWxkL3RhcmdldBIICgZ0YXJnZXQyIwohCh9b\\nU1RBUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd60ALQ7IDZrvG1knzaAnh1cGxvYWQgYXJ0aWZh\\nY3RzfGJ1bmRsZSBFQlVJTERfTE9HUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlm\\nYWN0c1NlcnZpY2UvQnVuZGxlRWJ1aWxkTG9nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuASpTCggKBnRhcmdldBIZW0NMRUFOVVBdL2FydGlmYWN0c190\\nbXBfMRoRCg8vcGF0aC90by9jaHJvb3QiGQoNL2J1aWxkL3RhcmdldBIICgZ0YXJnZXQyIwohCh9b\\nU1RBUlRfRElSXS90bXAvYXJ0aWZhY3QudGFyLmd60ALQ7IDZrvG1knzaAnh1cGxvYWQgYXJ0aWZh\\nY3RzfGJ1bmRsZSBFQlVJTERfTE9HUyBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlm\\nYWN0c1NlcnZpY2UvQnVuZGxlRWJ1aWxkTG9nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
