@@ -38,7 +38,13 @@
     "cmd": [],
     "name": "publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBHRwdXQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

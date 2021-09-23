@@ -198,7 +198,13 @@
     "cmd": [],
     "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAeIBKwoFCgNldmUSBAgBEAEiHAoaW0NBQ0hFXS9jcm9zX2No\\ncm9vdC9jaHJvb3TqARUKEwoKL2J1aWxkL2V2ZRIFCgNldmXQAtDsgNmu8bWSfNoCTGNyZWF0ZSBz\\neXNyb290fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxk\\nIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -422,7 +428,13 @@
     "cmd": [],
     "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAfIBNQoTCgovYnVpbGQvZXZlEgUKA2V2ZRIAGhwKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290+gEA0ALQ7IDZrvG1knzaAllpbnN0YWxsIHRvb2xjaGFpbnxj\\nYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsVG9vbGNoYWlufGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -603,7 +615,13 @@
     "cmd": [],
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIyYDE/QQiDAjKgMT9BBCAyrXuAZIBHgoFCgNldmUSACITCgovYnVpbGQvZXZlEgUKA2V2ZZoB\\nOwo5EjcSIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaEQoPc29tZS9zb3VyY2Uv\\nZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21p\\ndGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -1026,7 +1044,13 @@
     "cmd": [],
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CkgKEwoKL2J1aWxkL2V2ZRIFCgNldmUSACIcChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCoR\\nCg9jaHJvbWVfaW50ZXJuYWwSABoGCNKAxP0EIgwI04DE/QQQgMq17gHQAtDsgNmu8bWSfNoCV2lu\\nc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBh\\nY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -1243,7 +1267,13 @@
     "cmd": [],
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI1YDE/QQiDAjWgMT9BBCAyrXuAaIBQwoFCgNldmUSAgEDGAEqCGJpZ19kaXNrMgxidWlsZGVy\\nL3BhdGg6HAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3SqAUgIARIhChYvYnVpbGQvaW1hZ2Vz\\nL2Jhc2UuYmluEAEaBQoDZXZlEiEKFi9idWlsZC9pbWFnZXMvdGVzdC5iaW4QAxoFCgNldmXQAtDs\\ngNmu8bWSfNoCSGJ1aWxkIGltYWdlc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvQ3Jl\\nYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -1428,7 +1458,13 @@
     "cmd": [],
     "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI2IDE/QQiDAjZgMT9BBCAyrXuAbIBbgohChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBQoD\\nZXZlEgUKA2V2ZRokCiJbQ0xFQU5VUF0vaW1hZ2UtdGVzdC1yZXN1bHQtX3RtcF8xIhwKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290ugECCAHQAtDsgNmu8bWSfNoCUmJ1aWxkIGltYWdlc3x0ZXN0\\nIGltYWdlc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvVGVzdHxjYWxsIGJ1aWxkIEFQ\\nSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

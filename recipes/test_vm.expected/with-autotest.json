@@ -1639,7 +1639,13 @@
     "cmd": [],
     "name": "uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJLdXByZXYgcGFja2FnZXN8Y2FsbCBj\\naHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gIC\\nGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28u\\nZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVy\\nbGF5L2Jhci5lYnVpbGQSBTEuMi4z\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -1874,7 +1880,13 @@
     "cmd": [],
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIx4DE/QQQgMq17gEiBgjJgMT9BMIBIgoCGAESHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJv\\nb3TKAQQKAgh70ALQ7IDZrvG1knzaAkJpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2\\naWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -2351,7 +2363,13 @@
     "cmd": [],
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIzYDE/QQQgMq17gEiBgjPgMT9BNIBMQoAEg8KDWFtZDY0LWdlbmVyaWMaHAoaW0NBQ0hFXS9j\\ncm9zX2Nocm9vdC9jaHJvb3TaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNhbGwgY2hy\\nb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -2586,7 +2604,13 @@
     "cmd": [],
     "name": "build autotest packages.create sysroot.call chromite.api.SysrootService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI0IDE/QQQgMq17gEiBgjSgMT9BOIBNQoPCg1hbWQ2NC1nZW5lcmljEgQIARABIhwKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb2906gEpCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0\\nLWdlbmVyaWPQAtDsgNmu8bWSfNoCZGJ1aWxkIGF1dG90ZXN0IHBhY2thZ2VzfGNyZWF0ZSBzeXNy\\nb290fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQ\\nSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -2905,7 +2929,13 @@
     "cmd": [],
     "name": "build autotest packages.dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI1oDE/QQQgMq17gEiBgjYgMT9BJIBdwoPCg1hbWQ2NC1nZW5lcmljEhwKGltDQUNIRV0vY3Jv\\nc19jaHJvb3QvY2hyb290Gh0KDGF1dG90ZXN0LWFsbBINY2hyb21lb3MtYmFzZSInChQvYnVpbGQv\\nYW1kNjQtZ2VuZXJpYxIPCg1hbWQ2NC1nZW5lcmljmgE7CjkSNxIiCgpjaHJvbWUtaWN1Eg1jaHJv\\nbWVvcy1iYXNlGgUxLXI1MhoRCg9zb21lL3NvdXJjZS9kaXLQAtDsgNmu8bWSfNoChgFidWlsZCBh\\ndXRvdGVzdCBwYWNrYWdlc3xkZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21p\\ndGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVp\\nbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -3255,7 +3285,13 @@
     "cmd": [],
     "name": "build autotest packages.install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI2YDE/QQQgMq17gEiBgjbgMT9BPIBSQonChQvYnVpbGQvYW1kNjQtZ2VuZXJpYxIPCg1hbWQ2\\nNC1nZW5lcmljEgAaHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3T6AQDQAtDsgNmu8bWSfNoC\\ncWJ1aWxkIGF1dG90ZXN0IHBhY2thZ2VzfGluc3RhbGwgdG9vbGNoYWlufGNhbGwgY2hyb21pdGUu\\nYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -3598,7 +3634,13 @@
     "cmd": [],
     "name": "build autotest packages.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI34DE/QQQgMq17gEiBgjhgMT9BNAC0OyA2a7xtZJ82gKXAWJ1aWxkIGF1dG90ZXN0IHBhY2th\\nZ2VzfGluc3RhbGwgcGFja2FnZXN8Y2hlY2sgY2hyb21lIHNvdXJjZSBuZWVkZWR8c3luYyBjaHJv\\nbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxs\\nIGJ1aWxkIEFQSSBzY3JpcHSCAy8KHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QSDwoNYW1k\\nNjQtZ2VuZXJpY4oDCQoHdmVyc2lvbg==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4122,7 +4164,13 @@
     "cmd": [],
     "name": "build autotest packages.install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'Cq4CCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSAhgBGh0KDGF1dG90\\nZXN0LWFsbBINY2hyb21lb3MtYmFzZSIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NU\\nQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5hbDKaAQoVW1NUQVJUX0RJUl0vY2lwZC9n\\nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2aWNlLWFjY291bnQtZ29tYS1jbGllbnQu\\nanNvbiABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlwcm90bzoU\\nY291bnRlcnouYmluYXJ5cHJvdG8SABoMCOWAxP0EEIDKte4BIgYI54DE/QTQAtDsgNmu8bWSfNoC\\nb2J1aWxkIGF1dG90ZXN0IHBhY2thZ2VzfGluc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5h\\ncGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4335,7 +4383,13 @@
     "cmd": [],
     "name": "run autotest vm tests.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI6IDE/QQQgMq17gEiBgjqgMT9BLICzAEKDwoNYW1kNjQtZ2VuZXJpYxIwChpbQ0FDSEVdL2Ny\\nb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lGkIKPltDTEVBTlVQXS90ZXN0LWFy\\ndGlmYWN0c190bXBfMS9pbWFnZS9jaHJvbWl1bW9zX3Rlc3RfaW1hZ2UuYmluEAIiMQovCitbQ0xF\\nQU5VUF0vdGVzdC1hcnRpZmFjdHNfdG1wXzEvaW1hZ2UvaWRfcnNhEAIoAjIOCgxleGFtcGxlLlBh\\nc3O6AgDQAtDsgNmu8bWSfNoCK3J1biBhdXRvdGVzdCB2bSB0ZXN0c3xjYWxsIGJ1aWxkIEFQSSBz\\nY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

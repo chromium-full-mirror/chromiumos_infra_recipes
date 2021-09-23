@@ -6,6 +6,7 @@
 """APIs for using Cloud Pub/Sub"""
 
 import datetime
+import pprint
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
@@ -32,7 +33,9 @@ class CloudPubsubApi(recipe_api.RecipeApi):
       * endpoint (str): specific pub/sub endpoint to use
           eg: "us-east1-pubsub.googleapis.com"
     """
-    with self.m.step.nest('publish message'), self.m.context(infra_steps=True):
+    with self.m.step.nest('publish message') as presentation,\
+         self.m.context(infra_steps=True):
+
       publish_input = {
           'project_id': project_id,
           'topic_id': topic_id,
@@ -40,6 +43,8 @@ class CloudPubsubApi(recipe_api.RecipeApi):
           'ordering_key': ordering_key or "",
           'endpoint': endpoint or "",
       }
+
+      presentation.logs['request'] = [pprint.pformat(publish_input)]
 
       test_output_data = {'message_id': '12345'}
       self.m.support.call('publish-message', publish_input,

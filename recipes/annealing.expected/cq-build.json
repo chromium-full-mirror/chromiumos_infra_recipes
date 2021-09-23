@@ -1768,7 +1768,13 @@
     "cmd": [],
     "name": "uprev packages.uprev ebuilds.call chromite.api.PackageService/Uprev.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJZdXByZXYgcGFja2FnZXN8dXByZXYg\\nZWJ1aWxkc3xjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9VcHJldnxjYWxsIGJ1aWxk\\nIEFQSSBzY3JpcHTiAgIYAeoCgQEKNwo1W0NMRUFOVVBdL2Nocm9taXVtb3Nfd29ya3NwYWNlL3Ny\\nYy9vdmVybGF5L2Zvby5lYnVpbGQKPwo9W0NMRUFOVVBdL2Nocm9taXVtb3Nfd29ya3NwYWNlL3Ny\\nYy9wcml2YXRlLW92ZXJsYXkvYmFyLmVidWlsZBIFMS4yLjM=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

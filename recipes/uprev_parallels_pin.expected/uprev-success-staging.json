@@ -1648,7 +1648,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJzYnVpbGQgY2hyb21pdW1vcyB3aXRo\\nIHVwcmV2ZWQgUGFyYWxsZWxzfHVwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlBhY2th\\nZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gKBAQo3CjVbQ0xFQU5V\\nUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL292ZXJsYXkvZm9vLmVidWlsZAo/Cj1bQ0xFQU5V\\nUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL3ByaXZhdGUtb3ZlcmxheS9iYXIuZWJ1aWxkEgUx\\nLjIuMw==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -1899,7 +1905,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.init sdk.call chromite.api.SdkService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIx4DE/QQQgMq17gEiBgjJgMT9BMIBNQoAEjEKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nGhMKEQoPY2hyb21lX2ludGVybmFsygEECgIIe9AC0OyA2a7xtZJ82gJqYnVpbGQgY2hyb21pdW1v\\ncyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfGluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1Nl\\ncnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -2160,7 +2172,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.update sdk.call chromite.api.SdkService/Update.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIyoDE/QQQgMq17gEiBgjMgMT9BNIBRgoAEg8KDWFtZDY0LWdlbmVyaWMaMQoaW0NBQ0hFXS9j\\ncm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWzaAQQKAgh70ALQ7IDZrvG1knza\\nAmxidWlsZCBjaHJvbWl1bW9zIHdpdGggdXByZXZlZCBQYXJhbGxlbHN8dXBkYXRlIHNka3xjYWxs\\nIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -2599,7 +2617,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.create sysroot.call chromite.api.SysrootService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI0IDE/QQQgMq17gEiBgjSgMT9BOIBSgoPCg1hbWQ2NC1nZW5lcmljEgQIARABIjEKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFs6gEpCicKFC9idWlsZC9h\\nbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWPQAtDsgNmu8bWSfNoCdGJ1aWxkIGNocm9taXVt\\nb3Mgd2l0aCB1cHJldmVkIFBhcmFsbGVsc3xjcmVhdGUgc3lzcm9vdHxjYWxsIGNocm9taXRlLmFw\\naS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -3008,7 +3032,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI1oDE/QQQgMq17gEiBgjYgMT9BJIBbQoPCg1hbWQ2NC1nZW5lcmljEjEKGltDQUNIRV0vY3Jv\\nc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsIicKFC9idWlsZC9hbWQ2NC1nZW5l\\ncmljEg8KDWFtZDY0LWdlbmVyaWOaATsKORI3EiIKCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2Ua\\nBTEtcjUyGhEKD3NvbWUvc291cmNlL2RpctAC0OyA2a7xtZJ82gKWAWJ1aWxkIGNocm9taXVtb3Mg\\nd2l0aCB1cHJldmVkIFBhcmFsbGVsc3xkZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwg\\nY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNh\\nbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -3330,7 +3360,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI2YDE/QQQgMq17gEiBgjbgMT9BPIBXgonChQvYnVpbGQvYW1kNjQtZ2VuZXJpYxIPCg1hbWQ2\\nNC1nZW5lcmljEgAaMQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50\\nZXJuYWz6AQDQAtDsgNmu8bWSfNoCgQFidWlsZCBjaHJvbWl1bW9zIHdpdGggdXByZXZlZCBQYXJh\\nbGxlbHN8aW5zdGFsbCB0b29sY2hhaW58Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2Uv\\nSW5zdGFsbFRvb2xjaGFpbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -3710,7 +3746,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI34DE/QQQgMq17gEiBgjhgMT9BNAC0OyA2a7xtZJ82gKnAWJ1aWxkIGNocm9taXVtb3Mgd2l0\\naCB1cHJldmVkIFBhcmFsbGVsc3xpbnN0YWxsIHBhY2thZ2VzfGNoZWNrIGNocm9tZSBzb3VyY2Ug\\nbmVlZGVkfHN5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENo\\ncm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggNECjEKGltDQUNIRV0vY3Jvc19jaHJv\\nb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsEg8KDWFtZDY0LWdlbmVyaWOKAwkKB3ZlcnNp\\nb24=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4119,7 +4161,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CqQCCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSAhgBIkUKGltDQUNI\\nRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsIhJbU1RBUlRfRElSXS9j\\naHJvbWUqEQoPY2hyb21lX2ludGVybmFsMpoBChVbU1RBUlRfRElSXS9jaXBkL2dvbWESOC9jcmVk\\ncy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3VudC1nb21hLWNsaWVudC5qc29uIAEqHAoa\\nW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5i\\naW5hcnlwcm90bxIAGgwI4oDE/QQQgMq17gEiBgjkgMT9BNAC0OyA2a7xtZJ82gJ/YnVpbGQgY2hy\\nb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfGluc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJv\\nbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNj\\ncmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4364,7 +4412,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.build images.call chromite.api.ImageService/Create.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI5YDE/QQQgMq17gEiBgjngMT9BKIBnAEKDwoNYW1kNjQtZ2VuZXJpYxICAQMyPmFtZDY0LWdl\\nbmVyaWMtcG9zdHN1Ym1pdC9SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OkUK\\nGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsIhJbU1RBUlRf\\nRElSXS9jaHJvbWWqAVwIARIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoNYW1kNjQtZ2Vu\\nZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7x\\ntZJ82gJwYnVpbGQgY2hyb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfGJ1aWxkIGltYWdl\\nc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNj\\ncmlwdA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4577,7 +4631,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.build images.test images.call chromite.api.ImageService/Test.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI6IDE/QQQgMq17gEiBgjqgMT9BLIBqwEKKwoWL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGg8K\\nDWFtZDY0LWdlbmVyaWMSDwoNYW1kNjQtZ2VuZXJpYxokCiJbQ0xFQU5VUF0vaW1hZ2UtdGVzdC1y\\nZXN1bHQtX3RtcF8xIkUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2lu\\ndGVybmFsIhJbU1RBUlRfRElSXS9jaHJvbWW6AQIIAdAC0OyA2a7xtZJ82gJ6YnVpbGQgY2hyb21p\\ndW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfGJ1aWxkIGltYWdlc3x0ZXN0IGltYWdlc3xjYWxs\\nIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvVGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4775,7 +4835,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI64DE/QQQgMq17gEiBgjtgMT9BIICbwoPCg1hbWQ2NC1nZW5lcmljEhNbQ0xFQU5VUF0vdG1w\\nX3RtcF8yGkUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFs\\nIhJbU1RBUlRfRElSXS9jaHJvbWUiAIoCDgoMdGFyYmFsbC9wYXRo0ALQ7IDZrvG1knzaAoABYnVp\\nbGQgY2hyb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfHJ1biBlYnVpbGQgdGVzdHN8Y2Fs\\nbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxk\\nIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -4992,7 +5058,13 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI7oDE/QQQgMq17gEiBgjwgMT9BCqcAQoPCg1hbWQ2NC1nZW5lcmljEhlbQ0xFQU5VUF0vYXJ0\\naWZhY3RzX3RtcF8xGkUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2lu\\ndGVybmFsIhJbU1RBUlRfRElSXS9jaHJvbWUiJwoUL2J1aWxkL2FtZDY0LWdlbmVyaWMSDwoNYW1k\\nNjQtZ2VuZXJpYzIjCiEKH1tTVEFSVF9ESVJdL3RtcC9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWS\\nfNoCnAFidWlsZCBjaHJvbWl1bW9zIHdpdGggdXByZXZlZCBQYXJhbGxlbHN8dXBsb2FkIGFydGlm\\nYWN0c3xidW5kbGUgSU1BR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZh\\nY3RzU2VydmljZS9CdW5kbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

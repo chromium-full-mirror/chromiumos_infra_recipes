@@ -1,7 +1,15 @@
 [
   {
     "cmd": [],
-    "name": "publish message"
+    "name": "publish message",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{'data': 'Some test data',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
   },
   {
     "cmd": [

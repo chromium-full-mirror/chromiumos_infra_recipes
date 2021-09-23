@@ -291,7 +291,13 @@
     "cmd": [],
     "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAZIBOQoRCg9teV9idWlsZF90YXJnZXQSACIiCg0vYnVpbGQv\\ndGFyZ2V0EhEKD215X2J1aWxkX3RhcmdldJoBOwo5EjcSIgoKY2hyb21lLWljdRINY2hyb21lb3Mt\\nYmFzZRoFMS1yNTIaEQoPc29tZS9zb3VyY2UvZGly2gJuZGVwZW5kZW5jeSBncmFwaCBjYWxjdWxh\\ndGlvbnxjYWxsIGNocm9taXRlLmFwaS5EZXBlbmRlbmN5U2VydmljZS9HZXRCdWlsZERlcGVuZGVu\\nY3lHcmFwaHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

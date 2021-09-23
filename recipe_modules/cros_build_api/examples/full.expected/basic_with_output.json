@@ -140,7 +140,13 @@
     "cmd": [],
     "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIwYDE/QQQgMq17gEiBgjDgMT9BGIKCggKBnRhcmdldGoQCg4vYmluaG9zdHMvcGF0aNoCTWNh\\nbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1ByZXBhcmVCaW5ob3N0c1VwbG9hZHN8Y2Fs\\nbCBidWlsZCBBUEkgc2NyaXB0kgMfTG9nZmlsZSBjb250ZW50cyBmb3IgYnVpbGRfY21kLg==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

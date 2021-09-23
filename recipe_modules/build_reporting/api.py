@@ -31,7 +31,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 
 # TODO(b/200713946): Lookup the builder region and use that endpoint
-PUBSUB_ENDPOINT = "us-central1-pubsub.googleapis.com"
+PUBSUB_ENDPOINT = "us-central1-pubsub.googleapis.com:443"
 
 
 def default_project(staging):
@@ -169,7 +169,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
           # The publish-message binary requires that messages be base64 encoded to
           # avoid issues with binary data and strings.
           build_report.SerializeToString().encode('base64'),
-          ordering_key=self.m.buildbucket.build.id,
+          ordering_key=str(self.m.buildbucket.build.id or 'led-launch'),
           endpoint=PUBSUB_ENDPOINT,
       )
 

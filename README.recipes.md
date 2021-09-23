@@ -1405,11 +1405,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 APIs for using Cloud Pub/Sub
 
-#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Cloud Pub/Sub
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#17)(self, project_id, topic_id, data, ordering_key=None, endpoint=None):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None):**
 
 Publish a message to Cloud Pub/Sub
 
