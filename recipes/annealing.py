@@ -237,6 +237,10 @@ def RunSteps(api, properties):
             disable_gerrit=True, dry_run=dry_run,
             footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
         external_snapshot_ref = external_snapshot_commit.id
+        # Add snapshot commit id to tags so that they can be queried for.
+        snapshot_commit_tags = api.cros_tags.tags(**dict(
+            published_snapshot_id=external_snapshot_commit.id))
+        api.buildbucket.add_tags_to_current_build(snapshot_commit_tags)
 
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = _publish_snapshot(
