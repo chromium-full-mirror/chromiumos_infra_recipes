@@ -141,7 +141,7 @@ if [[ "${verbose}" == "yes" ]]; then
     printf " - Verbose specified, printing all changes\n"
     pending=$(recipe-pending)
 else
-    pending=$(recipe-pending | grep -v " Roll recipe dependencies (trivial)")
+    pending=$(recipe-pending | grep -vE "Roll recipe.*\(trivial\)\.?$")
 fi
 echo "${pending}"
 echo
