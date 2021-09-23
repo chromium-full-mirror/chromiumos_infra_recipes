@@ -136,11 +136,9 @@ class SkylabApi(recipe_api.RecipeApi):
         ]
         req.params.decorations.tags.extend(request_tags)
         # TODO(b/196956525): Remove check for experiment once uploading to rdb
-        # is stable. Initially we will also only add the settings to
-        # non-critical test suites.
+        # is stable.
         if (self._add_resultdb_settings and
-            uht.hw_test.hw_test_suite_type == HwTestCfg.TAST and
-            not uht.hw_test.common.critical.value):
+            uht.hw_test.hw_test_suite_type == HwTestCfg.TAST):
           resultdb_settings = self.m.json.dumps({
               'result_format': 'tast',
           })
