@@ -142,7 +142,7 @@ class SkylabApi(recipe_api.RecipeApi):
           resultdb_settings = self.m.json.dumps({
               'result_format': 'tast',
           })
-          req.params.decorations.autotest_keyvals[
+          req.params.decorations.test_args[
               'resultdb_settings'] = base64.b64encode(resultdb_settings)
         if self._enable_retries:
           self._enable_test_retries(req)
