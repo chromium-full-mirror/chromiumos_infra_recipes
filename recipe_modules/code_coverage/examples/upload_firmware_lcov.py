@@ -72,4 +72,7 @@ def GenTests(api):
           'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'
       ),
       cq=False,
+      input_properties={
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
+      },
   )

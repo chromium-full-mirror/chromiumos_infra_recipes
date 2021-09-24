@@ -108,7 +108,10 @@ def GenTests(api):
                                           '{"build_relevance": "UNKNOWN"}'),
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)),
-      input_properties={'$chromeos/build_menu': dict(artifact_build=True)})
+      input_properties={
+          '$chromeos/build_menu': dict(artifact_build=True),
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+      })
 
   yield api.build_menu.test(
       'toolchain-cq-build',
@@ -120,7 +123,9 @@ def GenTests(api):
       'has-no-artifacts',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      build_target='arm-generic')
+      input_properties={
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+      }, build_target='arm-generic')
 
   yield api.build_menu.test(
       'postsubmit-with-changes',
@@ -139,6 +144,8 @@ def GenTests(api):
       input_properties={
           '$chromeos/build_menu':
               dict(artifact_build=True),
+          '$chromeos/cros_relevance':
+              dict(force_postsubmit_relevance=True),
           '$chromeos/cros_prebuilts':
               dict(enable_snapshot_prebuilts=True, send_snapshot_prebuilts=1)
       })
@@ -165,7 +172,9 @@ def GenTests(api):
       'no-sysroot',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.properties(FullProperties(no_sysroot=True)))
+      api.properties(FullProperties(no_sysroot=True)), input_properties=({
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+      }))
 
   yield api.build_menu.test(
       'no-config',
@@ -188,6 +197,8 @@ def GenTests(api):
           ])),
       api.properties(
           **{
+              '$chromeos/cros_relevance':
+                  dict(force_postsubmit_relevance=True),
               '$chromeos/cros_bisect':
                   CrosBisectProperties(
                       compile={
@@ -216,7 +227,8 @@ def GenTests(api):
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       builder='sarien-code-coverage-postsubmit', build_target='sarien',
       input_properties={
-          '$chromeos/build_menu': dict(test_with_code_coverage=True)
+          '$chromeos/build_menu': dict(test_with_code_coverage=True),
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
       })
 
   # Cq build with bad container version string, should throw exception

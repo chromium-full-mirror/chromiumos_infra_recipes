@@ -16,6 +16,7 @@ for example:
 
 DEPS = [
     'recipe_engine/swarming',
+    'recipe_engine/properties',
     'android',
     'build_menu',
 ]
@@ -70,7 +71,10 @@ def GenTests(api):
       'basic',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.android.uprev_props(), api.android.set_mark_stable_success(),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.android.uprev_props(), api.android.set_mark_stable_success(),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -81,7 +85,11 @@ def GenTests(api):
       'android-not-revved',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.android.uprev_props(), api.android.set_mark_stable_early_exit(),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.android.uprev_props(),
+      api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -92,7 +100,10 @@ def GenTests(api):
       'install-packages-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.android.uprev_props(), api.android.set_mark_stable_success(),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.android.uprev_props(), api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
@@ -108,6 +119,10 @@ def GenTests(api):
       'bundle-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       api.post_check(post_process.StatusAnyFailure),
@@ -121,7 +136,10 @@ def GenTests(api):
       'install-packages-and-bundle-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.android.uprev_props(), api.android.set_mark_stable_success(),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.android.uprev_props(), api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),

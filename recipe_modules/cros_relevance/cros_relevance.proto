@@ -27,4 +27,7 @@ message CrosRelevanceProperties {
 
     // Whether to allow slim builds to be scheduled.
     bool enable_slim_builds = 6;
+
+    // Force relevance on a postsubmit build.
+    bool force_postsubmit_relevance = 7;
 }

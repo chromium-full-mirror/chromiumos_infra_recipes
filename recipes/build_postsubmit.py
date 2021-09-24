@@ -6,13 +6,18 @@
 """Recipe for building a BuildTarget image for Postsubmit."""
 
 DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/swarming',
     'build_menu',
+    'cros_history',
     'test_util',
 ]
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):
@@ -23,6 +28,9 @@ def RunSteps(api):
 
 def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+  if env_info.pointless:
+    return RawResult(status=common.SUCCESS,
+                     summary_markdown='Build was not relevant.')
   packages = env_info.packages
 
   # Artifacts are frequently of use even if the build failed.  For example, it
@@ -57,18 +65,35 @@ def GenTests(api):
       'postsubmit-build',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.MustRun, 'build images'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess))
+
+  # Pointless postsubmit build.
+  yield api.build_menu.test(
+      'pointless-postsubmit-build',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess),
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response()],
+          step_name='postsubmit relevance check.buildbucket.search',
+      ))
 
   # Postsubmit build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -84,7 +109,10 @@ def GenTests(api):
       'bundle-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.StatusAnyFailure),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
@@ -97,7 +125,10 @@ def GenTests(api):
       'install-packages-and-bundle-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -112,7 +143,10 @@ def GenTests(api):
       'run-exit-install',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -125,7 +159,10 @@ def GenTests(api):
       'no-run-tests',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),

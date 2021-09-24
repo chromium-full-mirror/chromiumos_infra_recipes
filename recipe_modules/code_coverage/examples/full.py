@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/swarming',
     'build_menu',
@@ -29,6 +30,10 @@ def GenTests(api):
       'code-coverage-ensures-binaries',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
       api.post_check(post_process.MustRun,
                      'upload code coverage data.ensure binaries'),
   )
@@ -37,6 +42,10 @@ def GenTests(api):
       'code-coverage-upload-failure',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
       api.step_data(
           'upload code coverage data.ensure binaries.ensure_installed',
           retcode=2, stdout=api.raw_io.output('lol')),

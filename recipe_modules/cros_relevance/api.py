@@ -195,6 +195,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       bool: Whether the build can be terminated early.
     """
     is_cq_run = config.id.type == BuilderConfig.Id.CQ
+    is_postsubmit = config.id.type == BuilderConfig.Id.POSTSUBMIT
+    if is_postsubmit:
+      if self._properties.force_postsubmit_relevance:
+        return False
+      else:
+        return not self.postsubmit_relevance_check(gitiles_commit, dep_graph)
+
     if not is_cq_run or force_relevant or self.toolchain_cls_applied:
       # If it is not a CQ run it should never be treated as pointless. Likewise
       # if force_relevant is set or toolchain changes are applied.
@@ -221,6 +228,55 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       step.presentation.step_text = ('build is relevant'
                                      if relevant else 'build is irrelevant')
       return not relevant
+
+  def _format_pkgs(self, pkg_list):
+    print_lines = []
+    for pkg in pkg_list:
+      print_lines.append('({}, {}, {})'.format(pkg.category, pkg.package_name,
+                                               pkg.version))
+    return print_lines
+
+  def postsubmit_relevance_check(self, gitiles_commit, dep_graph):
+    """Determines if postsubmit builder is relevant for given snapshot.
+
+    Args:
+      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+          snapshot Gitiles commit.
+      dep_graph (chromite.api.DepGraph): The dependency graph to compare the
+          Gerrit changes against to test for build relevancy.
+
+    Returns:
+      bool: Whether any packages that target depends on have been upreved
+      in the latest snapshot.
+    """
+    relevance_log = []
+    with self.m.step.nest('postsubmit relevance check') as pres:
+      builds = self.m.cros_history.get_annealing_from_snapshot(
+          gitiles_commit.id)
+      if len(builds) != 1:
+        raise self.m.step.StepFailure('Did not find the one annealing build.')
+
+      upreved_pkgs = self.m.cros_history.get_upreved_pkgs(builds[0])
+      relevance_log.append('Packages upreved by Annealing:')
+      relevance_log += self._format_pkgs(upreved_pkgs)
+      dependent_pkgs = _flatten_depgraph_pkgs(dep_graph)
+      relevance_log.append('Packages target depends on:')
+      relevance_log += self._format_pkgs(dependent_pkgs)
+
+      relevant_pkgs = []
+      for pkg in upreved_pkgs:
+        if pkg in dependent_pkgs:
+          relevant_pkgs.append(pkg)
+
+      relevance_log.append('Packages that are relevant:')
+      relevance_log += self._format_pkgs(relevant_pkgs)
+      pres.logs['relevance log'] = relevance_log
+      relevant = len(relevant_pkgs) != 0
+      if relevant:
+        pres.step_text = 'build is relevant'
+      else:
+        pres.step_text = 'build is not relevant'
+      return relevant
 
   def _are_paths_affected(self, gerrit_changes, gitiles_commit, relevant_paths,
                           test_value=None, name=None,
@@ -499,3 +555,20 @@ def _flatten_depgraph_paths(depgraph):
     for source_path in package.dependency_source_paths:
       paths.add(source_path.path)
   return paths
+
+
+def _flatten_depgraph_pkgs(depgraph):
+  """Returns the union of relevant packages in the depgraph.
+
+  Args:
+    depgraph (chromite.api.DepGraph)
+
+  Returns:
+    Set[PackageInfo]: The union of the 'dependency_packages' fields for all
+      packages in the depgraph.
+  """
+  packages = []
+  for package in depgraph.package_deps:
+    for pkg_info in package.dependency_packages:
+      packages.append(pkg_info)
+  return packages

@@ -79,7 +79,9 @@ def GenTests(api):
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='releasespecs/91/13818.0.0.xml')))
+                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+              '$chromeos/cros_relevance':
+                  dict(force_postsubmit_relevance=True),
           }), api.post_check(post_process.MustRun,
                              'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
@@ -93,7 +95,10 @@ def GenTests(api):
       'install-packages-fail',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -111,7 +116,10 @@ def GenTests(api):
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return('upload artifacts',
@@ -123,7 +131,10 @@ def GenTests(api):
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),

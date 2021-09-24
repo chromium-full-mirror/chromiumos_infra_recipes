@@ -5,7 +5,9 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'cros_history',
     'cros_relevance',
     'cros_source',
     'src_state',
@@ -26,10 +28,9 @@ PROPERTIES = PointlessTest
 
 
 def RunSteps(api, properties):
-  is_cq = (properties.is_cq if properties.is_cq else False)
   config = BuilderConfig()
-  if is_cq:
-    config.id.type = BuilderConfig.Id.CQ
+  if properties.config_type:
+    config.id.type = properties.config_type
   force_relevant = (
       properties.force_relevant if properties.force_relevant else False)
   if properties.manifest_branch:
@@ -61,7 +62,7 @@ def GenTests(api):
               gerrit_changes=[
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
-              ], is_cq=True, expected=False)),
+              ], config_type=BuilderConfig.Id.CQ, expected=False)),
       api.post_check(
           post_process.MustRun,
           'pointless build check.depgraph relevance check.run check'),
@@ -74,7 +75,7 @@ def GenTests(api):
               manifest_branch='BRANCH', gerrit_changes=[
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
-              ], is_cq=True, expected=False)),
+              ], config_type=BuilderConfig.Id.CQ, expected=False)),
       api.post_check(
           post_process.MustRun,
           'pointless build check.depgraph relevance check.run check'),
@@ -83,7 +84,8 @@ def GenTests(api):
   yield api.test(
       'relevant-force-relevant',
       api.properties(
-          PointlessTest(force_relevant=True, is_cq=True, expected=False)))
+          PointlessTest(force_relevant=True, config_type=BuilderConfig.Id.CQ,
+                        expected=False)))
 
   yield api.test(
       'pointless',
@@ -92,12 +94,37 @@ def GenTests(api):
               gerrit_changes=[
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
-              ], is_cq=True, expected=True)))
+              ], config_type=BuilderConfig.Id.CQ, expected=True)))
 
   yield api.test(
       'pointless-cq-no-changes',
       api.properties(
-          PointlessTest(gerrit_changes=[], is_cq=True, expected=True)))
+          PointlessTest(gerrit_changes=[], config_type=BuilderConfig.Id.CQ,
+                        expected=True)))
 
   yield api.test('relevant-non-cq',
-                 api.properties(PointlessTest(is_cq=False, expected=False)))
+                 api.properties(PointlessTest(expected=False)))
+
+  yield api.test(
+      'force-postsubmit-relevant',
+      api.properties(
+          PointlessTest(config_type=BuilderConfig.Id.POSTSUBMIT,
+                        expected=False)),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+      api.post_check(post_process.DoesNotRun, 'postsubmit relevance check'),
+  )
+
+  yield api.test(
+      'postsubmit-relevant',
+      api.properties(
+          PointlessTest(config_type=BuilderConfig.Id.POSTSUBMIT,
+                        expected=True)),
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response()],
+          step_name='postsubmit relevance check.buildbucket.search',
+      ),
+      api.post_check(post_process.MustRun, 'postsubmit relevance check'),
+  )

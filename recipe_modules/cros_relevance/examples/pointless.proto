@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_relevance.examples;
 
+import "chromiumos/builder_config.proto";
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message PointlessTest {
@@ -19,8 +20,12 @@ message PointlessTest {
   bool force_relevant = 3;
 
   // Whether this is a CQ build.
-  bool is_cq = 4;
+  // bool is_cq = 4;
+  reserved 4;
 
   // Any manifest branch to checkout.
   string manifest_branch = 5;
+
+  // Config type of the build.
+  chromiumos.BuilderConfig.Id.Type config_type = 6;
 }

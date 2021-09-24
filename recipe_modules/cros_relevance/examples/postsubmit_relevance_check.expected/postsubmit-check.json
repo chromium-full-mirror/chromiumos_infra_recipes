@@ -1,0 +1,106 @@
+[
+  {
+    "cmd": [],
+    "name": "postsubmit relevance check",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@build is not relevant@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages upreved by Annealing:@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-aogh, 0.0.1-r12845)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-apu-firmware, 0.0.1-r1429)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-vpu-firmware, 0.0.1-r1429)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-tests, 0.0.1-r1815)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-libs, 0.0.1-r4377)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, actions, 0.0.1-r5146)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-wireless, 0.0.1-r4645)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-https-server, 0.0.1-r309)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-infra, 0.0.1-r4187)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-net, 0.0.1-r4118)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-security, 0.0.1-r4415)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-daemons, 0.0.3-r7022)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(sys-boot, depthcharge, 0.0.1-r3403)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(dev-util, hdctools, 0.0.1-r1446)@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages target depends on:@@@",
+      "@@@STEP_LOG_LINE@relevance log@(something, irrelevant, some-version)@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages that are relevant:@@@",
+      "@@@STEP_LOG_END@relevance log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"my hash\"}]}"
+    ],
+    "infra_step": true,
+    "name": "postsubmit relevance check.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"Annealing\"}, \"id\": \"123\", \"output\": {\"properties\": {\"compressed_uprev_response\": \"\\neJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\\n\\nTGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\\n\\nGFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\\n\\n8OWiqFIpDlmg8UzE4ZTPZ0xWgCX6CNM0w1MukyWVf76wqF7/ce2ki23SxV9IfyL4ftGkh0znR81o\\n\\nUnXWmRaaqbLj+lFVfmDBfdcGww8E3xoAHvPJudzr9wbbG4zHBvsNgleXjh1oLubKjAZr6Hojg/UR\\n\\nwftLx0rxkksWM6XKtt21UZH5nxF8qgEv0jpVWDGZz91+NpiDns2ltwhOaqDk86mk1rDb5/o26F4j\\n\\nOK4BbM70ZiigXL/mkFMsyCTXq7Jt8byivnxA8K4GvJCy5DRXrXkKN8By3Ov3DdwLBM//EU5HXIYH\\n\\nKZX5FhROhpWoVc4ihCYhS3UURFTOWNm2Ye/1BobmGYKn/4cmZAucaR6TKAy0ELGyRnGXFUWsUarF\\n\\nq10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\\n\\n3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\\n\\nVtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\\n\\neQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\\n\\n\"}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@Annealing@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "postsubmit relevance check (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@build is relevant@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages upreved by Annealing:@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-aogh, 0.0.1-r12845)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-apu-firmware, 0.0.1-r1429)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-vpu-firmware, 0.0.1-r1429)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-tests, 0.0.1-r1815)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-libs, 0.0.1-r4377)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, actions, 0.0.1-r5146)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-wireless, 0.0.1-r4645)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-https-server, 0.0.1-r309)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-infra, 0.0.1-r4187)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-net, 0.0.1-r4118)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-security, 0.0.1-r4415)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-daemons, 0.0.3-r7022)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(sys-boot, depthcharge, 0.0.1-r3403)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(dev-util, hdctools, 0.0.1-r1446)@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages target depends on:@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-aogh, 0.0.1-r12845)@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages that are relevant:@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-aogh, 0.0.1-r12845)@@@",
+      "@@@STEP_LOG_END@relevance log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"my hash\"}]}"
+    ],
+    "infra_step": true,
+    "name": "postsubmit relevance check (2).buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"Annealing\"}, \"id\": \"123\", \"output\": {\"properties\": {\"compressed_uprev_response\": \"\\neJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\\n\\nTGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\\n\\nGFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\\n\\n8OWiqFIpDlmg8UzE4ZTPZ0xWgCX6CNM0w1MukyWVf76wqF7/ce2ki23SxV9IfyL4ftGkh0znR81o\\n\\nUnXWmRaaqbLj+lFVfmDBfdcGww8E3xoAHvPJudzr9wbbG4zHBvsNgleXjh1oLubKjAZr6Hojg/UR\\n\\nwftLx0rxkksWM6XKtt21UZH5nxF8qgEv0jpVWDGZz91+NpiDns2ltwhOaqDk86mk1rDb5/o26F4j\\n\\nOK4BbM70ZiigXL/mkFMsyCTXq7Jt8byivnxA8K4GvJCy5DRXrXkKN8By3Ov3DdwLBM//EU5HXIYH\\n\\nKZX5FhROhpWoVc4ihCYhS3UURFTOWNm2Ye/1BobmGYKn/4cmZAucaR6TKAy0ELGyRnGXFUWsUarF\\n\\nq10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\\n\\n3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\\n\\nVtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\\n\\neQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\\n\\n\"}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@Annealing@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

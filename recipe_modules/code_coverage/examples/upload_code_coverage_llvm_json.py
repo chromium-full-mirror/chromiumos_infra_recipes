@@ -93,7 +93,8 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
+          '$chromeos/code_coverage': dict(project='chromiumos/platform2'),
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
       },
   )
 
@@ -107,6 +108,7 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
           '$chromeos/code_coverage': dict(project='chromiumos/platform2')
       },
   )
@@ -121,6 +123,7 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
           '$chromeos/code_coverage': dict(project='chromiumos/platform2')
       },
   )

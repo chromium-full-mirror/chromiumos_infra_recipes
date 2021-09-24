@@ -436,6 +436,9 @@ def get_latest_green_snapshot_commit(api, build_target):
 
 def GenTests(api):
   good_props = {
+      '$chromeos/cros_relevance': {
+        'force_postsubmit_relevance': True
+      },
       '$chromeos/overlayfs': {
           'random_work_path': True
       },

@@ -22,6 +22,7 @@ import json
 
 from recipe_engine import post_process
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 
 
 def RunSteps(api):
@@ -41,6 +42,8 @@ def DoRunSteps(api):
         CrosSourceProperties(sync_to_manifest=api.cros_release.releasespec))
   elif api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['commit_overlay_binhost'] = True
+    extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
+        CrosRelevanceProperties(force_postsubmit_relevance=True))
 
   if api.orch_menu.chromium_src_ref_cl_tag:
     extra_child_props[
