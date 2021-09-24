@@ -137,7 +137,7 @@ class GitilesApi(recipe_api.RecipeApi):
         credential_cookie_location or
         self.m.path.join(self.m.path['home'], '.git-credential-cache/cookie'))
     curl_params = [
-        '-b', credential_cookie_location, '-X', 'POST', '-H',
+        '-f', '-b', credential_cookie_location, '-X', 'POST', '-H',
         'Content-Type: application/json', '-d',
         self.m.json.dumps(post_json)
     ]

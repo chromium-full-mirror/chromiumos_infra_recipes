@@ -103,6 +103,7 @@
   {
     "cmd": [
       "curl",
+      "-f",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
       "-X",
