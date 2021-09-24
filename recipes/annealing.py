@@ -72,9 +72,8 @@ def RunSteps(api, properties):
   if not manifest_ref:
     raise StepFailure('must set manifest ref')
 
-  with api.gcloud.cleanup_gce_disks(), \
-         api.gcloud.cleanup_mounted_disks(), \
-         api.cros_source.checkout_overlays_context(snapshot_mount=True, disk_type='pd-ssd'):
+  with api.cros_source.checkout_overlays_context_cache(snapshot_mount=True,
+                                                       disk_type='pd-ssd'):
 
     internal_manifest = api.src_state.internal_manifest
     external_manifest = api.src_state.external_manifest

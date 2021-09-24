@@ -721,6 +721,49 @@ class CrosSourceApi(RecipeApi):
         self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
+  def checkout_overlays_context_cache(self, mount_cache=True,
+                                      snapshot_mount=False, disk_type='pd-ssd'):
+    """Returns a context where overlays can be mounted.
+
+    Args:
+      mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
+      snapshot_mount (bool): Whether to utilize the snapshot mount location,
+        rather than the image preload directory.  Default: False
+      disk_type (str): GCE disk type to use.  Default: pd-ssd
+    """
+    with self.m.overlayfs.cleanup_context():
+      self._have_overlayfs_cleanup_context = True
+      if not self._enable_custom_overlays and mount_cache:
+        lower_dir = self.preload_path
+        if snapshot_mount:
+          branch = self.manifest_branch or 'main'
+          lower_dir = self.m.gcloud.setup_cache_disk(cache_name='chromiumos',
+                                                     branch=branch,
+                                                     disk_type=disk_type)
+          self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
+        # TODO(mikenichols): Remove once source cache lands and is not reverted.
+        if lower_dir == self.preload_path and len(
+            self.m.file.listdir('check for existing verison file',
+                                self.m.gcloud.snapshot_version_path)) > 0:
+          self.m.overlayfs.cleanup_overlay_directories(
+              cache_name='chromiumos'
+          )  # pragma: nocover, no way to simulate in tests.
+          self.m.file.rmcontents(
+              'removing version files', self.m.gcloud.snapshot_version_path
+          )  # pragma: nocover, no way to simulate in tests.
+        self.m.overlayfs.mount('chromiumos', lower_dir, self.cache_path,
+                               persist=True)
+        self.m.path.mock_add_paths(self.cache_path.join('.repo'))
+        # Explicitly do not mount the workspace overlay at this time, to prevent
+        # recipes from accidentally trashing their view of the source tree by
+        # accessing it before ensure_synced_cache() is called.
+      try:
+        yield
+      finally:
+        self.m.easy.set_properties_step(source_sync_target=self._sync_target)
+        self._have_overlayfs_cleanup_context = False
+
+  @contextlib.contextmanager
   def checkout_overlays_context(self, mount_cache=True, snapshot_mount=False,
                                 disk_type='pd-standard'):
     """Returns a context where overlays can be mounted.

@@ -333,7 +333,7 @@
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.create and attach disk",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -349,14 +349,14 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "build chromiumos with upreved Parallels.create and attach disk.set gcloud project",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.set gcloud project",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.create and attach disk.retrieve image version from storage",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.retrieve image version from storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -373,21 +373,21 @@
       "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.retrieve image version from storage.gsutil cat",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.set snapshot_version",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
@@ -405,7 +405,7 @@
       "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
     ],
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -437,7 +437,7 @@
       "json(disks)"
     ],
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -471,7 +471,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.detach disk",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
@@ -491,7 +491,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.delete disk",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -513,7 +513,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.create disk from image",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -529,7 +529,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.pull the blk ids attached",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.pull the blk ids attached",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -623,7 +623,27 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.attach disk",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -638,7 +658,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.ensure mount directory exists",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.ensure mount directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -656,7 +676,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -673,7 +693,7 @@
       "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "build chromiumos with upreved Parallels.create and attach disk.create disk from snapshot image.write version file",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"

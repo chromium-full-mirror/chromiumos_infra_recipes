@@ -34,7 +34,7 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.create and attach disk",
+    "name": "source cache update.setup source cache disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -50,14 +50,14 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "source cache update.create and attach disk.set gcloud project",
+    "name": "source cache update.setup source cache disk.set gcloud project",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.create and attach disk.retrieve image version from storage",
+    "name": "source cache update.setup source cache disk.retrieve image version from storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -74,21 +74,21 @@
       "gs://chromeos-bot-cache/staging-test-cache-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.create and attach disk.retrieve image version from storage.gsutil cat",
+    "name": "source cache update.setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.create and attach disk.create disk from snapshot image",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.create and attach disk.create disk from snapshot image.set snapshot_version",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
@@ -106,7 +106,7 @@
       "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-"
     ],
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -143,7 +143,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.create disk from image",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -159,7 +159,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.pull the blk ids attached",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.pull the blk ids attached",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -253,7 +253,27 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.attach disk",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -274,7 +294,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.create mount path",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -292,7 +312,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.mount disk test-cache",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.mount disk test-cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -309,7 +329,7 @@
       "[CACHE]/infra_versions/staging-test-cache-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.create and attach disk.create disk from snapshot image.write version file",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@staging-test-cache-main-cache-snapshot-version.txt@@@"

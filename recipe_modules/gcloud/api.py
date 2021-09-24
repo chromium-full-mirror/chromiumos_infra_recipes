@@ -39,6 +39,9 @@ class GcloudApi(recipe_api.RecipeApi):
     self._snapshot_suffix = None
     self._version_file = None
     self._zone = None
+    self._infra_host = None
+    self._overlay_branch_file = 'overlay_branch.txt'
+    self._cache_mounted = False
 
   @property
   def snapshot_builder_mount_path(self):
@@ -286,6 +289,7 @@ class GcloudApi(recipe_api.RecipeApi):
       # Increment the device reference; /dev/sda is root device.
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
+      self.set_disk_autodelete(instance=instance, disk=disk, zone=zone)
 
   def sync_disk_cache(self, name):
     """Force a local disk cache sync before snapshotting.
@@ -418,6 +422,54 @@ class GcloudApi(recipe_api.RecipeApi):
       cmd = str(unmount_script)
       self.m.step('unmount disk %s' % name, [cmd, mount_path], infra_step=True)
       self._remove_cleanup_mounted_disk(name, mount_path)
+
+  def update_fstab(self, mount_path, name):
+    """Mount an attached disk to host.
+
+    As a disk is mounted, the disk is then added to the stack
+    that is used by the context manager to unmount as the task ends.
+
+    Args:
+      mount_path(str): Directory to mount the disk.
+      name (str): An alphanumeric name for the mount, used for display.
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      uuid_cmd = [
+          'sudo', 'blkid', '-s', 'UUID', '-o', 'value',
+          self._attached_disks[name]
+      ]
+      uuid = self.m.easy.stdout_step(
+          'determine UUID', uuid_cmd,
+          test_stdout='860a9e6a-f624-4f86-a00d-33a5cede3430').rstrip()
+      self.m.step(
+          'update fstab for %s' % self._attached_disks[name],
+          ['sudo', 'tee', '-a', '/etc/fstab'], stdin=self.m.raw_io.input_text(
+              'UUID={} {} ext4 discard,defaults,noatime,nofail 0 2'.format(
+                  uuid, mount_path)), infra_step=True)
+
+  def set_disk_autodelete(self, instance, disk, zone):
+    """Set a disk to autodelete when a GCE instance is deleted.
+
+    GCE disks are not default to delete when the instance is
+    deleted, thus to ensure cleanup we can flip the metadata
+    to ensure the disks are deleted when the instance is removed.
+
+    Args:
+      instance(str): GCE instance on which disk is attached.
+      disk(str): Google Cloud disk name.
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('set disk to autodelete', [
+          'gcloud',
+          'compute',
+          'instances',
+          'set-disk-auto-delete',
+          instance,
+          '--auto-delete',
+          '--disk={}'.format(disk),
+          '--zone={}'.format(zone),
+      ], infra_step=True)
 
   def snapshot_exists(self, snapshot):
     """Check whether a snapshot exists.
@@ -691,6 +743,136 @@ class GcloudApi(recipe_api.RecipeApi):
       disk_suffix = '{}{}'.format(disk_suffix, 'stabilize')
     return disk_suffix
 
+  def check_for_disk_mount(self, mount_path, mock_mount=False):
+    """Check whether there is a disk mounted on given path.
+
+    Args:
+      mount_path (str): System path on which the disk is mounted.
+      mock_mount (bool): Testing flag to mock a disk being mounted.
+
+    Returns:
+      Bool indicating whether there is a disk mounted on the path.
+    """
+    with self.m.step.nest(
+        'determine whether cache is mounted and can be reused') as pres:
+      if os.path.ismount(mount_path) or mock_mount:
+        pres.logs['{}'.format(mount_path)] = 'is a mounted disk'
+        return True
+    return False
+
+  def _swarming_information(self):
+    """Set Swarming variables based on hostname."""
+    with self.m.step.nest('get swarming hostname'):
+      self._infra_host = self.m.swarming.bot_id
+      m = re.search(_SWARMING_HOST_REGEXP, self._infra_host)
+      if not m:
+        raise self.m.step.StepFailure(
+            'failed to get zone from swarming host: {}'.format(
+                self._infra_host))
+      self._zone = m.group('zone')
+
+  def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
+                       recipe_mount=False):
+    """Create disk from snapshot, reuse if still attached.
+
+    Check if disk is attached, otherwise grab the matching snapshot, create,
+    attach, and mount the source disk.
+
+    Args:
+      cache_name(str): Name of the cache file to use.
+      branch(str): Git branch.
+      disk_type(str): Type of GCE disk to create, defaults to standard
+        persistent disk.
+      recipe_mount(bool): Whether mount needs to be in the path to use within
+        a recipe.
+    """
+    if not self._zone or not self._infra_host:
+      self._swarming_information()
+    self.set_gce_project(GCE_BUILD_PROJECT)
+    self._branch = branch
+    is_staging = self.m.cros_infra_config.is_staging
+    recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
+    if not self._is_rfc1035_compliant(branch):
+      self._branch = self._scrub_special_characters(self._branch)
+    mount_path = cache_name if self._branch == 'main' else '{}-{}'.format(
+        cache_name, self._branch)
+    suffix = self._determine_disk_suffix(cache=cache_name, branch=branch)
+    self._snapshot_suffix = str(self.m.time.ms_since_epoch())[0:8]
+    self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
+        cache_name, self._branch)
+    if is_staging:
+      self._version_file = '{}-{}'.format('staging', self._version_file)
+    recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
+    self._cache_mounted = self.check_for_disk_mount(
+        mount_path=recipe_mount_path)
+    if not self._cache_mounted:
+      with self.m.step.nest('setup source cache disk'):
+        self._disk = '{}-{}'.format(self._infra_host, suffix)
+        self._disk = self._disk[:self.gce_name_limit] if len(
+            self._disk) > self.gce_name_limit else self._disk
+        local_version = None
+        local_version_path = self.snapshot_version_path.join(self._version_file)
+        if self.m.path.exists(local_version_path):
+          local_version = self.m.file.read_text(
+              'read local image version', local_version_path,
+              test_data='test-cache-snapshot-123')
+        with self.m.step.nest('retrieve image version from storage'):
+          try:
+            remote_version = self.m.gsutil.cat(
+                'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
+                infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
+          except self.m.step.StepFailure:
+            with self.m.step.nest(
+                'unable to find version file in GS bucket') as pres:
+              # This is intended behavior if a new cache builder is added.
+              # Rather than fail, default to an initial snapshot.
+              pres.logs['version file not found'] = self._version_file
+              remote_version = recovery_snapshot
+        with self.m.step.nest('create disk from snapshot image'):
+          snapshot = remote_version
+          if local_version and self.image_exists(image=local_version):
+            snapshot = local_version
+          self.m.easy.set_properties_step(snapshot_version=snapshot)
+          if not self.disk_exists(disk=self._disk):
+            # Create the disk but in the event of a stockout of SSD, catch the
+            # exception and create a standard spinning disk.
+            try:
+              self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                          image=snapshot, disk_type=disk_type)
+            except self.m.step.StepFailure:
+              self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                          image=snapshot,
+                                          disk_type='pd-standard')
+          if not local_version and self.m.path.exists(
+              self.m.path['cache'].join(cache_name).join('upperdir')):
+            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+          self.attach_disk(name=mount_path, instance=self._infra_host,
+                           disk=self._disk, zone=self._zone)
+          self.mount_disk(name=mount_path, mount_path=mount_path,
+                          recipe_mount=recipe_mount)
+          self.update_fstab(mount_path=recipe_mount_path, name=mount_path)
+          self.m.file.write_text('write version file', local_version_path,
+                                 snapshot)
+          self.m.file.write_text(
+              'write overlayfs branch file',
+              self.snapshot_version_path.join(self._overlay_branch_file),
+              self._branch)
+    with self.m.step.nest('determine whether to reset overlayfs directories'):
+      overlayfs_branch = 'main'
+      try:
+        overlayfs_branch = self.m.file.read_text(
+            'read overlayfs branch',
+            self.snapshot_version_path.join(self._overlay_branch_file),
+            test_data='main')
+      except self.m.step.StepFailure:
+        with self.m.step.nest('branch not set for overlay, defaulting') as pres:
+          # This is intended behavior if a new cache builder is added.
+          # Rather than fail, default to an initial snapshot.
+          pres.logs['overlay branch not found'] = overlayfs_branch
+      if overlayfs_branch != self._branch:
+        self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+    return recipe_mount_path
+
   def create_and_mount_disk(self, cache_name, branch='main',
                             disk_type='pd-standard', recipe_mount=False,
                             dry_run=False):
@@ -708,14 +890,9 @@ class GcloudApi(recipe_api.RecipeApi):
         a recipe.
       dry_run(bool): Whether to mount or just dry run through the steps.
     """
-    with self.m.step.nest('get swarming hostname'):
-      infra_host = self.m.swarming.bot_id
-      m = re.search(_SWARMING_HOST_REGEXP, infra_host)
-      if not m:
-        raise self.m.step.StepFailure(
-            'failed to get zone from swarming host: {}'.format(infra_host))
-      self._zone = m.group('zone')
-    with self.m.step.nest('create and attach disk'):
+    if not self._zone or not self._infra_host:
+      self._swarming_information()
+    with self.m.step.nest('setup source cache disk'):
       self.set_gce_project(GCE_BUILD_PROJECT)
       self._branch = branch
       is_staging = self.m.cros_infra_config.is_staging
@@ -724,7 +901,7 @@ class GcloudApi(recipe_api.RecipeApi):
         self._branch = self._scrub_special_characters(self._branch)
       suffix = self._determine_disk_suffix(cache=cache_name, branch=branch)
       self._snapshot_suffix = str(self.m.time.ms_since_epoch())[0:8]
-      self._disk = '{}-{}'.format(infra_host, suffix)
+      self._disk = '{}-{}'.format(self._infra_host, suffix)
       self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
           cache_name, self._branch)
       if is_staging:
@@ -756,9 +933,9 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step(snapshot_version=snapshot)
         if not dry_run:
           if self.disk_exists(disk=self._disk):
-            if self.disk_attached(instance=infra_host, disk=self._disk,
+            if self.disk_attached(instance=self._infra_host, disk=self._disk,
                                   zone=self._zone):
-              self.detach_disk(instance=infra_host, disk=self._disk,
+              self.detach_disk(instance=self._infra_host, disk=self._disk,
                                zone=self._zone)
             self.delete_disk(disk=self._disk, zone=self._zone)
           # Roll out SSD disks in waves to validate quota usage and ensure
@@ -776,7 +953,7 @@ class GcloudApi(recipe_api.RecipeApi):
           if not local_version and self.m.path.exists(
               self.m.path['cache'].join(cache_name).join('upperdir')):
             self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-          self.attach_disk(name=cache_name, instance=infra_host,
+          self.attach_disk(name=cache_name, instance=self._infra_host,
                            disk=self._disk, zone=self._zone)
           self.mount_disk(name=cache_name, mount_path=cache_name,
                           recipe_mount=recipe_mount)

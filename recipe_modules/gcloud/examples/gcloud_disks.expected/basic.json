@@ -179,6 +179,23 @@
   },
   {
     "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "test_bot1",
+      "--auto-delete",
+      "--disk=test_disk1",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "set disk to autodelete"
+  },
+  {
+    "cmd": [
       "lsblk",
       "--json",
       "--output",
@@ -282,6 +299,23 @@
     },
     "infra_step": true,
     "name": "attach disk (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "test_bot1",
+      "--auto-delete",
+      "--disk=test_disk2",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "set disk to autodelete (2)"
   },
   {
     "cmd": [
