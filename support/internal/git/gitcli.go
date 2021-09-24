@@ -1,3 +1,7 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package git
 
 import (
@@ -107,7 +111,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	// This tool should probably be rewritten anyways.
 	args := []string{"apply", "--3way", "--ignore-whitespace", patchFile}
 	ignore_filetypes := []string{
-		"bin", "hex", "dv", "efi", "jpg", "jpeg", "png", "gif", "ddc", "sfi",
+		".aiqb", "bin", "hex", "dv", "efi", "jpg", "jpeg", "png", "gif", "ddc", "sfi",
 	}
 	for _, filetype := range ignore_filetypes {
 		args = append(args, "--exclude", "*."+filetype)
