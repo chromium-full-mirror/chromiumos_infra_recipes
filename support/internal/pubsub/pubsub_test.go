@@ -1,3 +1,6 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 package pubsub
 
 import (
@@ -45,7 +48,7 @@ func TestPublishMessage(t *testing.T) {
 	srv, conn, err := setupTestServer()
 	assert.NilError(t, err)
 
-	id, err := PublishMessage(testProject, testTopic, []byte(testData), option.WithGRPCConn(conn))
+	id, err := PublishMessage(testProject, testTopic, "", "", []byte(testData), option.WithGRPCConn(conn))
 	assert.NilError(t, err)
 
 	assert.Equal(t, len(srv.Messages()), 1)
