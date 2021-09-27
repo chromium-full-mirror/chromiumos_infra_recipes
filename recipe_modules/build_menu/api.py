@@ -594,11 +594,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
           version = self.container_version
           presentation.step_summary_text = 'version: \'{}\''.format(version)
 
+          build_id = self.m.buildbucket.build.id
+
           response = BuildTestServiceContainers(
               BuildTestServiceContainersRequest(
                   build_target=self.build_target,
                   chroot=self.m.cros_sdk.chroot,
                   version=version,
+                  tags=[version],
+                  labels={
+                      "build-url":
+                          self.m.buildbucket.build_url() if build_id else "led",
+                  },
               ), timeout=1 * 60 * 60)
 
           # Set up links to built containers.
