@@ -18,7 +18,7 @@ DEPS = [
 
 def RunSteps(api):
   # Multiple disks
-  api.gcloud.setup_cache_disk(cache_name='chromiumos')
+  mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
   if api.build_menu.is_staging:
@@ -32,6 +32,7 @@ def RunSteps(api):
   else:
     api.assertions.assertEqual(api.gcloud.snapshot_version_file,
                                'chromiumos-main-cache-snapshot-version.txt')
+  api.gcloud.unmount_disk(name='chromiumos', mount_path=mount_path)
   api.gcloud.setup_cache_disk(cache_name='chromiumos',
                               branch='release-R90-13816.B', recipe_mount=True)
   api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
@@ -39,8 +40,7 @@ def RunSteps(api):
   api.assertions.assertRegexpMatches(
       api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosr90')
   api.gcloud.setup_cache_disk(cache_name='chromiumos',
-                              branch='stabilize-rust-13836.B',
-                              recipe_mount=True)
+                              branch='stabilize-rust-13836.B')
   api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
   api.assertions.assertRegexpMatches(
       api.gcloud.gce_disk,

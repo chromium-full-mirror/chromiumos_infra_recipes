@@ -37,91 +37,84 @@ def RunSteps(api, properties):
     image_prefixes = []
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.swarming.bot_id
-    with api.gcloud.cleanup_gce_disks(), \
-         api.gcloud.cleanup_mounted_disks():
-      for cache in properties.cache_definition:
-        api.gcloud.create_and_mount_disk(cache_name=cache.cache_name,
-                                         branch=cache.branch,
-                                         disk_type=cache.disk_type,
-                                         recipe_mount=True)
-        snapshot_prefix = '{}-{}'.format(cache.cache_name, api.gcloud.branch)
-        if is_staging:
-          snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
-        snapshot_prefixes.append(snapshot_prefix)
-        image_prefixes.append(snapshot_prefix)
-        with api.step.nest('sync mounted cache directories'):
-          snapshot_name = '{}-{}'.format(snapshot_prefix,
-                                         api.gcloud.snapshot_suffix)
-          snapshot_name = snapshot_name[:api.gcloud.gce_name_limit] if len(
-              snapshot_name) > api.gcloud.gce_name_limit else snapshot_name
-          disk = api.gcloud.gce_disk
-          mount_path = api.gcloud.snapshot_builder_mount_path.join(
-              cache.cache_name)
-          try:
-            if cache.command == 'repo':
-              with api.context(cwd=mount_path):
-                sync_opts = dict(force_sync=True, detach=True, jobs=20,
-                                 retry_fetches=8, timeout=10800,
-                                 force_remove_dirty=True)
-                manifest_branch = '{}snapshot'.format(
-                    'staging-' if is_staging else '')
-                if cache.branch != 'main':
-                  manifest_branch = cache.branch
-                init_opts = dict(verbose=True, manifest_branch=manifest_branch)
-                api.repo.ensure_synced_checkout(
-                    mount_path, api.src_state.internal_manifest.url,
-                    init_opts=init_opts, sync_opts=sync_opts,
-                    final_cleanup=True)
-            if cache.command == 'gclient':
-              # Chrome cache consists of a local repo cache and src,
-              # both mounted via a single disk. We change into the
-              # source directory to sync.
-              api.chrome.cache_sync(cache_path=mount_path)
-          # If sync fails, recovery to known working for next execution.
-          except StepFailure:
-            api.cros_cache.write_and_upload_version(
-                properties.cache_bucket, api.gcloud.snapshot_version_file,
-                cache.recovery_snapshot)
-            break
-        with api.step.nest('sync disk cache before snapshot'):
-          api.gcloud.sync_disk_cache(name=cache.cache_name)
-        with api.step.nest('unmount disk for snapshot'):
-          api.gcloud.unmount_disk(name=cache.cache_name, mount_path=mount_path)
-        with api.step.nest('detach disk for snapshot'):
-          api.gcloud.detach_disk(instance=infra_host, disk=disk,
-                                 zone=api.gcloud.host_zone)
-        with api.step.nest('create image from disk'):
-          api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
-                                            zone=api.gcloud.host_zone)
-        with api.step.nest('delete disk'):
-          api.gcloud.delete_disk(disk=disk, zone=api.gcloud.host_zone)
-        with api.step.nest('upload updated version file'):
+    for cache in properties.cache_definition:
+      api.gcloud.setup_cache_disk(cache_name=cache.cache_name,
+                                  branch=cache.branch,
+                                  disk_type=cache.disk_type, recipe_mount=True)
+      snapshot_prefix = '{}-{}'.format(cache.cache_name, api.gcloud.branch)
+      if is_staging:
+        snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
+      snapshot_prefixes.append(snapshot_prefix)
+      image_prefixes.append(snapshot_prefix)
+      with api.step.nest('sync mounted cache directories'):
+        snapshot_name = '{}-{}'.format(snapshot_prefix,
+                                       api.gcloud.snapshot_suffix)
+        snapshot_name = snapshot_name[:api.gcloud.gce_name_limit] if len(
+            snapshot_name) > api.gcloud.gce_name_limit else snapshot_name
+        disk = api.gcloud.gce_disk
+        mount_path = api.gcloud.snapshot_builder_mount_path.join(
+            cache.cache_name)
+        try:
+          if cache.command == 'repo':
+            with api.context(cwd=mount_path):
+              sync_opts = dict(force_sync=True, detach=True, jobs=20,
+                               retry_fetches=8, timeout=10800,
+                               force_remove_dirty=True)
+              manifest_branch = '{}snapshot'.format(
+                  'staging-' if is_staging else '')
+              if cache.branch != 'main':
+                manifest_branch = cache.branch
+              init_opts = dict(verbose=True, manifest_branch=manifest_branch)
+              api.repo.ensure_synced_checkout(
+                  mount_path, api.src_state.internal_manifest.url,
+                  init_opts=init_opts, sync_opts=sync_opts, final_cleanup=True)
+          if cache.command == 'gclient':
+            # Chrome cache consists of a local repo cache and src,
+            # both mounted via a single disk. We change into the
+            # source directory to sync.
+            api.chrome.cache_sync(cache_path=mount_path)
+        # If sync fails, recovery to known working for next execution.
+        except StepFailure:
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,
-              snapshot_name)
-    with api.step.nest('cleanup expired snapshots'):
-      snapshot_delete_list = api.gcloud.get_expired_snapshots(
-          retention_days=properties.retention_days, prefixes=snapshot_prefixes,
-          protected_snapshots=properties.protected_snapshots)
-      api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
-      api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
-    with api.step.nest('cleanup expired images'):
-      image_delete_list = api.gcloud.get_expired_images(
-          retention_days=properties.retention_days, prefixes=image_prefixes,
-          protected_images=properties.protected_images)
-      api.easy.set_properties_step(expired_images=image_delete_list)
-      api.gcloud.delete_images(images=image_delete_list)
-    with api.step.nest('delete orphaned disks'):
-      disks_to_delete = api.gcloud.determine_disks_to_delete(
-          disks=api.gcloud.list_all_disks(),
-          instances=api.gcloud.list_all_instances())
-      api.easy.set_properties_step(orphaned_disks=disks_to_delete)
-      if not is_staging:
-        futures = []
-        for disk, zone in disks_to_delete.items():
-          futures.append(
-              api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
-        api.futures.wait(futures)
+              cache.recovery_snapshot)
+      with api.step.nest('sync disk cache before snapshot'):
+        api.gcloud.sync_disk_cache(name=cache.cache_name)
+      with api.step.nest('unmount disk for snapshot'):
+        api.gcloud.unmount_disk(name=cache.cache_name, mount_path=mount_path)
+      with api.step.nest('detach disk for snapshot'):
+        api.gcloud.detach_disk(instance=infra_host, disk=disk,
+                               zone=api.gcloud.host_zone)
+      with api.step.nest('create image from disk'):
+        api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
+                                          zone=api.gcloud.host_zone)
+      with api.step.nest('upload updated version file'):
+        api.cros_cache.write_and_upload_version(
+            properties.cache_bucket, api.gcloud.snapshot_version_file,
+            snapshot_name)
+  with api.step.nest('cleanup expired snapshots'):
+    snapshot_delete_list = api.gcloud.get_expired_snapshots(
+        retention_days=properties.retention_days, prefixes=snapshot_prefixes,
+        protected_snapshots=properties.protected_snapshots)
+    api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
+    api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
+  with api.step.nest('cleanup expired images'):
+    image_delete_list = api.gcloud.get_expired_images(
+        retention_days=properties.retention_days, prefixes=image_prefixes,
+        protected_images=properties.protected_images)
+    api.easy.set_properties_step(expired_images=image_delete_list)
+    api.gcloud.delete_images(images=image_delete_list)
+  with api.step.nest('delete orphaned disks'):
+    disks_to_delete = api.gcloud.determine_disks_to_delete(
+        disks=api.gcloud.list_all_disks(),
+        instances=api.gcloud.list_all_instances())
+    api.easy.set_properties_step(orphaned_disks=disks_to_delete)
+    if not is_staging:
+      futures = []
+      for disk, zone in disks_to_delete.items():
+        futures.append(
+            api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
+      api.futures.wait(futures)
 
 
 def GenTests(api):

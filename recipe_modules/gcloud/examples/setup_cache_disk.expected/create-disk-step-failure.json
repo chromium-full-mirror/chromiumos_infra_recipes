@@ -372,14 +372,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
+      "main",
+      "[CACHE]/infra_versions/overlay_branch.txt"
     ],
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.write version file",
+    "name": "setup source cache disk.create disk from snapshot image.write overlayfs branch file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
   },
   {
@@ -390,15 +391,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "main",
-      "[CACHE]/infra_versions/overlay_branch.txt"
+      "",
+      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.write overlayfs branch file",
+    "name": "setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -423,6 +423,17 @@
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "unmount disk chromiumos"
   },
   {
     "cmd": [
@@ -678,7 +689,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/chromiumos-release-r90-13816-b"
+      "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -696,48 +707,13 @@
       "-o",
       "discard,defaults",
       "/dev/sdb",
-      "[CLEANUP]/snapshot/chromiumos-release-r90-13816-b"
+      "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.mount disk chromiumos-release-r90-13816-b",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "blkid",
-      "-s",
-      "UUID",
-      "-o",
-      "value",
-      "/dev/sdb"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "setup source cache disk (2).create disk from snapshot image.determine UUID",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "-a",
-      "/etc/fstab"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.update fstab for /dev/sdb",
-    "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos-release-r90-13816-b ext4 discard,defaults,noatime,nofail 0 2",
+    "name": "setup source cache disk (2).create disk from snapshot image.mount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -758,72 +734,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "release-r90-13816-b",
-      "[CACHE]/infra_versions/overlay_branch.txt"
-    ],
-    "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.write overlayfs branch file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@release-r90-13816-b@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "determine whether to reset overlayfs directories (2)"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/overlay_branch.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (2).read overlayfs branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rm",
-      "-rf",
-      "[CACHE]/chromiumos/upperdir"
-    ],
-    "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs upperdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rm",
-      "-rf",
-      "[CACHE]/chromiumos/workdir"
-    ],
-    "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs workdir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1072,21 +982,15 @@
   },
   {
     "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/snapshot/chromiumos-stabilize-rust-13836-b"
+      "mkdir",
+      "-p",
+      "/snapshot_mounts/chromiumos-stabilize-rust-13836-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.create mount path",
+    "name": "setup source cache disk (3).create disk from snapshot image.ensure mount directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1098,7 +1002,7 @@
       "-o",
       "discard,defaults",
       "/dev/sdb",
-      "[CLEANUP]/snapshot/chromiumos-stabilize-rust-13836-b"
+      "/snapshot_mounts/chromiumos-stabilize-rust-13836-b"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -1152,24 +1056,6 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
-      "[CACHE]/infra_versions/chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
       "stabilize-rust-13836-b",
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
@@ -1182,8 +1068,26 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CACHE]/infra_versions/chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "determine whether to reset overlayfs directories (3)"
+    "name": "determine whether to reset overlayfs directories (2)"
   },
   {
     "cmd": [
@@ -1197,7 +1101,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (3).read overlayfs branch",
+    "name": "determine whether to reset overlayfs directories (2).read overlayfs branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
@@ -1211,7 +1115,7 @@
       "[CACHE]/chromiumos/upperdir"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (3).cleanup overlayfs upperdir",
+    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1223,7 +1127,7 @@
       "[CACHE]/chromiumos/workdir"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (3).cleanup overlayfs workdir",
+    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

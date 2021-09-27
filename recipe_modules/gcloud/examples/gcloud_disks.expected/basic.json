@@ -327,7 +327,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/cache1"
+      "[CLEANUP]/snapshot/cache_test1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -342,7 +342,7 @@
       "-o",
       "discard,defaults",
       "/dev/sdb",
-      "[CLEANUP]/snapshot/cache1"
+      "[CLEANUP]/snapshot/cache_test1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -991,120 +991,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up mounted compute disk"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CLEANUP]/snapshot/cache1"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up mounted compute disk.unmount disk cache_test1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/snapshot_mounts/cache2"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up mounted compute disk.unmount disk cache_test2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up gce disk"
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "test_bot1",
-      "--disk=test_disk1",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up gce disk.detach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "test_disk1",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up gce disk.delete disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "test_bot1",
-      "--disk=test_disk2",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up gce disk.detach disk (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "test_disk2",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up gce disk.delete disk (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -33,13 +33,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache update.setup source cache disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",
@@ -50,9 +43,23 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "source cache update.setup source cache disk.set gcloud project",
+    "name": "source cache update.set gcloud project",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.determine whether cache is mounted and can be reused",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.setup source cache disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -711,32 +718,6 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.delete disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.delete disk.delete disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "source cache update.upload updated version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -790,10 +771,7 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired snapshots",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "cleanup expired snapshots"
   },
   {
     "cmd": [
@@ -807,9 +785,9 @@
       "creationTimestamp<2012-05-07 AND name~staging-test-cache-main-.*"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.list snapshots with filter staging-test-cache-main",
+    "name": "cleanup expired snapshots.list snapshots with filter staging-test-cache-main",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-07-09T20:12:11.796-07:00\", @@@",
@@ -871,9 +849,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired snapshots.set expired_snapshots",
+    "name": "cleanup expired snapshots.set expired_snapshots",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@expired_snapshots@[\"staging-chrome-cache-snapshot-16258867\", \"staging-chromeos-cache-snapshot-16258902\", \"staging-chromeos-cache-snapshot-16258939\"]@@@"
     ]
   },
@@ -890,9 +868,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chrome-cache-snapshot-16258867",
+    "name": "cleanup expired snapshots.delete snapshot staging-chrome-cache-snapshot-16258867",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -908,9 +886,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-16258902",
+    "name": "cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-16258902",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -926,17 +904,14 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-16258939",
+    "name": "cleanup expired snapshots.delete snapshot staging-chromeos-cache-snapshot-16258939",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired images",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "cleanup expired images"
   },
   {
     "cmd": [
@@ -950,9 +925,9 @@
       "creationTimestamp<2012-05-07 AND name~staging-test-cache-main-.*"
     ],
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.list images with filter staging-test-cache-main",
+    "name": "cleanup expired images.list images with filter staging-test-cache-main",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"archiveSizeBytes\": \"84563945856\", @@@",
@@ -1068,9 +1043,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired images.set expired_images",
+    "name": "cleanup expired images.set expired_images",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@expired_images@[\"staging-chromeos-cache-snapshot-16258939\", \"staging-chromeos-cache-snapshot-16258902\", \"staging-chrome-cache-snapshot-16258867\"]@@@"
     ]
   },
@@ -1087,9 +1062,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.delete image staging-chromeos-cache-snapshot-16258939",
+    "name": "cleanup expired images.delete image staging-chromeos-cache-snapshot-16258939",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1105,9 +1080,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.delete image staging-chromeos-cache-snapshot-16258902",
+    "name": "cleanup expired images.delete image staging-chromeos-cache-snapshot-16258902",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1123,17 +1098,14 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.cleanup expired images.delete image staging-chrome-cache-snapshot-16258867",
+    "name": "cleanup expired images.delete image staging-chrome-cache-snapshot-16258867",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.delete orphaned disks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "delete orphaned disks"
   },
   {
     "cmd": [
@@ -1147,9 +1119,9 @@
       "json(name,zone)"
     ],
     "infra_step": true,
-    "name": "source cache update.delete orphaned disks.get a list of all disks",
+    "name": "delete orphaned disks.get a list of all disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-lmno\", @@@",
@@ -1189,9 +1161,9 @@
       "json(name)"
     ],
     "infra_step": true,
-    "name": "source cache update.delete orphaned disks.get a list of all instances",
+    "name": "delete orphaned disks.get a list of all instances",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj\", @@@",
@@ -1207,9 +1179,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.delete orphaned disks.set orphaned_disks",
+    "name": "delete orphaned disks.set orphaned_disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros\": \"us-central1-b\"}@@@"
     ]
   },

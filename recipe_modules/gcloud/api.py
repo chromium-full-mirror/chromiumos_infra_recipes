@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
-import contextlib
 import datetime
 import os
 import re
@@ -393,7 +392,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       if recipe_mount:
-        recipe_mount_path = self.snapshot_builder_mount_path.join(mount_path)
+        recipe_mount_path = self.snapshot_builder_mount_path.join(name)
         self.m.file.ensure_directory('create mount path', recipe_mount_path)
       else:
         recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
@@ -557,29 +556,6 @@ class GcloudApi(recipe_api.RecipeApi):
     for gce_disk in output:
       disks[gce_disk['name']] = gce_disk['zone'].rsplit('/', 1)[1]
     return disks
-
-  def disk_attached(self, instance, disk, zone):
-    """Check whether a disk is attached to an instance.
-
-    Args:
-      instance(str): Name of the instance to check.
-      disk(str): Name of the disk to check.
-      zone(str): Name of the zone that the instance is in.
-
-    Returns:
-      Bool of whether the disk is attached or not.
-    """
-    list_cmd = [
-        'gcloud', 'compute', 'instances', 'describe', '{}'.format(instance),
-        '--zone={}'.format(zone), '--format', 'json(disks)'
-    ]
-    output = self.m.easy.stdout_json_step(
-        'check whether disk is attached: {}'.format(disk), list_cmd,
-        test_stdout=self.test_api.disk_attached_data, infra_step=True)
-    for gce_disk in output["disks"]:
-      if gce_disk['source'].endswith(disk):
-        return True
-    return False
 
   def create_image_from_disk(self, disk, image_name, zone):
     """Create an image from specified disk.
@@ -794,8 +770,10 @@ class GcloudApi(recipe_api.RecipeApi):
     recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
     if not self._is_rfc1035_compliant(branch):
       self._branch = self._scrub_special_characters(self._branch)
-    mount_path = cache_name if self._branch == 'main' else '{}-{}'.format(
-        cache_name, self._branch)
+    if self._branch == 'main' or recipe_mount:
+      mount_path = cache_name
+    else:
+      mount_path = '{}-{}'.format(cache_name, self._branch)
     suffix = self._determine_disk_suffix(cache=cache_name, branch=branch)
     self._snapshot_suffix = str(self.m.time.ms_since_epoch())[0:8]
     self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
@@ -850,134 +828,31 @@ class GcloudApi(recipe_api.RecipeApi):
                            disk=self._disk, zone=self._zone)
           self.mount_disk(name=mount_path, mount_path=mount_path,
                           recipe_mount=recipe_mount)
-          self.update_fstab(mount_path=recipe_mount_path, name=mount_path)
+          if not recipe_mount:
+            self.update_fstab(mount_path=recipe_mount_path, name=mount_path)
+            self.m.file.write_text(
+                'write overlayfs branch file',
+                self.snapshot_version_path.join(self._overlay_branch_file),
+                self._branch)
           self.m.file.write_text('write version file', local_version_path,
                                  snapshot)
-          self.m.file.write_text(
-              'write overlayfs branch file',
-              self.snapshot_version_path.join(self._overlay_branch_file),
-              self._branch)
-    with self.m.step.nest('determine whether to reset overlayfs directories'):
-      overlayfs_branch = 'main'
-      try:
-        overlayfs_branch = self.m.file.read_text(
-            'read overlayfs branch',
-            self.snapshot_version_path.join(self._overlay_branch_file),
-            test_data='main')
-      except self.m.step.StepFailure:
-        with self.m.step.nest('branch not set for overlay, defaulting') as pres:
-          # This is intended behavior if a new cache builder is added.
-          # Rather than fail, default to an initial snapshot.
-          pres.logs['overlay branch not found'] = overlayfs_branch
-      if overlayfs_branch != self._branch:
-        self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-    return recipe_mount_path
-
-  def create_and_mount_disk(self, cache_name, branch='main',
-                            disk_type='pd-standard', recipe_mount=False,
-                            dry_run=False):
-    """Determine the disk to create and mount from snapshot.
-
-    Grab the matching snapshot, create, attach, and mount the
-    source disk.
-
-    Args:
-      cache_name(str): Name of the cache file to use.
-      branch(str): Git branch.
-      disk_type(str): Type of GCE disk to create, defaults to standard
-        persistent disk.
-      recipe_mount(bool): Whether mount needs to be in the path to use within
-        a recipe.
-      dry_run(bool): Whether to mount or just dry run through the steps.
-    """
-    if not self._zone or not self._infra_host:
-      self._swarming_information()
-    with self.m.step.nest('setup source cache disk'):
-      self.set_gce_project(GCE_BUILD_PROJECT)
-      self._branch = branch
-      is_staging = self.m.cros_infra_config.is_staging
-      recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
-      if not self._is_rfc1035_compliant(branch):
-        self._branch = self._scrub_special_characters(self._branch)
-      suffix = self._determine_disk_suffix(cache=cache_name, branch=branch)
-      self._snapshot_suffix = str(self.m.time.ms_since_epoch())[0:8]
-      self._disk = '{}-{}'.format(self._infra_host, suffix)
-      self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
-          cache_name, self._branch)
-      if is_staging:
-        self._version_file = '{}-{}'.format('staging', self._version_file)
-      self._disk = self._disk[:self.gce_name_limit] if len(
-          self._disk) > self.gce_name_limit else self._disk
-      local_version = None
-      local_version_path = self.snapshot_version_path.join(self._version_file)
-      if self.m.path.exists(local_version_path):
-        local_version = self.m.file.read_text(
-            'read local image version', local_version_path,
-            test_data='test-cache-snapshot-123')
-      with self.m.step.nest('retrieve image version from storage'):
+    if not recipe_mount:
+      with self.m.step.nest('determine whether to reset overlayfs directories'):
+        overlayfs_branch = 'main'
         try:
-          remote_version = self.m.gsutil.cat(
-              'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
-              infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
+          overlayfs_branch = self.m.file.read_text(
+              'read overlayfs branch',
+              self.snapshot_version_path.join(self._overlay_branch_file),
+              test_data='main')
         except self.m.step.StepFailure:
           with self.m.step.nest(
-              'unable to find version file in GS bucket') as pres:
+              'branch not set for overlay, defaulting') as pres:
             # This is intended behavior if a new cache builder is added.
             # Rather than fail, default to an initial snapshot.
-            pres.logs['version file not found'] = self._version_file
-            remote_version = recovery_snapshot
-      with self.m.step.nest('create disk from snapshot image'):
-        snapshot = remote_version
-        if local_version and self.image_exists(image=local_version):
-          snapshot = local_version
-        self.m.easy.set_properties_step(snapshot_version=snapshot)
-        if not dry_run:
-          if self.disk_exists(disk=self._disk):
-            if self.disk_attached(instance=self._infra_host, disk=self._disk,
-                                  zone=self._zone):
-              self.detach_disk(instance=self._infra_host, disk=self._disk,
-                               zone=self._zone)
-            self.delete_disk(disk=self._disk, zone=self._zone)
-          # Roll out SSD disks in waves to validate quota usage and ensure
-          # no widespread impacts.
-          if self._zone in SSD_ZONES:
-            disk_type = 'pd-ssd'
-          # Create the disk but in the event of a stockout of SSD, catch the
-          # exception and create a standard spinning disk.
-          try:
-            self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                        image=snapshot, disk_type=disk_type)
-          except self.m.step.StepFailure:
-            self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                        image=snapshot, disk_type='pd-standard')
-          if not local_version and self.m.path.exists(
-              self.m.path['cache'].join(cache_name).join('upperdir')):
-            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-          self.attach_disk(name=cache_name, instance=self._infra_host,
-                           disk=self._disk, zone=self._zone)
-          self.mount_disk(name=cache_name, mount_path=cache_name,
-                          recipe_mount=recipe_mount)
-          self.m.file.write_text('write version file', local_version_path,
-                                 snapshot)
-
-  @contextlib.contextmanager
-  def cleanup_gce_disks(self):
-    """Wrap disk cleanup in a context handler to ensure they are handled.
-
-    Upon exiting the context manager, each attached disk is then iterated
-    through to unmount, detach, and delete the disk.
-    """
-    cleanup_gce_disks = []
-    self._cleanup_gce_stack.append(cleanup_gce_disks)
-    try:
-      yield
-    finally:
-      if cleanup_gce_disks:
-        with self.m.step.nest('clean up gce disk'):
-          for disk, instance, zone in list(cleanup_gce_disks):
-            self.detach_disk(instance, disk, zone)
-            self.delete_disk(disk, zone)
-      self._cleanup_gce_stack.pop()
+            pres.logs['overlay branch not found'] = overlayfs_branch
+        if overlayfs_branch != self._branch:
+          self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+    return recipe_mount_path
 
   def _add_cleanup_attached_disk(self, disk, instance, zone):
     """Track attach disk for cleanup_attached_disks.
@@ -1003,24 +878,6 @@ class GcloudApi(recipe_api.RecipeApi):
       # cleanup stack so we assume we already detached it.
       self.m.step.active_result.presentation.step_text += (
           '<br/>[WARNING: gcloud delete disk bookkeeping error for %s]' % disk)
-
-  @contextlib.contextmanager
-  def cleanup_mounted_disks(self):
-    """Wrap disk cleanup in a context handler to ensure they are unmounted.
-
-    Upon exiting the context manager, each mounted disk is then iterated
-    through and unmounted.
-    """
-    cleanup_mounted_disks = []
-    self._cleanup_mounted_stack.append(cleanup_mounted_disks)
-    try:
-      yield
-    finally:
-      if cleanup_mounted_disks:
-        with self.m.step.nest('clean up mounted compute disk'):
-          for name, mount_path in list(cleanup_mounted_disks):
-            self.unmount_disk(name, mount_path)
-      self._cleanup_mounted_stack.pop()
 
   def _add_cleanup_mounted_disk(self, name, mount_path):
     """Track mounted disk for cleanup_mounted_disks.

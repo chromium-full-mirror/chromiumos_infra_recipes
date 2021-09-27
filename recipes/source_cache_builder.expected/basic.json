@@ -27,40 +27,31 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired snapshots",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "cleanup expired snapshots"
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired snapshots.set expired_snapshots",
+    "name": "cleanup expired snapshots.set expired_snapshots",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@expired_snapshots@[]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired images",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "cleanup expired images"
   },
   {
     "cmd": [],
-    "name": "source cache update.cleanup expired images.set expired_images",
+    "name": "cleanup expired images.set expired_images",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@expired_images@[]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.delete orphaned disks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "delete orphaned disks"
   },
   {
     "cmd": [
@@ -74,9 +65,9 @@
       "json(name,zone)"
     ],
     "infra_step": true,
-    "name": "source cache update.delete orphaned disks.get a list of all disks",
+    "name": "delete orphaned disks.get a list of all disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-lmno\", @@@",
@@ -116,9 +107,9 @@
       "json(name)"
     ],
     "infra_step": true,
-    "name": "source cache update.delete orphaned disks.get a list of all instances",
+    "name": "delete orphaned disks.get a list of all instances",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj\", @@@",
@@ -134,9 +125,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.delete orphaned disks.set orphaned_disks",
+    "name": "delete orphaned disks.set orphaned_disks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros\": \"us-central1-b\"}@@@"
     ]
   },
@@ -154,9 +145,9 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.delete orphaned disks.delete disk",
+    "name": "delete orphaned disks.delete disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

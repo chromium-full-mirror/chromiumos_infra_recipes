@@ -240,10 +240,6 @@
     "name": "get swarming hostname"
   },
   {
-    "cmd": [],
-    "name": "setup source cache disk"
-  },
-  {
     "cmd": [
       "gcloud",
       "config",
@@ -254,10 +250,15 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "setup source cache disk.set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "set gcloud project"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused"
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk"
   },
   {
     "cmd": [],
@@ -328,99 +329,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--zone=us-central1-b",
-      "--format",
-      "json(disks)"
-    ],
-    "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"disks\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.detach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.delete disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "create",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b",
-      "--image-project=chromeos-bot",
-      "--image=",
-      "--quiet",
-      "--type=pd-ssd"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.create disk from image",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -588,6 +496,60 @@
   },
   {
     "cmd": [
+      "sudo",
+      "blkid",
+      "-s",
+      "UUID",
+      "-o",
+      "value",
+      "/dev/sdb"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "setup source cache disk.create disk from snapshot image.determine UUID",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "-a",
+      "/etc/fstab"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.update fstab for /dev/sdb",
+    "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos ext4 discard,defaults,noatime,nofail 0 2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "main",
+      "[CACHE]/infra_versions/overlay_branch.txt"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.write overlayfs branch file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -602,6 +564,29 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine whether to reset overlayfs directories"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/infra_versions/overlay_branch.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "determine whether to reset overlayfs directories.read overlayfs branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
   },
   {
@@ -1620,67 +1605,6 @@
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up mounted compute disk"
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/snapshot_mounts/chromiumos"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up mounted compute disk.unmount disk chromiumos",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up gce disk"
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up gce disk.detach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "clean up gce disk.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

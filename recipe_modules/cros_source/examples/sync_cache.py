@@ -25,7 +25,7 @@ def RunSteps(api, properties):
   if properties.cache_path_override:
     path = api.path['cache'].join(properties.cache_path_override)
   manifest_branch = 'release-R90-13816.B'
-  with api.cros_source.checkout_overlays_context_cache(snapshot_mount=True):
+  with api.cros_source.checkout_overlays_context(snapshot_mount=True):
     api.cros_source.ensure_synced_cache(
         manifest_url=properties.manifest_url, cache_path_override=path,
         manifest_branch_override=manifest_branch)

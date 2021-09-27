@@ -480,14 +480,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
+      "main",
+      "[CACHE]/infra_versions/overlay_branch.txt"
     ],
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.write version file",
+    "name": "setup source cache disk.create disk from snapshot image.write overlayfs branch file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
   },
   {
@@ -498,15 +499,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "main",
-      "[CACHE]/infra_versions/overlay_branch.txt"
+      "",
+      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.write overlayfs branch file",
+    "name": "setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
