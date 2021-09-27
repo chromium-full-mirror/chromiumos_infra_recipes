@@ -8467,6 +8467,27 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
+    ],
+    "infra_step": true,
+    "name": "buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [

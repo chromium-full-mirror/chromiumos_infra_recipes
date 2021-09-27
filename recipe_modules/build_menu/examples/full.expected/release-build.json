@@ -7010,6 +7010,28 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "finalize metadata"
   },

@@ -19,6 +19,8 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest, BuildTestServiceContainersRequest
 from PB.chromiumos.common import PackageInfo, Profile
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -638,3 +640,29 @@ class BuildMenuApi(recipe_api.RecipeApi):
           self.build_target, profile, config.id.type,
           artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+  def _get_child_builds(self):
+    """
+    Get the child builders of current build.
+
+    Returns:
+      (list[Build]): List of child builds.
+    """
+    current_build = self.m.buildbucket.build
+    # Do not want to search child builds for led job.
+    if current_build.id:
+      fields = frozenset({'id'})
+      predicate = builds_service_pb2.BuildPredicate(
+          tags=self.m.buildbucket.tags(
+              parent_buildbucket_id=str(current_build.id)))
+      predicate.builder.project = current_build.builder.project
+      return self.m.buildbucket.search(predicate, fields=fields)
+
+  def add_child_build_ids_to_output_property(self):
+    """
+    Add child build ids to output property of current build.
+    """
+    child_builds = self._get_child_builds()
+    if child_builds:
+      child_build_ids = [str(b.id) for b in child_builds]
+      self.m.easy.set_properties_step(child_builds=child_build_ids)

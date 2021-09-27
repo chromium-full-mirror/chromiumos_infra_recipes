@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'bot_cost',
+    'build_menu',
     'build_plan',
     'cros_bisect',
     'cros_history',

@@ -244,7 +244,10 @@ class OrchMenuApi(RecipeApi):
       self._wait_for_inflight_orchestrator()
 
       # Yield while inside of the bot_cost.cq_run_cost_context.
-      yield config
+      try:
+        yield config
+      finally:
+        self.m.build_menu.add_child_build_ids_to_output_property()
 
   def create_recipe_result(self):
     """Create the correct return value for RunSteps.

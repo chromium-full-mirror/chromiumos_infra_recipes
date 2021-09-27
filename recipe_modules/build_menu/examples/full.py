@@ -5,9 +5,11 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/swarming',
+    'recipe_engine/step',
     'build_menu',
     'cros_bisect',
     'cros_build_api',
@@ -20,6 +22,7 @@ from PB.chromiumos import common
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 PROPERTIES = FullProperties
 
@@ -52,6 +55,7 @@ def DoRunSteps(api, properties):
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       api.build_menu.upload_artifacts()
+      api.build_menu.add_child_build_ids_to_output_property()
 
     # Sometimes these are RepeatedCompositeFieldContainter, sometimes they are
     # list.  Cast them.
@@ -60,7 +64,35 @@ def DoRunSteps(api, properties):
 
 
 def GenTests(api):
-  # Normal CQ build, with one gerrit_change.
+
+  def get_buildbucket_simulated_search_results(builder):
+    """
+    Get buildbucket simulated search results for finding child builders.
+
+    Args:
+      builder (str): Builder name.
+
+    Returns:
+      (TestData): Test data for 'buildbucket.search' step.
+    """
+    return api.buildbucket.simulated_search_results([
+        build_pb2.Build(id=101, builder={'builder': builder}),
+        build_pb2.Build(id=102, builder={'builder': builder})
+    ])
+
+  def check_child_build_output_properties(check, steps,
+                                          expect_child_builds=False):
+    """
+    Validation of child build ids in build output properties.
+    """
+    child_builds = post_process.GetBuildProperties(steps).get('child_builds')
+    if child_builds:
+      check(
+          expect_child_builds and len(child_builds) == 2 and
+          child_builds[0] == '101' and child_builds[1] == '102')
+    else:
+      check(not expect_child_builds)
+
   yield api.build_menu.test(
       'cq-build',
       api.swarming.properties(
@@ -72,6 +104,9 @@ def GenTests(api):
               '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           )
       ),
+      get_buildbucket_simulated_search_results('atlas'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(lambda check, steps: check_child_build_output_properties(check, steps, True)),
       cq=True,
   )
 
@@ -79,7 +114,8 @@ def GenTests(api):
   yield api.build_menu.test(
       'slim-cq-build',
       api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'), cq=True,
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(check_child_build_output_properties), cq=True,
       build_target='atlas-slim')
 
   # This covers the env_info.pointless check.
