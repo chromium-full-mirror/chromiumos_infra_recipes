@@ -14,6 +14,8 @@ from urllib.parse import urlunparse
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+from datetime import timedelta
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 
 class GitilesApi(recipe_api.RecipeApi):
@@ -115,6 +117,7 @@ class GitilesApi(recipe_api.RecipeApi):
       pres.logs['data'] = decoded_data
       return decoded_data
 
+  @exponential_retry(retries=5, delay=timedelta(seconds=5))
   def set_change_labels(self, change_num, labels, gerrit_host,
                         credential_cookie_location=None, test_output_data=None):
     """Set the labels on a gerrit change using Gerrit and Gitiles REST API.

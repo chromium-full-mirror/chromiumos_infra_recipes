@@ -5303,11 +5303,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 APIs for dealing with Gitiles.
 
-#### **class [GitilesApi](/recipe_modules/gitiles/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitilesApi](/recipe_modules/gitiles/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gitiles helpers.
 
-&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#22)(self, host, project, branch, test_output_data=None):**
+&mdash; **def [fetch\_revision](/recipe_modules/gitiles/api.py#24)(self, host, project, branch, test_output_data=None):**
 
 Call gitiles-fetch-ref support tool.
 
@@ -5320,7 +5320,7 @@ Args:
 Returns:
   str: the current revision hash of the specified branch
 
-&mdash; **def [file\_url](/recipe_modules/gitiles/api.py#62)(self, commit, file_path=None):**
+&mdash; **def [file\_url](/recipe_modules/gitiles/api.py#64)(self, commit, file_path=None):**
 
 Return the url for a file in a GitilesCommit.
 
@@ -5331,7 +5331,7 @@ Args:
 Returns:
   (str) The url for the file.
 
-&mdash; **def [get\_file](/recipe_modules/gitiles/api.py#75)(self, host, project, path, ref=None, public=True, credential_cookie_location=None, test_output_data=None):**
+&mdash; **def [get\_file](/recipe_modules/gitiles/api.py#77)(self, host, project, path, ref=None, public=True, credential_cookie_location=None, test_output_data=None):**
 
 Return the contents of a file hosted on Gitiles.
 
@@ -5355,7 +5355,7 @@ Returns:
   (str) The contents of the file as a string or raise StepFailure on
       unexpected curl return.
 
-&mdash; **def [repo\_url](/recipe_modules/gitiles/api.py#51)(self, commit):**
+&mdash; **def [repo\_url](/recipe_modules/gitiles/api.py#53)(self, commit):**
 
 Return the url for the repo in a GitilesCommit.
 
@@ -5365,7 +5365,7 @@ Args:
 Returns:
   (str) The url for the repo.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gitiles/api.py#118)(self, change_num, labels, gerrit_host, credential_cookie_location=None, test_output_data=None):**
+&emsp; **@exponential_retry(retries=5, delay=timedelta(seconds=5))**<br>&mdash; **def [set\_change\_labels](/recipe_modules/gitiles/api.py#120)(self, change_num, labels, gerrit_host, credential_cookie_location=None, test_output_data=None):**
 
 Set the labels on a gerrit change using Gerrit and Gitiles REST API.
 
