@@ -39,4 +39,9 @@ message ManifestDoctorProperties {
 
     // Milestones to consider within project_buildspec_watch_paths.
     int32 project_buildspec_min_milestone = 8;
+
+    // Paths within manifest-versions to watch for buildspec creation for misc.
+    // (non project) repositories.
+    repeated string project_buildspec_watch_paths_other_repos = 10;
+
 }

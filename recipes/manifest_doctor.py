@@ -73,12 +73,18 @@ def RunSteps(api, properties):
 
       api.step("run manifest_doctor", cmd)
 
-  if len(properties.project_buildspec_watch_paths) > 0:
+  if len(properties.project_buildspec_watch_paths
+        ) > 0 and properties.project_buildspec_min_milestone > 0:
     with api.step.nest("create partner buildspecs"):
       cmd = [manifest_doctor_path, "project-buildspec"]
       cmd += ["--paths", ",".join(properties.project_buildspec_watch_paths)]
       cmd += ["--min_milestone", properties.project_buildspec_min_milestone]
       cmd += ["--projects", ",".join(properties.project_buildspecs)]
+      if properties.project_buildspec_watch_paths_other_repos:
+        cmd += [
+            "--other-repos",
+            ",".join(properties.project_buildspec_watch_paths_other_repos)
+        ]
       if properties.push:
         cmd += ["--push"]
 
@@ -135,6 +141,7 @@ def GenTests(api):
                   ["full/buildspecs/", "buildspecs/"],
               "project_buildspec_min_milestone": 90,
               "project_buildspecs": ["galaxy/", "foo/bar"],
+              "project_buildspec_watch_paths_other_repos": ["chromeos/foo"],
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
@@ -150,12 +157,17 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'create external buildspecs (legacy).run manifest_doctor',
                      ['--paths', 'buildspecs/']),
-      api.post_check(
-          post_process.StepCommandContains,
-          'create partner buildspecs.run manifest_doctor', [
-              '--paths', 'full/buildspecs/,buildspecs/', '--min_milestone',
-              '90', '--projects', 'galaxy/,foo/bar'
-          ]),
+      api.post_check(post_process.StepCommandContains,
+                     'create partner buildspecs.run manifest_doctor', [
+                         '--paths',
+                         'full/buildspecs/,buildspecs/',
+                         '--min_milestone',
+                         '90',
+                         '--projects',
+                         'galaxy/,foo/bar',
+                         '--other-repos',
+                         'chromeos/foo',
+                     ]),
       api.post_check(
           post_process.StepCommandContains,
           'branch local manifests.run manifest_doctor',

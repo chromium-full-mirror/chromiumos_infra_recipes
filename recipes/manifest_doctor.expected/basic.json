@@ -83,7 +83,9 @@
       "--min_milestone",
       "90",
       "--projects",
-      "galaxy/,foo/bar"
+      "galaxy/,foo/bar",
+      "--other-repos",
+      "chromeos/foo"
     ],
     "name": "create partner buildspecs.run manifest_doctor",
     "~followup_annotations": [
