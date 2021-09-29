@@ -514,26 +514,6 @@
   },
   {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "set-disk-auto-delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.set disk to autodelete",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos"
@@ -617,6 +597,26 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "set-disk-auto-delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--auto-delete",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.set disk to autodelete",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

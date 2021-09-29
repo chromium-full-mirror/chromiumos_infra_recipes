@@ -290,7 +290,6 @@ class GcloudApi(recipe_api.RecipeApi):
       # Increment the device reference; /dev/sda is root device.
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
-      self.set_disk_autodelete(instance=instance, disk=disk, zone=zone)
 
   def sync_disk_cache(self, name):
     """Force a local disk cache sync before snapshotting.
@@ -844,6 +843,8 @@ class GcloudApi(recipe_api.RecipeApi):
                 'write overlayfs branch file',
                 self.snapshot_version_path.join(self._overlay_branch_file),
                 self._branch)
+            self.set_disk_autodelete(instance=self._infra_host, disk=self._disk,
+                                     zone=self._zone)
           self.m.file.write_text('write version file', local_version_path,
                                  snapshot)
     if not recipe_mount:
