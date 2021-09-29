@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 import datetime
 import os
 import re
@@ -267,6 +268,7 @@ class GcloudApi(recipe_api.RecipeApi):
         blkid = blk['name'].split('sd')[1]
     return blkid
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def attach_disk(self, name, instance, disk, zone):
     """Attach a disk to a GCE instance.
 
@@ -304,6 +306,7 @@ class GcloudApi(recipe_api.RecipeApi):
           path_to_sync,
       ], infra_step=True)
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def detach_disk(self, instance, disk, zone):
     """Detach a disk to a GCE instance.
 
@@ -446,6 +449,7 @@ class GcloudApi(recipe_api.RecipeApi):
               'UUID={} {} ext4 discard,defaults,noatime,nofail 0 2'.format(
                   uuid, mount_path)), infra_step=True)
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def set_disk_autodelete(self, instance, disk, zone):
     """Set a disk to autodelete when a GCE instance is deleted.
 
@@ -470,6 +474,7 @@ class GcloudApi(recipe_api.RecipeApi):
           '--zone={}'.format(zone),
       ], infra_step=True)
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def snapshot_exists(self, snapshot):
     """Check whether a snapshot exists.
 
@@ -491,6 +496,7 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def image_exists(self, image):
     """Check whether a image exists.
 
@@ -512,6 +518,7 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def disk_exists(self, disk):
     """Check whether a disk exists.
 
@@ -533,6 +540,7 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def list_all_disks(self):
     """Pulls a list of all disks that exist.
 
@@ -557,6 +565,7 @@ class GcloudApi(recipe_api.RecipeApi):
       disks[gce_disk['name']] = gce_disk['zone'].rsplit('/', 1)[1]
     return disks
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def create_image_from_disk(self, disk, image_name, zone):
     """Create an image from specified disk.
 
@@ -571,6 +580,7 @@ class GcloudApi(recipe_api.RecipeApi):
           '--source-disk={}'.format(disk), '--source-disk-zone={}'.format(zone)
       ], infra_step=True)
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def snapshot_disk(self, disk, snapshot_name, zone):
     """Snapshot an attached disk on a GCE instance.
 
