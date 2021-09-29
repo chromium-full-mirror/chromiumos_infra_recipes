@@ -105,6 +105,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.publish build ID.call `result_flow`.ensure result_flow.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -131,6 +142,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.publish build ID.call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
@@ -209,6 +231,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
@@ -235,6 +268,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",
     "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
@@ -276,6 +320,17 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"fake_host\"\n}",
     "~followup_annotations": [
@@ -342,6 +397,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
     "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"fake_build\"\n    }\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2045-02-03T00:00:55Z\", \n  \"dutHostname\": \"fake_host\"\n}",
     "~followup_annotations": [
@@ -406,6 +472,17 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: run test.call `phosphorus`.run-test",
     "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"dutHostnames\": [\n    \"fake_host\"\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2045-02-03T00:00:55Z\"\n}",
     "~followup_annotations": [
@@ -456,6 +533,17 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: fetch crashes.call `phosphorus`.fetch-crashes",
     "stdin": "{\n  \"deadline\": \"2045-02-03T00:00:55Z\", \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"dutHostname\": \"fake_host\"\n}",
     "~followup_annotations": [
@@ -506,6 +594,17 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: upload to TKO.call `phosphorus`.upload-to-tko",
     "stdin": "{\n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
@@ -535,6 +634,17 @@
       "dummy-results-dir"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: get test results.call `phosphorus`.parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -592,6 +702,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"dummy-results-dir\", \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
@@ -620,6 +741,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Archive CTS results.prepare uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -658,6 +790,17 @@
       "gs://fake-bucket/fake-folder"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -698,6 +841,17 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.Phosphorus: save local DUT state.call `phosphorus`.save",
     "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"fake_host\"\n}",
     "~followup_annotations": [
@@ -739,6 +893,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.original_test.publish build ID.call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [
@@ -785,6 +950,17 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`.remove",
     "stdin": "{\n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [

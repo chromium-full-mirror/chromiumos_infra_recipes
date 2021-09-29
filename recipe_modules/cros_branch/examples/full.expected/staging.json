@@ -17,6 +17,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "ensure branch_util.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -42,6 +54,18 @@
       "--release",
       "--skip-group-check"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
@@ -57,6 +81,18 @@
       "--skip-group-check",
       "--force"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create branch from http://chromium.org/manifest.xml",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
@@ -76,6 +112,18 @@
       "--skip-group-check",
       "--force"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create branch from buildspec",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@@@@",
@@ -97,6 +145,18 @@
       "nami",
       "--skip-group-check"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
@@ -110,6 +170,18 @@
       "branch_new_name",
       "--skip-group-check"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "rename branch my_branch to branch_new_name",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
@@ -122,6 +194,18 @@
       "my_branch",
       "--skip-group-check"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "delete branch my_branch",
     "~followup_annotations": [
       "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"

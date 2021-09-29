@@ -23,6 +23,18 @@
       "[CLEANUP]/test-artifacts_tmp_1/autotest_server_package.tar.bz2"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup tast.gsutil download tast bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -36,6 +48,18 @@
       "--directory",
       "[CLEANUP]/test-artifacts_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup tast.untar tast",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -84,6 +108,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "provision DUT.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -108,6 +144,18 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "provision DUT.call `phosphorus`.build-parallels-image-save",
     "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
     "~followup_annotations": [
@@ -138,6 +186,18 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "provision DUT.call `phosphorus` (2).build-parallels-image-provision",
     "stdin": "{\n  \"deadline\": \"2012-05-14T14:53:21Z\", \n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
     "~followup_annotations": [
@@ -164,6 +224,18 @@
       "placeholder-dut-name",
       "pita.CreateFromIso.uprev"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.tast list",
     "timeout": 120,
     "~followup_annotations": [
@@ -192,6 +264,18 @@
       "placeholder-dut-name",
       "pita.CreateFromIso.uprev"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.tast run",
     "timeout": 5400,
     "~followup_annotations": [
@@ -204,6 +288,18 @@
       "[CLEANUP]/tast-results_tmp_1/tests/pita.CreateFromIso.uprev/PvmDefault.zip",
       "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.rename VM image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -228,6 +324,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.process tast output.read results.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -285,6 +393,18 @@
       "gs://chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.process tast output.GS upload first_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -308,6 +428,18 @@
       "/var/log",
       "[CLEANUP]/var-log-dump_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.record logs.copy logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -322,6 +454,18 @@
       "777",
       "[CLEANUP]/var-log-dump_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.record logs.loosen permission",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -352,6 +496,18 @@
       "gs://chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/system_logs"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "invoke tast.record logs.GS upload system_logs.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -381,6 +537,18 @@
       "gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload image.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -414,6 +582,18 @@
       "gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20120514.zip"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload image.set image permissions on destination.gsutil acl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -446,6 +626,18 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mark DUT ready.call `phosphorus`.build-parallels-image-save",
     "stdin": "{\n  \"dutState\": \"ready\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
     "~followup_annotations": [
@@ -469,6 +661,18 @@
       "sha256sum",
       "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "compute image size and sha256.get file sha256 hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -480,6 +684,18 @@
       "--printf=%s",
       "[CLEANUP]/parallels-image_tmp_1/pre_pluginvm_image_1.2.3.4_20120514.zip"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "compute image size and sha256.get file length",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

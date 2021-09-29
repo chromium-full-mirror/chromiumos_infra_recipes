@@ -31,6 +31,18 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get non-skipped builders.gerrit fetch current CL info",
     "timeout": 60,
     "~followup_annotations": [
@@ -75,6 +87,18 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get non-skipped builders.gerrit changes",
     "timeout": 60,
     "~followup_annotations": [
@@ -102,6 +126,18 @@
       "--json",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get non-skipped builders.parse description",
     "stdin": "A test change\n\nTest-Recipes-Skip-Builder:staging-Annealing\n",
     "~followup_annotations": [
@@ -131,6 +167,18 @@
       "[CLEANUP]/recipes"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "checkout recipes repo.ensure recipes workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -155,6 +203,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "checkout recipes repo.gclient setup",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -189,6 +249,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "checkout recipes repo.gclient sync",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -223,6 +295,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "checkout recipes repo.gclient recurse (git config user.name)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -249,6 +333,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "checkout recipes repo.gclient recurse (git config user.email)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -262,6 +358,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "git rev-parse",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
@@ -281,6 +389,18 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "apply gerrit changes.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -307,6 +427,18 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "apply gerrit changes.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -329,6 +461,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "apply gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
     "timeout": 600,
@@ -390,6 +534,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "apply gerrit changes.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -403,6 +559,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "apply gerrit changes.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -415,6 +583,18 @@
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "apply gerrit changes.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -448,6 +628,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.get affected files.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -478,6 +670,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -493,6 +697,18 @@
       "1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.led get-build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -534,6 +750,18 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.recipe analyze",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -569,6 +797,18 @@
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -584,6 +824,18 @@
       "2"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led get-build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -625,6 +877,18 @@
       "dry_run=true"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit",
     "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ],\n            \"task_id\": \"fake-id-3\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"recipe\": \"release_triggerer\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
@@ -680,6 +944,18 @@
       "bot_size=large"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (2)",
     "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ],\n            \"task_id\": \"fake-id-3\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
@@ -733,6 +1009,18 @@
       "edit-recipe-bundle"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-recipe-bundle",
     "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-3\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
@@ -794,6 +1082,18 @@
       "20"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system",
     "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-3\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  },\n  \"cas_user_payload\": {\n    \"digest\": {\n      \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n      \"size_bytes\": \"1337\"\n    }\n  }\n}",
     "~followup_annotations": [
@@ -855,6 +1155,18 @@
       "staging-release-triggerer 2"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (3)",
     "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-3\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  },\n  \"cas_user_payload\": {\n    \"digest\": {\n      \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n      \"size_bytes\": \"1337\"\n    }\n  }\n}",
     "~followup_annotations": [
@@ -915,6 +1227,18 @@
       "launch"
     ],
     "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led launch",
     "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-3\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    },\n    \"name\": \"staging-release-triggerer 2\"\n  },\n  \"cas_user_payload\": {\n    \"digest\": {\n      \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n      \"size_bytes\": \"1337\"\n    }\n  }\n}",
     "~followup_annotations": [
@@ -960,6 +1284,18 @@
       "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "collect results.install infra/tools/luci/swarming.ensure package directory",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -979,6 +1315,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "collect results.install infra/tools/luci/swarming.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1008,6 +1356,18 @@
       "fake-id-3"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "collect results.collect swarming tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

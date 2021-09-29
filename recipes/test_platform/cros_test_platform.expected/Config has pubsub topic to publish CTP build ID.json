@@ -13,6 +13,17 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -105,6 +116,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish build ID.call `result_flow`.ensure result_flow.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -130,6 +152,17 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish build ID.call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"42\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
@@ -225,6 +258,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -278,6 +322,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "enumerate tests.call binary.enumerate",
     "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"default-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"default-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"default-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
@@ -329,6 +384,17 @@
       "[START_DIR]/input.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execute.call binary.write input",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -402,6 +468,17 @@
       "TMPDIR": "[CLEANUP]/tmp_tmp_2"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execute.call binary.launch luciexe",
     "stdin": "\b*2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002\ufffd\u0001\u001d\n\u0015parent_buildbucket_id\u0012\u00041234",
     "~followup_annotations": [
@@ -424,6 +501,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execute.call binary.read output",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -492,6 +580,17 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish build ID (2).call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"42\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [
@@ -517,6 +616,17 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "postprocess.default.buildbucket.schedule",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"properties\": {\"debugSymbolsArchiveUrl\": \"default-metadata-url\", \"testResults\": [{\"logData\": {}}]}, \"requestId\": \"42-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [

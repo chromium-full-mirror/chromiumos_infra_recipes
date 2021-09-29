@@ -8,6 +8,18 @@
       "scheduler.Scheduler.EmitTriggers"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "trigger chromeos jobs",
     "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"release-R86-13421.B-branch-job\", \"project\": \"chromeos\"}], \"trigger\": {\"gitiles\": {\"ref\": \"refs/heads/release-R86-13421.B\", \"repo\": \"https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay\", \"revision\": \"589f2dd59777915e8e05cc0738724033e3ad26ff\", \"tags\": [\"buildset:commit/gitiles/chromium.googlesource.com/project-a/+/2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"gitiles_ref:refs/heads/main\", \"parent_buildername:builder\", \"user_agent:recipe\"]}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"builder/0\"}}], \"timestamp\": 1337000001500000}",
     "~followup_annotations": [

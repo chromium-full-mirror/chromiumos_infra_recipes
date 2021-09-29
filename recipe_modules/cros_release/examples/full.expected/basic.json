@@ -16,6 +16,18 @@
       "/preload/chromeos-sdk"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure chroot path.create preload path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -41,6 +53,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.create pinned manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -67,6 +91,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.clone manifest-versions.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -93,6 +129,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -112,6 +160,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.ensure [CLEANUP]/manifest-versions_tmp_1/releasespecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -130,6 +190,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.write releasespecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -152,6 +224,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.commit releasespecs/99/1234.56.0.xml to release.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -170,6 +254,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.commit releasespecs/99/1234.56.0.xml to release.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -191,6 +287,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.commit releasespecs/99/1234.56.0.xml to release.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -205,6 +313,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec.commit releasespecs/99/1234.56.0.xml to release.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -230,6 +350,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).create pinned manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -256,6 +388,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).clone manifest-versions.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -275,6 +419,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).ensure [CLEANUP]/manifest-versions_tmp_2/releasespecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -293,6 +449,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).write releasespecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -315,6 +483,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).commit releasespecs/99/1234.56.0.xml to release.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -333,6 +513,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).commit releasespecs/99/1234.56.0.xml to release.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -354,6 +546,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).commit releasespecs/99/1234.56.0.xml to release.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -368,6 +572,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).commit releasespecs/99/1234.56.0.xml to release.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -394,6 +610,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (2).upload releasespecs/99/1234.56.0.xml to bucket/foo/.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -420,6 +648,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).create pinned manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -446,6 +686,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).clone manifest-versions.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -465,6 +717,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).ensure [CLEANUP]/manifest-versions_tmp_3/releasespecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -483,6 +747,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).write releasespecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -505,6 +781,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).commit releasespecs/99/1234.56.0.xml to release.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -523,6 +811,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).commit releasespecs/99/1234.56.0.xml to release.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -544,6 +844,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).commit releasespecs/99/1234.56.0.xml to release.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -558,6 +870,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).commit releasespecs/99/1234.56.0.xml to release.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -584,6 +908,18 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "create releasespec (3).upload releasespecs/99/1234.56.0.xml to bucket/foo/bar.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -617,6 +953,18 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push images.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -657,6 +1005,18 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push images.call chromite.api.ImageService/PushImage.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -691,6 +1051,18 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push images.call chromite.api.ImageService/PushImage.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -713,6 +1085,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push images.call chromite.api.ImageService/PushImage.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -746,6 +1130,18 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "generate payloads.running paygen orchestrator.schedule",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_testing_models\": [], \"builder_name\": \"amd64-generic\", \"channels\": [], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"keyset\": \"\", \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
@@ -829,6 +1225,18 @@
       "8922054662172514000"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "generate payloads.running paygen orchestrator.collect.wait",
     "timeout": 25200,
     "~followup_annotations": [
@@ -843,6 +1251,18 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "generate payloads.running paygen orchestrator.collect.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514000\"}}]}",
     "~followup_annotations": [

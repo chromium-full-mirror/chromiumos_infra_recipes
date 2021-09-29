@@ -29,6 +29,18 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get non-skipped builders.gerrit fetch current CL info",
     "timeout": 60,
     "~followup_annotations": [
@@ -73,6 +85,18 @@
       "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get non-skipped builders.gerrit changes",
     "timeout": 60,
     "~followup_annotations": [
@@ -100,6 +124,18 @@
       "--json",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get non-skipped builders.parse description",
     "stdin": "A test change\n\nTest-Recipes-Skip-Builder:other-builder\n",
     "~followup_annotations": [

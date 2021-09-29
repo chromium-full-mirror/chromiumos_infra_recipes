@@ -16,6 +16,18 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "read builder configs.fetch refs/changes/45/12345/3:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
@@ -39,6 +51,18 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "read builder configs (2).fetch refs/changes/45/12345/3:generated/builder_configs.cfg",
     "timeout": 180,
     "~followup_annotations": [
