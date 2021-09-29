@@ -283,10 +283,11 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self._dev_ref = chr(ord(self._determine_dev_id()) + 1)
-      self.m.step('attach disk', [
-          'gcloud', 'compute', 'instances', 'attach-disk', instance,
-          '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
-      ], infra_step=True)
+      if not self.disk_attached(instance=instance, disk=disk, zone=zone):
+        self.m.step('attach disk', [
+            'gcloud', 'compute', 'instances', 'attach-disk', instance,
+            '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
+        ], infra_step=True)
       # Increment the device reference; /dev/sda is root device.
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
@@ -563,6 +564,30 @@ class GcloudApi(recipe_api.RecipeApi):
     for gce_disk in output:
       disks[gce_disk['name']] = gce_disk['zone'].rsplit('/', 1)[1]
     return disks
+
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  def disk_attached(self, instance, disk, zone):
+    """Check whether a disk is attached to an instance.
+
+    Args:
+      instance(str): Name of the instance to check.
+      disk(str): Name of the disk to check.
+      zone(str): Name of the zone that the instance is in.
+
+    Returns:
+      Bool of whether the disk is attached or not.
+    """
+    list_cmd = [
+        'gcloud', 'compute', 'instances', 'describe', '{}'.format(instance),
+        '--zone={}'.format(zone), '--format', 'json(disks)'
+    ]
+    output = self.m.easy.stdout_json_step(
+        'check whether disk is attached: {}'.format(disk), list_cmd,
+        test_stdout=self.test_api.disk_attached_data, infra_step=True)
+    for gce_disk in output["disks"]:
+      if gce_disk['source'].endswith(disk):
+        return True
+    return False
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def create_image_from_disk(self, disk, image_name, zone):
