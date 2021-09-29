@@ -603,7 +603,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   build_target=self.build_target,
                   chroot=self.m.cros_sdk.chroot,
                   version=version,
-                  tags=[version],
+                  tags=[version] + [str(build_id)] if build_id else [],
                   labels={
                       "build-url":
                           self.m.buildbucket.build_url() if build_id else "led",
