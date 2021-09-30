@@ -886,6 +886,7 @@ class GcloudApi(recipe_api.RecipeApi):
               self.snapshot_version_path.join(self._overlay_branch_file),
               test_data='main')
         except self.m.step.StepFailure:
+          self.m.step.active_result.presentation.status = 'SUCCESS'
           with self.m.step.nest(
               'branch not set for overlay, defaulting') as pres:
             # This is intended behavior if a new cache builder is added.

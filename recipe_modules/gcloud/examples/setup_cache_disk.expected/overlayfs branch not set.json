@@ -437,10 +437,7 @@
   },
   {
     "cmd": [],
-    "name": "determine whether to reset overlayfs directories",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "determine whether to reset overlayfs directories"
   },
   {
     "cmd": [
@@ -456,8 +453,7 @@
     "infra_step": true,
     "name": "determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
