@@ -2375,7 +2375,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:commit-bot@chromium.org\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"project:chromeos\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
@@ -2442,7 +2442,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:commit-bot@chromium.org\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"project:chromeos\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514001\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
@@ -2496,7 +2496,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:commit-bot@chromium.org\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"project:chromeos\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"critical\": \"YES\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
@@ -2687,10 +2687,10 @@
       "@@@STEP_LOG_LINE@planner_input@  }, @@@",
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoexIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiHHVzZXI6Y29tbWl0LWJvdEBjaHJvbWl1bS5vcmcyBgi5wqLYBWAMeq0BCnYKKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWMKRwoUJGNocm9tZW9zL2J1aWxkX21lbnUSLyotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGjMKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEglwcm9qZWN0LWEYwMQHIAeCAZIBCo8BChcKCmJ1aWxkX2Nvc3QSCREAAAAAAAAkQAorCgxidWlsZF90YXJnZXQSGyoZChcKBG5hbWUSDxoNYW1kNjQtZ2VuZXJpYwpHChQkY2hyb21lb3MvYnVpbGRfbWVudRIvKi0KKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWOSAUASFSAeMhEKCGJvdF9zaXplEgVsYXJnZSonEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAwmgEYCg9jcV9leHBlcmltZW50YWwSBWZhbHNlqAEB\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoexIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiEHByb2plY3Q6Y2hyb21lb3MyBgi5wqLYBWAMeq0BCnYKKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWMKRwoUJGNocm9tZW9zL2J1aWxkX21lbnUSLyotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGjMKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEglwcm9qZWN0LWEYwMQHIAeCAZIBCo8BChcKCmJ1aWxkX2Nvc3QSCREAAAAAAAAkQAorCgxidWlsZF90YXJnZXQSGyoZChcKBG5hbWUSDxoNYW1kNjQtZ2VuZXJpYwpHChQkY2hyb21lb3MvYnVpbGRfbWVudRIvKi0KKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWOSAUASFSAeMhEKCGJvdF9zaXplEgVsYXJnZSonEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAwmgEYCg9jcV9leHBlcmltZW50YWwSBWZhbHNlqAEB\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }, @@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexIYCghjaHJvbWVvcxICY3EaCGF0bGFzLWNxIhx1c2VyOmNvbW1pdC1ib3RAY2hyb21pdW0ub3JnMgYIucKi2AU6Bgjt9YXpBWAMep0BCmYKIwoMYnVpbGRfdGFyZ2V0EhMqEQoPCgRuYW1lEgcaBWF0bGFzCj8KFCRjaHJvbWVvcy9idWlsZF9tZW51EicqJQojCgxidWlsZF90YXJnZXQSEyoRCg8KBG5hbWUSBxoFYXRsYXMaMwogY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20SCXByb2plY3QtYRjAxAcgB5IBQBIVIB4yEQoIYm90X3NpemUSBWxhcmdlKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDKaARgKD2NxX2V4cGVyaW1lbnRhbBIFZmFsc2WoAQE=\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexIYCghjaHJvbWVvcxICY3EaCGF0bGFzLWNxIhBwcm9qZWN0OmNocm9tZW9zMgYIucKi2AU6Bgjt9YXpBWAMep0BCmYKIwoMYnVpbGRfdGFyZ2V0EhMqEQoPCgRuYW1lEgcaBWF0bGFzCj8KFCRjaHJvbWVvcy9idWlsZF9tZW51EicqJQojCgxidWlsZF90YXJnZXQSEyoRCg8KBG5hbWUSBxoFYXRsYXMaMwogY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20SCXByb2plY3QtYRjAxAcgB5IBQBIVIB4yEQoIYm90X3NpemUSBWxhcmdlKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDKaARgKD2NxX2V4cGVyaW1lbnRhbBIFZmFsc2WoAQE=\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ], @@@",
       "@@@STEP_LOG_LINE@planner_input@  \"gerritChanges\": [@@@",
@@ -6021,7 +6021,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0003\n\ufffd\u0003\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012 \n\bchromeos\u0012\u0002cq\u001a\u0010amd64-generic-cq\"\u001cuser:commit-bot@chromium.org2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0002\n\ufffd\u0002\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\n\bchromeos\u0012\u0002cq\u001a\batlas-cq\"\u001cuser:commit-bot@chromium.org2\u0006\b\ufffd\u00a2\ufffd\u0005:\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005`\fz\ufffd\u0001\nf\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514002\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAB[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0003\n\ufffd\u0003\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012 \n\bchromeos\u0012\u0002cq\u001a\u0010amd64-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0002\n\ufffd\u0002\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\n\bchromeos\u0012\u0002cq\u001a\batlas-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005:\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005`\fz\ufffd\u0001\nf\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514002\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAB[\nY\n chromium-review.googlesource.com\u0012&chromiumos/overlays/chromiumos-overlay\u0018\u024cU \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -6042,7 +6042,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@*\ufffd\u0003@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\ufffd\u0003\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012 @@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\bchromeos\u0012\u0002cq\u001a\u0010amd64-generic-cq\"\u001cuser:commit-bot@chromium.org2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\bchromeos\u0012\u0002cq\u001a\u0010amd64-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@v@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@+@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u001b*\u0019@@@",
@@ -6076,7 +6076,7 @@
       "@@@STEP_LOG_LINE@input.binaryproto@\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0018@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0002@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\ufffd\u0002\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\bchromeos\u0012\u0002cq\u001a\batlas-cq\"\u001cuser:commit-bot@chromium.org2\u0006\b\ufffd\u00a2\ufffd\u0005:\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005`\fz\ufffd\u0001@@@",
+      "@@@STEP_LOG_LINE@input.binaryproto@\bchromeos\u0012\u0002cq\u001a\batlas-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005:\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005`\fz\ufffd\u0001@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@#@@@",
       "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u0013*\u0011@@@",
@@ -6451,6 +6451,42 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@4321@https://cr-buildbucket.appspot.com/build/4321@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateIncludedInvocations",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.include sub resultdb invocations",
+    "stdin": "{\"addInvocations\": [\"invocations/build:4321\"], \"includingInvocation\": \"invocations/build:8945511751514863184\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:4321\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ], @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {
@@ -9391,6 +9427,42 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@orderfile-verify-orchestrator@https://cr-buildbucket.appspot.com/build/8922054662172515000@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateIncludedInvocations",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run follow on orchestrator.include sub resultdb invocations",
+    "stdin": "{\"addInvocations\": [\"invocations/build:8922054662172515000\"], \"includingInvocation\": \"invocations/build:8945511751514863184\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:8922054662172515000\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ], @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {
