@@ -18,7 +18,8 @@ GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
 SSD_ZONES = ['us-central1-b', 'us-east1-d']
 
-_SWARMING_HOST_REGEXP = (r'^chromeos-\w*-'
+_SWARMING_HOST_REGEXP = (r'^chromeos-'
+                         r'\w*-'
                          r'(?P<role>\w*)-'
                          r'(?P<zone>\w*-\w*-\w*)-'
                          r'(?P<suffix>.*)')
