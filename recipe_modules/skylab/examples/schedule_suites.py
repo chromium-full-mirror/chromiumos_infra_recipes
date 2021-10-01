@@ -63,15 +63,6 @@ def GenTests(api):
       api.properties(
           **{'$chromeos/skylab': SkylabProperties(enable_retries=True)}))
 
-  yield api.test(
-      'resultdb-settings',
-      api.properties(
-          **{
-              '$chromeos/skylab':
-                  SkylabProperties(enable_retries=True,
-                                   add_resultdb_settings=True)
-          }))
-
   build = api.buildbucket.try_build_message(project='chromeos',
                                             bucket='chromeos',
                                             builder='cq-orchestrator',

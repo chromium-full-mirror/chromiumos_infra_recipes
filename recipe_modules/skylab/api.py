@@ -31,12 +31,6 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
-    self._add_resultdb_settings = properties.add_resultdb_settings
-
-  def initialize(self):
-    # TODO(b/196956525): Remove once uploading to rdb is stable.
-    self._add_resultdb_settings |= ('chromeos.skylab.add_resultdb_settings' in
-                                    self.m.cros_infra_config.experiments)
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -135,10 +129,7 @@ class SkylabApi(recipe_api.RecipeApi):
             '{}:{}'.format(key, value) for key, value in tags.items()
         ]
         req.params.decorations.tags.extend(request_tags)
-        # TODO(b/196956525): Remove check for experiment once uploading to rdb
-        # is stable.
-        if (self._add_resultdb_settings and
-            uht.hw_test.hw_test_suite_type == HwTestCfg.TAST):
+        if uht.hw_test.hw_test_suite_type == HwTestCfg.TAST:
           resultdb_settings = self.m.json.dumps({
               'result_format': 'tast',
           })

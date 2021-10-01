@@ -6359,9 +6359,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for issuing commands to Skylab
 
-&mdash; **def [initialize](/recipe_modules/skylab/api.py#36)(self):**
-
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#49)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#43)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -6378,7 +6376,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#94)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#88)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -6392,11 +6390,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#45)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#39)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#203)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#194)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
