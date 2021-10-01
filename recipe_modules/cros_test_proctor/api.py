@@ -29,6 +29,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     if not self.timeout.seconds:
       self.timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
     self._vm_bucket = properties.vm_bucket or "staging"
+    self._resultdb_elegible_projects = properties.resultdb_elegible_projects
 
   def run_proctor_v2(self, gerrit_changes):
     """Runs the test platform v2 for a set of GerritChanges.
@@ -81,6 +82,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         test_to_build_target_map = {}
 
+        # TODO(b/201608160): Enable uploading to resultdb on select repos.
+        # Remove check for repos and experiment upon experiment conclusion.
+        if all(x.project in self._resultdb_elegible_projects
+               for x in self.m.src_state.gerrit_changes):
+          self.m.cros_infra_config.experiments.append(
+              'chromeos.cros_test_platform.add_resultdb_settings')
         test_tasks = self.schedule_tests(test_plan, previously_passed_tests,
                                          self.timeout, test_to_build_target_map,
                                          snapshot, is_retry=is_retry)

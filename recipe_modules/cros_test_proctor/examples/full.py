@@ -30,6 +30,7 @@ DEPS = [
     'easy',
     'gerrit',
     'skylab',
+    'src_state',
     'test_util',
 ]
 
@@ -50,7 +51,7 @@ def RunSteps(api, need_tests_builds_serialized):
                           need_tests_builds_serialized)
   gerrit_changes = []
   if need_tests_builds:
-    gerrit_changes = need_tests_builds[0].input.gerrit_changes
+    gerrit_changes = api.src_state.gerrit_changes
   _ = api.cros_test_proctor.run_proctor(need_tests_builds=need_tests_builds,
                                         snapshot=snapshot,
                                         gerrit_changes=gerrit_changes,
@@ -122,12 +123,52 @@ def GenTests(api):
                       )),
   ]
 
+  def cq_orchestrator_build_with_gerrit_change(**kwargs):
+    """Generate a test build proto with no gitiles commit project."""
+    kwargs.setdefault('bucket', 'cq')
+    kwargs.setdefault('builder', 'cq-orchestrator')
+    build = api.buildbucket.try_build_message(project='chromeos', **kwargs)
+    return api.buildbucket.build(build)
+
+  yield api.test(
+      'cq_with_resultdb_upload',
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
+      cq_orchestrator_build_with_gerrit_change(gerrit_changes=[
+          common_pb2.GerritChange(host='chromium-review.googlesource.com',
+                                  project='abc', change=1234)
+      ]), api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
+      api.properties(enable_history=True),
+      api.properties(
+          need_tests_builds_serialized=serialize_builds([
+              api.cros_history.build_with_passed_tests(
+                  ['arm-generic/hw/bvt-cq'])
+          ])),
+      api.properties(
+          **{
+              '$chromeos/cros_test_proctor':
+                  ProctorProperties(resultdb_elegible_projects=['abc'])
+          }),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks v2.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output([
+          vm_test_build('vm-test'),
+          vm_test_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
+      ], step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'))
+
   yield api.test(
       'tests_with_history',
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
-      # cq_orchestrator_build_with_gerrit_change(),
-      api.cq(run_mode=api.cq.FULL_RUN),
-      api.cros_history.is_retry(True),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
       api.properties(
           need_tests_builds_serialized=serialize_builds([

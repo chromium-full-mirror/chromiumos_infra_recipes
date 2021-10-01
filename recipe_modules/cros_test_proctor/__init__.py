@@ -19,6 +19,7 @@ DEPS = [
     'failures',
     'naming',
     'skylab',
+    'src_state',
 ]
 
 PROPERTIES = ProctorProperties
