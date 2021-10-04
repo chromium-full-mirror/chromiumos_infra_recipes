@@ -89,12 +89,7 @@ def GenTests(api):
     """Generate a test build proto with no gitiles commit project."""
     kwargs.setdefault('bucket', 'cq')
     kwargs.setdefault('builder', 'cq-orchestrator')
-    build = api.buildbucket.ci_build_message(project='chromeos', **kwargs)
-    build.input.gerrit_changes.extend([
-        common_pb2.GerritChange(host='chromium-review.googlesource.com',
-                                change=1234)
-    ])
-    return api.buildbucket.build(build)
+    return api.buildbucket.try_build(project='chromeos', **kwargs)
 
   yield api.test(
       'basic',

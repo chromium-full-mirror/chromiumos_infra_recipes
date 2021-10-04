@@ -25,9 +25,9 @@ def GenTests(api):
   yield api.test(
       'is-retry',
       api.buildbucket.simulated_search_results([
-          api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                           builder='bojack-cq',
-                                           status='SUCCESS', build_id=123)
+          api.buildbucket.try_build_message(project='chromeos', bucket='cq',
+                                            builder='bojack-cq',
+                                            status='SUCCESS', build_id=123)
       ], 'find matching builds.buildbucket.search'),
       api.properties(is_retry=True))
 

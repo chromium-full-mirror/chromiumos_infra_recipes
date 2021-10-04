@@ -23,10 +23,10 @@ def RunSteps(api):
 def GenTests(api):
 
   def build_msg(build_id, create_time):
-    message = api.buildbucket.ci_build_message(project='chromeos', bucket='cq',
-                                               builder='bojack-cq',
-                                               status='STARTED',
-                                               build_id=build_id)
+    message = api.buildbucket.try_build_message(project='chromeos', bucket='cq',
+                                                builder='bojack-cq',
+                                                status='STARTED',
+                                                build_id=build_id)
     message.create_time.seconds = create_time
     return message
 

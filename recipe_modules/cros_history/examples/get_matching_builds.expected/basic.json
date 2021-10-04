@@ -20,7 +20,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"build\": {\"startBuildId\": \"83\"}, \"builder\": {\"bucket\": \"cq\", \"builder\": \"bojack-cq\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:06:40Z\"}}"
+      "{\"build\": {\"startBuildId\": \"83\"}, \"builder\": {\"bucket\": \"cq\", \"builder\": \"bojack-cq\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:06:40Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -38,7 +38,7 @@
     "name": "find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"bojack-cq\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:01:40Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"id\": \"100\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:100\"}, \"swarming\": {\"priority\": 30}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/main\"}}, \"status\": \"STARTED\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"bojack-cq\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:01:40Z\", \"createdBy\": \"project:chromeos\", \"id\": \"100\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:100\"}, \"swarming\": {\"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}]}, \"status\": \"STARTED\", \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@bojack-cq@https://cr-buildbucket.appspot.com/build/100@@@"
     ]

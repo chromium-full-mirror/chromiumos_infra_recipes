@@ -40,8 +40,10 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('basic')
 
-  yield api.test('internal-builder',
-                 api.buildbucket.ci_build(builder='atlas-cq'))
+  yield api.test(
+      'internal-builder',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='atlas-cq'))
 
   yield api.test(
       'set-version', api.cros_version.workspace_version('R86-13421.11.0'),
