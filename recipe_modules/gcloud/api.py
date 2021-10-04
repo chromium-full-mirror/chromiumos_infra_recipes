@@ -846,7 +846,11 @@ class GcloudApi(recipe_api.RecipeApi):
           if local_version and self.image_exists(image=local_version):
             snapshot = local_version
           self.m.easy.set_properties_step(snapshot_version=snapshot)
-          if not self.disk_exists(disk=self._disk):
+          disk_exists = self.disk_exists(disk=self._disk)
+          if disk_exists and recipe_mount:
+            self.delete_disk(disk=self._disk, zone=self._zone)
+            disk_exists = False
+          if not disk_exists:
             # Create the disk but in the event of a stockout of SSD, catch the
             # exception and create a standard spinning disk.
             try:

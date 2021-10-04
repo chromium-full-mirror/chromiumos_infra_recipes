@@ -146,6 +146,8 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }, {
         "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr"
     }, {
+        "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90"
+    }, {
         "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90"
     }, {
         "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-cros"
