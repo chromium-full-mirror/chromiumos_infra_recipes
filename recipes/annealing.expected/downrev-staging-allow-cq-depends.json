@@ -2662,6 +2662,19 @@
   },
   {
     "cmd": [
+      "sudo",
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/workdir"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.cleanup overlayfs workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CLEANUP]/chromiumos_workspace"
     ],
@@ -2673,11 +2686,37 @@
   },
   {
     "cmd": [
+      "sudo",
+      "rm",
+      "-rf",
+      "[CACHE]/workspace/workdir"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.cleanup overlayfs workdir (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "rm",
+      "-rf",
+      "[CACHE]/workspace/workdir"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.cleanup overlayfs workdir (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

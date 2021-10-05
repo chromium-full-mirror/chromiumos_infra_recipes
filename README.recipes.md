@@ -5823,7 +5823,7 @@ A module for interacting with OverlayFS mounts.
 
 Initialize OverlayfsApi.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#122)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/overlayfs/api.py#129)(self):**
 
 Returns a context that cleans up any overlayfs mounts created in it.
 

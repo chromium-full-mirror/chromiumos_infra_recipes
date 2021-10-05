@@ -117,6 +117,13 @@ class OverlayfsApi(recipe_api.RecipeApi):
     cmd = str(unmount_script)
     self.m.step('unmount overlay %s' % name, [cmd, mount_path], infra_step=True)
 
+    # overlayfs leaves an empty dir called 'work', which is readable only by root.
+    # But, 'workdir' needs to be empty for next mount.
+    self.m.step(
+        'cleanup overlayfs workdir',
+        ['sudo', 'rm', '-rf', self.m.path['cache'].join(name, 'workdir')],
+        infra_step=True)
+
     self._cleanup_unmount(name, mount_path)
 
   @contextlib.contextmanager

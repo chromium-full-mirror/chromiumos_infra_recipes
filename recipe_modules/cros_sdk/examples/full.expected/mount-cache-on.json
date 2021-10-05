@@ -1575,6 +1575,19 @@
     ]
   },
   {
+    "cmd": [
+      "sudo",
+      "rm",
+      "-rf",
+      "[CACHE]/cros_chroot/workdir"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.cleanup overlayfs workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

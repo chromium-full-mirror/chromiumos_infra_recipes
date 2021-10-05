@@ -505,6 +505,19 @@
     ]
   },
   {
+    "cmd": [
+      "sudo",
+      "rm",
+      "-rf",
+      "[CACHE]/workspace/workdir"
+    ],
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.cleanup overlayfs workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
