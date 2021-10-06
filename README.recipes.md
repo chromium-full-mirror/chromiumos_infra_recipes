@@ -7411,15 +7411,15 @@ for example:
 &mdash; **def [RunSteps](/recipes/build_android_uprev.py#28)(api):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
-[DEPS](/recipes/build_borealis_rootfs.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/build_borealis_rootfs.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building a Borealis rootfs image.
 
-&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#24)(api):**
+&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#60)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#18)(api):**
+&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#40)(api, properties):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
 [DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)

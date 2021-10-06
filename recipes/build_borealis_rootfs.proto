@@ -1,0 +1,27 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_borealis_rootfs;
+
+import "chromiumos/common.proto";
+
+message BuildBorealisRootfsProperties {
+  // Path to the version file to update.
+  // Required
+  string version_file = 1;
+
+  // The package to generate CLs for.
+  // Required
+  chromiumos.PackageInfo package_info = 2;
+
+  // Destination gs bucket where the VM image will be copied.
+  // Required
+  string destination_gs_bucket = 3;
+
+  // Destination gs path where the VM image will be copied.
+  // Required
+  string destination_gs_path = 4;
+}
