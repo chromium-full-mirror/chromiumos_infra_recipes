@@ -520,22 +520,27 @@ class GcloudApi(recipe_api.RecipeApi):
     return False
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
-  def disk_exists(self, disk):
+  def disk_exists(self, disk, zone):
     """Check whether a disk exists.
 
     Args:
       disk(str): Name of the disk to check.
+      zone(str): GCE zone in which the disk exists.
 
     Returns:
       Bool of whether the disk exists or not.
     """
     list_cmd = [
-        'gcloud', 'compute', 'disks', 'list', '--format', 'json(name)',
-        '--filter', 'name={}'.format(disk)
+        'gcloud', 'compute', 'disks', 'describe', disk,
+        '--zone={}'.format(zone), '--format', 'json(name)'
     ]
-    output = self.m.easy.stdout_json_step(
-        'check whether disk exists: {}'.format(disk), list_cmd,
-        test_stdout=self.test_api.disk_exists_data, infra_step=True)
+    output = {}
+    try:
+      output = self.m.easy.stdout_json_step(
+          'check whether disk exists: {}'.format(disk), list_cmd,
+          test_stdout=self.test_api.disk_exists_data, infra_step=True)
+    except self.m.step.StepFailure:
+      self.m.step.active_result.presentation.status = 'SUCCESS'
     for gce_disk in output:
       if disk == gce_disk['name']:
         return True
@@ -846,7 +851,7 @@ class GcloudApi(recipe_api.RecipeApi):
           if local_version and self.image_exists(image=local_version):
             snapshot = local_version
           self.m.easy.set_properties_step(snapshot_version=snapshot)
-          disk_exists = self.disk_exists(disk=self._disk)
+          disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
           if disk_exists and recipe_mount:
             self.delete_disk(disk=self._disk, zone=self._zone)
             disk_exists = False

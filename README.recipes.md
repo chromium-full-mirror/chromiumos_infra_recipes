@@ -4176,7 +4176,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [branch](/recipe_modules/gcloud/api.py#81)(self):**
 
-&mdash; **def [check\_for\_disk\_mount](/recipe_modules/gcloud/api.py#757)(self, mount_path, mock_mount=False):**
+&mdash; **def [check\_for\_disk\_mount](/recipe_modules/gcloud/api.py#762)(self, mount_path, mock_mount=False):**
 
 Check whether there is a disk mounted on given path.
 
@@ -4223,7 +4223,7 @@ Args:
 
 Returns: A string name of the image.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#593)(self, disk, image_name, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#598)(self, disk, image_name, zone):**
 
 Create an image from specified disk.
 
@@ -4258,7 +4258,7 @@ Args:
 
 &mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#191)(self, image_name):**
 
-&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#703)(self, images):**
+&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#708)(self, images):**
 
 Delete the list of provided images from GCE.
 
@@ -4274,7 +4274,7 @@ Args:
   project(str): Google Cloud project name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#623)(self, snapshots):**
+&mdash; **def [delete\_snapshots](/recipe_modules/gcloud/api.py#628)(self, snapshots):**
 
 Delete the list of provided snapshots from GCE.
 
@@ -4293,7 +4293,7 @@ Args:
   disk(str): Google Cloud disk name.
   zone(str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [determine\_disks\_to\_delete](/recipe_modules/gcloud/api.py#715)(self, disks, instances):**
+&mdash; **def [determine\_disks\_to\_delete](/recipe_modules/gcloud/api.py#720)(self, disks, instances):**
 
 Determines the list of orphaned disks to delete.
 
@@ -4304,7 +4304,7 @@ Args:
 Returns:
   Dictionary containing disk name and zone to delete.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_attached](/recipe_modules/gcloud/api.py#569)(self, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_attached](/recipe_modules/gcloud/api.py#574)(self, instance, disk, zone):**
 
 Check whether a disk is attached to an instance.
 
@@ -4316,12 +4316,13 @@ Args:
 Returns:
   Bool of whether the disk is attached or not.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#522)(self, disk):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#522)(self, disk, zone):**
 
 Check whether a disk exists.
 
 Args:
   disk(str): Name of the disk to check.
+  zone(str): GCE zone in which the disk exists.
 
 Returns:
   Bool of whether the disk exists or not.
@@ -4330,7 +4331,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gce\_name\_limit](/recipe_modules/gcloud/api.py#89)(self):**
 
-&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#670)(self, retention_days, prefixes, protected_images=None):**
+&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#675)(self, retention_days, prefixes, protected_images=None):**
 
 Calculate the list of snapshots that have expired.
 
@@ -4339,7 +4340,7 @@ Args:
   prefixes(list|str): List of prefixes to filter.
   protected_images(list|str): List of images to preserve.
 
-&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#636)(self, retention_days, prefixes, protected_snapshots=None):**
+&mdash; **def [get\_expired\_snapshots](/recipe_modules/gcloud/api.py#641)(self, retention_days, prefixes, protected_snapshots=None):**
 
 Calculate the list of snapshots that have expired.
 
@@ -4360,7 +4361,7 @@ Args:
 Returns:
   Bool of whether the snapshot exists or not.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [list\_all\_disks](/recipe_modules/gcloud/api.py#544)(self):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [list\_all\_disks](/recipe_modules/gcloud/api.py#549)(self):**
 
 Pulls a list of all disks that exist.
 
@@ -4415,7 +4416,7 @@ Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#785)(self, cache_name, branch='main', disk_type='pd-standard', recipe_mount=False):**
+&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#790)(self, cache_name, branch='main', disk_type='pd-standard', recipe_mount=False):**
 
 Create disk from snapshot, reuse if still attached.
 
@@ -4434,7 +4435,7 @@ Args:
 
 Returns a Path to the base mount directory for cache builder.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#608)(self, disk, snapshot_name, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [snapshot\_disk](/recipe_modules/gcloud/api.py#613)(self, disk, snapshot_name, zone):**
 
 Snapshot an attached disk on a GCE instance.
 
@@ -8878,11 +8879,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/gcloud_disks.py#15)(api):**
 ### *recipes* / [gcloud:examples/setup\_cache\_disk](/recipe_modules/gcloud/examples/setup_cache_disk.py)
 
-[DEPS](/recipe_modules/gcloud/examples/setup_cache_disk.py#6): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/gcloud/examples/setup_cache_disk.py#8): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#21)(api):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#38): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

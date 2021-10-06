@@ -90,11 +90,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
@@ -541,11 +541,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "setup source cache disk (2).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
@@ -883,11 +883,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "setup source cache disk (3).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",

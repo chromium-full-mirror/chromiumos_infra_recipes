@@ -94,11 +94,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-lmno-cros",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-lmno-cros"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-cros",
@@ -537,11 +537,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-lmno-crosr90",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-lmno-crosr90"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "setup source cache disk (2).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-crosr90",
@@ -855,11 +855,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-lmno-crosstabilize",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-lmno-crosstabilize"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "setup source cache disk (3).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-crosstabilize",

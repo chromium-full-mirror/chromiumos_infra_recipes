@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -135,4 +137,16 @@ def GenTests(api):
       api.step_data((
           'determine whether to reset overlayfs directories.read overlayfs branch'
       ), retcode=3),
+  )
+  yield api.test(
+      'nothing returned on disk exists',
+      mock_directory('chromiumos'),
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
+      api.step_data((
+          'setup source cache disk (3).create disk from snapshot image.check whether'
+          +
+          ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize'
+      ), retcode=404),
+      api.post_check(post_process.StatusSuccess),
   )

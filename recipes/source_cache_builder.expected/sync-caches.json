@@ -106,11 +106,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "source cache update.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
@@ -860,11 +860,11 @@
       "gcloud",
       "compute",
       "disks",
-      "list",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+      "--zone=us-central1-b",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr"
+      "json(name)"
     ],
     "infra_step": true,
     "name": "source cache update.setup source cache disk (2).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",

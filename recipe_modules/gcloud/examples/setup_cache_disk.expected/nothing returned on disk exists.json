@@ -47,25 +47,6 @@
     "name": "setup source cache disk"
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "setup source cache disk.read local image version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "setup source cache disk.retrieve image version from storage",
     "~followup_annotations": [
@@ -97,43 +78,11 @@
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "list",
-      "--format",
-      "json(name)",
-      "--filter",
-      "name=test-cache-snapshot-123"
-    ],
-    "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.check whether image exists: test-cache-snapshot-123",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"test-cache-snapshot-123\"@@@"
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
     ]
   },
   {
@@ -142,13 +91,13 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
     ],
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -169,6 +118,52 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--image=",
+      "--quiet",
+      "--type=pd-standard"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/upperdir"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.cleanup overlayfs upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/workdir"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.cleanup overlayfs workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -267,7 +262,7 @@
       "compute",
       "instances",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--zone=us-central1-b",
       "--format",
       "json(disks)"
@@ -276,7 +271,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "setup source cache disk.create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -293,6 +288,26 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.attach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -388,9 +403,9 @@
       "compute",
       "instances",
       "set-disk-auto-delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -410,14 +425,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "test-cache-snapshot-123",
+      "",
       "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@test-cache-snapshot-123@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
@@ -521,13 +535,13 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
     ],
     "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+    "name": "setup source cache disk (2).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -555,27 +569,8 @@
       "gcloud",
       "compute",
       "disks",
-      "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.delete disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
       "create",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
       "--image=",
@@ -587,6 +582,30 @@
     },
     "infra_step": true,
     "name": "setup source cache disk (2).create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/upperdir"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (2).create disk from snapshot image.cleanup overlayfs upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/workdir"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (2).create disk from snapshot image.cleanup overlayfs workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -687,7 +706,7 @@
       "compute",
       "instances",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--zone=us-central1-b",
       "--format",
       "json(disks)"
@@ -696,7 +715,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+    "name": "setup source cache disk (2).create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -721,8 +740,8 @@
       "compute",
       "instances",
       "attach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -858,13 +877,13 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
     ],
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+    "name": "setup source cache disk (3).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -893,7 +912,7 @@
       "compute",
       "disks",
       "create",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
       "--image=",
@@ -905,6 +924,30 @@
     },
     "infra_step": true,
     "name": "setup source cache disk (3).create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/upperdir"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.cleanup overlayfs upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/workdir"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.cleanup overlayfs workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1005,7 +1048,7 @@
       "compute",
       "instances",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--zone=us-central1-b",
       "--format",
       "json(disks)"
@@ -1014,7 +1057,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+    "name": "setup source cache disk (3).create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1039,8 +1082,8 @@
       "compute",
       "instances",
       "attach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -1146,9 +1189,9 @@
       "compute",
       "instances",
       "set-disk-auto-delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -1231,7 +1274,7 @@
       "compute",
       "disks",
       "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
       "--zone=us-central1-b",
       "--quiet"
     ],
