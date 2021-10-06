@@ -232,7 +232,7 @@
       "@@@STEP_LOG_LINE@responses@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@responses@          }, @@@",
       "@@@STEP_LOG_LINE@responses@          \"logUrl\": \"logs://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz\", @@@",
+      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz/b100\", @@@",
       "@@@STEP_LOG_LINE@responses@          \"name\": \"foo-failed\"@@@",
       "@@@STEP_LOG_LINE@responses@        }, @@@",
       "@@@STEP_LOG_LINE@responses@        {@@@",
@@ -241,7 +241,7 @@
       "@@@STEP_LOG_LINE@responses@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@responses@          }, @@@",
       "@@@STEP_LOG_LINE@responses@          \"logUrl\": \"logs://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz1\", @@@",
+      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz/b101\", @@@",
       "@@@STEP_LOG_LINE@responses@          \"name\": \"foo-failed\"@@@",
       "@@@STEP_LOG_LINE@responses@        }@@@",
       "@@@STEP_LOG_LINE@responses@      ]@@@",
@@ -374,7 +374,7 @@
       "@@@STEP_LOG_LINE@output.json@            \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
       "@@@STEP_LOG_LINE@output.json@            \"verdict\": \"VERDICT_FAILED\"@@@",
       "@@@STEP_LOG_LINE@output.json@          },@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz\"@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz/b100\"@@@",
       "@@@STEP_LOG_LINE@output.json@        },@@@",
       "@@@STEP_LOG_LINE@output.json@        {@@@",
       "@@@STEP_LOG_LINE@output.json@          \"log_url\": \"logs://bar/baz1\",@@@",
@@ -383,7 +383,7 @@
       "@@@STEP_LOG_LINE@output.json@            \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
       "@@@STEP_LOG_LINE@output.json@            \"verdict\": \"VERDICT_FAILED\"@@@",
       "@@@STEP_LOG_LINE@output.json@          },@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz1\"@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz/b101\"@@@",
       "@@@STEP_LOG_LINE@output.json@        }@@@",
       "@@@STEP_LOG_LINE@output.json@      ]@@@",
       "@@@STEP_LOG_LINE@output.json@    }@@@",
@@ -396,9 +396,9 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00lU3PyU8PLcoBKQGyiq309ZMS\\ni4C4SglqM1QyLT8fVS4vMTcVKqGblpiZk5oCMo5OjjPE5zpDXM6Lra0FAMCfgL8=\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTquRiT0lNSyzNKRHK4zIU4k3Lz7fS109KLALiKikWjgIBJiUuoKBuWmJmTmqKFl9OfnoxQgWX\\nsRAfihZDLHr4UfUYCoGVAABkiCJW\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz\"}, {\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz1\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00lU3PyU8PLcoBKQGyiq309ZMS\\ni4C4SglqM1QyLT8fIaefZGhgAFKQl5ibCpXVTUvMzElNAZlJJxcaEnKiIS4nxtbWAgACn4LT\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTamLkYk9JTUsszSkRKucyExJKy8+30tdPSiwC4ir9JEMDAykWjgIBJiUuoIxuWmJmTmqKFl9O\\nfnoxQhmXORZ9hlj08aPqMxQCKwEAmuUkjw==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}, {\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-failed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskUrl\": \"foo://bar/baz/b101\"}]}@@@"
     ]
   },
   {
@@ -504,9 +504,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@1. (log)   foo-failed@logs://bar/baz@@@",
-      "@@@STEP_LINK@1. (task)  foo-failed@foo://bar/baz@@@",
+      "@@@STEP_LINK@1. (task)  foo-failed@foo://bar/baz/b100@@@",
       "@@@STEP_LINK@2. (log)   foo-failed@logs://bar/baz1@@@",
-      "@@@STEP_LINK@2. (task)  foo-failed@foo://bar/baz1@@@",
+      "@@@STEP_LINK@2. (task)  foo-failed@foo://bar/baz/b101@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

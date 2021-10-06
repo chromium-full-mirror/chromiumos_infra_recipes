@@ -5,7 +5,6 @@
 
 """Recipe for the ChromeOS Test Frontend."""
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
@@ -27,6 +26,7 @@ from PB.test_platform.steps.execute.build import Build
 
 import collections
 import json
+import re
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -42,6 +42,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/random',
     'recipe_engine/raw_io',
+    'recipe_engine/resultdb',
     'recipe_engine/step',
     'result_flow',
     'cros_tags',
@@ -53,6 +54,8 @@ DEPS = [
 # staging or prod is tagged with a timestamped release version.
 CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
+
+BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
 
 
 def output_ctp_release_timestamp_tag(api):
@@ -369,17 +372,24 @@ _SUCCESSFUL_VERDICTS = (TaskState.VERDICT_PASSED,
 def summarize(api, enumerations, responses):
   # Failures in summarization are non-infra related.
   failures = 0
+  invocations = []
   with api.step.nest('summarize') as step:
     for tag, response in sorted(responses.iteritems()):
       with api.step.nest('%s task results' % tag):
         _log_enumeration_errors(api, enumerations[tag])
         _log_task_results(api, response.task_results)
+        # TODO(b/201608160): Remove conditional upon experiment completion.
+        if api.cros_test_platform.add_to_resultdb:
+          invocations.extend(_get_rdb_invocations(response.task_results))
         if response.state.verdict not in _SUCCESSFUL_VERDICTS:
           failures += 1
           step.logs['overall verdict'] = [
               TaskState.Verdict.Name(response.state.verdict)
           ]
           step.presentation.status = api.step.FAILURE
+
+    if invocations and api.resultdb.enabled:
+      api.resultdb.include_invocations(api.resultdb.invocation_ids(invocations))
 
     if failures:
       raise api.step.StepFailure('%s out of %s requests were unsuccessful' %
@@ -483,6 +493,17 @@ def _log_task_results(api, task_results):
         _emit_links(step, task_results)
         if task_state in _UNSUCCESSFUL_TASK_STATES:
           step.presentation.status = api.step.FAILURE
+
+
+def _get_rdb_invocations(task_results):
+  """Get the test_runner invocation names from the task results."""
+  invs = []
+  for t in task_results:
+    res = re.search(BUILD_ID_REGEX, t.task_url)
+    if res.group('build_id'):
+      inv = 'invocations/build-%s' % res.group('build_id')
+      invs.append(inv)
+  return invs
 
 
 _PASSED_VERDICTS = [TaskState.VERDICT_PASSED, TaskState.VERDICT_PASSED_ON_RETRY]
@@ -632,7 +653,7 @@ def _generic_passing_execute_response(api):
                                       verdict='VERDICT_PASSED'),
                       task_results=[
                           ExecuteResponse.TaskResult(
-                              task_url='foo://bar/baz',
+                              task_url='foo://bar/baz/b100',
                               log_url='logs://bar/baz',
                               name='foo-passed',
                               state=TaskState(
@@ -646,10 +667,14 @@ def _generic_passing_execute_response(api):
 
 def GenTests(api):
 
-  def _set_build_id(bid, tags=None):
+  def _set_build(bid=None, tags=None, experiments=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
-    return api.buildbucket.build(build_pb2.Build(id=bid, tags=bb_tags))
+    return api.buildbucket.ci_build(build_id=bid, tags=bb_tags,
+                                    experiments=experiments, project='chromeos',
+                                    bucket='testplatform',
+                                    builder='cros_test_platform')
+
 
   # Missing request and requests should cause a recipe crash
   yield api.test('no requests')
@@ -779,7 +804,7 @@ def GenTests(api):
   # Config set the result flow pubsub project and topic should push build ID.
   yield api.test(
       'Config has pubsub topic to publish CTP build ID',
-      _set_build_id(bid=42, tags={'parent_buildbucket_id': '1234'}),
+      _set_build(bid=42, tags={'parent_buildbucket_id': '1234'}),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -796,8 +821,7 @@ def GenTests(api):
 
   # Recipe running outside Buildbucket should skip publishing build ID.
   yield api.test(
-      'Recipe runs without Build ID',
-      api.buildbucket.build(build_pb2.Build(id=0)),
+      'Recipe runs without Build ID', _set_build(bid=0),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -809,7 +833,7 @@ def GenTests(api):
   # Config missing result flow topic name should skip publishing build ID.
   yield api.test(
       'Recipe runs without result flow pubsub topic',
-      api.buildbucket.build(build_pb2.Build(id=8874582904031090640)),
+      _set_build(bid=8874582904031090640),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -819,12 +843,52 @@ def GenTests(api):
   # Config missing result flow project name should skip publishing build ID.
   yield api.test(
       'Recipe runs without result flow pubsub project',
-      api.buildbucket.build(build_pb2.Build(id=8874582904031090640)),
+      _set_build(bid=8874582904031090640),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
               config=Config(pubsub=Config.PubSub(topic='foo-topic')))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
+
+  # TODO(b/201608160): Remove upon experiment completion.
+  yield api.test(
+      'end-to-end execution with resultdb experiment enabled',
+      _set_build(
+          bid=8874582904031090640,
+          experiments=['chromeos.cros_test_platform.add_resultdb_settings']),
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))),
+      _generic_enumerate_response(api), _generic_passing_execute_response(api),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_PASSED'),
+                          task_results=[
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz/b100',
+                                  log_url='logs://bar/baz',
+                                  name='foo-passed',
+                                  state=TaskState(
+                                      verdict="VERDICT_PASSED",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                              ExecuteResponse.TaskResult(
+                                  task_url='foo://bar/baz/b101',
+                                  log_url='logs://bar/baz1',
+                                  name='foo-skipped',
+                                  state=TaskState(
+                                      verdict="VERDICT_NO_VERDICT",
+                                      life_cycle='LIFE_CYCLE_COMPLETED'),
+                              ),
+                          ],
+                      )
+              }),
+      ))
 
   # An end-to-end run with ctp release version tagging.
   yield api.test(
@@ -902,7 +966,7 @@ def GenTests(api):
                                           verdict='VERDICT_PASSED'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-passed',
                                   state=TaskState(
@@ -910,7 +974,7 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED'),
                               ),
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz1',
+                                  task_url='foo://bar/baz/b101',
                                   log_url='logs://bar/baz1',
                                   name='foo-skipped',
                                   state=TaskState(
@@ -949,7 +1013,7 @@ def GenTests(api):
                                           verdict='VERDICT_FAILED'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-failed',
                                   state=TaskState(
@@ -957,7 +1021,7 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED'),
                               ),
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz1',
+                                  task_url='foo://bar/baz/b101',
                                   log_url='logs://bar/baz1',
                                   name='foo-failed',
                                   attempt=1,
@@ -986,7 +1050,7 @@ def GenTests(api):
                                           verdict='VERDICT_FAILED'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-failed',
                                   state=TaskState(
@@ -994,7 +1058,7 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED'),
                               ),
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz1',
+                                  task_url='foo://bar/baz/b101',
                                   log_url='logs://bar/baz1',
                                   name='foo-failed',
                                   state=TaskState(
@@ -1022,7 +1086,7 @@ def GenTests(api):
                                           verdict='VERDICT_PASSED_ON_RETRY'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-retried',
                                   state=TaskState(
@@ -1030,7 +1094,7 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED'),
                               ),
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz1',
+                                  task_url='foo://bar/baz/b101',
                                   log_url='logs://bar/baz1',
                                   name='foo-retried',
                                   attempt=1,
@@ -1059,7 +1123,7 @@ def GenTests(api):
                                           verdict='VERDICT_PASSED_ON_RETRY'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-retried',
                                   state=TaskState(
@@ -1067,7 +1131,7 @@ def GenTests(api):
                                       life_cycle='LIFE_CYCLE_COMPLETED'),
                               ),
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz1',
+                                  task_url='foo://bar/baz/b101',
                                   log_url='logs://bar/baz1',
                                   name='foo-retried',
                                   attempt=1,
@@ -1098,7 +1162,7 @@ def GenTests(api):
                               # Include one result with task_url and
                               # rejected_task_dimensions, and one without.
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz', name='foo',
                                   state=TaskState(
                                       life_cycle="LIFE_CYCLE_REJECTED"),
@@ -1269,7 +1333,7 @@ def GenTests(api):
                                           verdict='VERDICT_FAILED'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-failed',
                                   state=TaskState(
@@ -1284,7 +1348,7 @@ def GenTests(api):
                                           verdict='VERDICT_FAILED'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='baz-failed',
                                   state=TaskState(
@@ -1324,7 +1388,7 @@ def GenTests(api):
                                           verdict='VERDICT_PASSED'),
                           task_results=[
                               ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz',
+                                  task_url='foo://bar/baz/b100',
                                   log_url='logs://bar/baz',
                                   name='foo-passed',
                                   state=TaskState(

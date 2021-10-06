@@ -232,7 +232,7 @@
       "@@@STEP_LOG_LINE@responses@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
       "@@@STEP_LOG_LINE@responses@          }, @@@",
       "@@@STEP_LOG_LINE@responses@          \"logUrl\": \"logs://bar/baz\", @@@",
-      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz\", @@@",
+      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz/b100\", @@@",
       "@@@STEP_LOG_LINE@responses@          \"name\": \"foo-passed\"@@@",
       "@@@STEP_LOG_LINE@responses@        }@@@",
       "@@@STEP_LOG_LINE@responses@      ]@@@",
@@ -365,7 +365,7 @@
       "@@@STEP_LOG_LINE@output.json@            \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
       "@@@STEP_LOG_LINE@output.json@            \"verdict\": \"VERDICT_PASSED\"@@@",
       "@@@STEP_LOG_LINE@output.json@          },@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz\"@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz/b100\"@@@",
       "@@@STEP_LOG_LINE@output.json@        }@@@",
       "@@@STEP_LOG_LINE@output.json@      ]@@@",
       "@@@STEP_LOG_LINE@output.json@    }@@@",
@@ -378,9 +378,9 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8QGOwcGuLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKgWqKoksTg7KLUYaHYxUF00lU3PyU8PLcoBKQGyiq309ZMS\\ni4C4SglqM1QyLT8fVS4vMTcVKqFbkFhcnJqiVBtbWwsAC51RWw==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTcuFiT0lNSyzNKRGy5DIU4k3Lz7fS109KLALiKikWjgIBRiUuoKBuQWJxcWqKFl9OfnoxQoUQ\\nWAUAnPIS+A==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJytjdEKgkAQRX9F5rnQXn2LdQNBSdSCiJBVx5C2DGcLSvbfmw2hH+hhhsucw50JWuzUQxsIvQnI\\nKIPf9MSx7Rt3hb3Mo1iUVbYuChnBwgPddyhejXYqJPFGVuIgEt7bNEtkyZJlyyi65EjcTewd/9yu\\nh/Nu1E7hRKHv12rkecP8eYbdMPyYX6+CwAk3dcWZLu+KCFuwJ2s/mRFSfQ==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwT8uRiT0lNSyzNKRGy4zITEkrLz7fS109KLALiKv0kQwMDKRaOAgFGJS6gjG5BYnFxaooWX05+\\nejFCmRBYBQD9CBQu\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}@@@"
     ]
   },
   {
@@ -477,7 +477,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@1. (log)   foo-passed@logs://bar/baz@@@",
-      "@@@STEP_LINK@1. (task)  foo-passed@foo://bar/baz@@@"
+      "@@@STEP_LINK@1. (task)  foo-passed@foo://bar/baz/b100@@@"
     ]
   },
   {
