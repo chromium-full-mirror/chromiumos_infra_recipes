@@ -73,11 +73,12 @@ def RunSteps(api, properties):
             # both mounted via a single disk. We change into the
             # source directory to sync.
             api.chrome.cache_sync(cache_path=mount_path)
-        # If sync fails, recovery to known working for next execution.
+        # If sync fails, write a recovery image to the current version file.
         except StepFailure:
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,
               cache.recovery_snapshot)
+          continue
       with api.step.nest('sync disk cache before snapshot'):
         api.gcloud.sync_disk_cache(name=cache.cache_name)
       with api.step.nest('unmount disk for snapshot'):
