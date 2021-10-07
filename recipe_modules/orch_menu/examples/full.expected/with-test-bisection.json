@@ -2840,9 +2840,16 @@
   },
   {
     "cmd": [],
-    "name": "clean up orchestrator.read builder configs",
+    "name": "clean up orchestrator.final criticality update",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.final criticality update.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2870,10 +2877,19 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "clean up orchestrator.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "name": "clean up orchestrator.final criticality update.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.print greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@greenness@{u'amd64-generic': 100}@@@",
+      "@@@STEP_LOG_END@greenness@@@"
     ]
   },
   {

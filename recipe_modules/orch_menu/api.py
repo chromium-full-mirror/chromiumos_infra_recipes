@@ -258,11 +258,13 @@ class OrchMenuApi(RecipeApi):
     # If there are any remaining children to collect, collect them now.
     self._collect_remaining_children()
 
-    # Recheck the BuilderConfigs at HEAD, one last time, to see if any
-    # failed builders are now noncritical.
-    result = self._non_critical_build_check('clean up orchestrator',
-                                            self.builds_status.completed_builds,
-                                            self.builds_status.failures)
+    with self.m.step.nest('clean up orchestrator'):
+      # Recheck the BuilderConfigs at HEAD, one last time, to see if any
+      # failed builders are now noncritical.
+      result = self._non_critical_build_check(
+          'final criticality update', self.builds_status.completed_builds,
+          self.builds_status.failures)
+      self.m.greenness.print_step()
     return self.m.failures.aggregate_failures(result.failures)
 
   def _validate_properties(self):
@@ -394,6 +396,7 @@ class OrchMenuApi(RecipeApi):
 
     self._builds_status.update(completed_builds, check_result.failures,
                                check_result.configs, collect_after)
+    self.m.greenness.update_build_info(completed_builds)
 
     # Determine the failure ratio and see if we should update the ref.
     # If we didn't complete a build, call it success.
@@ -670,4 +673,5 @@ class OrchMenuApi(RecipeApi):
         check_result = self._collect_and_check_build_results(completed_builds)
         self._builds_status.update(completed_builds, check_result.failures,
                                    check_result.configs)
+        self.m.greenness.update_build_info(completed_builds)
     return self._builds_status

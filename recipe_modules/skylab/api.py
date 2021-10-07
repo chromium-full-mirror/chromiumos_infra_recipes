@@ -225,6 +225,7 @@ class SkylabApi(recipe_api.RecipeApi):
             _request_tag(t.test), self._default_failed_response())
         results.append(self._translate_result(result, t))
 
+      self.m.greenness.update_hwtest_info(results)
       presentation.logs['return value'] = [str(r) for r in results]
       return results
 

@@ -59,6 +59,7 @@
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
+  * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc)
   * [iterutils](#recipe_modules-iterutils)
@@ -324,6 +325,8 @@
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
+  * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
+  * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
   * [ipc:examples/full](#recipes-ipc_examples_full)
@@ -5436,6 +5439,48 @@ Returns:
   tuple[GomaResults]: tuple containing the GS bucket and path used to write
       log files and any BQ errors when updating stats/counterz. None is
       returned if there were no artifacts to process.
+### *recipe_modules* / [greenness](/recipe_modules/greenness)
+
+[DEPS](/recipe_modules/greenness/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+API providing a menu for calculating greenness metric.
+
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to calculate greenness metric.
+
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#25)(self, target):**
+
+Returns the greenness metric for a specific target.
+
+Args:
+  target (str): Name of the target.
+
+Returns: Metric of the target or None if the target wasn't
+launched.
+
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#21)(self):**
+
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#67)(self):**
+
+Print comprehensive greenness info in a step.
+
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#36)(self, builds):**
+
+Update Grenness with build information.
+
+Args:
+  builds([Build]): Buildbucket.Build objects of builds that
+  have completed.
+
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#48)(self, results):**
+
+Update Grenness with HW test information.
+
+Args:
+  results([SkylabResult]): Results of the HW test runs.
 ### *recipe_modules* / [gs\_step\_logging](/recipe_modules/gs_step_logging)
 
 [DEPS](/recipe_modules/gs_step_logging/__init__.py#6): [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5701,7 +5746,7 @@ Returns:
   str: A string describing the VM test.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
 
-[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -5743,7 +5788,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#136)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#364)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#366)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -5757,7 +5802,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#628)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#631)(self, testable_builds=None):**
 
 Plan, schedule, and run tests.
 
@@ -5770,11 +5815,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#557)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#560)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#563)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#566)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -6358,7 +6403,7 @@ Module for issuing ServiceVersion commands
 Validate the caller's service version if they sent one.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -9135,6 +9180,20 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#23)(api, properties):**
+### *recipes* / [greenness:examples/update\_build\_info](/recipe_modules/greenness/examples/update_build_info.py)
+
+[DEPS](/recipe_modules/greenness/examples/update_build_info.py#6): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#13)(api):**
+### *recipes* / [greenness:examples/update\_hwtest\_info](/recipe_modules/greenness/examples/update_hwtest_info.py)
+
+[DEPS](/recipe_modules/greenness/examples/update_hwtest_info.py#6): [greenness](#recipe_modules-greenness), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_hwtest_info.py#16)(api):**
 ### *recipes* / [gs\_step\_logging:examples/full](/recipe_modules/gs_step_logging/examples/full.py)
 
 [DEPS](/recipe_modules/gs_step_logging/examples/full.py#6): [gs\_step\_logging](#recipe_modules-gs_step_logging), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

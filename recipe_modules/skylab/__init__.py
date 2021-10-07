@@ -13,6 +13,7 @@ DEPS = [
     'cros_tags',
     'easy',
     'git_footers',
+    'greenness',
     'src_state',
 ]
 

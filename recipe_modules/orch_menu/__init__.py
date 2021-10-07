@@ -28,6 +28,7 @@ DEPS = [
     'git',
     'git_footers',
     'gitiles',
+    'greenness',
     'naming',
     'skylab',
     'src_state',
