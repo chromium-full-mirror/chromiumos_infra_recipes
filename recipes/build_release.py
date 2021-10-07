@@ -60,7 +60,7 @@ def DoRunSteps(api, config):
       if not failing_build:
         raise
 
-  api.cros_release.push_and_sign_images()
+  api.cros_release.push_and_sign_images(config, api.build_menu.sysroot)
   api.cros_release.schedule_payload_generation()
 
 

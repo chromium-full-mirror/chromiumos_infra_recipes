@@ -177,19 +177,24 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
 
-  def push_and_sign_images(self):
+  def push_and_sign_images(self, config, sysroot):
     """Call the Push Image Build API endpoint for the build.
 
     This pushes the image files to the appropriate bucket and prepares them
     for signing. The actual execution of these procedures is handled in the
     underlying script, chromite/scripts/push_image.py. Must be used in the
     context of a build.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build.
+      sysroot (Sysroot): sysroot to use.
     """
-    version = str(self.m.cros_version.version)
     with self.m.step.nest('push images') as presentation:
       gs_bucket = self.m.build_menu.config.artifacts.artifacts_gs_bucket
-      gs_path = '{target}-release/{version}'.format(
-          target=self.m.build_menu.build_target.name, version=version)
+      gs_path = self.m.cros_artifacts.artifacts_gs_path(config.id.name,
+                                                        sysroot.build_target,
+                                                        config.id.type)
+
       gs_image_dir = 'gs://{gs_bucket}/{gs_path}'.format(
           gs_bucket=gs_bucket, gs_path=gs_path)
       presentation.step_text = (

@@ -2584,7 +2584,7 @@ Returns:
 
 Takes an array of common_pb2.Channel & validates & strings them.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#180)(self):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#180)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2592,6 +2592,10 @@ This pushes the image files to the appropriate bucket and prepares them
 for signing. The actual execution of these procedures is handled in the
 underlying script, chromite/scripts/push_image.py. Must be used in the
 context of a build.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build.
+  sysroot (Sysroot): sysroot to use.
 
 &emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#64)(self):**
 
@@ -8343,11 +8347,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#18)(api):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release/examples/full.py#6): [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#22)(api):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
