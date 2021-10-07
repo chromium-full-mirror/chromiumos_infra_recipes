@@ -38,6 +38,7 @@ def RunSteps(api, properties):
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.swarming.bot_id
     for cache in properties.cache_definition:
+      successful_sync = False
       api.gcloud.setup_cache_disk(cache_name=cache.cache_name,
                                   branch=cache.branch,
                                   disk_type=cache.disk_type, recipe_mount=True)
@@ -73,12 +74,12 @@ def RunSteps(api, properties):
             # both mounted via a single disk. We change into the
             # source directory to sync.
             api.chrome.cache_sync(cache_path=mount_path)
+          successful_sync = True
         # If sync fails, write a recovery image to the current version file.
         except StepFailure:
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,
               cache.recovery_snapshot)
-          continue
       with api.step.nest('sync disk cache before snapshot'):
         api.gcloud.sync_disk_cache(name=cache.cache_name)
       with api.step.nest('unmount disk for snapshot'):
@@ -86,13 +87,14 @@ def RunSteps(api, properties):
       with api.step.nest('detach disk for snapshot'):
         api.gcloud.detach_disk(instance=infra_host, disk=disk,
                                zone=api.gcloud.host_zone)
-      with api.step.nest('create image from disk'):
-        api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
-                                          zone=api.gcloud.host_zone)
-      with api.step.nest('upload updated version file'):
-        api.cros_cache.write_and_upload_version(
-            properties.cache_bucket, api.gcloud.snapshot_version_file,
-            snapshot_name)
+      if successful_sync:
+        with api.step.nest('create image from disk'):
+          api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
+                                            zone=api.gcloud.host_zone)
+        with api.step.nest('upload updated version file'):
+          api.cros_cache.write_and_upload_version(
+              properties.cache_bucket, api.gcloud.snapshot_version_file,
+              snapshot_name)
   with api.step.nest('cleanup expired snapshots'):
     snapshot_delete_list = api.gcloud.get_expired_snapshots(
         retention_days=properties.retention_days, prefixes=snapshot_prefixes,
