@@ -139,20 +139,9 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }]
     return image_list
 
-  def disk_exists_data(self):
+  def disk_exists_data(self, disk):
     """Returns list of disks in json format."""
-    disk_list = [{
-        "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
-    }, {
-        "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr"
-    }, {
-        "name": "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90"
-    }, {
-        "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90"
-    }, {
-        "name": "chromeos-ci-infra-us-central1-b-x16-0-disk-cros"
-    }]
-    return disk_list
+    return {"name": disk}
 
   def disk_list_data(self):
     """Returns list of disks in json format."""

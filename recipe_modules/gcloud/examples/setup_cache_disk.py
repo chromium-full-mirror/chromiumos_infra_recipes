@@ -73,6 +73,10 @@ def GenTests(api):
       'create-disk-step-failure',
       api.swarming.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.step_data((
+          'setup source cache disk.create disk from snapshot image.check whether'
+          + ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-cros'),
+                    retcode=404),
       api.step_data(
           'setup source cache disk.create disk from snapshot image.create disk from image',
           retcode=3),

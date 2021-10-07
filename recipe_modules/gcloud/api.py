@@ -538,12 +538,12 @@ class GcloudApi(recipe_api.RecipeApi):
     try:
       output = self.m.easy.stdout_json_step(
           'check whether disk exists: {}'.format(disk), list_cmd,
-          test_stdout=self.test_api.disk_exists_data, infra_step=True)
+          test_stdout=self.test_api.disk_exists_data(disk=disk),
+          infra_step=True)
     except self.m.step.StepFailure:
       self.m.step.active_result.presentation.status = 'SUCCESS'
-    for gce_disk in output:
-      if disk == gce_disk['name']:
-        return True
+    if disk == output.get('name', ''):
+      return True
     return False
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
