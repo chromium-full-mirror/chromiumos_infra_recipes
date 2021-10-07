@@ -284,13 +284,16 @@ class GcloudApi(recipe_api.RecipeApi):
       zone(str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self._dev_ref = chr(ord(self._determine_dev_id()) + 1)
-      if not self.disk_attached(instance=instance, disk=disk, zone=zone):
-        self.m.step('attach disk', [
-            'gcloud', 'compute', 'instances', 'attach-disk', instance,
-            '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
-        ], infra_step=True)
+      # To ensure that the bot doesn't end in a weird state, detach
+      # the disk before attaching since it should already be mounted.
+      if self.disk_attached(instance=instance, disk=disk, zone=zone):
+        self.detach_disk(instance=instance, disk=disk, zone=zone)
+      self.m.step('attach disk', [
+          'gcloud', 'compute', 'instances', 'attach-disk', instance,
+          '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
+      ], infra_step=True)
       # Increment the device reference; /dev/sda is root device.
+      self._dev_ref = chr(ord(self._determine_dev_id()) + 1)
       self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
 
@@ -707,6 +710,7 @@ class GcloudApi(recipe_api.RecipeApi):
       del cmd[:]
     return image_list
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def delete_images(self, images):
     """Delete the list of provided images from GCE.
 
