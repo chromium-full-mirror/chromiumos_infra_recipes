@@ -26,7 +26,7 @@ def RunSteps(api):
   cwd = api.path['cleanup'].join('test', 'dir', 'sub')
   api.file.ensure_directory('test dir', cwd)
   expected = str(cwd)
-  api.path.mock_add_paths(api.path['cleanup'].join('test', '.repo'))
+  api.path.mock_add_paths(api.path['cleanup'].join('.repo'))
   with api.context(cwd=cwd):
     api.repo._find_root()  # pylint: disable=protected-access
     api.assertions.assertEqual(expected, str(api.context.cwd))

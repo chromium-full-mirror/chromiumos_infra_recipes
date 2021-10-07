@@ -76,14 +76,11 @@ class RepoApi(recipe_api.RecipeApi):
     # We need a copy of cwd that we can modify. join() with no arguments
     # returns the instance, so we add an element, and then remove it.
     candidate = self.m.context.cwd.join('force-copy')
-    candidate.pieces = candidate.pieces[:-1]
-    while True:
+    while candidate.pieces:
+      candidate.pieces = candidate.pieces[:-1]
       if self.m.path.exists(candidate.join('.repo')):
         return candidate
-      if candidate.pieces:
-        candidate.pieces = candidate.pieces[:-1]
-      else:
-        return None
+    return None
 
   def _step(self, args, name=None, **kwargs):
     """Executes 'repo' with the supplied arguments.
