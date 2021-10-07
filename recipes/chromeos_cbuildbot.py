@@ -19,6 +19,7 @@ DEPS = [
     'bot_cost',
     'chromite',
     'cros_infra_config',
+    'easy',
     'gcloud',
 ]
 
@@ -66,11 +67,23 @@ def DoRunSteps(api):
   api.chromite.m.goma.client_version = api.properties.get(
       'cbb_goma_client_type')
 
-  # Use the system python, not "bundled python" so that we have access
-  # to system python packages.
-  with api.chromite.with_system_python(), \
-       api.bot_cost.build_cost_context():
-    api.chromite.run()
+  if api.chromite.chromite_branch in api.chromite.source_cache_branches:
+    # Only mount snapshot mounts on branches that have been patched.
+    with api.chromite.with_system_python(), \
+      api.gcloud.cleanup_gce_disks(), \
+      api.gcloud.cleanup_mounted_disks(), \
+      api.bot_cost.build_cost_context():
+      recipe_mount_path = api.gcloud.setup_cache_disk(
+          cache_name='chromiumos', branch=api.chromite.chromite_branch,
+          disk_type='pd-ssd', recipe_mount=True),
+      api.easy.set_properties_step(recipe_mount_path=recipe_mount_path)
+      api.chromite.run()
+  else:
+    # Use the system python, not "bundled python" so that we have access
+    # to system python packages.
+    with api.chromite.with_system_python(), \
+         api.bot_cost.build_cost_context():
+      api.chromite.run()
 
 
 def MakeSummaryMarkdown(api, failure):
@@ -104,6 +117,8 @@ def GenTests(api):
   # Test a minimal invocation.
   yield api.test(
       'swarming_builder',
+      api.swarming.properties(
+          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj',
           cbb_config='swarming-build-config',

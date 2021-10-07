@@ -33,6 +33,17 @@ class ChromiteApi(recipe_api.RecipeApi):
   def depot_tools_path(self):
     return self.m.path['start_dir'].join('depot_tools')
 
+  @property
+  def chromite_branch(self):
+    return self.c.chromite_branch
+
+  @property
+  def source_cache_branches(self):
+    return [
+        'main', 'release-R93-14092.B', 'release-R94-14150.B',
+        'release-R92-13982.B', 'release-R91-13904.B', 'release-R90-13816.B'
+    ]
+
   def get_config_defaults(self):
     defaults = {
         'CBB_CONFIG': self.m.properties.get('cbb_config'),
@@ -232,10 +243,14 @@ class ChromiteApi(recipe_api.RecipeApi):
         # '--chrome_version' flag.
         self.c.cbb.chrome_version = self.m.buildbucket.gitiles_commit.id
 
-    cbb_args = [
-        '--buildroot',
-        self.m.path['cache'].join('cbuild'),
-    ]
+    cbb_args = []
+    if self.c.chromite_branch in self.source_cache_branches:
+      cbb_args.extend([
+          '--buildroot', self.m.path['cleanup'].join('snapshot', 'chromiumos')
+      ])
+      cbb_args.extend(['--source_cache'])
+    else:
+      cbb_args.extend(['--buildroot', self.m.path['cache'].join('cbuild')])
 
     if self.c.chromite_branch:
       cbb_args.extend(['--branch', self.c.chromite_branch])
@@ -256,6 +271,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     cbb_args.extend(['--git-cache-dir', self.m.path['cache'].join('git')])
     # Use preloaded chrome cache present on the nightly image for chrome sync.
     cbb_args.extend(['--chrome-preload-dir', '/preload/chrome_cache'])
+
 
     if goma_dir is None:
       goma_dir = self.m.goma.goma_dir
