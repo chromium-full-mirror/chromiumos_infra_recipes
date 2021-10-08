@@ -172,6 +172,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
+      "--device-name=chromiumos",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -614,6 +615,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosr90",
+      "--device-name=chromiumos",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -886,6 +888,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
+      "--device-name=chromiumos-stabilize-rust-13836-b",
       "--zone=us-central1-b",
       "--quiet"
     ],

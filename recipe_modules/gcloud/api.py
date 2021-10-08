@@ -293,7 +293,8 @@ class GcloudApi(recipe_api.RecipeApi):
         self.detach_disk(instance=instance, disk=disk, zone=zone)
       self.m.step('attach disk', [
           'gcloud', 'compute', 'instances', 'attach-disk', instance,
-          '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
+          '--disk={}'.format(disk), '--device-name={}'.format(name),
+          '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
       self._dev_ref = self._determine_dev_id()
       self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)

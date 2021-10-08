@@ -220,6 +220,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--device-name=chromiumos",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -612,6 +613,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--device-name=chromiumos",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -860,6 +862,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "--device-name=chromiumos-stabilize-rust-13836-b",
       "--zone=us-central1-b",
       "--quiet"
     ],

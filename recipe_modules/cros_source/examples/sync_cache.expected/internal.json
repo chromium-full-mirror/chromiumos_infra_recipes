@@ -419,6 +419,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-lmno",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-lmno-cros",
+      "--device-name=chromiumos",
       "--zone=us-central1-b",
       "--quiet"
     ],

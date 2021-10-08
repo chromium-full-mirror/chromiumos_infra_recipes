@@ -215,6 +215,7 @@
       "attach-disk",
       "image-name",
       "--disk=test-disk",
+      "--device-name=test-disk",
       "--zone=us-central1-b",
       "--quiet"
     ],

@@ -205,6 +205,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-r90",
+      "--device-name=test-cache",
       "--zone=us-central1-b",
       "--quiet"
     ],
