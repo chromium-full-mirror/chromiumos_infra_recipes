@@ -5,7 +5,6 @@
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
-import contextlib
 import datetime
 import os
 import re
@@ -371,7 +370,6 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('create disk from image', cmd, infra_step=True)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def delete_disk(self, disk, zone):
     """Delete a GCE disk.
 
@@ -907,25 +905,6 @@ class GcloudApi(recipe_api.RecipeApi):
           self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
     return recipe_mount_path
 
-  @contextlib.contextmanager
-  def cleanup_gce_disks(self):
-    """Wrap disk cleanup in a context handler to ensure they are handled.
-
-    Upon exiting the context manager, each attached disk is then iterated
-    through to unmount, detach, and delete the disk.
-    """
-    cleanup_gce_disks = []
-    self._cleanup_gce_stack.append(cleanup_gce_disks)
-    try:
-      yield
-    finally:
-      if cleanup_gce_disks:
-        with self.m.step.nest('clean up gce disk'):
-          for disk, instance, zone in list(cleanup_gce_disks):
-            self.detach_disk(instance, disk, zone)
-            self.delete_disk(disk, zone)
-      self._cleanup_gce_stack.pop()
-
   def _add_cleanup_attached_disk(self, disk, instance, zone):
     """Track attach disk for cleanup_attached_disks.
 
@@ -950,24 +929,6 @@ class GcloudApi(recipe_api.RecipeApi):
       # cleanup stack so we assume we already detached it.
       self.m.step.active_result.presentation.step_text += (
           '<br/>[WARNING: gcloud delete disk bookkeeping error for %s]' % disk)
-
-  @contextlib.contextmanager
-  def cleanup_mounted_disks(self):
-    """Wrap disk cleanup in a context handler to ensure they are unmounted.
-
-    Upon exiting the context manager, each mounted disk is then iterated
-    through and unmounted.
-    """
-    cleanup_mounted_disks = []
-    self._cleanup_mounted_stack.append(cleanup_mounted_disks)
-    try:
-      yield
-    finally:
-      if cleanup_mounted_disks:
-        with self.m.step.nest('clean up mounted compute disk'):
-          for name, mount_path in list(cleanup_mounted_disks):
-            self.unmount_disk(name, mount_path)
-      self._cleanup_mounted_stack.pop()
 
   def _add_cleanup_mounted_disk(self, name, mount_path):
     """Track mounted disk for cleanup_mounted_disks.
