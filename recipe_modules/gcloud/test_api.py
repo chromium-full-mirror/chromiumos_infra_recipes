@@ -210,38 +210,6 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         }, {
             "name": "loop5"
         }, {
-            "name":
-                "loop6",
-            "children": [{
-                "name":
-                    "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool_tmeta",
-                "children": [{
-                    "name":
-                        "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool-tpool",
-                    "children": [{
-                        "name":
-                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool"
-                    }, {
-                        "name":
-                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-chroot"
-                    }]
-                }]
-            }, {
-                "name":
-                    "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool_tdata",
-                "children": [{
-                    "name":
-                        "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool-tpool",
-                    "children": [{
-                        "name":
-                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-thinpool"
-                    }, {
-                        "name":
-                            "cros_b+s+w+ir+cache+cros_chroot+chroot_000-chroot"
-                    }]
-                }]
-            }]
-        }, {
             "name": "sda",
             "children": [{
                 "name": "sda1"
@@ -250,6 +218,8 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
             }, {
                 "name": "sda15"
             }]
+        }, {
+            "name": "sdb"
         }]
     }
     return blkid_dict

@@ -90,6 +90,10 @@ class GcloudApi(recipe_api.RecipeApi):
   def gce_name_limit(self):
     return 63
 
+  @property
+  def gce_disk_blkid(self):
+    return self._dev_ref
+
   def _is_rfc1035_compliant(self, branch):
     RFC_PATTERN = '^[a-z]([-a-z0-9]*[a-z0-9])?$'
     if not re.match(RFC_PATTERN, branch):
@@ -266,7 +270,7 @@ class GcloudApi(recipe_api.RecipeApi):
         test_stdout=self.test_api.blkid_test_data, infra_step=True)
     for blk in output['blockdevices']:
       if 'sd' in blk['name']:
-        blkid = blk['name'].split('sd')[1]
+        blkid = blk['name']
     return blkid
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
@@ -291,9 +295,8 @@ class GcloudApi(recipe_api.RecipeApi):
           'gcloud', 'compute', 'instances', 'attach-disk', instance,
           '--disk={}'.format(disk), '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
-      # Increment the device reference; /dev/sda is root device.
-      self._dev_ref = chr(ord(self._determine_dev_id()) + 1)
-      self._attached_disks[name] = '/dev/sd{}'.format(self._dev_ref)
+      self._dev_ref = self._determine_dev_id()
+      self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
 
   def sync_disk_cache(self, name):

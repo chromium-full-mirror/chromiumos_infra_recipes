@@ -26,6 +26,7 @@ def RunSteps(api):
                                     image='test-chrome-snapshot')
   api.gcloud.attach_disk(name='cache_test1', instance='test_bot1',
                          disk='test_disk1', zone='us-central1-b')
+  api.assertions.assertEqual(api.gcloud.gce_disk_blkid, 'sdb')
   api.gcloud.attach_disk(name='cache_test2', instance='test_bot1',
                          disk='test_disk2', zone='us-central1-b')
   api.gcloud.mount_disk(name='cache_test1', mount_path='cache1',
