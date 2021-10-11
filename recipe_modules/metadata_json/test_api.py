@@ -10,7 +10,7 @@ from recipe_engine import recipe_test_api
 class MetadataJsonTestApi(recipe_test_api.RecipeTestApi):
   """A module for testing metadata_json."""
 
-  led_build_id = 8882749049375545216
+  led_build_id = 8833652816417593793
 
   def test_builder(self, build_target_name, **kwargs):
     """Step data for a test builder.
