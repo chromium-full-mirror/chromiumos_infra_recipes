@@ -461,8 +461,6 @@ def GenTests(api):
 
   yield api.test(
       'uprev-sludge',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.git.diff_check(True),
       mock_sludge_build_search,
@@ -471,8 +469,6 @@ def GenTests(api):
 
   yield api.test(
       'uprev-termina',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_properties),
       api.git.diff_check(True),
       mock_tatl_build_search_success,
@@ -482,8 +478,6 @@ def GenTests(api):
 
   yield api.test(
       'no-common-builds',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_properties),
       api.git.diff_check(True),
       mock_tatl_build_search_success,
@@ -493,8 +487,6 @@ def GenTests(api):
 
   yield api.test(
       'version-compare-subversions',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_properties),
       api.git.diff_check(True),
       mock_tatl_build_search_subversion,
@@ -504,8 +496,6 @@ def GenTests(api):
 
   yield api.test(
       'version-compare-falloff',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_properties),
       api.git.diff_check(True),
       mock_tatl_build_search_falloff,
@@ -515,8 +505,6 @@ def GenTests(api):
 
   yield api.test(
       'uprev-termina-multibranch-success',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_release_properties),
       api.git.diff_check(True),
       mock_tatl_release_build_search_success,
@@ -526,8 +514,6 @@ def GenTests(api):
 
   yield api.test(
       'multibranch-no-version-diff',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_release_properties),
       api.git.diff_check(False),
       mock_tatl_release_build_search_success,
@@ -537,8 +523,6 @@ def GenTests(api):
 
   yield api.test(
       'multibranch-no-matching-builds',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_release_properties),
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_no_match,
@@ -547,8 +531,6 @@ def GenTests(api):
 
   yield api.test(
       'multibranch-no-matching-builds-on-one-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_release_properties),
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_partial_match,
@@ -557,8 +539,6 @@ def GenTests(api):
 
   yield api.test(
       'no-version-file',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.properties(versionFile=''),
       api.post_check(post_process.StatusFailure),
@@ -566,8 +546,6 @@ def GenTests(api):
 
   yield api.test(
       'no-vm-board-images',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.properties(vmBoardImages=[]),
       api.post_check(post_process.StatusFailure),
@@ -576,8 +554,6 @@ def GenTests(api):
   yield api.test(
       'no-board',
       api.properties(**sludge_properties),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(vmBoardImages=[
           json_format.MessageToDict(
               VmBoardImage(
@@ -591,8 +567,6 @@ def GenTests(api):
 
   yield api.test(
       'no-destination-gs-bucket',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.properties(vmBoardImages=[
           json_format.MessageToDict(
@@ -607,8 +581,6 @@ def GenTests(api):
 
   yield api.test(
       'no-destination-gs-path',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.properties(vmBoardImages=[
           json_format.MessageToDict(
@@ -623,8 +595,6 @@ def GenTests(api):
 
   yield api.test(
       'unknown-build-type',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.properties(builderType=123),
       api.post_check(post_process.StatusFailure),
@@ -632,8 +602,6 @@ def GenTests(api):
 
   yield api.test(
       'no-version-diff',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.git.diff_check(False),
       mock_sludge_build_search,
@@ -642,8 +610,6 @@ def GenTests(api):
 
   yield api.test(
       'no-latest-postsubmit-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.buildbucket.simulated_search_results(
           [],
@@ -653,8 +619,6 @@ def GenTests(api):
 
   yield api.test(
       'no-latest-release-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**termina_release_properties),
       api.buildbucket.simulated_search_results(
           [],
@@ -664,8 +628,6 @@ def GenTests(api):
 
   yield api.test(
       'no-acls',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(**sludge_properties),
       api.properties(userAcls=[], groupAcls=[]),
       api.git.diff_check(True),

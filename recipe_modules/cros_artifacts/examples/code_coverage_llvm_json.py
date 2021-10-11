@@ -23,8 +23,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.build_menu.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'ArtifactsService/Get',
           json.dumps({

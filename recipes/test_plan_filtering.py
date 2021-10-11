@@ -286,8 +286,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',
@@ -307,8 +305,6 @@ def GenTests(api):
   yield api.test(
       'no_changes_produced_in_diff_causes_no_push',
       # Mocking to make it seem there are 3 star files
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data(
           'update ref.gerrit transaction.find test plans',
           stdout=api.raw_io.output("\n".join([

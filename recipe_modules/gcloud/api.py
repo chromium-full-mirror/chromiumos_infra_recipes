@@ -24,6 +24,8 @@ _SWARMING_HOST_REGEXP = (r'^chromeos-'
                          r'(?P<zone>\w*-\w*-\w*)-'
                          r'(?P<suffix>.*)')
 
+_DEFAULT_TEST_BOT_ID = 'chromeos-ci-infra-us-central1-b-x16-0-nvcj'
+
 
 class GcloudApi(recipe_api.RecipeApi):
   """A module to interact with Google Cloud."""
@@ -43,6 +45,17 @@ class GcloudApi(recipe_api.RecipeApi):
     self._infra_host = None
     self._overlay_branch_file = 'overlay_branch.txt'
     self._cache_mounted = False
+
+  def initialize(self):
+    self._infra_host = (
+        _DEFAULT_TEST_BOT_ID
+        if self._test_data.enabled else self.m.swarming.bot_id)
+
+  @property
+  def infra_host(self):
+    if self._test_data.enabled and self._test_data.get('infra_host', None):
+      return self._test_data.get('infra_host')
+    return self._infra_host
 
   @property
   def snapshot_builder_mount_path(self):
@@ -787,12 +800,10 @@ class GcloudApi(recipe_api.RecipeApi):
   def _swarming_information(self):
     """Set Swarming variables based on hostname."""
     with self.m.step.nest('get swarming hostname'):
-      self._infra_host = self.m.swarming.bot_id
-      m = re.search(_SWARMING_HOST_REGEXP, self._infra_host)
+      m = re.search(_SWARMING_HOST_REGEXP, self.infra_host)
       if not m:
         raise self.m.step.StepFailure(
-            'failed to get zone from swarming host: {}'.format(
-                self._infra_host))
+            'failed to get zone from swarming host: {}'.format(self.infra_host))
       self._zone = m.group('zone')
 
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
@@ -810,7 +821,7 @@ class GcloudApi(recipe_api.RecipeApi):
       recipe_mount(bool): Whether mount needs to be in the path to use within
         a recipe.
     """
-    if not self._zone or not self._infra_host:
+    if not self._zone or not self.infra_host:
       self._swarming_information()
     self.set_gce_project(GCE_BUILD_PROJECT)
     self._branch = branch
@@ -833,7 +844,7 @@ class GcloudApi(recipe_api.RecipeApi):
         mount_path=recipe_mount_path)
     if not self._cache_mounted:
       with self.m.step.nest('setup source cache disk'):
-        self._disk = '{}-{}'.format(self._infra_host, suffix)
+        self._disk = '{}-{}'.format(self.infra_host, suffix)
         self._disk = self._disk[:self.gce_name_limit] if len(
             self._disk) > self.gce_name_limit else self._disk
         local_version = None
@@ -876,7 +887,7 @@ class GcloudApi(recipe_api.RecipeApi):
           if not local_version and self.m.path.exists(
               self.m.path['cache'].join(cache_name).join('upperdir')):
             self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-          self.attach_disk(name=mount_path, instance=self._infra_host,
+          self.attach_disk(name=mount_path, instance=self.infra_host,
                            disk=self._disk, zone=self._zone)
           self.mount_disk(name=mount_path, mount_path=mount_path,
                           recipe_mount=recipe_mount)
@@ -886,7 +897,7 @@ class GcloudApi(recipe_api.RecipeApi):
                 'write overlayfs branch file',
                 self.snapshot_version_path.join(self._overlay_branch_file),
                 self._branch)
-            self.set_disk_autodelete(instance=self._infra_host, disk=self._disk,
+            self.set_disk_autodelete(instance=self.infra_host, disk=self._disk,
                                      zone=self._zone)
           self.m.file.write_text('write version file', local_version_path,
                                  snapshot)

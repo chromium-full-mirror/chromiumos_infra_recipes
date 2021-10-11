@@ -507,10 +507,7 @@ def GenTests(api):
     return api.post_check(PropertyEquals, 'suite_scheduling', str(value))
 
   yield test(
-      'release',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      'release', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(MustRun, 'bump version'),
       api.post_check(MustRun, 'create buildspec'), suite_scheduling(True),
@@ -522,8 +519,6 @@ def GenTests(api):
 
   yield test(
       'staging-release',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(MustRun, 'bump version'),
@@ -538,8 +533,6 @@ def GenTests(api):
 
   yield test(
       'old-staging-release',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(MustRun, 'bump version'),
@@ -554,10 +547,7 @@ def GenTests(api):
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
   yield test(
-      'postsubmit',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      'postsubmit', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'),
       api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
@@ -565,10 +555,7 @@ def GenTests(api):
                      ['--withdebugsymbols']), api.post_check(StatusSuccess))
 
   yield test(
-      'postsubmit-outside',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.properties(chroot_outside=True),
+      'postsubmit-outside', api.properties(chroot_outside=True),
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'),
@@ -578,8 +565,6 @@ def GenTests(api):
 
   yield test(
       'old-postsubmit',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'),
@@ -593,56 +578,36 @@ def GenTests(api):
           ]), api.post_check(StatusSuccess), suite_scheduling(False),
       version='R39-6301.202.44')
 
-  yield test(
-      'cq',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
-      api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(DoesNotRun, 'bump version'),
-      api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
-      api.post_check(StatusSuccess), cq=True)
+  yield test('cq', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+             api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
+             api.post_check(DoesNotRun, 'bump version'),
+             api.post_check(DoesNotRun, 'create buildspec'),
+             suite_scheduling(False), api.post_check(StatusSuccess), cq=True)
 
   yield test(
-      'cq-bump',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(MustRun, 'upload artifacts.bundle tarball'),
+      'cq-bump', api.post_check(MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(MustRun, 'bump version'),
       api.post_check(DoesNotRun, 'create buildspec'), suite_scheduling(False),
       api.post_check(StatusSuccess), cq=True,
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
-  yield test(
-      'two-targets',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(MustRun, 'board1.build board1.setup board'),
-      api.post_check(MustRun, 'board2.build board2.setup board'),
-      api.post_check(DoesNotRun, 'bump version'), api.post_check(StatusSuccess),
-      suite_scheduling(False),
-      build_targets=[dict(name='board1'),
-                     dict(name='board2')])
+  yield test('two-targets',
+             api.post_check(MustRun, 'board1.build board1.setup board'),
+             api.post_check(MustRun, 'board2.build board2.setup board'),
+             api.post_check(DoesNotRun, 'bump version'),
+             api.post_check(StatusSuccess), suite_scheduling(False),
+             build_targets=[dict(name='board1'),
+                            dict(name='board2')])
 
   yield test(
       'no-firmware',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data('upload artifacts.create firmware archive.list files',
                     api.file.listdir()), suite_scheduling(False),
       api.post_check(DoesNotRun, 'upload artifacts.bundle tarball'),
       api.post_check(DoesNotRun, 'upload artifacts.gsutil rsync'),
       api.post_check(DoesNotRun, 'bump version'), api.post_check(StatusSuccess))
 
-  yield test(
-      'chroot-exists',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      exists('chroot'))
+  yield test('chroot-exists', exists('chroot'))
 
-  yield test(
-      'old-cq',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      exists('src', 'scripts', 'setup_board'), cq=True)
+  yield test('old-cq', exists('src', 'scripts', 'setup_board'), cq=True)

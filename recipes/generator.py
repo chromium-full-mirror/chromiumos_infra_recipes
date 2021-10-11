@@ -647,8 +647,6 @@ def GenTests(api):
 
   yield api.test(
       'ignore-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(ignore=True)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -657,8 +655,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-do-nothing-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -666,8 +662,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-do-nothing-policy-init-sdk',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(init_sdk=True),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -675,8 +669,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-dry-run-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(existing_cls_policy=DRY_RUN)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -684,8 +676,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-full-run-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -693,8 +683,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-abandon-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(existing_cls_policy=ABANDON)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -702,8 +690,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-abandon-outdated-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(outdated_cls_policy=OUTDATED_ABANDON)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -711,8 +697,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-abandon-no-nothing-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(
           outdated_cls_policy=OUTDATED_DO_NOTHING)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
@@ -721,8 +705,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-submit-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[
           _policy(no_existing_cls_policy=SUBMIT, existing_cls_policy=SUBMIT)
       ]),
@@ -732,8 +714,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-uprev-comment-outdated-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(
           branch_policies=[_policy(
               outdated_cls_policy=OUTDATED_LEAVE_COMMENT)]),
@@ -743,15 +723,11 @@ def GenTests(api):
 
   yield api.test(
       'fail-validate-props-on-gitiles-fetch-info',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(gitiles_info=GitilesFetchInfo()),
   )
 
   yield api.test(
       'no-matching-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.post_check(post_process.StatusAnyFailure),
@@ -760,15 +736,11 @@ def GenTests(api):
 
   yield api.test(
       'no-package-info',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StatusAnyFailure),
   )
 
   yield api.test(
       'no-reviewers',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(reviewers=None)]),
       api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
@@ -776,8 +748,6 @@ def GenTests(api):
 
   yield api.test(
       'blank-reviewer',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(reviewers=[{}])]),
       api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
@@ -785,8 +755,6 @@ def GenTests(api):
 
   yield api.test(
       'non-gitiles-triggers',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(),
       api.scheduler(triggers=[
           Trigger(id='456', webui=WebUITrigger()),
@@ -797,8 +765,6 @@ def GenTests(api):
 
   yield api.test(
       'without-uprev',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.step_data(
@@ -808,8 +774,6 @@ def GenTests(api):
 
   yield api.test(
       'one-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
       # Only one changed project.
       api.repo.project_infos_step_data('commit uprev', data=[
@@ -824,8 +788,6 @@ def GenTests(api):
 
   yield api.test(
       'no-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(False),
@@ -833,8 +795,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-gerrit-changes', _props(),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun,
@@ -846,8 +806,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-gerrit-changes_with_revision_override',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(
           gitiles_info=GitilesFetchInfo(host='chromium.googlesource.com',
                                         project='chrome/src',
@@ -873,8 +831,6 @@ def GenTests(api):
 
   yield _with_infos(
       'cq-active', _props(), api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.git.diff_check(True), api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
@@ -909,8 +865,6 @@ def GenTests(api):
   # a gitiles poller through api.scheduler.
   yield api.test(
       'invoked-directly',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(
           package_info=package_chrome, branch_policies=[
               _policy(reviewers=[Reviewer(email='dburger@chromium.org')])
@@ -937,8 +891,6 @@ def GenTests(api):
 
   yield _with_infos(
       'branch-policies',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(triggers=[trigger_prop]),
       _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.git.diff_check(True),
@@ -950,8 +902,6 @@ def GenTests(api):
 
   yield _with_infos(
       'branch-policies-multiple-triggers',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(triggers=[trigger_prop] * 2),
       _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.git.diff_check(True),
@@ -963,8 +913,6 @@ def GenTests(api):
 
   yield api.test(
       'branch-policies-multiple-trigger-policies',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(triggers=[trigger_prop, trigger_prop2]),
       _props(package_info=package_chrome,
              branch_policies=[branch_policy, _policy()]),
@@ -974,8 +922,6 @@ def GenTests(api):
 
   yield api.test(
       'branch-policies-no-pattern',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(triggers=[trigger_prop]),
       _props(package_info=package_chrome, branch_policies=[no_pattern_policy]),
       api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
@@ -984,8 +930,6 @@ def GenTests(api):
 
   yield api.test(
       'branch-policies-default-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(triggers=[trigger_prop]),
       _props(
           package_info=package_chrome, branch_policies=[
@@ -998,8 +942,6 @@ def GenTests(api):
 
   yield api.test(
       'branch-policies-multi-ref',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(triggers=[trigger_prop]),
       _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.step_data(
@@ -1047,8 +989,6 @@ def GenTests(api):
 
   yield _with_infos(
       'with-retry-policy',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(branch_policies=[
           _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
                   existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
@@ -1069,8 +1009,6 @@ def GenTests(api):
 
   yield api.test(
       'no-triggers',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(),
       api.scheduler(triggers=[]),
       api.post_check(post_process.StatusAnyFailure),
@@ -1079,8 +1017,6 @@ def GenTests(api):
 
   yield api.test(
       'cron-trigger',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(
           branch_policies=[
               _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
@@ -1098,8 +1034,6 @@ def GenTests(api):
 
   yield api.test(
       'no-merged-changes-warning',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),

@@ -63,8 +63,6 @@ def GenTests(api):
   # Normal postsubmit build.
   yield api.build_menu.test(
       'postsubmit-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -76,10 +74,7 @@ def GenTests(api):
 
   # Pointless postsubmit build.
   yield api.build_menu.test(
-      'pointless-postsubmit-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.post_check(post_process.StatusSuccess),
+      'pointless-postsubmit-build', api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
@@ -88,8 +83,6 @@ def GenTests(api):
   # Postsubmit build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -107,8 +100,6 @@ def GenTests(api):
   # Postsubmit build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -123,8 +114,6 @@ def GenTests(api):
   # Postsubmit build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -141,8 +130,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'run-exit-install',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -157,8 +144,6 @@ def GenTests(api):
   # data...)
   yield api.build_menu.test(
       'no-run-tests',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

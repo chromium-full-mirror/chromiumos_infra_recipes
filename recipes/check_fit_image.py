@@ -392,8 +392,6 @@ def GenTests(api):
   # Standard run through that should succeed, changes match reference.
   yield api.test(
       "basic",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
       mock_modified_file(1, "fitimage-test-versions.txt", mock_version_file()),
@@ -403,8 +401,6 @@ def GenTests(api):
   # No changes, should do nothing
   yield api.test(
       "nothing_to_do",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build([("foo", [])]),
       api.post_process(StepSummaryEquals, "checking change 1",
                        "No FIT image changes found, quitting"),
@@ -413,8 +409,6 @@ def GenTests(api):
   # Not getting project info from `repo forall` should be an error.
   yield api.test(
       "no_project_info",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       api.step_data(
           "repo forall", stdout=api.raw_io.output(
@@ -426,8 +420,6 @@ def GenTests(api):
   # Fail if hashes in versions file don't match
   yield api.test(
       "non_match_hashes",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
       mock_modified_file(
@@ -445,8 +437,6 @@ def GenTests(api):
   # Fail if no version information in reference file
   yield api.test(
       "no_version_information_in_ref",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file("")),
       api.post_process(post_process.ResultReasonRE,
@@ -456,8 +446,6 @@ def GenTests(api):
   # Fail if no version information in input file
   yield api.test(
       "no_version_information_in_input",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
       mock_modified_file(
@@ -474,8 +462,6 @@ def GenTests(api):
   # Fail if we modified a -versions.txt but not the corresponding .bin file
   yield api.test(
       "no_matching_bin_change",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build([("foo", ["fitimage-test-versions.txt"])]),
       api.post_process(post_process.ResultReasonRE, "no change in binary blob"),
   )
@@ -483,8 +469,6 @@ def GenTests(api):
   # Fail if we modified a .bin file but not the corresponding -versions.txt
   yield api.test(
       "no_matching_version_change",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build([("foo", ["fitimage-test.bin"])]),
       api.post_process(post_process.ResultReasonRE,
                        "no change in versions file"),
@@ -493,8 +477,6 @@ def GenTests(api):
   # Fail if FIT versions in input and reference don't match
   yield api.test(
       "mismatched_versions",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       mock_file("checking change 1.read reference file",
                 mock_version_file("14.1.2.2")),
@@ -512,8 +494,6 @@ def GenTests(api):
   # Fail if versions file is missing any of the files from the reference
   yield api.test(
       "reference_file_missing",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
       mock_modified_file(1, "fitimage-test-versions.txt",
@@ -532,8 +512,6 @@ def GenTests(api):
   # Standard run through that should succeed, changes match reference.
   yield api.test(
       "stacked_basic",
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       setup_build(stacked_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
       mock_modified_file(1, "fitimage-foo-versions.txt", mock_version_file()),

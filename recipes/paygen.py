@@ -97,8 +97,6 @@ def GenTests(api):
 
   yield api.test(
       'dryrun',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
@@ -114,8 +112,6 @@ def GenTests(api):
 
   yield api.test(
       'no-testing',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0])),
@@ -126,8 +122,6 @@ def GenTests(api):
 
   yield api.test(
       'with-testing',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
@@ -156,8 +150,6 @@ def GenTests(api):
 
   yield api.test(
       'mismatched-payload-and-testing-config',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
@@ -172,8 +164,6 @@ def GenTests(api):
 
   yield api.test(
       'mistmatch-non-test-payload-with-testing-config',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],

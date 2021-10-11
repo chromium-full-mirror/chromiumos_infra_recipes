@@ -69,8 +69,6 @@ def GenTests(api):
   # Normal Android uprev build.
   yield api.build_menu.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -83,8 +81,6 @@ def GenTests(api):
   # Android uprev build where uprev is not needed.
   yield api.build_menu.test(
       'android-not-revved',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -98,8 +94,6 @@ def GenTests(api):
   # Android uprev build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -117,8 +111,6 @@ def GenTests(api):
   # Android uprev build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -134,8 +126,6 @@ def GenTests(api):
   # Android uprev build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/swarming',
     'cros_source',
+    'gcloud',
     'src_state',
 ]
 
@@ -45,16 +46,14 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'basic', manifest_branch,
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.post_check(verify_manifest_url, internal_url,
                      'sync cached directory.ensure synced checkout.repo init'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.cros_source.test(
       'internal', manifest_branch,
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.properties(
           SyncCacheProperties(
               manifest_url=api.src_state.internal_manifest.url)),
@@ -65,8 +64,7 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'custom', manifest_branch,
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.properties(
           SyncCacheProperties(manifest_url=api.src_state.external_manifest.url,
                               cache_path_override='chromiumos-external')),

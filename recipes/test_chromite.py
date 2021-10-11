@@ -35,8 +35,6 @@ def GenTests(api):
   def test(name, **kwargs):
     return api.test(
         name,
-        api.swarming.properties(
-            bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
         api.test_util.test_child_build(None, **kwargs).build)
 
   yield test('no-gerrit-changes', cq=True, builder='chromite-cq')

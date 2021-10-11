@@ -223,8 +223,6 @@ def GenTests(api):
   # No changes provided
   yield api.build_menu.test(
       'no-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepFailure, 'check for relevant changes'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
       api.post_check(post_process.StatusSuccess), revision=None, cq=False)
@@ -232,8 +230,6 @@ def GenTests(api):
   # No changes to relevant projects
   yield api.build_menu.test(
       'no-relevant-projects',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
       api.gerrit.set_gerrit_fetch_changes_response('check for relevant changes',
@@ -244,8 +240,6 @@ def GenTests(api):
   # No changes with Rust
   yield api.build_menu.test(
       'no-rust-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.DoesNotRun, 'get rust files'),
       api.post_check(post_process.DoesNotRun, 'getting rust lints'),
@@ -270,8 +264,6 @@ def GenTests(api):
   # No affected packages relevant to target platform
   yield api.build_menu.test(
       'no-affected-packages',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepSuccess, 'get rust files'),
       api.post_check(post_process.DoesNotRun, 'getting rust lints'),
@@ -291,8 +283,6 @@ def GenTests(api):
   # Normal build with rust changes
   yield api.build_menu.test(
       'one-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepSuccess, 'get rust files'),
       api.post_check(post_process.StepSuccess, 'getting rust lints'),
@@ -310,8 +300,6 @@ def GenTests(api):
   # Multiple change lists with rust changes
   yield api.build_menu.test(
       'multiple-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.MustRun, 'get rust files.filter rust files'),
       api.post_check(post_process.StepSuccess, 'get rust files'),
@@ -350,8 +338,6 @@ def GenTests(api):
   }
   yield api.build_menu.test(
       'no-source-path',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepFailure, 'get rust files'),
       api.post_check(post_process.DoesNotRun,
@@ -369,8 +355,6 @@ def GenTests(api):
   # CROS Build API failure in DependencyService.List
   yield api.build_menu.test(
       'get-packages-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepFailure, 'get affected packages'),
       api.post_check(post_process.DoesNotRun, 'getting rust lints'),
@@ -391,8 +375,6 @@ def GenTests(api):
   # CROS Build API failure in ToolchainService.GetClippyLints
   yield api.build_menu.test(
       'get-clipy-lints-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'check for relevant changes'),
       api.post_check(post_process.StepFailure, 'getting rust lints'),
       api.post_check(post_process.DoesNotRun,

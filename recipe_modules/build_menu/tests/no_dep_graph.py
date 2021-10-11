@@ -27,14 +27,8 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield api.test(
-      'cq-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.test_util.test_child_build('amd64-generic', cq=True).build)
+  yield api.test('cq-build',
+                 api.test_util.test_child_build('amd64-generic', cq=True).build)
 
-  yield api.test(
-      'staging-cq-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.test_util.test_child_build('amd64-generic', cq=True).build)
+  yield api.test('staging-cq-build',
+                 api.test_util.test_child_build('amd64-generic', cq=True).build)

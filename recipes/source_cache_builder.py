@@ -36,7 +36,7 @@ def RunSteps(api, properties):
     snapshot_prefixes = []
     image_prefixes = []
     is_staging = api.cros_infra_config.is_staging
-    infra_host = api.swarming.bot_id
+    infra_host = api.gcloud.infra_host
     for cache in properties.cache_definition:
       successful_sync = False
       api.gcloud.setup_cache_disk(cache_name=cache.cache_name,
@@ -126,8 +126,6 @@ def GenTests(api):
 
   yield api.test(
       'attach-chromeos-disk',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cache_definition=[
               dict(
@@ -147,8 +145,6 @@ def GenTests(api):
       'staging-execution',
       api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
                                     bucket='staging'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cache_definition=[
               dict(
@@ -166,8 +162,6 @@ def GenTests(api):
 
   yield api.test(
       'sync-caches',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cache_definition=[
               dict(
@@ -192,8 +186,6 @@ def GenTests(api):
 
   yield api.test(
       'sync-cache-step-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cache_definition=[
               dict(

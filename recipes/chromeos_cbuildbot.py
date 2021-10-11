@@ -113,8 +113,6 @@ def GenTests(api):
   # Tests the summary_markdown generation, only works on failure for now
   yield api.test(
       'swarming_builder_fails',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj',
           cbb_config='swarming-build-config',
@@ -127,8 +125,6 @@ def GenTests(api):
   # Test a plain tryjob.
   yield api.test(
       'tryjob_simple',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(cbb_config='tryjob_config',
                      cbb_extra_args='["--remote-trybot"]',
                      email='user@google.com', **common_properties),
@@ -137,8 +133,6 @@ def GenTests(api):
   # Test a tryjob with a branch and CLs.
   yield api.test(
       'tryjob_complex',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cbb_config='tryjob_config',
           cbb_extra_args='["--remote-trybot", "-b", "release-R65-10323.B",'
@@ -149,8 +143,6 @@ def GenTests(api):
   # Test a tryjob with a branch and CLs.
   yield api.test(
       'main_builder',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(branch='', cbb_branch='worker_branch',
                      cbb_config='main_config', **common_properties),
   )
@@ -158,8 +150,6 @@ def GenTests(api):
   # Test a tryjob with a branch and CLs.
   yield api.test(
       'complex_worker_builder',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(branch='', cbb_branch='worker_branch',
                      cbb_config='worker_config', cbb_master_build_id=123,
                      **common_properties),
@@ -168,8 +158,6 @@ def GenTests(api):
   # Test empty string args.
   yield api.test(
       'empty_string_args',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(cbb_config='tryjob_config', cbb_extra_args='',
                      email='user@google.com', **common_properties),
   )
@@ -178,8 +166,6 @@ def GenTests(api):
   # can happen.
   yield api.test(
       'tuple_args',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(cbb_config='tryjob_config',
                      cbb_extra_args=('--remote-trybot', '-foo'),
                      email='user@google.com', **common_properties),
@@ -187,8 +173,6 @@ def GenTests(api):
 
   yield api.test(
       'goma_canary',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           cbb_config='amd64-generic-goma-canary-chromium-pfq-informational',
           cbb_goma_canary=True, email='user@google.com', **common_properties),

@@ -14,6 +14,7 @@ GCE_PROJECT = 'chromeos-gce-tests'
 
 
 def RunSteps(api):
+  _ = api.gcloud.infra_host
   api.gcloud.set_gce_project(project=GCE_PROJECT)
   api.gcloud.auth_list()
   api.gcloud.prep_image('chromeos-image-archive', 'image_path', 1234)

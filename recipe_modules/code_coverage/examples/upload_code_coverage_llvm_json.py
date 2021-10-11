@@ -27,8 +27,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.build_menu.test(
       'cq-only-uploads-incremental',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.MustRun,
           'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit'
@@ -49,8 +47,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'cq-should-write-cleaned-coverage-file-for-incremental',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.MustRun,
           'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.writing cleaned coverage file'
@@ -63,8 +59,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'cq-should-write-cleaned-and-filtered-coverage-file-for-incremental',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.MustRun,
           'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write cleaned and filtered file'
@@ -77,8 +71,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'non-cq-uploads-absolute-to-code-search-and-chromium',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit'
@@ -100,8 +92,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'non-cq-should-write-cleaned-coverage-file-for-absolute-code-search',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.MustRun,
           'upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search.writing cleaned coverage file'
@@ -115,8 +105,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'non-cq-should-not-write-cleaned-coverage-file-for-chromium-coverage',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (code coverage llvm json).upload absolute coverage to chromium coverage.writing cleaned coverage file'

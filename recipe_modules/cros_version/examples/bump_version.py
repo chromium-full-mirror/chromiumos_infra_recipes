@@ -38,8 +38,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       orchestrator(),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
@@ -48,8 +46,6 @@ def GenTests(api):
 
   yield api.test(
       'release-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       orchestrator(git_ref='refs/heads/release-R87-13505.B'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
@@ -58,8 +54,6 @@ def GenTests(api):
 
   yield api.test(
       'stabilize-branch',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       orchestrator(git_ref='refs/heads/stabilize-13505.33.B'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
@@ -68,10 +62,6 @@ def GenTests(api):
 
   yield api.test(
       'staging',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       orchestrator(builder='staging-main-release-orchestrator'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
@@ -80,8 +70,6 @@ def GenTests(api):
 
   yield api.test(
       'with-ref',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       orchestrator(),
       api.properties(
           **{

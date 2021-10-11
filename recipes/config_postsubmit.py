@@ -614,8 +614,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -637,8 +635,6 @@ def GenTests(api):
 
   yield api.test(
       'failed_actions',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -695,8 +691,6 @@ def GenTests(api):
 
   yield api.test(
       'flattening_basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -719,8 +713,6 @@ def GenTests(api):
 
   yield api.test(
       'flattening_not_allowed_project',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(allowed_projects=[]),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -734,8 +726,6 @@ def GenTests(api):
 
   yield api.test(
       'flattening_no_entries',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -751,8 +741,6 @@ def GenTests(api):
 
   yield api.test(
       'no_flattening_changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -776,8 +764,6 @@ def GenTests(api):
 
   yield api.test(
       'flattening_error',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -798,8 +784,6 @@ def GenTests(api):
 
   yield api.test(
       'no_input_files',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -813,8 +797,6 @@ def GenTests(api):
   # import to internal config stage tests
   yield api.test(
       'aggregate_configs_basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -846,8 +828,6 @@ def GenTests(api):
 
   yield api.test(
       'aggregate_configs_no_diff',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -870,8 +850,6 @@ def GenTests(api):
 
   yield api.test(
       'aggregate_configs_error',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -888,8 +866,6 @@ def GenTests(api):
 
   yield api.test(
       'regenerate_suite_scheduler_configs_error',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -911,8 +887,6 @@ def GenTests(api):
 
   yield api.test(
       'regenerate_test_plan_error',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),

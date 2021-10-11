@@ -47,8 +47,6 @@ def GenTests(api):
     return api.test(
         name,
         api.test_util.test_child_build('amd64-generic', **kwargs).build,
-        api.swarming.properties(
-            bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
         api.properties(props))
 
   for bucket in 'staging', 'cq':

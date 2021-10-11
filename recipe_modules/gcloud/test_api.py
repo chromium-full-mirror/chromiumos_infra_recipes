@@ -342,3 +342,8 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "storageLocations": ["us"]
     }]
     return images_list
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def infra_host(value):
+    return value

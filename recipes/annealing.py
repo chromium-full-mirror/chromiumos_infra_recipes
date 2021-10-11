@@ -524,15 +524,11 @@ def GenTests(api):
   # closer to the actual manifests we process.
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
   )
 
   yield api.test(
       'staging-basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.generic_build(builder="staging-Annealing",
                                     bucket='staging'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
@@ -540,8 +536,6 @@ def GenTests(api):
 
   yield api.test(
       'no-snapshot-identifier',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -565,8 +559,6 @@ def GenTests(api):
 
   yield api.test(
       'snapshot-manifest-has-manifest-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -589,8 +581,6 @@ def GenTests(api):
 
   yield api.test(
       'snapshot-manifest-has-manifest-change-that-triggers',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(
               manifest_ref='snapshot', path_triggers=[
@@ -622,8 +612,6 @@ def GenTests(api):
 
   yield api.test(
       'sync-manifests-has-manifest-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='main', publish_uprevs=True)),
       api.git.diff_check(True),
@@ -631,16 +619,12 @@ def GenTests(api):
 
   yield api.test(
       'staging-sync-manifests-has-manifest-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='main')),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'uprev-manifest-changes',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='main', publish_uprevs=True,
                               dry_run=False)), api.git.diff_check(True),
@@ -666,8 +650,6 @@ def GenTests(api):
   # No changes in the manifest at all.
   yield api.test(
       'no-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -690,8 +672,6 @@ def GenTests(api):
   # Manifest changes, but no gerrit change to go with it.
   yield api.test(
       'no-gerrit-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -716,8 +696,6 @@ def GenTests(api):
   # Dry Run: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'dry-run',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=True)),
       api.step_data(
@@ -742,8 +720,6 @@ def GenTests(api):
 
   yield api.test(
       'retry-fetch-first',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
@@ -782,8 +758,6 @@ def GenTests(api):
 
   yield api.test(
       'retry-fast-forward',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
@@ -823,8 +797,6 @@ def GenTests(api):
 
   yield api.test(
       'retry-no-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
@@ -837,8 +809,6 @@ def GenTests(api):
 
   yield api.test(
       'retry-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False,
                               publish_uprevs=True)),
@@ -880,8 +850,6 @@ def GenTests(api):
 
   yield api.test(
       'retry-unknown',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(('push uprevs.push to src/private-overlay.git push '
@@ -905,8 +873,6 @@ def GenTests(api):
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.ci_build(project='chromeos',
                                git_repo=api.src_state.internal_manifest.url,
                                git_ref='refs/heads/snapshot'),
@@ -934,8 +900,6 @@ def GenTests(api):
 
   yield api.test(
       'cq-build-no-footer',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.buildbucket.ci_build(project='chromeos',
                                git_repo=api.src_state.internal_manifest.url,
                                git_ref='refs/heads/snapshot'),
@@ -951,8 +915,6 @@ def GenTests(api):
   # CQ without bb commit: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build-no-commit',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
@@ -977,8 +939,6 @@ def GenTests(api):
 
   yield api.test(
       'only-ignored-gerrit-change',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -1004,8 +964,6 @@ def GenTests(api):
 
   yield api.test(
       'disable-commits-in-commit-message',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot',
                               disable_gerrit_commits_in_commit_message=True)),
@@ -1032,8 +990,6 @@ def GenTests(api):
 
   yield api.test(
       'missing-required-properties',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties()),
       api.post_check(post_process.StatusFailure),
   )
@@ -1041,8 +997,6 @@ def GenTests(api):
   # TODO(crbug/1169277) this will become multiple tests.
   yield api.test(
       'downrev',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',
@@ -1068,8 +1022,6 @@ def GenTests(api):
 
   yield api.test(
       'downrev-staging-allow-cq-depends',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='staging-snapshot', dry_run=True,
                               publish_uprevs=False)),
@@ -1096,8 +1048,6 @@ def GenTests(api):
 
   yield api.test(
       'crbug-1169277-ignored-downrev',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot',
                               ignore_downrev_paths=['NAME'])),
@@ -1125,8 +1075,6 @@ def GenTests(api):
 
   yield api.test(
       'cq-deps-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest',

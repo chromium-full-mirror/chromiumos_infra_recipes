@@ -56,8 +56,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-  )
+  yield api.test('basic')

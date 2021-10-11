@@ -6,7 +6,6 @@
 """Recipe for building a BuildTarget image for CQ."""
 
 DEPS = [
-    'recipe_engine/swarming',
     'build_menu',
     'test_util',
 ]
@@ -66,8 +65,6 @@ def GenTests(api):
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(
       'cq-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -78,8 +75,6 @@ def GenTests(api):
   # This covers the Relevance check.
   yield api.build_menu.test(
       'prepare-for-build-pointless',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -92,8 +87,6 @@ def GenTests(api):
   # This covers the env_info.pointless check.
   yield api.build_menu.test(
       'pointless-cq-build',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -105,8 +98,6 @@ def GenTests(api):
   # CQ build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -121,8 +112,6 @@ def GenTests(api):
   # CQ build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.StatusAnyFailure),
@@ -133,8 +122,6 @@ def GenTests(api):
   # CQ build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),

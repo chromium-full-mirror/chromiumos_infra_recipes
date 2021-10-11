@@ -46,8 +46,6 @@ def GenTests(api):
   branch = 'release-R86-13421.B'
   yield api.cros_source.test(
       'basic', 'snapshot',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           CheckoutBranchProperties(branch_name=branch, is_staging=False)),
       api.post_check(post_process.StatusSuccess),
@@ -62,8 +60,6 @@ def GenTests(api):
   yield api.cros_source.test(
       'staging-snapshot',
       staging,
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           CheckoutBranchProperties(branch_name=staging, is_staging=True)),
       api.step_data(

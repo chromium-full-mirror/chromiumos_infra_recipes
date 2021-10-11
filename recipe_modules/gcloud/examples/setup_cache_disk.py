@@ -62,17 +62,15 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'failed-to-get-zone-from-host',
-      api.swarming.properties(bot_id='chromeos-ci-infra-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-x16-0-nvcj'),
   )
   yield api.test(
       'create-disk-step-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.step_data((
           'setup source cache disk.create disk from snapshot image.check whether'
           + ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-cros'),
@@ -85,26 +83,23 @@ def GenTests(api):
       'staging-execution',
       api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
                                     bucket='staging'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'release-staging-execution',
       api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
                                     bucket='staging'),
-      api.swarming.properties(
-          bot_id='chromeos-release-staging-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host(
+          'chromeos-release-staging-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'local-version-file-exists',
       mock_path("chromiumos-main-cache-snapshot-version.txt"),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'missing-version-file-in-storage',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data((
           'setup source cache disk.retrieve image version from storage.gsutil cat'
       ), retcode=3),
@@ -112,23 +107,20 @@ def GenTests(api):
   yield api.test(
       'upperdir-with-no-local-version',
       mock_directory('chromiumos'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'local-version-snapshot-exists',
       mock_directory('chromiumos'),
       mock_path('chromiumos-main-cache-snapshot-version.txt'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data('setup source cache disk.read local image version',
                     stdout=api.raw_io.output_text('chromiumos-main-16287984')),
   )
   yield api.test(
       'fail-to-create-disk-from-local-version',
       mock_directory('chromiumos'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
           'setup source cache disk (2).create disk from snapshot image.create disk from image'
       ), retcode=3),
@@ -136,8 +128,7 @@ def GenTests(api):
   yield api.test(
       'overlayfs branch not set',
       mock_directory('chromiumos'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
           'determine whether to reset overlayfs directories.read overlayfs branch'
       ), retcode=3),
@@ -145,8 +136,7 @@ def GenTests(api):
   yield api.test(
       'nothing returned on disk exists',
       mock_directory('chromiumos'),
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
           'setup source cache disk (3).create disk from snapshot image.check whether'
           +

@@ -28,8 +28,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.build_menu.test(
       'code-coverage-ensures-binaries',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -40,8 +38,6 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'code-coverage-upload-failure',
-      api.swarming.properties(
-          bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
