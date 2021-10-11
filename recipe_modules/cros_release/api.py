@@ -9,7 +9,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
+from PB.chromiumos.common import (Channel, CHANNEL_RUBIK, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_USBPD,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
@@ -203,7 +203,14 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       sysroot = Sysroot(build_target=self.m.build_menu.build_target)
       # Validate sign types given.
       self.validate_sign_types(self._sign_types)
+
+      # If CHANNEL_RUBIK is set, explicitly pass that parameter to PushImage.
+      # See b/202716782 for context.
+      kwargs = {}
+      if CHANNEL_RUBIK in self._channels:
+        kwargs['channels'] = self._channels
+
       return self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
           sign_types=self._sign_types,
-          dest_bucket='gs://' + self._release_bucket)
+          dest_bucket='gs://' + self._release_bucket, **kwargs)

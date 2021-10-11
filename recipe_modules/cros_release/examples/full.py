@@ -16,6 +16,7 @@ from recipe_engine import post_process
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
 from PB.chromite.api.sysroot import Sysroot
+from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
 from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
 
 
@@ -47,6 +48,22 @@ def GenTests(api):
           **{
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
+          }),
+      api.post_check(
+          post_process.LogContains,
+          'push images.call chromite.api.ImageService/PushImage', 'request', [
+              'gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0-8945511751514863184'
+          ]),
+      api.test_util.test_child_build('amd64-generic').build)
+
+  yield api.build_menu.test(
+      'channel_rubik',
+      api.properties(
+          **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/cros_release':
+                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_RUBIK]),
           }),
       api.post_check(
           post_process.LogContains,

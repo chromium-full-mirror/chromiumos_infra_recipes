@@ -854,7 +854,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return result
 
   def push_image(self, chroot, gs_image_dir, sysroot, dryrun=False,
-                 profile=None, sign_types=None, dest_bucket=None):
+                 profile=None, sign_types=None, dest_bucket=None,
+                 channels=None):
     """Call the PushImage build API endpoint.
 
       Args:
@@ -863,6 +864,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         sysroot (Sysroot): The sysroot (build target) to use.
         profile (Profile): The profile to use, or None.
         sign_types (list(ImageType)): The sign types to use, or None.
+        dest_bucket (string): The destination bucket to use, or None.
+        channels (list(Channel)): The channels to use, or empty list.
 
         For more context on this parameters, see chromite/scripts/pushimage.py.
       """
@@ -874,6 +877,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         profile=profile,
         sign_types=sign_types,
         dest_bucket=dest_bucket,
+        channels=channels,
         is_staging=self.m.cros_infra_config.is_staging,
     )
     self.m.cros_build_api.ImageService.PushImage(request, test_output_data='{}')

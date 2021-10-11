@@ -1577,7 +1577,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#856)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#856)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1587,6 +1587,8 @@ Args:
   sysroot (Sysroot): The sysroot (build target) to use.
   profile (Profile): The profile to use, or None.
   sign_types (list(ImageType)): The sign types to use, or None.
+  dest_bucket (string): The destination bucket to use, or None.
+  channels (list(Channel)): The channels to use, or empty list.
 
   For more context on this parameters, see chromite/scripts/pushimage.py.
 
@@ -8398,7 +8400,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#23)(api):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
