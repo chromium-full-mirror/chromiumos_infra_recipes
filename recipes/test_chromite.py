@@ -9,7 +9,6 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 DEPS = [
-    'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
@@ -37,10 +36,8 @@ def GenTests(api):
         name,
         api.test_util.test_child_build(None, **kwargs).build)
 
-  yield test('no-gerrit-changes', cq=True, builder='chromite-cq')
+  yield test('cq', cq=True, builder='chromite-cq')
 
   yield test('postsubmit', builder='chromite-postsubmit')
-
-  yield test('one-gerrit-change', cq=True, builder='chromite-cq')
 
   yield test('builder-no-longer-exists', builder='none')
