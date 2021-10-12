@@ -504,186 +504,6 @@
   },
   {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--zone=us-central1-b",
-      "--format",
-      "json(disks)"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "setup source cache disk.create disk from snapshot image.check whether disk is attached: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"disks\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "detach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "setup source cache disk.create disk from snapshot image.detach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "attach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--device-name=chromiumos",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "setup source cache disk.create disk from snapshot image.attach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "lsblk",
-      "--json",
-      "--output",
-      "name"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "setup source cache disk.create disk from snapshot image.pull the blk ids attached",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"blockdevices\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop2\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop3\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop4\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop5\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"children\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda14\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda15\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      ], @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sda\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos"
@@ -715,7 +535,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdb",
+      "/dev/sdz",
       "/snapshot_mounts/chromiumos"
     ],
     "env": {
@@ -747,7 +567,7 @@
       "UUID",
       "-o",
       "value",
-      "/dev/sdb"
+      "/dev/sdz"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -792,7 +612,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.update fstab for /dev/sdb",
+    "name": "setup source cache disk.create disk from snapshot image.update fstab for /dev/sdz",
     "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

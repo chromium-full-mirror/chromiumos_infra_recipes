@@ -76,39 +76,6 @@
       "gcloud",
       "compute",
       "instances",
-      "describe",
-      "test_bot1",
-      "--zone=us-central1-b",
-      "--format",
-      "json(disks)"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "check whether disk is attached: test_disk1",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"disks\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
       "attach-disk",
       "test_bot1",
       "--disk=test_disk1",
@@ -121,94 +88,6 @@
     },
     "infra_step": true,
     "name": "attach disk"
-  },
-  {
-    "cmd": [
-      "lsblk",
-      "--json",
-      "--output",
-      "name"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "pull the blk ids attached",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"blockdevices\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop2\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop3\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop4\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop5\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"children\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda14\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda15\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      ], @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sda\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "describe",
-      "test_bot1",
-      "--zone=us-central1-b",
-      "--format",
-      "json(disks)"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "check whether disk is attached: test_disk2",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"disks\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
   },
   {
     "cmd": [
@@ -227,61 +106,6 @@
     },
     "infra_step": true,
     "name": "attach disk (2)"
-  },
-  {
-    "cmd": [
-      "lsblk",
-      "--json",
-      "--output",
-      "name"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "pull the blk ids attached (2)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"blockdevices\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop0\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop2\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop3\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop4\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"loop5\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"children\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda14\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"name\": \"sda15\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      ], @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sda\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"sdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
   },
   {
     "cmd": [
@@ -307,7 +131,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdb",
+      "/dev/None",
       "[CLEANUP]/snapshot/cache_test1"
     ],
     "env": {
@@ -334,7 +158,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdb",
+      "/dev/None",
       "/snapshot_mounts/cache2"
     ],
     "env": {
@@ -347,7 +171,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/sdb"
+      "/dev/None"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -359,7 +183,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/sdb"
+      "/dev/None"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

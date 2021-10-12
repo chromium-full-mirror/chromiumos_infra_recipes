@@ -274,17 +274,27 @@ class GcloudApi(recipe_api.RecipeApi):
         test_stdout=self.test_api.instances_data, infra_step=True)
     return [instance['name'] for instance in output]
 
-  def _determine_dev_id(self):
-    """Determine which dev ids are in use."""
-    blkid_cmd = ['lsblk', '--json', '--output', 'name']
-    blkid = 'a'
-    output = self.m.easy.stdout_json_step(
-        'pull the blk ids attached', blkid_cmd,
-        test_stdout=self.test_api.blkid_test_data, infra_step=True)
-    for blk in output['blockdevices']:
-      if 'sd' in blk['name']:
-        blkid = blk['name']
-    return blkid
+  def lookup_device_id(self, disk_name):
+    """Look up the device id in /dev/disk/by-id by name.
+
+    Args:
+      disk_name (str): The name associated with the attached device.
+    Returns:
+      Returns a dict map of device name to device id.
+    """
+    disk_dir = '/dev/disk/by-id'
+    disk_device_map = {}
+    disks = os.listdir(disk_dir)
+    for disk in disks:
+      device_id = os.path.basename(
+          os.path.realpath(os.path.join(disk_dir, disk)))
+      if disk.startswith('google-'):
+        disk = disk[len(
+            'google-'):]  # pragma: nocover, not expected to match in test.
+      disk_device_map[disk] = device_id
+    if self._test_data.enabled:
+      disk_device_map['chromiumos'] = 'sdz'
+    return disk_device_map.get(disk_name, None)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def attach_disk(self, name, instance, disk, zone):
@@ -302,14 +312,13 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       # To ensure that the bot doesn't end in a weird state, detach
       # the disk before attaching since it should already be mounted.
-      if self.disk_attached(instance=instance, disk=disk, zone=zone):
-        self.detach_disk(instance=instance, disk=disk, zone=zone)
-      self.m.step('attach disk', [
-          'gcloud', 'compute', 'instances', 'attach-disk', instance,
-          '--disk={}'.format(disk), '--device-name={}'.format(name),
-          '--zone={}'.format(zone), '--quiet'
-      ], infra_step=True)
-      self._dev_ref = self._determine_dev_id()
+      if not self.disk_attached(disk_name=name):
+        self.m.step('attach disk', [
+            'gcloud', 'compute', 'instances', 'attach-disk', instance,
+            '--disk={}'.format(disk), '--device-name={}'.format(name),
+            '--zone={}'.format(zone), '--quiet'
+        ], infra_step=True)
+        self._dev_ref = self.lookup_device_id(disk_name=name)
       self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
 
@@ -591,29 +600,17 @@ class GcloudApi(recipe_api.RecipeApi):
       disks[gce_disk['name']] = gce_disk['zone'].rsplit('/', 1)[1]
     return disks
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
-  def disk_attached(self, instance, disk, zone):
+  def disk_attached(self, disk_name):
     """Check whether a disk is attached to an instance.
 
     Args:
-      instance(str): Name of the instance to check.
-      disk(str): Name of the disk to check.
-      zone(str): Name of the zone that the instance is in.
+      disk_name(str): Disk name to match for device id.
 
     Returns:
       Bool of whether the disk is attached or not.
     """
-    list_cmd = [
-        'gcloud', 'compute', 'instances', 'describe', '{}'.format(instance),
-        '--zone={}'.format(zone), '--format', 'json(disks)'
-    ]
-    output = self.m.easy.stdout_json_step(
-        'check whether disk is attached: {}'.format(disk), list_cmd,
-        test_stdout=self.test_api.disk_attached_data, infra_step=True)
-    for gce_disk in output["disks"]:
-      if gce_disk['source'].endswith(disk):
-        return True
-    return False
+    self._dev_ref = self.lookup_device_id(disk_name=disk_name)
+    return bool(self._dev_ref)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def create_image_from_disk(self, disk, image_name, zone):

@@ -178,52 +178,6 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }]
     return disk_list
 
-  def disk_attached_data(self):
-    """Returns dict of disks in json format."""
-    disk_dict = {
-        'disks': [{
-            "source":
-                "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros"
-        }, {
-            "source":
-                "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr"
-        }, {
-            "source":
-                "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/chromeos-ci-infra-us-central1-b-x16-0-disk-crosr90"
-        }]
-    }
-    return disk_dict
-
-  def blkid_test_data(self):
-    """Returns dict of local disks in json format."""
-    blkid_dict = {
-        "blockdevices": [{
-            "name": "loop0"
-        }, {
-            "name": "loop1"
-        }, {
-            "name": "loop2"
-        }, {
-            "name": "loop3"
-        }, {
-            "name": "loop4"
-        }, {
-            "name": "loop5"
-        }, {
-            "name": "sda",
-            "children": [{
-                "name": "sda1"
-            }, {
-                "name": "sda14"
-            }, {
-                "name": "sda15"
-            }]
-        }, {
-            "name": "sdb"
-        }]
-    }
-    return blkid_dict
-
   def images_list_data(self):
     """Returns a list of images in json format."""
     images_list = [{

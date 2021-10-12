@@ -1,0 +1,61 @@
+[
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "chromiumos",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--image=test-chromeos-snapshot",
+      "--quiet",
+      "--type=pd-ssd"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create disk from image"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "foo",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--image=test-chromeos-snapshot",
+      "--quiet",
+      "--type=pd-ssd"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create disk from image (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "test_bot1",
+      "--disk=test_disk1",
+      "--device-name=foo",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "attach disk"
+  },
+  {
+    "name": "$result"
+  }
+]
