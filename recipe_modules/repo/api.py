@@ -73,13 +73,11 @@ class RepoApi(recipe_api.RecipeApi):
 
   def _find_root(self):
     """Starting from cwd, find an ancestor with a '.repo' subdir."""
-    # We need a copy of cwd that we can modify. join() with no arguments
-    # returns the instance, so we add an element, and then remove it.
-    candidate = self.m.context.cwd.join('force-copy')
+    candidate = self.m.context.cwd
     while candidate.pieces:
-      candidate.pieces = candidate.pieces[:-1]
       if self.m.path.exists(candidate.join('.repo')):
         return candidate
+      candidate = self.m.path.abs_to_path(self.m.path.dirname(candidate))
     return None
 
   def _step(self, args, name=None, **kwargs):
