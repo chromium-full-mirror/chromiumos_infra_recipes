@@ -53,10 +53,6 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def mock_path(version_file):
-    return api.path.exists(
-        api.path['cache'].join('infra_versions').join(version_file))
-
   def mock_directory(cache_name):
     return api.path.exists(api.path['cache'].join(cache_name).join('upperdir'))
 
@@ -93,11 +89,6 @@ def GenTests(api):
           'chromeos-release-staging-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
-      'local-version-file-exists',
-      mock_path("chromiumos-main-cache-snapshot-version.txt"),
-      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-  )
-  yield api.test(
       'missing-version-file-in-storage',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data((
@@ -108,22 +99,6 @@ def GenTests(api):
       'upperdir-with-no-local-version',
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-  )
-  yield api.test(
-      'local-version-snapshot-exists',
-      mock_directory('chromiumos'),
-      mock_path('chromiumos-main-cache-snapshot-version.txt'),
-      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
-      api.step_data('setup source cache disk.read local image version',
-                    stdout=api.raw_io.output_text('chromiumos-main-16287984')),
-  )
-  yield api.test(
-      'fail-to-create-disk-from-local-version',
-      mock_directory('chromiumos'),
-      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
-      api.step_data((
-          'setup source cache disk (2).create disk from snapshot image.create disk from image'
-      ), retcode=3),
   )
   yield api.test(
       'overlayfs branch not set',

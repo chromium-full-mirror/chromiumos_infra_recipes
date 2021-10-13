@@ -94,11 +94,43 @@
     ]
   },
   {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name="
+    ],
+    "infra_step": true,
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.check whether image exists: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "source cache update.setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromiumos-source-snapshot\"@@@"
     ]
   },
   {
@@ -150,7 +182,7 @@
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
-      "--image=",
+      "--image=initial-chromiumos-source-snapshot",
       "--quiet",
       "--type=pd-ssd"
     ],
@@ -210,13 +242,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
+      "initial-chromiumos-source-snapshot",
       "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
@@ -710,11 +743,43 @@
     ]
   },
   {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name="
+    ],
+    "infra_step": true,
+    "name": "source cache update.setup source cache disk (2).create disk from snapshot image.check whether image exists: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "source cache update.setup source cache disk (2).create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"\"@@@"
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chrome-source-snapshot\"@@@"
     ]
   },
   {
@@ -766,7 +831,7 @@
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
-      "--image=",
+      "--image=initial-chrome-source-snapshot",
       "--quiet",
       "--type=pd-ssd"
     ],
@@ -847,13 +912,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
+      "initial-chrome-source-snapshot",
       "[CACHE]/infra_versions/chrome-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.setup source cache disk (2).create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@chrome-main-cache-snapshot-version.txt@initial-chrome-source-snapshot@@@",
       "@@@STEP_LOG_END@chrome-main-cache-snapshot-version.txt@@@"
     ]
   },

@@ -844,12 +844,8 @@ class GcloudApi(recipe_api.RecipeApi):
         self._disk = '{}-{}'.format(self.infra_host, suffix)
         self._disk = self._disk[:self.gce_name_limit] if len(
             self._disk) > self.gce_name_limit else self._disk
-        local_version = None
         local_version_path = self.snapshot_version_path.join(self._version_file)
-        if self.m.path.exists(local_version_path):
-          local_version = self.m.file.read_text(
-              'read local image version', local_version_path,
-              test_data='test-cache-snapshot-123')
+
         with self.m.step.nest('retrieve image version from storage'):
           try:
             remote_version = self.m.gsutil.cat(
@@ -862,14 +858,10 @@ class GcloudApi(recipe_api.RecipeApi):
               # Rather than fail, default to an initial snapshot.
               pres.logs['version file not found'] = self._version_file
               remote_version = recovery_snapshot
-
-        # TODO(b/202913239): Temporary fix due to bad image name
-        remote_version = remote_version.replace("chromeos", "chromiumos")
-
         with self.m.step.nest('create disk from snapshot image'):
           snapshot = remote_version
-          if local_version and self.image_exists(image=local_version):
-            snapshot = local_version
+          if not self.image_exists(image=snapshot):
+            snapshot = recovery_snapshot
           self.m.easy.set_properties_step(snapshot_version=snapshot)
           disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
           if disk_exists and recipe_mount:
@@ -885,9 +877,6 @@ class GcloudApi(recipe_api.RecipeApi):
               self.create_disk_from_image(disk=self._disk, zone=self._zone,
                                           image=snapshot,
                                           disk_type='pd-standard')
-          if not local_version and self.m.path.exists(
-              self.m.path['cache'].join(cache_name).join('upperdir')):
-            self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
           self.attach_disk(name=mount_path, instance=self.infra_host,
                            disk=self._disk, zone=self._zone)
           self.mount_disk(name=mount_path, mount_path=mount_path,
