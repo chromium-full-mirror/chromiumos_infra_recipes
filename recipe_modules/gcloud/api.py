@@ -862,6 +862,10 @@ class GcloudApi(recipe_api.RecipeApi):
               # Rather than fail, default to an initial snapshot.
               pres.logs['version file not found'] = self._version_file
               remote_version = recovery_snapshot
+
+        # TODO(b/202913239): Temporary fix due to bad image name
+        remote_version = remote_version.replace("chromeos", "chromiumos")
+
         with self.m.step.nest('create disk from snapshot image'):
           snapshot = remote_version
           if local_version and self.image_exists(image=local_version):
