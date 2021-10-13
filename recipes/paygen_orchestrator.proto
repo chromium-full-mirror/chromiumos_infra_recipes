@@ -27,6 +27,7 @@ message PaygenOrchestratorProperties {
     DEV = 2;
     BETA = 3;
     STABLE = 4;
+    RUBIK = 5;
   }
 
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
