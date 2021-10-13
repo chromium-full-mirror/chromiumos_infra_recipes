@@ -9221,7 +9221,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@{u'atlas': 100, u'target': 100, u'amd64-generic': 100, u'arm-generic': 0}@@@",
+      "@@@STEP_LOG_LINE@greenness@{'atlas': 100, 'target': 100, 'amd64-generic': 100, 'arm-generic': 0}@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

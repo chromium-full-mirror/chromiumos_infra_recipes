@@ -37,6 +37,7 @@ def RunSteps(api):
   api.greenness.update_hwtest_info(results)
   api.assertions.assertEqual(api.greenness.greenness_dict['build_target_name'],
                              60)
+  api.greenness.publish_step()
 
 
 def GenTests(api):

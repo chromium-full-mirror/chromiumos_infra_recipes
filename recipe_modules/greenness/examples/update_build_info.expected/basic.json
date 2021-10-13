@@ -3,8 +3,16 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@{u'eve-kernelnext': 100}@@@",
+      "@@@STEP_LOG_LINE@greenness@{'eve-kernelnext': 100}@@@",
       "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.set greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"metric\": \"100\", \"target\": \"eve-kernelnext\"}]}@@@"
     ]
   },
   {

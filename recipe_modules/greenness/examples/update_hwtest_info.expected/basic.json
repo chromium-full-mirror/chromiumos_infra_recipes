@@ -1,5 +1,12 @@
 [
   {
+    "cmd": [],
+    "name": "set greenness",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"metric\": \"60\", \"target\": \"build_target_name\"}]}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

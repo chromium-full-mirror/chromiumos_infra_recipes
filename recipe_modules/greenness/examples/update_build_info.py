@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'greenness',
     'test_util',
 ]
@@ -23,4 +24,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.properties(**{'$chromeos/greenness': {
+          'publish_property': True
+      }}))

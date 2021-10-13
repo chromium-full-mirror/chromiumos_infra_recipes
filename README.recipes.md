@@ -5457,17 +5457,17 @@ Returns:
       returned if there were no artifacts to process.
 ### *recipe_modules* / [greenness](/recipe_modules/greenness)
 
-[DEPS](/recipe_modules/greenness/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/greenness/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#25)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#27)(self, target):**
 
 Returns the greenness metric for a specific target.
 
@@ -5477,13 +5477,17 @@ Args:
 Returns: Metric of the target or None if the target wasn't
 launched.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#21)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#23)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#67)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#70)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#36)(self, builds):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#77)(self):**
+
+Publish greenness to output properties.
+
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#38)(self, builds):**
 
 Update Grenness with build information.
 
@@ -5491,7 +5495,7 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#48)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#50)(self, results):**
 
 Update Grenness with HW test information.
 
@@ -9205,11 +9209,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#23)(api, properties):**
 ### *recipes* / [greenness:examples/update\_build\_info](/recipe_modules/greenness/examples/update_build_info.py)
 
-[DEPS](/recipe_modules/greenness/examples/update_build_info.py#6): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/greenness/examples/update_build_info.py#6): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#14)(api):**
 ### *recipes* / [greenness:examples/update\_hwtest\_info](/recipe_modules/greenness/examples/update_hwtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_hwtest_info.py#6): [greenness](#recipe_modules-greenness), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

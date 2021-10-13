@@ -7,6 +7,7 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
+from PB.chromiumos.greenness import AggregateGreenness
 
 from recipe_engine import recipe_api
 
@@ -14,8 +15,9 @@ from recipe_engine import recipe_api
 class GreennessApi(recipe_api.RecipeApi):
   """A module to calculate greenness metric."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     super(GreennessApi, self).__init__(*args, **kwargs)
+    self._publish_property = properties.publish_property
     self._greenness_dict = {}
 
   @property
@@ -41,7 +43,7 @@ class GreennessApi(recipe_api.RecipeApi):
       have completed.
     """
     for build in builds:
-      bt = self.m.cros_infra_config.get_build_target_name(build)
+      bt = str(self.m.cros_infra_config.get_build_target_name(build))
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       self._greenness_dict[bt] = green_metric
 
@@ -62,9 +64,21 @@ class GreennessApi(recipe_api.RecipeApi):
 
     for bt, test_cases in hwtest_dict.items():
       if test_cases:
-        self._greenness_dict[bt] = int(sum(test_cases) * 100 / len(test_cases))
+        self._greenness_dict[str(bt)] = int(
+            sum(test_cases) * 100 / len(test_cases))
 
   def print_step(self):
     """Print comprehensive greenness info in a step."""
     with self.m.step.nest('print greenness') as pres:
       pres.logs['greenness'] = str(self._greenness_dict)
+      if self._publish_property:
+        self.publish_step()
+
+  def publish_step(self):
+    """Publish greenness to output properties."""
+    agg_greenness = AggregateGreenness()
+    for bt, score in self._greenness_dict.items():
+      target_greenness = agg_greenness.target_greenness.add()
+      target_greenness.target = bt
+      target_greenness.metric = score
+    self.m.easy.set_properties_step(greenness=agg_greenness)

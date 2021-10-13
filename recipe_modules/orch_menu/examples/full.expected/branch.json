@@ -9055,7 +9055,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@{u'target': 100, None: 100}@@@",
+      "@@@STEP_LOG_LINE@greenness@{'None': 100, 'target': 100}@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },
