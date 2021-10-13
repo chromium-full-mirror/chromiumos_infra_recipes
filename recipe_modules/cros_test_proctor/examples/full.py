@@ -14,6 +14,8 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
 from PB.test_platform.taskstate import TaskState
+
+from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 
 from google.protobuf import json_format
@@ -36,11 +38,14 @@ DEPS = [
 
 PROPERTIES = {
     'need_tests_builds_serialized':
-        Property(kind=list, help='List of serialized Build protos', default=[])
+        Property(kind=list, help='List of serialized Build protos', default=[]),
+    'run_async':
+        Property(kind=bool, help='Should we run the proctor in async mode',
+                 default=False),
 }
 
 
-def RunSteps(api, need_tests_builds_serialized):
+def RunSteps(api, need_tests_builds_serialized, run_async):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
@@ -52,10 +57,12 @@ def RunSteps(api, need_tests_builds_serialized):
   gerrit_changes = []
   if need_tests_builds:
     gerrit_changes = api.src_state.gerrit_changes
+
   _ = api.cros_test_proctor.run_proctor(need_tests_builds=need_tests_builds,
                                         snapshot=snapshot,
                                         gerrit_changes=gerrit_changes,
-                                        enable_history=True)
+                                        enable_history=True,
+                                        run_async=run_async)
 
 
 def GenTests(api):
@@ -267,4 +274,15 @@ def GenTests(api):
           'schedule skylab tests v2.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks v2.buildbucket.collect'))
+
+  yield api.test(
+      'with_async_enabled',
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
+      api.properties(run_async=True),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule'),
+      api.post_check(
+          post_process.DoesNotRun, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'))

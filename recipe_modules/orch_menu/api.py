@@ -649,7 +649,8 @@ class OrchMenuApi(RecipeApi):
     test_failures = self.m.cros_test_proctor.run_proctor(
         testable_builds or self._builds_status.testable_builds,
         self.gitiles_commit, self.gerrit_changes,
-        self._properties.enable_history)
+        self._properties.enable_history,
+        run_async=self._properties.run_tests_async)
     self._builds_status.update([], test_failures)
 
     if not self._collect_remaining_children().fatal_failures:

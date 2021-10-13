@@ -50,7 +50,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         raise ValueError('CTP2 not implemented')
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
-                  enable_history):
+                  enable_history, run_async=False):
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the Chrome OS infra test platform via recipes.
@@ -64,7 +64,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           in the provided builds, or None.
       enable_history (bool): whether to prune test history for previously
           successful tests on images with the same build inputs.
-
+      run_async (bool): whether to stop and collect, if set we return no
+          failures (an empty list).
     Returns
       list[failures.Failure]: failures encountered running tests
     """
@@ -91,6 +92,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_tasks = self.schedule_tests(test_plan, previously_passed_tests,
                                          self.timeout, test_to_build_target_map,
                                          snapshot, is_retry=is_retry)
+      if run_async:
+        return []
 
       with self.m.step.nest('collect tests'):
         test_results = self._collect_tests(test_tasks, timeout=self.timeout)

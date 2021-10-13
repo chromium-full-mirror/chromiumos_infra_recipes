@@ -40,4 +40,9 @@ message OrchMenuProperties {
   // testing.
   // bool collect_after_hw_test = 5;
   reserved 5;
+
+
+  // Should we collect failures after test proctor is ran or continue without
+  // referencing or setting status on test results.
+  bool run_tests_async = 6;
 }
