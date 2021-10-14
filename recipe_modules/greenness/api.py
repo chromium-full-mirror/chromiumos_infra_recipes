@@ -5,11 +5,15 @@
 
 """API providing a menu for calculating greenness metric."""
 
+from collections import namedtuple
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 from PB.chromiumos.greenness import AggregateGreenness
 
 from recipe_engine import recipe_api
+
+GreennessTuple = namedtuple('GreennessTuple', ['score', 'critical'])
 
 
 class GreennessApi(recipe_api.RecipeApi):
@@ -18,6 +22,7 @@ class GreennessApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(GreennessApi, self).__init__(*args, **kwargs)
     self._publish_property = properties.publish_property
+    # _greenness_dict contains a map target -> (score, critical)
     self._greenness_dict = {}
 
   @property
@@ -45,7 +50,8 @@ class GreennessApi(recipe_api.RecipeApi):
     for build in builds:
       bt = str(self.m.cros_infra_config.get_build_target_name(build))
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
-      self._greenness_dict[bt] = green_metric
+      critical = build.critical == common_pb2.YES
+      self._greenness_dict[bt] = GreennessTuple(green_metric, critical)
 
   def update_hwtest_info(self, results):
     """Update Grenness with HW test information.
@@ -55,17 +61,20 @@ class GreennessApi(recipe_api.RecipeApi):
     """
     hwtest_dict = {}
     for res in results:
-      bt = res.task.unit.common.build_target.name
-      test_cases = [
-          r.state.verdict == TaskState.VERDICT_PASSED for r in res.child_results
-      ]
-      prev_cases = hwtest_dict.get(bt, [])
-      hwtest_dict[bt] = prev_cases + test_cases
+      # Only count if test suite was critical.
+      if res.task.test.common.critical.value:
+        bt = res.task.unit.common.build_target.name
+        test_cases = [
+            r.state.verdict == TaskState.VERDICT_PASSED
+            for r in res.child_results
+        ]
+        prev_cases = hwtest_dict.get(bt, [])
+        hwtest_dict[bt] = prev_cases + test_cases
 
     for bt, test_cases in hwtest_dict.items():
       if test_cases:
-        self._greenness_dict[str(bt)] = int(
-            sum(test_cases) * 100 / len(test_cases))
+        score = int(sum(test_cases) * 100 / len(test_cases))
+        self._greenness_dict[str(bt)] = GreennessTuple(score, True)
 
   def print_step(self):
     """Print comprehensive greenness info in a step."""
@@ -77,8 +86,15 @@ class GreennessApi(recipe_api.RecipeApi):
   def publish_step(self):
     """Publish greenness to output properties."""
     agg_greenness = AggregateGreenness()
-    for bt, score in self._greenness_dict.items():
+    critical_scores = []
+    for bt, green_tuple in self._greenness_dict.items():
       target_greenness = agg_greenness.target_greenness.add()
       target_greenness.target = bt
-      target_greenness.metric = score
+      target_greenness.metric = green_tuple.score
+      if green_tuple.critical:
+        critical_scores.append(green_tuple.score)
+
+    if critical_scores:
+      AggregateGreenness.aggregate_metric = int(
+          sum(critical_scores) / len(critical_scores))
     self.m.easy.set_properties_step(greenness=agg_greenness)

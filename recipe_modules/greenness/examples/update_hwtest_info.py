@@ -35,8 +35,8 @@ def RunSteps(api):
       api.skylab.test_api.skylab_result(child_results=child_results[:2]),
   ]
   api.greenness.update_hwtest_info(results)
-  api.assertions.assertEqual(api.greenness.greenness_dict['build_target_name'],
-                             60)
+  api.assertions.assertEqual(
+      api.greenness.greenness_dict['build_target_name'].score, 60)
   api.greenness.publish_step()
 
 

@@ -5464,11 +5464,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#27)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#32)(self, target):**
 
 Returns the greenness metric for a specific target.
 
@@ -5478,17 +5478,17 @@ Args:
 Returns: Metric of the target or None if the target wasn't
 launched.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#23)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#28)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#70)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#79)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#77)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#86)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#38)(self, builds):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#43)(self, builds):**
 
 Update Grenness with build information.
 
@@ -5496,7 +5496,7 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#50)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#56)(self, results):**
 
 Update Grenness with HW test information.
 

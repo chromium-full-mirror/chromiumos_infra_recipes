@@ -10923,7 +10923,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@{'atlas': 100, 'None': 100, 'target': 100, 'amd64-generic': 100, 'arm-generic': 0}@@@",
+      "@@@STEP_LOG_LINE@greenness@{'atlas': GreennessTuple(score=100, critical=True), 'None': GreennessTuple(score=100, critical=False), 'target': GreennessTuple(score=100, critical=True), 'amd64-generic': GreennessTuple(score=100, critical=True), 'arm-generic': GreennessTuple(score=0, critical=True)}@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

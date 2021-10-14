@@ -8482,7 +8482,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@{'target': 100}@@@",
+      "@@@STEP_LOG_LINE@greenness@{'target': GreennessTuple(score=100, critical=True)}@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

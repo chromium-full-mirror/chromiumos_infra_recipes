@@ -17,8 +17,8 @@ def RunSteps(api):
           build_target_name='eve-kernelnext', status='SUCCESS').message
   ]
   api.greenness.update_build_info(builds)
-  api.assertions.assertEqual(api.greenness.greenness_dict['eve-kernelnext'],
-                             100)
+  api.assertions.assertEqual(
+      api.greenness.greenness_dict['eve-kernelnext'].score, 100)
   api.assertions.assertEqual(api.greenness.get_greenness('eve'), None)
   api.greenness.print_step()
 
