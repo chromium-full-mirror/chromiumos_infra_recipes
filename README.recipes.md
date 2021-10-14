@@ -6825,7 +6825,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#199)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#203)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
 
 Run tast tests without retries or results processing.
 
@@ -6844,7 +6844,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#156)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#160)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
 
 Run tast tests in a VM without retries or results processing.
 

@@ -137,6 +137,10 @@ class TastExecApi(RecipeApi):
 
     self.m.easy.set_properties_step(all_test_cases=all_test_cases,
                                     failed_test_cases=failed_test_cases)
+    if all_test_cases:
+      passed_tc_count = len(all_test_cases) - len(failed_test_cases)
+      greenness = int(100 * passed_tc_count / len(all_test_cases))
+      self.m.easy.set_properties_step(greenness=greenness)
     self.m.tast_results.record_logs(SYS_LOG_DIR)
 
     return failures, empty_result

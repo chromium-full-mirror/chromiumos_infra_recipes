@@ -954,6 +954,13 @@
   },
   {
     "cmd": [],
+    "name": "set greenness",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@greenness@83@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "record logs",
     "~followup_annotations": [
       "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
