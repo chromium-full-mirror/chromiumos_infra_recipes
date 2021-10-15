@@ -135,6 +135,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       self.m.cros_bisect.set_test_failures(test_results.skylab,
                                            needs_test_bisection)
+      self.m.greenness.update_vmtest_info(test_results.tast_vm)
       failures = self.get_test_failures(test_results)
     return failures
 

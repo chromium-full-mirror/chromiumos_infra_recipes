@@ -328,6 +328,7 @@
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
   * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
   * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
+  * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
   * [ipc:examples/full](#recipes-ipc_examples_full)
@@ -3672,13 +3673,13 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#258)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#259)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3714,7 +3715,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#201)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#202)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False):**
 
 Schedule all tests from the test_plan.
 
@@ -5480,11 +5481,11 @@ launched.
 
 &emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#28)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#79)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#91)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#86)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#98)(self):**
 
 Publish greenness to output properties.
 
@@ -5502,6 +5503,13 @@ Update Grenness with HW test information.
 
 Args:
   results([SkylabResult]): Results of the HW test runs.
+
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#79)(self, results):**
+
+Update Grenness with VM test information.
+
+Args:
+  results([build_pb2.Build]): Builds of the VM test runs.
 ### *recipe_modules* / [gs\_step\_logging](/recipe_modules/gs_step_logging)
 
 [DEPS](/recipe_modules/gs_step_logging/__init__.py#6): [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9222,6 +9230,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_hwtest_info.py#16)(api):**
+### *recipes* / [greenness:examples/update\_vmtest\_info](/recipe_modules/greenness/examples/update_vmtest_info.py)
+
+[DEPS](/recipe_modules/greenness/examples/update_vmtest_info.py#6): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_vmtest_info.py#14)(api):**
 ### *recipes* / [gs\_step\_logging:examples/full](/recipe_modules/gs_step_logging/examples/full.py)
 
 [DEPS](/recipe_modules/gs_step_logging/examples/full.py#6): [gs\_step\_logging](#recipe_modules-gs_step_logging), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

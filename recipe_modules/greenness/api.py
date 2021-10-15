@@ -76,6 +76,18 @@ class GreennessApi(recipe_api.RecipeApi):
         score = int(sum(test_cases) * 100 / len(test_cases))
         self._greenness_dict[str(bt)] = GreennessTuple(score, True)
 
+  def update_vmtest_info(self, results):
+    """Update Grenness with VM test information.
+
+    Args:
+      results([build_pb2.Build]): Builds of the VM test runs.
+    """
+    for res in results:
+      bt = self.m.cros_infra_config.get_build_target_name(build=res)
+      if 'greenness' in res.output.properties:
+        greenness = res.output.properties['greenness']
+        self._greenness_dict[str(bt)] = GreennessTuple(int(greenness), True)
+
   def print_step(self):
     """Print comprehensive greenness info in a step."""
     with self.m.step.nest('print greenness') as pres:
