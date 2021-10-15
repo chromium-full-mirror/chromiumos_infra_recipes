@@ -379,6 +379,63 @@
   },
   {
     "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "resize",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--size=600GB",
+      "--zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup source cache disk.create disk from snapshot image.resize GCE disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "resize2fs",
+      "/dev/sdz"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup source cache disk.create disk from snapshot image.execute resize2fs on resized disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",

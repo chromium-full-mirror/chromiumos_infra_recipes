@@ -33,6 +33,14 @@ class ChromiteApi(recipe_api.RecipeApi):
   def depot_tools_path(self):
     return self.m.path['start_dir'].join('depot_tools')
 
+  @property
+  def chromite_branch(self):
+    return self.c.chromite_branch
+
+  @property
+  def source_cache_branches(self):
+    return ['main']
+
   def get_config_defaults(self):
     defaults = {
         'CBB_CONFIG': self.m.properties.get('cbb_config'),
@@ -232,10 +240,14 @@ class ChromiteApi(recipe_api.RecipeApi):
         # '--chrome_version' flag.
         self.c.cbb.chrome_version = self.m.buildbucket.gitiles_commit.id
 
-    cbb_args = [
-        '--buildroot',
-        self.m.path['cache'].join('cbuild'),
-    ]
+    cbb_args = []
+    if self.c.chromite_branch in self.source_cache_branches:
+      cbb_args.extend([
+          '--buildroot', self.m.path['cleanup'].join('snapshot', 'chromiumos')
+      ])
+      cbb_args.extend(['--source_cache'])
+    else:
+      cbb_args.extend(['--buildroot', self.m.path['cache'].join('cbuild')])
 
     if self.c.chromite_branch:
       cbb_args.extend(['--branch', self.c.chromite_branch])

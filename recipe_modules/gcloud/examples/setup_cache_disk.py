@@ -20,7 +20,8 @@ DEPS = [
 
 def RunSteps(api):
   # Multiple disks
-  mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos')
+  mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
+                                           disk_size='600GB')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
   if api.build_menu.is_staging:
