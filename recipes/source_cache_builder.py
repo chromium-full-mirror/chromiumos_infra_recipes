@@ -95,6 +95,8 @@ def RunSteps(api, properties):
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,
               snapshot_name)
+      with api.step.nest('delete disk'):
+        api.gcloud.delete_disk(disk=disk, zone=api.gcloud.host_zone)
   with api.step.nest('cleanup expired snapshots'):
     snapshot_delete_list = api.gcloud.get_expired_snapshots(
         retention_days=properties.retention_days, prefixes=snapshot_prefixes,
