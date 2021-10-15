@@ -750,7 +750,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#661)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#669)(self):**
 
 Add child build ids to output property of current build.
 
@@ -863,6 +863,13 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#131)(self):**
 
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#518)(self, config=None):**
+
+run ebuild tests as specified by config.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+
 &mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#296)(self, no_chroot_timeout=False):**
 
 Setup the chroot for the builder.
@@ -923,7 +930,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#557)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#565)(self, config=None, failing_build=False, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -940,7 +947,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#625)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#633)(self, config=None):**
 
 Upload prebuilts from the build.
 

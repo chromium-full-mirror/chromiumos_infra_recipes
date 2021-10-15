@@ -511,8 +511,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self.m.sysroot_util.build_images(build_images.image_types, builder_path,
                                      build_images.disable_rootfs_verification,
                                      build_images.disk_layout, **extra_kwargs)
+    self.run_unittests(config)
 
-    # If we should run ebuild tests, do that.
+    return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
+
+  def run_unittests(self, config=None):
+    """run ebuild tests as specified by config.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    unit_tests = config.unit_tests
+
     if self.m.cros_infra_config.should_run(unit_tests.ebuilds_run_spec):
       with self.m.step.nest('run ebuild tests') as presentation:
         relevant_testable_packages = unit_tests.packages
@@ -551,8 +561,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
             response_lambda=self.m.cros_build_api.failed_pkg_names)
         self.m.failures.set_failed_packages(presentation,
                                             response.failed_packages)
-
-    return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
   def upload_artifacts(self, config=None, failing_build=False,
                        private_bundle_func=None, sysroot=None):

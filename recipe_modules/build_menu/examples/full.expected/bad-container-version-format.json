@@ -7472,7 +7472,7 @@
       "    return DoRunSteps(api, properties)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 57, in DoRunSteps",
       "    api.build_menu.upload_artifacts()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 586, in upload_artifacts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 594, in upload_artifacts",
       "    if self.container_version:",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 107, in container_version",
       "    ','.join([\"'{}'\".format(field) for field in fields]),",
