@@ -48,8 +48,7 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
-      if api.build_menu.build_and_test_images(config, include_version=True):
-        api.build_menu.upload_prebuilts(config)
+      api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure:
     failing_build = True
     raise
@@ -96,7 +95,6 @@ def GenTests(api):
               'force_postsubmit_relevance': True
           }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
@@ -113,8 +111,6 @@ def GenTests(api):
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}), api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload prebuilts'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1))
 
@@ -126,7 +122,6 @@ def GenTests(api):
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}), api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
