@@ -506,7 +506,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     extra_kwargs = {}
     if include_version:
       version = self.m.cros_version.version
-      extra_kwargs = {'version': str(version)}
+      extra_kwargs = {'version': str(version.platform_version)}
 
     self.m.sysroot_util.build_images(build_images.image_types, builder_path,
                                      build_images.disable_rootfs_verification,
