@@ -244,10 +244,7 @@ class OrchMenuApi(RecipeApi):
       self._wait_for_inflight_orchestrator()
 
       # Yield while inside of the bot_cost.cq_run_cost_context.
-      try:
-        yield config
-      finally:
-        self.m.build_menu.add_child_build_ids_to_output_property()
+      yield config
 
   def create_recipe_result(self):
     """Create the correct return value for RunSteps.
@@ -265,6 +262,8 @@ class OrchMenuApi(RecipeApi):
           'final criticality update', self.builds_status.completed_builds,
           self.builds_status.failures)
       self.m.greenness.print_step()
+      # Set child output ids if any
+      self.m.build_menu.add_child_build_ids_to_output_property()
     return self.m.failures.aggregate_failures(result.failures)
 
   def _validate_properties(self):

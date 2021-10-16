@@ -9418,8 +9418,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "buildbucket.search",
+    "name": "clean up orchestrator.buildbucket.search",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
