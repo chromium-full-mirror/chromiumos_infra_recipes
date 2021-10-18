@@ -130,8 +130,14 @@ class SkylabApi(recipe_api.RecipeApi):
         ]
         req.params.decorations.tags.extend(request_tags)
         if uht.hw_test.hw_test_suite_type == HwTestCfg.TAST:
+          # TODO(b/203419042): Revist terminology. Currently, this is in-line
+          # with how lacros tests are uploaded.
           resultdb_settings = self.m.json.dumps({
               'result_format': 'tast',
+              'base_variant': {
+                  'device_type': uht.hw_test.skylab_board,
+                  'cros_img': image_path
+              }
           })
           req.params.decorations.test_args[
               'resultdb_settings'] = base64.b64encode(resultdb_settings)

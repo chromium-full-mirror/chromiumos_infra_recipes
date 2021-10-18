@@ -6512,7 +6512,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#194)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#200)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
