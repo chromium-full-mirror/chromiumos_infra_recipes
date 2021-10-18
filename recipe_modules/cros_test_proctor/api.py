@@ -91,7 +91,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
               'chromeos.cros_test_platform.add_resultdb_settings')
         test_tasks = self.schedule_tests(test_plan, previously_passed_tests,
                                          self.timeout, test_to_build_target_map,
-                                         snapshot, is_retry=is_retry)
+                                         snapshot, is_retry=is_retry,
+                                         run_async=run_async)
       if run_async:
         return []
 
@@ -200,7 +201,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return test_plan
 
   def schedule_tests(self, test_plan, passed_tests, timeout,
-                     test_to_build_map=None, snapshot=None, is_retry=False):
+                     test_to_build_map=None, snapshot=None, is_retry=False,
+                     run_async=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -214,13 +216,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
       is_retry (bool): Whether this is a CQ retry.
+      run_async (bool): whether to stop and collect, if set we return no
+          failures (an empty list).
 
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
     test_plan = self._filter_snapshot_test_plan(test_plan)
     skylab_tasks = self._schedule_skylab_tests(test_plan, passed_tests, timeout,
-                                               test_to_build_map, is_retry)
+                                               test_to_build_map, is_retry,
+                                               run_async=run_async)
     autotest_vm_tests = self._schedule_autotest_vm_tests(
         test_plan, passed_tests, snapshot, test_to_build_map, is_retry)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
@@ -270,7 +275,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
-                             test_to_build_map=None, is_retry=False):
+                             test_to_build_map=None, is_retry=False,
+                             run_async=False):
     """Schedule skylab tests from the test_plan.
 
     Args:
@@ -282,6 +288,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
+      run_async (bool): Should the tests be ran async and not cancel
+          on the termination of the parent (this caller).
 
     Returns:
       list[SkylabTask] of the tests scheduled.
@@ -305,7 +313,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             hw_build_targets.add(build_target.name)
       if tests_to_run:
         skylab_tasks.extend(
-            self.m.skylab.schedule_suites(tests_to_run, timeout))
+            self.m.skylab.schedule_suites(tests_to_run, timeout,
+                                          async_suite_run=run_async))
       self.m.easy.set_properties_step(
           hw_test_build_targets=len(hw_build_targets))
       self.m.easy.set_properties_step(hw_test_suites=len(tests_to_run))

@@ -3690,7 +3690,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#259)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#264)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3726,7 +3726,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#202)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#203)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False):**
 
 Schedule all tests from the test_plan.
 
@@ -3741,6 +3741,8 @@ Args:
   snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
       the included builds were created.
   is_retry (bool): Whether this is a CQ retry.
+  run_async (bool): whether to stop and collect, if set we return no
+      failures (an empty list).
 
 Returns:
   MetaTestTuple of lists of the tests scheduled.
