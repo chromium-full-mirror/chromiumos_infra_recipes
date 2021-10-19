@@ -77,23 +77,20 @@ def GenTests(api):
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='releasespecs/91/13818.0.0.xml'))),
-              '$chromeos/cros_relevance':
-                  dict(force_postsubmit_relevance=True),
-          }), api.post_check(post_process.MustRun,
-                             'sync to specified manifest'),
+          }),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess), build_target='kukui-main',
-      bucket='release')
+      api.post_check(post_process.StatusSuccess),
+      build_target='kukui-main',
+      bucket='release',
+  )
 
   # Release build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
-      api.properties(
-          **{'$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -101,31 +98,35 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
-                                          retcode=1))
+                                          retcode=1),
+      bucket='release',
+      build_target='kukui-main',
+  )
 
   # Release build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail', api.post_check(post_process.StatusAnyFailure),
+      'bundle-fail',
+      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
-      api.properties(
-          **{'$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.build_menu.set_build_api_return('upload artifacts',
-                                          'ArtifactsService/Get', retcode=1))
+                                          'ArtifactsService/Get', retcode=1),
+      bucket='release',
+      build_target='kukui-main',
+  )
 
   # Release build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.properties(
-          **{'$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return('upload artifacts',
-                                          'ArtifactsService/Get', retcode=1))
+                                          'ArtifactsService/Get', retcode=1),
+      bucket='release',
+      build_target='kukui-main',
+  )
