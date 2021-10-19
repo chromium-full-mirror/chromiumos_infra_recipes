@@ -1392,6 +1392,73 @@
   },
   {
     "cmd": [],
+    "name": "upload test metadata"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[CLEANUP]/tmp_tmp_1/metadata.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test metadata.writing metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@metadata.jsonpb@{}@@@",
+      "@@@STEP_LOG_END@metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1/metadata.jsonpb",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/metadata/metadata.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test metadata.gsutil upload",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/metadata/metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "call chromite.api.ImageService/PushImage",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",

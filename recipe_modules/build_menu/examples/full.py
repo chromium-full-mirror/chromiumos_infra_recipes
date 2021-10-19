@@ -55,6 +55,7 @@ def DoRunSteps(api, properties):
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       api.build_menu.upload_artifacts()
+      api.build_menu.create_containers()
       api.build_menu.add_child_build_ids_to_output_property()
 
     # Sometimes these are RepeatedCompositeFieldContainter, sometimes they are
@@ -313,7 +314,7 @@ def GenTests(api):
 
     # Simulate a failure building a single container
     api.cros_build_api.set_api_return(
-      'build and upload test service containers',
+      'create test service containers',
       endpoint='TestService/BuildTestServiceContainers',
       data='{ "results": [ { "failure" : {} } ]}',
     ),

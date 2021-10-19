@@ -3,8 +3,8 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-0@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-0@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-@@@"
     ]
   },
   {
@@ -846,7 +846,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-0"
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-"
     ],
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync",
@@ -860,7 +860,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-0\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-\"}@@@"
     ]
   },
   {
@@ -868,7 +868,7 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-0@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-@@@"
     ]
   },
   {
@@ -883,7 +883,7 @@
       "cp",
       "-a",
       "public-read",
-      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-0/../../[START_DIR]/orderfile",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
       "gs://publish_gs_location/"
     ],
     "infra_step": true,
@@ -905,8 +905,8 @@
       "cp",
       "-a",
       "public-read",
-      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-0/../../[START_DIR]/orderfile",
-      "gs://pub2/target-toolchain/R99-1234.56.0-101-0/"
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
+      "gs://pub2/target-toolchain/R99-1234.56.0-101-/"
     ],
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp (2)",
@@ -920,7 +920,50 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-0\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload test metadata"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[CLEANUP]/tmp_tmp_1/metadata.jsonpb"
+    ],
+    "infra_step": true,
+    "name": "upload test metadata.writing metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@metadata.jsonpb@{}@@@",
+      "@@@STEP_LOG_END@metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1/metadata.jsonpb",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/metadata/metadata.jsonpb"
+    ],
+    "infra_step": true,
+    "name": "upload test metadata.gsutil upload",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/metadata/metadata.jsonpb@@@"
     ]
   },
   {
@@ -1030,7 +1073,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\", \"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\", \"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\", \"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\", \"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\", \"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-0\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\", \"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\", \"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\", \"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\", \"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\", \"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-\"}@@@"
     ]
   },
   {

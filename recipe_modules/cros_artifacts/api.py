@@ -401,14 +401,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     ret = {
         'version': str(version),
         'legacy_version': version.legacy_version,
-        'build_id': self.m.buildbucket.build.id,
+        'build_id': str(self.m.buildbucket.build.id or self.m.led.run_id),
         'target': target.name,
         'builder_name': builder_name.replace('_', '-'),
     }
     if kind:
       ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
       ret['label'] = ret['kind']
-    ret['gs_path'] = '%s/%s-%d' % (ret['builder_name'], ret['version'],
+    ret['gs_path'] = '%s/%s-%s' % (ret['builder_name'], ret['version'],
                                    ret['build_id'])
     return ret
 
@@ -657,6 +657,47 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       for k, v in links.items():
         presentation.links[k] = v
     return uploaded_artifacts
+
+  def upload_metadata(self, name, builder_name, target, gs_bucket, filename,
+                      message):
+    """Materialize a protobuffer message as a jsonpb artifact in GCS.
+
+    Convert the message to a jsonpb file and upload it to the appropriate
+    location in GCS with the other build artifacts.
+
+    Args:
+      name (str): Human readable metadata name for step name.
+      builder_name (str): The builder name, e.g. octopus-cq.
+      target (str|): Build target, eg: octopus-kernelnext.
+      gs_bucket (str): Google storage bucket to upload artifacts to.
+      filename (str): Filename for the metadata.
+      message (Message): Protobuffer message to serialize and upload.
+
+    Returns:
+      GS path inside bucket to uploaded file
+    """
+
+    with self.m.step.nest('upload {} metadata'.format(name)):
+      # Wrap target up into a BuildTarget proto if needed
+      if isinstance(target, basestring):
+        target = common_pb.BuildTarget(name=target)
+
+      # Add a .jsonpb extension to the filename if we don't have one.
+      path, ext = self.m.path.splitext(filename)
+      if not ext:
+        ext = '.jsonpb'
+      filename = ''.join([path, ext])
+
+      gs_path = self.m.path.join(
+          self.artifacts_gs_path(builder_name, target), 'metadata', filename)
+
+      full_path = self.m.path.mkdtemp().join(filename)
+      self.m.file.write_proto('writing metadata', full_path, message, 'JSONPB')
+
+      self.m.gsutil.upload(full_path, gs_bucket, gs_path,
+                           timeout=self.test_api.gsutil_timeout_seconds)
+
+      return gs_path
 
   def merge_artifacts_properties(self, properties):
     """Combine uploaded artifacts to produce a final value.

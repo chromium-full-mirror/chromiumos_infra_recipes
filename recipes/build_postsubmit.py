@@ -41,6 +41,7 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
+      api.build_menu.create_containers(config)
       if api.build_menu.build_and_test_images(config):
         api.build_menu.upload_prebuilts(config)
   except StepFailure:

@@ -7,6 +7,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_artifacts',
     'cros_build_api',
 ]
@@ -70,6 +71,15 @@ def RunSteps(api, properties):
       sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
                               build_target=target),
       failing_build=properties.failing_build,
+  )
+
+  api.cros_artifacts.upload_metadata(
+      'test',
+      'target-toolchain',
+      target.name,
+      'artifacts_gs_bucket',
+      'metadata',
+      BuilderConfig(),  # Just used as a proto Message for testing
   )
 
   api.cros_artifacts.push_image(

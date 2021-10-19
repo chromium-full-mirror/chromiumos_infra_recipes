@@ -7087,7 +7087,7 @@
   },
   {
     "cmd": [],
-    "name": "build and upload test service containers",
+    "name": "create test service containers",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@No endpoint, skipping@@@"
     ]

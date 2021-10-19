@@ -17,6 +17,7 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest, BuildTestServiceContainersRequest
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import PackageInfo, Profile
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
@@ -582,18 +583,30 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = config or self.config_or_default
     sysroot = sysroot or self.sysroot or Sysroot(build_target=self.build_target)
 
-    artifacts = None
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
-      artifacts = self.m.cros_artifacts.upload_artifacts(
+      return self.m.cros_artifacts.upload_artifacts(
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, failing_build=failing_build,
           private_bundle_func=private_bundle_func)
 
+  def create_containers(self, builder_config=None):
+    """Call the BuildTestServiceContainers endpoint to build test containers.
+
+    The build API itself handles uploading generated container images to the
+    container registry, but we handle collecting the metadata and uploading
+    it with the build artifacts.
+
+    Args:
+      builder_config (BuilderConfig): The BuilderConfig for this build, or None
+
+    Returns:
+      None
+    """
+    builder_config = builder_config or self.config_or_default
     if self.container_version:
-      with self.m.step.nest(
-          'build and upload test service containers') as presentation:
+      with self.m.step.nest('create test service containers') as presentation:
         if not self.m.cros_build_api.has_endpoint(
             self.m.cros_build_api.TestService, 'BuildTestServiceContainers'):
           presentation.step_summary_text = "No endpoint, skipping"
@@ -611,24 +624,72 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   build_target=self.build_target,
                   chroot=self.m.cros_sdk.chroot,
                   version=version,
-                  tags=[version] + [str(build_id)] if build_id else [],
+                  tags=[version] + ([str(build_id)] if build_id else []),
                   labels={
                       "build-url":
-                          self.m.buildbucket.build_url() if build_id else "led",
+                          "https://ci.chromium.org/b/{}".format(build_id)
+                          if build_id else "led"
                   },
               ), timeout=1 * 60 * 60)
 
           # Set up links to built containers.
+          container_metadata = ContainerMetadata()
+          container_images = container_metadata.containers[
+              self.build_target.name].images
+
           for result in response.results:
             if result.HasField('success'):
-              presentation.links[result.name] = result.success.registry_path
+              image_info = result.success.image_info
+
+              # Make sure digest has the hash algorithm on it so links work
+              image_digest = image_info.digest
+              if not image_digest.startswith("sha256:"):
+                image_digest = "sha256:" + image_digest
+
+              image_link = "https://{host}/{proj}/{name}@{hash}".format(
+                  host=image_info.repository.hostname,
+                  proj=image_info.repository.project,
+                  name=image_info.name,
+                  hash=image_digest,
+              )
+
+              link_name = '{} [{}]'.format(result.name, image_info.digest[:8])
+              presentation.links[link_name] = image_link
+
+              # Index the container info by container name and store in
+              # the overall metadata structure that we'll upload.
+              container_images[image_info.name].CopyFrom(image_info)
 
           # Set error status if any builds failed.
+          failed = False
           for result in response.results:
             if result.HasField('failure'):
-              presentation.status = self.m.step.FAILURE
+              presentation.logs['{} error log'.format(result.name)] = \
+                result.failure.error_message
+              failed = True
 
-    return artifacts
+          gs_bucket = builder_config.artifacts.artifacts_gs_bucket
+          gs_path = self.m.cros_artifacts.upload_metadata(
+              'container',
+              builder_config.id.name,
+              self.build_target,
+              gs_bucket,
+              'containers.jsonpb',
+              container_metadata,
+          )
+
+          presentation.links['container metadata (gs)'] = (
+              'https://console.cloud.google.com/storage/browser/{}/{}'.format(
+                  gs_bucket,
+                  gs_path,
+              ))
+
+          presentation.logs['container metadata (log)'] = \
+            json_format.MessageToJson(container_metadata)
+
+          if failed:
+            raise recipe_api.StepFailure(
+                'One or more test service containers failed to build.')
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.

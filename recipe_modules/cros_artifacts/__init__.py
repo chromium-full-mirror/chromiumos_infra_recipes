@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/file',
+    'recipe_engine/led',
     'recipe_engine/path',
     'recipe_engine/step',
     'code_coverage',
