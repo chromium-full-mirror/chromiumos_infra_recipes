@@ -158,6 +158,27 @@
     "cmd": [
       "gcloud",
       "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
       "disks",
       "delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",

@@ -887,6 +887,9 @@ class GcloudApi(recipe_api.RecipeApi):
           self.m.easy.set_properties_step(snapshot_version=snapshot)
           disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
           if disk_exists and recipe_mount:
+            if self.disk_attached(disk_name=mount_path):
+              self.detach_disk(instance=self.infra_host, disk=self._disk,
+                               zone=self._zone)
             self.delete_disk(disk=self._disk, zone=self._zone)
             disk_exists = False
           if not disk_exists:
