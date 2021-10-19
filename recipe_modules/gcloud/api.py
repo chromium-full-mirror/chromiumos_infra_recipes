@@ -625,7 +625,7 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('resize GCE disk', [
           'gcloud', 'compute', 'disks', 'resize', disk,
-          '--size={}'.format(size), '--zone={}'.format(zone)
+          '--size={}'.format(size), '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
       self.m.easy.stdout_step(
           'execute resize2fs on resized disk',

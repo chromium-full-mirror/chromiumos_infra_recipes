@@ -267,7 +267,8 @@
       "resize",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--size=600GB",
-      "--zone=us-central1-b"
+      "--zone=us-central1-b",
+      "--quiet"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
