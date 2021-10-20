@@ -69,5 +69,10 @@ def GenTests(api):
                                             experiments={'chromeos.a.b': True})
   yield api.test(
       'experiments', api.buildbucket.build(build),
+      api.properties(
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(resultdb_elegible_projects=['chromeos'])
+          }),
       api.git_footers.simulated_get_footers(['chromeos.c.d', 'chromeos.e.f'],
                                             'schedule skylab tests v2'))

@@ -14,4 +14,7 @@ message SkylabProperties {
   int32 skylab_priority = 4;
   bool enable_retries = 6;
   bool add_resultdb_settings = 7;
+  // TODO(b/201608160): Remove upon experiment completion.
+  // Projects on which to enable uploading to resultdb in prod.
+  repeated string resultdb_elegible_projects = 8;
 }

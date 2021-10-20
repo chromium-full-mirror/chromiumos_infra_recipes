@@ -31,6 +31,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
+    self._resultdb_elegible_projects = properties.resultdb_elegible_projects
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -66,6 +67,12 @@ class SkylabApi(recipe_api.RecipeApi):
         self.m.src_state.gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
+    # TODO(b/201608160): Enable uploading to resultdb on select repos.
+    # Remove check for repos and experiment upon experiment conclusion.
+    if self._resultdb_elegible_projects and all(
+        x.project in self._resultdb_elegible_projects
+        for x in self.m.src_state.gerrit_changes):
+      exps.update({'chromeos.cros_test_platform.add_resultdb_settings': True})
 
     bb_request = self.m.buildbucket.schedule_request(
         self._ctp_builder,

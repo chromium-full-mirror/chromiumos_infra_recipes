@@ -16,8 +16,4 @@ message ProctorProperties {
 
   // Buildbucket Bucket for VM execution.
   string vm_bucket = 6;
-
-  // TODO(b/201608160): Remove upon experiment completion.
-  // Projects on which to enable uploading to resultdb in prod.
-  repeated string resultdb_elegible_projects = 7;
 }
