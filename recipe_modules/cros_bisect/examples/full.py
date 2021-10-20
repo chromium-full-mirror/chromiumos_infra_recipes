@@ -31,18 +31,12 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.cros_bisect.get_test_child_builders(),
                              properties.expected_test_child_builders)
 
-  api.assertions.assertEqual(api.cros_bisect.test_bisection_percent,
-                             properties.expected_test_bisection_percent)
-
-  api.assertions.assertEqual(api.cros_bisect.test_bisection_count,
-                             properties.expected_test_bisection_count)
-
 
 def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'with-findit-bisect',
+      'findit-compilation-failures-rerun-build',
       api.properties(
           **{
               '$chromeos/cros_bisect':
@@ -67,7 +61,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'with-failed-build',
+      'failed-build-with-bisection-enabled',
       api.properties(
           TestInputProperties(failed_packages=[
               PackageInfo(package_name='uno', category='pkg', version='1'),
@@ -80,7 +74,7 @@ def GenTests(api):
   hw_test_unit3 = api.cros_bisect.serialized_hw_test_unit('bar')
 
   yield api.test(
-      'with-test-child-builders',
+      'findit-test-failures-rerun-build',
       api.properties(
           **{
               '$chromeos/cros_bisect':

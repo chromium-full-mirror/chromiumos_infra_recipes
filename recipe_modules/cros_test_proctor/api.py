@@ -121,13 +121,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('check test results'):
       self.m.cros_history.set_passed_tests(passed_test_names)
-      needs_test_bisection = self._needs_bisection(
-          crit_failure_test_names, test_plan,
-          self.m.cros_bisect.test_bisection_percent,
-          self.m.cros_bisect.test_bisection_count)
-
+      critical_test_count = self.critical_test_count(test_plan)
       self.m.cros_bisect.set_test_failures(test_results.skylab,
-                                           needs_test_bisection)
+                                           len(crit_failure_test_names),
+                                           critical_test_count)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
       failures = self.get_test_failures(test_results)
     return failures
@@ -406,21 +403,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
     return vm_tests
 
-  def _needs_bisection(self, failed_results, test_plan, percent_threshold,
-                       count_threshold):
-    """Check if we need bisection.
+  def critical_test_count(self, test_plan):
+    """Returns the number of critical tests in the build plan.
 
     Check if we need bisection of the results per the bisection constraints.
 
     Args:
-      failed_results (list[SkylabResults]): Results of failed tests.
       test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
-      percent_threshold (float): upper threshold for test bisection.
-      count_threshold (int): upper threshold of # of tests
-          for test bisection.
 
     Returns:
-      A boolean indicating whether we need to initiate bisection
+      test_count (int): Number of critical tests ran.
     """
     test_count = (
         self._critical_test_count(test_plan.hw_test_units, lambda unit: unit.
@@ -430,14 +422,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self._critical_test_count(
             test_plan.direct_tast_vm_test_units, lambda unit: unit.
             tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test))
-    failure_ratio = 0
-    if test_count != 0 and failed_results:
-      failure_ratio = float(len(failed_results)) / test_count
-      if (failure_ratio <= float(percent_threshold) / 100 or
-          len(failed_results) <= count_threshold):
-        return True
-
-    return False
+    return test_count
 
   def _critical_test_count(self, units, cfg_func, tests_func):
     """Returns the count of critical tests within `units`.

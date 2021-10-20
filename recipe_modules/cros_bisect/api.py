@@ -28,14 +28,6 @@ class CrosBisectApi(recipe_api.RecipeApi):
     self._test_bisection_percent = properties.test_bisection_percent
     self._test_bisection_count = properties.test_bisection_count
 
-  @property
-  def test_bisection_percent(self):
-    return self._test_bisection_percent
-
-  @property
-  def test_bisection_count(self):
-    return self._test_bisection_count
-
   def _set_bisect_builder(self, builder):
     self.m.easy.set_properties_step(BISECT_BUILDER=builder)
 
@@ -113,7 +105,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
                                             needs_bisection)
     self.m.easy.set_properties_step(compile_failures=payload)
 
-  def set_test_failures(self, hw_results, needs_bisection):
+  def set_test_failures(self, hw_results, failed_test_count, total_test_count):
     """Outputs the failed hardware tests, if any, for FindIt consumption.
 
     Outputs hardware test failures from the results for consumption by FindIt
@@ -123,8 +115,11 @@ class CrosBisectApi(recipe_api.RecipeApi):
     Args:
       hw_results (list[SkylabResult]): list of SkylabResults from running
           hardware tests
-      needs_bisection: (bool): Whether or not bisection is needed for this run.
+      failed_test_count (int): Number of critical test failures.
+      total_test_count (int): Total number of critical tests run.
     """
+    needs_bisection = self._test_failures_need_bisection(
+        failed_test_count, total_test_count)
     hw_failed_results = [
         result for result in hw_results
         if self.m.failures.is_critical_hw_test_failure(result)
@@ -152,6 +147,27 @@ class CrosBisectApi(recipe_api.RecipeApi):
           'needs_bisection': needs_bisection,
       }
       self.m.easy.set_properties_step(test_failures=payload)
+
+  def _test_failures_need_bisection(self, failed_test_count, total_test_count):
+    """Check if the test failures need bisection.
+
+    Check if we need bisection of the results per the bisection constraints.
+
+    Args:
+      failed_test_count (int): Number of critical test failures.
+      total_test_count (int): Total number of critical tests run.
+
+    Returns:
+      A boolean indicating whether we need to initiate bisection.
+    """
+    failure_ratio = 0
+    if total_test_count != 0 and failed_test_count:
+      failure_ratio = float(failed_test_count) / total_test_count
+      if (failure_ratio <= float(self._test_bisection_percent) / 100 or
+          failed_test_count <= self._test_bisection_count):
+        return True
+
+    return False
 
   def get_packages(self):
     """Returns packages to build as specified by FindIt or empty list.

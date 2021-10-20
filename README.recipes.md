@@ -1647,7 +1647,7 @@ API for interacting with FindIt.
 
 A module for interacting with FindIt.
 
-&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#156)(self):**
+&mdash; **def [get\_packages](/recipe_modules/cros_bisect/api.py#172)(self):**
 
 Returns packages to build as specified by FindIt or empty list.
 
@@ -1657,7 +1657,7 @@ empty list if this run was not invoked as a bisection build.
 Returns:
   list[PackageInfo]: list of packages to build as specified by FindIt
 
-&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#167)(self):**
+&mdash; **def [get\_test\_child\_builders](/recipe_modules/cros_bisect/api.py#183)(self):**
 
 Returns the child builders as specified by FindIt or empty list.
 
@@ -1668,7 +1668,7 @@ build.
 Returns:
   list[str]: sorted list of child builders to run.
 
-&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#183)(self, builds):**
+&mdash; **def [get\_test\_plan](/recipe_modules/cros_bisect/api.py#199)(self, builds):**
 
 Returns the test plan as specified by FindIt or None.
 
@@ -1684,7 +1684,7 @@ Args:
 Returns:
   GenerateTestPlanResponse or None.
 
-&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#42)(self, build_target_name):**
+&mdash; **def [set\_bisect\_builder](/recipe_modules/cros_bisect/api.py#34)(self, build_target_name):**
 
 Sets the BISECT_BUILDER output property for the build target recipe.
 
@@ -1694,7 +1694,7 @@ should invoke if the build fails and bisection is required.
 Args:
   build_target_name (str): build target name to set the bisect builder for.
 
-&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#95)(self, failed_packages, failed_step, needs_bisection):**
+&mdash; **def [set\_compile\_failures](/recipe_modules/cros_bisect/api.py#87)(self, failed_packages, failed_step, needs_bisection):**
 
 Outputs the failed packages, if any, for FindIt consumption.
 
@@ -1710,7 +1710,7 @@ Args:
   needs_bisection: (bool): Whether or not bisection is needed for this run.
       A non-critical builder, for example may not need bisection.
 
-&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#53)(self):**
+&mdash; **def [set\_orchestrator\_bisect\_builder](/recipe_modules/cros_bisect/api.py#45)(self):**
 
 Sets the BISECT_BUILDER output property for the orchestrator.
 
@@ -1718,7 +1718,7 @@ Sets the BISECT_BUILDER output property to the name of the builder FindIt
 should invoke if the postsubmit-orchestrator encounters hardware test
 failures.
 
-&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#116)(self, hw_results, needs_bisection):**
+&mdash; **def [set\_test\_failures](/recipe_modules/cros_bisect/api.py#108)(self, hw_results, failed_test_count, total_test_count):**
 
 Outputs the failed hardware tests, if any, for FindIt consumption.
 
@@ -1729,11 +1729,8 @@ tests this method outputs nothing.
 Args:
   hw_results (list[SkylabResult]): list of SkylabResults from running
       hardware tests
-  needs_bisection: (bool): Whether or not bisection is needed for this run.
-
-&emsp; **@property**<br>&mdash; **def [test\_bisection\_count](/recipe_modules/cros_bisect/api.py#35)(self):**
-
-&emsp; **@property**<br>&mdash; **def [test\_bisection\_percent](/recipe_modules/cros_bisect/api.py#31)(self):**
+  failed_test_count (int): Number of critical test failures.
+  total_test_count (int): Total number of critical tests run.
 ### *recipe_modules* / [cros\_branch](/recipe_modules/cros_branch)
 
 [DEPS](/recipe_modules/cros_branch/__init__.py#4): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3690,7 +3687,19 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#256)(self, test_results):**
+&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#406)(self, test_plan):**
+
+Returns the number of critical tests in the build plan.
+
+Check if we need bisection of the results per the bisection constraints.
+
+Args:
+  test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
+
+Returns:
+  test_count (int): Number of critical tests ran.
+
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#253)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3726,7 +3735,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#195)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#192)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False):**
 
 Schedule all tests from the test_plan.
 
@@ -8101,11 +8110,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#22)(api, properties):**
 ### *recipes* / [cros\_bisect:examples/set\_test\_failures](/recipe_modules/cros_bisect/examples/set_test_failures.py)
 
-[DEPS](/recipe_modules/cros_bisect/examples/set_test_failures.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_bisect/examples/set_test_failures.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/set_test_failures.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/set_test_failures.py#18)(api):**
 ### *recipes* / [cros\_bisect:examples/test\_plan\_processing](/recipe_modules/cros_bisect/examples/test_plan_processing.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/test_plan_processing.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
