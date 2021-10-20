@@ -248,6 +248,9 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env": {
+      "USE_DUT_TOPO": ""
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -285,6 +288,9 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "env": {
+      "USE_DUT_TOPO": ""
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {

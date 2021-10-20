@@ -143,6 +143,9 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env": {
+      "USE_DUT_TOPO": ""
+    },
     "infra_step": true,
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
@@ -169,6 +172,9 @@
       "-output_json",
       "/dev/stdout"
     ],
+    "env": {
+      "USE_DUT_TOPO": ""
+    },
     "infra_step": true,
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",
     "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
