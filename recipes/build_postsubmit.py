@@ -11,7 +11,6 @@ DEPS = [
     'recipe_engine/swarming',
     'build_menu',
     'cros_history',
-    'test_util',
 ]
 
 from recipe_engine import post_process
