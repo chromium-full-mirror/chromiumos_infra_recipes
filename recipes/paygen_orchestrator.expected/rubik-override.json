@@ -1,0 +1,112 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "discovering payload configuration",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no configurations matched in payload.json@@@",
+      "@@@STEP_LOG_LINE@0 configured sources@[]@@@",
+      "@@@STEP_LOG_END@0 configured sources@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "discovering payload configuration.get paygen json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@paygen.json@{@@@",
+      "@@@STEP_LOG_LINE@paygen.json@  \"delta\": [@@@",
+      "@@@STEP_LOG_LINE@paygen.json@    {@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"board\": {@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"public_codename\": \"amenia\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"is_active\": false,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"builder_name\": \"amenia\"@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      },@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"delta_type\": \"NO_DELTA\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"generate_delta\": false,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"delta_payload_tests\": false,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"full_payload_tests\": false@@@",
+      "@@@STEP_LOG_LINE@paygen.json@    },@@@",
+      "@@@STEP_LOG_LINE@paygen.json@    {@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"board\": {@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"public_codename\": \"coral\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"is_active\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"builder_name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      },@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"delta_type\": \"OMAHA\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"channel\": \"beta\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"chrome_os_version\": \"13505.11.0\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"chrome_version\": \"87.0.4280.20\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"milestone\": 87,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"generate_delta\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"delta_payload_tests\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"full_payload_tests\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"applicable_models\": [@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"astronaut\"@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      ]@@@",
+      "@@@STEP_LOG_LINE@paygen.json@    },@@@",
+      "@@@STEP_LOG_LINE@paygen.json@    {@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"board\": {@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"public_codename\": \"coral\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"is_active\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"builder_name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      },@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"delta_type\": \"OMAHA\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"channel\": \"beta\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"chrome_os_version\": \"13505.15.0\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"chrome_version\": \"87.0.4280.24\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"milestone\": 87,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"generate_delta\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"delta_payload_tests\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"full_payload_tests\": true,@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"applicable_models\": [@@@",
+      "@@@STEP_LOG_LINE@paygen.json@        \"astronaut\"@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      ]@@@",
+      "@@@STEP_LOG_LINE@paygen.json@    }@@@",
+      "@@@STEP_LOG_LINE@paygen.json@  ]@@@",
+      "@@@STEP_LOG_LINE@paygen.json@}@@@",
+      "@@@STEP_LOG_END@paygen.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-build-release-console/paygen.json"
+    ],
+    "infra_step": true,
+    "name": "discovering payload configuration.get paygen json.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

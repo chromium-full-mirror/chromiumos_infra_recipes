@@ -51,10 +51,16 @@ def RunSteps(api, properties):
   # Get the current paygen configuration.
   with api.step.nest('discovering payload configuration') as pres:
     configured_payloads = []
-    for delta_type, channel in itertools.product(delta_types,
-                                                 properties.channels):
 
-      # TODO(1122854): We should have channel enum from common.
+    # Override RUBIK channel with canary as there are no payload definitions for
+    # it. This should be removed once we transition to the main channels.
+    # TODO(b:195415535): Remove this.
+    override_chan = properties.channels
+    if override_chan == [PaygenOrchestratorProperties.Channel.RUBIK]:
+      override_chan = [PaygenOrchestratorProperties.Channel.CANARY]
+
+    for delta_type, channel in itertools.product(delta_types, override_chan):
+
       delta_t_str, channel_str = (
           DeltaType.Name(delta_type),
           PaygenOrchestratorProperties.Channel.Name(channel))
@@ -201,3 +207,7 @@ def GenTests(api):
           'ChromeOS-factory-R87-13505.15.0-coral.tar.xz'),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))
+
+  # TODO(b:195415535): Remove this with channel RUBIK.
+  yield api.test('rubik-override', get_props(channels=['RUBIK']),
+                 good_paygen_cfg)
