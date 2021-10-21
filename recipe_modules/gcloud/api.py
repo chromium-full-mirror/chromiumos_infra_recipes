@@ -11,14 +11,8 @@ import json
 import os
 import re
 
-DUMMY_IMAGE = 'cos-rc-85-13310-1015-0'
-GCE_PREFIX = 'gce-tests'
-GCE_TEST_BUCKET = 'images-in-test'
-RAW_IMAGE_NAME = 'disk.raw'
-TEST_IMAGE_NAME = 'chromiumos_test_image.bin'
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
-SSD_ZONES = ['us-central1-b', 'us-east1-d']
 
 _SWARMING_HOST_REGEXP = (r'^chromeos-'
                          r'\w*-'
@@ -150,67 +144,32 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step(step_name or 'gcloud auth', ['gcloud', 'auth', 'list'])
 
-  def prep_image(self, source_bucket, source_path, uniq_id):
-    """Prepare the image to be used for testing.
+  def create_image(self, image_name, source_uri=None, licenses=None):
+    """Creates an image in the GCE project.
 
     Args:
-      source_bucket(str): Source GS bucket to download from.
-      source_path(str): Path in GS to the build artifacts.
-      uniq_id(int): ID to differentiate the image. Usually
-          buildbucket_id of the build that generated the image.
-
-    Returns: Path to the image tar file.
+      image_name(str): Name of the image.
+      source_uri(str, optional): Sets the `--source-uri` flag if the image
+        source is a tarball. See gcloud docs for detail.
+      licenses(list[str], optional): List of image licenses to apply.
     """
-    with self.m.step.nest('prepare image'):
-      image_archive_dir = self.m.path.mkdtemp(prefix='image-archive')
-      test_image_zip = image_archive_dir.join('image.zip')
-      test_image_dir = image_archive_dir.join('image')
-      test_image_path = str(test_image_dir.join(TEST_IMAGE_NAME))
-      raw_image_path = str(test_image_dir.join(RAW_IMAGE_NAME))
-      self.m.gsutil.download(source_bucket,
-                             os.path.join(source_path,
-                                          'image.zip'), test_image_zip,
-                             name='download image bundle from GS')
-      self.m.archive.extract('unzip image bundle', test_image_zip,
-                             test_image_dir, include_files=[TEST_IMAGE_NAME])
-      # Rename image and tar it up.
-      self.m.file.move('Rename image to disk.raw', test_image_path,
-                       raw_image_path)
-      tar_file = '{}.tar.gz'.format(uniq_id)
-      tar_path = str(test_image_dir.join(tar_file))
-      with self.m.context(cwd=test_image_dir):
-        self.m.step(
-            'tar image',
-            ['tar', '--format=oldgnu', '-Sczf', tar_file, RAW_IMAGE_NAME])
-      return tar_path
+    # source_uri is made optional to leave room for other image sources in the
+    # future (--source-disk, --source-image, etc.), although it's currently the
+    # only supported type and effectively required.
+    # Once other sources are supported we should check here if exactly one of
+    # the arguments is set.
+    if source_uri is None:
+      raise ValueError('source_uri not set')
 
-  def create_image(self, tar_path, target, uniq_id):
-    """Create an image in the GCE project.
+    cmd = ['gcloud', 'compute', 'images', 'create', image_name]
+    if source_uri is not None:
+      cmd.append('--source-uri={}'.format(source_uri))
+    if licenses is not None:
+      cmd.append('--licenses={}'.format(','.join(licenses)))
 
-    Args:
-      tar_path(str): Path to the requisite image tar_file.
-      target(str): Target being tested. (Ex:betty-arc-r)
-      uniq_id(int): ID to differentiate the image. Usually
-        buildbucket_id of the build that generated the image.
-
-    Returns: A string name of the image.
-    """
-    with self.m.step.nest('create image'):
-      tar_file = '{}.tar.gz'.format(uniq_id)
-      self.m.gsutil.upload(tar_path, GCE_TEST_BUCKET,
-                           '{}/{}'.format(target, tar_file))
-      with self.m.context(env={'VIRTUAL_ENV': '1'}):
-        image_name = '{}-{}'.format(target, uniq_id)
-        self.m.step('gce create image', [
-            'gcloud',
-            'compute',
-            'images',
-            'create',
-            image_name,
-            '--source-uri=gs://{}/{}/{}'.format(GCE_TEST_BUCKET, target,
-                                                tar_file),
-        ])
-        return image_name
+    with self.m.step.nest('create image'), \
+        self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('gce create image', cmd, infra_step=True)
 
   def delete_image(self, image_name):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
@@ -221,7 +180,7 @@ class GcloudApi(recipe_api.RecipeApi):
           'delete',
           image_name,
           '--quiet',
-      ])
+      ], infra_step=True)
 
   def create_instance(self, image, project, machine, zone, network=None,
                       subnet=None):
@@ -235,7 +194,8 @@ class GcloudApi(recipe_api.RecipeApi):
       network(str): Network name to use.
       subnet(str): Network subnet on which to create instance.
 
-    Returns: A string name of the instance.
+    Returns:
+      Tuple[str, str]: (name, ip_addr) of the instance.
     """
     extra_args = []
     if network:
@@ -243,14 +203,25 @@ class GcloudApi(recipe_api.RecipeApi):
     if subnet:
       extra_args.append('--subnet={}'.format(subnet))
     gcloud_cmd = [
-        'gcloud', 'compute', 'instances', 'create', image,
-        '--image={}'.format(image), '--project={}'.format(project),
-        '--machine-type={}'.format(machine), '--no-scopes', '--no-address',
-        '--zone={}'.format(zone)
+        'gcloud',
+        'compute',
+        'instances',
+        'create',
+        image,
+        '--image={}'.format(image),
+        '--project={}'.format(project),
+        '--machine-type={}'.format(machine),
+        '--no-scopes',
+        '--no-address',
+        '--zone={}'.format(zone),
+        '--format=json',
     ]
     gcloud_cmd.extend(extra_args)
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('create instance', gcloud_cmd)
+      output = self.m.easy.stdout_json_step(
+          'create instance', gcloud_cmd,
+          test_stdout=self.test_api.instance_data, infra_step=True)
+      return output[0]['name'], output[0]['networkInterfaces'][0]['networkIP']
 
   def delete_instance(self, instance, project, zone):
     """Delete a GCE instance.
@@ -264,10 +235,10 @@ class GcloudApi(recipe_api.RecipeApi):
       self.m.step('delete instance', [
           'gcloud', 'compute', 'instances', 'delete', instance, '--quiet',
           '--zone={}'.format(zone), '--project={}'.format(project)
-      ])
+      ], infra_step=True)
 
   def list_all_instances(self):
-    """Pulls a list of all disks that exist."""
+    """Pulls a list of all instances that exist."""
     list_cmd = [
         'gcloud',
         'compute',
@@ -941,3 +912,13 @@ class GcloudApi(recipe_api.RecipeApi):
       self.m.step.active_result.presentation.step_text += (
           '<br/>[WARNING: gcloud unmount disk bookkeeping error for %s]' %
           mount_path)
+
+  def get_instance_serial_output(self, instance, project, zone):
+    with self.m.step.nest('get instance serial output') as presentation, \
+        self.m.context(env={'VIRTUAL_ENV': '1'}):
+      output = self.m.easy.stdout_step(
+          'gcloud compute instances get-serial-port-output', [
+              'gcloud', 'compute', 'instances', 'get-serial-port-output',
+              instance, '--zone={}'.format(zone), '--project={}'.format(project)
+          ], infra_step=True)
+      presentation.logs['serial output'] = output

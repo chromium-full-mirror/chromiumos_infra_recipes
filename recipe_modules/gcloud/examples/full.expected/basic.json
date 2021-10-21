@@ -25,102 +25,7 @@
   },
   {
     "cmd": [],
-    "name": "prepare image"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://chromeos-image-archive/image_path/image.zip",
-      "[CLEANUP]/image-archive_tmp_1/image.zip"
-    ],
-    "infra_step": true,
-    "name": "prepare image.gsutil download image bundle from GS",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
-      "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/image-archive_tmp_1/image.zip\", \"include_files\": [\"chromiumos_test_image.bin\"], \"output\": \"[CLEANUP]/image-archive_tmp_1/image\", \"safe_mode\": true}",
-      "--json-output",
-      "/path/to/tmp/json"
-    ],
-    "name": "prepare image.unzip image bundle",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "move",
-      "[CLEANUP]/image-archive_tmp_1/image/chromiumos_test_image.bin",
-      "[CLEANUP]/image-archive_tmp_1/image/disk.raw"
-    ],
-    "infra_step": true,
-    "name": "prepare image.Rename image to disk.raw",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "tar",
-      "--format=oldgnu",
-      "-Sczf",
-      "1234.tar.gz",
-      "disk.raw"
-    ],
-    "cwd": "[CLEANUP]/image-archive_tmp_1/image",
-    "name": "prepare image.tar image",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "create image"
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "tar/path/1234.tar.gz",
-      "gs://images-in-test/betty/1234.tar.gz"
-    ],
-    "infra_step": true,
-    "name": "create image.gsutil upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/images-in-test/betty/1234.tar.gz@@@"
-    ]
   },
   {
     "cmd": [
@@ -128,12 +33,14 @@
       "compute",
       "images",
       "create",
-      "betty-1234",
-      "--source-uri=gs://images-in-test/betty/1234.tar.gz"
+      "image-name",
+      "--source-uri=source-uri",
+      "--licenses=license"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "create image.gce create image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -151,6 +58,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "delete image"
   },
   {
@@ -166,13 +74,77 @@
       "--no-scopes",
       "--no-address",
       "--zone=us-central1-b",
+      "--format=json",
       "--network=chromeos-gce-tests",
       "--subnet=us-central1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "create instance"
+    "infra_step": true,
+    "name": "create instance",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
   },
   {
     "cmd": [],
@@ -218,6 +190,33 @@
     "name": "detach disk"
   },
   {
+    "cmd": [],
+    "name": "get instance serial output",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@serial output@@@@",
+      "@@@STEP_LOG_END@serial output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "get-serial-port-output",
+      "image-name",
+      "--zone=us-central1-a",
+      "--project=chromeos-gce-tests"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "get instance serial output.gcloud compute instances get-serial-port-output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -231,6 +230,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "infra_step": true,
     "name": "delete instance"
   },
   {

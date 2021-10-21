@@ -197,6 +197,95 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }]
     return images_list
 
+  def instance_data(self):
+    """Returns metadata of a single instance in json format."""
+    metadata = [{
+        "canIpForward":
+            False,
+        "cpuPlatform":
+            "Intel Cascade Lake",
+        "creationTimestamp":
+            "2021-10-20T22:58:08.883-07:00",
+        "deletionProtection":
+            False,
+        "disks": [{
+            "autoDelete":
+                True,
+            "boot":
+                True,
+            "deviceName":
+                "persistent-disk-0",
+            "diskSizeGb":
+                "17",
+            "index":
+                0,
+            "interface":
+                "SCSI",
+            "kind":
+                "compute#attachedDisk",
+            "licenses": [
+                "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+            ],
+            "mode":
+                "READ_WRITE",
+            "source":
+                "https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702",
+            "type":
+                "PERSISTENT"
+        }],
+        "fingerprint":
+            "96TqUn4aIDM=",
+        "id":
+            "4143780481849933727",
+        "kind":
+            "compute#instance",
+        "labelFingerprint":
+            "42WmSpB8rSM=",
+        "lastStartTimestamp":
+            "2021-10-20T22:58:22.786-07:00",
+        "machineType":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8",
+        "metadata": {
+            "fingerprint": "rNGahkL14fg=",
+            "kind": "compute#metadata"
+        },
+        "name":
+            "betty-arc-r-3447702",
+        "networkInterfaces": [{
+            "fingerprint":
+                "U3oPE5xhuUo=",
+            "kind":
+                "compute#networkInterface",
+            "name":
+                "nic0",
+            "network":
+                "https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests",
+            "networkIP":
+                "172.16.0.15",
+            "stackType":
+                "IPV4_ONLY",
+            "subnetwork":
+                "https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1"
+        }],
+        "scheduling": {
+            "automaticRestart": True,
+            "onHostMaintenance": "MIGRATE",
+            "preemptible": False
+        },
+        "selfLink":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702",
+        "startRestricted":
+            False,
+        "status":
+            "RUNNING",
+        "tags": {
+            "fingerprint": "42WmSpB8rSM="
+        },
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a"
+    }]
+    return metadata
+
   @recipe_test_api.mod_test_data
   @staticmethod
   def infra_host(value):

@@ -19,6 +19,7 @@ VM_IMAGE_NAME = 'chromiumos_test_image.bin'
 QCOW_IMG_NAME = 'qcow2.img'
 QEMU_VM_HOST = 'localhost'
 QEMU_VM_PORT = '9222'
+GCE_VM_PORT = '22'
 
 
 class TastExecApi(RecipeApi):
@@ -102,7 +103,7 @@ class TastExecApi(RecipeApi):
       suite_name (str): Name of the suite to run.
       expressions (list[str]): Expressions to test.
       vm_context (contextlib.contextmanager): The VM context manager, created
-        by create_qemu_vm_context.
+        by create_qemu_vm_context/create_gce_vm_context.
       test_artifacts_dir (Path): Dir containing test artifacts.
       private_key_path (Path): Path to private key.
       artifacts_gs_bucket (str): The bucket containing build artifacts.
@@ -167,7 +168,7 @@ class TastExecApi(RecipeApi):
     Args:
       expressions (list[str]): Expressions describing tests to run.
       vm_context (contextlib.contextmanager): The VM context manager, created
-        by create_qemu_vm_context.
+        by create_qemu_vm_context/create_gce_vm_context.
       test_artifacts_dir (Path): Dir containing test artifacts.
       private_key_path (Path): Path to private key.
       artifacts_gs_bucket (str): The bucket containing build artifacts.
@@ -384,7 +385,7 @@ class TastExecApi(RecipeApi):
         '-display', 'none'
     ], infra_step=True)
     try:
-      self._test_ssh_conn(private_key_path)
+      self._test_ssh_conn(QEMU_VM_HOST, QEMU_VM_PORT, private_key_path)
     except StepFailure:  # pragma: nocover
       self._kill_vm(kvm_pid_file)
       raise
@@ -399,11 +400,46 @@ class TastExecApi(RecipeApi):
       presentation.logs['kvm.monitor.serial'] = self.m.file.read_text(
           'reading file', kvm_monitor_serial_file)
 
+  def create_gce_vm_context(self, image, project, machine, zone, network,
+                            subnet, private_key_path):
+    """Creates a context manager which performs setup/teardown of a GCE VM.
+
+    Args:
+      image(str): GCE image to use for the instance.
+      project(str): Google Cloud project name.
+      machine(str): GCE machine type
+      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      network(str): Network name to use.
+      subnet(str): Network subnet on which to create instance.
+      private_key_path (Path): Path to private key.
+
+    Returns:
+      A context manager that
+        - when entered, prepares a VM to test against, and yields the
+          (host, port) for connecting to it.
+        - when exited, terminates the VM and performs cleanup.
+    """
+
+    @contextlib.contextmanager
+    def gce_vm_context():
+      instance, ip_addr = self.m.gcloud.create_instance(image, project, machine,
+                                                        zone, network, subnet)
+      try:
+        self._test_ssh_conn(ip_addr, GCE_VM_PORT, private_key_path)
+        yield ip_addr, GCE_VM_PORT
+      finally:
+        try:
+          self.m.gcloud.get_instance_serial_output(instance, project, zone)
+        finally:
+          self.m.gcloud.delete_instance(instance, project, zone)
+
+    return gce_vm_context
+
   @exponential_retry(retries=3)
-  def _test_ssh_conn(self, private_key_path):
+  def _test_ssh_conn(self, host, port, private_key_path):
     self.m.step('connect via ssh', [
         'ssh', \
-        '-p', QEMU_VM_PORT, \
+        '-p', port, \
         '-oConnectionAttempts=4', \
         '-oUserKnownHostsFile=/dev/null', \
         '-oProtocol=2', \
@@ -414,5 +450,5 @@ class TastExecApi(RecipeApi):
         '-oNumberOfPasswordPrompts=0', \
         '-oIdentitiesOnly=yes', \
         '-i', private_key_path, \
-        'root@{}'.format(QEMU_VM_HOST), '--', 'true'
+        'root@{}'.format(host), '--', 'true'
     ], infra_step=True, timeout=5*60)

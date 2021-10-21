@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
     'easy',
+    'gcloud',
     'tast_results',
     'util',
 ]

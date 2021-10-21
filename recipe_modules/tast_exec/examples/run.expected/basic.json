@@ -1451,6 +1451,990 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "first tast iteration (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "create",
+      "image",
+      "--image=image",
+      "--project=project",
+      "--machine-type=machine",
+      "--no-scopes",
+      "--no-address",
+      "--zone=zone",
+      "--format=json",
+      "--network=network",
+      "--subnet=subnet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "first tast iteration (2).create instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15",
+      "--",
+      "true"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration (2).connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "172.16.0.15:22",
+      "!informational"
+    ],
+    "name": "first tast iteration (2).tast list",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_3",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "172.16.0.15:22",
+      "!informational"
+    ],
+    "name": "first tast iteration (2).tast run",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/var/log",
+      "/var/spool/crash"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration (2).gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_3/artifacts.tar"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration (2).download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).get instance serial output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@serial output@@@@",
+      "@@@STEP_LOG_END@serial output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "get-serial-port-output",
+      "betty-arc-r-3447702",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "first tast iteration (2).get instance serial output.gcloud compute instances get-serial-port-output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "betty-arc-r-3447702",
+      "--quiet",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "first tast iteration (2).delete instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_3/results.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration (2).process tast output.read results.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@results.json@[@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:arc.Boot\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:android_all\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"group:mainline\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"ereth@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"arc-core@google.com\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"nya@chromium.org\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Checks that Android boots\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:33.420622341-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      {@@@",
+      "@@@STEP_LOG_LINE@results.json@        \"reason\": \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@results.json@      }@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"arc.Boot\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"android_all\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:15.146771555-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 300000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"unknownField\": 123@@@",
+      "@@@STEP_LOG_LINE@results.json@  },@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:arc.BuildProperties\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"group:mainline\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"niwa@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"risan@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"arc-eng@google.com\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Checks important Android properties such as first_api_level\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:36.833644627-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"arc.BuildProperties\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:33.421007899-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 240000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"unknownField\": 123@@@",
+      "@@@STEP_LOG_LINE@results.json@  },@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:arc.MiniContainerState\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"group:mainline\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"yusukes@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"arc-core@google.com\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"hidehiko@chromium.org\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:40.090886944-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"arc.MiniContainerState\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:36.833776957-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 240000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"unknownField\": 123@@@",
+      "@@@STEP_LOG_LINE@results.json@  }@@@",
+      "@@@STEP_LOG_LINE@results.json@]@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).process tast output.GS upload first_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/first_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_3",
+      "gs://chromeos-vmtest-archive//0/first_results"
+    ],
+    "infra_step": true,
+    "name": "first tast iteration (2).process tast output.GS upload first_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "tests to retry (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@reason_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_END@retry_config@@@",
+      "@@@STEP_LOG_LINE@failed_tests@{u'arc.Boot': name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@failed_tests@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@}@@@",
+      "@@@STEP_LOG_END@failed_tests@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
+      "@@@STEP_LOG_END@matches@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/vm_retry.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "tests to retry (2).fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "create",
+      "image",
+      "--image=image",
+      "--project=project",
+      "--machine-type=machine",
+      "--no-scopes",
+      "--no-address",
+      "--zone=zone",
+      "--format=json",
+      "--network=network",
+      "--subnet=subnet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "second tast iteration (2).create instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15",
+      "--",
+      "true"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration (2).connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "172.16.0.15:22",
+      "arc.Boot"
+    ],
+    "name": "second tast iteration (2).tast list",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_4",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "172.16.0.15:22",
+      "arc.Boot"
+    ],
+    "name": "second tast iteration (2).tast run",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/var/log",
+      "/var/spool/crash"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration (2).gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_4/artifacts.tar"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration (2).download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).get instance serial output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@serial output@@@@",
+      "@@@STEP_LOG_END@serial output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "get-serial-port-output",
+      "betty-arc-r-3447702",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "second tast iteration (2).get instance serial output.gcloud compute instances get-serial-port-output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "betty-arc-r-3447702",
+      "--quiet",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "second tast iteration (2).delete instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_4/results.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration (2).process tast output.read results.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@results.json@[@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:arc.Boot\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:android_all\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"group:mainline\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"ereth@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"arc-core@google.com\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"nya@chromium.org\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Checks that Android boots\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:33.420622341-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      {@@@",
+      "@@@STEP_LOG_LINE@results.json@        \"reason\": \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@results.json@      }@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"arc.Boot\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"android_all\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:15.146771555-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 300000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"unknownField\": 123@@@",
+      "@@@STEP_LOG_LINE@results.json@  },@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:arc.BuildProperties\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"group:mainline\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"niwa@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"risan@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"arc-eng@google.com\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Checks important Android properties such as first_api_level\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:36.833644627-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"arc.BuildProperties\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:33.421007899-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 240000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"unknownField\": 123@@@",
+      "@@@STEP_LOG_LINE@results.json@  },@@@",
+      "@@@STEP_LOG_LINE@results.json@  {@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"name:arc.MiniContainerState\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"group:mainline\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"yusukes@chromium.org\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"arc-core@google.com\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"hidehiko@chromium.org\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:40.090886944-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"name\": \"arc.MiniContainerState\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"android\",@@@",
+      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@results.json@    ],@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:36.833776957-08:00\",@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 240000000000,@@@",
+      "@@@STEP_LOG_LINE@results.json@    \"unknownField\": 123@@@",
+      "@@@STEP_LOG_LINE@results.json@  }@@@",
+      "@@@STEP_LOG_LINE@results.json@]@@@",
+      "@@@STEP_LOG_END@results.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).process tast output.GS upload second_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/second_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_4",
+      "gs://chromeos-vmtest-archive//0/second_results"
+    ],
+    "infra_step": true,
+    "name": "second tast iteration (2).process tast output.GS upload second_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set properties (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set greenness (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@greenness@83@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record logs (2)",
+    "~followup_annotations": [
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "cp",
+      "-rf",
+      "/var/log",
+      "[CLEANUP]/var-log-dump_tmp_2"
+    ],
+    "name": "record logs (2).copy logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "-R",
+      "777",
+      "[CLEANUP]/var-log-dump_tmp_2"
+    ],
+    "name": "record logs (2).loosen permission",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record logs (2).GS upload system_logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/var-log-dump_tmp_2",
+      "gs://chromeos-vmtest-archive//0/system_logs"
+    ],
+    "infra_step": true,
+    "name": "record logs (2).GS upload system_logs.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

@@ -17,8 +17,8 @@ def RunSteps(api):
   _ = api.gcloud.infra_host
   api.gcloud.set_gce_project(project=GCE_PROJECT)
   api.gcloud.auth_list()
-  api.gcloud.prep_image('chromeos-image-archive', 'image_path', 1234)
-  api.gcloud.create_image('tar/path/1234.tar.gz', 'betty', 1234)
+  api.gcloud.create_image('image-name', source_uri='source-uri',
+                          licenses=['license'])
   api.gcloud.delete_image('image-name')
   api.gcloud.create_instance('image-name', project=GCE_PROJECT,
                              machine='n1-standard-4', zone='us-central1-b',
@@ -27,8 +27,13 @@ def RunSteps(api):
                          disk='test-disk', zone='us-central1-b')
   api.gcloud.detach_disk(instance='image-name', disk='test-disk',
                          zone='us-central1-b')
+  api.gcloud.get_instance_serial_output('image-name', project=GCE_PROJECT,
+                                        zone='us-central1-a')
   api.gcloud.delete_instance('image-name', project=GCE_PROJECT,
                              zone='us-central1-a')
+
+  with api.assertions.assertRaises(ValueError):
+    api.gcloud.create_image('image-name')  # No source specified
 
   versions_exists_tests = {
       'chromiumos-main-16287984': True,

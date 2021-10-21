@@ -35,6 +35,14 @@ def RunSteps(api):
                               'artifacts-path', results_dir,
                               run_args=['-var=myVar=myVal'])
 
+  # Run with GCE VM
+  vm_context = api.tast_exec.create_gce_vm_context('image', 'project',
+                                                   'machine', 'zone', 'network',
+                                                   'subnet', private_key_path)
+  api.tast_exec.run_vm('tast_vm', ['!informational'], vm_context,
+                       test_artifacts, private_key_path, 'artifacts-bucket',
+                       'artifacts-path')
+
 
 def GenTests(api):
   yield api.test(
