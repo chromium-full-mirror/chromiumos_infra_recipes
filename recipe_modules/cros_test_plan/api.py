@@ -123,3 +123,28 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._test_planner_path = cipd_dir.join('test_plan_generator')
+
+  def get_test_plan_summary(self, test_plan):
+    """Return a mapping of display name to criticality.
+
+    Args:
+      test_plan (GenerateTestPlanResponse): The test plan to summarize.
+
+    Returns:
+      test_to_crit_map (dict{string: bool}): Map of test display name to
+        criticality.
+    """
+    test_to_crit_map = {}
+    for unit in test_plan.hw_test_units:
+      for test in unit.hw_test_cfg.hw_test:
+        test_to_crit_map[test.common.display_name] = test.common.critical.value
+
+    for unit in test_plan.vm_test_units:
+      for test in unit.vm_test_cfg.vm_test:
+        test_to_crit_map[test.common.display_name] = test.common.critical.value
+
+    for unit in test_plan.direct_tast_vm_test_units:
+      for test in unit.tast_vm_test_cfg.tast_vm_test:
+        test_to_crit_map[test.common.display_name] = test.common.critical.value
+
+    return test_to_crit_map

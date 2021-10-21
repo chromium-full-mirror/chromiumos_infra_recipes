@@ -255,6 +255,7 @@
   * [cros_storage:examples/full](#recipes-cros_storage_examples_full)
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
+  * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
   * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes)
   * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes)
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full)
@@ -3603,6 +3604,17 @@ Args:
 
 Returns:
   GenerateTestPlanResponse of test plan.
+
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#127)(self, test_plan):**
+
+Return a mapping of display name to criticality.
+
+Args:
+  test_plan (GenerateTestPlanResponse): The test plan to summarize.
+
+Returns:
+  test_to_crit_map (dict{string: bool}): Map of test display name to
+    criticality.
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#28)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
@@ -8760,6 +8772,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#20)(api):**
+### *recipes* / [cros\_test\_plan:tests/test\_plan\_summary](/recipe_modules/cros_test_plan/tests/test_plan_summary.py)
+
+[DEPS](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#12)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/disabled\_on\_changes](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
