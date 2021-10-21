@@ -39,7 +39,7 @@ class ChromiteApi(recipe_api.RecipeApi):
 
   @property
   def source_cache_branches(self):
-    return ['main']
+    return ['main', 'release-R96-14268.B', 'release-R90-13816.B']
 
   def get_config_defaults(self):
     defaults = {
@@ -245,6 +245,7 @@ class ChromiteApi(recipe_api.RecipeApi):
       cbb_args.extend([
           '--buildroot', self.m.path['cleanup'].join('snapshot', 'chromiumos')
       ])
+      cbb_args.extend(['--workspace', self.m.path['cleanup'].join('workspace')])
       cbb_args.extend(['--source_cache'])
     else:
       cbb_args.extend(['--buildroot', self.m.path['cache'].join('cbuild')])
