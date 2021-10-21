@@ -13,9 +13,12 @@ DEPS = [
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.common import Channel
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 BuildStatus = BuildReport.BuildStatus
 StepDetails = BuildReport.StepDetails
+
+PARENT_ID = 8832734656515626817
 
 
 def RunSteps(api):
@@ -70,7 +73,17 @@ def RunSteps(api):
   api.assertions.assertTrue(build_report.HasField("config"))
   api.assertions.assertTrue(build_report.HasField("steps"))
   api.assertions.assertEqual(len(build_report.steps.info), 1)
+  api.assertions.assertEqual(build_report.parent.buildbucket_id, PARENT_ID)
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.buildbucket.build(
+          build_pb2.Build(
+              tags=[{
+                  'key': 'parent_buildbucket_id',
+                  'value': str(PARENT_ID),
+              }],
+          ),
+      ))

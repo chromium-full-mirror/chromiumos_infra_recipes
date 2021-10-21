@@ -46,6 +46,17 @@ def default_topic():
   return 'chromeos-builds-all'
 
 
+def make_oneup():
+  """Construct a oneup counter function."""
+
+  def closure():
+    closure.counter += 1
+    return closure.counter
+
+  closure.counter = 0
+  return closure
+
+
 class _MessageDelegate(object):
   """
   MessageDelegate wraps a protobuf message, adding a publish() function.
@@ -123,7 +134,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._build_type = build_type
 
   def _MakeBuildReport(self):
-    """Create new instance of BuildReport with id and possibly populated."""
+    """Create new instance of BuildReport with id populated."""
     build_report = BuildReport()
     build_report.buildbucket_id = self.m.buildbucket.build.id
     return build_report
@@ -134,9 +145,10 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._pubsub_project = properties.pubsub_project
     self._pubsub_topic = properties.pubsub_topic
     self._build_type = None
-    self._build_type_sent = False
+    self._build_preamble_sent = False
     self._build_report = BuildReport()
-    self._step_order = 0
+    self._step_order = make_oneup()
+    self._msg_counter = make_oneup()
 
   def publish(self, build_report):
     """Send a BuildReport to the pubsub topic.
@@ -153,13 +165,21 @@ class BuildReportingApi(recipe_api.RecipeApi):
     if not isinstance(build_report, BuildReport):
       raise TypeError("Can only publish BuildReport messages.")
 
-    # If we haven't send the build type, add it when it becomes available.
-    if not self._build_type_sent:
+    # If we haven't sent preamble info yet, add it to the first message.
+    if not self._build_preamble_sent:
       if self._build_type is None:
         raise RuntimeError(
             "Build type must be set before sending first message.")
+
+      parent = self.m.cros_tags.get_values('parent_buildbucket_id')
+      if parent:
+        build_report.parent.buildbucket_id = int(parent[0])
+
       build_report.type = self._build_type
-      self._build_type_sent = True
+      self._build_preamble_sent = True
+
+    # Add counter to message for ordering
+    build_report.count = self._msg_counter()
 
     with self.m.step.nest('build status pubsub update') as pres:
       pres.logs['message'] = MessageToJson(build_report)
@@ -267,7 +287,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     build_report = self._MakeBuildReport()
 
     step_details = build_report.steps.info[self.step_as_str(step_name)]
-    step_details.order = self._step_order
+    step_details.order = self._step_order()
     step_details.status = status
 
     if start_time:
@@ -275,10 +295,6 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     if end_time:
       step_details.runtime.end.FromDatetime(end_time)
-
-    # Increment step order counter so that steps are in the order that this
-    # function was called.
-    self._step_order += 1
 
     return _MessageDelegate(
         step_details,

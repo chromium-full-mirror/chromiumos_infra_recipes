@@ -55,6 +55,31 @@ class CrosTagsApi(recipe_api.RecipeApi):
         return True
     return False
 
+  def get_values(self, key, tags=None, default=None):
+    """Return a value from a list of tags.
+
+    Since tags are able to have multiple values for the same key, the
+    return value is always a list, even for a single item.
+
+    Args:
+      key (str): The key to lookup values for
+      tags ([StringPair]): A list of tags to look up values in (defaults to tags for current build)
+      default (str): A default value to return if no values found
+
+    Returns
+      List of tag values, or [default] if none found.
+    """
+    tags = tags or self.m.buildbucket.build.tags
+
+    results = []
+    for tag in tags:
+      if tag.key == key:
+        results.append(tag.value)
+
+    if (not results) and default:
+      return [default]
+    return results
+
   def cq_cl_tag_value(self, cl_tag_key, tags):
     """Returns the value for the given cq_cl_tag, if it is found."""
     tag_prefix = cl_tag_key + ':'

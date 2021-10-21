@@ -1060,7 +1060,7 @@ Args:
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
-[DEPS](/recipe_modules/build_reporting/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/build_reporting/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -1079,27 +1079,27 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#84)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#95)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#107)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#118)(self):**
 
-&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#193)(self):**
+&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#213)(self):**
 
 Create a BuildConfig instance that can be .published().
 
 Return:
    _MessageDelegate wrapping BuildConfig instance
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#181)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#201)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#249)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#269)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1112,9 +1112,9 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#111)(self):**
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#122)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#141)(self, build_report):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#153)(self, build_report):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1127,7 +1127,7 @@ Args:
 Return:
   Reference to input message
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#213)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#233)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish information about a created artifact.
 
@@ -1143,23 +1143,23 @@ Throws:
 Return:
   Nothing
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#205)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#225)(self, status):**
 
 Publish build status.
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#99)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#110)(self):**
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#103)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#114)(self):**
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#115)(self, build_type):**
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#126)(self, build_type):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#93)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#104)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#288)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#304)(self, step_name):**
 
 Create a context manager to automatically send out step status.
 
@@ -3542,23 +3542,38 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#108)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#58)(self, cl_tag_key, tags):**
+&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#83)(self, cl_tag_key, tags):**
 
 Returns the value for the given cq_cl_tag, if it is found.
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#66)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#91)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
 Returns:
   (str) cq_equivalent_cl_group_key, or None
+
+&mdash; **def [get\_values](/recipe_modules/cros_tags/api.py#58)(self, key, tags=None, default=None):**
+
+Return a value from a list of tags.
+
+Since tags are able to have multiple values for the same key, the
+return value is always a list, even for a single item.
+
+Args:
+  key (str): The key to lookup values for
+  tags ([StringPair]): A list of tags to look up values in (defaults to tags for current build)
+  default (str): A default value to return if no values found
+
+Returns
+  List of tag values, or [default] if none found.
 
 &mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#51)(self, key, value, tags):**
 
@@ -3575,7 +3590,7 @@ Args:
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#100)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#125)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
@@ -7756,7 +7771,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#24)(api):**
 ### *recipes* / [build\_reporting:tests/full](/recipe_modules/build_reporting/tests/full.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8791,11 +8806,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_storage/examples/full.py#14)(api):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
-[DEPS](/recipe_modules/cros_tags/examples/full.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_tags/examples/full.py#12): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#28)(api, properties):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#12): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
