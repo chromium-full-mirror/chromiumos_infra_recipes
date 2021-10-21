@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.build_menu;
 
 import "chromiumos/common.proto";
+import "chromiumos/build/api/container_metadata.proto";
 
 message BuildMenuProperties {
   // The build target being built.
@@ -46,4 +47,7 @@ message BuildMenuProperties {
   // Example, for CQ we use:
   //   {staging?}{build-target}-cq.{cros-version}-{bbid}
   string container_version_format = 6;
+
+  // Optional override to the default container registry to push to.
+  chromiumos.build.api.GcrRepository container_repository = 7;
 }
