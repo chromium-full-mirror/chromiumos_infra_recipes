@@ -73,8 +73,8 @@
     "cmd": [],
     "name": "non-critical build check",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@new non-critical builders@changed amd64-postsubmit to non-critical@@@",
-      "@@@STEP_LOG_LINE@new non-critical builders@changed grunt-postsubmit to non-critical@@@",
+      "@@@STEP_LOG_LINE@new non-critical builders@amd64-postsubmit@@@",
+      "@@@STEP_LOG_LINE@new non-critical builders@grunt-postsubmit@@@",
       "@@@STEP_LOG_END@new non-critical builders@@@"
     ]
   },

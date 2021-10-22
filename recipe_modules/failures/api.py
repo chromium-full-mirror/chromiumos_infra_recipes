@@ -29,7 +29,8 @@ class FailuresApi(RecipeApi):
   #   fatal (bool): Whether or not the failure is fatal. Fatal failures cause
   #       recipes to fail when the failure is aggregated.
   #   id (str): a unique, reproducible name for this failure. For build-type
-  #       failures, this is the builder name.
+  #       failures, this is the builder name. For test-type failures this is the
+  #       display_name.
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
 
@@ -287,7 +288,7 @@ class FailuresApi(RecipeApi):
       self.m.cros_infra_config.force_reload()
       child_configs = self.m.cros_infra_config.safe_get_builder_configs(
           [b.builder.builder for b in builds])
-      ret = self.update_non_critical_failures(None, ret, child_configs)
+      ret = self.update_non_critical_build_failures(ret, child_configs)
     return ret
 
   def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
@@ -416,21 +417,23 @@ class FailuresApi(RecipeApi):
       with self.m.step.nest(name) as step:
         yield step
 
-  def update_non_critical_failures(self, step, failures, fresh_builder_configs):
+  def update_non_critical_build_failures(self, failures, fresh_builder_configs,
+                                         presentation=None):
     """If builders are now non-critical or removed, failures are non-fatal.
 
     Args:
       failures (list[Failure]): All failures encountered during execution.
-      step (recipe Step): parent step.  If None, a step will be created.
       fresh_builder_configs (dict(str, BuilderConfig)): name to builder config
           for all BuilderConfigs that should have criticality checked.
+      presentation (StepPresentation): Parent step presentation.  If None, a
+          StepPresentation will be created.
 
     Returns:
-      list[Failure]: the updated list of builders with 'fatal' statuses
-          possibly updated.
+      updated_failures (list[Failure]): The list of Failures with 'fatal'
+          statuses possibly updated.
     """
-    new_failures = []
-    presentation_log = []
+    updated_failures = []
+    new_non_critical_builds = []
     for f in failures:
       fatal = f.fatal
       if f.kind == 'build':
@@ -441,13 +444,51 @@ class FailuresApi(RecipeApi):
           # Deleted builders are non_critical.
           non_critical = True
         if f.fatal and non_critical:
-          presentation_log.append('changed {} to non-critical'.format(f.id))
+          new_non_critical_builds.append(f.id)
           fatal = False
-      new_failures.append(
+      updated_failures.append(
           self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
                        fatal=fatal, id=f.id))
-    if presentation_log:
-      # Make sure we hvae a "parent" step.
-      with self._with_step(step, 'non-critical build check') as pres:
-        pres.presentation.logs['new non-critical builders'] = presentation_log
-    return new_failures
+    if new_non_critical_builds:
+      with self._with_step(presentation, 'non-critical build check') as pres:
+        pres.logs['new non-critical builders'] = new_non_critical_builds
+    return updated_failures
+
+  def update_non_critical_test_failures(self, failures, test_plan_summary,
+                                        presentation=None):
+    """If tests are now non-critical or removed, failures are non-fatal.
+
+    Args:
+      failures (list[Failure]): All failures encountered during execution.
+      test_plan_summary (dict{string: bool}): Map of test display name to
+        criticality against which to check test failures.
+      presentation (StepPresentation): Parent step presentation.  If None, a
+          StepPresentation will be created.
+
+    Returns:
+      updated_failures (list[Failure]): The list of Failures with 'fatal'
+        statuses possibly updated.
+    """
+    updated_failures = []
+    new_non_critical_tests = []
+
+    for f in failures:
+      # Skip build and non-fatal failures.
+      if f.kind != 'test' or not f.fatal:
+        updated_failures.append(f)
+        continue
+
+      # Deleted tests are considered non_critical.
+      critical = test_plan_summary.get(f.id, False)
+      if not critical:
+        new_non_critical_tests.append(f.id)
+        updated_failures.append(
+            self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
+                         fatal=critical, id=f.id))
+      else:
+        updated_failures.append(f)
+
+    if new_non_critical_tests:
+      with self._with_step(presentation, 'non-critical test check') as pres:
+        pres.logs['new non-critical tests'] = new_non_critical_tests
+    return updated_failures

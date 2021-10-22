@@ -285,6 +285,7 @@
   * [failures:examples/is_critical_test_failure](#recipes-failures_examples_is_critical_test_failure)
   * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures)
+  * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
@@ -4029,7 +4030,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#206)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#207)(self, failures):**
 
 Returns a recipe result based on the given failures.
 
@@ -4041,7 +4042,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#271)(self, builds, refresh_configs=False):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#272)(self, builds, refresh_configs=False):**
 
 Verify all builds completed successfully.
 
@@ -4052,7 +4053,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#329)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#330)(self, build):**
 
 Retrieve the status of the build.
 
@@ -4062,7 +4063,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#293)(self, hw_tests, baseline_hw_tests=None):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#294)(self, hw_tests, baseline_hw_tests=None):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -4075,7 +4076,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#356)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#357)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -4085,7 +4086,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#311)(self, vm_tests, baseline_vm_tests=None):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#312)(self, vm_tests, baseline_vm_tests=None):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -4098,14 +4099,14 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#142)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#143)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#378)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#379)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -4115,7 +4116,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#390)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#391)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -4125,7 +4126,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#340)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#341)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -4135,7 +4136,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#367)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#368)(self, hw_test):**
 
 Determine if the vm test was critical.
 
@@ -4145,7 +4146,7 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#180)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#181)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -4160,7 +4161,7 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [set\_failed\_packages](/recipe_modules/failures/api.py#155)(self, enclosing_step, packages):**
+&mdash; **def [set\_failed\_packages](/recipe_modules/failures/api.py#156)(self, enclosing_step, packages):**
 
 If any failed packages, set presentation and raise failure.
 
@@ -4171,19 +4172,35 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [update\_non\_critical\_failures](/recipe_modules/failures/api.py#419)(self, step, failures, fresh_builder_configs):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#420)(self, failures, fresh_builder_configs, presentation=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
 Args:
   failures (list[Failure]): All failures encountered during execution.
-  step (recipe Step): parent step.  If None, a step will be created.
   fresh_builder_configs (dict(str, BuilderConfig)): name to builder config
       for all BuilderConfigs that should have criticality checked.
+  presentation (StepPresentation): Parent step presentation.  If None, a
+      StepPresentation will be created.
 
 Returns:
-  list[Failure]: the updated list of builders with 'fatal' statuses
-      possibly updated.
+  updated_failures (list[Failure]): The list of Failures with 'fatal'
+      statuses possibly updated.
+
+&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#457)(self, failures, test_plan_summary, presentation=None):**
+
+If tests are now non-critical or removed, failures are non-fatal.
+
+Args:
+  failures (list[Failure]): All failures encountered during execution.
+  test_plan_summary (dict{string: bool}): Map of test display name to
+    criticality against which to check test failures.
+  presentation (StepPresentation): Parent step presentation.  If None, a
+      StepPresentation will be created.
+
+Returns:
+  updated_failures (list[Failure]): The list of Failures with 'fatal'
+    statuses possibly updated.
 ### *recipe_modules* / [gce\_provider](/recipe_modules/gce_provider)
 
 [DEPS](/recipe_modules/gce_provider/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/futures][recipe_engine/recipe_modules/futures]
@@ -8992,6 +9009,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_failures.py#16)(api):**
+### *recipes* / [failures:examples/update\_non\_critical\_test\_failures](/recipe_modules/failures/examples/update_non_critical_test_failures.py)
+
+[DEPS](/recipe_modules/failures/examples/update_non_critical_test_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_test_failures.py#13)(api):**
 ### *recipes* / [failures:examples/vm\_test\_failures](/recipe_modules/failures/examples/vm_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/vm_test_failures.py#6): [failures](#recipe_modules-failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

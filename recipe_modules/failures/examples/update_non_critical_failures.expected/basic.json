@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "test step",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@new non-critical builders@changed noncritical builder to non-critical@@@",
+      "@@@STEP_LOG_LINE@new non-critical builders@noncritical builder@@@",
       "@@@STEP_LOG_END@new non-critical builders@@@"
     ]
   },

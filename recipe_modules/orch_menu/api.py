@@ -339,8 +339,8 @@ class OrchMenuApi(RecipeApi):
       self.m.cros_infra_config.force_reload()
       configs = self.m.cros_infra_config.safe_get_builder_configs(
           [b.builder.builder for b in builds])
-      failures = self.m.failures.update_non_critical_failures(
-          presentation, failures, configs)
+      failures = self.m.failures.update_non_critical_build_failures(
+          failures, configs, presentation)
       return _non_crit_ret(configs, failures)
 
   def _wait_for_inflight_orchestrator(self):

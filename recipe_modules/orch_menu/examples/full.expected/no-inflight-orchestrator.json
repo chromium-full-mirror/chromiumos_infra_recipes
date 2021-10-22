@@ -3657,7 +3657,7 @@
     "cmd": [],
     "name": "non-critical build check",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@new non-critical builders@changed arm-generic-cq to non-critical@@@",
+      "@@@STEP_LOG_LINE@new non-critical builders@arm-generic-cq@@@",
       "@@@STEP_LOG_END@new non-critical builders@@@"
     ]
   },

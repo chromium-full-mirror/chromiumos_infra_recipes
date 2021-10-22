@@ -28,17 +28,17 @@ def RunSteps(api):
       api.failures.Failure(kind='build', title='title', link_map=link_map,
                            fatal=True, id='noncritical builder')
   ]
-  with api.step.nest('test step') as step:
-    out_failures = api.failures.update_non_critical_failures(
-        step, in_failures, builder_configs)
+  with api.step.nest('test step') as pres:
+    out_failures = api.failures.update_non_critical_build_failures(
+        in_failures, builder_configs, pres)
     api.assertions.assertFalse(out_failures[0].fatal)
 
     in_failures = [
         api.failures.Failure(kind='build', title='title', link_map=link_map,
                              fatal=True, id='critical builder')
     ]
-    out_failures = api.failures.update_non_critical_failures(
-        step, in_failures, builder_configs)
+    out_failures = api.failures.update_non_critical_build_failures(
+        in_failures, builder_configs, pres)
     api.assertions.assertTrue(out_failures[0].fatal)
 
 
