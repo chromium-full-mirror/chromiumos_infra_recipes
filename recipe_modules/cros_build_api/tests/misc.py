@@ -127,6 +127,7 @@ def RunSteps(api):
           'NeedsChromeSource': packages.NeedsChromeSourceResponse,
           'Uprev': packages.UprevPackagesResponse,
           'UprevVersionedPackage': packages.UprevVersionedPackageResponse,
+          'RevBumpChrome': packages.UprevVersionedPackageResponse,
       },
       'PayloadService': {
           'GeneratePayload': payload.GenerationResponse,

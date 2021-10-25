@@ -21,6 +21,7 @@ import urlparse
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties
+from PB.chromite.api.packages import RevBumpChromeRequest
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -35,6 +36,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/swarming',
+    'cros_build_api',
     'cros_cq_depends',
     'cros_infra_config',
     'cros_source',
@@ -332,6 +334,10 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
       uprev_info.append(
           api.cros_source.PushUprevRequest([ebuild.path],
                                            'Marking set of ebuilds as stable'))
+
+    with api.step.nest('revbump chrome'):
+      api.cros_build_api.PackageService.RevBumpChrome(RevBumpChromeRequest(),
+                                                      name='revbump chrome')
 
     # Treat the manifest changes as if they were an uprev
     for _, files in manifest_diffs.items():

@@ -294,6 +294,17 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 },
             ])
     ])
+    responses['RevBumpChrome'] = jsonify(responses=[
+        dict(
+            version='1.2.3', modified_ebuilds=[
+                {
+                    'path': self.src_path('src/overlay/foo.ebuild')
+                },
+                {
+                    'path': self.src_path('src/private-overlay/bar.ebuild')
+                },
+            ])
+    ])
     return responses
 
   @property
