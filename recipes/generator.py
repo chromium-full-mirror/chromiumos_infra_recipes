@@ -331,8 +331,10 @@ def RunSteps(api, properties):
           open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
 
           if not api.pupr.retries_frozen(open_ci):
-            retry_ci, cq_label = api.pupr.identify_retry(
+            retry_ci, cq_label, message = api.pupr.identify_retry(
                 retry_cl_policy, open_ci)
+            presentation.step_text = message
+
             if retry_ci:
               with api.step.nest("retry CL {}".format(retry_ci.change_id)):
                 labels = {

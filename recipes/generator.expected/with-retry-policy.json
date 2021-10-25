@@ -1911,7 +1911,10 @@
   },
   {
     "cmd": [],
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED"
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Found cl: https://chromium-review.googlesource.com/c/1@@@"
+    ]
   },
   {
     "cmd": [

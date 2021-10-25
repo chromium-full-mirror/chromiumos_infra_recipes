@@ -132,10 +132,12 @@ class PuprApi(recipe_api.RecipeApi):
       open_cls (List[gerrit.PatchSet]): List of CLs.
 
     Returns:
-      (PatchSet, int): (The CL to be retried (or None if no retry), CQ label to be applied)
+      (PatchSet, int, str): (The CL to be retried (or None if no retry),
+                             CQ label to be applied,
+                             The description of the action)
     """
     if retry_policy not in [RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED]:
-      return (None, 0)
+      return (None, 0, 'Not set to retry.')
 
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
@@ -153,13 +155,16 @@ class PuprApi(recipe_api.RecipeApi):
           retry_cl = cl
           is_dry_run = True
         else:  # Pinned CL has not failed, do not attempt any retry.
-          return (None, 0)
+          return (None, 0,
+                  'Pinned retry CL {} has not failed.'.format(cl.display_url))
         break
 
     # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
     # If a CL is in the process of running, no retry will occur.
-    if filter(is_running_cl, open_cls):
-      return (None, 0)
+    running_cls = filter(is_running_cl, open_cls)
+    if running_cls:
+      return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
+          [cl.display_url for cl in running_cls])))
 
     # If we haven't identified a pinned CL and the retry policy is not RETRY_PINNED_ONLY
     # (i.e it is RETRY_LATEST_OR_LATEST_PINNED) find most recent failed CL.
@@ -178,5 +183,6 @@ class PuprApi(recipe_api.RecipeApi):
 
     # Only want to retry a CL that has not passed/is currently running.
     if retry_cl and needs_retry(retry_cl, dry_run=is_dry_run):
-      return (retry_cl, 1 if is_dry_run else 2)
-    return (None, 0)
+      return (retry_cl, 1 if is_dry_run else 2,
+              'Found cl: {}'.format(retry_cl.display_url))
+    return (None, 0, 'No open CL was found to retry.')

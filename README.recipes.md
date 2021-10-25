@@ -6203,7 +6203,9 @@ Args:
   open_cls (List[gerrit.PatchSet]): List of CLs.
 
 Returns:
-  (PatchSet, int): (The CL to be retried (or None if no retry), CQ label to be applied)
+  (PatchSet, int, str): (The CL to be retried (or None if no retry),
+                         CQ label to be applied,
+                         The description of the action)
 
 &mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#115)(self, changes):**
 
@@ -9081,7 +9083,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#70)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#400)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#402)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
