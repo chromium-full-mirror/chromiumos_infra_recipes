@@ -57,7 +57,7 @@ class BuildsStatus(object):
   def fatal_failures(self):
     return [f for f in self.failures if f.fatal]
 
-  def update(self, completed, failures, configs=None, running=None):
+  def update(self, completed=None, failures=None, configs=None, running=None):
     """Update the status.
 
     Add the new builds and failures to our attributes.  Remove completed builds
@@ -69,17 +69,37 @@ class BuildsStatus(object):
       configs (dict{name: BuilderConfig}): Builder config dictionary.
       running (list[Build]): The still-running builds, or None.
     """
-    completed_ids = set(b.id for b in completed)
     self._configs = configs or self._configs
-    self.completed_builds += completed
-    self.failures += failures
+    self._update_failures(failures or [])
+    new_completed_builds = [
+        b for b in completed or [] if b not in self.completed_builds
+    ]
+    self.completed_builds += new_completed_builds
     # Remove any just completed builds from self.running_builds.
+    completed_ids = set(b.id for b in self.completed_builds)
     self.running_builds = [
         b for b in self.running_builds if b.id not in completed_ids
     ]
     # Add any new running builds to self.running_builds.
     running_ids = set(b.id for b in self.running_builds)
     self.running_builds += [b for b in running or [] if not b.id in running_ids]
+
+  def _update_failures(self, failure_updates):
+    """Update self._failures with the list of failure_updates.
+
+    If a failure is new, add it to self._failures. If the a failure is for an id
+    which already exists in self._failures, the updated failure overrides the
+    existing failure.
+
+    Args:
+      failure_updates (list[Failure]): Failures with which to update build_status.
+    """
+    failure_update_ids = [f.id for f in failure_updates]
+    unchanged_failures = [
+        f for f in self.failures if f.id not in failure_update_ids
+    ]
+    failure_updates += unchanged_failures
+    self.failures = failure_updates
 
   def _is_testable(self, build):
     """Whether the build is testable."""
