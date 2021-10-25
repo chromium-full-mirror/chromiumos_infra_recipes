@@ -22,6 +22,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'metadata',
     'metadata_json',
     'sysroot_util',
     'test_util',

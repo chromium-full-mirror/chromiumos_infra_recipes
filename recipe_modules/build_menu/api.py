@@ -639,15 +639,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
               image_info = result.success.image_info
 
               # Make sure digest has the hash algorithm on it so links work
-              image_digest = image_info.digest
-              if not image_digest.startswith("sha256:"):
-                image_digest = "sha256:" + image_digest
+              if not image_info.digest.startswith("sha256:"):
+                image_info.digest = "sha256:" + image_info.digest
 
               image_link = "https://{host}/{proj}/{name}@{hash}".format(
                   host=image_info.repository.hostname,
                   proj=image_info.repository.project,
                   name=image_info.name,
-                  hash=image_digest,
+                  hash=image_info.digest,
               )
 
               link_name = '{} [{}]'.format(result.name, image_info.digest[:8])
@@ -667,11 +666,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
           gs_bucket = builder_config.artifacts.artifacts_gs_bucket
           gs_path = self.m.cros_artifacts.upload_metadata(
-              'container',
+              self.m.metadata.CONTAINER_METADATA_INFO.name,
               builder_config.id.name,
               self.build_target,
               gs_bucket,
-              'containers.jsonpb',
+              self.m.metadata.CONTAINER_METADATA_INFO.filename,
               container_metadata,
           )
 

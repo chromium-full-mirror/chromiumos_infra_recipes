@@ -672,7 +672,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       filename = ''.join([path, ext])
 
       gs_path = self.m.path.join(
-          self.artifacts_gs_path(builder_name, target), 'metadata', filename)
+          self.artifacts_gs_path(builder_name, target),
+          self.m.metadata.METADATA_GSDIR,
+          filename,
+      )
 
       full_path = self.m.path.mkdtemp().join(filename)
       self.m.file.write_proto('writing metadata', full_path, message, 'JSONPB')

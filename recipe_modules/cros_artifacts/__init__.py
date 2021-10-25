@@ -20,4 +20,5 @@ DEPS = [
     'cros_version',
     'disk_usage',
     'easy',
+    'metadata',
 ]
