@@ -6973,11 +6973,25 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to execute tast commands.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#30)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#326)(self, qcow_image_path, private_key_path):**
+
+Creates a context manager which performs setup/teardown of a QEMU VM.
+
+Args:
+  qcow_image_path (Path): Path to image in qcow format.
+  private_key_path (Path): Path to private key.
+
+Returns:
+  A context manager that
+    - when entered, prepares a VM to test against, and yields the
+      (host, port) for connecting to it.
+    - when exited, terminates the VM and performs cleanup.
+
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#33)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -6989,7 +7003,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#53)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#56)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -7006,7 +7020,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#203)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#198)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
 
 Run tast tests without retries or results processing.
 
@@ -7025,13 +7039,14 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#160)(self, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#162)(self, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
 
 Run tast tests in a VM without retries or results processing.
 
 Args:
   expressions (list[str]): Expressions describing tests to run.
-  qcow_image_path (Path): Path to image in qcow format.
+  vm_context (contextlib.contextmanager): The VM context manager, created
+    by create_qemu_vm_context.
   test_artifacts_dir (Path): Dir containing test artifacts.
   private_key_path (Path): Path to private key.
   artifacts_gs_bucket (str): The bucket containing build artifacts.
@@ -7043,14 +7058,15 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#94)(self, suite_name, expressions, qcow_image_path, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#97)(self, suite_name, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
 Args:
   suite_name (str): Name of the suite to run.
   expressions (list[str]): Expressions to test.
-  qcow_image_path (Path): Path to image in qcow format.
+  vm_context (contextlib.contextmanager): The VM context manager, created
+    by create_qemu_vm_context.
   test_artifacts_dir (Path): Dir containing test artifacts.
   private_key_path (Path): Path to private key.
   artifacts_gs_bucket (str): The bucket containing build artifacts.

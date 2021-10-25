@@ -17,18 +17,20 @@ def RunSteps(api):
   vm_dir = api.path.mkdtemp(prefix='temp')
   qcow_image, private_key_path = api.tast_exec.download_vm(
       'bucket', 'path', vm_dir)
+  vm_context = api.tast_exec.create_qemu_vm_context(qcow_image,
+                                                    private_key_path)
 
   # Run with retry
-  api.tast_exec.run_vm('tast_vm', ['!informational'], qcow_image,
+  api.tast_exec.run_vm('tast_vm', ['!informational'], vm_context,
                        test_artifacts, private_key_path, 'artifacts-bucket',
                        'artifacts-path')
 
   # Run without retry
   results_dir = api.path.mkdtemp(prefix='temp')
-  api.tast_exec.run_direct_vm(['!informational'], qcow_image, test_artifacts,
+  api.tast_exec.run_direct_vm(['!informational'], vm_context, test_artifacts,
                               private_key_path, 'artifacts-bucket',
                               'artifacts-path', results_dir)
-  api.tast_exec.run_direct_vm(['example.Pass'], qcow_image, test_artifacts,
+  api.tast_exec.run_direct_vm(['example.Pass'], vm_context, test_artifacts,
                               private_key_path, 'artifacts-bucket',
                               'artifacts-path', results_dir,
                               run_args=['-var=myVar=myVal'])

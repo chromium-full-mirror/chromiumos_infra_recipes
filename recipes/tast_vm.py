@@ -32,12 +32,13 @@ def RunSteps(api, properties):
   qcow_image_path, private_key_path = api.tast_exec.download_vm(
       properties.build_payload.artifacts_gs_bucket,
       properties.build_payload.artifacts_gs_path, image_archive_dir)
+  vm_context = api.tast_exec.create_qemu_vm_context(qcow_image_path,
+                                                    private_key_path)
 
   with api.step.nest('run tast tests'):
     failures, empty_result = api.tast_exec.run_vm(
-        properties.name, properties.expressions, qcow_image_path,
-        test_artifacts_dir, private_key_path,
-        properties.build_payload.artifacts_gs_bucket,
+        properties.name, properties.expressions, vm_context, test_artifacts_dir,
+        private_key_path, properties.build_payload.artifacts_gs_bucket,
         properties.build_payload.artifacts_gs_path)
 
   api.tast_results.print_results(failures, empty_result)

@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import contextlib
 import os
 from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -16,6 +17,8 @@ VM_ARTIFACT_LIST = ['/var/log', '/var/spool/crash']
 PRIVATE_KEY_NAME = 'id_rsa'
 VM_IMAGE_NAME = 'chromiumos_test_image.bin'
 QCOW_IMG_NAME = 'qcow2.img'
+QEMU_VM_HOST = 'localhost'
+QEMU_VM_PORT = '9222'
 
 
 class TastExecApi(RecipeApi):
@@ -91,14 +94,15 @@ class TastExecApi(RecipeApi):
                   ['chmod', '400', str(private_key_path)])
     return qcow_image_path, private_key_path
 
-  def run_vm(self, suite_name, expressions, qcow_image_path, test_artifacts_dir,
+  def run_vm(self, suite_name, expressions, vm_context, test_artifacts_dir,
              private_key_path, artifacts_gs_bucket, artifacts_gs_path):
     """Run tast tests in a VM with one retry and upload logs to Google storage.
 
     Args:
       suite_name (str): Name of the suite to run.
       expressions (list[str]): Expressions to test.
-      qcow_image_path (Path): Path to image in qcow format.
+      vm_context (contextlib.contextmanager): The VM context manager, created
+        by create_qemu_vm_context.
       test_artifacts_dir (Path): Dir containing test artifacts.
       private_key_path (Path): Path to private key.
       artifacts_gs_bucket (str): The bucket containing build artifacts.
@@ -109,8 +113,7 @@ class TastExecApi(RecipeApi):
       A tuple of list(Failures) and a bool indicating whether
         the results were empty.
     """
-    # Setup qemu debug.
-    task_result = self._retry_iter(suite_name, expressions, qcow_image_path,
+    task_result = self._retry_iter(suite_name, expressions, vm_context,
                                    test_artifacts_dir, private_key_path,
                                    'first', artifacts_gs_bucket,
                                    artifacts_gs_path)
@@ -123,7 +126,7 @@ class TastExecApi(RecipeApi):
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
     if tests_to_retry and self._should_retry:
       retry_task_result = self._retry_iter(suite_name, tests_to_retry,
-                                           qcow_image_path, test_artifacts_dir,
+                                           vm_context, test_artifacts_dir,
                                            private_key_path, 'second',
                                            artifacts_gs_bucket,
                                            artifacts_gs_path)
@@ -145,26 +148,26 @@ class TastExecApi(RecipeApi):
 
     return failures, empty_result
 
-  def _retry_iter(self, suite_name, expressions, qcow_image_path,
-                  test_artifacts_dir, private_key_path, tag,
-                  artifacts_gs_bucket, artifacts_gs_path):
+  def _retry_iter(self, suite_name, expressions, vm_context, test_artifacts_dir,
+                  private_key_path, tag, artifacts_gs_bucket,
+                  artifacts_gs_path):
     with self.m.step.nest('%s tast iteration' % tag):
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
-      tests = self.run_direct_vm(expressions, qcow_image_path,
-                                 test_artifacts_dir, private_key_path,
-                                 artifacts_gs_bucket, artifacts_gs_path,
-                                 test_results_dir)
+      tests = self.run_direct_vm(expressions, vm_context, test_artifacts_dir,
+                                 private_key_path, artifacts_gs_bucket,
+                                 artifacts_gs_path, test_results_dir)
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests)
 
-  def run_direct_vm(self, expressions, qcow_image_path, test_artifacts_dir,
+  def run_direct_vm(self, expressions, vm_context, test_artifacts_dir,
                     private_key_path, artifacts_gs_bucket, artifacts_gs_path,
                     test_results_dir, run_args=None):
     """Run tast tests in a VM without retries or results processing.
 
     Args:
       expressions (list[str]): Expressions describing tests to run.
-      qcow_image_path (Path): Path to image in qcow format.
+      vm_context (contextlib.contextmanager): The VM context manager, created
+        by create_qemu_vm_context.
       test_artifacts_dir (Path): Dir containing test artifacts.
       private_key_path (Path): Path to private key.
       artifacts_gs_bucket (str): The bucket containing build artifacts.
@@ -179,25 +182,17 @@ class TastExecApi(RecipeApi):
     if run_args is None:
       run_args = []
 
-    kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
-    kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
-    kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
-
-    self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                    kvm_monitor_serial_file, private_key_path)
-    try:
-      tests = self.run_direct('localhost:9222', expressions, test_artifacts_dir,
-                              artifacts_gs_bucket, artifacts_gs_path,
-                              test_results_dir,
+    # Entering vm_context instantiates the VM we are to test against. The VM
+    # is cleaned up automatically when exiting the context.
+    with vm_context() as (host, port):
+      tests = self.run_direct('{}:{}'.format(host, port), expressions,
+                              test_artifacts_dir, artifacts_gs_bucket,
+                              artifacts_gs_path, test_results_dir,
                               private_key_path=private_key_path,
                               run_args=run_args)
 
       # Add logs and other artifacts from DUT into the test results directory.
-      self._archive_vm_artifacts(private_key_path, test_results_dir)
-    finally:
-      # Always kill QEMU.
-      self._kill_vm(kvm_pid_file)
-    self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
+      self._archive_vm_artifacts(host, port, private_key_path, test_results_dir)
     return tests
 
   def run_direct(self, dut_name, expressions, test_artifacts_dir,
@@ -231,10 +226,10 @@ class TastExecApi(RecipeApi):
     return tests
 
   @exponential_retry(retries=2)
-  def _archive_vm_artifacts(self, private_key_path, output_dir):
+  def _archive_vm_artifacts(self, host, port, private_key_path, output_dir):
     self.m.step('gather artifacts on VM', [
         'ssh', \
-        '-p', '9222', \
+        '-p', port, \
         '-oConnectionAttempts=4', \
         '-oUserKnownHostsFile=/dev/null', \
         '-oProtocol=2', \
@@ -245,12 +240,12 @@ class TastExecApi(RecipeApi):
         '-oNumberOfPasswordPrompts=0', \
         '-oIdentitiesOnly=yes', \
         '-i', private_key_path, \
-        'root@localhost', '--', 'tar', 'cf', VM_ARTIFACT_TARBALL] +
+        'root@{}'.format(host), '--', 'tar', 'cf', VM_ARTIFACT_TARBALL] +
         VM_ARTIFACT_LIST,
         infra_step=True, timeout=5*60)
     self.m.step('download artifacts from VM', [
         'scp', \
-        '-P', '9222', \
+        '-P', port, \
         '-oConnectionAttempts=4', \
         '-oUserKnownHostsFile=/dev/null', \
         '-oProtocol=2', \
@@ -261,7 +256,8 @@ class TastExecApi(RecipeApi):
         '-oNumberOfPasswordPrompts=0', \
         '-oIdentitiesOnly=yes', \
         '-i', private_key_path, \
-        'root@localhost:%s'%VM_ARTIFACT_TARBALL, str(output_dir.join(ARTIFACT_TARBALL_NAME))],
+        'root@{}:{}'.format(host, VM_ARTIFACT_TARBALL),
+        str(output_dir.join(ARTIFACT_TARBALL_NAME))],
         infra_step=True, timeout=5*60)
 
   def _list_tests(self, dut_name, expressions, tast_dir, private_key_path,
@@ -327,6 +323,37 @@ class TastExecApi(RecipeApi):
         [dut_name] + \
         list(expressions), ok_ret='any', timeout=self._exec_timeout)
 
+  def create_qemu_vm_context(self, qcow_image_path, private_key_path):
+    """Creates a context manager which performs setup/teardown of a QEMU VM.
+
+    Args:
+      qcow_image_path (Path): Path to image in qcow format.
+      private_key_path (Path): Path to private key.
+
+    Returns:
+      A context manager that
+        - when entered, prepares a VM to test against, and yields the
+          (host, port) for connecting to it.
+        - when exited, terminates the VM and performs cleanup.
+    """
+
+    @contextlib.contextmanager
+    def qemu_vm_context():
+      kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
+      kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
+      kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
+
+      self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
+                      kvm_monitor_serial_file, private_key_path)
+      try:
+        yield QEMU_VM_HOST, QEMU_VM_PORT
+      finally:
+        # Always kill QEMU.
+        self._kill_vm(kvm_pid_file)
+      self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
+
+    return qemu_vm_context
+
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,
                  kvm_monitor_serial_file, private_key_path):
@@ -350,7 +377,9 @@ class TastExecApi(RecipeApi):
         '-drive',
         'if=none,id=hd,file={},cache=unsafe,format=qcow2'.format(
             qcow_image_path), \
-        '-netdev', 'user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22', \
+        '-netdev', \
+        'user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:{}-:22'.format(
+            QEMU_VM_PORT), \
         '-enable-kvm', \
         '-display', 'none'
     ], infra_step=True)
@@ -374,7 +403,7 @@ class TastExecApi(RecipeApi):
   def _test_ssh_conn(self, private_key_path):
     self.m.step('connect via ssh', [
         'ssh', \
-        '-p', '9222', \
+        '-p', QEMU_VM_PORT, \
         '-oConnectionAttempts=4', \
         '-oUserKnownHostsFile=/dev/null', \
         '-oProtocol=2', \
@@ -385,5 +414,5 @@ class TastExecApi(RecipeApi):
         '-oNumberOfPasswordPrompts=0', \
         '-oIdentitiesOnly=yes', \
         '-i', private_key_path, \
-        'root@localhost', '--', 'true'
+        'root@{}'.format(QEMU_VM_HOST), '--', 'true'
     ], infra_step=True, timeout=5*60)
