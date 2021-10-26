@@ -17,7 +17,7 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest, BuildTestServiceContainersRequest
-from PB.chromiumos.build.api.container_metadata import ContainerMetadata, GcrRepository
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import PackageInfo, Profile
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
@@ -31,33 +31,26 @@ class BuildMenuApi(recipe_api.RecipeApi):
   there via this module, and are a simple sequence of steps.
   """
 
-  DEFAULT_REPOSITORY = GcrRepository(
-      hostname='us-docker.pkg.dev',
-      project='cros-registry/test-services',
-  )
-
   UPLOADABLE_PREBUILTS = [
       BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
   ]
 
   def __init__(self, props, *args, **kwargs):
     super(BuildMenuApi, self).__init__(*args, **kwargs)
-    self._properties = props
-
-    # Break out individual properties and set default values
-    self._artifact_build = props.artifact_build
-    self._build_target = props.build_target
-    self._chroot_created = False
-    self._cl_affected_sysroot_packages = None
     self._container_version_fmt = props.container_version_format
+    self._chroot_created = False
     self._dep_graph = None
-    self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
+    self._target_versions = None
+    self._build_target = props.build_target
     self._force_relevant_build = props.force_relevant_build
+    self._artifact_build = props.artifact_build
+    self._test_with_code_coverage = props.test_with_code_coverage
     # Prebuilt information for the builder.  Created in setup_sysroot, used
     # there and install_packages.
     self._package_indexes = None
-    self._target_versions = None
-    self._test_with_code_coverage = props.test_with_code_coverage
+    self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
+
+    self._cl_affected_sysroot_packages = None
 
   def initialize(self):
     self._force_empty_toolchain_targets |= (
@@ -624,24 +617,19 @@ class BuildMenuApi(recipe_api.RecipeApi):
           version = self.container_version
           presentation.step_summary_text = 'version: \'{}\''.format(version)
 
-          # Allow user to override the container registry we're pushing to
-          repository = self._properties.container_repository
-          if not self._properties.HasField('container_repository'):
-            repository = self.DEFAULT_REPOSITORY
-
           build_id = self.m.buildbucket.build.id
+
           response = BuildTestServiceContainers(
               BuildTestServiceContainersRequest(
                   build_target=self.build_target,
                   chroot=self.m.cros_sdk.chroot,
+                  version=version,
+                  tags=[version] + ([str(build_id)] if build_id else []),
                   labels={
                       "build-url":
                           "https://ci.chromium.org/b/{}".format(build_id)
                           if build_id else "led"
                   },
-                  repository=repository,
-                  tags=[version] + ([str(build_id)] if build_id else []),
-                  version=version,
               ), timeout=1 * 60 * 60)
 
           # Set up links to built containers.
