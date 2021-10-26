@@ -7,11 +7,13 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'cros_source',
     'cros_tags',
+    'cros_test_plan',
     'gerrit',
     'git_footers',
     'orch_menu',
@@ -163,6 +165,18 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
+
+  yield api.orch_menu.test(
+      'non-crit-test-check-updates', data.ctp_failure,
+      api.step_data(
+          'clean up orchestrator.non-critical test check.generate test plan.read output file',
+          api.file.read_raw(
+              api.cros_test_plan.all_non_critical_generate_test_plan_response
+              .SerializeToString())),
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(status=common_pb2.SUCCESS))),
+      api.post_check(post_process.StatusSuccess))
 
   yield api.orch_menu.test(
       'bad-ref',

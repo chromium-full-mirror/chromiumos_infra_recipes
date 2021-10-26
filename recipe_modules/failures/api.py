@@ -474,7 +474,7 @@ class FailuresApi(RecipeApi):
 
     for f in failures:
       # Skip build and non-fatal failures.
-      if f.kind != 'test' or not f.fatal:
+      if not f.kind.endswith('test') or not f.fatal:
         updated_failures.append(f)
         continue
 

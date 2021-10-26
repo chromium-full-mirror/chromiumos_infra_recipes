@@ -29,6 +29,22 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     if not self.timeout.seconds:
       self.timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
     self._vm_bucket = properties.vm_bucket or "staging"
+    self._test_summary = []
+
+  @property
+  def test_summary(self):
+    """Returns the test_summary for this build."""
+    return self._test_summary
+
+  @test_summary.setter
+  def test_summary(self, test_summary):
+    """Set the test_summary for this build.
+
+    Args:
+      test_summary (list[map{string: string}]): The test_summary for this build.
+    """
+    self._test_summary = test_summary
+    self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: self._test_summary})
 
   def run_proctor_v2(self, gerrit_changes):
     """Runs the test platform v2 for a set of GerritChanges.
@@ -104,7 +120,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           else:
             non_crit_failure_test_names.append(
                 self.m.naming.get_test_title(test_result))
-        self._set_test_summary(
+
+        self.test_summary = self._generate_test_summary(
             test_plan, previously_passed_tests.union(set(passed_test_names)))
 
       if crit_failure_test_names:
@@ -445,12 +462,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           count += 1
     return count
 
-  def _set_test_summary(self, test_plan, passed_test_names):
-    """Saves a summary of the test plan to the build output properties.
+  def _generate_test_summary(self, test_plan, passed_test_names):
+    """Creates a summary of the test results.
 
     Args:
       test_plan (GenerateTestPlanResponse): The test plan.
       passed_test_names (list[str]): The names of the passed tests.
+
+    Returns:
+      test_summary (list[dict]):  A summary of tests, one item per test
+        detailing display name, criticality, and last status.
     """
     # Use cases:
     # * CQ test and build planning.
@@ -465,8 +486,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self._extract_test_summary(
             test_plan.direct_tast_vm_test_units, lambda unit: unit.
             tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test, passed_test_names))
-
-    self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: test_summary})
+    return test_summary
 
   def _extract_test_summary(self, units, cfg_func, tests_func,
                             passed_test_names):

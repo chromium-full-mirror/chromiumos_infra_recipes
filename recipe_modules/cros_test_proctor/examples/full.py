@@ -64,6 +64,8 @@ def RunSteps(api, need_tests_builds_serialized, run_async):
                                         enable_history=True,
                                         run_async=run_async)
 
+  _ = api.cros_test_proctor.test_summary
+
 
 def GenTests(api):
 

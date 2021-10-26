@@ -20,6 +20,7 @@ DEPS = [
 def RunSteps(api):
   api.cros_test_plan.generate([Build()], [GerritChange()],
                               GitilesCommit(id='1234abcd'))
+  _ = api.cros_test_plan.test_api.all_non_critical_generate_test_plan_response
 
 
 def GenTests(api):

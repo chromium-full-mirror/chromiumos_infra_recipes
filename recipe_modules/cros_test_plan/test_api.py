@@ -172,3 +172,11 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         ],
         vm_test_units=[self.vm_test_unit, self.non_critical_vm_test_unit],
     )
+
+  @property
+  def all_non_critical_generate_test_plan_response(self):
+    return GenerateTestPlanResponse(
+        hw_test_units=[self.non_critical_hw_test_unit],
+        direct_tast_vm_test_units=[self.tast_vm_informational_test_unit],
+        vm_test_units=[self.non_critical_vm_test_unit],
+    )

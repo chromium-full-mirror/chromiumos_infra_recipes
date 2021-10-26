@@ -287,9 +287,10 @@ class OrchMenuApi(RecipeApi):
     with self.m.step.nest('clean up orchestrator'):
       # Recheck the BuilderConfigs at HEAD, one last time, to see if any
       # failed builders are now noncritical.
-      self._non_critical_build_check('final criticality update',
+      self._non_critical_build_check('final build criticality update',
                                      self.builds_status.completed_builds,
                                      self.builds_status.failures)
+      self._non_critical_test_check()
       self.m.greenness.print_step()
       # Set child output ids if any
       self.m.build_menu.add_child_build_ids_to_output_property()
@@ -329,6 +330,47 @@ class OrchMenuApi(RecipeApi):
             self.m.context(cwd=manifest.path):
           self.m.git.push(manifest.url,
                           "%s:%s" % (manifest.gitiles_commit.id, ref))
+
+  def _update_test_summary(self):
+    """Updates criticality on the output test_summary"""
+    # Output the number of updates in order to measure impact.
+    update_count = 0
+    non_fatal_failures = [
+        f.id for f in self.builds_status.failures if not f.fatal
+    ]
+    test_summary = self.m.cros_test_proctor.test_summary
+    for test in test_summary:
+      if test['status'] == 'FAILURE' and test['critical']:
+        if test.get('name') in non_fatal_failures:
+          test['critical'] = False
+          update_count += 1
+    if update_count:
+      self.m.step.active_result.presentation.properties[
+          'test_criticality_update_count'] = update_count
+      self.m.cros_test_proctor.test_summary = test_summary
+
+  def _non_critical_test_check(self):
+    """Update failures in builds_status based on the current criticality."""
+    with self.m.step.nest('non-critical test check') as pres:
+      # Avoid regenerating the test plan if there are no critical test failures.
+      if not any(
+          f.kind.endswith('test') and f.fatal
+          for f in self.builds_status.failures):
+        pres.step_text = 'no critical test failures'
+        return
+
+      refreshed_test_plan = self.m.cros_test_plan.generate(
+          self.builds_status.completed_builds, self.gerrit_changes,
+          self.gitiles_commit)
+
+      test_plan_summary = self.m.cros_test_plan.get_test_plan_summary(
+          refreshed_test_plan)
+
+      updated_failures = self.m.failures.update_non_critical_test_failures(
+          self.builds_status.failures, test_plan_summary)
+
+      self.builds_status.update(failures=updated_failures)
+      self._update_test_summary()
 
   def _non_critical_build_check(self, step_name, builds, failures):
     """Update failures based on the current criticality of the builders.
