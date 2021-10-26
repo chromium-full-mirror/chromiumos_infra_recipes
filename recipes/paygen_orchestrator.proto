@@ -20,18 +20,8 @@ message PaygenOrchestratorProperties {
   // The delta types to generate for, empty for all.
   repeated chromiumos.DeltaType delta_types = 3;
 
-  // TODO(crbug.com/1122854): Replace these with the common definition.
-  enum Channel {
-    CHANNEL_UNKNOWN = 0;
-    CANARY = 1;
-    DEV = 2;
-    BETA = 3;
-    STABLE = 4;
-    RUBIK = 5;
-  }
-
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
-  repeated Channel channels = 4;
+  repeated chromiumos.Channel channels = 4;
 
   // The models in which we've enabled AU testing. If empty we will assume
   // that the board name is the builder name (i.e. this isn't a unibuild).

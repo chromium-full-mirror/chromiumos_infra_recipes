@@ -42,12 +42,14 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       raise StepFailure('attempting to sign type not in supported sign types')
 
   @staticmethod
-  def massage_channels(channels):
-    """Takes an array of common_pb2.Channel & validates & strings them."""
-    channels_strs = [Channel.Name(x) for x in channels]
-    if 'CHANNEL_UNSPECIFIED' in channels_strs:
-      raise StepFailure('invalid channel CHANNEL_UNSPECIFIED')
-    return [x.replace('CHANNEL_', '') for x in channels_strs]
+  def channel_strip_prefix(channel):
+    """Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta)."""
+    return Channel.Name(channel).replace('CHANNEL_', '').lower()
+
+  @staticmethod
+  def channel_dash_suffix(channel):
+    """Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel)."""
+    return CrosReleaseApi.channel_strip_prefix(channel).lower() + '-channel'
 
   def __init__(self, properties, **kwargs):
     super(CrosReleaseApi, self).__init__(**kwargs)
@@ -162,7 +164,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'builder_name': self.m.build_menu.build_target.name,
           'target_chromeos_version': version.platform_version,
           'delta_types': [],
-          'channels': CrosReleaseApi.massage_channels(self._channels),
+          'channels': [Channel.Name(x) for x in self._channels],
           'au_testing_models': [],
           'src_bucket': self._release_bucket,
           'dest_bucket': self._release_bucket,

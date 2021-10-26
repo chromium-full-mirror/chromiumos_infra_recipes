@@ -2612,7 +2612,15 @@ An API for providing release related operations (e.g. paygen, signing).
 
 #### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_dash\_suffix](/recipe_modules/cros_release/api.py#49)(channel):**
+
+Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
+
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release/api.py#44)(channel):**
+
+Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
+
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#71)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2628,11 +2636,7 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&emsp; **@staticmethod**<br>&mdash; **def [massage\_channels](/recipe_modules/cros_release/api.py#44)(channels):**
-
-Takes an array of common_pb2.Channel & validates & strings them.
-
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#180)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#182)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2645,11 +2649,11 @@ Args:
   config (BuilderConfig): The Builder Config for the build.
   sysroot (Sysroot): sysroot to use.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#64)(self):**
+&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#66)(self):**
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#141)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#143)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -8540,7 +8544,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#16)(api):**
 ### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9555,13 +9559,13 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 &mdash; **def [RunSteps](/recipes/paygen.py#33)(api, properties):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#20): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#20): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#46)(api, properties):**
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#35)(api, properties):**
 ### *recipes* / [phosphorus:examples/build\_parallels\_image](/recipe_modules/phosphorus/examples/build_parallels_image.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/build_parallels_image.py#8): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -31,6 +31,13 @@ def RunSteps(api):
   api.cros_release.create_releasespec(gs_location='bucket/foo/bar.xml')
   api.assertions.assertIsNotNone(api.cros_release.releasespec)
 
+  api.assertions.assertEqual(
+      api.cros_release.channel_strip_prefix(common_pb2.Channel.CHANNEL_BETA),
+                                            'beta')
+  api.assertions.assertEqual(
+      api.cros_release.channel_dash_suffix(common_pb2.Channel.CHANNEL_BETA),
+                                           'beta-channel')
+
   # Manufacture the minimal builder config.
   config = BuilderConfig(
       id=BuilderConfig.Id(name='amd64-generic-release',

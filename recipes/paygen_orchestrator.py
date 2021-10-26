@@ -11,7 +11,7 @@ import json
 from os import path
 
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-from PB.chromiumos.common import DeltaType
+from PB.chromiumos.common import Channel, DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
@@ -23,24 +23,13 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_paygen',
+    'cros_release',
     'cros_source',
     'cros_storage',
     'workspace_util',
 ]
 
 PROPERTIES = PaygenOrchestratorProperties
-
-
-# TODO(crbug.com/1122854): We should write a cros_channel module to handle.
-def _long_channel_name(channel_enum_val):
-  """Takes the integer enum value and outputs suffix'd string form."""
-  return (PaygenOrchestratorProperties.Channel.Name(channel_enum_val).lower() +
-          '-channel')
-
-
-def _short_channel_name(channel_enum_val):
-  """Takes the integer enum value and outputs non-suffix'd string form."""
-  return PaygenOrchestratorProperties.Channel.Name(channel_enum_val).lower()
 
 
 def RunSteps(api, properties):
@@ -56,14 +45,14 @@ def RunSteps(api, properties):
     # it. This should be removed once we transition to the main channels.
     # TODO(b:195415535): Remove this.
     override_chan = properties.channels
-    if override_chan == [PaygenOrchestratorProperties.Channel.RUBIK]:
-      override_chan = [PaygenOrchestratorProperties.Channel.CANARY]
+    if override_chan == [Channel.CHANNEL_RUBIK]:
+      override_chan = [Channel.CHANNEL_CANARY]
 
     for delta_type, channel in itertools.product(delta_types, override_chan):
 
       delta_t_str, channel_str = (
           DeltaType.Name(delta_type),
-          PaygenOrchestratorProperties.Channel.Name(channel))
+          api.cros_release.channel_strip_prefix(channel))
 
       cfg = api.cros_paygen.get_builder_config(properties.builder_name,
                                                delta_type=delta_t_str,
@@ -81,14 +70,19 @@ def RunSteps(api, properties):
   # Get all the artifacts in the source(s) and target locations.
   target_artifacts, source_artifacts = [], []
   for channel in properties.channels:
-    long_chan_name = _long_channel_name(channel)
+
+    # e.g. beta-channel, beta
+    long_chan_name, short_chan_name = (
+        api.cros_release.channel_dash_suffix(channel),
+        api.cros_release.channel_strip_prefix(channel))
+
     with api.step.nest('examining %s' % long_chan_name):
 
       # Iterate the configured payloads and find artifacts at each source.
       with api.step.nest('source artifacts'):
         # Create Source Image definitions based upon the configuration alone.
         for payload_cfg in configured_payloads:
-          if payload_cfg['channel'] == _short_channel_name(channel):
+          if payload_cfg['channel'] == short_chan_name:
             found_arts = api.cros_storage.discover_gs_artifacts(
                 path.join('gs://' + properties.src_bucket, long_chan_name,
                           payload_cfg['builder_name'],
@@ -166,7 +160,7 @@ def GenTests(api):
   def get_props(delta_types=None, builder_name='coral',
                 target_chromeos_version='13505.15.0', channels=None):
     delta_types = delta_types or ['OMAHA']
-    channels = channels or ['DEV', 'BETA']
+    channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
     props = api.properties(delta_types=delta_types, builder_name=builder_name,
                            target_chromeos_version=target_chromeos_version,
                            channels=channels)
@@ -209,5 +203,5 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'running children'))
 
   # TODO(b:195415535): Remove this with channel RUBIK.
-  yield api.test('rubik-override', get_props(channels=['RUBIK']),
+  yield api.test('rubik-override', get_props(channels=['CHANNEL_RUBIK']),
                  good_paygen_cfg)
