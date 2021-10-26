@@ -39,8 +39,9 @@ class ArtifactRoot(object):
   _URI_TEMPLATE = 'gs://%(bucket)s/%(channel)s/%(build_target_name)s/%(version)s'
 
   _VERSION_EXP = r'[0-9][0-9.]+[0-9]'
-  _CHANNEL_EXP = r'(canary-channel|dev-channel|beta-channel|stable-channel)'
-
+  # TODO(b:195415535): Temporarily parse images from the rubik-channel.
+  _CHANNEL_EXP = (
+      r'(canary-channel|dev-channel|beta-channel|stable-channel|rubik-channel)')
   _ARTIFACTROOT_URI_EXP = (r'gs://(?P<bucket>[^/]+)/(?P<channel>%s)/'
                            r'(?P<build_target>[^/]+)/(?P<version>%s)' %
                            (_CHANNEL_EXP, _VERSION_EXP))

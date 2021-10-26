@@ -54,10 +54,20 @@ def RunSteps(api, properties):
           DeltaType.Name(delta_type),
           api.cros_release.channel_strip_prefix(channel))
 
-      cfg = api.cros_paygen.get_builder_config(properties.builder_name,
-                                               delta_type=delta_t_str,
-                                               channel=channel_str)
-      configured_payloads.extend(cfg)
+      cfgs = api.cros_paygen.get_builder_configs(properties.builder_name,
+                                                 delta_type=delta_t_str,
+                                                 channel=channel_str)
+      # RUBIK is currently using canary channels payload definitions which will
+      # have the channel field set to 'canary'. We need to set the config's
+      # channel to 'rubik' in order for the artifact discover logic to match
+      # artifacts from the rubik-channel to the config.
+      # TODO(b:195415535): Remove this.
+      if properties.channels == [Channel.CHANNEL_RUBIK]:
+        for cfg in cfgs:
+          cfg['channel'] = api.cros_release.channel_strip_prefix(
+              Channel.CHANNEL_RUBIK)
+
+      configured_payloads.extend(cfgs)
 
     pres.logs['%s configured sources' % len(configured_payloads)] = (
         json.dumps(configured_payloads, indent=2))
@@ -203,5 +213,9 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'running children'))
 
   # TODO(b:195415535): Remove this with channel RUBIK.
+  rubik_override_paygen_cfg = api.cros_paygen.test_paygen(
+      'discovering payload configuration.get paygen json.gsutil cat',
+      api.cros_paygen.RUBIK_OVERRIDE_PAYGEN_JSON)
+
   yield api.test('rubik-override', get_props(channels=['CHANNEL_RUBIK']),
-                 good_paygen_cfg)
+                 rubik_override_paygen_cfg)

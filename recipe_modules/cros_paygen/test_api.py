@@ -47,6 +47,8 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   ALL_EXAMPLE_JSONS = [
       EXAMPLE_PAYGEN_JSON, EXAMPLE_EMPTY_JSON, EXAMPLE_NOT_EVEN_JSON
   ]
+  # TODO(b:195415535): Remove this and rubik_override_paygen.json.
+  RUBIK_OVERRIDE_PAYGEN_JSON = _read_test_file('rubik_override_paygen.json')
 
   # Pull out useful configs for testing get_requests (and others).
   EXAMPLE_SINGLE_PAYGEN_CONFIG = _read_test_file('test_single_cfg.json')

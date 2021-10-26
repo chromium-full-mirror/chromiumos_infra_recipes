@@ -378,7 +378,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
   def default_delta_types(self):
     return DEFAULT_DELTA_TYPES
 
-  def get_builder_config(self, builder_name, **kwargs):
+  def get_builder_configs(self, builder_name, **kwargs):
     """Return the configs matching the query or [].
 
     Note that all comparisons are made _in lower case_!

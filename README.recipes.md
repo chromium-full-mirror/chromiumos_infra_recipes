@@ -2433,7 +2433,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#377)(self):**
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_paygen/api.py#381)(self, builder_name, \*\*kwargs):**
+&mdash; **def [get\_builder\_configs](/recipe_modules/cros_paygen/api.py#381)(self, builder_name, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -3512,11 +3512,11 @@ Much of the inspiration for this module came from:
 As long as there are two versions of the the path construction any changes
 to one of these needs to be reflected in the other.
 
-#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#644)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#645)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Apis for dealing with stored images, payloads, and artifacts.
 
-&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#674)(self, prefix_uri, parse_types=None):**
+&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#675)(self, prefix_uri, parse_types=None):**
 
 Discover and return all the GS artifacts found in a given ArtifactRoot.
 

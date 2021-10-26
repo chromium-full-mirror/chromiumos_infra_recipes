@@ -25,9 +25,41 @@
     "cmd": [],
     "name": "discovering payload configuration",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no configurations matched in payload.json@@@",
-      "@@@STEP_LOG_LINE@0 configured sources@[]@@@",
-      "@@@STEP_LOG_END@0 configured sources@@@"
+      "@@@STEP_LOG_LINE@2 configured sources@[@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@  {@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"public_codename\": \"coral\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"chrome_version\": \"87.0.4280.20\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"full_payload_tests\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"delta_type\": \"OMAHA\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"is_active\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"milestone\": 87, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"delta_payload_tests\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"applicable_models\": [@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@      \"astronaut\"@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    ], @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"chrome_os_version\": \"13505.11.0\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"generate_delta\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"channel\": \"rubik\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"builder_name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@  }, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@  {@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"public_codename\": \"coral\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"chrome_version\": \"87.0.4280.24\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"full_payload_tests\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"delta_type\": \"OMAHA\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"is_active\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"milestone\": 87, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"delta_payload_tests\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"applicable_models\": [@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@      \"astronaut\"@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    ], @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"chrome_os_version\": \"13505.15.0\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"generate_delta\": true, @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"channel\": \"rubik\", @@@",
+      "@@@STEP_LOG_LINE@2 configured sources@    \"builder_name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@  }@@@",
+      "@@@STEP_LOG_LINE@2 configured sources@]@@@",
+      "@@@STEP_LOG_END@2 configured sources@@@"
     ]
   },
   {
@@ -55,7 +87,7 @@
       "@@@STEP_LOG_LINE@paygen.json@        \"builder_name\": \"coral\"@@@",
       "@@@STEP_LOG_LINE@paygen.json@      },@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"delta_type\": \"OMAHA\",@@@",
-      "@@@STEP_LOG_LINE@paygen.json@      \"channel\": \"beta\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"channel\": \"canary\",@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"chrome_os_version\": \"13505.11.0\",@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"chrome_version\": \"87.0.4280.20\",@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"milestone\": 87,@@@",
@@ -73,7 +105,7 @@
       "@@@STEP_LOG_LINE@paygen.json@        \"builder_name\": \"coral\"@@@",
       "@@@STEP_LOG_LINE@paygen.json@      },@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"delta_type\": \"OMAHA\",@@@",
-      "@@@STEP_LOG_LINE@paygen.json@      \"channel\": \"beta\",@@@",
+      "@@@STEP_LOG_LINE@paygen.json@      \"channel\": \"canary\",@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"chrome_os_version\": \"13505.15.0\",@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"chrome_version\": \"87.0.4280.24\",@@@",
       "@@@STEP_LOG_LINE@paygen.json@      \"milestone\": 87,@@@",
@@ -104,6 +136,125 @@
     "name": "discovering payload configuration.get paygen json.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examining rubik-channel"
+  },
+  {
+    "cmd": [],
+    "name": "examining rubik-channel.source artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examining rubik-channel.source artifacts.discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@artifacts found@@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://rubik-channel/coral/13505.11.0/**"
+    ],
+    "infra_step": true,
+    "name": "examining rubik-channel.source artifacts.discover gs artifacts.gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examining rubik-channel.source artifacts.discover gs artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@artifacts found@@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://rubik-channel/coral/13505.15.0/**"
+    ],
+    "infra_step": true,
+    "name": "examining rubik-channel.source artifacts.discover gs artifacts (2).gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examining rubik-channel.target artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "examining rubik-channel.target artifacts.discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@artifacts found@@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://rubik-channel/coral/13505.15.0/**"
+    ],
+    "infra_step": true,
+    "name": "examining rubik-channel.target artifacts.discover gs artifacts.gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "discovered artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@target_artifacts@@@",
+      "@@@STEP_LOG_END@source_artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "pairing artifacts",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No payload pairs (src->tgt) found.@@@",
+      "@@@STEP_LOG_END@0 deltas@@@",
+      "@@@STEP_LOG_END@0 full@@@"
     ]
   },
   {

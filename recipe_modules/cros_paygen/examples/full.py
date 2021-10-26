@@ -20,7 +20,7 @@ PROPERTIES = TestPaygenProperties
 def RunSteps(api, properties):
   api.assertions.assertEqual(
       len(
-          api.cros_paygen.get_builder_config(
+          api.cros_paygen.get_builder_configs(
               builder_name=properties.builder_name,
               delta_type=properties.delta_type)), properties.expected_length)
 
