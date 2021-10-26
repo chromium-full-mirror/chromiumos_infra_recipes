@@ -47,6 +47,10 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(api.orch_menu.is_postsubmit_orchestrator,
                                is_postsubmit_orch)
 
+    is_bisecting_orch = build.builder.builder == 'bisecting-orchestrator'
+    api.assertions.assertEqual(api.orch_menu.is_bisecting_orchestrator,
+                               is_bisecting_orch)
+
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
     expected_changes.extend([

@@ -45,6 +45,10 @@ def DoRunSteps(api):
     extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
         CrosRelevanceProperties(force_postsubmit_relevance=True))
 
+  if api.orch_menu.is_bisecting_orchestrator:
+    extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
+        CrosRelevanceProperties(force_postsubmit_relevance=True))
+
   if api.orch_menu.chromium_src_ref_cl_tag:
     extra_child_props[
         '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()
@@ -72,6 +76,10 @@ def GenTests(api):
                            builder='main-release-orchestrator',
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True, bot_size='medium')
+
+  yield api.orch_menu.test('bisecting-orchestrator', data.ctp_normal,
+                           api.post_check(post_process.StatusSuccess),
+                           builder='bisecting-orchestrator')
 
   yield api.orch_menu.test('builds_with_history', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess), cq=True,

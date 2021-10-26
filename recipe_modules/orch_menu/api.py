@@ -123,6 +123,7 @@ class OrchMenuApi(RecipeApi):
     self._builds_status = BuildsStatus([], [], {})
     self._is_release_orchestrator = False
     self._is_postsubmit_orchestrator = False
+    self._is_bisecting_orchestrator = False
     self._chromium_src_ref_cl_tag = None
 
   def initialize(self):
@@ -160,6 +161,10 @@ class OrchMenuApi(RecipeApi):
   @property
   def is_postsubmit_orchestrator(self):
     return self._is_postsubmit_orchestrator
+
+  @property
+  def is_bisecting_orchestrator(self):
+    return self._is_bisecting_orchestrator
 
   @property
   def chromium_src_ref_cl_tag(self):
@@ -248,6 +253,10 @@ class OrchMenuApi(RecipeApi):
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
+
+        if self.m.buildbucket.build.builder.builder.endswith(
+            'bisecting-orchestrator'):
+          self._is_bisecting_orchestrator = True
 
         self._chromium_src_ref_cl_tag = self.m.cros_tags.cq_cl_tag_value(
             'chromium_src_ref', self.m.buildbucket.build.tags)
