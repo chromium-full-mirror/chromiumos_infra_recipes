@@ -67,13 +67,13 @@ def RunSteps(api):
 
   # Test get_testable_models.
   # Models is None, self._applicable_models is non-empty.
-  api.assertions.assertItemsEqual(delta_test_config._get_testable_models(),
+  api.assertions.assertCountEqual(delta_test_config._get_testable_models(),
                                   ['woomax'])
   # Models and self._applicable_models is non-empty.
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       delta_test_config._get_testable_models(['woomax', 'other']), ['woomax'])
   # Models is non-empty, self._applicable_models is None.
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       full_test_config._get_testable_models(['woomax', 'other']),
       ['woomax', 'other'])
 

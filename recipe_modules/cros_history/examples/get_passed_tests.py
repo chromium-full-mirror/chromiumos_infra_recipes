@@ -12,7 +12,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.assertions.assertItemsEqual(api.cros_history.get_passed_tests(),
+  api.assertions.assertCountEqual(api.cros_history.get_passed_tests(),
                                   ['nami/hw/bvt-cq'])
 
 

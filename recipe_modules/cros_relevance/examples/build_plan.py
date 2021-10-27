@@ -43,7 +43,7 @@ def RunSteps(api, properties):
   builders = api.cros_relevance.get_necessary_builders(
       bc, gc, bbcommon_pb2.GitilesCommit(id='hello'),
       test_builder_ids=properties.test_builder_ids)
-  api.assertions.assertItemsEqual(builders, properties.expected_builders)
+  api.assertions.assertCountEqual(builders, properties.expected_builders)
 
 
 def GenTests(api):

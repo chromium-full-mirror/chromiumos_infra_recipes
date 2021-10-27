@@ -38,7 +38,7 @@ def RunSteps(api):
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0],
           [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_N2N])
   ]
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [y.properties for y in expected_full_tests],
       [y.properties for y in actual_full_schedule_reqs])
   # Force tests
@@ -51,7 +51,7 @@ def RunSteps(api):
               api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_OMAHA
           ])
   ]
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [y.properties for y in expected_full_tests],
       [y.properties for y in actual_full_schedule_reqs])
   # Force no tests
@@ -61,7 +61,7 @@ def RunSteps(api):
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0])
   ]
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [y.properties for y in expected_full_tests],
       [y.properties for y in actual_full_schedule_reqs])
 
@@ -76,7 +76,7 @@ def RunSteps(api):
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0])
   ]
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [y.properties for y in expected_delta_tests],
       [y.properties for y in actual_delta_schedule_reqs])
   # Force tests
@@ -90,7 +90,7 @@ def RunSteps(api):
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
           [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_N2N]),
   ]
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [y.properties for y in expected_delta_tests],
       [y.properties for y in actual_delta_schedule_reqs])
   # Force no tests
@@ -102,7 +102,7 @@ def RunSteps(api):
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_N2N[0])
   ]
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [y.properties for y in expected_delta_tests],
       [y.properties for y in actual_delta_schedule_reqs])
 

@@ -56,7 +56,7 @@ def RunSteps(api):
 
   updated_failures = api.failures.update_non_critical_test_failures(
       initial_failures, test_plan_summary)
-  api.assertions.assertItemsEqual(expected_failures, updated_failures)
+  api.assertions.assertCountEqual(expected_failures, updated_failures)
 
 
 def GenTests(api):

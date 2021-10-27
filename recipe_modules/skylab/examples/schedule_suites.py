@@ -52,7 +52,7 @@ def RunSteps(api):
       unit_hw_test_with_license
   ], timeout=duration_pb2.Duration(seconds=3600))
   api.assertions.assertEqual(len(tasks), 4)
-  api.assertions.assertItemsEqual(
+  api.assertions.assertCountEqual(
       [x.test for x in tasks],
       [hw_test, another_hw_test, non_crit_hw_test, hw_test_with_license])
 

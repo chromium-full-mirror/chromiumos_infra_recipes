@@ -38,15 +38,15 @@ def RunSteps(api):
       ])
 
   # Completed builds are deduped.
-  api.assertions.assertItemsEqual(api.orch_menu.builds_status.completed_builds,
+  api.assertions.assertCountEqual(api.orch_menu.builds_status.completed_builds,
                                   [
                                       build_pb2.Build(id=111),
                                       build_pb2.Build(id=222),
                                   ])
   # Completed builds are removed from running builds.
-  api.assertions.assertItemsEqual(api.orch_menu.builds_status.running_builds,
+  api.assertions.assertCountEqual(api.orch_menu.builds_status.running_builds,
                                   [build_pb2.Build(id=333)])
-  api.assertions.assertItemsEqual(api.orch_menu.builds_status.failures, [
+  api.assertions.assertCountEqual(api.orch_menu.builds_status.failures, [
       api.failures.Failure(kind='test', title='unchanged_failure', link_map={},
                            fatal=True, id='1'),
       api.failures.Failure(kind='test', title='update_failure', link_map={},

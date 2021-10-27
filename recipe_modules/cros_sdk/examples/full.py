@@ -50,7 +50,7 @@ def RunSteps(api, properties):
     with api.cros_sdk.snapshot():
       api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
       api.assertions.assertTrue(api.cros_sdk.has_goma_config())
-      api.assertions.assertItemsEqual(chroot.env.use_flags,
+      api.assertions.assertCountEqual(chroot.env.use_flags,
                                       [common.UseFlag(flag='goma')])
 
     goma = api.cros_sdk.goma_config()

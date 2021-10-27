@@ -25,7 +25,7 @@ def RunSteps(api):
       common_pb2.STATUS_UNSPECIFIED)
   build_targets = api.cros_infra_config.build_target_dict(result)
   result_builders = [build.builder.builder for build in result]
-  api.assertions.assertItemsEqual(build_targets.keys(), ['bob', 'eve'])
+  api.assertions.assertCountEqual(build_targets.keys(), ['bob', 'eve'])
   api.assertions.assertEqual(result_builders, expected)
 
 

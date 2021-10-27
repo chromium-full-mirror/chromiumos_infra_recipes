@@ -27,7 +27,7 @@ PROPERTIES = GetPassedBuildsProperties
 def RunSteps(api, properties):
   if properties.input_build_patches:
     previous_builds = api.cros_history.get_passed_builds()
-    api.assertions.assertItemsEqual(previous_builds, properties.output_builds)
+    api.assertions.assertCountEqual(previous_builds, properties.output_builds)
 
 
 def _build_with_changes(build):

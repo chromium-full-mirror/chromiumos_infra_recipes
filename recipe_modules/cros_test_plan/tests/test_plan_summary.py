@@ -33,7 +33,7 @@ def RunSteps(api):
   actual_summary = api.cros_test_plan.get_test_plan_summary(
       api.cros_test_plan.test_api.generate_test_plan_response)
 
-  api.assertions.assertItemsEqual(actual_summary, expected_summary)
+  api.assertions.assertCountEqual(actual_summary, expected_summary)
 
 
 def GenTests(api):

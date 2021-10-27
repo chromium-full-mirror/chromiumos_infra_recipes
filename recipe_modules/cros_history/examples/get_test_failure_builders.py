@@ -23,7 +23,7 @@ PROPERTIES = {
 
 
 def RunSteps(api, expected_builder_names):
-  api.assertions.assertItemsEqual(expected_builder_names,
+  api.assertions.assertCountEqual(expected_builder_names,
                                   api.cros_history.get_test_failure_builders())
 
 

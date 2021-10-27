@@ -36,12 +36,12 @@ def RunSteps(api, properties):
           common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                   change=1234)
       ], common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
-  api.assertions.assertItemsEqual(existing_builds, [])
+  api.assertions.assertCountEqual(existing_builds, [])
   actual_completed_builds = [x.builder.builder for x in completed_builds]
-  api.assertions.assertItemsEqual(actual_completed_builds,
+  api.assertions.assertCountEqual(actual_completed_builds,
                                   properties.expected_completed_builds)
   actual_build_requests = [x.builder.builder for x in new_requests]
-  api.assertions.assertItemsEqual(actual_build_requests,
+  api.assertions.assertCountEqual(actual_build_requests,
                                   properties.expected_build_requests)
   api.assertions.assertEqual({x: True for x in properties.expected_experiments},
                              new_requests[0].experiments)
