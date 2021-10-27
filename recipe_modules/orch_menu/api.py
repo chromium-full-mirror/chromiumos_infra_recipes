@@ -10,7 +10,7 @@ from __future__ import division
 from collections import defaultdict, namedtuple
 import contextlib
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf import json_format
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -171,7 +171,7 @@ class OrchMenuApi(RecipeApi):
     return self._chromium_src_ref_cl_tag
 
   def chrome_module_child_props(self):
-    return MessageToDict(
+    return json_format.MessageToDict(
         ChromeProperties(version=self._chromium_src_ref_cl_tag))
 
   def _get_manifest_info(self, external=False):
@@ -738,3 +738,138 @@ class OrchMenuApi(RecipeApi):
         self._collect_and_check_build_results(completed_builds)
         self.m.greenness.update_build_info(completed_builds)
     return self._builds_status
+
+  def aggregate_metadata(self, child_builds):
+    """Aggregate metadata payloads from children.
+
+    Pull metadata message of each type from children and merge the messages
+    together.  Upload the resulting message as our own metadata.
+
+    Args:
+      child_builds ([BuildStatus]): BuildStatus instances for child builds
+    """
+
+    def get_property(pathspec, props):
+      """Get a value from a property by pathspec.
+
+      Input and output properties are protobuffer.Struct instances, so
+      normal python .get() methods don't work on them, so we have to walk the
+      struct and check for presence of a key to safely retrieve it.
+
+      Args:
+        pathspec (str): Dotted field names to get, eg: build_target.name.
+        props (Struct): Input or output properties.
+
+      Return:
+        Value of field if found, otherwise None.
+      """
+      obj = props
+      for key in pathspec.split('.'):
+        obj = obj[key] if key in obj else []
+      return obj or None
+
+    # Iterate over each metadata payload defined in the metadata module.
+    with self.m.step.nest('aggregating metadata') as aggregate_step:
+      for metadata_info in self.m.metadata.METADATA_PAYLOADS.values():
+        aggregated = metadata_info.msgtype()
+
+        # For each child build we were given.
+        step_name = '{} metadata'.format(metadata_info.name)
+        with self.m.step.nest(step_name) as payload_step:
+          skipped = []
+          for build in child_builds:
+
+            step_name = 'processing {}'.format(build.builder.builder)
+            with self.m.step.nest(step_name) as child_step:
+              # If no build-target is set on the child build, then it's not an
+              # actual build (not compiling an image), so skip it.
+              input_props = build.input.properties
+              build_target = get_property('build_target.name', input_props)
+              if not build_target:
+                child_step.step_summary_text = 'no build-target set, skipping'
+                continue
+
+              # If the child wasn't asked to build containers then skip it.
+              container_version_format = get_property(
+                  '$chromeos/build_menu.container_version_format',
+                  input_props,
+              )
+              if not container_version_format:
+                skipped.append(build.builder.builder)
+                continue
+
+              # Grab artifact bucket and path from output properties of child
+              # and use them to piece together the full path to the metadata
+              # payload.
+              output_props = build.output.properties
+              gs_bucket = get_property('artifacts.gs_bucket', output_props)
+              gs_path = get_property('artifacts.gs_path', output_props)
+
+              if not (gs_bucket and gs_path):
+                child_step.step_summary_text = 'no artifacts path, skipping'
+                skipped.append(build_target)
+                continue
+
+              payload_path = self.m.path.join(
+                  gs_bucket,
+                  gs_path,
+                  self.m.metadata.gspath(metadata_info),
+              )
+
+              # Force path to have a gs:// prefix.
+              prefix = '' if payload_path.startswith('gs://') else 'gs://'
+              payload_path = prefix + payload_path
+
+              # Try to cat the payload, if it fails, note that fact, but don't
+              # fail the overall build.
+              try:
+                payload = self.m.gsutil.cat(
+                    payload_path,
+                    name='reading payload for {}'.format(build_target),
+                    stdout=self.m.raw_io.output(),
+                ).stdout
+              except StepFailure:
+                for pres in [payload_step, aggregate_step]:
+                  pres.status = self.m.step.FAILURE
+                  pres.step_summary_text = 'One or more child payloads failed to download'
+                continue
+
+              # Decode the child payload and log any parsing errors that occur,
+              # but don't allow it to fail the overall build.
+              try:
+                message = json_format.Parse(payload, metadata_info.msgtype())
+              # pylint: disable=broad-except
+              except Exception as ex:
+                payload_step.logs['proto error'] = str(ex)
+                continue
+
+              aggregated.MergeFrom(message)
+
+          payload_step.logs['skipped children'] = '\n'.join(skipped)
+
+        # TODO(b/204184594): Due to an issue in builder_config, we can't set an
+        # artifacts path for orchestrators, so we'll hardcode the image-archive
+        # bucket here but should use the configured bucket once it's fixed.
+        staging = self.m.cros_infra_config.is_staging
+        gs_bucket = ('staging-' if staging else '') + 'chromeos-image-archive'
+
+        # All child payloads should be merged into 'aggregated' now, so write
+        # it to our bucket as just another set of metadata.
+        gs_path = self.m.cros_artifacts.upload_metadata(
+            metadata_info.name,
+            self.m.build_menu.config_or_default.id.name, # eg: cq-orchestrator
+            "", # orchestrators have no build target
+            gs_bucket,
+            metadata_info.filename,
+            aggregated,
+        )
+
+        aggregate_step.links['{} metadata (gs)'.format(metadata_info.name)] = (
+            self.m.path.join(
+                'https://console.cloud.google.com/storage/browser/_details',
+                gs_bucket,
+                gs_path,
+            ))
+
+        aggregate_step.logs['{} metadata (log)'.format(metadata_info.name)] = \
+          json_format.MessageToJson(aggregated)

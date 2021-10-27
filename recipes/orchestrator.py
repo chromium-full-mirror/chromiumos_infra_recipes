@@ -53,7 +53,12 @@ def DoRunSteps(api):
     extra_child_props[
         '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()
 
-  api.orch_menu.plan_and_run_children(extra_child_props=extra_child_props)
+  builds_status = api.orch_menu.plan_and_run_children(
+      extra_child_props=extra_child_props,
+  )
+
+  # Aggregate any metadata produced by the child builds into our own GS bucket
+  api.orch_menu.aggregate_metadata(builds_status.completed_builds)
 
   # Run any HW tests.
   api.orch_menu.plan_and_run_tests()

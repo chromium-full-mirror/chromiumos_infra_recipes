@@ -7103,7 +7103,7 @@
       "@@@STEP_LOG_LINE@container metadata (log)@}@@@",
       "@@@STEP_LOG_END@container metadata (log)@@@",
       "@@@STEP_LINK@ [sha256:]@https:////@sha256:@@@",
-      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/container.jsonpb@@@"
+      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
     ]
   },
   {
@@ -7290,7 +7290,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"containers\": {\n    \"atlas\": {\n      \"images\": {\n        \"\": {\n          \"digest\": \"sha256:\"\n        }\n      }\n    }\n  }\n}",
-      "[CLEANUP]/tmp_tmp_3/container.jsonpb"
+      "[CLEANUP]/tmp_tmp_3/containers.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -7309,18 +7309,18 @@
     "name": "create test service containers.upload container metadata.writing metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@{@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@    \"atlas\": {@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@      \"images\": {@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@        \"\": {@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@          \"digest\": \"sha256:\"@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@        }@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@      }@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@    }@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@  }@@@",
-      "@@@STEP_LOG_LINE@container.jsonpb@}@@@",
-      "@@@STEP_LOG_END@container.jsonpb@@@"
+      "@@@STEP_LOG_LINE@containers.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@  \"containers\": {@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@    \"atlas\": {@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@      \"images\": {@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@        \"\": {@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@          \"digest\": \"sha256:\"@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@        }@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@      }@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@    }@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@  }@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@}@@@",
+      "@@@STEP_LOG_END@containers.jsonpb@@@"
     ]
   },
   {
@@ -7332,8 +7332,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/tmp_tmp_3/container.jsonpb",
-      "gs:///amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/container.jsonpb"
+      "[CLEANUP]/tmp_tmp_3/containers.jsonpb",
+      "gs:///amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -7353,7 +7353,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com//amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/container.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com//amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
     ]
   },
   {

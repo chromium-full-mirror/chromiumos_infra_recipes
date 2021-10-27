@@ -5,12 +5,18 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'metadata',
 ]
 
 
 def RunSteps(api):
-  _ = api
+  api.assertions.assertEqual(
+      api.metadata.gspath(
+          api.metadata.METADATA_PAYLOADS['container'],
+      ),
+      'metadata/containers.jsonpb',
+  )
 
 
 def GenTests(api):

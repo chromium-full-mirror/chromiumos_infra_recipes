@@ -42,8 +42,23 @@ class MetadataApi(recipe_api.RecipeApi):
 
   # Define suported metadata types
   CONTAINER_METADATA_INFO = \
-      MetadataInfo('container', 'container.jsonpb', ContainerMetadata)
+      MetadataInfo('container', 'containers.jsonpb', ContainerMetadata)
 
-  METADATA_INFOS = {
+  METADATA_PAYLOADS = {
       'container': CONTAINER_METADATA_INFO,
   }
+
+  def gspath(self, metadata_info):
+    """Return relative path to a metadata payload.
+
+    Args:
+      metadata_info (MetadataInfo): Metadata config information
+
+    Returns:
+      The relative GCS path for metadata.
+    """
+
+    return self.m.path.join(
+        MetadataApi.METADATA_GSDIR,
+        metadata_info.filename,
+    )
