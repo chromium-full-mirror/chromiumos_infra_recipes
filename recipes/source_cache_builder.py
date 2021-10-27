@@ -25,6 +25,8 @@ DEPS = [
 
 from recipe_engine.recipe_api import StepFailure
 
+from PB.recipe_engine import result as result_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.source_cache_builder import (
     SourceCacheBuilderProperties)
 
@@ -35,6 +37,7 @@ def RunSteps(api, properties):
   with api.step.nest('source cache update'):
     snapshot_prefixes = []
     image_prefixes = []
+    step_failures = []
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.gcloud.infra_host
     for cache in properties.cache_definition:
@@ -76,10 +79,11 @@ def RunSteps(api, properties):
             api.chrome.cache_sync(cache_path=mount_path)
           successful_sync = True
         # If sync fails, write a recovery image to the current version file.
-        except StepFailure:
+        except StepFailure as e:
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,
               cache.recovery_snapshot)
+          step_failures.append(e)
       with api.step.nest('sync disk cache before snapshot'):
         api.gcloud.sync_disk_cache(name=cache.cache_name)
       with api.step.nest('unmount disk for snapshot'):
@@ -97,12 +101,6 @@ def RunSteps(api, properties):
               snapshot_name)
       with api.step.nest('delete disk'):
         api.gcloud.delete_disk(disk=disk, zone=api.gcloud.host_zone)
-  with api.step.nest('cleanup expired snapshots'):
-    snapshot_delete_list = api.gcloud.get_expired_snapshots(
-        retention_days=properties.retention_days, prefixes=snapshot_prefixes,
-        protected_snapshots=properties.protected_snapshots)
-    api.easy.set_properties_step(expired_snapshots=snapshot_delete_list)
-    api.gcloud.delete_snapshots(snapshots=snapshot_delete_list)
   with api.step.nest('cleanup expired images'):
     image_delete_list = api.gcloud.get_expired_images(
         retention_days=properties.retention_days, prefixes=image_prefixes,
@@ -120,6 +118,26 @@ def RunSteps(api, properties):
         futures.append(
             api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
       api.futures.wait(futures)
+  # format markdown
+  markdown = ""
+  if step_failures:
+    lines = ["%d steps failed:\n" % len(step_failures)]
+    for failure in step_failures:
+      lines += ["- %s\n" % failure.reason or failure.name]
+
+    # truncate markdown to 4K to avoid INFRA_FAILURE
+    markdown = lines[0]
+    for line in lines[1:]:
+      if len(markdown) + len(line) < 3990:
+        markdown += '\n\n' + line
+      else:  #pragma: nocover
+        markdown += '\n\n...'
+        break
+
+  # return RawResult directly to set the markdown (only with luciexe)
+  return result_pb2.RawResult(
+      status=common_pb2.FAILURE if step_failures else common_pb2.SUCCESS,
+      summary_markdown=markdown)
 
 
 def GenTests(api):

@@ -27,18 +27,6 @@
   },
   {
     "cmd": [],
-    "name": "cleanup expired snapshots"
-  },
-  {
-    "cmd": [],
-    "name": "cleanup expired snapshots.set expired_snapshots",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@expired_snapshots@[]@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "cleanup expired images"
   },
   {

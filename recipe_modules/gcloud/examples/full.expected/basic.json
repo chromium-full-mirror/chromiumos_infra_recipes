@@ -196,22 +196,6 @@
     "cmd": [
       "gcloud",
       "compute",
-      "disks",
-      "snapshot",
-      "test-disk",
-      "--snapshot-names=test-disk-snapshot",
-      "--zone=us-central1-b"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "snapshot disk"
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
       "instances",
       "detach-disk",
       "image-name",
@@ -245,30 +229,19 @@
     "cmd": [
       "gcloud",
       "compute",
-      "snapshots",
-      "list",
+      "disks",
+      "describe",
+      "chromiumos-main-16287984",
+      "--zone=foo",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chromiumos-main-16287984"
+      "json(name)"
     ],
     "infra_step": true,
-    "name": "check whether snapshot exists: chromiumos-main-16287984",
+    "name": "check whether disk exists: chromiumos-main-16287984",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromiumos-main-16287984\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
@@ -307,30 +280,19 @@
     "cmd": [
       "gcloud",
       "compute",
-      "snapshots",
-      "list",
+      "disks",
+      "describe",
+      "staging-chromiumos-release-r93-14092-b-16287710",
+      "--zone=foo",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=staging-chromiumos-release-r93-14092-b-16287710"
+      "json(name)"
     ],
     "infra_step": true,
-    "name": "check whether snapshot exists: staging-chromiumos-release-r93-14092-b-16287710",
+    "name": "check whether disk exists: staging-chromiumos-release-r93-14092-b-16287710",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
@@ -369,30 +331,17 @@
     "cmd": [
       "gcloud",
       "compute",
-      "snapshots",
-      "list",
+      "disks",
+      "describe",
+      "chrome-release-r93-14092-b-99999999",
+      "--zone=foo",
       "--format",
-      "json(name)",
-      "--filter",
-      "name=chrome-release-r93-14092-b-99999999"
+      "json(name)"
     ],
     "infra_step": true,
-    "name": "check whether snapshot exists: chrome-release-r93-14092-b-99999999",
+    "name": "check whether disk exists: chrome-release-r93-14092-b-99999999",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },

@@ -127,6 +127,7 @@
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
+      "--reset",
       "--with_branch_heads",
       "--with_tags"
     ],

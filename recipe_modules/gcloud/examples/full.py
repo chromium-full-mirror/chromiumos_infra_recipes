@@ -25,8 +25,6 @@ def RunSteps(api):
                              network='chromeos-gce-tests', subnet='us-central1')
   api.gcloud.attach_disk(name='test-disk', instance='image-name',
                          disk='test-disk', zone='us-central1-b')
-  api.gcloud.snapshot_disk(disk='test-disk', snapshot_name='test-disk-snapshot',
-                           zone='us-central1-b')
   api.gcloud.detach_disk(instance='image-name', disk='test-disk',
                          zone='us-central1-b')
   api.gcloud.delete_instance('image-name', project=GCE_PROJECT,
@@ -39,7 +37,7 @@ def RunSteps(api):
   }
   for test, result in versions_exists_tests.items():
     api.assertions.assertEqual(result,
-                               api.gcloud.snapshot_exists(snapshot=test))
+                               api.gcloud.disk_exists(disk=test, zone='foo'))
     api.assertions.assertEqual(result, api.gcloud.image_exists(image=test))
 
   suffix_test = [

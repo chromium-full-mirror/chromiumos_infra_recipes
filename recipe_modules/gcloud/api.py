@@ -356,26 +356,6 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
 
-  def create_disk_from_snapshot(self, disk, zone, snapshot, disk_type=None):
-    """Create a GCE disk from supplied snapshot.
-
-    Create a GCE disk from a provided snapshot name.
-
-    Args:
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create disk (e.g. us-central1-b).
-      snapshot(str): Snapshot version use to create the disk.
-      disk_type(str): Type of GCE disk to create.
-    """
-    cmd = [
-        'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--source-snapshot={}'.format(snapshot), '--quiet'
-    ]
-    if disk_type:
-      cmd.extend(['--type={}'.format(disk_type)])
-    with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('create disk from snapshot', cmd, infra_step=True)
-
   def create_disk_from_image(self, disk, zone, image, disk_type=None):
     """Create a GCE disk from supplied image.
 
@@ -506,28 +486,6 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
-  def snapshot_exists(self, snapshot):
-    """Check whether a snapshot exists.
-
-    Args:
-      snapshot(str): Name of the snapshot to check.
-
-    Returns:
-      Bool of whether the snapshot exists or not.
-    """
-    list_cmd = [
-        'gcloud', 'compute', 'snapshots', 'list', '--format', 'json(name)',
-        '--filter', 'name={}'.format(snapshot)
-    ]
-    output = self.m.easy.stdout_json_step(
-        'check whether snapshot exists: {}'.format(snapshot), list_cmd,
-        test_stdout=self.test_api.snapshot_exists_data, infra_step=True)
-    for snap in output:
-      if snapshot == snap['name']:
-        return True
-    return False
-
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def image_exists(self, image):
     """Check whether a image exists.
 
@@ -649,69 +607,8 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
-  def snapshot_disk(self, disk, snapshot_name, zone):
-    """Snapshot an attached disk on a GCE instance.
-
-    Args:
-      disk(str): Google Cloud disk name.
-      snapshot_name(str): The name to give the snapshot.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
-    """
-    with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('snapshot disk', [
-          'gcloud', 'compute', 'disks', 'snapshot', disk,
-          '--snapshot-names={}'.format(snapshot_name), '--zone={}'.format(zone)
-      ], infra_step=True)
-
-  def delete_snapshots(self, snapshots):
-    """Delete the list of provided snapshots from GCE.
-
-    Args:
-      snapshots(list|str): A list of snapshot names.
-    """
-    with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      for snapshot in snapshots:
-        self.m.step(
-            'delete snapshot {}'.format(snapshot),
-            ['gcloud', 'compute', 'snapshots', 'delete', snapshot, '--quiet'],
-            infra_step=True)
-
-  def get_expired_snapshots(self, retention_days, prefixes,
-                            protected_snapshots=None):
-    """Calculate the list of snapshots that have expired.
-
-    Args:
-      retention_days(int): Number of days to retain.
-      prefixes(list|str): List of prefixes to filter.
-      protected_snapshots(list|str): List of snapshots to preserve.
-    """
-    lookback_date = (
-        self.m.time.utcnow() -
-        datetime.timedelta(days=retention_days)).strftime("%Y-%m-%d")
-    list_cmd = ['gcloud', 'compute', 'snapshots', 'list', '--format', 'json']
-    snapshot_list = []
-    cmd = []
-    for prefix in prefixes:
-      cmd.extend(list_cmd)
-      cmd.extend([
-          '--filter',
-          'creationTimestamp<{} AND name~{}-.*'.format(lookback_date, prefix)
-      ])
-      snap_list = self.m.easy.stdout_json_step(
-          'list snapshots with filter {}'.format(prefix), cmd,
-          test_stdout=self.test_api.snapshot_list_data, infra_step=True)
-      for snap in snap_list:
-        snapshot_name = snap['name']
-        if protected_snapshots:
-          if snapshot_name in protected_snapshots:
-            continue
-        if snapshot_name not in snapshot_list:
-          snapshot_list.append(snapshot_name)
-      del cmd[:]
-    return snapshot_list
-
   def get_expired_images(self, retention_days, prefixes, protected_images=None):
-    """Calculate the list of snapshots that have expired.
+    """Calculate the list of images that have expired.
 
     Args:
       retention_days(int): Number of days to retain.

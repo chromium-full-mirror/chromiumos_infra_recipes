@@ -112,6 +112,7 @@ class ChromeApi(recipe_api.RecipeApi):
                       infra_step=True)
         gclient_sync_cmd = [
             'sync',
+            '--reset',
             '--with_branch_heads',
             '--with_tags',
         ]

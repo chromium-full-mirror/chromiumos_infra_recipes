@@ -24,108 +24,6 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }]
     return disk_list
 
-  def snapshot_list_data(self):
-    """Returns list of snapshots in json format."""
-    snapshot_list = [{
-        "creationTimestamp":
-            "2021-07-09T20:12:11.796-07:00",
-        "diskSizeGb":
-            "200",
-        "downloadBytes":
-            "78986442536",
-        "id":
-            "7781563162436087524",
-        "kind":
-            "compute#snapshot",
-        "labelFingerprint":
-            "42WmSpB8rSM=",
-        "name":
-            "staging-chrome-cache-snapshot-16258867",
-        "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chrome-cache-snapshot-16258867",
-        "sourceDisk":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central2-c/disks/staging-source-cache-disk-chrome-us-central2-c",
-        "sourceDiskId":
-            "4287499025374294961",
-        "status":
-            "READY",
-        "storageBytes":
-            "78985626944",
-        "storageBytesStatus":
-            "UP_TO_DATE",
-        "storageLocations": ["us"]
-    }, {
-        "creationTimestamp":
-            "2021-07-09T21:11:05.550-07:00",
-        "diskSizeGb":
-            "200",
-        "downloadBytes":
-            "78994231357",
-        "id":
-            "4736713593347941175",
-        "kind":
-            "compute#snapshot",
-        "labelFingerprint":
-            "42WmSpB8rSM=",
-        "name":
-            "staging-chromeos-cache-snapshot-16258902",
-        "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258902",
-        "sourceDisk":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d",
-        "sourceDiskId":
-            "2341635010697930119",
-        "status":
-            "READY",
-        "storageBytes":
-            "78993415936",
-        "storageBytesStatus":
-            "UP_TO_DATE",
-        "storageLocations": ["us"]
-    }, {
-        "creationTimestamp":
-            "2021-07-09T22:12:18.806-07:00",
-        "diskSizeGb":
-            "200",
-        "downloadBytes":
-            "78999426485",
-        "id":
-            "4629036345170629341",
-        "kind":
-            "compute#snapshot",
-        "labelFingerprint":
-            "42WmSpB8rSM=",
-        "name":
-            "staging-chromeos-cache-snapshot-16258939",
-        "selfLink":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/global/snapshots/staging-chromeos-cache-snapshot-16258939",
-        "sourceDisk":
-            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-east1-d/disks/staging-source-cache-disk-chromeos-us-east1-d",
-        "sourceDiskId":
-            "5316746804958893913",
-        "status":
-            "READY",
-        "storageBytes":
-            "78998610816",
-        "storageBytesStatus":
-            "UP_TO_DATE",
-        "storageLocations": ["us"]
-    }]
-    return snapshot_list
-
-  def snapshot_exists_data(self):
-    """Returns list of snapshots in json format."""
-    snapshot_list = [{
-        "name": "chromiumos-main-16287984"
-    }, {
-        "name": "staging-chromiumos-release-r93-14092-b-16287710"
-    }, {
-        "name": "chrome-release-r93-14092-b-16287710"
-    }, {
-        "name": "test-cache-snapshot-123",
-    }]
-    return snapshot_list
-
   def image_exists_data(self):
     """Returns list of images in json format."""
     image_list = [{
@@ -141,6 +39,8 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
 
   def disk_exists_data(self, disk):
     """Returns list of disks in json format."""
+    if disk.startswith('chrome-'):
+      return {}
     return {"name": disk}
 
   def disk_list_data(self):
