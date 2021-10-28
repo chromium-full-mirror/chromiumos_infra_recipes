@@ -7098,7 +7098,7 @@
       "@@@STEP_LOG_LINE@container metadata (log)@  }@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@}@@@",
       "@@@STEP_LOG_END@container metadata (log)@@@",
-      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser//amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
+      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

@@ -679,7 +679,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           )
 
           presentation.links['container metadata (gs)'] = (
-              'https://console.cloud.google.com/storage/browser/{}/{}'.format(
+              self.m.path.join(
+                  'https://console.cloud.google.com/storage/browser/_details',
                   gs_bucket,
                   gs_path,
               ))
