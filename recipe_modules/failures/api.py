@@ -492,3 +492,30 @@ class FailuresApi(RecipeApi):
       with self._with_step(presentation, 'non-critical test check') as pres:
         pres.logs['new non-critical tests'] = new_non_critical_tests
     return updated_failures
+
+  def format_step_failures(self, step_failures):
+    """Helper function to format the collected failures for presentation.
+
+    Args:
+      step_failures (list[Failure]): Collected error messages from exceptions.
+    Returns:
+      formatted markdown string for UI presentation.
+    """
+    markdown = ""
+    if step_failures:
+      lines = [
+          "{} step{} failed:\n".format(
+              len(step_failures), "" if len(step_failures) == 1 else "s")
+      ]
+      for failure in step_failures:
+        lines += ["- %s\n" % failure.reason or failure.name]
+
+      # truncate markdown to 4K to avoid INFRA_FAILURE
+      markdown = lines[0]
+      for line in lines[1:]:
+        if len(markdown) + len(line) < 3990:
+          markdown += '\n\n' + line
+        else:  #pragma: nocover
+          markdown += '\n\n...'
+          break
+    return markdown

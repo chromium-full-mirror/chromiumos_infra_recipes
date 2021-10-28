@@ -2789,7 +2789,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 steps failed:\n\n\n- Step('Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal') (retcode: 1)\n"
+      "humanReason": "1 step failed:\n\n\n- Step('Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal') (retcode: 1)\n"
     },
     "name": "$result"
   }

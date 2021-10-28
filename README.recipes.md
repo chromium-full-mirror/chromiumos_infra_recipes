@@ -284,6 +284,7 @@
   * [failures:examples/image_test_failures](#recipes-failures_examples_image_test_failures)
   * [failures:examples/is_critical_test_failure](#recipes-failures_examples_is_critical_test_failure)
   * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
+  * [failures:examples/step_failures](#recipes-failures_examples_step_failures)
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures)
   * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
@@ -4068,6 +4069,15 @@ Args:
 
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
+
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#496)(self, step_failures):**
+
+Helper function to format the collected failures for presentation.
+
+Args:
+  step_failures (list[Failure]): Collected error messages from exceptions.
+Returns:
+  formatted markdown string for UI presentation.
 
 &mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#272)(self, builds, refresh_configs=False):**
 
@@ -8060,7 +8070,7 @@ Require a given condition be true or throw a ValueError.
 Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)
 
-[DEPS](/recipes/config_postsubmit.py#24): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/config_postsubmit.py#24): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -8075,7 +8085,7 @@ action to copy these public configs to a public repo.
 Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 
-&mdash; **def [RunSteps](/recipes/config_postsubmit.py#479)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_postsubmit.py#480)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -8984,6 +8994,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#15)(api):**
+### *recipes* / [failures:examples/step\_failures](/recipe_modules/failures/examples/step_failures.py)
+
+[DEPS](/recipe_modules/failures/examples/step_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/step_failures.py#13)(api):**
 ### *recipes* / [failures:examples/update\_non\_critical\_failures](/recipe_modules/failures/examples/update_non_critical_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/update_non_critical_failures.py#8): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9795,13 +9812,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#15)(api):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
-[DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for generating ChromeOS source cache snapshots.
 
-&mdash; **def [RunSteps](/recipes/source_cache_builder.py#36)(api, properties):**
+&mdash; **def [RunSteps](/recipes/source_cache_builder.py#37)(api, properties):**
 ### *recipes* / [src\_state:examples/build\_manifest](/recipe_modules/src_state/examples/build_manifest.py)
 
 [DEPS](/recipe_modules/src_state/examples/build_manifest.py#6): [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

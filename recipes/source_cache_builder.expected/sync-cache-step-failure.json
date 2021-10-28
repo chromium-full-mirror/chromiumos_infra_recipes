@@ -992,7 +992,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 steps failed:\n\n\n- Infra Failure: Step('source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)') (retcode: 3)\n"
+      "humanReason": "1 step failed:\n\n\n- Infra Failure: Step('source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)') (retcode: 3)\n"
     },
     "name": "$result"
   }

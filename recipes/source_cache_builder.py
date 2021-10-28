@@ -18,6 +18,7 @@ DEPS = [
     'cros_cache',
     'cros_infra_config',
     'easy',
+    'failures',
     'gcloud',
     'repo',
     'src_state',
@@ -118,26 +119,11 @@ def RunSteps(api, properties):
         futures.append(
             api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
       api.futures.wait(futures)
-  # format markdown
-  markdown = ""
-  if step_failures:
-    lines = ["%d steps failed:\n" % len(step_failures)]
-    for failure in step_failures:
-      lines += ["- %s\n" % failure.reason or failure.name]
-
-    # truncate markdown to 4K to avoid INFRA_FAILURE
-    markdown = lines[0]
-    for line in lines[1:]:
-      if len(markdown) + len(line) < 3990:
-        markdown += '\n\n' + line
-      else:  #pragma: nocover
-        markdown += '\n\n...'
-        break
-
   # return RawResult directly to set the markdown (only with luciexe)
   return result_pb2.RawResult(
       status=common_pb2.FAILURE if step_failures else common_pb2.SUCCESS,
-      summary_markdown=markdown)
+      summary_markdown=api.failures.format_step_failures(
+          step_failures=step_failures))
 
 
 def GenTests(api):
