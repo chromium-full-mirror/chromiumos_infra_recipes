@@ -436,7 +436,7 @@
       "disks",
       "resize",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--size=700GB",
+      "--size=1024GB",
       "--zone=us-central1-b",
       "--quiet"
     ],

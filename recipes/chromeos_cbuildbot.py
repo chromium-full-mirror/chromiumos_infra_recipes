@@ -73,7 +73,7 @@ def DoRunSteps(api):
     api.bot_cost.build_cost_context():
     recipe_mount_path = api.gcloud.setup_cache_disk(
         cache_name='chromiumos', branch=api.chromite.chromite_branch,
-        disk_type='pd-standard', disk_size='700GB', recipe_mount=True),
+        disk_type='pd-standard', disk_size='1024GB', recipe_mount=True),
     api.easy.set_properties_step(recipe_mount_path=recipe_mount_path)
     api.chromite.run()
 
