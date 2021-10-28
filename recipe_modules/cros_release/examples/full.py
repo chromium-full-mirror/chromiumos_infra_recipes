@@ -41,7 +41,14 @@ def RunSteps(api):
   # Manufacture the minimal builder config.
   config = BuilderConfig(
       id=BuilderConfig.Id(name='amd64-generic-release',
-                          type=BuilderConfig.Id.RELEASE))
+                          type=BuilderConfig.Id.RELEASE),
+      artifacts=BuilderConfig.Artifacts(
+          artifacts_info=common_pb2.ArtifactsByService(
+              legacy=common_pb2.ArtifactsByService.Legacy(output_artifacts=[
+                  common_pb2.ArtifactsByService.Legacy.ArtifactInfo(
+                      gs_locations=['{target}-release-rubik/{version}'])
+              ]),
+          )))
   sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='amd64-generic'))
 
   api.cros_release.push_and_sign_images(config, sysroot)
@@ -59,7 +66,7 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request', [
-              'gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0-8945511751514863184'
+              'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
           ]),
       api.test_util.test_child_build('amd64-generic').build)
 
@@ -75,6 +82,6 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request', [
-              'gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0-8945511751514863184'
+              'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
           ]),
       api.test_util.test_child_build('amd64-generic').build)

@@ -193,9 +193,17 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('push images') as presentation:
       gs_bucket = self.m.build_menu.config.artifacts.artifacts_gs_bucket
-      gs_path = self.m.cros_artifacts.artifacts_gs_path(config.id.name,
-                                                        sysroot.build_target,
-                                                        config.id.type)
+
+      # Use the publish dir because it's formatted the way that we want for
+      # pushimage. Currently images are uploaded using the legacy artifacts
+      # service so we'll pull from that. b/204435742 for context.
+      publish_template = '{gs_path}'
+      output_artifacts = config.artifacts.artifacts_info.legacy.output_artifacts
+      if output_artifacts and output_artifacts[0].gs_locations:
+        publish_template = output_artifacts[0].gs_locations[0]
+      gs_path = self.m.cros_artifacts.artifacts_gs_path(
+          config.id.name, sysroot.build_target, config.id.type,
+          template=publish_template)
 
       gs_image_dir = 'gs://{gs_bucket}/{gs_path}'.format(
           gs_bucket=gs_bucket, gs_path=gs_path)
