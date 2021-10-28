@@ -4,8 +4,12 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'recipe_engine/buildbucket', 'recipe_engine/step', 'recipe_engine/time',
-    'build_menu', 'cloud_pubsub', 'cros_tags'
+    'recipe_engine/buildbucket',
+    'recipe_engine/step',
+    'recipe_engine/time',
+    'build_menu',
+    'cloud_pubsub',
+    'cros_tags',
 ]
 
 from PB.recipe_modules.chromeos.build_reporting.build_reporting \

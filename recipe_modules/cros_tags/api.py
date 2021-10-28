@@ -63,7 +63,8 @@ class CrosTagsApi(recipe_api.RecipeApi):
 
     Args:
       key (str): The key to lookup values for
-      tags ([StringPair]): A list of tags to look up values in (defaults to tags for current build)
+      tags ([StringPair]): A list of tags in which to look up values.
+        (defaults to tags for current build)
       default (str): A default value to return if no values found
 
     Returns
@@ -76,7 +77,7 @@ class CrosTagsApi(recipe_api.RecipeApi):
       if tag.key == key:
         results.append(tag.value)
 
-    if (not results) and default:
+    if not results and default:
       return [default]
     return results
 

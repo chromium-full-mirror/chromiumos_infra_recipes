@@ -3542,18 +3542,18 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#108)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#109)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#83)(self, cl_tag_key, tags):**
+&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#84)(self, cl_tag_key, tags):**
 
 Returns the value for the given cq_cl_tag, if it is found.
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#91)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#92)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
@@ -3569,7 +3569,8 @@ return value is always a list, even for a single item.
 
 Args:
   key (str): The key to lookup values for
-  tags ([StringPair]): A list of tags to look up values in (defaults to tags for current build)
+  tags ([StringPair]): A list of tags in which to look up values.
+    (defaults to tags for current build)
   default (str): A default value to return if no values found
 
 Returns
@@ -3590,7 +3591,7 @@ Args:
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#125)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#126)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
