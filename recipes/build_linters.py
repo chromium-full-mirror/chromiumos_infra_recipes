@@ -146,7 +146,6 @@ def RunSteps(api, properties):
 
 def DoRunSteps(api, config, _properties):
   api.build_menu.setup_sysroot_and_determine_relevance()
-  failing_build = False
   try:
     api.build_menu.bootstrap_sysroot(config)
     rust_files = _GetRustFiles(api)
@@ -163,10 +162,9 @@ def DoRunSteps(api, config, _properties):
       return RawResult(status=SUCCESS,
                        summary_markdown='Wrote %d findings.' % comment_count)
   except StepFailure:
-    failing_build = True
     raise
   finally:
-    api.build_menu.upload_artifacts(config, failing_build=failing_build)
+    api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):

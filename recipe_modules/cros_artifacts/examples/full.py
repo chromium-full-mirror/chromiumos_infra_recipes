@@ -6,7 +6,6 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
-    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'cros_artifacts',
     'cros_build_api',
@@ -17,14 +16,10 @@ from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 
-from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
-    TestInputProperties)
 from recipe_engine import post_process
 
-PROPERTIES = TestInputProperties
 
-
-def RunSteps(api, properties):
+def RunSteps(api):
 
   target = common.BuildTarget()
   target.name = 'target'
@@ -40,9 +35,7 @@ def RunSteps(api, properties):
                   common.ArtifactsByService.Toolchain
                   .UNVERIFIED_CHROME_LLVM_ORDERFILE
               ], gs_locations=['publish_gs_location', 'pub2/{gs_path}'],
-              acl_name='public-read', publish_condition=common
-              .ArtifactsByService.PUBLISH_ALWAYS if properties
-              .publish_always else common.ArtifactsByService.PUBLISH_ON_SUCCESS)
+              acl_name='public-read')
       ]),
       firmware=common.ArtifactsByService.Firmware(output_artifacts=[
           common.ArtifactsByService.Firmware.ArtifactInfo(
@@ -70,7 +63,6 @@ def RunSteps(api, properties):
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
                               build_target=target),
-      failing_build=properties.failing_build,
   )
 
   api.cros_artifacts.upload_metadata(
@@ -113,18 +105,6 @@ def GenTests(api):
           data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
                 '"paths": [{"path":"[START_DIR]/coverage.tbz2","location":2}],'
                 '"location": "PLATFORM_EC"}]}}')))
-
-  yield api.test(
-      'failing-build', api.properties(TestInputProperties(failing_build=True)),
-      api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'))
-
-  yield api.test(
-      'failing-build-publish-always',
-      api.properties(
-          TestInputProperties(failing_build=True, publish_always=True)),
-      api.post_check(post_process.MustRun,
-                     'upload artifacts.publish artifacts'))
 
   yield api.test('no-ArtifactsService/Get',
                  api.cros_build_api.remove_endpoints(['ArtifactsService/Get']))

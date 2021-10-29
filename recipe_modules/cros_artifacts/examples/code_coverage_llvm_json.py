@@ -17,7 +17,7 @@ from recipe_engine import post_process
 def RunSteps(api):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    api.build_menu.upload_artifacts(config=config, failing_build=False)
+    api.build_menu.upload_artifacts(config=config)
 
 
 def GenTests(api):

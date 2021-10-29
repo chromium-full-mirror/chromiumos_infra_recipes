@@ -435,8 +435,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         **self._artifacts_gs_path_dict(builder_name, target, kind))
 
   def _publish_artifacts(self, builder_name, target, kind, artifacts_info,
-                         upload_uri, files_by_artifact, name=None,
-                         failing_build=False):
+                         upload_uri, files_by_artifact, name=None):
     """Publish the artifacts that were uploaded.
 
     Some artifacts need to also be published in a better-known place than the
@@ -462,8 +461,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri (string): gs path were the artifacts were uploaded.
       files_by_artifact (dict{name: list[string]}): artifact file dictionary.
       name (str): The step name.  Defaults to 'publish artifacts'.
-      failing_build (bool): whether or not the build is failing, used (in part)
-          to decide whether or not to upload artifacts.
 
     Returns:
       {name: link} of gs publishing directories used.
@@ -476,13 +473,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     #   ...
     # ]
     to_publish = []
-    PUBLISH_ALWAYS = ArtifactsByService.PublishCondition.Name(
-        ArtifactsByService.PUBLISH_ALWAYS)
     for service in json_format.MessageToDict(artifacts_info).values():
       for out_info in service.get('outputArtifacts', []):
-        if out_info.get('gsLocations') and out_info.get('artifactTypes') and (
-            not failing_build or
-            out_info.get('publishCondition') == PUBLISH_ALWAYS):
+        if out_info.get('gsLocations') and out_info.get('artifactTypes'):
           to_publish.append(out_info)
     if not to_publish:
       return links
@@ -553,8 +546,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   def upload_artifacts(self, builder_name, kind, gs_bucket, _kwonly=(),
                        artifacts_info=None, chroot=None, sysroot=None,
-                       failing_build=False, name='upload artifacts',
-                       test_data=None, private_bundle_func=None):
+                       name='upload artifacts', test_data=None,
+                       private_bundle_func=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -571,8 +564,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       artifacts_info (ArtifactsByService): Information about artifacts.
       chroot (Chroot): chroot to use
       sysroot (Sysroot): sysroot to use (this contains the build target.)
-      failing_build (bool): whether or not the build is failing, used (in part)
-          to decide whether or not to upload artifacts.
       name (str): The step name. Defaults to 'upload artifacts'.
       test_data (str): Some data for this step to return when running under
           simulation.  The string "@@DIR@@" is replaced with the output_dir
@@ -620,13 +611,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # We upload artifacts whether the build passed or failed (see
       # crbug/1086630).
-      #
-      # Publishing artifacts is a "Push to Production" step.  As such,
-      # dry-run and failed builds must not publish artifacts.  However,
-      # there are some cases in which we'd like to publish artifacts for
-      # failed builds (e.g. CLANG_CRASH_DIAGNOSES). As such, we pass
-      # failing_build to _publish_artifacts and publish if the build is
-      # not failing or if ArtifactInfo.publish_conditions = PUBLISH_ALWAYS.
 
       # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
       for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
@@ -652,8 +636,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # artifacts.
       links = self._publish_artifacts(builder_name, sysroot.build_target, kind,
                                       artifacts_info, upload_uri,
-                                      files_by_artifact,
-                                      failing_build=failing_build)
+                                      files_by_artifact)
       for k, v in links.items():
         presentation.links[k] = v
     return uploaded_artifacts

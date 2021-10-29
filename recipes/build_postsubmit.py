@@ -32,30 +32,32 @@ def DoRunSteps(api, config):
                      summary_markdown='Build was not relevant.')
   packages = env_info.packages
 
-  # Artifacts are frequently of use even if the build failed.  For example, it
-  # is likely that the developer will want to see the ebuild logs from install
-  # packages when that step fails, or even if build images fail afterward.
-  # Thus, we track raise_upload_failure to avoid raising an upload failure if
-  # the build has already failed. See also crbug/1086630.
-  raise_upload_failure = True
+  failing_build_exception = None
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
       api.build_menu.create_containers(config)
       if api.build_menu.build_and_test_images(config):
         api.build_menu.upload_prebuilts(config)
-  except StepFailure:
-    raise_upload_failure = False
-    raise
-  finally:
-    try:
-      api.build_menu.upload_artifacts(config,
-                                      failing_build=not raise_upload_failure)
-    except StepFailure:
-      # TODO(crbug/1086630): We do not need to catch StepFailure here after
-      # 2020-12-31.
-      if raise_upload_failure:
-        raise
+  except StepFailure as sf:
+    # If we catch an exception, swallow it and store it so the next steps can
+    # still occur (there is value in uploading the artifact even in cases of
+    # build failure for debug purposes).
+    failing_build_exception = sf
+
+  try:
+    api.build_menu.upload_artifacts(config)
+  except StepFailure as sf:
+    # If uploading artifacts threw an exception, surface that exception unless
+    # build_and_test_images above threw an exception, in which case we want to
+    # surface *that* exception for accuracy in reporting the build (and it's
+    # likely that upload artifacts failed as a result of those previous issues).
+    raise failing_build_exception or sf
+
+    # Finally, if there was an exception caught above in building the image, but
+    # the upload succeeded, raise that exception.
+  if failing_build_exception:
+    raise failing_build_exception  # pylint: disable=raising-bad-type
 
 
 def GenTests(api):

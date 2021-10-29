@@ -42,13 +42,13 @@ def RunSteps(api, properties):
                                code_coverage=properties.code_coverage),
         name='test firmware')
     if properties.working_artifacts:
-      api.build_menu.upload_artifacts(config=config, failing_build=False)
+      api.build_menu.upload_artifacts(config=config)
     else:
       # TODO(b/177907749): Once we have artifacts in all of the builders, stop
       # ignoring failures.
       with api.step.nest('try to upload artifacts') as pres:
         try:
-          api.build_menu.upload_artifacts(config=config, failing_build=False)
+          api.build_menu.upload_artifacts(config=config)
         except StepFailure as ex:
           pres.step_text = ex.reason_message()
 

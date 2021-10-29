@@ -133,20 +133,14 @@ def build_os_with_uprev(api, properties, package, upstream_version):
       env_info = api.build_menu.setup_sysroot_and_determine_relevance()
       packages = env_info.packages
 
-      # Artifacts are frequently of use even if the build failed.  For example,
-      # it is likely that the developer will want to see the ebuild logs from
-      # install packages when that step fails, or even if build images fail
-      # afterward.
-      publish = True
       try:
         api.build_menu.bootstrap_sysroot(config)
         api.build_menu.install_packages(config, packages)
         api.build_menu.build_and_test_images(config)
       except StepFailure:
-        publish = False
         raise
       finally:
-        api.build_menu.upload_artifacts(config, failing_build=not publish)
+        api.build_menu.upload_artifacts(config)
 
       with api.step.nest('get artifacts path'):
         gs_path = api.cros_artifacts.artifacts_gs_path(

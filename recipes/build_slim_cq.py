@@ -41,16 +41,16 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
   except StepFailure:
-    api.build_menu.upload_artifacts(config, failing_build=True)
+    api.build_menu.upload_artifacts(config)
     raise
 
   packages = env_info.packages
-  failing_build = False
   install_all_packages = _should_install_all_packages(api, config, packages)
   if api.cros_relevance.toolchain_cls_applied:
     config = api.cros_infra_config.get_builder_config(
         api.buildbucket.build.builder.builder.replace('-slim-cq', '-cq'))
 
+  failing_build_exception = None
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages,
@@ -58,11 +58,26 @@ def DoRunSteps(api, config):
                                        include_rev_deps=True):
       api.build_menu.build_and_test_images(config)
   except StepFailure as sf:
-    failing_build = True
-  finally:
-    api.build_menu.upload_artifacts(config, failing_build=failing_build)
-    if failing_build:
-      raise sf
+    # If we catch an exception, swallow it and store it so the next steps can
+    # still occur (there is value in uploading the artifact even in cases of
+    # build failure for debug purposes).
+    failing_build_exception = sf
+
+  # Always upload the artifacts, regardless of whether the above threw an
+  # exception.
+  try:
+    api.build_menu.upload_artifacts(config)
+  except StepFailure as sf:
+    # If uploading artifacts threw an exception, surface that exception unless
+    # build_and_test_images above threw an exception, in which case we want to
+    # surface *that* exception for accuracy in reporting the build (and it's
+    # likely that upload artifacts failed as a result of those previous issues).
+    raise failing_build_exception or sf
+
+  # Finally, if there was an exception caught above in building the image, but
+  # the upload succeeded, raise that exception.
+  if failing_build_exception:
+    raise failing_build_exception  # pylint: disable=raising-bad-type
 
 
 def _should_install_all_packages(api, config, packages):
@@ -208,6 +223,18 @@ def GenTests(api):
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
+      build_target='atlas-slim',
+      cq=True,
+  )
+
+  # Upload artifacts failure.
+  yield api.build_menu.test(
+      'upload-artifacts-fail',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.StatusAnyFailure),
+      api.build_menu.set_build_api_return('upload artifacts',
+                                          'ArtifactsService/Get', retcode=1),
       build_target='atlas-slim',
       cq=True,
   )

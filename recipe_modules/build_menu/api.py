@@ -563,14 +563,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.failures.set_failed_packages(presentation,
                                             response.failed_packages)
 
-  def upload_artifacts(self, config=None, failing_build=False,
-                       private_bundle_func=None, sysroot=None):
+  def upload_artifacts(self, config=None, private_bundle_func=None,
+                       sysroot=None):
     """Upload artifacts from the build.
 
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
-      failing_build (bool): whether or not the build is failing, used (in part)
-          to decide whether or not to upload artifacts.
       private_bundle_func (func): If a private bundling method is needed (such
           as when there is no Build API on the branch), this will be called
           instead of the internal bundling method.
@@ -588,8 +586,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       return self.m.cros_artifacts.upload_artifacts(
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
-          sysroot=sysroot, failing_build=failing_build,
-          private_bundle_func=private_bundle_func)
+          sysroot=sysroot, private_bundle_func=private_bundle_func)
 
   def create_containers(self, builder_config=None):
     """Call the BuildTestServiceContainers endpoint to build test containers.
