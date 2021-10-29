@@ -197,19 +197,22 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       # Use the publish dir because it's formatted the way that we want for
       # pushimage. Currently images are uploaded using the legacy artifacts
       # service so we'll pull from that. b/204435742 for context.
+      gs_image_dir_template = 'gs://{gs_bucket}/{gs_path}'
       publish_template = '{gs_path}'
       output_artifacts = config.artifacts.artifacts_info.legacy.output_artifacts
       if output_artifacts and output_artifacts[0].gs_locations:
         publish_template = output_artifacts[0].gs_locations[0]
+        # Publish templates include the bucket.
+        gs_image_dir_template = 'gs://{gs_path}'
       gs_path = self.m.cros_artifacts.artifacts_gs_path(
           config.id.name, sysroot.build_target, config.id.type,
           template=publish_template)
 
-      gs_image_dir = 'gs://{gs_bucket}/{gs_path}'.format(
-          gs_bucket=gs_bucket, gs_path=gs_path)
+      gs_image_dir = gs_image_dir_template.format(gs_bucket=gs_bucket,
+                                                  gs_path=gs_path)
       presentation.step_text = (
-          'https://console.cloud.google.com/storage/browser/{gs_bucket}/{gs_path}'
-          .format(gs_bucket=gs_bucket, gs_path=gs_path))
+          'https://console.cloud.google.com/storage/browser/{gs_path}'.format(
+              gs_path=gs_image_dir[len('gs://'):]))
       sysroot = Sysroot(build_target=self.m.build_menu.build_target)
       # Validate sign types given.
       self.validate_sign_types(self._sign_types)

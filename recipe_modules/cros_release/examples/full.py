@@ -45,8 +45,10 @@ def RunSteps(api):
       artifacts=BuilderConfig.Artifacts(
           artifacts_info=common_pb2.ArtifactsByService(
               legacy=common_pb2.ArtifactsByService.Legacy(output_artifacts=[
-                  common_pb2.ArtifactsByService.Legacy.ArtifactInfo(
-                      gs_locations=['{target}-release-rubik/{version}'])
+                  common_pb2.ArtifactsByService.Legacy
+                  .ArtifactInfo(gs_locations=[
+                      'chromeos-image-archive/{target}-release-rubik/{version}'
+                  ])
               ]),
           )))
   sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='amd64-generic'))
