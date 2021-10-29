@@ -1946,7 +1946,7 @@
       "--drop_file",
       "[CLEANUP]/tmp_tmp_1",
       "--all",
-      "--boards=target",
+      "--boards=board1:board2",
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
       "--overlay-type",
@@ -2005,7 +2005,7 @@
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/cros_mark_as_stable",
       "push",
       "--all",
-      "--boards=target",
+      "--boards=board1:board2",
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
       "--overlay-type",
@@ -2044,7 +2044,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"board1\": {}, \n        \"board2\": {}\n    }, \n    \"boards\": [\n        \"board1\", \n        \"board2\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2066,10 +2066,12 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@{@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"board-metadata\": {@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@        \"target\": {}@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"board1\": {}, @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"board2\": {}@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"boards\": [@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@        \"target\"@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"board1\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"board2\"@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    ], @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"bot-config\": \"fw-atlas-postsubmit\", @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"branch\": \"firmware-board-9999.B\", @@@",
@@ -2328,7 +2330,7 @@
       "--",
       "./update_chroot",
       "--toolchain_boards",
-      "target"
+      "board1,board2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -2423,7 +2425,17 @@
   },
   {
     "cmd": [],
-    "name": "build target"
+    "name": "board1",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build board1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -2433,7 +2445,7 @@
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "setup_board",
-      "--board=target",
+      "--board=board1",
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade"
     ],
@@ -2462,9 +2474,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build target.setup board",
+    "name": "board1.build board1.setup board",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2475,7 +2487,7 @@
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
       "./build_packages",
-      "--board=target",
+      "--board=board1",
       "--accept_licenses=@CHROMEOS",
       "--skip_chroot_upgrade",
       "--nousepkg",
@@ -2506,23 +2518,24 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build target.install packages",
+    "name": "board1.build board1.install packages",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts",
+    "name": "board1.upload artifacts",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.create firmware archive",
+    "name": "board1.upload artifacts.create firmware archive",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -2560,9 +2573,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.create firmware archive.create tempdir",
+    "name": "board1.upload artifacts.create firmware archive.create tempdir",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2573,7 +2586,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "glob",
-      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board1/firmware",
       "**/ec-private/fingerprint"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2598,10 +2611,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.create firmware archive.glob private",
+    "name": "board1.upload artifacts.create firmware archive.glob private",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/chroot/build/board1/firmware/foo/ec-private/fingerprint@@@",
       "@@@STEP_LOG_END@glob@@@"
     ]
   },
@@ -2613,7 +2626,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board1/firmware",
       "--recursive"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2638,10 +2651,623 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.create firmware archive.list files",
+    "name": "board1.upload artifacts.create firmware archive.list files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2"
+  },
+  {
+    "cmd": [],
+    "name": "board2.build board2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
+      "USE=chrome_internal -cros-debug chromeless_tty",
+      "--",
+      "setup_board",
+      "--board=board2",
+      "--accept-licenses=@CHROMEOS",
+      "--skip-chroot-upgrade"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build board2.setup board",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
+      "USE=chrome_internal -cros-debug chromeless_tty",
+      "--",
+      "./build_packages",
+      "--board=board2",
+      "--accept_licenses=@CHROMEOS",
+      "--skip_chroot_upgrade",
+      "--nousepkg",
+      "--withdebugsymbols",
+      "virtual/chromeos-firmware"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build board2.install packages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.upload artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/board2-firmware/R91-13874.10.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/board2-firmware/R91-13874.10.0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.upload artifacts.create firmware archive",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.create firmware archive.create tempdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware",
+      "**/ec-private/fingerprint"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.create firmware archive.glob private",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/foo/ec-private/fingerprint@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware",
+      "--recursive"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.create firmware archive.list files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/bar/file@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/foo/ec-private/fingerprint/bar@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--log-level",
+      "debug",
+      "USE=chrome_internal -cros-debug chromeless_tty",
+      "--",
+      "tar",
+      "cvjf",
+      "/tmp/firmware-bundle_tmp_2/firmware_from_source.tar.bz2",
+      "-C",
+      "/build/board2/firmware",
+      "--null",
+      "-T",
+      "/dev/stdin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.create firmware archive.create tarball",
+    "stdin": "bar/file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/artifacts_tmp_2/board2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.create board2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_2/firmware_from_source.tar.bz2",
+      "[CLEANUP]/artifacts_tmp_2/board2/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.bundle tarball",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"bcs_version_info\": {\n    \"version_string\": \"R91-13874.10.0-101\"\n  },\n  \"objects\": [\n    {\n      \"file_name\": \"board2/firmware_from_source.tar.bz2\",\n      \"tarball_info\": {\n        \"firmware_image_name\": \"board2\",\n        \"firmware_version_info\": {\n          \"version_string\": \"v0.0.3733-0612ae7\"\n        },\n        \"type\": \"EC\"\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/artifacts_tmp_2/board2/firmware_metadata.jsonpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.write firmware metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@listdir@@@"
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"bcs_version_info\": {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    \"version_string\": \"R91-13874.10.0-101\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  },@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"objects\": [@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"file_name\": \"board2/firmware_from_source.tar.bz2\",@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"tarball_info\": {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"firmware_image_name\": \"board2\",@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"firmware_version_info\": {@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"version_string\": \"v0.0.3733-0612ae7\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        },@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"EC\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  ]@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@}@@@",
+      "@@@STEP_LOG_END@firmware_metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/artifacts_tmp_2",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.gsutil rsync",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.upload artifacts.output artifact GS paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board2/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board2/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.upload artifacts.publish artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/board2-firmware/R91-13874.10.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/board2-firmware/R91-13874.10.0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2",
+      "gs://chromeos-image-archive/board2-firmware/R91-13874.10.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.publish artifacts.gsutil cp",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2/firmware_metadata.jsonpb",
+      "gs://chromeos-image-archive/board2-firmware/R91-13874.10.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.upload artifacts.publish artifacts.gsutil cp (2)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.upload artifacts.publish artifact GS paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"board2/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/board2-firmware/R91-13874.10.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"board2/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/board2-firmware/R91-13874.10.0\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.push image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
+      "--yes",
+      "--board=board2",
+      "--version=R91-13874.10.0",
+      "--buildroot",
+      "[CLEANUP]/chromiumos_workspace",
+      "-n",
+      "--sign-types=firmware",
+      "--sign-types=accessory_rwsig",
+      "--dest-bucket=gs://chromeos-releases",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.push image.call pushimage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2649,6 +3275,13 @@
     "name": "set suite_scheduling",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@suite_scheduling@\"False\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "output artifact GS paths",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board2/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board2/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -2803,7 +3436,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"board1\": {}, \n        \"board2\": {}\n    }, \n    \"boards\": [\n        \"board1\", \n        \"board2\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -2824,10 +3457,12 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@metadata.json@{@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"board-metadata\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"target\": {}@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"board1\": {}, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"board2\": {}@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"target\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"board1\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"board2\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"fw-atlas-postsubmit\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"firmware-board-9999.B\", @@@",
