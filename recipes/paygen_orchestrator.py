@@ -14,6 +14,10 @@ from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.chromiumos.common import Channel, DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as bs_pb2
+
+from PB.recipe_engine import result as result_pb2
 
 from recipe_engine import post_process
 
@@ -162,7 +166,14 @@ def RunSteps(api, properties):
     fail = [x for x in res if x.status != common_pb2.SUCCESS]
     pres.step_text = '%s of %s passed' % (len(suc), (len(suc) + len(fail)))
 
-  # Launch AU tests if configured, don't wait for them.
+  if fail:
+    # Give a failure markdown with the failed paygen jobs.
+    return result_pb2.RawResult(
+        status=common_pb2.FAILURE, summary_markdown='{}\n{}'.format(
+            pres.step_text, '\n'.join([
+                'https://cr-buildbucket.appspot.com/build/{}'.format(x.id)
+                for x in fail
+            ])))
 
 
 def GenTests(api):
@@ -191,6 +202,28 @@ def GenTests(api):
           'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'pairing artifacts'),
+      api.post_check(post_process.MustRun, 'results'))
+
+  yield api.test(
+      'some-failures', get_props(), good_paygen_cfg,
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.step_data(
+          'running children.collect.get', stdout=api.raw_io.output(
+              MessageToJson(
+                  bs_pb2.BatchResponse(responses=[
+                      bs_pb2.BatchResponse.Response(
+                          get_build=build_pb2.Build(id=8922054662172514000 +
+                                                    x, status='FAILURE'))
+                      for x in range(8)
+                  ])))), api.post_check(post_process.StatusFailure),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'))
 
