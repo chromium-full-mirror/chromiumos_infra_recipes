@@ -82,7 +82,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/snapshot/cache_test1"
+      "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -97,7 +97,7 @@
       "-o",
       "discard,defaults",
       "/dev/None",
-      "[CLEANUP]/snapshot/cache_test1"
+      "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -547,7 +547,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CLEANUP]/snapshot/cache_test1"
+      "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

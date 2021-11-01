@@ -24,6 +24,7 @@ def RunSteps(api):
                                            disk_size='600GB')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
+  api.assertions.assertEqual(api.gcloud.disk_short_name, 'cros')
   if api.build_menu.is_staging:
     api.assertions.assertTrue(
         api.gcloud.check_for_disk_mount(mount_path='/tmp/', mock_mount=True))
@@ -35,13 +36,18 @@ def RunSteps(api):
   else:
     api.assertions.assertEqual(api.gcloud.snapshot_version_file,
                                'chromiumos-main-cache-snapshot-version.txt')
-  api.gcloud.unmount_disk(name='chromiumos', mount_path=mount_path)
-  api.gcloud.setup_cache_disk(cache_name='chromiumos',
-                              branch='release-R90-13816.B', recipe_mount=True)
+  api.gcloud.unmount_disk(name=api.gcloud.disk_short_name,
+                          mount_path=mount_path)
+  mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
+                                           branch='release-R90-13816.B',
+                                           recipe_mount=True)
   api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.assertions.assertRegexpMatches(
       api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosr90')
+  api.gcloud.unmount_disk(name='cros-r90', mount_path=mount_path)
+  api.gcloud.setup_cache_disk(cache_name='chromiumos',
+                              branch='release-R90-13816.B', recipe_mount=True)
   api.gcloud.setup_cache_disk(cache_name='chromiumos',
                               branch='stabilize-rust-13836.B')
   api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
@@ -114,7 +120,7 @@ def GenTests(api):
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
-          'setup source cache disk (3).create disk from snapshot image.check whether'
+          'setup source cache disk (4).create disk from snapshot image.check whether'
           +
           ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize'
       ), retcode=404),

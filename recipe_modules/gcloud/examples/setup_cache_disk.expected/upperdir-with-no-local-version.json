@@ -166,7 +166,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "setup source cache disk.create disk from snapshot image.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -330,7 +330,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "unmount disk chromiumos"
+    "name": "unmount disk cros"
   },
   {
     "cmd": [
@@ -534,14 +534,14 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdz",
+      "/dev/sdy",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (2).create disk from snapshot image.mount disk chromiumos",
+    "name": "setup source cache disk (2).create disk from snapshot image.mount disk crosr90",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -563,6 +563,20 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
       "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "unmount disk cros-r90",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /snapshot_mounts/chromiumos]@@@"
     ]
   },
   {
@@ -602,7 +616,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "setup source cache disk (3).retrieve image version from storage.gsutil cat",
@@ -663,13 +677,245 @@
       "compute",
       "disks",
       "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--zone=us-central1-b",
+      "--format",
+      "json(name)"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--image=initial-chromiumos-source-snapshot",
+      "--quiet",
+      "--type=pd-standard"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-o",
+      "discard,defaults",
+      "/dev/sdy",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.mount disk crosr90",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (3).create disk from snapshot image.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project (4)"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused (4)"
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk (4)"
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk (4).retrieve image version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (4).retrieve image version from storage.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk (4).create disk from snapshot image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name="
+    ],
+    "infra_step": true,
+    "name": "setup source cache disk (4).create disk from snapshot image.check whether image exists: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk (4).create disk from snapshot image.set snapshot_version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromiumos-source-snapshot\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "describe",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
     ],
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+    "name": "setup source cache disk (4).create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -686,7 +932,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
-      "--device-name=chromiumos-stabilize-rust-13836-b",
+      "--device-name=crosstabilize",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -694,7 +940,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.attach disk",
+    "name": "setup source cache disk (4).create disk from snapshot image.attach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -709,7 +955,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.ensure mount directory exists",
+    "name": "setup source cache disk (4).create disk from snapshot image.ensure mount directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -727,7 +973,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.mount disk chromiumos-stabilize-rust-13836-b",
+    "name": "setup source cache disk (4).create disk from snapshot image.mount disk crosstabilize",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -745,7 +991,7 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "setup source cache disk (3).create disk from snapshot image.determine UUID",
+    "name": "setup source cache disk (4).create disk from snapshot image.determine UUID",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -761,7 +1007,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.update fstab for /dev/None",
+    "name": "setup source cache disk (4).create disk from snapshot image.update fstab for /dev/None",
     "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos-stabilize-rust-13836-b ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -779,7 +1025,7 @@
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.write overlayfs branch file",
+    "name": "setup source cache disk (4).create disk from snapshot image.write overlayfs branch file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@stabilize-rust-13836-b@@@",
@@ -801,7 +1047,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.set disk to autodelete",
+    "name": "setup source cache disk (4).create disk from snapshot image.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -818,7 +1064,7 @@
       "[CACHE]/infra_versions/chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "setup source cache disk (3).create disk from snapshot image.write version file",
+    "name": "setup source cache disk (4).create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",

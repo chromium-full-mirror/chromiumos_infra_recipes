@@ -86,7 +86,7 @@ def RunSteps(api, properties):
               cache.recovery_snapshot)
           step_failures.append(e)
       with api.step.nest('sync disk cache before snapshot'):
-        api.gcloud.sync_disk_cache(name=cache.cache_name)
+        api.gcloud.sync_disk_cache(name=api.gcloud.disk_short_name)
       with api.step.nest('unmount disk for snapshot'):
         api.gcloud.unmount_disk(name=cache.cache_name, mount_path=mount_path)
       with api.step.nest('detach disk for snapshot'):
@@ -135,7 +135,7 @@ def GenTests(api):
       api.properties(
           cache_definition=[
               dict(
-                  cache_name='test-cache',
+                  cache_name='chromiumos',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='release-R90-13816.B',
@@ -154,7 +154,7 @@ def GenTests(api):
       api.properties(
           cache_definition=[
               dict(
-                  cache_name='test-cache',
+                  cache_name='chromiumos',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',

@@ -250,7 +250,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.setup source cache disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -593,7 +593,8 @@
     "infra_step": true,
     "name": "source cache update.unmount disk for snapshot.unmount disk chromiumos",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for [CLEANUP]/snapshot/chromiumos]@@@"
     ]
   },
   {
@@ -899,7 +900,7 @@
       "attach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
-      "--device-name=chrome",
+      "--device-name=cr",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -946,7 +947,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.setup source cache disk (2).create disk from snapshot image.mount disk chrome",
+    "name": "source cache update.setup source cache disk (2).create disk from snapshot image.mount disk cr",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1137,7 +1138,8 @@
     "infra_step": true,
     "name": "source cache update.unmount disk for snapshot (2).unmount disk chrome",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for [CLEANUP]/snapshot/chrome]@@@"
     ]
   },
   {

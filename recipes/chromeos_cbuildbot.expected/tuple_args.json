@@ -424,7 +424,7 @@
       ]
     },
     "infra_step": true,
-    "name": "setup source cache disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "setup source cache disk.create disk from snapshot image.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -738,7 +738,7 @@
       ]
     },
     "infra_step": true,
-    "name": "clean up mounted compute disk.unmount disk chromiumos",
+    "name": "clean up mounted compute disk.unmount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

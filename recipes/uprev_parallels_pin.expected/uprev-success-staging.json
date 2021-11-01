@@ -638,7 +638,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -7979,7 +7979,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update VERSION-PIN.setup source cache disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "update VERSION-PIN.setup source cache disk.create disk from snapshot image.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

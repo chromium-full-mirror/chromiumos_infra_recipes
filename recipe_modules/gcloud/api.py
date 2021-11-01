@@ -34,18 +34,19 @@ class GcloudApi(recipe_api.RecipeApi):
   def __init__(self, *args, **kwargs):
     """Initialize GcloudApi."""
     super(GcloudApi, self).__init__(*args, **kwargs)
-    self._cleanup_gce_stack = [[]]
-    self._cleanup_mounted_stack = [[]]
     self._attached_disks = {}
     self._branch = None
+    self._cache_mounted = False
+    self._cleanup_gce_stack = [[]]
+    self._cleanup_mounted_stack = [[]]
     self._dev_ref = 'a'
     self._disk = None
+    self._infra_host = None
+    self._overlay_branch_file = 'overlay_branch.txt'
     self._snapshot_suffix = None
     self._version_file = None
     self._zone = None
-    self._infra_host = None
-    self._overlay_branch_file = 'overlay_branch.txt'
-    self._cache_mounted = False
+    self._short_name = None
 
   def initialize(self):
     self._infra_host = (
@@ -99,6 +100,10 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def snapshot_version_file(self):
     return self._version_file
+
+  @property
+  def disk_short_name(self):
+    return self._short_name
 
   @property
   def gce_name_limit(self):
@@ -294,7 +299,8 @@ class GcloudApi(recipe_api.RecipeApi):
             'google-'):]  # pragma: nocover, not expected to match in test.
       disk_device_map[disk] = device_id
     if self._test_data.enabled:
-      disk_device_map['chromiumos'] = 'sdz'
+      disk_device_map['cros'] = 'sdz'
+      disk_device_map['crosr90'] = 'sdy'
     return disk_device_map.get(disk_name, None)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
@@ -406,7 +412,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       if recipe_mount:
-        recipe_mount_path = self.snapshot_builder_mount_path.join(name)
+        recipe_mount_path = self.snapshot_builder_mount_path.join(mount_path)
         self.m.file.ensure_directory('create mount path', recipe_mount_path)
       else:
         recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
@@ -749,7 +755,8 @@ class GcloudApi(recipe_api.RecipeApi):
       mount_path = cache_name
     else:
       mount_path = '{}-{}'.format(cache_name, self._branch)
-    suffix = self._determine_disk_suffix(cache=cache_name, branch=branch)
+    self._short_name = self._determine_disk_suffix(cache=cache_name,
+                                                   branch=branch)
     self._snapshot_suffix = str(self.m.time.ms_since_epoch())[0:8]
     self._version_file = '{}-{}-cache-snapshot-version.txt'.format(
         cache_name, self._branch)
@@ -760,7 +767,7 @@ class GcloudApi(recipe_api.RecipeApi):
         mount_path=recipe_mount_path)
     if not self._cache_mounted:
       with self.m.step.nest('setup source cache disk'):
-        self._disk = '{}-{}'.format(self.infra_host, suffix)
+        self._disk = '{}-{}'.format(self.infra_host, self._short_name)
         self._disk = self._disk[:self.gce_name_limit] if len(
             self._disk) > self.gce_name_limit else self._disk
         local_version_path = self.snapshot_version_path.join(self._version_file)
@@ -784,7 +791,7 @@ class GcloudApi(recipe_api.RecipeApi):
           self.m.easy.set_properties_step(snapshot_version=snapshot)
           disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
           if disk_exists and recipe_mount:
-            if self.disk_attached(disk_name=mount_path):
+            if self.disk_attached(disk_name=self._short_name):
               self.detach_disk(instance=self.infra_host, disk=self._disk,
                                zone=self._zone)
             self.delete_disk(disk=self._disk, zone=self._zone)
@@ -799,12 +806,13 @@ class GcloudApi(recipe_api.RecipeApi):
               self.create_disk_from_image(disk=self._disk, zone=self._zone,
                                           image=snapshot,
                                           disk_type='pd-standard')
-          self.attach_disk(name=mount_path, instance=self.infra_host,
+          self.attach_disk(name=self._short_name, instance=self.infra_host,
                            disk=self._disk, zone=self._zone)
-          self.mount_disk(name=mount_path, mount_path=mount_path,
+          self.mount_disk(name=self._short_name, mount_path=mount_path,
                           recipe_mount=recipe_mount)
           if not recipe_mount:
-            self.update_fstab(mount_path=recipe_mount_path, name=mount_path)
+            self.update_fstab(mount_path=recipe_mount_path,
+                              name=self._short_name)
             self.m.file.write_text(
                 'write overlayfs branch file',
                 self.snapshot_version_path.join(self._overlay_branch_file),

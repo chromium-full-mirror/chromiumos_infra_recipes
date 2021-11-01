@@ -576,7 +576,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.mount disk chromiumos",
+    "name": "setup source cache disk.create disk from snapshot image.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
