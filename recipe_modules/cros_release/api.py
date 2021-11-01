@@ -16,6 +16,8 @@ from PB.chromiumos.common import (Channel, CHANNEL_RUBIK, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_GSC_FIRMWARE)
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 MANIFEST_VERSIONS_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
 
@@ -175,9 +177,16 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       }
       request = self.m.buildbucket.schedule_request(
           builder=pg_orch_builder, bucket=bucket, properties=paygen_properties)
-      return self.m.buildbucket.run(
+      builds = self.m.buildbucket.run(
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
+
+      if builds[0].status != common_pb2.SUCCESS:
+        raise StepFailure('paygen orchestrator failed\n'
+                          'https://cr-buildbucket.appspot.com/build/{}'.format(
+                              builds[0].id))
+
+      return builds
 
   def push_and_sign_images(self, config, sysroot):
     """Call the Push Image Build API endpoint for the build.

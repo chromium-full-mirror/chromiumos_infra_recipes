@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'build_menu',
     'cros_release',
@@ -18,6 +19,7 @@ from PB.chromiumos import common as common_pb2
 from PB.chromite.api.sysroot import Sysroot
 from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
 from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 
 def RunSteps(api):
@@ -86,4 +88,24 @@ def GenTests(api):
           'push images.call chromite.api.ImageService/PushImage', 'request', [
               'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
           ]),
+      api.test_util.test_child_build('amd64-generic').build)
+
+  yield api.build_menu.test(
+      'paygen_failure',
+      api.properties(
+          **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/cros_release':
+                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_RUBIK]),
+          }),
+      api.post_check(
+          post_process.LogContains,
+          'push images.call chromite.api.ImageService/PushImage', 'request', [
+              'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
+          ]),
+      api.buildbucket.simulated_collect_output(
+          [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.StepFailure, 'generate payloads'),
       api.test_util.test_child_build('amd64-generic').build)

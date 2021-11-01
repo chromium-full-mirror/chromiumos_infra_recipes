@@ -15,15 +15,14 @@ from PB.chromiumos.common import Channel, DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builds_service as bs_pb2
 
 from PB.recipe_engine import result as result_pb2
 
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_build_api',
     'cros_paygen',
@@ -215,15 +214,11 @@ def GenTests(api):
           'examining beta-channel.target artifacts.'
           'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
-      api.step_data(
-          'running children.collect.get', stdout=api.raw_io.output(
-              MessageToJson(
-                  bs_pb2.BatchResponse(responses=[
-                      bs_pb2.BatchResponse.Response(
-                          get_build=build_pb2.Build(id=8922054662172514000 +
-                                                    x, status='FAILURE'))
-                      for x in range(8)
-                  ])))), api.post_check(post_process.StatusFailure),
+      api.buildbucket.simulated_collect_output([
+          build_pb2.Build(id=8922054662172514000 + x, status='FAILURE')
+          for x in range(8)
+      ], 'running children.collect'),
+      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'))
 

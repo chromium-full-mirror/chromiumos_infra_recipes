@@ -2609,17 +2609,17 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_dash\_suffix](/recipe_modules/cros_release/api.py#49)(channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_dash\_suffix](/recipe_modules/cros_release/api.py#51)(channel):**
 
 Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release/api.py#44)(channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release/api.py#46)(channel):**
 
 Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#71)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#73)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2635,7 +2635,7 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#182)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#191)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2648,11 +2648,11 @@ Args:
   config (BuilderConfig): The Builder Config for the build.
   sysroot (Sysroot): sysroot to use.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#66)(self):**
+&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#68)(self):**
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#143)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#145)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -2667,7 +2667,7 @@ Args:
 Returns:
   The int build id for the launched orchestrator.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#39)(self, sign_types):**
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#41)(self, sign_types):**
 
 Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure.
 ### *recipe_modules* / [cros\_release\_config](/recipe_modules/cros_release_config)
@@ -7722,15 +7722,15 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#22)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#40)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#42)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#29)(api):**
+&mdash; **def [RunSteps](/recipes/build_release.py#31)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -8537,11 +8537,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#18)(api):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#25)(api):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9577,13 +9577,13 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 &mdash; **def [RunSteps](/recipes/paygen.py#33)(api, properties):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#24): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#23): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#39)(api, properties):**
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#38)(api, properties):**
 ### *recipes* / [phosphorus:examples/build\_parallels\_image](/recipe_modules/phosphorus/examples/build_parallels_image.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/build_parallels_image.py#8): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

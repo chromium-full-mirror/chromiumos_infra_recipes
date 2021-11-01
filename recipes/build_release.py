@@ -6,6 +6,7 @@
 """Recipe for building images for release."""
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/swarming',
@@ -22,6 +23,7 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 StepDetails = BuildReport.StepDetails
 
@@ -136,4 +138,28 @@ def GenTests(api):
                                           'ArtifactsService/Get', retcode=1),
       bucket='release',
       build_target='kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'paygen-failure',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+          }),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusFailure),
+      api.buildbucket.simulated_collect_output(
+          [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.StatusFailure),
+      build_target='kukui-main',
+      bucket='release',
   )
