@@ -56,6 +56,9 @@ def RunSteps(api):
       r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosstabilize')
   api.gcloud.delete_disk(disk=api.gcloud.gce_disk, zone='us-central1-b')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
+  mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
+                                           branch='master', recipe_mount=True)
+  api.assertions.assertEqual(api.gcloud.branch, 'main')
 
 
 def GenTests(api):

@@ -747,6 +747,8 @@ class GcloudApi(recipe_api.RecipeApi):
       self._swarming_information()
     self.set_gce_project(GCE_BUILD_PROJECT)
     self._branch = branch
+    if branch == 'master':
+      self._branch = 'main'
     is_staging = self.m.cros_infra_config.is_staging
     recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
     if not self._is_rfc1035_compliant(branch):
