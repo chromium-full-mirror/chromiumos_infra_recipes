@@ -44,17 +44,13 @@
   },
   {
     "cmd": [],
-    "name": "setup source cache disk",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "setup source cache disk"
   },
   {
     "cmd": [],
     "name": "setup source cache disk.retrieve image version from storage",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -71,8 +67,7 @@
     "infra_step": true,
     "name": "setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

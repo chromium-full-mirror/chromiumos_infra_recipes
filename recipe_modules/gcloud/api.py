@@ -780,6 +780,7 @@ class GcloudApi(recipe_api.RecipeApi):
                 'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
                 infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
           except self.m.step.StepFailure:
+            self.m.step.active_result.presentation.status = 'SUCCESS'
             with self.m.step.nest(
                 'unable to find version file in GS bucket') as pres:
               # This is intended behavior if a new cache builder is added.
