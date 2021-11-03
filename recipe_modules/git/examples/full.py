@@ -88,6 +88,7 @@ def RunSteps(api):
 
   api.assertions.assertEqual(
       api.git.extract_branch('refs/heads/something', 'whatever'), 'something')
+  api.assertions.assertEqual(api.git.extract_branch('something'), 'something')
   api.assertions.assertEqual(
       api.git.extract_branch('refs/tags/something', 'whatever'), 'whatever')
   api.assertions.assertEqual(

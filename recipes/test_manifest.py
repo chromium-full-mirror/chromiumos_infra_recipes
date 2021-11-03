@@ -17,6 +17,7 @@ DEPS = [
     'cros_branch',
     'cros_infra_config',
     'cros_source',
+    'git',
     'repo',
     'src_state',
 ]
@@ -78,7 +79,9 @@ def RunSteps(api, properties):
         manifest_branch = (
             api.cros_source.manifest_branch or
             api.src_state.internal_manifest.branch)
+        branch_name = api.git.extract_branch(branch)
         if (branch == manifest_branch and
+            not branch_name.startswith('stabilize-') and
             project_info.name in test_branch_projects and
             api.path.exists(manifest_path)):
           # Test branching with cros_branch.  See go/cros-branch.

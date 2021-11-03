@@ -652,7 +652,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     self._step(['config', '--global'] + args)
 
-  def extract_branch(self, refspec, default):
+  def extract_branch(self, refspec, default=None):
     """Splits the branch from the refspec.
 
     Splits the branch from a refs/heads refspec and returns it. Returns
@@ -667,6 +667,8 @@ class GitApi(recipe_api.RecipeApi):
     """
     if refspec.startswith('refs/heads/'):
       return refspec.split('/', 2)[2]
+    if not default:
+      return refspec
     return default
 
   def get_branch_refspec(self, branch):

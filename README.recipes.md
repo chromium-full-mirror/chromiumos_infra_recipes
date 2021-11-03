@@ -4931,7 +4931,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#655)(self, refspec, default):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#655)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -4981,7 +4981,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#672)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#674)(self, branch):**
 
 Creates the full refspec for a branch.
 
@@ -5009,7 +5009,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#687)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#689)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -5023,7 +5023,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#712)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#714)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -5042,7 +5042,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#701)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#703)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -5170,7 +5170,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#735)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#737)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -5197,7 +5197,7 @@ Runs `git config --global` to set global config.
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#751)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#753)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -10043,13 +10043,13 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 &mdash; **def [RunSteps](/recipes/test_chromite.py#21)(api):**
 ### *recipes* / [test\_manifest](/recipes/test_manifest.py)
 
-[DEPS](/recipes/test_manifest.py#8): [cros\_branch](#recipe_modules-cros_branch), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/test_manifest.py#8): [cros\_branch](#recipe_modules-cros_branch), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Verifies a repo manifest.
 
-&mdash; **def [RunSteps](/recipes/test_manifest.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_manifest.py#34)(api, properties):**
 ### *recipes* / [test\_plan\_filtering](/recipes/test_plan_filtering.py)
 
 [DEPS](/recipes/test_plan_filtering.py#36): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
