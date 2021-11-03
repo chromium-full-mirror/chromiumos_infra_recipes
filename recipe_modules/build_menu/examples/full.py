@@ -39,7 +39,9 @@ def RunSteps(api, properties):
 
 
 def DoRunSteps(api, properties):
-  with api.build_menu.setup_workspace_and_chroot() as relevant:
+  cherry_pick_changes = not properties.dont_cherry_pick_changes
+  with api.build_menu.setup_workspace_and_chroot(
+      cherry_pick_changes=cherry_pick_changes) as relevant:
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
     if properties.forced_relevant:
@@ -107,6 +109,22 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       api.post_check(lambda check, steps: check_child_build_output_properties(check, steps, True)),
       cq=True,
+  )
+
+  yield api.build_menu.test(
+    'cq-build-no-cherry-pick',
+      api.properties(FullProperties(dont_cherry_pick_changes=True)),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='atlas',
+          container_version_format=\
+            '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+        )
+    ),
+    get_buildbucket_simulated_search_results('atlas'),
+    api.post_check(post_process.StatusSuccess),
+    api.post_check(lambda check, steps: check_child_build_output_properties(check, steps, True)),
+    cq=True,
   )
 
   # Slim CQ build, with one gerrit_change.

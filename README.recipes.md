@@ -744,7 +744,7 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
 
-[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -757,13 +757,13 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#727)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#732)(self):**
 
 Add child build ids to output property of current build.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#60)(self):**
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#432)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#437)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -772,7 +772,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#488)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#493)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -822,7 +822,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#591)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#596)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -861,7 +861,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#55)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#445)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#450)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -884,14 +884,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#132)(self):**
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#519)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#524)(self, config=None):**
 
 run ebuild tests as specified by config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#297)(self, no_chroot_timeout=False):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#302)(self, no_chroot_timeout=False):**
 
 Setup the chroot for the builder.
 
@@ -902,7 +902,7 @@ Args:
 Returns:
   (bool): Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#336)(self, with_sysroot=True, packages=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#341)(self, with_sysroot=True, packages=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -917,15 +917,16 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#270)(self, apply_changes=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#271)(self, cherry_pick_changes=True):**
 
 Setup the workspace for the builder.
 
 Args:
-  apply_changes (bool): whether to apply gerrit changes on top of the
-      checkout.
+  cherry_pick_changes (bool): whether to apply gerrit changes on top of the
+      checkout using cherry-pick. If set to False, will directly checkout
+      the changes using the gerrit fetch refs.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#251)(self, no_chroot_timeout=False, apply_changes=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#251)(self, no_chroot_timeout=False, cherry_pick_changes=True):**
 
 Setup the workspace and chroot for the builder.
 
@@ -934,8 +935,9 @@ This context manager sets up the workspace path.
 Args:
   no_chroot_timeout (bool): whether to allow unlimited time to create the
       chroot.
-  apply_changes (bool): whether to apply gerrit changes on top of the
-      checkout.
+  cherry_pick_changes (bool): whether to apply gerrit changes on top of the
+      checkout using cherry-pick. If set to False, will directly checkout
+      the changes using the gerrit fetch refs.
 
 Returns:
   (bool): Whether the build is relevant.
@@ -951,7 +953,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#566)(self, config=None, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#571)(self, config=None, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -966,7 +968,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#691)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#696)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -7625,7 +7627,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for linting CLs with Cargo Clippy.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#147)(api, config, _properties):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#143)(api, config, _properties):**
 
 &mdash; **def [RunSteps](/recipes/build_linters.py#132)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)

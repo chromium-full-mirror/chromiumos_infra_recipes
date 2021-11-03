@@ -32,4 +32,8 @@ message FullProperties {
 
   // Whether to call upload_prebuilts.
   bool upload_prebuilts = 8;
+
+  // Value of cherry_pick_changes to pass to setup_workspace_and_chroot.
+  // Inverted so that `false` is the default.
+  bool dont_cherry_pick_changes = 9;
 }

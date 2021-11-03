@@ -250,7 +250,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def setup_workspace_and_chroot(self, no_chroot_timeout=False,
-                                 apply_changes=True):
+                                 cherry_pick_changes=True):
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
@@ -258,22 +258,24 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       no_chroot_timeout (bool): whether to allow unlimited time to create the
           chroot.
-      apply_changes (bool): whether to apply gerrit changes on top of the
-          checkout.
+      cherry_pick_changes (bool): whether to apply gerrit changes on top of the
+          checkout using cherry-pick. If set to False, will directly checkout
+          the changes using the gerrit fetch refs.
 
     Returns:
       (bool): Whether the build is relevant.
     """
-    with self.setup_workspace(apply_changes=apply_changes):
+    with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
       yield self.setup_chroot(no_chroot_timeout)
 
   @contextlib.contextmanager
-  def setup_workspace(self, apply_changes=True):
+  def setup_workspace(self, cherry_pick_changes=True):
     """Setup the workspace for the builder.
 
     Args:
-      apply_changes (bool): whether to apply gerrit changes on top of the
-          checkout.
+      cherry_pick_changes (bool): whether to apply gerrit changes on top of the
+          checkout using cherry-pick. If set to False, will directly checkout
+          the changes using the gerrit fetch refs.
     """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
@@ -284,9 +286,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # Apply any appropriate gerrit changes.
       ignore_missing_projects = (
           config.general.manifest == BuilderConfig.General.PUBLIC)
-      if apply_changes:
+      if cherry_pick_changes:
         self.m.workspace_util.apply_changes(
             ignore_missing_projects=ignore_missing_projects)
+      else:
+        for change in self.m.src_state.gerrit_changes:
+          self.m.workspace_util.checkout_change(change=change)
 
       # The Chrome OS verison can be reported once the workspace is synced.
       version = self.m.cros_version.version

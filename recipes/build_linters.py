@@ -134,13 +134,9 @@ def RunSteps(api, properties):
     return RawResult(status=SUCCESS,
                      summary_markdown='No changes need linting.')
   with api.build_menu.configure_builder() as config:
-    with api.build_menu.setup_workspace_and_chroot(apply_changes=False):
-      # This builder is triggered by tricium, which means that it should only
-      # ever have one gerrit change.
-      # We checkout the change like this rather than relying on apply_changes
-      # built-into setup_workspace_and_chroot to ensure that line numbers are
-      # accurate for comments (see b/196275805).
-      api.workspace_util.checkout_change(change=api.src_state.gerrit_changes[0])
+    # We checkout the changes directly rather than using cherry pick
+    # to ensure that line numbers are accurate for comments (see b/196275805).
+    with api.build_menu.setup_workspace_and_chroot(cherry_pick_changes=False):
       return DoRunSteps(api, config, properties)
 
 

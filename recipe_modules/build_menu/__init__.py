@@ -24,6 +24,7 @@ DEPS = [
     'failures',
     'metadata',
     'metadata_json',
+    'src_state',
     'sysroot_util',
     'test_util',
     'workspace_util',
