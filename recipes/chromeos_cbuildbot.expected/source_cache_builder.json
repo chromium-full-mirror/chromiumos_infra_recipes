@@ -682,7 +682,7 @@
       "[START_DIR]/cipd/goma",
       "--goma_client_json",
       "/creds/service_accounts/service-account-goma-client.json",
-      "main_config"
+      "betty-vmtest-informational"
     ],
     "env": {
       "DEPOT_TOOLS_UPDATE": "0",
@@ -702,7 +702,7 @@
         "[START_DIR]/depot_tools"
       ]
     },
-    "name": "cbuildbot_launch [main_config]",
+    "name": "cbuildbot_launch [betty-vmtest-informational]",
     "stdin": "2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",

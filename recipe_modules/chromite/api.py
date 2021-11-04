@@ -38,8 +38,16 @@ class ChromiteApi(recipe_api.RecipeApi):
     return self.c.chromite_branch
 
   @property
+  def chromite_config(self):
+    return self.c.cbb.config
+
+  @property
   def source_cache_branches(self):
-    return ['foo_test']
+    return ['foo_test', 'stabilize-14321.B', 'main']
+
+  @property
+  def source_cache_configs(self):
+    return ['betty-vmtest-informational']
 
   def get_config_defaults(self):
     defaults = {
@@ -241,7 +249,8 @@ class ChromiteApi(recipe_api.RecipeApi):
         self.c.cbb.chrome_version = self.m.buildbucket.gitiles_commit.id
 
     cbb_args = []
-    if self.c.chromite_branch in self.source_cache_branches:
+    if (self.c.chromite_branch in self.source_cache_branches and
+        self.c.cbb.config in self.source_cache_configs):
       cbb_args.extend([
           '--buildroot', self.m.path['cleanup'].join('snapshot', 'chromiumos')
       ])

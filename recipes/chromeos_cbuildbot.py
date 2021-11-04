@@ -67,7 +67,8 @@ def DoRunSteps(api):
   api.chromite.m.goma.client_version = api.properties.get(
       'cbb_goma_client_type')
 
-  if api.chromite.chromite_branch in api.chromite.source_cache_branches:
+  if (api.chromite.chromite_branch in api.chromite.source_cache_branches and
+      api.chromite.chromite_config in api.chromite.source_cache_configs):
     # Only mount snapshot mounts on branches that have been patched.
     with api.chromite.with_system_python(), \
       api.gcloud.cleanup_gce_disks(), \
@@ -194,6 +195,7 @@ def GenTests(api):
   # Source Cache disk.
   yield api.test(
       'source_cache_builder',
-      api.properties(branch='', cbb_branch='foo_test', cbb_config='main_config',
+      api.properties(branch='', cbb_branch='foo_test',
+                     cbb_config='betty-vmtest-informational',
                      **common_properties),
   )
