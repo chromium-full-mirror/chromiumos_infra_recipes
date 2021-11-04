@@ -236,7 +236,7 @@
       "/path/to/tmp/json"
     ],
     "env": {
-      "USE_DUT_TOPO": ""
+      "USE_DUT_TOPO": "False"
     },
     "infra_step": true,
     "luci_context": {
@@ -277,7 +277,7 @@
       "/dev/stdout"
     ],
     "env": {
-      "USE_DUT_TOPO": ""
+      "USE_DUT_TOPO": "False"
     },
     "infra_step": true,
     "luci_context": {

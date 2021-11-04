@@ -143,7 +143,7 @@
       "/path/to/tmp/json"
     ],
     "env": {
-      "USE_DUT_TOPO": ""
+      "USE_DUT_TOPO": "False"
     },
     "infra_step": true,
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
@@ -172,7 +172,7 @@
       "/dev/stdout"
     ],
     "env": {
-      "USE_DUT_TOPO": ""
+      "USE_DUT_TOPO": "False"
     },
     "infra_step": true,
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",

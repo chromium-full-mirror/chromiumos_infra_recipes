@@ -292,7 +292,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
   def load_skylab_local_state(self, test_id):
     with self._api.step.nest('Phosphorus: load skylab local state'):
       # Check for DUT topology experiment
-      use_dut_topo = self._properties.config.prejob_step.dut_topology_experiment
+      use_dut_topo = self._properties.config.prejob_step.dut_topology_experiment.enabled
       with self._api.context(env={'USE_DUT_TOPO': use_dut_topo}):
         return self._api.phosphorus.load_skylab_local_state(test_id=test_id)
 
