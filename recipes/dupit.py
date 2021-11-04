@@ -19,9 +19,9 @@ Mirror = namedtuple("Mirror", "uri rate")
 
 # list of of (uri, rate limit) for mirrors to try, in order
 MIRRORS = [
+    Mirror('rsync://mirrors.rit.edu/gentoo/distfiles', '1m'),
     Mirror('rsync://mirror.rackspace.com/gentoo/distfiles', '1m'),
     Mirror('rsync://rsync.gtlib.gatech.edu/gentoo/distfiles', '1m'),
-    Mirror('rsync://mirrors.rit.edu/gentoo/distfiles', '1m'),
 ]
 
 GS_DISTFILES = 'gs://chromeos-mirror/gentoo/distfiles/'
@@ -57,7 +57,7 @@ def GenTests(api):
   yield api.test(
       'mirror_failure',
       api.step_data(
-          'list distfiles in rsync://mirror.rackspace.com/gentoo/distfiles',
+          'list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles',
           retcode=1,
       ),
       api.post_process(

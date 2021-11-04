@@ -39,10 +39,10 @@
       "--recursive",
       "--links",
       "--safe-links",
-      "rsync://mirror.rackspace.com/gentoo/distfiles/**"
+      "rsync://mirrors.rit.edu/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "list distfiles in rsync://mirror.rackspace.com/gentoo/distfiles",
+    "name": "list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
     ]
@@ -87,10 +87,10 @@
       "--recursive",
       "--links",
       "--safe-links",
-      "rsync://rsync.gtlib.gatech.edu/gentoo/distfiles/**"
+      "rsync://mirror.rackspace.com/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "list distfiles in rsync://rsync.gtlib.gatech.edu/gentoo/distfiles"
+    "name": "list distfiles in rsync://mirror.rackspace.com/gentoo/distfiles"
   },
   {
     "cmd": [
@@ -135,11 +135,11 @@
       "--timeout=180",
       "--bwlimit=1m",
       "--files-from=[CLEANUP]/distfile_lists_tmp_2/new.txt",
-      "rsync://rsync.gtlib.gatech.edu/gentoo/distfiles/",
+      "rsync://mirror.rackspace.com/gentoo/distfiles/",
       "[CLEANUP]/distfiles_tmp_2"
     ],
     "infra_step": true,
-    "name": "rsync distfiles from rsync://rsync.gtlib.gatech.edu/gentoo/distfiles"
+    "name": "rsync distfiles from rsync://mirror.rackspace.com/gentoo/distfiles"
   },
   {
     "cmd": [
