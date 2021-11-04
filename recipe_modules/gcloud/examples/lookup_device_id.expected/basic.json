@@ -19,6 +19,18 @@
     "name": "create disk from image"
   },
   {
+    "cmd": [],
+    "name": "look up device name to device id map"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (2)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (3)"
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -38,6 +50,10 @@
     "name": "create disk from image (2)"
   },
   {
+    "cmd": [],
+    "name": "look up device name to device id map (4)"
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -54,6 +70,14 @@
     },
     "infra_step": true,
     "name": "attach disk"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (5)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (6)"
   },
   {
     "name": "$result"

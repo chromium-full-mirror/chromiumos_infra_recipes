@@ -587,6 +587,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "mkdir",
       "-p",
@@ -7933,6 +7940,13 @@
       "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update VERSION-PIN.setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

@@ -175,6 +175,10 @@
     "name": "create instance"
   },
   {
+    "cmd": [],
+    "name": "look up device name to device id map"
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -191,6 +195,10 @@
     },
     "infra_step": true,
     "name": "attach disk"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (2)"
   },
   {
     "cmd": [

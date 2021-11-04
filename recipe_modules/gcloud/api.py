@@ -7,6 +7,7 @@ from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 import contextlib
 import datetime
+import json
 import os
 import re
 
@@ -286,21 +287,30 @@ class GcloudApi(recipe_api.RecipeApi):
     Args:
       disk_name (str): The name associated with the attached device.
     Returns:
-      Returns a dict map of device name to device id.
+      Returns the device id of the provided disk name, defaulting to None if no
+      disk can be found.
     """
-    disk_dir = '/dev/disk/by-id'
-    disk_device_map = {}
-    disks = os.listdir(disk_dir)
-    for disk in disks:
-      device_id = os.path.basename(
-          os.path.realpath(os.path.join(disk_dir, disk)))
-      if disk.startswith('google-'):
-        disk = disk[len(
-            'google-'):]  # pragma: nocover, not expected to match in test.
-      disk_device_map[disk] = device_id
-    if self._test_data.enabled:
-      disk_device_map['cros'] = 'sdz'
-      disk_device_map['crosr90'] = 'sdy'
+    with self.m.step.nest('look up device name to device id map') as pres:
+      disk_dir = '/dev/disk/by-id'
+      disk_device_map = {}
+      disks = os.listdir(disk_dir)
+      for disk in disks:
+        device_id = os.path.basename(
+            os.path.realpath(os.path.join(disk_dir, disk)))
+        if disk.startswith('google-'):
+          disk = disk[len(
+              'google-'):]  # pragma: nocover, not expected to match in test.
+        disk_device_map[disk] = device_id
+
+      if self._test_data.enabled:
+        disk_device_map['cros'] = 'sdz'
+        disk_device_map['crosr90'] = 'sdy'
+
+      # Emit the map as output.
+      if not self._test_data.enabled:
+        pres.logs['device_map'] = json.dumps(disk_device_map,
+                                             indent=2)  # pragma: nocover
+
     return disk_device_map.get(disk_name, None)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))

@@ -586,6 +586,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "mkdir",
       "-p",

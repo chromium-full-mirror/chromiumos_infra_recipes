@@ -215,6 +215,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "compute",
@@ -308,6 +315,13 @@
       }
     },
     "name": "source cache update.setup source cache disk.create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.setup source cache disk.create disk from snapshot image.look up device name to device id map (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
