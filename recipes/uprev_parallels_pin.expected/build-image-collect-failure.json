@@ -4265,6 +4265,14 @@
   },
   {
     "cmd": [],
+    "name": "build chromiumos with upreved Parallels.buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"relevance\": [\"relevant\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build chromiumos with upreved Parallels.install toolchain",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

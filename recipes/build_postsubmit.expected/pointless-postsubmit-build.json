@@ -3859,7 +3859,14 @@
     "cmd": [],
     "name": "buildbucket.add_tags_to_current_build",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-in-gerrit\": [\"pointless\"]}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-in-gerrit\": [\"pointless\"], \"relevance\": [\"not relevant\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "buildbucket.add_tags_to_current_build (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-in-gerrit\": [\"pointless\"], \"relevance\": [\"not relevant\"]}@@@"
     ]
   },
   {

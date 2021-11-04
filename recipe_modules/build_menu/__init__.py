@@ -19,6 +19,7 @@ DEPS = [
     'cros_relevance',
     'cros_sdk',
     'cros_source',
+    'cros_tags',
     'cros_version',
     'easy',
     'failures',

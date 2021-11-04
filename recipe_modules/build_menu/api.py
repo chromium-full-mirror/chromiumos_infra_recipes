@@ -407,6 +407,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         force_relevant=force_rel)
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()
+    # Adding relevance to tags to help cros_fleet and others search for
+    # latest postsubmit image. See b/205142684.
+    if config.id.type == BuilderConfig.Id.POSTSUBMIT:
+      relevance_tags = self.m.cros_tags.tags(**dict(
+          relevance='{}relevant'.format('not ' if pointless else '')))
+      self.m.buildbucket.add_tags_to_current_build(relevance_tags)
 
     return _env_info(pointless, packages)
 
