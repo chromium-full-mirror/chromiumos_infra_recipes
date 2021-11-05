@@ -212,7 +212,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromiumos-foo-test-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "env_prefixes": {
       "PATH": [
@@ -496,7 +496,7 @@
       "/path/to/tmp/json",
       "copy",
       "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/chromiumos-foo-test-cache-snapshot-version.txt"
+      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "env_prefixes": {
       "PATH": [
@@ -507,8 +507,8 @@
     "name": "setup source cache disk.create disk from snapshot image.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-foo-test-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromiumos-foo-test-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -687,7 +687,7 @@
       "[CLEANUP]/workspace",
       "--source_cache",
       "--branch",
-      "foo_test",
+      "main",
       "--git-cache-dir",
       "[CACHE]/git",
       "--chrome-preload-dir",
@@ -696,7 +696,7 @@
       "[START_DIR]/cipd/goma",
       "--goma_client_json",
       "/creds/service_accounts/service-account-goma-client.json",
-      "betty-vmtest-informational"
+      "amd64-generic-msan-fuzzer"
     ],
     "env": {
       "DEPOT_TOOLS_UPDATE": "0",
@@ -716,7 +716,7 @@
         "[START_DIR]/depot_tools"
       ]
     },
-    "name": "cbuildbot_launch [betty-vmtest-informational]",
+    "name": "cbuildbot_launch [amd64-generic-msan-fuzzer]",
     "stdin": "2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",

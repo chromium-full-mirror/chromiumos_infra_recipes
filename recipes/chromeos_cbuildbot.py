@@ -195,7 +195,7 @@ def GenTests(api):
   # Source Cache disk.
   yield api.test(
       'source_cache_builder',
-      api.properties(branch='', cbb_branch='foo_test',
-                     cbb_config='betty-vmtest-informational',
+      api.properties(branch='', cbb_branch='main',
+                     cbb_config='amd64-generic-msan-fuzzer',
                      **common_properties),
   )

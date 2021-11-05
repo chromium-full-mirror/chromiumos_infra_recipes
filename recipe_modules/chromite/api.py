@@ -43,11 +43,14 @@ class ChromiteApi(recipe_api.RecipeApi):
 
   @property
   def source_cache_branches(self):
-    return ['foo_test', 'stabilize-14321.B', 'main']
+    return ['main']
 
   @property
   def source_cache_configs(self):
-    return ['betty-vmtest-informational']
+    return [
+        'adlrvp-release', 'amd64-generic-msan-fuzzer', 'beaglebone-release',
+        'beaglebone-servo-release', 'bubs-release'
+    ]
 
   def get_config_defaults(self):
     defaults = {
