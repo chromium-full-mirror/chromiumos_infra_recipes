@@ -16,7 +16,7 @@
       "----",
       "cp",
       "gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2",
-      "gs://chromeos-releases-test/staging/canary-channel/eve/12499.10.0/ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2"
+      "gs://chromeos-releases-test/canary-channel/eve/12499.10.0/ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2"
     ],
     "infra_step": true,
     "name": "validate request.gsutil cp",
@@ -75,7 +75,7 @@
       "----",
       "cp",
       "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions",
-      "gs://chromeos-releases-test/staging/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
+      "gs://chromeos-releases-test/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
     "name": "upload gsc instructions.gsutil cp",
@@ -118,7 +118,7 @@
       "----",
       "cp",
       "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions",
-      "gs://chromeos-releases-test/staging/tobesigned/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
+      "gs://chromeos-releases-test/tobesigned/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
     "name": "trigger gsc signing.gsutil cp",

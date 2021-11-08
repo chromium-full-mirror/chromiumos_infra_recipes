@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "validate request"
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "illegal archive location: gs://staging-chromeos-image-archive/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2"
+    },
+    "name": "$result"
+  }
+]

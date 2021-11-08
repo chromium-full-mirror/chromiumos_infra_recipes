@@ -26,9 +26,11 @@ from PB.chromiumos.sign_image import GscInstructions
 from PB.recipes.chromeos.sign_image import SignImageProperties
 from PB.recipe_engine import result as result_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from recipe_engine import post_process
 
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -75,13 +77,19 @@ class _BucketBase(object):
     return path.startswith(self.gs_path())
 
 
-_signer_buckets = {
+_release_signer_buckets = {
+    sign_image_os.SIGNER_PRODUCTION: _BucketBase('chromeos-releases/', '/'),
+    sign_image_os.SIGNER_STAGING: _BucketBase('chromeos-releases-test/', '/'),
+    sign_image_os.SIGNER_DEV: _BucketBase('chromeos-releases-test/', '/'),
+}
+
+_non_release_signer_buckets = {
     sign_image_os.SIGNER_PRODUCTION:
-        _BucketBase('chromeos-releases/', '/'),
+        _BucketBase('chromeos-image-archive/', '/'),
     sign_image_os.SIGNER_STAGING:
-        _BucketBase('chromeos-releases-test/', '/staging/'),
+        _BucketBase('staging-chromeos-image-archive/', '/'),
     sign_image_os.SIGNER_DEV:
-        _BucketBase('chromeos-releases-test/', '/dev/'),
+        _BucketBase('staging-chromeos-image-archive/', '/'),
 }
 
 # Map gsc_instructions.target to the text value for instructions.
@@ -102,7 +110,9 @@ _channel_to_name = {
 
 def RunSteps(api, properties):
   """Run steps."""
+
   local_dir = api.path['cleanup']
+  non_release_signer_bucket = False
 
   with api.step.nest('validate request') as presentation:
     image_type = properties.image_type
@@ -120,8 +130,9 @@ def RunSteps(api, properties):
       signer_type = sign_image_os.SIGNER_PRODUCTION
     else:
       signer_type = properties.signer_type
-    gs = _signer_buckets[signer_type]
-    prod = _signer_buckets[sign_image_os.SIGNER_PRODUCTION]
+    gs = _release_signer_buckets[signer_type]
+    prod = _release_signer_buckets[sign_image_os.SIGNER_PRODUCTION]
+    non_release_gs = _non_release_signer_buckets[signer_type]
 
     # The archive must point to a valid location.  In addition to inside their
     # own bucket, any instance is allowed to use the production bucket for
@@ -135,9 +146,13 @@ def RunSteps(api, properties):
         api.gsutil(['cp', archive, new_archive])
         archive = new_archive
       else:
-        return result_pb2.RawResult(
-            status=common_pb2.FAILURE,
-            summary_markdown='illegal archive location: %s' % archive)
+        if properties.allow_non_release_signer_bucket and non_release_gs.path_in_bucket(
+            archive):
+          non_release_signer_bucket = True
+        else:
+          return result_pb2.RawResult(
+              status=common_pb2.FAILURE,
+              summary_markdown='illegal archive location: %s' % archive)
 
     # GSC specific handling.
     gsc = properties.gsc_instructions
@@ -146,6 +161,15 @@ def RunSteps(api, properties):
                                   summary_markdown='must set device_id')
 
     presentation.step_text = 'all properties good'
+
+  # Copy artifact to release bucket if archive is in non release bucket.
+  if non_release_signer_bucket:
+    with api.step.nest('copy artifacts to release bucket') as presentation:
+      new_archive = archive.replace(non_release_gs.bucket, gs.bucket)
+      api.gsutil.copy(non_release_gs.bucket, non_release_gs.rel_path(archive),
+                      gs.bucket, gs.rel_path(new_archive))
+      # Update archive.
+      archive = new_archive
 
   with api.step.nest('create GSC instructions'):
     target = _target_type_to_name[gsc.target]
@@ -265,3 +289,53 @@ def GenTests(api):
           keyset='cr50-accessory-mp',
           gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED,
                                            device_id='12345678-11223344')))
+
+  yield api.test(
+      'gsc_non_release_bucket_prod',
+      props(
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
+          archive=('gs://chromeos-image-archive/firmware-ti50-postsubmit/'
+                   'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
+          allow_non_release_signer_bucket=True),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'))
+
+  yield api.test(
+      'gsc_non_release_bucket_prod_not_allowed',
+      props(
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
+          archive=('gs://chromeos-image-archive/firmware-ti50-postsubmit/'
+                   'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
+          allow_non_release_signer_bucket=False),
+      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun,
+                     'copy artifacts to release bucket'))
+
+  yield api.test(
+      'gsc_non_release_bucket_staging',
+      props(
+          signer_type=sign_image_os.SIGNER_STAGING,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
+          archive=(
+              'gs://staging-chromeos-image-archive/firmware-ti50-postsubmit/'
+              'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
+          allow_non_release_signer_bucket=True),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'))
+
+  yield api.test(
+      'gsc_non_release_bucket_staging_not_allowed',
+      props(
+          signer_type=sign_image_os.SIGNER_STAGING,
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
+          archive=(
+              'gs://staging-chromeos-image-archive/firmware-ti50-postsubmit/'
+              'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
+          allow_non_release_signer_bucket=False),
+      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun,
+                     'copy artifacts to release bucket'))

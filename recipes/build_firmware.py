@@ -9,6 +9,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'build_menu',
@@ -17,6 +18,7 @@ DEPS = [
     'test_util',
 ]
 
+from google.protobuf.json_format import MessageToDict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -41,19 +43,80 @@ def RunSteps(api, properties):
         TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                code_coverage=properties.code_coverage),
         name='test firmware')
+
+    uploaded_artifacts = None
     if properties.working_artifacts:
-      api.build_menu.upload_artifacts(config=config)
+      uploaded_artifacts = api.build_menu.upload_artifacts(config=config)
     else:
       # TODO(b/177907749): Once we have artifacts in all of the builders, stop
       # ignoring failures.
       with api.step.nest('try to upload artifacts') as pres:
         try:
-          api.build_menu.upload_artifacts(config=config)
+          uploaded_artifacts = api.build_menu.upload_artifacts(config=config)
         except StepFailure as ex:
           pres.step_text = ex.reason_message()
 
+    # Invoke signing if applies.
+    build = api.buildbucket.build
+    if _invoke_signing_for_current_build(build.builder.builder,
+                                         uploaded_artifacts, properties):
+      with api.step.nest('schedule signing build') as pres:
+        requests = []
+        sign_image_props = MessageToDict(properties.sign_image_properties,
+                                         preserving_proto_field_name=True)
+        bucket = 'staging' if api.build_menu.is_staging else 'release'
+        builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
+        for artifact_name in uploaded_artifacts[2]['FIRMWARE_TARBALL']:
+          archive = "gs://%s/%s/%s" % (uploaded_artifacts[0],
+                                       uploaded_artifacts[1], artifact_name)
+          sign_image_props["archive"] = archive
+          requests.append(
+              api.buildbucket.schedule_request(bucket=bucket, builder=builder,
+                                               properties=sign_image_props))
+
+        api.buildbucket.schedule(requests)
+
+
+def _invoke_signing_for_current_build(builder_name, uploaded_artifacts,
+                                      properties):
+  '''
+  Whether signing for current build should be invoked.
+
+  Args:
+    builder_name (str): Current builder name.
+    uploaded_artifacts (UploadedArtifacts): Uploaded artifacts.
+    properties (BuildFirmwareProperties): Build firmware properties for current build.
+
+  Returns:
+    (bool): True if signing should be invoked. False otherwise.
+  '''
+  valid_builder = builder_name in properties.signing_allowed_builder_names and properties.sign_image_properties
+  artifact_upload_succeeded = uploaded_artifacts and len(uploaded_artifacts) > 2
+  return valid_builder and artifact_upload_succeeded
+
 
 def GenTests(api):
+
+  def get_signing_image_props_for_test(is_staging=False):
+    '''
+    Get SignImageProperties for test.
+
+    Args:
+      is_staging (bool): Whether properties need for staging.
+
+    Returns:
+      (dict): SignImageProperties object as dict for testing.
+    '''
+    return {
+        "image_type": 13,
+        "channel": 0,
+        "keyset": "test-keyset",
+        "signer_type": 2 if is_staging else 1,
+        "allow_non_release_signer_bucket": True,
+        "gsc_instructions": {
+            "target": 1,
+        },
+    }
 
   def test(name, *args, **kwargs):
     kwargs.setdefault('builder', 'fw-ec-postsubmit')
@@ -77,4 +140,24 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1), api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.DoesNotRun, 'schedule signing build'),
       input_properties=(dict(firmware_location=1, working_artifacts=True)))
+
+  yield test(
+      'signing_invocation', api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'schedule signing build'),
+      builder='fw-ec-postsubmit', input_properties=(dict(
+          firmware_location=1,
+          signing_allowed_builder_names=['fw-ec-postsubmit'],
+          sign_image_properties=get_signing_image_props_for_test(),
+      )))
+
+  yield test(
+      'staging_signing_invocation', api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'schedule signing build'),
+      builder='fw-ec-postsubmit', bucket='staging', input_properties=(dict(
+          firmware_location=1,
+          signing_allowed_builder_names=['fw-ec-postsubmit'],
+          sign_image_properties=get_signing_image_props_for_test(
+              is_staging=True),
+      )))
