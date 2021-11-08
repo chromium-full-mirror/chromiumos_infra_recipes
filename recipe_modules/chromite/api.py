@@ -48,8 +48,11 @@ class ChromiteApi(recipe_api.RecipeApi):
   @property
   def source_cache_configs(self):
     return [
-        'adlrvp-release', 'amd64-generic-msan-fuzzer', 'beaglebone-release',
-        'beaglebone-servo-release', 'bubs-release'
+        'adlrvp-release', 'amd64-generic-full', 'amd64-generic-msan-fuzzer',
+        'beaglebone-release', 'beaglebone-servo-release',
+        'betty-arc-t-vmt-android-pfq', 'bubs-release', 'chromiumos-sdk',
+        'config-updater', 'endeavour-factory-endeavour-13295.B-factorybranch',
+        'luci-scheduler-updater', 'master-vmt-android-pfq'
     ]
 
   def get_config_defaults(self):
