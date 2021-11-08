@@ -162,7 +162,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
         return PhosphorusPrejobDUTResponse(
             metadata.test_id, self._api.phosphorus.prejob(prejob_request))
 
-  def run_test(self, metadata):
+  def run_test(self, metadata, container_image_info):
     with self._api.step.nest('Phosphorus: run test'):
       run_test_request = phosphorus.runtest.RunTestRequest(
           config=metadata.phosphorus_config,
@@ -174,7 +174,8 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
               display_name=metadata.test.autotest.display_name,
               keyvals=self._with_gs_logs_keyval(metadata),
               is_client_test=metadata.test.autotest.is_client_test,
-              peer_duts=[dut.hostname for dut in metadata.peer_duts]))
+              peer_duts=[dut.hostname for dut in metadata.peer_duts]),
+          container_image_info=container_image_info)
       run_test_request.deadline.MergeFrom(self.get_deadline())
       return PhosphorusTestDUTResponse(
           metadata.test_id, self._api.phosphorus.run_test(run_test_request))

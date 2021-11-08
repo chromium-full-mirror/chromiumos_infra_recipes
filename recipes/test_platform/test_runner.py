@@ -194,7 +194,8 @@ def _collect_tests(request):
 
 
 def _execution_steps_for_test(api, properties, interface, test_metadata,
-                              max_duration_sec, dut_state):
+                              max_duration_sec, dut_state,
+                              container_image_info):
   """Execute all the required steps for a single test.
 
   Run the following steps required for a test:
@@ -211,6 +212,8 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
   apposite a test.
   * max_duration_sec (int): Maximum amount of time the job should run.
   * dut_state (str): The current state of the DUT.
+  * container_image_info (ContainerImageInfo): If set, info on a Docker
+  container for use by the DUTInterface.
 
   Returns: DUTResult: a constructed result for this test.
 
@@ -226,7 +229,8 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     # failure that should be bubbled up immediately.
     prejob_response = interface.submit_pre_job(test_metadata, max_duration_sec)
     if not prejob_response.is_failure():
-      run_test_response = interface.run_test(test_metadata)
+      run_test_response = interface.run_test(test_metadata,
+                                             container_image_info)
       # TODO(crbug.com/1107005) Once this step is proved stable, stop ignoring
       # errors.
       # TODO(crbug.com/1107005) Add links to UI for the uploaded crashes, using
@@ -341,11 +345,15 @@ def execution_steps(api, properties):
             properties.config.harness.prejob_deadline_seconds or _24_HOURS)
 
         if interface.is_within_deadline():
-          result = _execution_steps_for_test(api=api, properties=properties,
-                                             interface=interface,
-                                             test_metadata=test_metadata,
-                                             max_duration_sec=max_duration_sec,
-                                             dut_state=dut_state)
+          result = _execution_steps_for_test(
+              api=api,
+              properties=properties,
+              interface=interface,
+              test_metadata=test_metadata,
+              max_duration_sec=max_duration_sec,
+              dut_state=dut_state,
+              container_image_info=properties.request.container_image_info,
+          )
           global_result.add_result(test_id, result)
         else:
           prejob_response = interface.build_aborted_prejob_response(

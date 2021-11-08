@@ -84,11 +84,14 @@ class DUTInterface(object):  # pragma: no cover
     pass
 
   @abstractmethod
-  def run_test(self, metadata):
+  def run_test(self, metadata, container_image_info):
     """Submits a test execution on the DUT.
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test.
+    * container_image_info (ContainerImageInfo): If set, info on a Docker
+    container for use by the DUTInterface. For example, autoserv may be run by
+    the container instead of the host.
 
     Returns:
       dut_results.DUTTestResponse: The test results.
