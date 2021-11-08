@@ -660,7 +660,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   hash=image_info.digest,
               )
 
-              link_name = '{} [{}]'.format(result.name, image_info.digest[:8])
+              # Remove the sha prefix and get a subset of the digest to display.
+              short_hash = image_info.digest.replace("sha256:", "")[:8]
+              link_name = '{} [{}]'.format(result.name, short_hash)
               presentation.links[link_name] = image_link
 
               # Index the container info by container name and store in
