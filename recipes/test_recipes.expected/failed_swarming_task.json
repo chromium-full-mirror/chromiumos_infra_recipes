@@ -1573,13 +1573,6 @@
   },
   {
     "cmd": [],
-    "name": "collect results.extract host name",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "collect results.install infra/tools/luci/swarming",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1662,7 +1655,7 @@
       "[CACHE]/cipd/infra/tools/luci/swarming/swarming_module_pin/swarming",
       "collect",
       "-server",
-      "chromium-swarm.appspot.com",
+      "https://example.swarmingserver.appspot.com",
       "-task-summary-json",
       "/path/to/tmp/json",
       "-task-output-stdout",

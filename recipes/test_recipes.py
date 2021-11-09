@@ -320,15 +320,12 @@ def _collect_results(api, verifiers):
                                if v.led_launch_result)
   assert verifier_by_id
   with api.step.nest('collect results'):
-    host_name = _extract_host_name(
-        api, [v.led_launch_result for v in verifier_by_id.values()])
-    with api.swarming.with_server(host_name):
-      results = api.swarming.collect(
-          'collect swarming tasks',
-          [v.led_launch_result.task_id for v in verifier_by_id.values()])
-      for result in results:
-        verifier_by_id[result.id].swarming_result = result
-      return verifiers
+    results = api.swarming.collect(
+        'collect swarming tasks',
+        [v.led_launch_result.task_id for v in verifier_by_id.values()])
+    for result in results:
+      verifier_by_id[result.id].swarming_result = result
+    return verifiers
 
 
 def _update_skipped_verifiers(api, verifiers):
