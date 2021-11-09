@@ -380,10 +380,6 @@
     "name": "validate inputs"
   },
   {
-    "cmd": [],
-    "name": "get swarming hostname"
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

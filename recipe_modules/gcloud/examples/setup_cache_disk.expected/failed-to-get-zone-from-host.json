@@ -22,13 +22,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "get swarming hostname",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
     "failure": {
       "failure": {},
       "humanReason": "failed to get zone from swarming host: chromeos-ci-infra-x16-0-nvcj"

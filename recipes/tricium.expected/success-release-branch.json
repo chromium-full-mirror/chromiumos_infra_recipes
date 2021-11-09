@@ -368,10 +368,6 @@
     "name": "check branch version"
   },
   {
-    "cmd": [],
-    "name": "get swarming hostname"
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

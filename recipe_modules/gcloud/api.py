@@ -730,12 +730,11 @@ class GcloudApi(recipe_api.RecipeApi):
 
   def _swarming_information(self):
     """Set Swarming variables based on hostname."""
-    with self.m.step.nest('get swarming hostname'):
-      m = re.search(_SWARMING_HOST_REGEXP, self.infra_host)
-      if not m:
-        raise self.m.step.StepFailure(
-            'failed to get zone from swarming host: {}'.format(self.infra_host))
-      self._zone = m.group('zone')
+    m = re.search(_SWARMING_HOST_REGEXP, self.infra_host)
+    if not m:
+      raise self.m.step.StepFailure(
+          'failed to get zone from swarming host: {}'.format(self.infra_host))
+    self._zone = m.group('zone')
 
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
                        disk_size=None, recipe_mount=False):

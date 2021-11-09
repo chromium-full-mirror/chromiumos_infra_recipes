@@ -123,10 +123,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "get swarming hostname"
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

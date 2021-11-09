@@ -409,13 +409,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "build chromiumos with upreved Parallels.get swarming hostname",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",
