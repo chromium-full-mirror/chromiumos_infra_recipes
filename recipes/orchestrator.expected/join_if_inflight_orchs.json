@@ -3846,31 +3846,34 @@
     "name": "aggregating metadata.container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skipped children@amd64-generic-cq@@@",
-      "@@@STEP_LOG_LINE@skipped children@arm-generic-cq@@@",
-      "@@@STEP_LOG_LINE@skipped children@atlas-cq@@@",
-      "@@@STEP_LOG_END@skipped children@@@"
+      "@@@STEP_LOG_LINE@skipped build info@amd64-generic - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm-generic - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@atlas - containers not configured@@@",
+      "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing amd64-generic-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing arm-generic-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing atlas-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
     ]
   },
   {

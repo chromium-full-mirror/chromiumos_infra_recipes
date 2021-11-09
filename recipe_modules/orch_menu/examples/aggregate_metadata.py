@@ -18,6 +18,9 @@ import json
 # Recipe engine imports
 from recipe_engine import post_process
 
+# External imports
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 # Local imports
 from PB.recipe_modules.chromeos.orch_menu.examples.aggregate_metadata import AggregateProperties
 
@@ -45,17 +48,22 @@ def RunSteps(api, properties):
       # Setup the input properties
       build.input.properties['$chromeos/build_menu'] = build_menu_props
 
+      # Add the build_target config to the builder.
       if not build.id in properties.skip_build_target:
         build.input.properties['build_target'] = {
             'name': 'test-target-{}'.format(ii)
         }
 
-      # Mock the output properties
+      # Mock the output properties.
       if not build.id in properties.skip_artifacts:
         build.output.properties['artifacts'] = {
             'gs_bucket': 'gs://test-bucket',
             'gs_path': 'test-builder-{}/R97-14304.0.0-55874'.format(ii),
         }
+
+      # If we're mocking a failed child build, then update the build status.
+      if build.id in properties.failed_builds:
+        build.status = common_pb2.Status.FAILURE
 
     api.orch_menu.aggregate_metadata(builds_status.completed_builds)
 
@@ -65,11 +73,39 @@ def GenTests(api):
   def set_test_properties(**kwargs):
     return api.properties(AggregateProperties(**kwargs))
 
-  def mock_metadata(step, data):
-    return api.step_data(
-        step,
-        stdout=api.raw_io.output(data),
-    )
+  def mock_metadata(skip=None):
+    skip = skip or []
+
+    data = []
+    for ii in range(3):
+      if ii in skip:
+        continue
+
+      target = 'test-target-{}'.format(ii)
+      step_data = api.step_data(
+          'aggregating metadata'
+          '.container metadata'
+          '.processing {target}'
+          '.gsutil reading payload for {target}'.format(target=target),
+          stdout=api.raw_io.output(
+              json.dumps({
+                  'containers': {
+                      target: {
+                          'images': {
+                              'some-service': {
+                                  'digest': '123abc',
+                              },
+                          },
+                      }
+                  }
+              }),
+          ))
+      data.append(step_data)
+
+    result = data[0]
+    for dd in data[1:]:
+      result += dd
+    return result
 
   # flattening stage tests
   def StepLogEquals(check, step_odict, step, logkey, expected):
@@ -113,28 +149,13 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'basic',
+      mock_metadata(),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-0.*'),
       require_step('.*reading payload for test-target-1.*'),
       require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
-      mock_metadata(
-          'aggregating metadata'
-          '.container metadata'
-          '.processing test-target-0'
-          '.gsutil reading payload for test-target-0',
-          json.dumps({
-              'containers': {
-                  'test-target-0': {
-                      'images': {
-                          'some-service': {
-                              'digest': '123abc',
-                          },
-                      },
-                  }
-              }
-          })),
       step_passed('aggregating metadata'),
       step_passed('aggregating metadata.container metadata'),
   )
@@ -142,6 +163,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'skip-child',
       set_test_properties(skip_builds=[CHILD_BUILDS[0]]),
+      mock_metadata(skip=[0]),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-1.*'),
@@ -150,14 +172,15 @@ def GenTests(api):
       api.post_check(
           StepLogEquals,
           'aggregating metadata.container metadata',
-          'skipped children',
-          'test-target-0',
+          'skipped build info',
+          'test-target-0 - containers not configured',
       ),
   )
 
   yield api.orch_menu.test(
       'skip-build-target',
       set_test_properties(skip_build_target=[CHILD_BUILDS[0]]),
+      mock_metadata(skip=[0]),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-1.*'),
@@ -173,6 +196,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'skip-artifacts',
       set_test_properties(skip_artifacts=[CHILD_BUILDS[0]]),
+      mock_metadata(skip=[0]),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-1.*'),
@@ -187,6 +211,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'failed-reading',
+      mock_metadata(),
       api.step_data(
           'aggregating metadata'
           '.container metadata'
@@ -196,4 +221,32 @@ def GenTests(api):
       ),
       step_failed('aggregating metadata'),
       step_failed('aggregating metadata.container metadata'),
+  )
+
+  yield api.orch_menu.test(
+      'failed-decoding',
+      step_failed('aggregating metadata'),
+      step_failed('aggregating metadata.container metadata'),
+  )
+
+  yield api.orch_menu.test(
+      'failed-reading-but-forgiven',
+      set_test_properties(failed_builds=[CHILD_BUILDS[0]]),
+      mock_metadata(),
+      api.step_data(
+          'aggregating metadata'
+          '.container metadata'
+          '.processing test-target-0'
+          '.gsutil reading payload for test-target-0',
+          retcode=1,
+      ),
+      step_passed('aggregating metadata'),
+      step_passed('aggregating metadata.container metadata'),
+      step_passed('aggregating metadata'
+                  '.container metadata'
+                  '.processing test-target-0'),
+      api.post_check(
+          StepSummaryEquals,
+          'aggregating metadata.container metadata.processing test-target-0',
+          'no metadata but build failed, ignoring.'),
   )

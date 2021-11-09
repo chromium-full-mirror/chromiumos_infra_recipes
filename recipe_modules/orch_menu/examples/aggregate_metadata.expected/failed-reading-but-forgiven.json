@@ -2414,10 +2414,9 @@
     "cmd": [],
     "name": "aggregating metadata",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@one or more child payloads failed to download@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@{@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@container metadata (log)@    \"test-target-0\": {@@@",
+      "@@@STEP_LOG_LINE@container metadata (log)@    \"test-target-1\": {@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@      \"images\": {@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@        \"some-service\": {@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@          \"digest\": \"123abc\"@@@",
@@ -2434,8 +2433,7 @@
       "@@@STEP_LOG_LINE@container metadata (log)@  }@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@}@@@",
       "@@@STEP_LOG_END@container metadata (log)@@@",
-      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/postsubmit-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/postsubmit-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
     ]
   },
   {
@@ -2443,17 +2441,16 @@
     "name": "aggregating metadata.container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@one or more child payloads failed to download@@@",
-      "@@@STEP_LOG_LINE@skipped build info@@@@",
-      "@@@STEP_LOG_END@skipped build info@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_LINE@skipped build info@test-target-0 - no metadata on failed build@@@",
+      "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing test-target-0",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@no metadata but build failed, ignoring.@@@"
     ]
   },
   {
@@ -2694,7 +2691,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"containers\": {\n    \"test-target-0\": {\n      \"images\": {\n        \"some-service\": {\n          \"digest\": \"123abc\"\n        }\n      }\n    },\n    \"test-target-2\": {\n      \"images\": {\n        \"some-service\": {\n          \"digest\": \"123abc\"\n        }\n      }\n    }\n  }\n}",
+      "{\n  \"containers\": {\n    \"test-target-1\": {\n      \"images\": {\n        \"some-service\": {\n          \"digest\": \"123abc\"\n        }\n      }\n    },\n    \"test-target-2\": {\n      \"images\": {\n        \"some-service\": {\n          \"digest\": \"123abc\"\n        }\n      }\n    }\n  }\n}",
       "[CLEANUP]/tmp_tmp_1/containers.jsonpb"
     ],
     "infra_step": true,
@@ -2715,7 +2712,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@containers.jsonpb@{@@@",
       "@@@STEP_LOG_LINE@containers.jsonpb@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@containers.jsonpb@    \"test-target-0\": {@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@    \"test-target-1\": {@@@",
       "@@@STEP_LOG_LINE@containers.jsonpb@      \"images\": {@@@",
       "@@@STEP_LOG_LINE@containers.jsonpb@        \"some-service\": {@@@",
       "@@@STEP_LOG_LINE@containers.jsonpb@          \"digest\": \"123abc\"@@@",

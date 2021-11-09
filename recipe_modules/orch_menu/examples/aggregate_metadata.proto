@@ -10,4 +10,5 @@ message AggregateProperties {
     repeated int64 skip_builds = 1;       // Builds to skip gathering metadata
     repeated int64 skip_build_target = 2; // Builds to unset the build_target
     repeated int64 skip_artifacts = 3;    // Builds to skip setting artifacts path
+    repeated int64 failed_builds = 4;     // Builds to mock as failures
 }

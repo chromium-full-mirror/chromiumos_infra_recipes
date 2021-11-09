@@ -776,6 +776,14 @@ class OrchMenuApi(RecipeApi):
         # For each child build we were given.
         step_name = '{} metadata'.format(metadata_info.name)
         with self.m.step.nest(step_name) as payload_step:
+
+          def fail_parent_steps(summary=None):
+            """Helper to fail higher steps and set step summary text."""
+            # pylint: disable=cell-var-from-loop
+            for step in [payload_step, aggregate_step]:
+              step.status = self.m.step.FAILURE
+              step.step_summary_text = summary or ""
+
           skipped = []
           for build in child_builds:
 
@@ -795,7 +803,9 @@ class OrchMenuApi(RecipeApi):
                   input_props,
               )
               if not container_version_format:
-                skipped.append(build.builder.builder)
+                child_step.step_summary_text = (
+                    'containers not configured, skipping')
+                skipped.append((build_target, 'containers not configured'))
                 continue
 
               # Grab artifact bucket and path from output properties of child
@@ -807,7 +817,7 @@ class OrchMenuApi(RecipeApi):
 
               if not (gs_bucket and gs_path):
                 child_step.step_summary_text = 'no artifacts path, skipping'
-                skipped.append(build_target)
+                skipped.append((build_target, 'no artifacts path'))
                 continue
 
               payload_path = self.m.path.join(
@@ -820,32 +830,44 @@ class OrchMenuApi(RecipeApi):
               prefix = '' if payload_path.startswith('gs://') else 'gs://'
               payload_path = prefix + payload_path
 
-              # Try to cat the payload, if it fails, note that fact, but don't
-              # fail the overall build.
-              try:
-                payload = self.m.gsutil.cat(
-                    payload_path,
-                    name='reading payload for {}'.format(build_target),
-                    stdout=self.m.raw_io.output(),
-                ).stdout
-              except StepFailure:
-                for pres in [payload_step, aggregate_step]:
-                  pres.status = self.m.step.FAILURE
-                  pres.step_summary_text = 'One or more child payloads failed to download'
+              # Download the build's metadata payload.
+              result = self.m.gsutil.cat(
+                  payload_path,
+                  name='reading payload for {}'.format(build_target),
+                  stdout=self.m.raw_io.output(),
+                  ok_ret=(0, 1),
+              )
+
+              if result.retcode != 0:
+                # If we fail to download the metadata but the child build failed
+                # overall, then we didn't build the containers but it's not an
+                # error.  Containers for failed builds are a nice-to-have not
+                # a requirement.
+                if build.status != common_pb2.Status.SUCCESS:
+                  child_step.status = self.m.step.SUCCESS
+                  child_step.step_summary_text = (
+                      'no metadata but build failed, ignoring.')
+                  skipped.append((build_target, 'no metadata on failed build'))
+                else:
+                  fail_parent_steps(
+                      'one or more child payloads failed to download')
                 continue
 
               # Decode the child payload and log any parsing errors that occur,
               # but don't allow it to fail the overall build.
+              payload = result.stdout
               try:
                 message = json_format.Parse(payload, metadata_info.msgtype())
               # pylint: disable=broad-except
               except Exception as ex:
                 payload_step.logs['proto error'] = str(ex)
+                fail_parent_steps('one or more child payloads failed to parse')
                 continue
 
               aggregated.MergeFrom(message)
 
-          payload_step.logs['skipped children'] = '\n'.join(skipped)
+          payload_step.logs['skipped build info'] = '\n'.join(
+              "%s - %s" % skipped_build for skipped_build in sorted(skipped))
 
         # TODO(b/204184594): Due to an issue in builder_config, we can't set an
         # artifacts path for orchestrators, so we'll hardcode the image-archive

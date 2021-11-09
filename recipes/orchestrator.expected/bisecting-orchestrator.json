@@ -1911,8 +1911,8 @@
     "name": "aggregating metadata.container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skipped children@@@@",
-      "@@@STEP_LOG_END@skipped children@@@"
+      "@@@STEP_LOG_LINE@skipped build info@@@@",
+      "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },
   {

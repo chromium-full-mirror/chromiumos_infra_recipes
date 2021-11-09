@@ -2688,23 +2688,25 @@
     "name": "aggregating metadata.container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skipped children@amd64-generic-postsubmit@@@",
-      "@@@STEP_LOG_LINE@skipped children@arm-generic-postsubmit@@@",
-      "@@@STEP_LOG_END@skipped children@@@"
+      "@@@STEP_LOG_LINE@skipped build info@amd64-generic - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm-generic - containers not configured@@@",
+      "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing amd64-generic-postsubmit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing arm-generic-postsubmit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
     ]
   },
   {
