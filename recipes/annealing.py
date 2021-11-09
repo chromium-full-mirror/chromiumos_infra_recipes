@@ -336,8 +336,14 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
                                            'Marking set of ebuilds as stable'))
 
     with api.step.nest('revbump chrome'):
-      api.cros_build_api.PackageService.RevBumpChrome(RevBumpChromeRequest(),
-                                                      name='revbump chrome')
+      responses = api.cros_build_api.PackageService.RevBumpChrome(
+          RevBumpChromeRequest(), name='revbump chrome').responses
+
+      for response in responses:
+        for ebuild in response.modified_ebuilds:
+          uprev_info.append(
+              api.cros_source.PushUprevRequest([ebuild.path],
+                                               'Revbumping chrome'))
 
     # Treat the manifest changes as if they were an uprev
     for _, files in manifest_diffs.items():

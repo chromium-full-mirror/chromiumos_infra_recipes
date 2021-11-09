@@ -1811,6 +1811,32 @@
       "rev-parse",
       "--show-toplevel"
     ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "name": "push uprevs.retrieve project information.repo for src/overlay/foo.ebuild (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "name": "push uprevs.retrieve project information.repo for src/private-overlay/bar.ebuild (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "push uprevs.retrieve project information.repo for manifest/full.xml",
@@ -1908,6 +1934,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild@@@",
       "@@@STEP_LOG_END@ebuilds@@@"
     ]
   },
@@ -1915,6 +1942,7 @@
     "cmd": [
       "git",
       "add",
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
@@ -1954,6 +1982,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2",
       "--",
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
@@ -1969,6 +1998,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild@@@",
       "@@@STEP_LOG_END@ebuilds@@@"
     ]
   },
@@ -1976,6 +2006,7 @@
     "cmd": [
       "git",
       "add",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
@@ -2015,6 +2046,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_3",
       "--",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
@@ -2087,7 +2119,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@repo@[CLEANUP]/chromiumos_workspace/src/overlay@@@",
       "@@@STEP_LOG_END@repo@@@",
-      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
+      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
       "@@@STEP_LOG_END@projects@@@",
       "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
       "@@@STEP_LOG_END@project chosen@@@"
@@ -2097,6 +2129,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -2114,6 +2147,7 @@
     "name": "push uprevs.push to src/overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild|src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild|src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
@@ -2141,7 +2175,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@repo@[CLEANUP]/chromiumos_workspace/src/private-overlay@@@",
       "@@@STEP_LOG_END@repo@@@",
-      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
+      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
       "@@@STEP_LOG_END@projects@@@",
       "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
       "@@@STEP_LOG_END@project chosen@@@"
@@ -2151,6 +2185,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -2168,6 +2203,7 @@
     "name": "push uprevs.push to src/private-overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild|src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild|src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
