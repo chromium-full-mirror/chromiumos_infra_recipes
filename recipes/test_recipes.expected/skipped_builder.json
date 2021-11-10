@@ -605,7 +605,7 @@
     "name": "analyze and launch builders",
     "~followup_annotations": [
       "@@@STEP_TEXT@launched 1 / 2 builders@@@",
-      "@@@STEP_LINK@staging-release-triggerer@https://chromium-swarm.appspot.com/task?id=fake-id-3@@@"
+      "@@@STEP_LINK@staging-release-triggerer@https://example.swarmingserver.appspot.com/task?id=fake-id-3@@@"
     ]
   },
   {
@@ -1245,12 +1245,12 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"swarming\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"chromium-swarm.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"example.swarmingserver.appspot.com\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"task_id\": \"fake-id-3\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Swarming task@https://chromium-swarm.appspot.com/task?id=fake-id-3@@@"
+      "@@@STEP_LINK@Swarming task@https://example.swarmingserver.appspot.com/task?id=fake-id-3@@@"
     ]
   },
   {
