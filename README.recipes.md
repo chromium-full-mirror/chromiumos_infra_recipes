@@ -3184,11 +3184,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 API for working with CrOS source.
 
-#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#45)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#794)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#795)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -3204,11 +3204,11 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
-&emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#123)(self):**
+&emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#124)(self):**
 
 Returns the Path to the manifest_file for this build.
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#160)(self):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#161)(self):**
 
 The cached checkout path.
 
@@ -3216,7 +3216,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 workspace path.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#615)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#616)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -3233,7 +3233,7 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#825)(self, change):**
+&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#826)(self, change):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -3245,7 +3245,7 @@ Args:
   change (GerritChange): Change to check out.
   name (string): Step name.  Default: "checkout gerrit change".
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#509)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#510)(self, commit=None, is_staging=False, checkout_external=False, test_footers=None):**
 
 Check out the manifest projects.
 
@@ -3271,7 +3271,7 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#723)(self, mount_cache=True, snapshot_mount=False, disk_type='pd-ssd'):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#724)(self, mount_cache=True, snapshot_mount=False, disk_type='pd-ssd'):**
 
 Returns a context where overlays can be mounted.
 
@@ -3281,7 +3281,7 @@ Args:
     rather than the image preload directory.  Default: False
   disk_type (str): GCE disk type to use.  Default: pd-ssd
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1446)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1447)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -3294,11 +3294,11 @@ Args:
 Returns:
   List[str]: List of project paths with commits in the archive.
 
-&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#661)(self):**
+&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#662)(self):**
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_source/api.py#194)(self, commit=None, changes=None, is_staging=None, default_main=False, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_source/api.py#195)(self, commit=None, changes=None, is_staging=None, default_main=False, name='configure builder'):**
 
 Configure the builder.
 
@@ -3321,7 +3321,7 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1403)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1404)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -3335,7 +3335,7 @@ Args:
   project_commits (List[ProjectCommit]): Commits to add to archive. Must be
     in patch application order.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#378)(self, manifest_url=None, init_opts=None, sync_opts=None, cache_path_override=None, is_staging=False, projects=None, gitiles_commit=None, manifest_branch_override=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#379)(self, manifest_url=None, init_opts=None, sync_opts=None, cache_path_override=None, is_staging=False, projects=None, gitiles_commit=None, manifest_branch_override=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -3354,7 +3354,7 @@ Args:
     manifest_branch value in init_opts. If None then use the value returned
     from configure_builder()
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#667)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#668)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -3368,7 +3368,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#766)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#767)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -3384,11 +3384,11 @@ Args:
 Returns:
   list(str), The path values for the found project.
 
-&mdash; **def [initialize](/recipe_modules/cros_source/api.py#79)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_source/api.py#80)(self):**
 
 Initialization that follows all module loading.
 
-&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#141)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#142)(self):**
 
 Returns whether the source is dirty.
 
@@ -3396,15 +3396,15 @@ Returns whether the source is dirty. The source is dirty if it was checked
 out to a custom snapshot from isolate or has had patches applied or has
 been moved to a branch.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#129)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#130)(self):**
 
 Returns any non-default manifest branch that is checked out.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_push](/recipe_modules/cros_source/api.py#134)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_push](/recipe_modules/cros_source/api.py#135)(self):**
 
 Returns the manifest branch to push changes to.
 
-&emsp; **@property**<br>&mdash; **def [mirrored\_manifest\_files](/recipe_modules/cros_source/api.py#94)(self):**
+&emsp; **@property**<br>&mdash; **def [mirrored\_manifest\_files](/recipe_modules/cros_source/api.py#95)(self):**
 
 Returns the names of files that are mirrored into the public manifest.
 
@@ -3417,18 +3417,18 @@ builders do it when applying manifest changes.
 Returns:
   (list[MirroredManifestFile]) with files we mirror.
 
-&emsp; **@property**<br>&mdash; **def [pinned\_manifest](/recipe_modules/cros_source/api.py#115)(self):**
+&emsp; **@property**<br>&mdash; **def [pinned\_manifest](/recipe_modules/cros_source/api.py#116)(self):**
 
 Return the pinned manifest for this build.
 
-&emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#151)(self):**
+&emsp; **@property**<br>&mdash; **def [preload\_path](/recipe_modules/cros_source/api.py#152)(self):**
 
 The cached image checkout path.
 
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1500)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1501)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -3442,11 +3442,11 @@ Return:
   all_uprevs_passed (bool): True if all uprevs succeeded,
                             False if ANY failed.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_cas\_digest](/recipe_modules/cros_source/api.py#179)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_cas\_digest](/recipe_modules/cros_source/api.py#180)(self):**
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1212)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1213)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -3458,7 +3458,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1303)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1304)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -3469,7 +3469,7 @@ Args:
   manifest_url: URL of manifest repo.  Default: internal manifest
   kwargs (dict): additional args for repo.sync_manifest.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1234)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1235)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -3486,7 +3486,7 @@ Args:
     gs://buildspecs-internal/release/91/13818.0.0.xml. Takes precendence over
     manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1479)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1480)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
 
 Uprev packages.
 
@@ -3500,7 +3500,7 @@ Args:
 Returns:
   UprevPackagesResponse
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#170)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#171)(self):**
 
 The "workspace" checkout path.
 
@@ -6314,7 +6314,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#317)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#323)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -6322,13 +6322,13 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#270)(self, manifest_data):**
+&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#276)(self, manifest_data):**
 
 Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#503)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#509)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -6346,7 +6346,7 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#610)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#616)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -6354,7 +6354,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#461)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#467)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -6376,7 +6376,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#70)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#403)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#409)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -6394,7 +6394,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#673)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#679)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -6430,7 +6430,7 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/repo/api.py#59)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#430)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#436)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -6447,11 +6447,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#667)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#673)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#388)(self, project=None):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#394)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -6462,7 +6462,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#331)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#337)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -6484,7 +6484,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#66)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#303)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#309)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -6492,7 +6492,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#216)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False, force_remove_dirty=False):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#216)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False, force_remove_dirty=False, prune=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -6512,8 +6512,9 @@ Args:
   no_manifest_update (bool): Whether to disable updating the manifest.
   force_remove_dirty (bool): Whether to force remove projects with
     uncommitted modifications if projects no longer exist in the manifest.
+  prune (bool): Delete refs that no longer exist on the remote.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#284)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#290)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
@@ -9725,7 +9726,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/cache_builder.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/cache_builder.py#25)(api, properties):**
 ### *recipes* / [repo:examples/image\_builder](/recipe_modules/repo/examples/image_builder.py)
 
 [DEPS](/recipe_modules/repo/examples/image_builder.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9738,7 +9739,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [WithManifestNameTest](/recipe_modules/repo/examples/image_builder.py#64)(api, state_name, state):**
 
-&mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#98)(api, state_name, state, local_manifest):**
+&mdash; **def [WithNonePruneTest](/recipe_modules/repo/examples/image_builder.py#126)(api, state_name, state):**
+
+&mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#100)(api, state_name, state, local_manifest):**
 ### *recipes* / [repo:examples/project\_infos](/recipe_modules/repo/examples/project_infos.py)
 
 [DEPS](/recipe_modules/repo/examples/project_infos.py#6): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

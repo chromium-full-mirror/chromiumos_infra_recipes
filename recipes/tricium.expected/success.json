@@ -1362,6 +1362,7 @@
       "--retry-fetches",
       "8",
       "--force-remove-dirty",
+      "--prune",
       "chromium/src"
     ],
     "cwd": "[CACHE]/chromiumos",

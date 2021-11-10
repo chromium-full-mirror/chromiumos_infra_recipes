@@ -851,6 +851,7 @@
       "--retry-fetches",
       "8",
       "--force-remove-dirty",
+      "--prune",
       "chromiumos/config"
     ],
     "cwd": "[CACHE]/chromiumos",

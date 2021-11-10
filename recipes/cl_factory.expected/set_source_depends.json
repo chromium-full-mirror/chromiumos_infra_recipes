@@ -1465,6 +1465,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--prune",
       "chromiumos/config",
       "chromeos/program/galaxy"
     ],
@@ -1933,7 +1934,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--prune"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {

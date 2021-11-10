@@ -102,4 +102,7 @@ message SyncOpts {
   // force-remove_dirty (bool): force remove projects with uncommitted
   // modifications if projects no longer exist in the manifest.
   bool force_remove_dirty = 13;
+
+  // prune (bool):  Delete refs that no longer exist on the remote.
+  bool prune = 14;
 }

@@ -1,28 +1,5 @@
 [
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/ensure/.recipes_state.json",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[START_DIR]/repo/manifest-internal",
-    "infra_step": true,
-    "name": "Read proto from [CLEANUP]/ensure/.recipes_state.json",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"http://manifest_url\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "set initial_repo_state",
     "~followup_annotations": [
@@ -38,11 +15,11 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"http://manifest_url\",\n  \"state\": \"STATE_DIRTY\"\n}",
-      "[CLEANUP]/ensure/.recipes_state.json"
+      "[START_DIR]/repo/.recipes_state.json"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
-    "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json",
+    "name": "Write proto to [START_DIR]/repo/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
@@ -69,7 +46,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/ensure"
+      "[START_DIR]/repo"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
@@ -88,22 +65,9 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--reference",
-      "/preload/chromeos",
-      "--groups",
-      "group1,group2",
-      "--depth",
-      "10",
-      "--repo-url",
-      "http://repo_url",
-      "--repo-branch",
-      "next",
-      "--no-repo-verify",
-      "--manifest-name",
-      "../../snapshot.xml",
-      "--verbose"
+      "--repo-rev=stable"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -131,7 +95,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -151,7 +115,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -171,7 +135,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -197,7 +161,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "infra_step": true,
     "name": "ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -221,7 +185,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -237,73 +201,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/ensure/.repo/local_manifests"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.ensure local manifest dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/testproject1/+/HEAD/local_manifest.xml",
-      "--format",
-      "text"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.fetch HEAD:local_manifest.xml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
-      "[CLEANUP]/ensure/.repo/local_manifests/local_manifest.xml"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.write local manifest",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@<manifest>@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@  <remote name=\"cros-internal\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@          fetch=\"https://chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@          review=\"https://chrome-internal-review.googlesource.com\" />@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@  <project name=\"chromeos/private-repo1\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@     path=\"src/private-repo1\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@     remote=\"cros-internal\" />@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@</manifest>@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@    @@@",
-      "@@@STEP_LOG_END@local_manifest.xml@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "ensure synced checkout.ensure clean checkout",
     "~followup_annotations": [
@@ -314,8 +211,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy",
       "--ignore-missing",
       "-j",
       "32",
@@ -324,7 +219,7 @@
       "reset",
       "--hard"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -344,8 +239,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy",
       "--ignore-missing",
       "-j",
       "32",
@@ -356,7 +249,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -380,9 +273,7 @@
       "--detach",
       "--current-branch",
       "--jobs",
-      "99",
-      "--manifest-name",
-      "../../snapshot.xml",
+      "20",
       "--no-tags",
       "--optimized-fetch",
       "--cache-dir",
@@ -391,12 +282,9 @@
       "8",
       "--verbose",
       "--no-manifest-update",
-      "--force-remove-dirty",
-      "--prune",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy"
+      "--force-remove-dirty"
     ],
-    "cwd": "[CLEANUP]/ensure",
+    "cwd": "[START_DIR]/repo",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -412,6 +300,71 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure synced checkout.ensure clean checkout (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "reset",
+      "--hard"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure clean checkout (2).repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-x",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[START_DIR]/repo",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure synced checkout.ensure clean checkout (2).repo forall (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -420,11 +373,11 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"http://manifest_url\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CLEANUP]/ensure/.recipes_state.json"
+      "[START_DIR]/repo/.recipes_state.json"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "infra_step": true,
-    "name": "Write proto to [CLEANUP]/ensure/.recipes_state.json (2)",
+    "name": "Write proto to [START_DIR]/repo/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
@@ -432,83 +385,6 @@
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sync to snapshot"
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "<manifest></manifest>",
-      "[START_DIR]/repo/.repo/tmp_manifest"
-    ],
-    "cwd": "[START_DIR]/repo/manifest-internal",
-    "infra_step": true,
-    "name": "sync to snapshot.write manifest",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "init",
-      "--manifest-url",
-      "http://manifest_url",
-      "--groups",
-      "all",
-      "--repo-rev=stable",
-      "--manifest-name",
-      "../tmp_manifest"
-    ],
-    "cwd": "[START_DIR]/repo/manifest-internal",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.repo init",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "sync",
-      "--detach",
-      "--current-branch",
-      "--optimized-fetch",
-      "--retry-fetches",
-      "8"
-    ],
-    "cwd": "[START_DIR]/repo/manifest-internal",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.repo sync",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -25,7 +25,8 @@ ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id', 'patch_set'])
 DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
                                force_sync=True, jobs=8, no_tags=True,
                                optimized_fetch=True, retry_fetches=8,
-                               timeout=3600, force_remove_dirty=True)
+                               timeout=3600, force_remove_dirty=True,
+                               prune=True)
 
 STAGING_INIT_OPTS = dict(repo_branch='main')
 

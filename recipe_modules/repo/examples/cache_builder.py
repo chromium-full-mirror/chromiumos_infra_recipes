@@ -15,6 +15,7 @@ DEPS = [
 from google.protobuf.json_format import MessageToDict
 from PB.recipe_modules.chromeos.repo.examples.image_builder import (
     ImageBuilderProperties)
+from PB.recipe_modules.chromeos.repo.examples import common
 
 PROPERTIES = ImageBuilderProperties
 
@@ -42,3 +43,13 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test('basic')
+
+  yield api.test(
+      'no-prune',
+      api.properties(
+          sync_opts=common.SyncOpts(
+              force_sync=True, detach=True, current_branch=True, jobs=20,
+              no_tags=True, optimized_fetch=True, cache_dir='/tmp/cache',
+              retry_fetches=8, verbose=True, no_manifest_update=True,
+              force_remove_dirty=True, prune=False)),
+  )

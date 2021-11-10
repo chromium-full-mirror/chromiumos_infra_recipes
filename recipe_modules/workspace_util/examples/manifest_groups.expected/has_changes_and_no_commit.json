@@ -727,7 +727,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--prune"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {

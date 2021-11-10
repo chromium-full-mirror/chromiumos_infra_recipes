@@ -1268,6 +1268,7 @@
       "--retry-fetches",
       "8",
       "--force-remove-dirty",
+      "--prune",
       "chromiumos/manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

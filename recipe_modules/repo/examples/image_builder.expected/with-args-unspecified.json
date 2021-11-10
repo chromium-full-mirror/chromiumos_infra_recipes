@@ -390,6 +390,7 @@
       "--verbose",
       "--no-manifest-update",
       "--force-remove-dirty",
+      "--prune",
       "chromiumos/config",
       "chromeos/project/puff/duffy"
     ],

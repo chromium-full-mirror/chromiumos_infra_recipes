@@ -1418,6 +1418,7 @@
       "--retry-fetches",
       "8",
       "--force-remove-dirty",
+      "--prune",
       "chromeos/manifest-internal",
       "chromiumos/manifest"
     ],
@@ -2012,7 +2013,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--prune"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {

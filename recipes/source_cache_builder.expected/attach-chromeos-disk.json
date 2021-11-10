@@ -453,7 +453,8 @@
       "20",
       "--retry-fetches",
       "8",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--prune"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {

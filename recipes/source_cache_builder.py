@@ -64,7 +64,7 @@ def RunSteps(api, properties):
             with api.context(cwd=mount_path):
               sync_opts = dict(force_sync=True, detach=True, jobs=20,
                                retry_fetches=8, timeout=10800,
-                               force_remove_dirty=True)
+                               force_remove_dirty=True, prune=True)
               manifest_branch = '{}snapshot'.format(
                   'staging-' if is_staging else '')
               if cache.branch != 'main':

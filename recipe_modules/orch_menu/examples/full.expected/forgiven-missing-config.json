@@ -1415,6 +1415,7 @@
       "--retry-fetches",
       "8",
       "--force-remove-dirty",
+      "--prune",
       "chromeos/manifest-internal",
       "chromiumos/manifest"
     ],
