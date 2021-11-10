@@ -7582,12 +7582,12 @@
       "    if self.container_version:",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 117, in container_version",
       "    raise RuntimeError('Invalid tag format: \\'{}\\''.format(version))",
-      "RuntimeError('Invalid tag format: 'atlas-cq/R99-1234.56.0'')"
+      "RuntimeError('Invalid tag format: 'atlas-cq/R99-1234.56.0-101'')"
     ]
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: RuntimeError('Invalid tag format: 'atlas-cq/R99-1234.56.0'')"
+      "humanReason": "Uncaught Exception: RuntimeError('Invalid tag format: 'atlas-cq/R99-1234.56.0-101'')"
     },
     "name": "$result"
   }

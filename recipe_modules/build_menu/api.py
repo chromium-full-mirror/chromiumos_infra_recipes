@@ -87,7 +87,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Replace any explicitly allowed fields
     ALLOWED_FIELDS = {
         '{build-target}': self._build_target.name,
-        '{cros-version}': self.m.cros_version.version.legacy_version,
+        '{cros-version}': self.m.cros_version.version,
         '{bbid}': self.m.buildbucket.build.id or 'led-launch',
         '{staging?}': staging_prefix,
     }
