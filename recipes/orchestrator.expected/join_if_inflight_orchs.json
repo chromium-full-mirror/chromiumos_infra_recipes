@@ -3842,9 +3842,9 @@
     "name": "aggregating metadata.container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skipped build info@amd64-generic - containers not configured@@@",
-      "@@@STEP_LOG_LINE@skipped build info@arm-generic - containers not configured@@@",
-      "@@@STEP_LOG_LINE@skipped build info@atlas - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@amd64-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@atlas-cq - containers not configured@@@",
       "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },

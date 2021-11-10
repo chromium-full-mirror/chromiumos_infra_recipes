@@ -805,7 +805,8 @@ class OrchMenuApi(RecipeApi):
               if not container_version_format:
                 child_step.step_summary_text = (
                     'containers not configured, skipping')
-                skipped.append((build_target, 'containers not configured'))
+                skipped.append(
+                    (build.builder.builder, 'containers not configured'))
                 continue
 
               # Grab artifact bucket and path from output properties of child
