@@ -20,15 +20,6 @@ class AndroidApiTestApi(recipe_test_api.RecipeTestApi):
   def android_version(self):
     return '7123456'
 
-  def uprev_props(self):
-    return self.m.properties(
-        **{
-            '$chromeos/android': {
-                'android_package': self.android_package,
-                'android_version': self.android_version,
-            }
-        })
-
   def _mark_stable_response(self, status):
     response = MarkStableResponse(status=status)
     if status == MarkStableStatusType.MARK_STABLE_STATUS_SUCCESS:

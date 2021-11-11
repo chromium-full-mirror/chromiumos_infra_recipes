@@ -498,28 +498,26 @@ Args:
   step_output (str): Output for the step.
 ### *recipe_modules* / [android](/recipe_modules/android)
 
-[DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [AndroidApi](/recipe_modules/android/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [android\_package](/recipe_modules/android/api.py#34)(self):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#135)(self, chroot, sysroot, android_package, android_version):**
 
-&emsp; **@property**<br>&mdash; **def [android\_version](/recipe_modules/android/api.py#38)(self):**
-
-&mdash; **def [uprev](/recipe_modules/android/api.py#131)(self, chroot, sysroot):**
-
-Uprev the Android package.
+Uprev the given Android package to the given version.
 
 Args:
   chroot (chromiumos.Chroot): Information on the chroot for the build.
   sysroot (Sysroot): The Sysroot being used.
+  android_package (str): The Android package to uprev (e.g. android-vm-rvc).
+  android_version (str): The Android version to uprev to (e.g. 7123456).
 
 Returns:
   bool: If the android package has been uprevved.
 
-&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#98)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#101)(self, chroot, sysroot, patch_sets):**
 
 Uprev Android if changes are found in the unstable ebuild.
 
@@ -7705,7 +7703,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/no_symbols.py#16)(api):**
 ### *recipes* / [build\_android\_uprev](/recipes/build_android_uprev.py)
 
-[DEPS](/recipes/build_android_uprev.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/build_android_uprev.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -7719,9 +7717,9 @@ for example:
   "android_version": "7444938"
 }
 
-&mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#34)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#36)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/build_android_uprev.py#28)(api):**
+&mdash; **def [RunSteps](/recipes/build_android_uprev.py#30)(api, properties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
 [DEPS](/recipes/build_borealis_rootfs.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]

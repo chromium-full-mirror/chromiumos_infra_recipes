@@ -16,16 +16,14 @@ DEPS = [
 def RunSteps(api):
   chroot = Chroot()
   sysroot = Sysroot(build_target=BuildTarget(name='build_target'))
-  api.android.uprev(chroot, sysroot)
+  api.android.uprev(chroot, sysroot, 'android-package', 'android-version')
 
 
 def GenTests(api):
-  yield api.test('mark-stable-success', api.android.uprev_props(),
-                 api.android.set_mark_stable_success(),
+  yield api.test('mark-stable-success', api.android.set_mark_stable_success(),
                  api.post_check(post_process.StatusSuccess))
-  yield api.test('mark-stable-pinned', api.android.uprev_props(),
-                 api.android.set_mark_stable_pinned(),
+  yield api.test('mark-stable-pinned', api.android.set_mark_stable_pinned(),
                  api.post_check(post_process.StatusFailure))
-  yield api.test('mark-stable-early-exit', api.android.uprev_props(),
+  yield api.test('mark-stable-early-exit',
                  api.android.set_mark_stable_early_exit(),
                  api.post_check(post_process.StatusSuccess))

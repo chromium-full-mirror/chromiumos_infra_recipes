@@ -15,7 +15,6 @@ for example:
 """
 
 DEPS = [
-    'recipe_engine/swarming',
     'recipe_engine/properties',
     'android',
     'build_menu',
@@ -23,21 +22,26 @@ DEPS = [
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
+
+PROPERTIES = AndroidUprevProperties
 
 
-def RunSteps(api):
+def RunSteps(api, properties):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    return DoRunSteps(api, config)
+    return DoRunSteps(api, properties, config)
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api, properties, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
   # Bootstrap sysroot, and skip the rest if android is not revved at all.
   api.build_menu.bootstrap_sysroot(config)
-  if not api.android.uprev(api.build_menu.chroot, api.build_menu.sysroot):
+  if not api.android.uprev(api.build_menu.chroot, api.build_menu.sysroot,
+                           properties.android_package,
+                           properties.android_version):
     return
 
   # Artifacts are frequently of use even if the build failed.  For example, it
@@ -65,13 +69,16 @@ def DoRunSteps(api, config):
 
 
 def GenTests(api):
+  uprev_props = api.properties(android_package='android-package',
+                               android_version='7123456')
+
   # Normal Android uprev build.
   yield api.build_menu.test(
       'basic',
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.android.uprev_props(), api.android.set_mark_stable_success(),
+          }}), uprev_props, api.android.set_mark_stable_success(),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -83,8 +90,7 @@ def GenTests(api):
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.android.uprev_props(),
-      api.android.set_mark_stable_early_exit(),
+          }}), uprev_props, api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -96,7 +102,7 @@ def GenTests(api):
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.android.uprev_props(), api.android.set_mark_stable_success(),
+          }}), uprev_props, api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
@@ -119,8 +125,8 @@ def GenTests(api):
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.android.uprev_props(), api.android.set_mark_stable_success())
+      api.post_check(post_process.MustRun, 'upload artifacts'), uprev_props,
+      api.android.set_mark_stable_success())
 
   # Android uprev build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -128,7 +134,7 @@ def GenTests(api):
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.android.uprev_props(), api.android.set_mark_stable_success(),
+          }}), uprev_props, api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),

@@ -4,12 +4,9 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.android;
+package recipes.chromeos.android_uprev;
 
-message AndroidProperties {
-  // The Android package which uprev is performed against.
+message AndroidUprevProperties {
   string android_package = 1;
-
-  // The Android version to uprev to.
   string android_version = 2;
 }

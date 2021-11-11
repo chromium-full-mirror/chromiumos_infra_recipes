@@ -15,7 +15,7 @@
       "@@@STEP_LOG_LINE@request@  \"skipCommit\": true, @@@",
       "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-package\", @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"7123456\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"android-version\", @@@",
       "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"build_target\"@@@",
@@ -37,7 +37,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"skipCommit\": true, \n  \"packageName\": \"android-package\", \n  \"chroot\": {}, \n  \"androidVersion\": \"7123456\", \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ]\n}",
+      "{\n  \"skipCommit\": true, \n  \"packageName\": \"android-package\", \n  \"chroot\": {}, \n  \"androidVersion\": \"android-version\", \n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

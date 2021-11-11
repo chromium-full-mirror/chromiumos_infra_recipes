@@ -3,11 +3,6 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_build_api',
 ]
-
-from PB.recipe_modules.chromeos.android.android import AndroidProperties
-
-PROPERTIES = AndroidProperties
