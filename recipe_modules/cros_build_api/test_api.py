@@ -50,6 +50,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def android_service_responses(self):
     """Generate responses for AndroidService."""
     ret = {
+        'GetLatestBuild':
+            jsonify(android_version='7123456'),
         'MarkStable':
             jsonify(
                 status='MARK_STABLE_STATUS_SUCCESS', android_atom={

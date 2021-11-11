@@ -95,7 +95,9 @@
   * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
   * [android:examples/full](#recipes-android_examples_full)
+  * [android:examples/misc](#recipes-android_examples_misc)
   * [android:examples/uprev](#recipes-android_examples_uprev)
+  * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
@@ -502,9 +504,19 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [AndroidApi](/recipe_modules/android/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#135)(self, chroot, sysroot, android_package, android_version):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#170)(self, android_package):**
+
+Retrieves the latest Android version for the given Android package.
+
+Args:
+  android_package (str): The Android package.
+
+Returns:
+  str: The latest Android version (build ID).
+
+&mdash; **def [uprev](/recipe_modules/android/api.py#136)(self, chroot, sysroot, android_package, android_version):**
 
 Uprev the given Android package to the given version.
 
@@ -517,7 +529,7 @@ Args:
 Returns:
   bool: If the android package has been uprevved.
 
-&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#101)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#102)(self, chroot, sysroot, patch_sets):**
 
 Uprev Android if changes are found in the unstable ebuild.
 
@@ -7568,6 +7580,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#23)(api, properties):**
+### *recipes* / [android:examples/misc](/recipe_modules/android/examples/misc.py)
+
+[DEPS](/recipe_modules/android/examples/misc.py#5): [android](#recipe_modules-android), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/android/examples/misc.py#11)(api):**
 ### *recipes* / [android:examples/uprev](/recipe_modules/android/examples/uprev.py)
 
 [DEPS](/recipe_modules/android/examples/uprev.py#11): [android](#recipe_modules-android)
@@ -7575,6 +7594,25 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#16)(api):**
+### *recipes* / [android\_uprev\_orchestrator](/recipes/android_uprev_orchestrator.py)
+
+[DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Orchestrator for Android uprev builders.
+
+The orchestrator determines the latest Android version for the specified Android
+package, then passes the info down into child builders running the
+build_android_uprev recipe.
+
+Once all builds and tests passed, it submits a CL to update the Android LKGB
+file. The change will in turn trigger the PUpr generator to publish an actual
+Android uprev.
+
+&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#38)(api, properties):**
+
+&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#31)(api, properties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

@@ -71,7 +71,8 @@ def RunSteps(api):
   # Check the test API.
   response_type_by_service = {
       'AndroidService': {
-          'MarkStable': android.MarkStableResponse
+          'GetLatestBuild': android.GetLatestBuildResponse,
+          'MarkStable': android.MarkStableResponse,
       },
       'ArtifactsService': {
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,

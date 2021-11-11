@@ -6,6 +6,7 @@
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
+from PB.chromite.api.android import GetLatestBuildRequest
 from PB.chromite.api.android import MarkStableRequest
 from PB.chromite.api.android import MarkStableStatusType
 from PB.chromite.api.packages import GetAndroidMetadataRequest
@@ -165,3 +166,20 @@ class AndroidApi(recipe_api.RecipeApi):
 
       raise StepFailure('MarkStable returned unhandled status %s' %
                         MarkStableStatusType.Name(response.status))
+
+  def get_latest_build(self, android_package):
+    """Retrieves the latest Android version for the given Android package.
+
+    Args:
+      android_package (str): The Android package.
+
+    Returns:
+      str: The latest Android version (build ID).
+    """
+    with self.m.step.nest('get latest android build') as pres:
+      request = GetLatestBuildRequest(android_package=android_package)
+      response = self.m.cros_build_api.AndroidService.GetLatestBuild(request)
+
+      pres.step_text = 'found ab/{} for package {}'.format(
+          response.android_version, android_package)
+      return response.android_version
