@@ -35,9 +35,9 @@
   },
   {
     "cmd": [],
-    "name": "check for relevant changes",
+    "name": "get relevant patches",
     "~followup_annotations": [
-      "@@@STEP_TEXT@No relevant changes@@@"
+      "@@@STEP_TEXT@found 1 relevant patchsets@@@"
     ]
   },
   {
@@ -60,7 +60,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for relevant changes.read deploy_cipd.json",
+    "name": "get relevant patches.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -97,7 +97,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for relevant changes.ensure_installed",
+    "name": "get relevant patches.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -130,7 +130,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for relevant changes.gerrit-fetch-changes",
+    "name": "get relevant patches.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
@@ -168,6 +168,15 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get relevant files",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 0 modified relevant files@@@",
+      "@@@STEP_LOG_LINE@output@[]@@@",
+      "@@@STEP_LOG_END@output@@@"
     ]
   },
   {

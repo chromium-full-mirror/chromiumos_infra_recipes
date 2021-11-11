@@ -35,9 +35,9 @@
   },
   {
     "cmd": [],
-    "name": "check for relevant changes",
+    "name": "get relevant patches",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Found relevant changes@@@"
+      "@@@STEP_TEXT@found 1 relevant patchsets@@@"
     ]
   },
   {
@@ -60,7 +60,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for relevant changes.read deploy_cipd.json",
+    "name": "get relevant patches.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -97,7 +97,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for relevant changes.ensure_installed",
+    "name": "get relevant patches.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -130,7 +130,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for relevant changes.gerrit-fetch-changes",
+    "name": "get relevant patches.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
@@ -168,6 +168,15 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get relevant files",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 2 modified relevant files@@@",
+      "@@@STEP_LOG_LINE@output@[set(['bar.rs', 'foo.rs'])]@@@",
+      "@@@STEP_LOG_END@output@@@"
     ]
   },
   {
@@ -4713,85 +4722,9 @@
   },
   {
     "cmd": [],
-    "name": "get rust files",
+    "name": "get affected packages",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 2 Rust changes.@@@",
-      "@@@STEP_LOG_LINE@output@[path: \"src/foo/bar.rs\"@@@",
-      "@@@STEP_LOG_LINE@output@, path: \"src/foo/foo.rs\"@@@",
-      "@@@STEP_LOG_LINE@output@]@@@",
-      "@@@STEP_LOG_END@output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "get rust files.get patch sets",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "get rust files.get patch sets.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
-    "timeout": 600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"fake-branch\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"fake-project\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bar.rs\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"foo.rs\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "get rust files.filter rust files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_TEXT@No packages affected for target platform@@@"
     ]
   },
   {
@@ -4824,18 +4757,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get rust files.filter rust files.repo forall",
+    "name": "get affected packages.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@fake-project|src/foo|cros|refs/heads/main|refs/heads/fake-branch@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "get affected packages",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@No packages affected for target platform@@@"
     ]
   },
   {

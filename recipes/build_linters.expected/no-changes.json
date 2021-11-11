@@ -35,10 +35,9 @@
   },
   {
     "cmd": [],
-    "name": "check for relevant changes",
+    "name": "get relevant patches",
     "~followup_annotations": [
-      "@@@STEP_TEXT@No changes given: Build is POINTLESS.@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@found 0 relevant patchsets@@@"
     ]
   },
   {
