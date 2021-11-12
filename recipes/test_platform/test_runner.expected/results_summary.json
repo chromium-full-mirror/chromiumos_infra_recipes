@@ -106,10 +106,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -143,10 +144,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -235,10 +237,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -275,10 +278,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -327,10 +331,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -404,10 +409,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -480,10 +486,11 @@
     ],
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -541,10 +548,11 @@
     ],
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -602,10 +610,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -662,10 +671,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -730,10 +740,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -769,10 +780,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -818,10 +830,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -869,10 +882,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -921,10 +935,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -978,10 +993,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": ":"
+        "name": "chromeos:test_runner"
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"

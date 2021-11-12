@@ -1,14 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "upload chromium test result to rdb",
+    "name": "upload chromium test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload chromium test result to rdb.ensure result_adapter",
+    "name": "upload chromium test results to rdb.ensure result_adapter",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -39,7 +39,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload chromium test result to rdb.ensure result_adapter.ensure_installed",
+    "name": "upload chromium test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -87,10 +87,47 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload chromium test result to rdb.run rdb",
+    "name": "upload chromium test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload test results to rdb"
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "dummy-result-dir/autoserv_test/tast/results/streamed_results.jsonl",
+      "-artifact-directory",
+      "dummy-result-dir/autoserv_test",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

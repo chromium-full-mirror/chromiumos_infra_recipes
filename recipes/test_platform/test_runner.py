@@ -7,7 +7,6 @@
 import base64
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus\
@@ -36,6 +35,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'recipe_engine/uuid',
+    'cros_infra_config',
     'cros_resultdb',
     'cros_tags',
     'cros_test_runner',
@@ -49,6 +49,8 @@ PROPERTIES = TestRunnerProperties
 _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
 _24_HOURS = 24 * 60 * 60
+
+RESULTDB_EXPERIMENT = 'chromeos.cros_test_platform.add_resultdb_settings'
 
 
 # API STEP HELPERS
@@ -254,10 +256,15 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
 
+    # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
     if (test_metadata.test.autotest.test_args and
         'resultdb_settings' in test_metadata.test.autotest.test_args):
-      api.cros_resultdb.upload(test_metadata.test.autotest.test_args,
-                               interface.get_results_directory(test_metadata))
+      api.cros_resultdb.upload_chromium_tests(
+          test_metadata.test.autotest.test_args,
+          interface.get_results_directory(test_metadata))
+    elif RESULTDB_EXPERIMENT in api.cros_infra_config.experiments:
+      api.cros_resultdb.upload_chromeos_tests(
+          base_dir=interface.get_results_directory(test_metadata))
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
@@ -388,10 +395,12 @@ def GenTests(api):
   _gs_root = "gs://bucket/foo/bar"
   _sync_subdir = "synchronous_subdir"
 
-  def _set_build_id(bid, tags=None):
+  def _set_build(bid, tags=None, experiments=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
-    return api.buildbucket.build(build_pb2.Build(id=bid, tags=bb_tags))
+    return api.buildbucket.ci_build(build_id=bid, tags=bb_tags,
+                                    experiments=experiments, project='chromeos',
+                                    bucket='test_runner', builder='test_runner')
 
   def _build_with_execution_timeout(timeout_s):
     # NB: The input Build does not have start_time set, because buildbucket has
@@ -633,7 +642,22 @@ def GenTests(api):
 
   yield api.test(
       'success',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb',
+      _set_build(bid=42, experiments=[RESULTDB_EXPERIMENT], tags={
+          'label-board': 'eve',
+          'build': 'eve-cq/R11-123.45'
+      }),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -645,7 +669,7 @@ def GenTests(api):
 
   yield api.test(
       'success_multi_duts',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties_multiduts(),
       api.step_data(
@@ -777,7 +801,7 @@ def GenTests(api):
 
   yield api.test(
       'link_to_all_archived_logs',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -796,7 +820,7 @@ def GenTests(api):
 
   yield api.test(
       'get_results_crash',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -810,7 +834,7 @@ def GenTests(api):
 
   yield api.test(
       'results_summary',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -840,7 +864,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_prejob_with_missing_failures_in_result',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -850,7 +874,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_run-test_with_missing_failures_in_result',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -861,7 +885,7 @@ def GenTests(api):
 
   yield api.test(
       'successful_run-test_with_multiple_tests',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties_multitest(),
       _mock_load_step(test_id='multi_test_2'),
@@ -874,7 +898,7 @@ def GenTests(api):
 
   yield api.test(
       'failed_fetch-crashes',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -889,7 +913,7 @@ def GenTests(api):
       crashes_rtd_only=["foobar.meta"])
   yield api.test(
       'successful_fetch-crashes-with-missed-crashes',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -912,7 +936,7 @@ def GenTests(api):
 
   yield api.test(
       'skip_result_flow_pubsub_due_to_missing_topic',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(
@@ -935,7 +959,7 @@ def GenTests(api):
 
   yield api.test(
       'skip_result_flow_pubsub_due_to_missing_project',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       api.properties(
           TestRunnerProperties(
@@ -964,17 +988,8 @@ def GenTests(api):
       },
   })
   yield api.test(
-      'chormium_test_upload_result_to_rdb',
-      api.buildbucket.ci_build(),
-      api.buildbucket.build(
-          build_pb2.Build(
-              id=42, builder=builder_pb2.BuilderID(
-                  project='chromeos',
-                  bucket='test_runner',
-                  builder='test_runner',
-              ), infra=build_pb2.BuildInfra(
-                  resultdb=build_pb2.BuildInfra.ResultDB(
-                      invocation='invocations/build:%d' % 42)))),
+      'chromium_test_upload_result_to_rdb',
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties_rdb('resultdb_settings=%s' %
                               base64.b64encode(rdb_settings)),
@@ -985,7 +1000,7 @@ def GenTests(api):
       _successful_logs_archive_step(),
       api.post_process(
           post_process.StepCommandContains,
-          'execution steps.original_test.upload chromium test result '
+          'execution steps.original_test.upload chromium test results '
           'to rdb.run rdb',
           [
               '[START_DIR]/cipd/result_adapter/result_adapter',
@@ -998,22 +1013,13 @@ def GenTests(api):
       ),
       api.post_process(
           post_process.MustRun,
-          'execution steps.original_test.upload chromium test result to rdb.'
+          'execution steps.original_test.upload chromium test results to rdb.'
           'run rdb'),
   )
 
   yield api.test(
-      'chormium_test_upload_result_to_rdb_failure',
-      api.buildbucket.ci_build(),
-      api.buildbucket.build(
-          build_pb2.Build(
-              id=42, builder=builder_pb2.BuilderID(
-                  project='chromeos',
-                  bucket='test_runner',
-                  builder='test_runner',
-              ), infra=build_pb2.BuildInfra(
-                  resultdb=build_pb2.BuildInfra.ResultDB(
-                      invocation='invocations/build:%d' % 42)))),
+      'chromium_test_upload_result_to_rdb_failure',
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties_rdb('resultdb_settings=%s' %
                               base64.b64encode(rdb_settings)),
@@ -1023,11 +1029,11 @@ def GenTests(api):
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       api.step_data(
-          'execution steps.original_test.upload chromium test result '
+          'execution steps.original_test.upload chromium test results '
           'to rdb.run rdb', retcode=1),
       api.post_process(
-          post_process.StepFailure, 'execution steps.'
-          'original_test.upload chromium test result to rdb'),
+          post_process.StepWarning, 'execution steps.'
+          'original_test.upload chromium test results to rdb'),
       api.post_process(
           post_process.MustRun,
           'execution steps.Phosphorus: remove autotest results dir'),
@@ -1035,7 +1041,7 @@ def GenTests(api):
 
   yield api.test(
       'dut_topology_experiment_flag',
-      _set_build_id(bid=42),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       api.properties(

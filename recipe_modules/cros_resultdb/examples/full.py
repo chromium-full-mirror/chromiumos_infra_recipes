@@ -13,14 +13,18 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/properties',
     'cros_resultdb',
+    'cros_tags',
 ]
 
 
 def RunSteps(api):
-  api.cros_resultdb.upload(api.properties.get('test_args'), 'dummy-results-dir')
+  api.cros_resultdb.upload_chromium_tests(
+      api.properties.get('test_args'), 'dummy-results-dir')
+  api.cros_resultdb.upload_chromeos_tests('dummy-result-dir')
   if 'result_adapter_cached' in api.properties:
-    api.cros_resultdb.upload(
+    api.cros_resultdb.upload_chromium_tests(
         api.properties.get('test_args'), 'dummy-results-dir')
+    api.cros_resultdb.upload_chromeos_tests('dummy-result-dir')
 
 
 def GenTests(api):
@@ -35,13 +39,17 @@ def GenTests(api):
 
   yield api.test(
       'basic_tast',
-      api.buildbucket.ci_build(),
+      api.buildbucket.ci_build(
+          tags=api.cros_tags.tags(**{
+              'label-board': 'eve',
+              'build': 'eve-cq/R11-123.45'
+          })),
       api.properties(test_args='resultdb_settings=%s' %
                      base64.b64encode(rdb_settings)),
       api.post_process(post_process.StepSuccess,
-                       'upload chromium test result to rdb'),
+                       'upload chromium test results to rdb'),
       api.post_process(post_process.MustRun,
-                       'upload chromium test result to rdb.run rdb'),
+                       'upload chromium test results to rdb.run rdb'),
   )
 
   rdb_settings = api.json.dumps({
@@ -59,9 +67,9 @@ def GenTests(api):
       api.properties(test_args='resultdb_settings=%s' %
                      base64.b64encode(rdb_settings)),
       api.post_process(post_process.StepSuccess,
-                       'upload chromium test result to rdb'),
+                       'upload chromium test results to rdb'),
       api.post_process(post_process.MustRun,
-                       'upload chromium test result to rdb.run rdb'),
+                       'upload chromium test results to rdb.run rdb'),
   )
 
   yield api.test(
@@ -69,7 +77,7 @@ def GenTests(api):
       api.buildbucket.ci_build(),
       api.properties(test_args='resultdb_settings=%s' %
                      base64.b64encode(rdb_settings)),
-      api.step_data('upload chromium test result to rdb.run rdb', retcode=1),
+      api.step_data('upload chromium test results to rdb.run rdb', retcode=1),
   )
 
   yield api.test(
@@ -79,10 +87,10 @@ def GenTests(api):
           result_adapter_cached=True,
           test_args='resultdb_settings=%s' % base64.b64encode(rdb_settings)),
       api.post_process(post_process.StepSuccess,
-                       'upload chromium test result to rdb'),
+                       'upload chromium test results to rdb'),
       api.post_process(
           post_process.DoesNotRun,
-          'upload chromium test result to rdb (2).ensure result_adapter'),
+          'upload chromium test results to rdb (2).ensure result_adapter'),
       api.post_process(post_process.MustRun,
-                       'upload chromium test result to rdb.run rdb'),
+                       'upload chromium test results to rdb.run rdb'),
   )

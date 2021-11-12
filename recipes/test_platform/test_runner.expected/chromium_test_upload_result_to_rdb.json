@@ -9,7 +9,7 @@
       "@@@STEP_LOG_LINE@request@      \"keyvals\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"key1\": \"value1\"@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"testArgs\": \"foo=bar\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"testArgs\": \"resultdb_settings=eyJiYXNlX3RhZ3MiOiBbInRlc3Rfc3VpdGU6bGFjcm9zX2FsbF90YXN0X3Rlc3RzIl0sICJiYXNlX3ZhcmlhbnQiOiB7InRlc3Rfc3VpdGUiOiAibGFjcm9zX2FsbF90YXN0X3Rlc3RzIn0sICJyZXN1bHRfZm9ybWF0IjogInRhc3QifQ==\", @@@",
       "@@@STEP_LOG_LINE@request@      \"displayName\": \"fancy_name\", @@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"dummy_name\", @@@",
       "@@@STEP_LOG_LINE@request@      \"isClientTest\": true@@@",
@@ -57,10 +57,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "execution steps"
   },
   {
     "cmd": [],
@@ -167,8 +164,7 @@
     "cmd": [],
     "name": "execution steps.original_test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -448,7 +444,7 @@
       "@@@STEP_LOG_LINE@request@      \"key1\": \"value1\", @@@",
       "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"testArgs\": \"foo=bar\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"testArgs\": \"resultdb_settings=eyJiYXNlX3RhZ3MiOiBbInRlc3Rfc3VpdGU6bGFjcm9zX2FsbF90YXN0X3Rlc3RzIl0sICJiYXNlX3ZhcmlhbnQiOiB7InRlc3Rfc3VpdGUiOiAibGFjcm9zX2FsbF90YXN0X3Rlc3RzIn0sICJyZXN1bHRfZm9ybWF0IjogInRhc3QifQ==\", @@@",
       "@@@STEP_LOG_LINE@request@    \"displayName\": \"fancy_name\", @@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"dummy_name\", @@@",
       "@@@STEP_LOG_LINE@request@    \"isClientTest\": true@@@",
@@ -501,7 +497,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"containerImageInfo\": {}, \n  \"dutHostnames\": [\n    \"fake_host\"\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:26Z\"\n}",
+    "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"resultdb_settings=eyJiYXNlX3RhZ3MiOiBbInRlc3Rfc3VpdGU6bGFjcm9zX2FsbF90YXN0X3Rlc3RzIl0sICJiYXNlX3ZhcmlhbnQiOiB7InRlc3Rfc3VpdGUiOiAibGFjcm9zX2FsbF90YXN0X3Rlc3RzIn0sICJyZXN1bHRfZm9ybWF0IjogInRhc3QifQ==\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"containerImageInfo\": {}, \n  \"dutHostnames\": [\n    \"fake_host\"\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:26Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -536,9 +532,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"crashesRtdOnly\": [@@@",
-      "@@@STEP_LOG_LINE@response@    \"foobar.meta\"@@@",
-      "@@@STEP_LOG_LINE@response@  ], @@@",
       "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -575,8 +568,7 @@
     "cmd": [],
     "name": "execution steps.original_test.ensure all crashes were fetched",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -742,6 +734,99 @@
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"dummy-results-dir\", \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.original_test.upload chromium test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.original_test.upload chromium test results to rdb.ensure result_adapter",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_adapter",
+      "-ensure-file",
+      "infra/tools/result_adapter/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.upload chromium test results to rdb.ensure result_adapter.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-var",
+      "test_suite:lacros_all_tast_tests",
+      "-tag",
+      "test_suite:lacros_all_tast_tests",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
+      "-artifact-directory",
+      "dummy-results-dir/autoserv_test",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.upload chromium test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
