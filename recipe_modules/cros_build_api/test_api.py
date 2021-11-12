@@ -285,7 +285,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         ])
     responses['UprevVersionedPackage'] = jsonify(responses=[
         dict(
-            version='1.2.3', modified_ebuilds=[
+            version='1.2.3',
+            additional_commit_info='additional info to be rendered on uprev cl.',
+            modified_ebuilds=[
                 {
                     'path': self.src_path('src/overlay/foo.ebuild')
                 },
