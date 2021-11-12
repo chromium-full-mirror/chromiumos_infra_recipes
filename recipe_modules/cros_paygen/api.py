@@ -727,13 +727,18 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     bucket = 'staging' if is_staging else 'release'
     builder = 'staging-paygen' if is_staging else 'paygen'
     return self.m.buildbucket.schedule_request(
-        bucket=bucket, builder=builder, properties={
+        bucket=bucket,
+        builder=builder,
+        properties={
             'request':
                 MessageToDict(generation_request),
             'autoupdate_test_configs': [
                 MessageToDict(x) for x in test_requests or {}
             ]
-        })
+        },
+        tags=self.m.buildbucket.tags(
+            parent_buildbucket_id=str(self.m.buildbucket.build.id)),
+    )
 
   def create_paygen_test_config(self, tgt_payload, delta_type, src_version=None,
                                 src_channel=None, applicable_models=None):

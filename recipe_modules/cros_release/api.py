@@ -176,7 +176,12 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'full_payload_test_override': 'RESPECT_CONFIG',
       }
       request = self.m.buildbucket.schedule_request(
-          builder=pg_orch_builder, bucket=bucket, properties=paygen_properties)
+          builder=pg_orch_builder,
+          bucket=bucket,
+          properties=paygen_properties,
+          tags=self.m.buildbucket.tags(
+              parent_buildbucket_id=str(self.m.buildbucket.build.id)),
+      )
       builds = self.m.buildbucket.run(
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
