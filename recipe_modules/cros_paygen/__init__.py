@@ -14,6 +14,7 @@ DEPS = [
     'cros_infra_config',
     'cros_sdk',
     'cros_storage',
+    'cros_test_plan',
     'cros_version',
     'skylab',
 ]

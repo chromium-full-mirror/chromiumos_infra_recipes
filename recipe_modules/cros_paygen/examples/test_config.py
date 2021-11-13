@@ -6,24 +6,30 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_paygen',
     'cros_storage',
+    'gitiles',
 ]
 
 from PB.chromiumos.common import DeltaType, ImageType
+from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
+
+PROPERTIES = TestPaygenProperties
 
 
-def RunSteps(api):
+def RunSteps(api, properties):
   test_artifact_root = api.cros_storage.ArtifactRoot('test-bucket',
-                                                     'canary-channel', 'zork',
+                                                     'canary-channel',
+                                                     properties.builder_name,
                                                      '13337.0.1')
   test_unsigned_image = (
       api.cros_storage.UnsignedImage(test_artifact_root,
                                      ImageType.Value('IMAGE_TYPE_RECOVERY'),
                                      'R82'))
   src_test_artifact_root = api.cros_storage.ArtifactRoot(
-      'test-bucket', 'canary-channel', 'zork', '13336.0.1')
+      'test-bucket', 'canary-channel', properties.builder_name, '13336.0.1')
   src_test_unsigned_image = (
       api.cros_storage.UnsignedImage(src_test_artifact_root,
                                      ImageType.Value('IMAGE_TYPE_RECOVERY'),
@@ -51,6 +57,10 @@ def RunSteps(api):
   full_test_config = api.cros_paygen.create_paygen_test_config(
       tgt_payload=unsigned_full_payload, delta_type=DeltaType.Value('OMAHA'),
       src_version='13336.0.1', src_channel='canary-channel')
+
+  if properties.expected_test_build_target:
+    api.assertions.assertEqual(full_test_config.build_target_name,
+                               properties.expected_test_build_target)
 
   # The source payload does not exist.
   with api.assertions.assertRaises(api.step.StepFailure):
@@ -81,6 +91,22 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.properties(builder_name='zork', expected_test_build_target='zork'),
+      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.cros_storage.test_listing(
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      api.cros_storage.test_listing(
+          'discover gs artifacts (2).gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+  )
+
+  yield api.test(
+      'variant',
+      api.properties(builder_name='atlas-kernelnext',
+                     expected_test_build_target='atlas'),
+      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),

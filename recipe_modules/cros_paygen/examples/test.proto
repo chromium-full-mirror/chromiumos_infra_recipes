@@ -17,6 +17,10 @@ message TestPaygenProperties {
 
   // Delta type requested.
   string delta_type = 3;
+
+  // Builder name to expect in the test config. Potentially different than
+  // build_name because of variant boards.
+  string expected_test_build_target = 4;
 }
 
 message GetRequestTestInputProperties {

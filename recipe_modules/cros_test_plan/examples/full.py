@@ -14,10 +14,42 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_test_plan',
+    'gitiles',
 ]
+
+TEST_TARGET_TEST_REQUIREMENTS_DATA = '''{
+    "perTargetTestRequirements": [
+        {
+            "targetCriteria": {
+                "buildTarget": "atlas-kernelnext",
+                "builderName": "atlas-kernelnext-release-main"
+            },
+            "hwTestCfg": {
+                "hwTest": [
+                    {
+                        "common": {
+                            "displayName": "atlas-kernelnext-release-main.hw.bvt-tast-cq",
+                            "critical": false,
+                            "testSuiteGroups": [
+                                {
+                                    "testSuiteGroup": "default-tast-suites"
+                                }
+                            ]
+                        },
+                        "suite": "bvt-tast-cq",
+                        "skylabBoard": "atlas",
+                        "hwTestSuiteType": "TAST",
+                        "pool": "DUT_POOL_QUOTA"
+                    }
+                 ]
+            }
+        }
+    ]
+}'''
 
 
 def RunSteps(api):
+  api.cros_test_plan.get_target_test_requirements_file()
   api.cros_test_plan.generate([Build()], [GerritChange()],
                               GitilesCommit(id='1234abcd'))
   _ = api.cros_test_plan.test_api.all_non_critical_generate_test_plan_response
@@ -26,6 +58,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.gitiles.get_file(TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.buildbucket.try_build(
           project='chromeos', bucket='cq',
           builder='lts-cq-release-R90-13816.B-orchestrator'),

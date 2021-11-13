@@ -38,7 +38,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "ls",
-      "gs://test-bucket/canary-channel/zork/13336.0.1/**"
+      "gs://test-bucket/canary-channel/atlas-kernelnext/13336.0.1/**"
     ],
     "infra_step": true,
     "name": "discover gs artifacts.gsutil list",
@@ -144,7 +144,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "ls",
-      "gs://test-bucket/canary-channel/zork/13336.0.1/**"
+      "gs://test-bucket/canary-channel/atlas-kernelnext/13336.0.1/**"
     ],
     "infra_step": true,
     "name": "discover gs artifacts (2).gsutil list",
@@ -250,7 +250,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "ls",
-      "gs://test-bucket/canary-channel/zork/13336.0.1/**"
+      "gs://test-bucket/canary-channel/atlas-kernelnext/13336.0.1/**"
     ],
     "infra_step": true,
     "name": "discover gs artifacts (3).gsutil list",

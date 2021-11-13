@@ -38,9 +38,66 @@ def _read_test_file(filename):
     return f.read().strip()
 
 
+TEST_TARGET_TEST_REQUIREMENTS_DATA = '''{
+    "perTargetTestRequirements": [
+        {
+            "targetCriteria": {
+                "buildTarget": "atlas-kernelnext",
+                "builderName": "atlas-kernelnext-release-main"
+            },
+            "hwTestCfg": {
+                "hwTest": [
+                    {
+                        "common": {
+                            "displayName": "atlas-kernelnext-release-main.hw.bvt-tast-cq",
+                            "critical": false,
+                            "testSuiteGroups": [
+                                {
+                                    "testSuiteGroup": "default-tast-suites"
+                                }
+                            ]
+                        },
+                        "suite": "bvt-tast-cq",
+                        "skylabBoard": "atlas",
+                        "hwTestSuiteType": "TAST",
+                        "pool": "DUT_POOL_QUOTA"
+                    }
+                ]
+            }
+        },
+        {
+            "targetCriteria": {
+                "buildTarget": "zork",
+                "builderName": "zork-release-main"
+            },
+            "hwTestCfg": {
+                "hwTest": [
+                    {
+                        "common": {
+                            "displayName": "zork-release-main.hw.bvt-tast-cq",
+                            "critical": false,
+                            "testSuiteGroups": [
+                                {
+                                    "testSuiteGroup": "default-tast-suites"
+                                }
+                            ]
+                        },
+                        "suite": "bvt-tast-cq",
+                        "skylabBoard": "zork",
+                        "hwTestSuiteType": "TAST",
+                        "pool": "DUT_POOL_QUOTA"
+                    }
+                ]
+            }
+        }
+    ]
+}'''
+
+
 class PaygenTestApi(recipe_test_api.RecipeTestApi):
   """Helper class for testing Chrome OS Paygen Recipes."""
 
+  TEST_TARGET_TEST_REQUIREMENTS_DATA = TEST_TARGET_TEST_REQUIREMENTS_DATA
   EXAMPLE_PAYGEN_JSON = _read_test_file('test_paygen.json')
   EXAMPLE_EMPTY_JSON = "{}"
   EXAMPLE_NOT_EVEN_JSON = "dawiojdoiawjdioawjdow"

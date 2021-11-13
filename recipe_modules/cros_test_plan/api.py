@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -16,7 +17,6 @@ from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
-
 
 class CrosTestPlanApi(recipe_api.RecipeApi):
   """A module for generating and parsing test plans."""
@@ -35,6 +35,33 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     self._test_planner_cipd_ref = (
         self._properties.test_plan_generator_cipd_ref.encode('utf-8') or
         default_ref)
+
+  def get_target_test_requirements_file(self):
+    """Fetch contents of target test requirements file.
+
+    Returns:
+      JSON structure of target test requirements.
+    """
+    with self.m.step.nest('fetch target test requirements file'):
+      source_gitiles_repo = (
+          str(self._properties.source_gitiles_repo)
+          if self._properties.source_gitiles_repo else 'chromeos/infra/config')
+      source_gitiles_branch = (
+          str(self._properties.source_gitiles_branch)
+          if self._properties.source_gitiles_branch else 'main')
+      target_test_requirements_path = (
+          str(self._properties.target_test_requirements_path)
+          if self._properties.target_test_requirements_path else
+          'testingconfig/generated/target_test_requirements.binaryproto')
+
+      data = self.m.gitiles.get_file(
+          'chrome-internal.googlesource.com', source_gitiles_repo,
+          target_test_requirements_path,
+          ref=self.m.git.get_branch_refspec(source_gitiles_branch),
+          public=False)
+      if data:
+        return json.loads(data)
+      return None
 
   def generate(self, builds, gerrit_changes, manifest_commit, name=None):
     """Generate test plan.

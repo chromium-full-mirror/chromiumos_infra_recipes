@@ -11,6 +11,8 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'cros_source',
+    'git',
+    'gitiles',
 ]
 
 from PB.recipe_modules.chromeos.cros_test_plan.cros_test_plan import (

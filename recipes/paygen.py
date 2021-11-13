@@ -16,6 +16,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_storage',
+    'gitiles',
     'src_state',
     'workspace_util',
 ]
@@ -122,6 +123,7 @@ def GenTests(api):
 
   yield api.test(
       'with-testing',
+      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.properties(
           PaygenProperties(
               request=api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],

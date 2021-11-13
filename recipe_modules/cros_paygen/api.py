@@ -143,6 +143,10 @@ class PaygenTestConfig(object):
         'unique_name_suffix': self._unique_name_suffix,
     }
 
+  @property
+  def build_target_name(self):
+    return self._build_target_name
+
   def _get_test_plan(self):
     """A test_platform TestPlan proto with the enumerated test request."""
     autotest_invocation = Request.Enumeration.AutotestInvocation(
@@ -272,8 +276,6 @@ class PaygenTestConfig(object):
     sw_dep = params.software_dependencies.add()
     sw_dep.chromeos_build = self._chromeos_build_name
 
-    # TODO(crbug.com/1122854): Some non-unibuild boards run on a DUT with a
-    # different board label (e.g. eve-arc-r maps to eve).
     params.software_attributes.build_target.name = self._build_target_name
 
     params.metadata.test_metadata_url = self._tgt_archive_uri
@@ -801,8 +803,22 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     tgt_archive_uri = tgt_image.archive_uri
     src_artifact_uri = src_image._artifact_root.uri
 
+    # Fetch target test requirements to get the proper build target.
+    # We can't take the build target directly from the artifact because it won't
+    # necessarily match what CTP expects (e.g. atlas-kernelnext vs atlas).
+    test_build_target = build_target_name
+    target_test_reqs = self.m.cros_test_plan.get_target_test_requirements_file()
+    for target_requirements in target_test_reqs['perTargetTestRequirements']:
+      if target_requirements.get('targetCriteria',
+                                 {}).get('buildTarget',
+                                         '') == build_target_name:
+        hw_test_cfg = target_requirements.get('hwTestCfg', {}).get('hwTest', [])
+        if hw_test_cfg:
+          if 'skylabBoard' in hw_test_cfg[0]:
+            test_build_target = hw_test_cfg[0]['skylabBoard']
+
     return PaygenTestConfig(
-        build_target_name=build_target_name, tgt_channel=tgt_channel,
+        build_target_name=test_build_target, tgt_channel=tgt_channel,
         tgt_payload_uri=tgt_payload.uri, tgt_archive_uri=tgt_archive_uri,
         tgt_version=tgt_version, src_payload_uri=src_payload.uri,
         src_artifact_uri=src_artifact_uri, src_version=src_version,
