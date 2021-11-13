@@ -1086,27 +1086,22 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#95)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#97)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#118)(self):**
+&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#111)(build_config, kind, value):**
 
-&mdash; **def [create\_build\_config](/recipe_modules/build_reporting/api.py#213)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#126)(self):**
 
-Create a BuildConfig instance that can be .published().
-
-Return:
-   _MessageDelegate wrapping BuildConfig instance
-
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#201)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#205)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#269)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#306)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1119,9 +1114,9 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#122)(self):**
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#130)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#153)(self, build_report):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#155)(self, build_report):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1134,9 +1129,9 @@ Args:
 Return:
   Reference to input message
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#233)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#270)(self, artifact_type, gs_uri, sha256, created=None):**
 
-Publish information about a created artifact.
+Publish and merge information about a created artifact.
 
 Args:
   artifact_type: BuildReport.BuildArtifact.Type for artifact
@@ -1150,23 +1145,45 @@ Throws:
 Return:
   Nothing
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#225)(self, status):**
+&mdash; **def [publish\_config](/recipe_modules/build_reporting/api.py#225)(self, build_target, branch, builder_config):**
 
-Publish build status.
+Publish and merge basic build configuration.
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#110)(self):**
+Args:
+  build_target (str): The build target (e.g. atlas).
+  branch (str): The branch name (e.g. release-R97-14324.B).
+  builder_config (BuilderConfig): The config sourced from infra/config.
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#114)(self):**
+Returns:
+  None
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#126)(self, build_type):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#217)(self, status):**
+
+Publish and merge build status.
+
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#246)(self, gtv_response):**
+
+Publish and merge versions, sourced from a GetTargetVersionsRequest.
+
+Args:
+  gtv_response (GetTargetVersionsResponse): Response to a build api request.
+
+Return:
+  Nothing
+
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#118)(self):**
+
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#122)(self):**
+
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#134)(self, build_type):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#104)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#106)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#304)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#341)(self, step_name):**
 
 Create a context manager to automatically send out step status.
 
@@ -7768,15 +7785,15 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#22)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#42)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#46)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#31)(api):**
+&mdash; **def [RunSteps](/recipes/build_release.py#32)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

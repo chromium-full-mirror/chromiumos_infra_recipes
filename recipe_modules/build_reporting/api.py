@@ -33,6 +33,8 @@ from recipe_engine.recipe_api import InfraFailure, StepFailure
 # TODO(b/200713946): Lookup the builder region and use that endpoint
 PUBSUB_ENDPOINT = "us-central1-pubsub.googleapis.com:443"
 
+BuildConfig = BuildReport.BuildConfig
+
 
 def default_project(staging):
   """Default cloud project containing the pubsub topic to send to."""
@@ -106,6 +108,12 @@ class BuildReportingApi(recipe_api.RecipeApi):
     """Convert a BuildReport.StepDetails.StepName to a canonical string."""
     return BuildReport.StepDetails.StepName.Name(step_name)
 
+  @staticmethod
+  def add_version_msg(build_config, kind, value):
+    new_ver = build_config.versions.add()
+    new_ver.kind = kind
+    new_ver.value = value
+
   # property accessors
   @property
   def pubsub_project(self):
@@ -133,12 +141,6 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     self._build_type = build_type
 
-  def _MakeBuildReport(self):
-    """Create new instance of BuildReport with id populated."""
-    build_report = BuildReport()
-    build_report.buildbucket_id = self.m.buildbucket.build.id
-    return build_report
-
   def __init__(self, properties, *args, **kwargs):
     super(BuildReportingApi, self).__init__(*args, **kwargs)
     self._properties = properties
@@ -164,6 +166,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
     """
     if not isinstance(build_report, BuildReport):
       raise TypeError("Can only publish BuildReport messages.")
+
+    build_report.buildbucket_id = self.m.buildbucket.build.id
 
     # If we haven't sent preamble info yet, add it to the first message.
     if not self._build_preamble_sent:
@@ -204,30 +208,63 @@ class BuildReportingApi(recipe_api.RecipeApi):
     Return:
       _MessageDelegate wrapping BuildReport instance
     """
-    build_report = self._MakeBuildReport()
+    build_report = BuildReport()
     return _MessageDelegate(
         build_report,
         lambda: self.publish(build_report),
     )
 
-  def create_build_config(self):
-    """Create a BuildConfig instance that can be .published().
-
-    Return:
-       _MessageDelegate wrapping BuildConfig instance
-    """
-    build_report = self._MakeBuildReport()
-    return _MessageDelegate(
-        build_report.config,
-        lambda: self.publish(build_report),
-    )
-
   def publish_status(self, status):
-    """Publish build status."""
+    """Publish and merge build status."""
     build_status = BuildReport.BuildStatus()
     build_status.value = status
-    build_report = self._MakeBuildReport()
+    build_report = BuildReport()
     build_report.status.CopyFrom(build_status)
+    self.publish(build_report)
+
+  def publish_config(self, build_target, branch, builder_config):
+    """Publish and merge basic build configuration.
+
+    Args:
+      build_target (str): The build target (e.g. atlas).
+      branch (str): The branch name (e.g. release-R97-14324.B).
+      builder_config (BuilderConfig): The config sourced from infra/config.
+
+    Returns:
+      None
+    """
+    # TODO(b/206154671): Use these, add models list.
+    _ = build_target
+    _ = builder_config
+
+    build_report = BuildReport()
+    config = build_report.config
+
+    config.branch.name = branch
+    self.publish(build_report)
+
+  def publish_versions(self, gtv_response):
+    """Publish and merge versions, sourced from a GetTargetVersionsRequest.
+
+    Args:
+      gtv_response (GetTargetVersionsResponse): Response to a build api request.
+
+    Return:
+      Nothing
+    """
+    build_report = BuildReport()
+    config = build_report.config
+    BuildReportingApi.add_version_msg(config,
+                                      BuildConfig.VERSION_KIND_ASH_CHROME,
+                                      gtv_response.chrome_version)
+    # TODO(b/206154671): enable once proto rolls.
+    #    BuildReportingApi.add_version_msg(config, BuildConfig.VERSION_KIND_MILESTONE,
+    #                                      gtv_response.milestone_version)
+    #    BuildReportingApi.add_version_msg(config, BuildConfig.VERSION_KIND_PLATFORM,
+    #                                      gtv_response.platform_version)
+    BuildReportingApi.add_version_msg(config, BuildConfig.VERSION_KIND_ARC,
+                                      gtv_response.android_version)
+
     self.publish(build_report)
 
   def publish_build_artifact(
@@ -237,7 +274,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
       sha256,
       created=None,
   ):
-    """Publish information about a created artifact.
+    """Publish and merge information about a created artifact.
 
     Args:
       artifact_type: BuildReport.BuildArtifact.Type for artifact
@@ -256,7 +293,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     if not gs_uri.startswith("gs://"):
       raise ValueError("GS bucket URI should start with gs:// prefix")
 
-    build_report = self._MakeBuildReport()
+    build_report = BuildReport()
     artifact = build_report.artifacts.add()
 
     artifact.type = artifact_type
@@ -284,7 +321,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     Return:
        _MessageDelegate wrapping StepDetails instance
     """
-    build_report = self._MakeBuildReport()
+    build_report = BuildReport()
 
     step_details = build_report.steps.info[self.step_as_str(step_name)]
     step_details.order = self._step_order()

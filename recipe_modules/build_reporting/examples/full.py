@@ -10,7 +10,7 @@ DEPS = [
     'build_reporting',
 ]
 
-# infra/proto/src/chromiumos/builder_report.proto
+from PB.chromite.api.packages import GetTargetVersionsResponse
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -27,17 +27,20 @@ def RunSteps(api):
   api.build_reporting.publish_status(BuildStatus.RUNNING)
 
   # publish config information about the build
-  config = api.build_reporting.create_build_config()
+  build_report = api.build_reporting.create_build_report()
+  config = build_report.config
   config.branch.name = "release-R12-12345.B"
   config.release.milestone = 12
   config.release.build = "12345.123.0"
+
   config.release.channels.append(Channel.CHANNEL_BETA)
   config.release.channels.append(Channel.CHANNEL_DEV)
   config.release.channels.append(Channel.CHANNEL_CANARY)
+
   config.models.add().name = "fooble"
   config.models.add().name = "barble"
   config.models.add().name = "bazble"
-  config.publish()
+  build_report.publish()
 
   # build some stuff
   step_info = api.build_reporting.create_step_info(
@@ -56,6 +59,14 @@ def RunSteps(api):
       "gs://chromeos-image-archive/garble.tgz",
       "3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60",
   )
+
+  # Publish the versions.
+  vers = GetTargetVersionsResponse(
+      android_version='5812377', android_branch_version='git_nyc',
+      android_target_version='cheets', chrome_version='78.0.3877.0',
+      full_version='R78-12438.0.0', milestone_version='78',
+      platform_version='12438.0.0')
+  api.build_reporting.publish_versions(vers)
 
   # ...
 

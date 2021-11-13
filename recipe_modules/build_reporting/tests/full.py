@@ -56,12 +56,13 @@ def RunSteps(api):
   )
 
   api.build_reporting.publish_status(BuildStatus.RUNNING)
+  api.build_reporting.publish_config('atlas', 'release-R12-12345.B', None)
 
   # check that we can create a raw build report instance
   build_report = api.build_reporting.create_build_report()
 
   # publish config information about the build
-  config = api.build_reporting.create_build_config()
+  config = build_report.config
   config.branch.name = "release-R12-12345.B"
   config.release.milestone = 12
   config.release.build = "12345.123.0"
@@ -72,7 +73,7 @@ def RunSteps(api):
   config.models.add().name = "fooble"
   config.models.add().name = "barble"
   config.models.add().name = "bazble"
-  config.publish()
+  build_report.publish()
 
   # build some stuff
   step_info = api.build_reporting.create_step_info(

@@ -13,6 +13,7 @@ DEPS = [
     'build_menu',
     'build_reporting',
     'cros_release',
+    'cros_source',
     'test_util',
 ]
 
@@ -36,17 +37,22 @@ def RunSteps(api):
     with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
       with api.build_menu.configure_builder() as config, \
           api.build_menu.setup_workspace_and_chroot():
+        api.build_reporting.publish_config(api.build_menu.build_target,
+                                           api.cros_source.manifest_branch,
+                                           config)
         return DoRunSteps(api, config)
 
 
 def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
-  packages = env_info.packages
+
+  # After the sysroot is setup we have the package versions determined.
+  api.build_reporting.publish_versions(api.build_menu.target_versions)
 
   failing_build_exception = None
   try:
     api.build_menu.bootstrap_sysroot(config)
-    if api.build_menu.install_packages(config, packages):
+    if api.build_menu.install_packages(config, env_info.packages):
       api.build_menu.build_and_test_images(
           config, include_version=True,
           builder_path_template='{builder_name}/{version}')
