@@ -20,11 +20,13 @@ DEPS = [
 def RunSteps(api):
   api.cros_resultdb.upload_chromium_tests(
       api.properties.get('test_args'), 'dummy-results-dir')
-  api.cros_resultdb.upload_chromeos_tests('dummy-result-dir')
+  api.cros_resultdb.upload_chromeos_tests(
+      'dummy-result-dir', 'gs://chromeos-test-logs/common-env/UUID/logs')
   if 'result_adapter_cached' in api.properties:
     api.cros_resultdb.upload_chromium_tests(
         api.properties.get('test_args'), 'dummy-results-dir')
-    api.cros_resultdb.upload_chromeos_tests('dummy-result-dir')
+    api.cros_resultdb.upload_chromeos_tests(
+        'dummy-result-dir', 'gs://chromeos-test-logs/common-env/UUID/logs')
 
 
 def GenTests(api):

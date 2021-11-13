@@ -57,13 +57,14 @@ class ResultDBCommand(recipe_api.RecipeApi):
       config = self.m.json.loads(rdb_settings)
       return self._upload(config, base_dir)
 
-  def upload_chromeos_tests(self, base_dir):
+  def upload_chromeos_tests(self, base_dir, stainless_url=None):
     """Wrapper for uploading Chrome OS tests to resultDB.
 
     Currently only supports Tast tests.
 
     Args:
       base_dir (string): The path of the base test results on the drone server.
+      stainless_url (string): Link to the Stainless logs for the test run.
     """
     with self.m.step.nest('upload test results to rdb'):
 
@@ -85,9 +86,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
           'result_format': 'tast',
           'base_variant': base_variant,
       }
-      return self._upload(config, base_dir)
+      return self._upload(config, base_dir, stainless_url)
 
-  def _upload(self, config, base_dir):
+  def _upload(self, config, base_dir, stainless_url=None):
     """Call the resultDB module to upload test result
 
     Args:
@@ -103,6 +104,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       base_dir - The path of the base test results on the drone server.
           For example, Chromium gtest result can be found at
           base_dir/autoserv_test/chromium/results.
+      stainless_url (string): Link to the Stainless logs for the test run.
     """
     assert config.get('result_format') in [
         'gtest', 'json', 'single', 'tast'
@@ -158,6 +160,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # Even rdb failed we should complete the test runner build, so that
     # the we could return the stainless log link to upstream builders.
     try:
+      if stainless_url:
+        self._upload_invocation_artifacts(stainless_url)
       return self.m.step('run rdb', cmd)
     except self.m.step.StepFailure:
       self.m.step.active_result.presentation.status = self.m.step.WARNING
@@ -175,3 +179,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
         pkgs.add_package('infra/tools/result_adapter/${platform}', version)
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._result_adapter = cipd_dir.join('result_adapter')
+
+  def _upload_invocation_artifacts(self, stainless_url):
+    """Upload artifacts associated with the entire invocation.
+
+    Args:
+      stainless_url (string): Link to the Stainless logs for the test run.
+    """
+    artifact = {'stainless_logs': {'contents': stainless_url}}
+    self.m.resultdb.upload_invocation_artifacts(artifact)

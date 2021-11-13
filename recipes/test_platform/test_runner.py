@@ -264,7 +264,8 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
           interface.get_results_directory(test_metadata))
     elif RESULTDB_EXPERIMENT in api.cros_infra_config.experiments:
       api.cros_resultdb.upload_chromeos_tests(
-          base_dir=interface.get_results_directory(test_metadata))
+          base_dir=interface.get_results_directory(test_metadata),
+          stainless_url=str(result.get_stainless_log_url()))
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
