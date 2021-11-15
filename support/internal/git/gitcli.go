@@ -111,7 +111,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	// This tool should probably be rewritten anyways.
 	args := []string{"apply", "--3way", "--ignore-whitespace", patchFile}
 	ignore_filetypes := []string{
-		"aiqb", "7z", "a", "bin", "binaryproto", "bmp", "bz2", "csbin", "ddc", "dll",
+		"7z", "aiqb", "a", "bin", "binaryproto", "bmp", "bz2", "csbin", "ddc", "dll",
 		"docx", "dv", "efi", "elf", "exe", "fw", "gif", "hex", "jar", "jpeg",
 		"jpg", "jsonproto", "lib", "mp3", "mp4", "ogg", "opus", "pcap", "pdf", "png", "pnvm",
 		"rar", "raw", "rtf", "sbin", "sfi", "so", "svg", "sys", "tlv", "ucode", "wav",
@@ -119,6 +119,14 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	}
 	for _, filetype := range ignore_filetypes {
 		args = append(args, "--exclude", "*."+filetype)
+	}
+	// Allow list certain extension-less files: b/205959262
+	// Git 2.34 was released recently (around 11/15/21) but has not yet fully
+	// propagated across the fleet.
+	// TODO(b/198542075): Delete this.
+	dirs := []string{"apl", "cml", "tgl", "whl", "glk", "skl", "aml", "kbl", "jsl"}
+	for _, dir := range dirs {
+		args = append(args, "--exclude", fmt.Sprintf("chromeos-base/%s-ucode-firmware-private/files/*", dir))
 	}
 	if err := runnerImpl.run(ctx, repoDir, &stdoutBuf, &stderrBuf, "git", args...); err != nil {
 		errStr := stderrBuf.String()
