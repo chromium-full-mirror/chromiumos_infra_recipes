@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import base64
-
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -13,7 +11,6 @@ from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.lab import license as license_pb2
-from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.taskstate import TaskState
@@ -136,20 +133,6 @@ class SkylabApi(recipe_api.RecipeApi):
             '{}:{}'.format(key, value) for key, value in tags.items()
         ]
         req.params.decorations.tags.extend(request_tags)
-        if uht.hw_test.hw_test_suite_type == HwTestCfg.TAST:
-          resultdb_settings = self.m.json.dumps({
-              'result_format': 'tast',
-              'base_variant': {
-                  # TODO(b/203419042): Remove browser terms once this CL lands
-                  # in prod.
-                  'device_type': uht.hw_test.skylab_board,
-                  'cros_img': image_path,
-                  'board': uht.hw_test.skylab_board,
-                  'build': image_path
-              }
-          })
-          req.params.decorations.test_args[
-              'resultdb_settings'] = base64.b64encode(resultdb_settings)
         if self._enable_retries:
           self._enable_test_retries(req)
         reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
