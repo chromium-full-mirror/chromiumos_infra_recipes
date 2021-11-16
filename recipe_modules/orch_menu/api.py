@@ -326,10 +326,16 @@ class OrchMenuApi(RecipeApi):
     if self._update_manifest_refs and ref:
       for external in False, True:
         manifest = self._get_manifest_info(external)
-        with self.m.step.nest('update %s ref %s' % (manifest.name, ref)), \
+        with self.m.step.nest('update %s ref %s' % (manifest.name, ref)) as pres, \
             self.m.context(cwd=manifest.path):
-          self.m.git.push(manifest.url,
-                          "%s:%s" % (manifest.gitiles_commit.id, ref))
+          try:
+            self.m.git.push(manifest.url,
+                            "%s:%s" % (manifest.gitiles_commit.id, ref))
+          except self.m.step.StepFailure:  #pragma: no cover
+            # Making this fail silently because newer snapshot orchestrator can
+            # update a ref before the older one.
+            self.m.step.active_result.presentation.status = self.m.step.WARNING
+            pres.text = 'failed to push. continuing'
 
   def _update_test_summary(self):
     """Updates criticality on the output test_summary"""
