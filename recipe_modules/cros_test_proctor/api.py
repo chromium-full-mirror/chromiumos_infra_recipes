@@ -12,11 +12,16 @@ from recipe_engine import recipe_api
 from . import structs
 
 from PB.chromite.api.test import VmTestRequest
+from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.test_vm import TestVmProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 
 TEST_SUMMARY_KEY = 'test_summary'
+SNAPSHOT_HWTEST_SUITES = [
+    'bvt-tast-cq', 'bvt-arc', 'bvt-tast-arc', 'bvt-inline'
+]
 
 
 class CrosTestProctorApi(recipe_api.RecipeApi):
@@ -184,25 +189,45 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     tast_unit.tast_vm_test_cfg.tast_vm_test.extend(filtered_tests)
     return tast_unit
 
+  def _filter_snapshot_hw_test_units(self, hw_test_units):
+    """Restrict to SNAPSHOT_HWTEST_SUITES only."""
+    filtered_hw_test_units = []
+    for test_unit in hw_test_units:
+      filtered_hw_test = []
+      for hw_test in test_unit.hw_test_cfg.hw_test:
+        if hw_test.suite in SNAPSHOT_HWTEST_SUITES:
+          filtered_hw_test.append(hw_test)
+
+      if filtered_hw_test:
+        filtered_hw_test_units.append(
+            HwTestUnit(common=test_unit.common,
+                       hw_test_cfg=HwTestCfg(hw_test=filtered_hw_test)))
+
+    return filtered_hw_test_units
+
   def _filter_snapshot_test_plan(self, test_plan):
-    """Filter tests out of test_plan selectively. See b/197748687.
+    """Filter tests out of test_plan selectively.
 
     Args:
       test_plan (GenerateTestPlanResponse): Test plan for the input builds.
 
     Returns:
-      GenerateTestPlanResponse of tests that run.
+      GenerateTestPlanResponse of tests that should run.
     """
-    # This filter will be more sophisticated soon to launch HW tests
-    # only on boards that have idle DUTs. For now, cut out all HW tests.
+    # Remove informational tast VM tests from test_plan.
     if self.m.buildbucket.build.builder.builder == "snapshot-orchestrator":
-      test_plan.ClearField("hw_test_units")
-      non_informational_units = [
-          self._get_non_informational(unit)
-          for unit in test_plan.direct_tast_vm_test_units
-      ]
-      test_plan.ClearField("direct_tast_vm_test_units")
-      test_plan.direct_tast_vm_test_units.extend(non_informational_units)
+      with self.m.step.nest('filter test plan') as pres:
+        non_informational_units = [
+            self._get_non_informational(unit)
+            for unit in test_plan.direct_tast_vm_test_units
+        ]
+        filtered_hw_test_units = self._filter_snapshot_hw_test_units(
+            test_plan.hw_test_units)
+        test_plan.ClearField("direct_tast_vm_test_units")
+        test_plan.ClearField("hw_test_units")
+        test_plan.direct_tast_vm_test_units.extend(non_informational_units)
+        test_plan.hw_test_units.extend(filtered_hw_test_units)
+        pres.logs['filtered test plan'] = str(test_plan)
 
     return test_plan
 
