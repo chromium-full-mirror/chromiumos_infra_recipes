@@ -262,7 +262,8 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
       api.cros_resultdb.upload_chromium_tests(
           test_metadata.test.autotest.test_args,
           interface.get_results_directory(test_metadata))
-    elif RESULTDB_EXPERIMENT in api.cros_infra_config.experiments:
+    # Don't try to upload if there are no results.
+    elif RESULTDB_EXPERIMENT in api.cros_infra_config.experiments and result:
       api.cros_resultdb.upload_chromeos_tests(
           base_dir=interface.get_results_directory(test_metadata),
           stainless_url=str(result.get_stainless_log_url()))
@@ -737,6 +738,7 @@ def GenTests(api):
 
   yield api.test(
       'prejob_crash',
+      _set_build(bid=42, experiments=[RESULTDB_EXPERIMENT]),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
