@@ -147,6 +147,8 @@ def RunSteps(api, properties):
               str(properties.gitiles_info.project),
               str(properties.gitiles_info.path), ref=str(trigger.gitiles.ref),
               test_output_data='MTIzLjQ1Ni43ODkuMAo=')
+          if gitiles_response:
+            gitiles_response = gitiles_response.strip()
 
         # If we we recieved a target version from Gitiles, override the tag
         # argument.
@@ -817,6 +819,7 @@ def GenTests(api):
   yield _with_infos(
       'with-gerrit-changes_with_revision_override',
       _props(
+          branch_policies=[_policy(pattern=r'.*\s*')],
           gitiles_info=GitilesFetchInfo(host='chromium.googlesource.com',
                                         project='chrome/src',
                                         path='foo/bar.txt')),
@@ -828,12 +831,6 @@ def GenTests(api):
           post_process.MustRun, 'determine branch.fetch gitiles file.'
           'curl https://chromium.googlesource.com'
           '/chrome/src/+/refs/heads/main/foo/bar.txt?format=TEXT'),
-      api.step_data(
-          'determine branch.git ls-remote',
-          stdout=api.raw_io.output_text('\n'.join([
-              '9ed37bc6f515ef0ef42949d9f23e1180432649f5\t'
-              'refs/remotes/cros-internal/release-R79-5555.B',
-          ]))),
       api.test_util.test_build(
           revision=None, extra_changes=[
               GerritChange(host='chromium-review.googlesource.com', change=1234)
