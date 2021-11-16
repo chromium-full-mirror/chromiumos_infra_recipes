@@ -843,4 +843,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                                                    self._test_request_opts)
     if not tagged_requests:
       return
-    return self.m.skylab.schedule_ctp_requests(tagged_requests)
+
+    # Schedule with parent id tag.
+    parent_buildbucket_id = str(self.m.buildbucket.build.id)
+    return self.m.skylab.schedule_ctp_requests(
+        tagged_requests,
+        bb_tags={'parent_buildbucket_id': parent_buildbucket_id})
