@@ -167,6 +167,354 @@
     ]
   },
   {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "name": "set gcloud project"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused"
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk"
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk.retrieve image version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-bot-cache/chromiumos-worker-branch-cache-snapshot-version.txt"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.retrieve image version from storage.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk.create disk from snapshot image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "list",
+      "--format",
+      "json(name)",
+      "--filter",
+      "name="
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.check whether image exists: ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk.create disk from snapshot image.set snapshot_version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromiumos-source-snapshot\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "describe",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--format",
+      "json(name)"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--image=initial-chromiumos-source-snapshot",
+      "--quiet",
+      "--type=pd-standard"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup source cache disk.create disk from snapshot image.look up device name to device id map (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-o",
+      "discard,defaults",
+      "/dev/sdz",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.mount disk cros",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "resize",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--size=1024GB",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.resize GCE disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "resize2fs",
+      "/dev/sdz"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "name": "setup source cache disk.create disk from snapshot image.execute resize2fs on resized disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/chromiumos-worker-branch-cache-snapshot-version.txt"
+    ],
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "setup source cache disk.create disk from snapshot image.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@chromiumos-worker-branch-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@chromiumos-worker-branch-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set recipe_mount_path",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@recipe_mount_path@[\"/snapshot_mounts/chromiumos\"]@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "ensure goma client"
   },
@@ -330,7 +678,10 @@
       "--",
       "[START_DIR]/chromite/scripts/cbuildbot_launch",
       "--buildroot",
-      "[CACHE]/cbuild",
+      "[CLEANUP]/snapshot/chromiumos",
+      "--workspace",
+      "[CLEANUP]/workspace",
+      "--source_cache",
       "--branch",
       "worker_branch",
       "--master-build-id",
@@ -377,6 +728,82 @@
     "name": "set build cost",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up mounted compute disk"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "clean up mounted compute disk.unmount disk cros",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up gce disk"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "clean up gce disk.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -67,24 +67,15 @@ def DoRunSteps(api):
   api.chromite.m.goma.client_version = api.properties.get(
       'cbb_goma_client_type')
 
-  if (api.chromite.chromite_branch in api.chromite.source_cache_branches and
-      api.chromite.chromite_config in api.chromite.source_cache_configs):
-    # Only mount snapshot mounts on branches that have been patched.
-    with api.chromite.with_system_python(), \
-      api.gcloud.cleanup_gce_disks(), \
-      api.gcloud.cleanup_mounted_disks(), \
-      api.bot_cost.build_cost_context():
-      recipe_mount_path = api.gcloud.setup_cache_disk(
-          cache_name='chromiumos', branch=api.chromite.chromite_branch,
-          disk_type='pd-standard', disk_size='1024GB', recipe_mount=True),
-      api.easy.set_properties_step(recipe_mount_path=recipe_mount_path)
-      api.chromite.run()
-  else:
-    # Use the system python, not "bundled python" so that we have access
-    # to system python packages.
-    with api.chromite.with_system_python(), \
-         api.bot_cost.build_cost_context():
-      api.chromite.run()
+  with api.chromite.with_system_python(), \
+    api.gcloud.cleanup_gce_disks(), \
+    api.gcloud.cleanup_mounted_disks(), \
+    api.bot_cost.build_cost_context():
+    recipe_mount_path = api.gcloud.setup_cache_disk(
+        cache_name='chromiumos', branch=api.chromite.chromite_branch,
+        disk_type='pd-standard', disk_size='1024GB', recipe_mount=True),
+    api.easy.set_properties_step(recipe_mount_path=recipe_mount_path)
+    api.chromite.run()
 
 
 def MakeSummaryMarkdown(api, failure):
