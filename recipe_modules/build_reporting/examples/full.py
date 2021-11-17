@@ -30,8 +30,6 @@ def RunSteps(api):
   build_report = api.build_reporting.create_build_report()
   config = build_report.config
   config.branch.name = "release-R12-12345.B"
-  config.release.milestone = 12
-  config.release.build = "12345.123.0"
 
   config.release.channels.append(Channel.CHANNEL_BETA)
   config.release.channels.append(Channel.CHANNEL_DEV)

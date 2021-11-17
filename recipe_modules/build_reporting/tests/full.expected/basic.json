@@ -171,9 +171,7 @@
       "@@@STEP_LOG_LINE@message@        \"CHANNEL_BETA\", @@@",
       "@@@STEP_LOG_LINE@message@        \"CHANNEL_DEV\", @@@",
       "@@@STEP_LOG_LINE@message@        \"CHANNEL_CANARY\"@@@",
-      "@@@STEP_LOG_LINE@message@      ], @@@",
-      "@@@STEP_LOG_LINE@message@      \"build\": \"12345.123.0\", @@@",
-      "@@@STEP_LOG_LINE@message@      \"milestone\": 12@@@",
+      "@@@STEP_LOG_LINE@message@      ]@@@",
       "@@@STEP_LOG_LINE@message@    }, @@@",
       "@@@STEP_LOG_LINE@message@    \"models\": [@@@",
       "@@@STEP_LOG_LINE@message@      {@@@",
@@ -200,7 +198,7 @@
     "name": "build status pubsub update (3).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAiSwoVChNyZWxlYXNlLVIxMi0xMjM0NS5CEhQIDBILMTIzNDUuMTIzLjAaAwIDBBoICgZmb29i\\nbGUaCAoGYmFyYmxlGggKBmJhemJsZUAD\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAiPAoVChNyZWxlYXNlLVIxMi0xMjM0NS5CEgUaAwIDBBoICgZmb29ibGUaCAoGYmFyYmxlGggK\\nBmJhemJsZUAD\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -214,7 +212,7 @@
     ],
     "infra_step": true,
     "name": "build status pubsub update (3).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAiSwoVChNyZWxlYXNlLVIxMi0xMjM0NS5CEhQIDBILMTIzNDUuMTIzLjAaAwIDBBoICgZmb29i\\nbGUaCAoGYmFyYmxlGggKBmJhemJsZUAD\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAiPAoVChNyZWxlYXNlLVIxMi0xMjM0NS5CEgUaAwIDBBoICgZmb29ibGUaCAoGYmFyYmxlGggK\\nBmJhemJsZUAD\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
