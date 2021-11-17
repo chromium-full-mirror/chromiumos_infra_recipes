@@ -8,12 +8,14 @@ from recipe_engine import recipe_test_api
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.testplans.target_test_requirements_config import TastGceTestCfg
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.target_test_requirements_config import VmTestCfg
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.generate_test_plan import TastGceTestUnit
 from PB.testplans.generate_test_plan import TastVmTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.generate_test_plan import VmTestUnit
@@ -150,6 +152,56 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     )
 
   @property
+  def tast_gce_test_unit(self):
+    return TastGceTestUnit(
+        common=self.test_unit_common(),
+        tast_gce_test_cfg=TastGceTestCfg(
+            tast_gce_test=[
+                TastGceTestCfg.TastGceTest(
+                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
+                                           critical={'value': True}),
+                    suite_name='tast-suite',
+                    tast_test_expr=[
+                        TastGceTestCfg.TastTestExpr(test_expr='!informational'),
+                    ],
+                    gce_metadata=TastGceTestCfg.TastGceTest.GceMetadata(
+                        project='gce-test-project',
+                        zone='us-west1-a',
+                        machine_type='n2-standard-2',
+                        network='gce-test-project-network',
+                        subnet='us-west1-a',
+                    ),
+                ),
+            ],
+        ),
+    )
+
+  @property
+  def tast_gce_informational_test_unit(self):
+    return TastGceTestUnit(
+        common=self.test_unit_common(),
+        tast_gce_test_cfg=TastGceTestCfg(
+            tast_gce_test=[
+                TastGceTestCfg.TastGceTest(
+                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
+                                           critical={'value': False}),
+                    suite_name='tast-suite-informational',
+                    tast_test_expr=[
+                        TastGceTestCfg.TastTestExpr(test_expr='informational'),
+                    ],
+                    gce_metadata=TastGceTestCfg.TastGceTest.GceMetadata(
+                        project='gce-test-project',
+                        zone='us-west1-a',
+                        machine_type='n2-standard-2',
+                        network='gce-test-project-network',
+                        subnet='us-west1-a',
+                    ),
+                ),
+            ],
+        ),
+    )
+
+  @property
   def vm_test_unit(self):
     return VmTestUnit(
         common=self.test_unit_common(),
@@ -191,6 +243,10 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
             self.direct_tast_vm_test_unit, self.tast_vm_informational_test_unit
         ],
         vm_test_units=[self.vm_test_unit, self.non_critical_vm_test_unit],
+        tast_gce_test_units=[
+            self.tast_gce_test_unit,
+            self.tast_gce_informational_test_unit,
+        ],
     )
 
   @property
@@ -199,6 +255,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         hw_test_units=[self.non_critical_hw_test_unit],
         direct_tast_vm_test_units=[self.tast_vm_informational_test_unit],
         vm_test_units=[self.non_critical_vm_test_unit],
+        tast_gce_test_units=[self.tast_gce_informational_test_unit],
     )
 
   @property

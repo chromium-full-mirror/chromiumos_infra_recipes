@@ -15,6 +15,7 @@ from PB.chromite.api.test import VmTestRequest
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.gce_test import GceTestProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 
@@ -171,7 +172,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         crit_failure_test_names = []
         non_crit_failure_test_names = []
         for test_result in (test_results.tast_vm + test_results.skylab +
-                            test_results.autotest_vm):
+                            test_results.autotest_vm + test_results.tast_gce):
           if test_result.status == common_pb2.SUCCESS:
             passed_test_names.append(self.m.naming.get_test_title(test_result))
           elif self.m.failures.is_critical_test_failure(test_result):
@@ -203,6 +204,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                            len(crit_failure_test_names),
                                            critical_test_count)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
+      self.m.greenness.update_vmtest_info(test_results.tast_gce)
       failures = self.get_test_failures(test_results)
     return failures
 
@@ -234,6 +236,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     else:
       return build_target.name + '-tast-vm-informational'
 
+  def _tast_gce_builder(self, build_target, expressions):
+    """Returns the GCE builder name for the given build_target and expressions."""
+    if '!informational' in ''.join(expressions):
+      return build_target.name + '-tast-gce'
+    else:
+      return build_target.name + '-tast-gce-informational'
+
   def _get_non_informational(self, tast_unit):
     test_cfg = tast_unit.tast_vm_test_cfg
     tast_unit.tast_vm_test_cfg.ClearField('tast_vm_test')
@@ -243,6 +252,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     ]
     tast_unit.tast_vm_test_cfg.tast_vm_test.extend(filtered_tests)
     return tast_unit
+
+  def _filter_tast_gce_informational(self, tast_gce_unit):
+    """Modifies test plan unit to not include informational tests."""
+    test_cfg = tast_gce_unit.tast_gce_test_cfg
+    tast_gce_unit.tast_gce_test_cfg.ClearField('tast_gce_test')
+    filtered_tests = [
+        test for test in test_cfg.tast_gce_test
+        if 'informational' not in test.suite_name
+    ]
+    tast_gce_unit.tast_gce_test_cfg.tast_gce_test.extend(filtered_tests)
+    return tast_gce_unit
 
   def _filter_snapshot_hw_test_units(self, hw_test_units):
     """Restrict to SNAPSHOT_HWTEST_SUITES only."""
@@ -276,11 +296,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             self._get_non_informational(unit)
             for unit in test_plan.direct_tast_vm_test_units
         ]
+        non_informational_gce_units = [
+            self._filter_tast_gce_informational(unit)
+            for unit in test_plan.tast_gce_test_units
+        ]
         filtered_hw_test_units = self._filter_snapshot_hw_test_units(
             test_plan.hw_test_units)
+
         test_plan.ClearField("direct_tast_vm_test_units")
+        test_plan.ClearField('tast_gce_test_units')
         test_plan.ClearField("hw_test_units")
+
         test_plan.direct_tast_vm_test_units.extend(non_informational_units)
+        test_plan.tast_gce_test_units.extend(non_informational_gce_units)
         test_plan.hw_test_units.extend(filtered_hw_test_units)
         pres.logs['filtered test plan'] = str(test_plan)
 
@@ -330,15 +358,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                                  snapshot, test_to_build_map,
                                                  is_retry)
 
+    tast_gce_tests = self._schedule_tast_gce_tests(test_plan, passed_tests,
+                                                   snapshot, test_to_build_map,
+                                                   is_retry)
+
     return self.MetaTestTuple(skylab=skylab_tasks or [],
                               autotest_vm=autotest_vm_tests or [],
-                              tast_vm=tast_vm_tests or [])
+                              tast_vm=tast_vm_tests or [],
+                              tast_gce=tast_gce_tests or [])
 
   def _collect_tests(self, test_tasks, timeout):
     """Collect on all tests from test_tasks.
 
     The tests are collected in the order: skylab, autotest_vm,
-    tast_vm.
+    tast_vm, tast_gce.
 
     Args:
       test_tasks (MetaTestTuple): lists of tests to collect.
@@ -355,9 +388,15 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     tast_vm_results = self.m.buildbucket.collect_builds(
         [vt.id for vt in test_tasks.tast_vm], step_name='collect tast vm tests',
         timeout=int(timeout.seconds)).values()
+    tast_gce_results = self.m.buildbucket.collect_builds(
+        [vt.id for vt in test_tasks.tast_gce],
+        step_name='collect tast GCE tests',
+        timeout=int(timeout.seconds)).values()
+
     return self.MetaTestTuple(skylab=hw_results,
                               autotest_vm=autotest_vm_results,
-                              tast_vm=tast_vm_results)
+                              tast_vm=tast_vm_results or [],
+                              tast_gce=tast_gce_results)
 
   def get_test_failures(self, test_results):
     """Logs all test failures to the UI and raises on failed tests.
@@ -370,6 +409,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     failures = self.m.failures.get_hw_test_failures(test_results.skylab)
     failures += self.m.failures.get_vm_test_failures(test_results.autotest_vm)
     failures += self.m.failures.get_vm_test_failures(test_results.tast_vm)
+    failures += self.m.failures.get_vm_test_failures(test_results.tast_gce)
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
@@ -534,6 +574,62 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         url_title_fn=self.m.naming.get_build_title)
     return vm_tests
 
+  def _schedule_tast_gce_tests(self, test_plan, passed_tests, snapshot,
+                               test_to_build_map=None, is_retry=False):
+    """Schedule tast GCE Tests from the test_plan.
+
+    Args:
+      test_plan (GenerateTestPlanResponse): A plan for all tests to
+          be scheduled.
+      passed_tests (list[string]): A list of names for the tests that
+          have passed before.
+      snapshot (GitilesCommit): Start ref to be supplied to the tests.
+      test_to_build_map (dict{string->string}): Map of test names to
+          build_targets to be populated.
+      is_retry (bool): Whether this is a CQ retry.
+
+    Returns:
+      list[Build] objects of the GCE tests scheduled.
+    """
+    requests = []
+    test_to_build_map = {} if test_to_build_map is None else test_to_build_map
+
+    for unit in test_plan.tast_gce_test_units:
+      for test in unit.tast_gce_test_cfg.tast_gce_test:
+        # Do not run non-critical tests on retries.
+        if is_retry and not test.common.critical.value:
+          continue
+        if test.common.display_name not in passed_tests:
+          test_name = test.common.display_name
+          build_target = unit.common.build_target
+          test_to_build_map[test_name] = build_target.name
+          expressions = [t.test_expr for t in test.tast_test_expr]
+          gce_metadata = test.gce_metadata
+          properties_gce_metadata = GceTestProperties.GceMetadata(
+              project=gce_metadata.project,
+              zone=gce_metadata.zone,
+              machine_type=gce_metadata.machine_type,
+              network=gce_metadata.network,
+              subnet=gce_metadata.subnet,
+          )
+          requests.append(
+              self.m.buildbucket.schedule_request(
+                  gitiles_commit=snapshot,
+                  builder=self._tast_gce_builder(build_target, expressions),
+                  bucket=self._vm_bucket, critical=test.common.critical.value,
+                  properties=self._with_props_for_child_build(
+                      json_format.MessageToDict(
+                          GceTestProperties(
+                              name=test_name, build_target=build_target,
+                              build_payload=unit.common.build_payload,
+                              expressions=expressions,
+                              gce_metadata=properties_gce_metadata))),
+                  tags=self.m.cros_tags.make_schedule_tags(snapshot)))
+    gce_tests = self.m.buildbucket.schedule(
+        requests, step_name='schedule tast GCE tests',
+        url_title_fn=self.m.naming.get_build_title)
+    return gce_tests
+
   def critical_test_count(self, test_plan):
     """Returns the number of critical tests in the build plan.
 
@@ -552,7 +648,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                   vm_test_cfg, lambda cfg: cfg.vm_test) +
         self._critical_test_count(
             test_plan.direct_tast_vm_test_units, lambda unit: unit.
-            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test))
+            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test) +
+        self._critical_test_count(
+            test_plan.tast_gce_test_units, lambda unit: unit.tast_gce_test_cfg,
+            lambda cfg: cfg.tast_gce_test))
     return test_count
 
   def _critical_test_count(self, units, cfg_func, tests_func):
@@ -599,7 +698,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                 cfg: cfg.vm_test, passed_test_names) +
         self._extract_test_summary(
             test_plan.direct_tast_vm_test_units, lambda unit: unit.
-            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test, passed_test_names))
+            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test, passed_test_names) +
+        self._extract_test_summary(
+            test_plan.tast_gce_test_units, lambda unit: unit.tast_gce_test_cfg,
+            lambda cfg: cfg.tast_gce_test, passed_test_names))
     return test_summary
 
   def _extract_test_summary(self, units, cfg_func, tests_func,

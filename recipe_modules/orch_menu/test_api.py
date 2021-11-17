@@ -399,5 +399,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ctp_failure += self.m.buildbucket.simulated_collect_output(
         [], 'run tests.collect tests.collect tast vm tests')
 
+    ctp_normal += self.m.buildbucket.simulated_collect_output(
+        [], 'run tests.collect tests.collect tast GCE tests')
+    ctp_failure += self.m.buildbucket.simulated_collect_output(
+        [], 'run tests.collect tests.collect tast GCE tests')
+
     values.extend([ctp_normal, ctp_bisect, ctp_failure])
     return _ret(*values)

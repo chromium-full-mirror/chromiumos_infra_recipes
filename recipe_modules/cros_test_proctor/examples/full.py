@@ -172,7 +172,9 @@ def GenTests(api):
           vm_test_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
       ], step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests'))
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast GCE tests'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -210,7 +212,9 @@ def GenTests(api):
           [vm_test_build('vm-test')],
           step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests'))
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast GCE tests'))
 
   hw_tests = [
       api.skylab.test_with_multi_response(

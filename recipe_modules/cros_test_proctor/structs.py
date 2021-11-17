@@ -12,6 +12,7 @@ from collections import namedtuple
 #   skylab: A list of SkylabTasks or SkylabResults.
 #   autotest_vm: A list of autotest_vm build_pb2.Build objects.
 #   tast_vm: A list of tast_vm build_pb2.Build objects.
+#   tast_gce: A list of tast_gce build_pb2.Build objects.
 #   moblab_vm: A list of moblab_vm build_pb2.Build objects.
 MetaTestTuple = namedtuple('MetaTestTuple',
-                           ['skylab', 'autotest_vm', 'tast_vm'])
+                           ['skylab', 'autotest_vm', 'tast_vm', 'tast_gce'])
