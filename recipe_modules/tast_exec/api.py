@@ -122,10 +122,12 @@ class TastExecApi(RecipeApi):
     all_test_cases = []
     if task_result.test_cases:
       all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
+    if self._should_retry:
+      tests_to_retry = []
     failures, failed_test_cases = self.m.tast_results.get_failures(
         task_result, tests_to_retry)
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-    if tests_to_retry and self._should_retry:
+    if tests_to_retry:
       retry_task_result = self._retry_iter(suite_name, tests_to_retry,
                                            vm_context, test_artifacts_dir,
                                            private_key_path, 'second',
