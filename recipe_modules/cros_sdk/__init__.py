@@ -17,6 +17,7 @@ DEPS = [
     'git',
     'goma',
     'overlayfs',
+    'remoteexec',
     'src_state',
     'workspace_util',
 ]

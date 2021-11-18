@@ -72,6 +72,7 @@
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
+  * [remoteexec](#recipe_modules-remoteexec) &mdash; API for working with re-client for remote execution.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [result_flow](#recipe_modules-result_flow)
   * [service_version](#recipe_modules-service_version)
@@ -369,6 +370,7 @@
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
+  * [remoteexec:tests/full](#recipes-remoteexec_tests_full)
   * [repo:examples/annealing](#recipes-repo_examples_annealing)
   * [repo:examples/branching](#recipes-repo_examples_branching)
   * [repo:examples/cache_builder](#recipes-repo_examples_cache_builder)
@@ -2951,7 +2953,7 @@ Gets the last branched milestone number as an int.
 Returns a FetchMilestoneScheduleResponse from JSON repr.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
 
-[DEPS](/recipe_modules/cros_sdk/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [goma](#recipe_modules-goma), [overlayfs](#recipe_modules-overlayfs), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_sdk/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [goma](#recipe_modules-goma), [overlayfs](#recipe_modules-overlayfs), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2961,7 +2963,7 @@ API for interacting with cros_sdk, the interface to the CrOS SDK.
 
 A module for interacting with cros_sdk.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#227)(self, name, args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_sdk/api.py#257)(self, name, args, \*\*kwargs):**
 
 Executes 'cros_sdk' with the supplied arguments.
 
@@ -2973,17 +2975,17 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#612)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#642)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
-&emsp; **@property**<br>&mdash; **def [chrome\_root](/recipe_modules/cros_sdk/api.py#120)(self):**
+&emsp; **@property**<br>&mdash; **def [chrome\_root](/recipe_modules/cros_sdk/api.py#123)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#108)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/cros_sdk/api.py#111)(self):**
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#486)(self, checkout_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#516)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -2994,7 +2996,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#573)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#603)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#51)(self, chroot_parent_path):**
 
@@ -3003,7 +3005,7 @@ Configure CrosSdkApi.
 Args:
   chroot_parent_path (Path): Parent for chroot directory.
 
-&mdash; **def [configure\_goma](/recipe_modules/cros_sdk/api.py#169)(self, chrome_root):**
+&mdash; **def [configure\_goma](/recipe_modules/cros_sdk/api.py#172)(self, chrome_root):**
 
 Configure goma for Chrome.
 
@@ -3015,7 +3017,14 @@ Must be run with cwd inside a chromiumos source root.
 Args:
   chrome_root (Path): Directory with the Chrome source.
 
-&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#357)(self, version=None, use_image=True, bootstrap=False, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
+&mdash; **def [configure\_remoteexec](/recipe_modules/cros_sdk/api.py#224)(self, chrome_root):**
+
+Configure remoteexec for Chrome.
+
+Args:
+  chrome_root (Path): Directory with the Chrome source.
+
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#387)(self, version=None, use_image=True, bootstrap=False, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
 
 Initialize the chroot and link it into the workspace.
 
@@ -3038,7 +3047,7 @@ Args:
 Returns:
   chromiumos_pb2.Chroot protobuf for the chroot.
 
-&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#103)(self):**
+&emsp; **@property**<br>&mdash; **def [cros\_sdk\_path](/recipe_modules/cros_sdk/api.py#106)(self):**
 
 Returns a Path to the cros_sdk script.
 
@@ -3046,15 +3055,17 @@ Returns a Path to the cros_sdk script.
 
 Return whether we are forcing toolchain_cls off for testing.
 
-&mdash; **def [goma\_config](/recipe_modules/cros_sdk/api.py#208)(self):**
+&mdash; **def [goma\_config](/recipe_modules/cros_sdk/api.py#211)(self):**
 
-&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#205)(self):**
+&mdash; **def [has\_goma\_config](/recipe_modules/cros_sdk/api.py#208)(self):**
+
+&mdash; **def [has\_remoteexec\_config](/recipe_modules/cros_sdk/api.py#244)(self):**
 
 &mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#39)(self):**
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#423)(self, checkout_path, chroot_path=None):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#453)(self, checkout_path, chroot_path=None):**
 
 Link the chroot to a chromiumos checkout.
 
@@ -3062,15 +3073,17 @@ Args:
   checkout_path (Path): Path to the checkout root.
   chroot_path (Path): Path to the chroot, or None for the default.
 
-&emsp; **@long_timeouts.setter**<br>&mdash; **def [long\_timeouts](/recipe_modules/cros_sdk/api.py#95)(self, value):**
+&emsp; **@long_timeouts.setter**<br>&mdash; **def [long\_timeouts](/recipe_modules/cros_sdk/api.py#98)(self, value):**
 
 Set long_timeouts.
 
 This boolean is sticky.
 
-&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#224)(self):**
+&mdash; **def [mark\_sdk\_as\_dirty](/recipe_modules/cros_sdk/api.py#254)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#621)(self, name, cmd, env=None, \*\*kwargs):**
+&emsp; **@property**<br>&mdash; **def [remoteexec\_config](/recipe_modules/cros_sdk/api.py#247)(self):**
+
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#651)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -3085,11 +3098,11 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&emsp; **@property**<br>&mdash; **def [sdk\_cache\_state](/recipe_modules/cros_sdk/api.py#124)(self):**
+&emsp; **@property**<br>&mdash; **def [sdk\_cache\_state](/recipe_modules/cros_sdk/api.py#127)(self):**
 
 Returns default values if not set and cache state file does not exist.
 
-&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#186)(self, goma_dir, goma_client_json, goma_approach, log_dir, stats_file, counterz_file):**
+&mdash; **def [set\_goma\_config](/recipe_modules/cros_sdk/api.py#189)(self, goma_dir, goma_client_json, goma_approach, log_dir, stats_file, counterz_file):**
 
 Set the goma config.
 
@@ -3101,9 +3114,13 @@ Args:
   stats_file (str): Name of the goma stats file, relative to log_dir.
   counterz_file (str): Name of the goma counterz file, relative to log_dir.
 
-&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#221)(self, use_flags):**
+&mdash; **def [set\_remoteexec\_config](/recipe_modules/cros_sdk/api.py#234)(self, reclient_dir, reproxy_cfg_file):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#522)(self, create_test_data=None, restore_test_data=None):**
+Set the remoteexec config.
+
+&mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#251)(self, use_flags):**
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#552)(self, create_test_data=None, restore_test_data=None):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -3122,21 +3139,21 @@ Args:
       SdkService.RestoreSnapshot call, or None to use the default in
       cros_build_api/test_api.py.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#603)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#633)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#578)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#608)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#568)(self, chroot=None):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#598)(self, chroot=None):**
 
-&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#442)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
+&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#472)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
 
 Update the chroot.
 
@@ -3154,7 +3171,7 @@ Args:
   test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
   name (string): Step name.  Default: "update sdk".
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#641)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_sdk/api.py#671)(self, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -6313,6 +6330,23 @@ Args:
 
 Return:
   Bool
+### *recipe_modules* / [remoteexec](/recipe_modules/remoteexec)
+
+[DEPS](/recipe_modules/remoteexec/__init__.py#5): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+API for working with re-client for remote execution.
+
+#### **class [RemoteexecApi](/recipe_modules/remoteexec/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for working with re-client for remote execution.
+
+&emsp; **@property**<br>&mdash; **def [reclient\_dir](/recipe_modules/remoteexec/api.py#20)(self):**
+
+Fetches the reclient directory and returns its path.
+
+&emsp; **@property**<br>&mdash; **def [reproxy\_cfg\_file](/recipe_modules/remoteexec/api.py#27)(self):**
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6885,7 +6919,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#250)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#252)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 
@@ -8720,11 +8754,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#16)(api):**
 ### *recipes* / [cros\_sdk:examples/full](/recipe_modules/cros_sdk/examples/full.py)
 
-[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_sdk/examples/full.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/examples/full.py#30)(api, properties):**
 ### *recipes* / [cros\_sdk:tests/check\_sdk\_cache\_state](/recipe_modules/cros_sdk/tests/check_sdk_cache_state.py)
 
 [DEPS](/recipe_modules/cros_sdk/tests/check_sdk_cache_state.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9754,6 +9788,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
 &mdash; **def [RunSteps](/recipes/regen_build_cache.py#28)(api):**
+### *recipes* / [remoteexec:tests/full](/recipe_modules/remoteexec/tests/full.py)
+
+[DEPS](/recipe_modules/remoteexec/tests/full.py#6): [remoteexec](#recipe_modules-remoteexec), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/remoteexec/tests/full.py#19)(api, properties):**
 ### *recipes* / [repo:examples/annealing](/recipe_modules/repo/examples/annealing.py)
 
 [DEPS](/recipe_modules/repo/examples/annealing.py#6): [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

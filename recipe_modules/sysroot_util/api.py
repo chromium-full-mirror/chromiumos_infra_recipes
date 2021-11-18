@@ -207,6 +207,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                config.chrome.internal)
             if not install_packages.disable_goma:
               self.m.cros_sdk.configure_goma(chrome_root)
+            # TODO(crbug.com/1256966): Check install_packages.use_remoteexec
+            # and added remoteexec_config to InstallPackagesRequest.
 
         if self.m.cq.active:
           self.m.android.uprev_if_unstable_ebuild_changed(

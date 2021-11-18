@@ -17,4 +17,7 @@ message TestInputProperties {
 
   // Gerrit Changes
   repeated buildbucket.v2.GerritChange gerrit_changes = 3;
+
+  // If Remoteexec properties should be checked.
+  bool check_remoteexec = 4;
 }

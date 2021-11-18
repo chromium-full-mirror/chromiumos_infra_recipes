@@ -1,0 +1,16 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.remoteexec;
+
+import "chromiumos/common.proto";
+
+message RemoteexecProperties {
+  // cipd rbe client version to ensure.
+  string reclient_version = 1;
+  // file of the config that should be passed when calling reproxy.
+  string reproxy_cfg_file = 2;
+}

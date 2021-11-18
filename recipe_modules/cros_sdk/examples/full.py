@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_sdk',
     'goma',
+    'remoteexec',
     'workspace_util',
 ]
 
@@ -17,6 +18,7 @@ from PB.chromiumos import common
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
+from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
@@ -34,6 +36,8 @@ def RunSteps(api, properties):
   api.workspace_util.apply_changes(changes=properties.gerrit_changes or [])
   with api.cros_sdk.cleanup_context(checkout_path=workspace):
     api.assertions.assertIsNone(api.cros_sdk.goma_config())
+    api.assertions.assertIsNone(api.cros_sdk.remoteexec_config)
+    api.assertions.assertFalse(api.cros_sdk.has_remoteexec_config())
 
     chroot = api.cros_sdk.create_chroot(version=properties.sdk_cache_version)
     api.assertions.assertNotEqual(chroot, None)
@@ -44,21 +48,35 @@ def RunSteps(api, properties):
 
     api.assertions.assertEqual(api.cros_sdk.long_timeouts,
                                api.workspace_util.toolchain_cls_applied)
-    api.cros_sdk.configure_goma('/chrome_dir')
-    api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
-    chroot = api.cros_sdk.chroot
-    with api.cros_sdk.snapshot():
-      api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
-      api.assertions.assertTrue(api.cros_sdk.has_goma_config())
-      api.assertions.assertCountEqual(chroot.env.use_flags,
-                                      [common.UseFlag(flag='goma')])
 
-    goma = api.cros_sdk.goma_config()
-    api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
-    api.assertions.assertEqual(goma.goma_client_json,
-                               str(api.goma.goma_client_json))
-    api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
-    api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
+    if properties.check_remoteexec:
+      api.cros_sdk.configure_remoteexec('/chrome_dir')
+      api.cros_sdk.set_use_flags([common.UseFlag(flag='remoteexec')])
+      with api.cros_sdk.snapshot():
+        remoteexec = api.cros_sdk.remoteexec_config
+        api.assertions.assertEqual(remoteexec.reclient_dir,
+                                   str(api.remoteexec.reclient_dir))
+        api.assertions.assertEqual(remoteexec.reproxy_cfg_file,
+                                   str(api.remoteexec.reproxy_cfg_file))
+        api.assertions.assertTrue(api.cros_sdk.has_remoteexec_config())
+    else:
+      api.assertions.assertRaises(ValueError, api.cros_sdk.configure_remoteexec,
+                                  '/chrome_dir')
+      api.cros_sdk.configure_goma('/chrome_dir')
+      api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
+      chroot = api.cros_sdk.chroot
+      with api.cros_sdk.snapshot():
+        api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
+        api.assertions.assertTrue(api.cros_sdk.has_goma_config())
+        api.assertions.assertCountEqual(chroot.env.use_flags,
+                                        [common.UseFlag(flag='goma')])
+
+      goma = api.cros_sdk.goma_config()
+      api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
+      api.assertions.assertEqual(goma.goma_client_json,
+                                 str(api.goma.goma_client_json))
+      api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
+      api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
 
     api.cros_sdk('get cros_sdk help', ['--help'])
     api.cros_sdk.run('ls in chroot', ['ls'], env={'PATH': '/bin'})
@@ -153,3 +171,12 @@ def GenTests(api):
       'preload-does-not-exists', api.cros_sdk.preload_path_exists(False),
       api.post_check(post_process.DoesNotRun,
                      'configure chroot path.create preload path'))
+
+  yield api.test(
+      'use-remoteexec',
+      api.properties(
+          **{
+              '$chromeos/remoteexec':
+                  RemoteexecProperties(
+                      reproxy_cfg_file='reclient_cfgs/reproxy_config.cfg')
+          }), api.properties(TestInputProperties(check_remoteexec=True)))

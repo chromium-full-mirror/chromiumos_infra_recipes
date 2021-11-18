@@ -63,6 +63,9 @@ class CrosSdkApi(RecipeApi):
       self._sdk_cache_state = None
       self._sdk_cache_state_file = self._cache_path.join('sdk_cache_state.json')
       self._chrome_root = None
+      self._reclient_dir = None
+      self._reproxy_cfg_file = None
+      self._remoteexec_config = None
       self._goma_dir = None
       self._goma_client_json = None
       self._goma_approach = None
@@ -217,6 +220,33 @@ class CrosSdkApi(RecipeApi):
         stats_file=self._goma_stats_file,
         counterz_file=self._goma_counterz_file,
     )
+
+  def configure_remoteexec(self, chrome_root):
+    """Configure remoteexec for Chrome.
+
+    Args:
+      chrome_root (Path): Directory with the Chrome source.
+    """
+    self._chrome_root = chrome_root
+    self.set_remoteexec_config(self.m.remoteexec.reclient_dir,
+                               self.m.remoteexec.reproxy_cfg_file)
+
+  def set_remoteexec_config(self, reclient_dir, reproxy_cfg_file):
+    """Set the remoteexec config."""
+    if reclient_dir and reproxy_cfg_file:
+      self._remoteexec_config = common.RemoteexecConfig(
+          reclient_dir=str(reclient_dir),
+          reproxy_cfg_file=str(reproxy_cfg_file))
+    else:
+      raise ValueError('Both reclient_dir %s and reproxy_cfg_file %s required' %
+                       (reclient_dir, reproxy_cfg_file))
+
+  def has_remoteexec_config(self):
+    return self._remoteexec_config is not None
+
+  @property
+  def remoteexec_config(self):
+    return self._remoteexec_config
 
   def set_use_flags(self, use_flags):
     self._use_flags = use_flags
