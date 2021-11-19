@@ -5,6 +5,7 @@
 
 """APIs for managing Gerrit changes."""
 
+from datetime import timedelta
 import enum
 import functools
 import re
@@ -12,6 +13,7 @@ import re
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
@@ -473,9 +475,55 @@ class GerritApi(RecipeApi):
       pres.logs['labels'] = self.m.json.dumps(labels)
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
       change_num = gerrit_change.change
-      applied_labels = self.m.gitiles.set_change_labels(change_num, labels,
-                                                        gerrit_change.host)
+
+      applied_labels = self._do_set_change_labels(change_num, labels,
+                                                  gerrit_change.host)
       return applied_labels
+
+  @exponential_retry(retries=5, delay=timedelta(seconds=5))
+  def _do_set_change_labels(self, change_num, labels, gerrit_host,
+                            test_output_data=None):
+    """Set the labels on a gerrit change using Gerrit and Gitiles REST API.
+
+    Args:
+      change_num (int): The number of the change to label.
+      labels (dict): Mapping from label (Label) to value (int).
+      gerrit_host (str): Base URL to curl against.
+      credential_cookie_location (str): Path to git credential cookie.
+      test_output_data (dict): Test output for set_change_labels.
+
+    Returns:
+      str: JSON containing the applied labels (primarily for testing).
+    """
+    post_url = 'https://%s/changes/%s/revisions/current/review' % (gerrit_host,
+                                                                   change_num)
+    post_json = {'labels': labels}
+
+    # Retrieve the service_account user's auth token.
+    auth_token_out = self.m.easy.stdout_step(
+        'Retrieve service_account auth token', [
+            'luci-auth', 'token', '-scopes',
+            'https://www.googleapis.com/auth/gerritcodereview', '-json-output',
+            '-'
+        ], ok_ret={0}, test_stdout='{"token": "TEST_TOKEN"}')
+    auth_token = self.m.json.loads(auth_token_out)['token']
+    auth_token_path = self.m.path.mkstemp(prefix='service_account_auth_token')
+    self.m.file.write_text('Write auth token to temp file', auth_token_path,
+                           'Authorization: Bearer %s' % auth_token,
+                           include_log=False)
+
+    curl_params = [
+        '-f', '-X', 'POST', '-H',
+        '@%s' % auth_token_path, '-H', 'Content-Type: application/json', '-d',
+        self.m.json.dumps(post_json)
+    ]
+    test_output_data = test_output_data or self.m.json.dumps(post_json)
+
+    post_json = {'labels': labels}
+    data = self.m.easy.stdout_step('curl %s' % post_url,
+                                   ['curl'] + curl_params + [post_url],
+                                   ok_ret={0}, test_stdout=test_output_data)
+    return data
 
   def set_change_labels(self, gerrit_change, labels, branch=None, ref=None):
     """Set the given labels for the given Gerrit change.

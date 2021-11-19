@@ -2061,20 +2061,53 @@
   },
   {
     "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+    "infra_step": true,
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
       "curl",
       "-f",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
       "-X",
       "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
       "-H",
       "Content-Type: application/json",
       "-d",
       "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
-      "https://chromium-review.googlesource.com/changes/1/revisions/1/review"
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/1/review",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

@@ -1992,17 +1992,12 @@
   },
   {
     "cmd": [
-      "curl",
-      "-f",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "-X",
-      "POST",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Bot-Commit\": 1}}",
-      "https://chromium-review.googlesource.com/changes/123/revisions/1/review"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
     "luci_context": {
@@ -2017,7 +2012,69 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/1/review",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1}}",
+      "https://chromium-review.googlesource.com/changes/123/revisions/current/review"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]

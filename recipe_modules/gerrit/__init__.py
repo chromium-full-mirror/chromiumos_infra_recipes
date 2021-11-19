@@ -7,6 +7,8 @@ DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
     'buildbucket': 'recipe_engine/buildbucket',
     'context': 'recipe_engine/context',
+    'easy': 'easy',
+    'file': 'recipe_engine/file',
     'json': 'recipe_engine/json',
     'path': 'recipe_engine/path',
     'raw_io': 'recipe_engine/raw_io',
