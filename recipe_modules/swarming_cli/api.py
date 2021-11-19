@@ -99,8 +99,8 @@ class SwarmingCli(recipe_api.RecipeApi):
       limit (int): Number of tasks to return.
     """
     cmd = ['tasks', '-S', swarming_instance]
-    cmd.extend(['start', str(self._calculate_epoch_start(lookback_hours))])
-    cmd.extend(['state', state])
+    cmd.extend(['-start', str(self._calculate_epoch_start(lookback_hours))])
+    cmd.extend(['-state', state])
     for dim in dimensions:
       cmd.extend(['-tag', dim])
     if limit:
