@@ -34,11 +34,8 @@ message PaygenOrchestratorProperties {
   // chromes-throw-away-bucket).
   string dest_bucket = 7;
 
-  // The keyset to sign with (e.g. "coral-mp-v16"), if empty do not sign.
-  string keyset = 8;
-
   // Should we not upload any generated artifacts or make other mutations.
-  bool dryrun = 9;
+  bool dryrun = 8;
 
   // Enumeration on whether or not to override the configured defaults.
   enum PayloadTestsOverride {
@@ -48,8 +45,8 @@ message PaygenOrchestratorProperties {
   }
 
   // Should we override the configured delta testing policy?
-  PayloadTestsOverride delta_payload_test_override = 10;
+  PayloadTestsOverride delta_payload_test_override = 9;
 
   // Should we override the configured full testing policy?
-  PayloadTestsOverride full_payload_test_override = 11;
+  PayloadTestsOverride full_payload_test_override = 10;
 }

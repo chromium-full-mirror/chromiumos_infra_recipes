@@ -116,24 +116,18 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
           bucket='b', channel='stable'),
       image_type=common_pb2.IMAGE_TYPE_RECOVERY,
-      key='mp-v2',
   )
 
   SIGNED_SRC_IRRELEVANT = SignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
-          bucket='b', channel='beta'),
-      image_type=common_pb2.IMAGE_TYPE_TEST,
-      key='mp-v2',
-  )
+          bucket='b', channel='beta'), image_type=common_pb2.IMAGE_TYPE_TEST)
 
   SIGNED_TGT = SignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
           bucket='b', channel='stable'),
-      image_type=common_pb2.IMAGE_TYPE_RECOVERY,
-      key='mp-v2',
-  )
+      image_type=common_pb2.IMAGE_TYPE_RECOVERY)
 
   UNSIGNED_SRC = UnsignedImage_pb2(
       build=Build_pb2(
@@ -177,7 +171,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_signed_image=self.SIGNED_TGT,
             bucket='b',
             verify=True,
-            keyset='mp-v2',
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         )
@@ -191,7 +184,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_unsigned_image=self.UNSIGNED_TGT,
             bucket='b',
             verify=True,
-            keyset='',
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         )
@@ -205,7 +197,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_dlc_image=self.DLC_TGT,
             bucket='b',
             verify=True,
-            keyset='',
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         )
@@ -219,7 +210,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_signed_image=self.SIGNED_TGT,
             bucket='b',
             verify=True,
-            keyset='mp-v2',
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
         )
@@ -233,7 +223,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_unsigned_image=self.UNSIGNED_TGT,
             bucket='b',
             verify=True,
-            keyset='',
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
         )
@@ -247,7 +236,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_dlc_image=self.DLC_TGT,
             bucket='b',
             verify=True,
-            keyset='',
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
         )
@@ -261,7 +249,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             tgt_unsigned_image=self.UNSIGNED_TGT,
             bucket='b',
             verify=True,
-            keyset='',
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         )

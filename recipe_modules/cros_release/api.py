@@ -57,10 +57,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     super(CrosReleaseApi, self).__init__(**kwargs)
     self._release_bucket = properties.release_bucket
     self._channels = properties.channels
-    self._keyset = properties.keyset
     self._sign_types = properties.sign_types
-    self._ensure_no_password = properties.ensure_no_password
-    self._firmware_update = properties.firmware_update
     self._dryrun = properties.dryrun
     self._paygen_dryrun = properties.paygen_dryrun
     self._releasespec = None
@@ -170,7 +167,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'au_testing_models': [],
           'src_bucket': self._release_bucket,
           'dest_bucket': self._release_bucket,
-          'keyset': self._keyset,
           'dryrun': self._paygen_dryrun,
           'delta_payload_test_override': 'RESPECT_CONFIG',
           'full_payload_test_override': 'RESPECT_CONFIG',

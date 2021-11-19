@@ -24,7 +24,7 @@ def RunSteps(api, properties):
   elif properties.request_type == GetRequestTestInputProperties.DLC:
     tgts = properties.dlc_tgts
 
-  reqs = api.cros_paygen.get_full_requests(tgts, 'b', True, 'mp-v2', True)
+  reqs = api.cros_paygen.get_full_requests(tgts, 'b', True, True)
 
   api.assertions.assertEqual(len(properties.expected_reqs), len(reqs))
   for x, y in zip(properties.expected_reqs, reqs):

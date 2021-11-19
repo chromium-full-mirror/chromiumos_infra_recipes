@@ -136,7 +136,6 @@ def RunSteps(api, properties):
       reqs = api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
                                                 target_artifacts,
                                                 properties.dest_bucket, True,
-                                                properties.keyset,
                                                 properties.dryrun)
       cbr.extend(reqs)
     pres.logs['%s deltas' % len(cbr)] = [MessageToJson(x) for x in cbr]
@@ -144,7 +143,6 @@ def RunSteps(api, properties):
     # Do full payloads.
     reqs = api.cros_paygen.get_full_requests(target_artifacts,
                                              properties.dest_bucket, True,
-                                             properties.keyset,
                                              properties.dryrun)
     pres.logs['%s full' % len(reqs)] = [MessageToJson(x) for x in reqs]
     cbr.extend(reqs)
