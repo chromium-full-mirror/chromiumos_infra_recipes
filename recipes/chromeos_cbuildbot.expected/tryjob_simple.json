@@ -606,7 +606,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/cipd/infra/tools/run_annotations/latest"
+      "[START_DIR]/cipd_tool/infra/tools/run_annotations/latest"
     ],
     "env": {
       "DEPOT_TOOLS_UPDATE": "0"
@@ -632,7 +632,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[CACHE]/cipd/infra/tools/run_annotations/latest",
+      "[START_DIR]/cipd_tool/infra/tools/run_annotations/latest",
       "-ensure-file",
       "infra/tools/run_annotations/${platform} latest",
       "-max-threads",
@@ -672,7 +672,7 @@
   },
   {
     "cmd": [
-      "[CACHE]/cipd/infra/tools/run_annotations/latest/run_annotations",
+      "[START_DIR]/cipd_tool/infra/tools/run_annotations/latest/run_annotations",
       "--output",
       "[CLEANUP]/tmp_tmp_1/sub_build.pb",
       "--",
