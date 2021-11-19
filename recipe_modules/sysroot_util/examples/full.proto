@@ -15,6 +15,12 @@ message FullTestProperties {
   // ImageService.Test response JSON.
   string image_test_json = 2;
 
-  // Whether this is an artifact build
+  // Whether this is an artifact build.
   bool artifact_build = 3;
+
+  // Whether to use remoteexec.
+  bool use_remoteexec = 4;
+
+  // Name of the test builder config to use.
+  string builder_name = 5;
 }

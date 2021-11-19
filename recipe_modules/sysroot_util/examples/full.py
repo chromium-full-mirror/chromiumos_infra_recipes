@@ -16,6 +16,7 @@ DEPS = [
 import json
 
 from PB.chromiumos import common
+from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.recipe_modules.chromeos.sysroot_util.examples.full import (
     FullTestProperties)
 
@@ -28,7 +29,8 @@ def RunSteps(api, properties):
   ]
   image_test_json = properties.image_test_json
 
-  config = api.cros_infra_config.get_builder_config('amd64-generic-postsubmit')
+  name = properties.builder_name or 'amd64-generic-postsubmit'
+  config = api.cros_infra_config.get_builder_config(name)
 
   sysroot = api.sysroot_util.create_sysroot(common.BuildTarget(name='eve'))
   api.assertions.assertEqual(sysroot, api.sysroot_util.sysroot)
@@ -122,6 +124,21 @@ def GenTests(api):
       api.cros_build_api.set_api_return('install packages',
                                         'SysrootService/InstallPackages',
                                         goma_artifacts(True)))
+
+  yield api.test(
+      'with_remoteexec', test_build(),
+      api.properties(
+          **{
+              '$chromeos/remoteexec':
+                  RemoteexecProperties(
+                      reproxy_cfg_file='reclient_cfgs/reproxy_config.cfg',
+                      reclient_version='release',
+                  )
+          }),
+      api.properties(
+          FullTestProperties(
+              use_remoteexec=True,
+              builder_name='amd64-generic-postsubmit-remoteexec')))
 
   yield api.test('failed-image-test', test_build(),
                  api.properties(FullTestProperties(image_test_json='{}')))

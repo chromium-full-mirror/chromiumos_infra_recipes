@@ -77,6 +77,58 @@
     },
     {
       "id": {
+        "name": "amd64-generic-postsubmit-remoteexec",
+        "type": "POSTSUBMIT"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "artifacts": {
+        "prebuilts": "PUBLIC",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
+	  "use_remoteexec": true
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlocklist": [],
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
         "name": "amd64-generic-cq",
         "type": "CQ"
       },

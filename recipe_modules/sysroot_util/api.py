@@ -205,10 +205,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
                                self.sysroot.build_target,
                                config.chrome.internal)
-            if not install_packages.disable_goma:
+            if install_packages.use_remoteexec:
+              self.m.cros_sdk.configure_remoteexec(chrome_root)
+            elif not install_packages.disable_goma:
               self.m.cros_sdk.configure_goma(chrome_root)
-            # TODO(crbug.com/1256966): Check install_packages.use_remoteexec
-            # and added remoteexec_config to InstallPackagesRequest.
 
         if self.m.cq.active:
           self.m.android.uprev_if_unstable_ebuild_changed(
@@ -233,9 +233,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             timeout=timeout_sec)
 
         # Process goma response to upload logs, stats, and counterz.
-        self.m.goma.process_artifacts(
-            response, install_pkg_request.goma_config.log_dir.dir,
-            self.sysroot.build_target.name, self.m.cros_infra_config.is_staging)
+        if self.m.cros_sdk.has_goma_config():
+          self.m.goma.process_artifacts(
+              response, install_pkg_request.goma_config.log_dir.dir,
+              self.sysroot.build_target.name,
+              self.m.cros_infra_config.is_staging)
 
         step_name = (
             '{}|call chromite.api.SysrootService/InstallPackages|{}'.format(
