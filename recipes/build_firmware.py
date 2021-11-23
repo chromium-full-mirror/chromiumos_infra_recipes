@@ -15,6 +15,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'easy',
     'test_util',
 ]
 
@@ -35,10 +36,21 @@ def RunSteps(api, properties):
     service = api.cros_build_api.FirmwareService
     chroot = api.cros_sdk.chroot
     location = properties.firmware_location or config.general.firmware_location
-    service.BuildAllFirmware(
+    response = service.BuildAllFirmware(
         BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                 code_coverage=properties.code_coverage),
         name='build firmware')
+    binary_sizes = {}
+    if response.metrics and response.metrics.value:
+      for fw_metric in response.metrics.value:
+        for fw_section in fw_metric.fw_section:
+          if fw_section.track_on_gerrit:
+            binary_sizes[fw_section.region] = fw_section.used
+
+    if binary_sizes:
+      api.easy.set_properties_step(binary_sizes=binary_sizes,
+                                   step_name='output binary sizes')
+
     service.TestAllFirmware(
         TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                code_coverage=properties.code_coverage),
@@ -161,3 +173,6 @@ def GenTests(api):
           sign_image_properties=get_signing_image_props_for_test(
               is_staging=True),
       )))
+
+  yield test('output_binary_sizes', api.post_check(post_process.StatusSuccess),
+             api.post_check(post_process.MustRun, 'output binary sizes'))

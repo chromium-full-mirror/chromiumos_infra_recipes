@@ -188,8 +188,16 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {
         'BuildAllFirmware':
             jsonify(
-                # TODO(b/177907747): Provide sample data.
-            ),
+                metrics=dict(value=[
+                    dict(
+                        fw_section=[
+                            dict(
+                                region="total-image-size",
+                                used=432012,
+                                track_on_gerrit=True,
+                            )
+                        ], platform_name="dauntless", target_name="ti50")
+                ])),
         'TestAllFirmware':
             jsonify(
                 # TODO(b/177907747): Provide sample data.
