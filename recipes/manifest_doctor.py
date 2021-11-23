@@ -6,7 +6,6 @@
 """Recipe for performing various manipulations on ChromeOS manifests."""
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/cipd',
@@ -49,10 +48,6 @@ def ensure_manifest_doctor(api, properties):
 
 
 def RunSteps(api, properties):
-  with api.step.nest('validate properties'):
-    if not properties.min_milestone:
-      raise StepFailure("min_milestone required")
-
   manifest_doctor_path = ensure_manifest_doctor(api, properties)
   if len(properties.buildspec_watch_paths) > 0:
     with api.step.nest("create external buildspecs"):
@@ -90,47 +85,47 @@ def RunSteps(api, properties):
 
       api.step("run manifest_doctor", cmd)
 
-  with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace():
-    api.cros_source.ensure_synced_cache()
-    api.cros_source.checkout_tip_of_tree()
+  if properties.local_manifest_branching_min_milestone:
+    with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace(
+    ):
+      api.cros_source.ensure_synced_cache()
+      api.cros_source.checkout_tip_of_tree()
 
-    with api.step.nest("branch local manifests"):
-      with api.context(cwd=api.workspace_util.workspace_path):
-        all_projects = api.repo.project_infos()
-      project_paths = []
-      for project in all_projects:
-        if project.name.startswith(
-            "chromeos/project/") or project.name.startswith(
-                "chromeos/program/"):
-          project_paths.append(project.path)
+      with api.step.nest("branch local manifests"):
+        with api.context(cwd=api.workspace_util.workspace_path):
+          all_projects = api.repo.project_infos()
+          project_paths = []
+          for project in all_projects:
+            if project.name.startswith(
+                "chromeos/project/") or project.name.startswith(
+                    "chromeos/program/"):
+              project_paths.append(project.path)
 
-      nproc = api.step(
-          "nproc", ["nproc"], stdout=api.raw_io.output_text(),
-          step_test_data=lambda: api.raw_io.test_api.stream_output(
-              '8\n')).stdout.strip()
+          nproc = api.step(
+              "nproc", ["nproc"], stdout=api.raw_io.output_text(),
+              step_test_data=lambda: api.raw_io.test_api.stream_output(
+                  '8\n')).stdout.strip()
 
-      cmd = [manifest_doctor_path, "branch-local-manifest"]
-      cmd += ["--chromeos_checkout", api.workspace_util.workspace_path]
-      cmd += ["--min_milestone", properties.min_milestone]
-      cmd += ["--projects", ",".join(project_paths)]
-      cmd += ["-j", nproc]
+          cmd = [manifest_doctor_path, "branch-local-manifest"]
+          cmd += ["--chromeos_checkout", api.workspace_util.workspace_path]
+          cmd += [
+              "--min_milestone",
+              properties.local_manifest_branching_min_milestone
+          ]
+          cmd += ["--projects", ",".join(project_paths)]
+          cmd += ["-j", nproc]
 
-      if properties.push:
-        cmd += ["--push"]
-      api.step("run manifest_doctor", cmd)
+          if properties.push:
+            cmd += ["--push"]
+          api.step("run manifest_doctor", cmd)
 
 
 def GenTests(api):
   yield api.test(
-      'no-min_milestone',
-      api.post_check(post_process.StepFailure, 'validate properties'),
-  )
-
-  yield api.test(
       'basic',
       api.properties(
           **{
-              "min_milestone": 90,
+              "local_manifest_branching_min_milestone": 90,
               "buildspec_watch_paths": ["release/", "test/"],
               "buildspec_watch_paths_legacy": ["buildspecs/"],
               "project_buildspec_watch_paths":
@@ -180,7 +175,7 @@ def GenTests(api):
       api.properties(
           **{
               "push": True,
-              "min_milestone": 90,
+              "local_manifest_branching_min_milestone": 90,
               "buildspec_watch_paths": ["release/", "test/"],
               "buildspec_watch_paths_legacy": ["buildspecs/"],
               "project_buildspec_watch_paths":
@@ -217,7 +212,7 @@ def GenTests(api):
       'with-ref',
       api.properties(
           **{
-              "min_milestone":
+              "local_manifest_branching_min_milestone":
                   90,
               "manifest_doctor_cipd_package":
                   "chromiumos/infra/manifest_doctor_foo",

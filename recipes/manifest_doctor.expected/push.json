@@ -1,10 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "validate properties"
-  },
-  {
-    "cmd": [],
     "name": "ensure manifest_doctor"
   },
   {
@@ -1500,6 +1496,7 @@
     "cmd": [
       "nproc"
     ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "branch local manifests.nproc",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1519,6 +1516,7 @@
       "8",
       "--push"
     ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "name": "branch local manifests.run manifest_doctor",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

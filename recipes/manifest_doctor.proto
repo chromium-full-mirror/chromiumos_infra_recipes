@@ -20,7 +20,7 @@ message ManifestDoctorProperties {
     bool push = 3;
 
     // Minimum milestone to consider for local manifest branching.
-    int32 min_milestone = 4;
+    int32 local_manifest_branching_min_milestone = 4;
 
     // Paths within the internal buildspec GS bucket to mirror to external
     // buildspec bucket.
