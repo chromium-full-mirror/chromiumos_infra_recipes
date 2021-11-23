@@ -123,6 +123,12 @@ class SkylabApi(recipe_api.RecipeApi):
         sw_dep_gsc_bucket = req.params.software_dependencies.add()
         sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
         req.params.scheduling.qs_account = self._qs_account
+        if uht.hw_test.common.critical.value:
+          req.params.test_execution_behavior = (
+              Request.Params.TestExecutionBehavior.CRITICAL)
+        else:
+          req.params.test_execution_behavior = (
+              Request.Params.TestExecutionBehavior.NON_CRITICAL)
         req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
         suite_to_create = req.test_plan.suite.add()
         suite_to_create.name = uht.hw_test.suite
