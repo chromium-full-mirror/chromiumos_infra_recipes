@@ -5,6 +5,7 @@
 
 """Recipe for linting CLs with Cargo Clippy."""
 
+from collections import OrderedDict
 import json
 
 from PB.chromite.api.depgraph import ListRequest, SourcePath
@@ -172,7 +173,7 @@ def GenTests(api):
                    project='fake-project', patchset=2),
   ]
 
-  relevant_edits = {
+  relevant_edits = OrderedDict({
       1: {
           'change_id': '1',
           'created': '2020-10-22 18:54:00.000000000',
@@ -199,7 +200,7 @@ def GenTests(api):
               }
           }
       }
-  }
+  })
 
   project_info = [
       dict(project='fake-project', path='src/foo',
@@ -245,7 +246,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'linting packages'),
       api.post_check(post_process.StatusSuccess),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'get relevant patches', changes[:1], {
+          'get relevant patches', changes[:1],
+          OrderedDict({
               1: {
                   'change_id': '1',
                   'created': '2020-10-22 18:54:00.000000000',
@@ -259,7 +261,7 @@ def GenTests(api):
                       }
                   }
               }
-          }), **BuildTestArgs())
+          })), **BuildTestArgs())
 
   # No affected packages relevant to target platform
   yield api.build_menu.test(
@@ -330,7 +332,8 @@ def GenTests(api):
       api.repo.project_infos_step_data('get affected packages',
                                        data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'get relevant patches', changes[:1], {
+          'get relevant patches', changes[:1],
+          OrderedDict({
               1: {
                   'change_id': '1',
                   'created': '2020-10-22 18:54:00.000000000',
@@ -344,7 +347,7 @@ def GenTests(api):
                       }
                   }
               }
-          }), **BuildTestArgs())
+          })), **BuildTestArgs())
 
   # CROS Build API failure in DependencyService.List
   yield api.build_menu.test(
