@@ -53,9 +53,7 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
-      api.build_menu.build_and_test_images(
-          config, include_version=True,
-          builder_path_template='{builder_name}/{version}')
+      api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of

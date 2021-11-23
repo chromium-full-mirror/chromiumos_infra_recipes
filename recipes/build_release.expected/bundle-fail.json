@@ -5654,7 +5654,7 @@
       "@@@STEP_LOG_LINE@request@    3, @@@",
       "@@@STEP_LOG_LINE@request@    6@@@",
       "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"kukui-main-release/R99-1234.56.0-101\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
@@ -5708,7 +5708,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"kukui-main\"\n  }, \n  \"version\": \"1234.56.0\", \n  \"imageTypes\": [\n    1, \n    3, \n    6\n  ], \n  \"builderPath\": \"kukui-main-release/R99-1234.56.0-101\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    }\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"kukui-main\"\n  }, \n  \"version\": \"1234.56.0\", \n  \"imageTypes\": [\n    1, \n    3, \n    6\n  ], \n  \"builderPath\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\", \n    \"chromeDir\": \"[START_DIR]/chrome\", \n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }, \n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5741,7 +5741,7 @@
       "@@@STEP_LOG_LINE@input_proto.json@    3, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    6@@@",
       "@@@STEP_LOG_LINE@input_proto.json@  ], @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"builderPath\": \"kukui-main-release/R99-1234.56.0-101\", @@@",
+      "@@@STEP_LOG_LINE@input_proto.json@  \"builderPath\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    \"chromeDir\": \"[START_DIR]/chrome\", @@@",
@@ -5890,7 +5890,7 @@
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_TEST\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_RECOVERY\"@@@",
       "@@@STEP_LOG_LINE@published event@    ], @@@",
-      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"kukui-main-release/R99-1234.56.0-101\", @@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\", @@@",
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\", @@@",
@@ -5916,7 +5916,7 @@
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBmgEKDAoKa3VrdWktbWFpbhIDAQMGIgkxMjM0LjU2LjAy\\nJGt1a3VpLW1haW4tcmVsZWFzZS9SOTktMTIzNC41Ni4wLTEwMTpUChpbQ0FDSEVdL2Nyb3NfY2hy\\nb290L2Nocm9vdBoiChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZyISW1NUQVJUX0RJ\\nUl0vY2hyb21lqgGEAQgBEigKFi9idWlsZC9pbWFnZXMvYmFzZS5iaW4QARoMCgprdWt1aS1tYWlu\\nEigKFi9idWlsZC9pbWFnZXMvdGVzdC5iaW4QAxoMCgprdWt1aS1tYWluEiwKGi9idWlsZC9pbWFn\\nZXMvcmVjb3ZlcnkuYmluEAYaDAoKa3VrdWktbWFpbtAC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2Vz\\nfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2Ny\\naXB0\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBrgEKDAoKa3VrdWktbWFpbhIDAQMGIgkxMjM0LjU2LjAy\\nOGt1a3VpLW1haW4tcmVsZWFzZS9SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0\\nOlQKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GiIKEQoPY2hyb21lX2ludGVybmFsCg0KCy1j\\ncm9zLWRlYnVnIhJbU1RBUlRfRElSXS9jaHJvbWWqAYQBCAESKAoWL2J1aWxkL2ltYWdlcy9iYXNl\\nLmJpbhABGgwKCmt1a3VpLW1haW4SKAoWL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgwKCmt1a3Vp\\nLW1haW4SLAoaL2J1aWxkL2ltYWdlcy9yZWNvdmVyeS5iaW4QBhoMCgprdWt1aS1tYWlu0ALQ7IDZ\\nrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0\\nZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -5951,7 +5951,7 @@
       }
     },
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBmgEKDAoKa3VrdWktbWFpbhIDAQMGIgkxMjM0LjU2LjAy\\nJGt1a3VpLW1haW4tcmVsZWFzZS9SOTktMTIzNC41Ni4wLTEwMTpUChpbQ0FDSEVdL2Nyb3NfY2hy\\nb290L2Nocm9vdBoiChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZyISW1NUQVJUX0RJ\\nUl0vY2hyb21lqgGEAQgBEigKFi9idWlsZC9pbWFnZXMvYmFzZS5iaW4QARoMCgprdWt1aS1tYWlu\\nEigKFi9idWlsZC9pbWFnZXMvdGVzdC5iaW4QAxoMCgprdWt1aS1tYWluEiwKGi9idWlsZC9pbWFn\\nZXMvcmVjb3ZlcnkuYmluEAYaDAoKa3VrdWktbWFpbtAC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2Vz\\nfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2Ny\\naXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBrgEKDAoKa3VrdWktbWFpbhIDAQMGIgkxMjM0LjU2LjAy\\nOGt1a3VpLW1haW4tcmVsZWFzZS9SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0\\nOlQKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GiIKEQoPY2hyb21lX2ludGVybmFsCg0KCy1j\\ncm9zLWRlYnVnIhJbU1RBUlRfRElSXS9jaHJvbWWqAYQBCAESKAoWL2J1aWxkL2ltYWdlcy9iYXNl\\nLmJpbhABGgwKCmt1a3VpLW1haW4SKAoWL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgwKCmt1a3Vp\\nLW1haW4SLAoaL2J1aWxkL2ltYWdlcy9yZWNvdmVyeS5iaW4QBhoMCgprdWt1aS1tYWlu0ALQ7IDZ\\nrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0\\nZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
