@@ -1,0 +1,18 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_resultdb.tests;
+
+import "test_platform/request.proto";
+
+message TestInputProperties {
+
+  test_platform.Request.Params.TestExecutionBehavior default_behavior = 1;
+
+  // Maps the name of a test case to a TestExecutionBehavior.
+  map<string, test_platform.Request.Params.TestExecutionBehavior> behavior_overrides_map = 2;
+}
+

@@ -8,6 +8,11 @@ import re
 
 from recipe_engine import recipe_api
 
+from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
+from PB.test_platform.request import Request
+
+TestExecutionBehavior = Request.Params.TestExecutionBehavior
+
 
 class ResultDBCommand(recipe_api.RecipeApi):
   """Module for chromium tests on skylab to upload result to Result DB."""
@@ -15,6 +20,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
   def __init__(self, **kwargs):
     super(ResultDBCommand, self).__init__(**kwargs)
     self._result_adapter = None
+
+  @property
+  def current_invocation_id(self):
+    """Return the current invocation's id."""
+    inv_id = self.m.resultdb.invocation_ids(
+        [self.m.resultdb.current_invocation])
+    return str(inv_id[0])
 
   def extract_resultdb_settings(self, test_args):
     """Extract resultdb settings from test_args.
@@ -188,3 +200,73 @@ class ResultDBCommand(recipe_api.RecipeApi):
     """
     artifact = {'stainless_logs': {'contents': stainless_url}}
     self.m.resultdb.upload_invocation_artifacts(artifact)
+
+  def apply_exonerations(self, invocation_ids, default_behavior=Request.Params
+                         .TestExecutionBehavior.BEHAVIOR_UNSPECIFIED,
+                         behavior_overrides_map=None):
+    """Exonerate unexpected test failures for the given invocations.
+
+    Currently only supports exonerating tests based on criticality.
+    First attempt to exonerate based on test run's default behavior. If the
+    default behavior is not exonerable, try to apply a test case behavior
+    override.
+
+    Args:
+      invocation_ids (list(str)): The ids of the invocation whose results we
+        should try to exonerate.
+      default_behavior (TestExecutionBehavior): The default behavior for all
+          tests in the test_runner build.
+      behavior_overrides_map (dict{str: TestExecutionBehavior}): Test-specific
+          behavior overrides that supersede the default behavior.
+    """
+    with self.m.step.nest('exonerate ResultDB results') as presentation:
+
+      # If no test execution behavior is specified, assume the tests are
+      # critical and therefore not exonerable.
+      if not (default_behavior or behavior_overrides_map):
+        return
+
+      # ResultDB step failures should not fail the build.
+      # TODO(b/206989022): Consider refactoring this to use the exponential
+      # retries decorator.
+      status = 'SUCCESS'
+      for _ in range(2):
+        try:
+          self._apply_exonerations(
+              invocation_ids, default_behavior,
+              behavior_overrides_map=behavior_overrides_map or {})
+          break
+        except self.m.step.StepFailure:
+          status = 'WARNING'
+      presentation.status = status
+
+  def _apply_exonerations(self, invocation_ids, default_behavior,
+                          behavior_overrides_map):
+
+    def _is_exonerable(test_name):
+      if default_behavior == TestExecutionBehavior.NON_CRITICAL:
+        return True
+      test_behavior = behavior_overrides_map.get(
+          test_name, TestExecutionBehavior.BEHAVIOR_UNSPECIFIED)
+      return test_behavior == TestExecutionBehavior.NON_CRITICAL
+
+    # ResultDB test_id represents the name of the test case.
+    inv_bundle = self.m.resultdb.query(inv_ids=invocation_ids,
+                                       variants_with_unexpected_results=True,
+                                       tr_fields=['variant', 'testId'])
+
+    test_exonerations = []
+    for x in inv_bundle.values():
+      unexpected_results = x.test_results
+
+      test_exonerations.extend([
+          test_result_pb2.TestExoneration(
+              test_id=result.test_id, variant=result.variant,
+              explanation_html='failed but is not critical')
+          for result in unexpected_results
+          # Unexpected passes are currently exonerated by default.
+          if result.status == test_result_pb2.FAIL and
+          _is_exonerable(result.test_id)
+      ])
+    self.m.resultdb.exonerate(test_exonerations,
+                              step_name="exonerate non-critical failures")

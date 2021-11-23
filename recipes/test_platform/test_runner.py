@@ -13,6 +13,7 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus\
   import PhosphorusEnvProperties
 from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
 from PB.test_platform import phosphorus
+from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform import skylab_local_state
 from PB.test_platform.skylab_test_runner.result import Result
 from PB.test_platform.skylab_test_runner.request import Request
@@ -24,6 +25,8 @@ from google.protobuf import timestamp_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
+
+TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -267,6 +270,9 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
       api.cros_resultdb.upload_chromeos_tests(
           base_dir=interface.get_results_directory(test_metadata),
           stainless_url=str(result.get_stainless_log_url()))
+      api.cros_resultdb.apply_exonerations(
+          [api.cros_resultdb.current_invocation_id],
+          properties.request.default_test_execution_behavior)
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
@@ -474,7 +480,16 @@ def GenTests(api):
     return (api.properties(
         TestRunnerProperties(request=_canned_test_runner_request(test_arg))))
 
-  def _canned_test_runner_request(test_arg='foo=bar'):
+  # An example request with a default TestExecutionBehavior specified.
+  def _request_properties_with_test_exec_behavior(default_behavior):
+    return (api.properties(
+        TestRunnerProperties(
+            request=_canned_test_runner_request(
+                default_behavior=default_behavior))))
+
+  def _canned_test_runner_request(
+      test_arg='foo=bar',
+      default_behavior=TestExecutionBehavior.BEHAVIOR_UNSPECIFIED):
     return {
         'prejob': {
             'provisionable_labels': {
@@ -501,6 +516,7 @@ def GenTests(api):
             }
         },
         'parent_build_id': 12345,
+        'default_test_execution_behavior': default_behavior,
     }
 
   def _canned_request_missing_name():
@@ -661,7 +677,8 @@ def GenTests(api):
           'build': 'eve-cq/R11-123.45'
       }),
       _misc_properties(),
-      _request_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),

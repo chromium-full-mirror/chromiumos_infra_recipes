@@ -15,6 +15,7 @@
       "@@@STEP_LOG_LINE@request@      \"isClientTest\": true@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"defaultTestExecutionBehavior\": \"NON_CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@request@  \"parentBuildId\": \"12345\", @@@",
       "@@@STEP_LOG_LINE@request@  \"prejob\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
@@ -868,6 +869,44 @@
     "name": "execution steps.original_test.upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.original_test.exonerate ResultDB results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "query",
+      "-json",
+      "-n",
+      "1000",
+      "-u",
+      "-tr-fields",
+      "variant,testId",
+      "build:42"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.exonerate ResultDB results.rdb query",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
