@@ -48,9 +48,7 @@
     "infra_step": true,
     "name": "sync to snapshot.write manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

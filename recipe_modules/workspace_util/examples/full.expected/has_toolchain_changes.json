@@ -1623,9 +1623,7 @@
     },
     "name": "sync to gitiles commit.write manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2293,9 +2291,7 @@
     },
     "name": "detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2475,14 +2471,7 @@
     },
     "name": "detect toolchain change.path relevancy check.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@2\u0011snapshot-HEAD-SHA:5@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

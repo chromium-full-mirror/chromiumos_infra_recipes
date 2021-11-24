@@ -32,9 +32,7 @@
     "infra_step": true,
     "name": "test step.call chromite.api.VersionService/Get.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

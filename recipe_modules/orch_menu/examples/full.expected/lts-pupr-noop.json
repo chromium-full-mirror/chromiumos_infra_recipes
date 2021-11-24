@@ -5105,13 +5105,7 @@
     },
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@:\u0011snapshot-HEAD-SHAB5@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

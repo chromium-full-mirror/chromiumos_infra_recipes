@@ -86,18 +86,7 @@
     "infra_step": true,
     "name": "plan builds.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0019@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0017@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0013cr.googlesource.com\u0018{@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u001a@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0018@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0013cr.googlesource.com\u0018\ufffd\u0003\u0012\u0005hello\u001a\u001b@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0013@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0011my little builder\u0012\u0004\u001a\u0002\b\u0001\"\t@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0007\u001a\u0005hello@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -1810,25 +1810,7 @@
     },
     "name": "run builds.plan builds.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0012\u0011snapshot-HEAD-SHA\u001a\ufffd\u0001@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u001c@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0018amd64-generic-postsubmit\u0018\u0002\u0012\u0006@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\b\u00018\u0001\"6\b\u0001\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archiveB\u0007@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0005\u0012\u0003@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0001\u0001*\u0002\b\u00012 @@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0011@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000fchrome_internalz\u0004@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a+@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u001a@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0016arm-generic-postsubmit\u0018\u0002\u0012\u0004@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u00008\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001\u001a+@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0014@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0010grunt-postsubmit\u0018\u0002\u0012\u0004@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u00008\u00022\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0001@\u0001\"h@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@f@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

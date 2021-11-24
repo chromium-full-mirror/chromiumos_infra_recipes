@@ -204,9 +204,7 @@
     },
     "name": "create releasespec.write releasespecs/99/1234.56.0.xml",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@1234.56.0.xml@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@1234.56.0.xml@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -463,9 +461,7 @@
     },
     "name": "create releasespec (2).write releasespecs/99/1234.56.0.xml",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@1234.56.0.xml@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@1234.56.0.xml@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -761,9 +757,7 @@
     },
     "name": "create releasespec (3).write releasespecs/99/1234.56.0.xml",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@1234.56.0.xml@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@1234.56.0.xml@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1022,23 +1016,7 @@
     },
     "name": "push images.call chromite.api.ImageService/PushImage.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"destBucket\": \"gs://\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"sysroot\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  }, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"channels\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    5@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

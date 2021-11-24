@@ -48,19 +48,7 @@
     "infra_step": true,
     "name": "uprev android.call chromite.api.AndroidService/MarkStable.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"skipCommit\": true, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"packageName\": \"android-package\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}, @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"androidVersion\": \"7123456\", @@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"buildTargets\": [@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"name\": \"build_target\"@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@    }@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  ]@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

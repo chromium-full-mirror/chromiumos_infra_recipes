@@ -628,18 +628,7 @@
     },
     "name": "ensure synced checkout.write local manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@<manifest>@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@  <remote name=\"cros-internal\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@          fetch=\"https://chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@          review=\"https://chrome-internal-review.googlesource.com\" />@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@  <project name=\"chromeos/private-repo1\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@     path=\"src/private-repo1\"@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@     remote=\"cros-internal\" />@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@</manifest>@@@",
-      "@@@STEP_LOG_LINE@local_manifest.xml@    @@@",
-      "@@@STEP_LOG_END@local_manifest.xml@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

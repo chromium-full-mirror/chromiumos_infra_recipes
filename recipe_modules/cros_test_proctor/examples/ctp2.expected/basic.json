@@ -266,19 +266,7 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate coverage rules.write input files.write build_metadata.jsonproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@{@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@  \"values\": [@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@    {@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@        \"portageBuildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@          \"overlayName\": \"overlayA\"@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@        }@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@      }@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@    }@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@  ]@@@",
-      "@@@STEP_LOG_LINE@build_metadata.jsonproto@}@@@",
-      "@@@STEP_LOG_END@build_metadata.jsonproto@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -324,17 +312,7 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate coverage rules.write input files.write flattened.binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@{@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@  \"values\": [@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@    {@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@      \"hwDesign\": {@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@        \"name\": \"design1\"@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@      }@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@    }@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@  ]@@@",
-      "@@@STEP_LOG_LINE@flattened.binaryproto@}@@@",
-      "@@@STEP_LOG_END@flattened.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -380,17 +358,7 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate coverage rules.write input files.write dut_attributes.jsonproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@{@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@  \"dutAttributes\": [@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@    {@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@      \"id\": {@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@        \"value\": \"attribute1\"@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@      }@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@    }@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@  ]@@@",
-      "@@@STEP_LOG_LINE@dut_attributes.jsonproto@}@@@",
-      "@@@STEP_LOG_END@dut_attributes.jsonproto@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -407,8 +375,7 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@source_test_plans_0.textpb@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -425,8 +392,7 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@source_test_plans_1.textpb@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

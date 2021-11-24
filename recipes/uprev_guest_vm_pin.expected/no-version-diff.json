@@ -1576,9 +1576,7 @@
     "infra_step": true,
     "name": "upreving pin for branch main.try uprev version file.version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@80.1.2.3@@@",
-      "@@@STEP_LOG_END@VERSION-PIN@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

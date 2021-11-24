@@ -59,8 +59,7 @@
     "infra_step": true,
     "name": "upload build logs.write stderr.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@stderr.txt_tmp_1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -96,8 +95,7 @@
     "infra_step": true,
     "name": "upload build logs.write stdout.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@stdout.txt_tmp_1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -1090,11 +1090,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "write manifest file",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@manifest_tmp_1@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@manifest_tmp_1@@@"
-    ]
+    "name": "write manifest file"
   },
   {
     "cmd": [],

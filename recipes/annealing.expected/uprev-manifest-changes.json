@@ -1535,11 +1535,7 @@
     "infra_step": true,
     "name": "uprev packages.uprev ebuilds.call chromite.api.PackageService/Uprev.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"overlayType\": 1@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1699,9 +1695,7 @@
     "infra_step": true,
     "name": "uprev packages.revbump chrome.revbump chrome.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2620,9 +2614,7 @@
     "infra_step": true,
     "name": "publish external snapshot.update ref.git transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@snapshot.xml@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
-      "@@@STEP_LOG_END@snapshot.xml@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2866,9 +2858,7 @@
     "infra_step": true,
     "name": "publish internal snapshot.update ref.git transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@snapshot.xml@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
-      "@@@STEP_LOG_END@snapshot.xml@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

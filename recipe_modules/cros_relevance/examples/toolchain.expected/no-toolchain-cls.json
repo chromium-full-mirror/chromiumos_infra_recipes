@@ -30,11 +30,7 @@
     "infra_step": true,
     "name": "determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@{@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@  \"chroot\": {}@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@}@@@",
-      "@@@STEP_LOG_END@input_proto.json@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -168,13 +164,7 @@
     "infra_step": true,
     "name": "path relevancy check.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@2\u0007my hash:\u0004@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0002\u0018{:\u0005@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0003\u0018\ufffd\u0003B\u000b@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\t\u001a\u0007my hashJ\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u000esome/other/dirP\u0001@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

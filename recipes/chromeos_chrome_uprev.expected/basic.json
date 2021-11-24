@@ -160,13 +160,7 @@
     "infra_step": true,
     "name": "modify chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild.write to file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@# chrome-internal rev: internal1234revision@@@",
-      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@# chromium rev: public5678revision@@@",
-      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@# chromium/src rev: publicsrc9012revision@@@",
-      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@@@@",
-      "@@@STEP_LOG_LINE@chromeos-chrome-9999.ebuild@sample file contents@@@",
-      "@@@STEP_LOG_END@chromeos-chrome-9999.ebuild@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

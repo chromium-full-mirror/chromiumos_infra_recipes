@@ -3348,28 +3348,7 @@
     "infra_step": true,
     "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@*\ufffd\u0001@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\ufffd\u0001\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001a\u001a\u0018amd64-generic-postsubmit`\fzd@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@-@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@+@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u001b*\u0019@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0017@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0004name\u0012\u000f\u001a@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@amd64-generic\u001a3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\u0001*\ufffd\u0001@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\ufffd\u0001\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016arm-generic-postsubmit`\u0014z\ufffd\u0001@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@&@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@$@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\fbuild_target\u0012\u0014*\u0012@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0010@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0004name\u0012\b\u001a\u0006target\u0012C@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u0019chromium.googlesource.com\u0012\tproject-a\u001a@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@COMMIT_SHA\"\u000frefs/heads/main\u001a3@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\u0002:\bdeadbeefJ_@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@]@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@ chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

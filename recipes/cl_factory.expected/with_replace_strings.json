@@ -2864,9 +2864,7 @@
     },
     "name": "generate project change lists.working on project project-a.replace_strings.write [CLEANUP]/chromiumos_workspace/src/project-a/file.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@file.star@hellX wXrld@@@",
-      "@@@STEP_LOG_END@file.star@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2926,9 +2924,7 @@
     },
     "name": "generate project change lists.working on project project-a.replace_strings.write [CLEANUP]/chromiumos_workspace/src/project-a/file.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@file.txt@hellX wXrld@@@",
-      "@@@STEP_LOG_END@file.txt@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3330,9 +3326,7 @@
     },
     "name": "generate project change lists.working on project project-b.replace_strings.write [CLEANUP]/chromiumos_workspace/src/project-b/file.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@file.star@hellX wXrld@@@",
-      "@@@STEP_LOG_END@file.star@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3392,9 +3386,7 @@
     },
     "name": "generate project change lists.working on project project-b.replace_strings.write [CLEANUP]/chromiumos_workspace/src/project-b/file.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@file.txt@hellX wXrld@@@",
-      "@@@STEP_LOG_END@file.txt@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3796,9 +3788,7 @@
     },
     "name": "generate project change lists.working on project project-c.replace_strings.write [CLEANUP]/chromiumos_workspace/src/project-c/file.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@file.star@hellX wXrld@@@",
-      "@@@STEP_LOG_END@file.star@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3858,9 +3848,7 @@
     },
     "name": "generate project change lists.working on project project-c.replace_strings.write [CLEANUP]/chromiumos_workspace/src/project-c/file.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@file.txt@hellX wXrld@@@",
-      "@@@STEP_LOG_END@file.txt@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

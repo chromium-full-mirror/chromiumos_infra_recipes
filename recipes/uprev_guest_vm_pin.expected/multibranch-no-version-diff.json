@@ -1623,9 +1623,7 @@
     "infra_step": true,
     "name": "upreving pin for branch release-R89-12345.B.try uprev version file.version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@89.1.2.5@@@",
-      "@@@STEP_LOG_END@VERSION-PIN@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1791,9 +1789,7 @@
     "infra_step": true,
     "name": "upreving pin for branch release-R88-12345.B.try uprev version file.version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@VERSION-PIN@88.1.2.4@@@",
-      "@@@STEP_LOG_END@VERSION-PIN@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

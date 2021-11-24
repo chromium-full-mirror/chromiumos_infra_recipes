@@ -12,10 +12,7 @@
     ],
     "cwd": "[START_DIR]/repo",
     "infra_step": true,
-    "name": "write manifest",
-    "~followup_annotations": [
-      "@@@STEP_LOG_END@tmp_manifest@@@"
-    ]
+    "name": "write manifest"
   },
   {
     "cmd": [

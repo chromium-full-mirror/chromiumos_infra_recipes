@@ -3356,11 +3356,7 @@
     "infra_step": true,
     "name": "generate test plan.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@*\u0000:\b1234abcdB\u0000J\f@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@@@@",
-      "@@@STEP_LOG_LINE@input.binaryproto@\u001a\b1234abcd@@@",
-      "@@@STEP_LOG_END@input.binaryproto@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -1876,9 +1876,7 @@
     },
     "name": "recreating older run.sync to gitiles commit.write manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@tmp_manifest@<manifest></manifest>@@@",
-      "@@@STEP_LOG_END@tmp_manifest@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

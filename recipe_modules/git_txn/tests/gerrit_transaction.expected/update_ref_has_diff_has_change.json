@@ -311,9 +311,7 @@
     "infra_step": true,
     "name": "update ref (3).gerrit transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@path.txt@data@@@",
-      "@@@STEP_LOG_END@path.txt@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

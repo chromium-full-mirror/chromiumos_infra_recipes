@@ -190,9 +190,7 @@
     "infra_step": true,
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/c.dmp.write .dmp.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@c.dmp.txt@TEST_MINIDUMP_STDOUT@@@",
-      "@@@STEP_LOG_END@c.dmp.txt@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -231,9 +229,7 @@
     "infra_step": true,
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/d.dmp.write .dmp.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@d.dmp.txt@TEST_MINIDUMP_STDOUT@@@",
-      "@@@STEP_LOG_END@d.dmp.txt@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
