@@ -285,7 +285,7 @@ class TastExecApi(RecipeApi):
             str(tast_dir.join('remote_test_runner')))] + \
     keyfile_args + \
     [dut_name] + \
-    list(expressions), timeout=2 * 60)
+    list(expressions), timeout=5 * 60)
 
     tests = [t.strip() for t in list_stdout.splitlines()]
     return tests

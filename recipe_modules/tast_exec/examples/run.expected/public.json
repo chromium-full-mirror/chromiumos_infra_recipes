@@ -195,7 +195,7 @@
       "!informational"
     ],
     "name": "first tast iteration.tast list",
-    "timeout": 120,
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -645,7 +645,7 @@
       "arc.Boot"
     ],
     "name": "second tast iteration.tast list",
-    "timeout": 120,
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1107,7 +1107,7 @@
       "!informational"
     ],
     "name": "tast list",
-    "timeout": 120
+    "timeout": 300
   },
   {
     "cmd": [
@@ -1320,7 +1320,7 @@
       "example.Pass"
     ],
     "name": "tast list (2)",
-    "timeout": 120
+    "timeout": 300
   },
   {
     "cmd": [
@@ -1586,7 +1586,7 @@
       "!informational"
     ],
     "name": "first tast iteration (2).tast list",
-    "timeout": 120,
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2068,7 +2068,7 @@
       "arc.Boot"
     ],
     "name": "second tast iteration (2).tast list",
-    "timeout": 120,
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
