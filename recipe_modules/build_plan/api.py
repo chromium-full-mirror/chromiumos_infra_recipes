@@ -59,7 +59,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = [b.id.name for b in builder_configs]
-    if not self._properties.disable_build_plan_pruning:
+    if gerrit_changes and not self._properties.disable_build_plan_pruning:
       necessary_builders = self.m.cros_relevance.get_necessary_builders(
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
               b.id for b in builder_configs if 'pointless' not in b.id.name
