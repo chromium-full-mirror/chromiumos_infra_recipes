@@ -6454,6 +6454,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/orderfile",
       "gs://chromeos-toolchain-artifacts/orderfile/unvetted/"
     ],
@@ -6487,6 +6488,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/orderfile",
       "gs://chromeos-prebuilt/afdo-job/orderfiles/unvetted/"
     ],

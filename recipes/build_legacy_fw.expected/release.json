@@ -3521,6 +3521,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/target/firmware_from_source.tar.bz2",
       "gs://chromeos-image-archive/target-firmware/R91-13874.10.0/"
     ],
@@ -3562,6 +3563,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/target/firmware_metadata.jsonpb",
       "gs://chromeos-image-archive/target-firmware/R91-13874.10.0/"
     ],

@@ -9197,6 +9197,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
@@ -9233,6 +9234,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
@@ -9269,6 +9271,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
@@ -9305,6 +9308,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
@@ -9341,6 +9345,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
@@ -9377,6 +9382,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
@@ -9413,6 +9419,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],

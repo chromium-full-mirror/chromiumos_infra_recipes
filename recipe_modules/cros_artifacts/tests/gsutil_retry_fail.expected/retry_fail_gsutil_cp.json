@@ -690,6 +690,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/foo",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/bar",
       "gs://publish_gs_bucket/"
@@ -724,6 +725,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/foo",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/bar",
       "gs://publish_gs_bucket/"
@@ -758,6 +760,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/foo",
       "gs://artifacts_gs_bucket/target-postsubmit/R99-1234.56.0-101-8945511751514863184/bar",
       "gs://publish_gs_bucket/"

@@ -2912,6 +2912,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board1/firmware_from_source.tar.bz2",
       "gs://chromeos-image-archive/board1-firmware/R91-13874.10.0/"
     ],
@@ -2953,6 +2954,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board1/firmware_metadata.jsonpb",
       "gs://chromeos-image-archive/board1-firmware/R91-13874.10.0/"
     ],
@@ -3525,6 +3527,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2",
       "gs://chromeos-image-archive/board2-firmware/R91-13874.10.0/"
     ],
@@ -3566,6 +3569,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2/firmware_metadata.jsonpb",
       "gs://chromeos-image-archive/board2-firmware/R91-13874.10.0/"
     ],

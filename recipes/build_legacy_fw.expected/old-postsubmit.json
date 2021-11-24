@@ -2927,6 +2927,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184/target/firmware_from_source.tar.bz2",
       "gs://chromeos-image-archive/target-firmware/R39-6301.202.4/"
     ],
@@ -2968,6 +2969,7 @@
       "-m",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184/target/firmware_metadata.jsonpb",
       "gs://chromeos-image-archive/target-firmware/R39-6301.202.4/"
     ],
