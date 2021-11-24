@@ -8009,9 +8009,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipes/cipd_uprev.py#131)(api, properties):**
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#132)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#78)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#79)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -8023,7 +8023,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#105)(api, instruction, package_tags=None):**
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#106)(api, instruction, package_tags=None):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -8036,7 +8036,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/cipd_uprev.py#38)(api, instruction):**
+&mdash; **def [validate](/recipes/cipd_uprev.py#39)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 
@@ -10396,17 +10396,17 @@ Recipe for running tricium on CLs.
 &mdash; **def [RunSteps](/recipes/tricium.py#33)(api):**
 ### *recipes* / [upload\_debug\_symbols](/recipes/upload_debug_symbols.py)
 
-[DEPS](/recipes/upload_debug_symbols.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/upload_debug_symbols.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for uploading debug symbols to the crash service.
 
-&mdash; **def [RunSteps](/recipes/upload_debug_symbols.py#47)(api, properties):**
+&mdash; **def [RunSteps](/recipes/upload_debug_symbols.py#51)(api, properties):**
 
 Invoke the upload debug symbols builder.
 
-&mdash; **def [ensure\_cipd\_package](/recipes/upload_debug_symbols.py#23)(api, cipd_package_location, cipd_ref, package_name):**
+&mdash; **def [ensure\_cipd\_package](/recipes/upload_debug_symbols.py#27)(api, cipd_package_location, cipd_ref, package_name):**
 
 Use the recipe_engine CIPD api to fetch and store the package locally.
 

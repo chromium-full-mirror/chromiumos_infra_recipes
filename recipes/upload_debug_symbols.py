@@ -13,9 +13,13 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/raw_io',
     'cros_infra_config',
+    'easy',
 ]
 
 from PB.recipes.chromeos.upload_debug_symbols import UploadDebugSymbolsProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 PROPERTIES = UploadDebugSymbolsProperties
 
@@ -47,6 +51,11 @@ def ensure_cipd_package(api, cipd_package_location, cipd_ref, package_name):
 def RunSteps(api, properties):
   """Invoke the upload debug symbols builder."""
   staging = properties.is_staging or api.cros_infra_config.is_staging
+
+  # Check input parameters for basic validity.
+  if not properties.google_storage_path:
+    raise StepFailure('google_storage_path is a required parameter')
+
   # This is the name of the package as known buy the CIPD package system.
   with api.step.nest('fetch CIPD packages'):
     with api.context(infra_steps=True):
@@ -54,8 +63,9 @@ def RunSteps(api, properties):
       cipd_package_location = ('chromiumos/infra/'
                                'upload_debug_symbols/${platform}')
 
-      # Specify which instance of the package to pull. Default to prod.
-      cipd_ref = ('prod' or properties.cipd_ref)
+      # Specify which instance of the package to pull.
+      default_cipd_ref = 'staging' if staging else 'prod'
+      cipd_ref = properties.cipd_ref or default_cipd_ref
 
       # Retrieve the binary and store it locally.
       upload_debug_symbols_path = ensure_cipd_package(
@@ -65,19 +75,29 @@ def RunSteps(api, properties):
           'upload_debug_symbols',
       )
 
-  # CLI invocation of upload_debug_symbols golang binary.
-  cmd = [
-      upload_debug_symbols_path,
-      properties.google_storage_path,
-      properties.worker_count,
-      properties.retry_count,
-      staging,
-      properties.dry_run,
-  ]
+  # Note this precludes running with 0 retries.
+  retry_count_param = ('-retry-quota %s' % properties.retry_count
+                       if properties.retry_count else None)
+  worker_count_param = ('-worker-count %s' % properties.worker_count
+                        if properties.worker_count else None)
+  staging_param = '-staging' if staging else None
+  dryrun_param = '-dry-run=false' if not properties.dry_run else None
 
-  # Raise failures as InfraFailures rather than StepFailures
-  with api.context(infra_steps=True):
-    return api.step('upload debug symbols', cmd, stdout=api.raw_io.output())
+  # CLI invocation of upload_debug_symbols golang binary.
+  cmd = filter(None, [
+      upload_debug_symbols_path,
+      'upload',
+      '-gs-path',
+      properties.google_storage_path,
+      worker_count_param,
+      retry_count_param,
+      staging_param,
+      dryrun_param,
+  ])
+
+  with api.step.nest('uploading') as pres:
+    pres.logs['upload logs'] = api.easy.stdout_step('call upload go binary',
+                                                    cmd)
 
 
 def GenTests(api):
@@ -93,3 +113,4 @@ def GenTests(api):
               "dry_run": False,
           }),
   )
+  yield api.test('needs-gs-path', api.post_check(post_process.StatusFailure))

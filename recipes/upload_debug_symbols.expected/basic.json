@@ -41,22 +41,30 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/cipd/upload_debug_symbols",
-      "gs-test",
-      "90",
-      "90",
-      "True",
-      "False"
-    ],
-    "infra_step": true,
-    "name": "upload debug symbols"
+    "cmd": [],
+    "name": "uploading",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@upload logs@@@@",
+      "@@@STEP_LOG_END@upload logs@@@"
+    ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "\"<class 'recipe_engine.step_data.StepData'>\" is not a valid return type for recipes. Did you mean to use \"RawResult\"?"
-    },
+    "cmd": [
+      "[START_DIR]/cipd/upload_debug_symbols",
+      "upload",
+      "-gs-path",
+      "gs-test",
+      "-worker-count 90",
+      "-retry-quota 90",
+      "-staging",
+      "-dry-run=false"
+    ],
+    "name": "uploading.call upload go binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
