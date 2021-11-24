@@ -57,7 +57,8 @@ def _GetRelevantPatchsets(api, properties):
           if filepath.split('.')[-1] in relevant_extensions)
       if relevant_for_patchset:
         relevant_files[patch_set] = relevant_for_patchset
-    presentation.logs['output'] = [str(relevant_files.values())]
+    # TODO(b/207653519): Make output consistent across runs.
+    # presentation.logs['output'] = [str(relevant_files.values())]
     result_count = sum(len(filepaths) for filepaths in relevant_files.values())
     presentation.step_text = 'found %d modified relevant files' % result_count
     return relevant_files
@@ -78,6 +79,9 @@ def _GetAffectedPackages(api, relevant_patchsets):
   """Get a list of packages affected by changes to some list of files."""
   with api.step.nest('get affected packages') as presentation:
     source_paths = _GetSourcePaths(api, relevant_patchsets)
+    # TODO(b/207653519): Remove sort once https://crrev.com/c/3292206 is rolled
+    # into our Recipes repo.
+    source_paths.sort(key=lambda x: x.path)
     affected = api.cros_build_api.DependencyService.List(
         ListRequest(sysroot=api.build_menu.sysroot,
                     chroot=api.build_menu.chroot,

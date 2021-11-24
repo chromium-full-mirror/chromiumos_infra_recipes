@@ -231,9 +231,7 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 4 modified relevant files@@@",
-      "@@@STEP_LOG_LINE@output@[set(['bar.rs', 'foo.rs']), set(['bar2.rs', 'foo.rs'])]@@@",
-      "@@@STEP_LOG_END@output@@@"
+      "@@@STEP_TEXT@found 4 modified relevant files@@@"
     ]
   },
   {
@@ -5205,10 +5203,10 @@
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.rs\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.rs\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar2.rs\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar2.rs\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.rs\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.rs\"@@@",
@@ -5228,7 +5226,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    }, \n    \"path\": \"/build/atlas\"\n  }, \n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.rs\"\n    }, \n    {\n      \"path\": \"src/foo/foo.rs\"\n    }, \n    {\n      \"path\": \"src/foo/bar2.rs\"\n    }, \n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ]\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    }, \n    \"path\": \"/build/atlas\"\n  }, \n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.rs\"\n    }, \n    {\n      \"path\": \"src/foo/bar2.rs\"\n    }, \n    {\n      \"path\": \"src/foo/foo.rs\"\n    }, \n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5263,10 +5261,10 @@
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"src/foo/bar.rs\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"src/foo/foo.rs\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"src/foo/bar2.rs\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
-      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"src/foo/bar2.rs\"@@@",
+      "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"src/foo/foo.rs\"@@@",
       "@@@STEP_LOG_LINE@input_proto.json@    }, @@@",
       "@@@STEP_LOG_LINE@input_proto.json@    {@@@",
       "@@@STEP_LOG_LINE@input_proto.json@      \"path\": \"src/foo/foo.rs\"@@@",
