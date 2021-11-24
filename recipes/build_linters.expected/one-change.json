@@ -174,7 +174,10 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 2 modified relevant files@@@"
+      "@@@STEP_TEXT@found 2 modified relevant files@@@",
+      "@@@STEP_LOG_LINE@output@bar.rs@@@",
+      "@@@STEP_LOG_LINE@output@foo.rs@@@",
+      "@@@STEP_LOG_END@output@@@"
     ]
   },
   {

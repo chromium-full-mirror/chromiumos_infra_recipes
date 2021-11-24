@@ -231,7 +231,11 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 4 modified relevant files@@@"
+      "@@@STEP_TEXT@found 3 modified relevant files@@@",
+      "@@@STEP_LOG_LINE@output@bar.rs@@@",
+      "@@@STEP_LOG_LINE@output@bar2.rs@@@",
+      "@@@STEP_LOG_LINE@output@foo.rs@@@",
+      "@@@STEP_LOG_END@output@@@"
     ]
   },
   {

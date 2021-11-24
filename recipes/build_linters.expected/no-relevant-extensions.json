@@ -174,7 +174,8 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 0 modified relevant files@@@"
+      "@@@STEP_TEXT@found 0 modified relevant files@@@",
+      "@@@STEP_LOG_END@output@@@"
     ]
   },
   {
