@@ -248,13 +248,13 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/testproject1/+/HEAD/local_manifest.xml",
+      "https://chrome-internal.googlesource.com/testproject1/+/snapshot/local_manifest.xml",
       "--format",
       "text"
     ],
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
-    "name": "ensure synced checkout.fetch HEAD:local_manifest.xml",
+    "name": "ensure synced checkout.fetch snapshot:local_manifest.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -61,12 +61,10 @@ def RunSteps(api, properties):
   local_manifests = []
   for lm in properties.local_manifests:
     local_manifests.append(
-        api.repo.LocalManifest(repo=lm.repo_url, path=lm.manifest_path))
+        api.repo.LocalManifest(repo=lm.repo_url, path=lm.manifest_path,
+                               branch=properties.manifest_branch))
 
-  if local_manifests and properties.manifest_branch:
-    raise ValueError(
-        'local_manifests cannot be specified if manifest_branch is specified')
-  elif not local_manifests and not properties.manifest_branch:
+  if not local_manifests and not properties.manifest_branch:
     raise ValueError('local_manifests must be specified')
 
   # Do work in a context with manifest groups checked out. Most steps are infra
@@ -278,11 +276,15 @@ def GenTests(api):
           'manifest_branch': 'release-R123',
       })),
       project_config_cq_build(api),
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
-                       ('.*local_manifests cannot be specified '
-                        'if manifest_branch is specified.*')),
-      api.post_process(post_process.DropExpectation),
+      api.post_process(
+          post_process.StepCommandContains, 'ensure synced checkout.repo init',
+          ['--manifest-branch', 'release-R123', '--groups', 'partner-config']),
+      api.post_process(
+          post_process.StepCommandContains,
+          'ensure synced checkout.fetch release-R123:local_manifest.xml', [
+              '--url',
+              'https://chrome-internal.googlesource.com/chromeos/project/testproject1/+/release-R123/local_manifest.xml'
+          ]),
   )
 
   yield api.test(

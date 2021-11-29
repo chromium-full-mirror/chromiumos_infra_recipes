@@ -40,7 +40,7 @@ class ProjectInfo(
             if self.branch.startswith('refs/heads/') else self.branch)
 
 
-LocalManifest = namedtuple('LocalManifest', ['repo', 'path'])
+LocalManifest = namedtuple('LocalManifest', ['repo', 'path', 'branch'])
 
 
 class RepoApi(recipe_api.RecipeApi):
@@ -202,7 +202,8 @@ class RepoApi(recipe_api.RecipeApi):
 
       for i, local_manifest in enumerate(local_manifests):
         manifest_data = self.m.gitiles.download_file(
-            local_manifest.repo, local_manifest.path, branch='HEAD',
+            local_manifest.repo, local_manifest.path,
+            branch=local_manifest.branch or 'HEAD',
             step_test_data=self.test_api.local_manifest_step_test_data)
         self.m.file.write_raw(
             name='write local manifest',

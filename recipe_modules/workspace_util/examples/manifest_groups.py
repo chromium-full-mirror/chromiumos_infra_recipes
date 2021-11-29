@@ -28,10 +28,10 @@ def RunSteps(api, properties):
   # builders that have configs.
   _ = api.cros_source.configure_builder()
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')
-  with api.workspace_util.sync_to_manifest_groups(
-      ['group1', 'group2'],
-      [api.repo.LocalManifest(repo='http://repo.url', path='manifest_path')],
-      cache_dir):
+  with api.workspace_util.sync_to_manifest_groups(['group1', 'group2'], [
+      api.repo.LocalManifest(repo='http://repo.url', path='manifest_path',
+                             branch=None)
+  ], cache_dir):
     api.workspace_util.apply_changes()
 
   api.workspace_util.detect_toolchain_cls(None)

@@ -35,7 +35,8 @@ def RunSteps(api, properties):
     local_manifest = init_opts.pop('local_manifest', None)
     if local_manifest:
       init_opts['local_manifests'] = [
-          api.repo.LocalManifest(local_manifest['repo'], local_manifest['path'])
+          api.repo.LocalManifest(local_manifest['repo'], local_manifest['path'],
+                                 branch=init_opts.get('manifest_branch'))
       ]
     sync_opts = MessageToDict(properties.sync_opts,
                               preserving_proto_field_name=True)

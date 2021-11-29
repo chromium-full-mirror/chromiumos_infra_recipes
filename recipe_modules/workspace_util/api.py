@@ -212,12 +212,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
           commit saved in cros_infra_config.configure_builder().
       manifest_branch (str): Branch to checkout. See the `--manifest-branch`
-          option of `repo init` for details and defaults. Note that if
-          manifest_branch is specified, the internal manifest will be used and
-          local_manifest cannot be specified. This is because local manifests
-          are not branched along with main manifests, so using the  branched
-          public manifest along with a local manifest will mean some repos are
-          on branches, some are not.
+          option of `repo init` for details and defaults.
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
     init_opts = {
@@ -227,15 +222,18 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     manifest_url = self.m.src_state.external_manifest.url
 
     if local_manifests:
-      assert not manifest_branch, (
-          'manifest_branch and local_manifests cannot be specified together')
       init_opts['local_manifests'] = local_manifests
 
     if manifest_branch:
-      assert not local_manifests, (
-          'manifest_branch and local_manifests cannot be specified together')
       init_opts['manifest_branch'] = manifest_branch
-      manifest_url = self.m.src_state.internal_manifest.url
+
+      # When syncing to a branch with no local manifests specified, assume the
+      # full internal manifest is needed.
+      #
+      # TODO(b/207578928): Remove this once config checkers specify local
+      # manifests.
+      if not local_manifests:
+        manifest_url = self.m.src_state.internal_manifest.url
 
     with self.m.cros_source.checkout_overlays_context(
         mount_cache=not cache_path_override):
