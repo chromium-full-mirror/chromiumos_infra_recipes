@@ -76,7 +76,7 @@ def RunSteps(api, properties):
                   mount_path, api.src_state.internal_manifest.url,
                   init_opts=init_opts, sync_opts=sync_opts, final_cleanup=True)
               api.git.clone(repo_url=api.cros_release.manifest_versions_url,
-                            target_path='manifest-versions')
+                            target_path='manifest-versions-internal')
           if cache.command == 'gclient':
             # Chrome cache consists of a local repo cache and src,
             # both mounted via a single disk. We change into the

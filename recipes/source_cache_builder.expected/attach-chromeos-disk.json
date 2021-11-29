@@ -566,7 +566,7 @@
       "git",
       "clone",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
-      "manifest-versions"
+      "manifest-versions-internal"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
     "infra_step": true,
