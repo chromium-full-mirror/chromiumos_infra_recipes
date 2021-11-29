@@ -2,7 +2,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "google_storage_path is a required parameter"
+      "humanReason": "gs_path is a required parameter"
     },
     "name": "$result"
   }

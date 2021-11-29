@@ -13,17 +13,17 @@ message UploadDebugSymbolsProperties {
 
   // Location in Google storage in which to fetch debug symbols from.
   // E.g. gs://chromeos-debug-symbols/some-release-area/debug.tgz
-  string google_storage_path = 2;
+  string gs_path = 2;
 
   // Maximum number of concurrent workers to be ran in the builder.
   int32 worker_count = 3;
 
   // The total number of retries allowed.
-  int32 retry_count = 4;
+  int32 retry_quota = 4;
 
   // Bool stating if the builder being ran in a staging environment.
-  bool is_staging = 5;
+  bool staging = 5;
 
   // Bool stating whether or not to dry run the uploads.
-  bool dry_run = 6;
+  bool dryrun = 6;
 }

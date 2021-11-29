@@ -9,7 +9,9 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'recipe_engine/swarming',
+    'cros_infra_config',
     'build_menu',
     'build_reporting',
     'cros_release',
@@ -25,11 +27,48 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipes.chromeos.build_release import BuildReleaseProperties
 
 StepDetails = BuildReport.StepDetails
+PROPERTIES = BuildReleaseProperties
 
 
-def RunSteps(api):
+def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
+                         staging=False, dryrun=False, **kwargs):
+  """Asynchronously launch the upload debug symbols builder.
+
+  Args:
+    gs_image_dir (str): Google Storage directory where the sybmols are stored.
+    worker_count (int): Maximum number of concurrent workers allowed to upload.
+    retry_quota (int):  Maximum amount of upload retries allowed. This number is
+                        for the entire builder run, not per symbol.
+    staging (bool):     Is the run in a staging environment? This affects
+                        which crash service we upload to.
+    dryrun (bool):      Should the builder dryrun the upload?
+    **kwargs:           Extra args for buildbucket.schedule_request().
+
+  Return:
+    `Build` message describing the launched builder. See
+    https://chromium.googlesource.com/infra/luci/luci-go/+/HEAD/buildbucket/proto/build.proto
+    for more info.
+  """
+  gs_debug_image_location = '%s/debug_breakpad.tar.xz' % (gs_image_dir)
+
+  bb_request = api.buildbucket.schedule_request(
+      'staging-upload-debug-symbols' if staging else 'upload-debug-symbols',
+      bucket='staging' if staging else 'release', properties={
+          'cipd_ref': 'staging' if staging else 'prod',
+          'google_storage_path': gs_debug_image_location,
+          'worker_count': worker_count,
+          'retry_quota': retry_quota,
+          'staging': staging,
+          'dryrun': dryrun
+      }, **kwargs)
+
+  return api.buildbucket.schedule([bb_request])[0]
+
+
+def RunSteps(api, properties):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
   #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
@@ -40,12 +79,12 @@ def RunSteps(api):
         api.build_reporting.publish_config(api.build_menu.build_target,
                                            api.cros_source.manifest_branch,
                                            config)
-        return DoRunSteps(api, config)
+        return DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api, config, properties):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
-
+  staging = api.cros_infra_config.is_staging
   # After the sysroot is setup we have the package versions determined.
   api.build_reporting.publish_versions(api.build_menu.target_versions)
 
@@ -74,8 +113,21 @@ def DoRunSteps(api, config):
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
-  api.cros_release.push_and_sign_images(config, api.build_menu.sysroot)
+  gs_image_dir = api.cros_release.push_and_sign_images(config,
+                                                       api.build_menu.sysroot)
   api.cros_release.schedule_payload_generation()
+
+  with api.step.nest("schedule debug symbols upload") as presentation:
+    # Launch the upload debug symbols builder
+    debug_builder = launch_debug_symbols(api, gs_image_dir,
+                                         properties.debug_symbols.worker_count,
+                                         properties.debug_symbols.retry_quota,
+                                         staging,
+                                         properties.debug_symbols.dryrun)
+
+    # Add link to builder in step
+    builder_url = api.buildbucket.build_url(build_id=debug_builder.id)
+    presentation.links["builder page"] = builder_url
 
 
 def GenTests(api):
@@ -92,6 +144,11 @@ def GenTests(api):
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='releasespecs/91/13818.0.0.xml'))),
+              'debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              }
           }),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),

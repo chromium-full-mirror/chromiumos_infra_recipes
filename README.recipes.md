@@ -2674,6 +2674,9 @@ Args:
   config (BuilderConfig): The Builder Config for the build.
   sysroot (Sysroot): sysroot to use.
 
+Return:
+  The GS directory the image was pushed from.
+
 &emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#69)(self):**
 
 Return the releasespec as created by this module, or None.
@@ -7819,15 +7822,34 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#22)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#46)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#85)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#32)(api):**
+&mdash; **def [RunSteps](/recipes/build_release.py#71)(api, properties):**
+
+&mdash; **def [launch\_debug\_symbols](/recipes/build_release.py#36)(api, gs_image_dir, worker_count, retry_quota, staging=False, dryrun=False, \*\*kwargs):**
+
+Asynchronously launch the upload debug symbols builder.
+
+Args:
+  gs_image_dir (str): Google Storage directory where the sybmols are stored.
+  worker_count (int): Maximum number of concurrent workers allowed to upload.
+  retry_quota (int):  Maximum amount of upload retries allowed. This number is
+                      for the entire builder run, not per symbol.
+  staging (bool):     Is the run in a staging environment? This affects
+                      which crash service we upload to.
+  dryrun (bool):      Should the builder dryrun the upload?
+  **kwargs:           Extra args for buildbucket.schedule_request().
+
+Return:
+  `Build` message describing the launched builder. See
+  https://chromium.googlesource.com/infra/luci/luci-go/+/HEAD/buildbucket/proto/build.proto
+  for more info.
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

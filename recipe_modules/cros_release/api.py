@@ -206,6 +206,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The Builder Config for the build.
       sysroot (Sysroot): sysroot to use.
+
+    Return:
+      The GS directory the image was pushed from.
     """
     with self.m.step.nest('push images') as presentation:
       gs_bucket = self.m.build_menu.config.artifacts.artifacts_gs_bucket
@@ -239,7 +242,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       if CHANNEL_RUBIK in self._channels:
         kwargs['channels'] = self._channels
 
-      return self.m.cros_artifacts.push_image(
+      self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
           sign_types=self._sign_types,
           dest_bucket='gs://' + self._release_bucket, **kwargs)
+
+      return gs_image_dir

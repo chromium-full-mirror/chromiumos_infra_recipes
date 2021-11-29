@@ -1,0 +1,22 @@
+// Copyright 2021 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_release;
+
+message DebugSymbolUploadProperties{
+  // Maximum number of concurrent workers to be ran in the builder.
+  int32 worker_count = 1;
+
+  // The total number of retries allowed.
+  int32 retry_quota = 2;
+
+  // Bool stating whether or not to dry run the uploads.
+  bool dryrun = 3;
+}
+
+message BuildReleaseProperties {
+  DebugSymbolUploadProperties debug_symbols = 1;
+}

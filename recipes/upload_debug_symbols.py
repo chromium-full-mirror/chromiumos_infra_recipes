@@ -50,11 +50,11 @@ def ensure_cipd_package(api, cipd_package_location, cipd_ref, package_name):
 
 def RunSteps(api, properties):
   """Invoke the upload debug symbols builder."""
-  staging = properties.is_staging or api.cros_infra_config.is_staging
+  staging = properties.staging or api.cros_infra_config.is_staging
 
   # Check input parameters for basic validity.
-  if not properties.google_storage_path:
-    raise StepFailure('google_storage_path is a required parameter')
+  if not properties.gs_path:
+    raise StepFailure('gs_path is a required parameter')
 
   # This is the name of the package as known buy the CIPD package system.
   with api.step.nest('fetch CIPD packages'):
@@ -76,21 +76,21 @@ def RunSteps(api, properties):
       )
 
   # Note this precludes running with 0 retries.
-  retry_count_param = ('-retry-quota %s' % properties.retry_count
-                       if properties.retry_count else None)
+  retry_quota_param = ('-retry-quota %s' % properties.retry_quota
+                       if properties.retry_quota else None)
   worker_count_param = ('-worker-count %s' % properties.worker_count
                         if properties.worker_count else None)
   staging_param = '-staging' if staging else None
-  dryrun_param = '-dry-run=false' if not properties.dry_run else None
+  dryrun_param = '-dry-run=false' if not properties.dryrun else None
 
   # CLI invocation of upload_debug_symbols golang binary.
   cmd = filter(None, [
       upload_debug_symbols_path,
       'upload',
       '-gs-path',
-      properties.google_storage_path,
+      properties.gs_path,
       worker_count_param,
-      retry_count_param,
+      retry_quota_param,
       staging_param,
       dryrun_param,
   ])
@@ -106,11 +106,11 @@ def GenTests(api):
       api.properties(
           **{
               "cipd_ref": 'prod',
-              "google_storage_path": 'gs-test',
+              "gs_path": 'gs-test',
               "worker_count": 90,
-              "retry_count": 90,
-              "is_staging": True,
-              "dry_run": False,
+              "retry_quota": 90,
+              "staging": True,
+              "dryrun": False,
           }),
   )
   yield api.test('needs-gs-path', api.post_check(post_process.StatusFailure))
