@@ -773,7 +773,7 @@
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\": \"us-central2-d\", @@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"prefix\": \"prefix-second\", @@@",
-      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 14@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\": 15@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        }, @@@",
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\": \"us-east1-d\", @@@",
@@ -822,7 +822,7 @@
     "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chromeos\", \"resourceUtilization\": [{\"cpus\": 352.0, \"diskGb\": 8250.0, \"maxCpus\": 3200.0, \"memoryGb\": 704.0, \"region\": \"global\", \"vms\": 11}, {\"cpus\": 352.0, \"diskGb\": 8250.0, \"maxCpus\": 3200.0, \"memoryGb\": 704.0, \"region\": \"us-central1-b\", \"vms\": 11}]}], \"scalingActions\": [{\"actionable\": \"YES\", \"application\": \"chromeos\", \"botGroup\": \"cq\", \"botMax\": 100, \"botMin\": 15, \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32.0, \"memoryGb\": 64.0}, \"botsRequested\": 46, \"regionalActions\": [{\"botsRequested\": 11, \"prefix\": \"prefix-first\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 14, \"prefix\": \"prefix-second\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 11, \"prefix\": \"prefix-third\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 9, \"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chromeos\", \"resourceUtilization\": [{\"cpus\": 352.0, \"diskGb\": 8250.0, \"maxCpus\": 3200.0, \"memoryGb\": 704.0, \"region\": \"global\", \"vms\": 11}, {\"cpus\": 352.0, \"diskGb\": 8250.0, \"maxCpus\": 3200.0, \"memoryGb\": 704.0, \"region\": \"us-central1-b\", \"vms\": 11}]}], \"scalingActions\": [{\"actionable\": \"YES\", \"application\": \"chromeos\", \"botGroup\": \"cq\", \"botMax\": 100, \"botMin\": 15, \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32.0, \"memoryGb\": 64.0}, \"botsRequested\": 46, \"regionalActions\": [{\"botsRequested\": 11, \"prefix\": \"prefix-first\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 15, \"prefix\": \"prefix-second\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 11, \"prefix\": \"prefix-third\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 9, \"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\"}]}]}@@@"
     ]
   },
   {

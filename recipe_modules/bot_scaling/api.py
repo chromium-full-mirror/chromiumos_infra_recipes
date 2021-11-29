@@ -12,6 +12,7 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 
+import decimal
 import itertools
 
 TASK_STATES = ['RUNNING', 'PENDING']
@@ -141,6 +142,9 @@ class BotScalingApi(recipe_api.RecipeApi):
   def get_regional_actions(self, bots_requested, region_restrictions):
     """Determines regional distribution of bot requests.
 
+    This function uses a running total and residual to ensure we're accurate
+    in computing totals to equal bots_requested.
+
     Args:
       bots_requested(int): Total number of bots requested.
       region_restrictions(list[RegionRestriction]): Regional preferences
@@ -149,22 +153,26 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       list[RegionalAction], region wise distribution of bots requested.
     """
-    # TODO(dhanyaganesh): Make this function aware of budgets.
-    total_weight = round(
-        sum([restriction.weight for restriction in region_restrictions]), 2)
+    D = decimal.Decimal
+
+    preceding_weight_sum = D('0')
+    bots_requested = D(bots_requested)
+    total_weight = sum(
+        [D(restriction.weight) for restriction in region_restrictions])
+
     actions = []
     for restriction in region_restrictions:
-      num_bots = 0
-      quotient, remainder = divmod(bots_requested * restriction.weight,
-                                   total_weight)
-      if remainder >= 5:
-        num_bots = quotient + 1  # pragma: nocover, implemented as part of python3 upgrade.
-      else:
-        num_bots = quotient
+      current_weight = D(restriction.weight)
+      tot_alloc = (bots_requested *
+                   (preceding_weight_sum + current_weight)) / total_weight
+      cur_alloc = bots_requested * preceding_weight_sum / total_weight
+      preceding_weight_sum = preceding_weight_sum + current_weight
+      new_alloc = tot_alloc.quantize(0) - cur_alloc.quantize(0)
       actions.append(
           ScalingAction.RegionalAction(region=restriction.region,
                                        prefix=restriction.prefix,
-                                       bots_requested=int(num_bots)))
+                                       bots_requested=int(new_alloc)))
+
     return actions
 
   def get_swarming_demand(self, swarming_stats, bot_group):

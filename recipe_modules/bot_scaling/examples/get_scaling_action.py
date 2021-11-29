@@ -31,12 +31,28 @@ def RunSteps(api):
                                'prefix-first')
     api.assertions.assertEqual(
         scaling_action.regional_actions[0].bots_requested, 27)
+
     api.assertions.assertEqual(scaling_action.regional_actions[1].region,
                                'second')
     api.assertions.assertEqual(scaling_action.regional_actions[1].prefix,
                                'prefix-second')
     api.assertions.assertEqual(
-        scaling_action.regional_actions[1].bots_requested, 27)
+        scaling_action.regional_actions[1].bots_requested, 28)
+
+    api.assertions.assertEqual(scaling_action.regional_actions[2].region,
+                               'third')
+    api.assertions.assertEqual(scaling_action.regional_actions[2].prefix,
+                               'prefix-third')
+    api.assertions.assertEqual(
+        scaling_action.regional_actions[2].bots_requested, 22)
+
+    api.assertions.assertEqual(scaling_action.regional_actions[3].region,
+                               'fourth')
+    api.assertions.assertEqual(scaling_action.regional_actions[3].prefix,
+                               'prefix-fourth')
+    api.assertions.assertEqual(
+        scaling_action.regional_actions[3].bots_requested, 33)
+
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
     api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 2.1568)
 
