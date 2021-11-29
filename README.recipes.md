@@ -2628,17 +2628,17 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_dash\_suffix](/recipe_modules/cros_release/api.py#51)(channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_dash\_suffix](/recipe_modules/cros_release/api.py#54)(channel):**
 
 Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release/api.py#46)(channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release/api.py#49)(channel):**
 
 Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#70)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#73)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2654,7 +2654,11 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#192)(self, config, sysroot):**
+&emsp; **@property**<br>&mdash; **def [manifest\_versions\_url](/recipe_modules/cros_release/api.py#24)(self):**
+
+Returns the git repo URL for manifest versions.
+
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#195)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2667,11 +2671,11 @@ Args:
   config (BuilderConfig): The Builder Config for the build.
   sysroot (Sysroot): sysroot to use.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#68)(self):**
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#142)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#145)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -2686,7 +2690,7 @@ Args:
 Returns:
   The int build id for the launched orchestrator.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#41)(self, sign_types):**
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#44)(self, sign_types):**
 
 Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure.
 ### *recipe_modules* / [cros\_release\_config](/recipe_modules/cros_release_config)
@@ -9946,13 +9950,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#15)(api):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
-[DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for generating ChromeOS source cache snapshots.
 
-&mdash; **def [RunSteps](/recipes/source_cache_builder.py#37)(api, properties):**
+&mdash; **def [RunSteps](/recipes/source_cache_builder.py#39)(api, properties):**
 ### *recipes* / [src\_state:examples/build\_manifest](/recipe_modules/src_state/examples/build_manifest.py)
 
 [DEPS](/recipe_modules/src_state/examples/build_manifest.py#6): [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

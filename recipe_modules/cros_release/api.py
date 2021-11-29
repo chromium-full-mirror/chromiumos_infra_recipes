@@ -18,10 +18,13 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
-MANIFEST_VERSIONS_URL = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
-
 
 class CrosReleaseApi(recipe_api.RecipeApi):
+
+  @property
+  def manifest_versions_url(self):
+    """Returns the git repo URL for manifest versions."""
+    return 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
   @property
   def _supported_sign_types(self):
@@ -93,7 +96,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       with self.m.context(cwd=tmp_dir):
         # Clone manifest-versions repo to current path.
         with self.m.step.nest('clone manifest-versions'):
-          self.m.git.clone(MANIFEST_VERSIONS_URL, branch=branch,
+          self.m.git.clone(self.manifest_versions_url, branch=branch,
                            single_branch=True)
           branch = branch or self.m.git.current_branch()
 
@@ -136,7 +139,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             manifest_gs_path = 'gs://{}/{}'.format(gs_bucket, gs_path)
 
       self._releasespec = ManifestLocation(
-          manifest_repo_url=MANIFEST_VERSIONS_URL, branch=branch,
+          manifest_repo_url=self.manifest_versions_url, branch=branch,
           manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
 
   def schedule_payload_generation(self):
