@@ -2638,7 +2638,7 @@ Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
 
 Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#73)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#74)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2658,7 +2658,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#195)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#198)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2671,11 +2671,11 @@ Args:
   config (BuilderConfig): The Builder Config for the build.
   sysroot (Sysroot): sysroot to use.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#68)(self):**
+&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#69)(self):**
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#145)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#148)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
