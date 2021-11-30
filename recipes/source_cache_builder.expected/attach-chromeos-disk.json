@@ -562,6 +562,30 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories.git clone manifest-versions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[CLEANUP]/snapshot/chromiumos/manifest-versions-internal"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories.git clone manifest-versions.Removing previous directory [CLEANUP]/snapshot/chromiumos/manifest-versions-internal",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "clone",
@@ -570,9 +594,9 @@
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.git clone",
+    "name": "source cache update.sync mounted cache directories.git clone manifest-versions.git clone",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
