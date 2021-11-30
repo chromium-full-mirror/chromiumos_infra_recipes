@@ -1,0 +1,94 @@
+[
+  {
+    "cmd": [],
+    "name": "generate attestations",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Generated attestations for 1 files@@@",
+      "@@@STEP_LOG_LINE@attestations ['path&#x2f;to&#x2f;artifact']@path/to/artifact.attestation@@@",
+      "@@@STEP_LOG_END@attestations ['path&#x2f;to&#x2f;artifact']@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "path/to/artifact"
+    ],
+    "infra_step": true,
+    "name": "generate attestations.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"exp\": 0, \"recipe\": \"test_recipe\", \"subjectHash\": \"deadbeef\", \"topLevelSource\": {}}",
+      "[CLEANUP]/tmp_tmp_1/manifest.json"
+    ],
+    "infra_step": true,
+    "name": "generate attestations.Provenance manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@manifest.json@{\"exp\": 0, \"recipe\": \"test_recipe\", \"subjectHash\": \"deadbeef\", \"topLevelSource\": {}}@@@",
+      "@@@STEP_LOG_END@manifest.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/provenance",
+      "-ensure-file",
+      "infra/tools/provenance/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "generate attestations.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/provenance/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/provenance/provenance",
+      "generate",
+      "-input",
+      "[CLEANUP]/tmp_tmp_1/manifest.json",
+      "-output",
+      "path/to/artifact.attestation",
+      ""
+    ],
+    "name": "generate attestations.generate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
