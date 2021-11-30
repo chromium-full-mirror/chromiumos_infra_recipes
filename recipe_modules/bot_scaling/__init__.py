@@ -6,6 +6,7 @@
 DEPS = [
     'cros_history',
     'gce_provider',
+    'recipe_engine/buildbucket',
     'recipe_engine/futures',
     'recipe_engine/json',
     'recipe_engine/time',

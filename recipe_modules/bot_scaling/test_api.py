@@ -2,15 +2,13 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 from recipe_engine import recipe_test_api
-
 from PB.chromiumos.bot_scaling import BotPolicy, BotPolicyCfg, BotType
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Configs, Disk, VM, Schedule, TimePeriod, TimeOfDay
 
 
 class BotScalingTestApi(recipe_test_api.RecipeTestApi):
-  """Helpers for testing the cros_history module."""
+  """Helpers for testing the bot_scaling module."""
 
   def gce_provider_config(self):
     return Configs(vms=[

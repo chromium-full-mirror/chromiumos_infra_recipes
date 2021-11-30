@@ -1,5 +1,43 @@
 [
   {
+    "cmd": [],
+    "name": "estimate time between builds"
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1969-12-31T23:59:00Z\", \"startTime\": \"1969-12-31T22:59:00Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "estimate time between builds.search for builds in past hour",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
+      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@",
+      "@@@STEP_LINK@4@https://cr-buildbucket.appspot.com/build/4@@@",
+      "@@@STEP_LINK@5@https://cr-buildbucket.appspot.com/build/5@@@",
+      "@@@STEP_LINK@6@https://cr-buildbucket.appspot.com/build/6@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

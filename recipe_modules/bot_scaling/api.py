@@ -6,17 +6,23 @@
 from collections import namedtuple
 from datetime import timedelta, time
 
-from PB.chromiumos.bot_scaling import ApplicationUtilization, BotPolicy, ReducedBotPolicyCfg, ResourceUtilization, RoboCropAction, ScalingAction
+from PB.chromiumos.bot_scaling import (ApplicationUtilization, BotPolicy,
+                                       ReducedBotPolicyCfg, ResourceUtilization,
+                                       RoboCropAction, ScalingAction)
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
 from google.protobuf import json_format as jsonpb
+from google.protobuf import timestamp_pb2
 from recipe_engine import recipe_api
 
 import decimal
 import itertools
 
+DEFAULT_HOURS_BETWEEN_BUILDS = 0.167
 TASK_STATES = ['RUNNING', 'PENDING']
-EXECUTION_HOUR_PERCENTILE = .16
 
 BotStats = namedtuple('BotStats', [
     'bot_group', 'busy', 'count', 'dead', 'maintenance', 'quarantined', 'min',
@@ -28,6 +34,10 @@ SwarmingStats = namedtuple('SwarmingStats', ['bot_stats', 'task_stats'])
 
 class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
+
+  def __init__(self, *args, **kwargs):
+    super(BotScalingApi, self).__init__(*args, **kwargs)
+    self._hours_between_builds = None
 
   def get_robocrop_action(self, bot_policy_config, configs, swarming_stats):
     """Function to compute all the actions of this RoboCrop.
@@ -584,5 +594,47 @@ class BotScalingApi(recipe_api.RecipeApi):
     if bot_policy.scaling_restriction.bot_ceiling == -1 and bot_policy.scaling_restriction.bot_floor == -1:
       return 0.0
     bot_base = configured if (actionable == ScalingAction.NO) else requested
+    if self._hours_between_builds is None:
+      self._hours_between_builds = self._estimate_hours_between_builds()
     return (bot_policy.scaling_restriction.bot_ceiling - bot_base) * (
-        bot_policy.bot_type.hourly_cost * EXECUTION_HOUR_PERCENTILE)
+        bot_policy.bot_type.hourly_cost * self._hours_between_builds)
+
+  def _estimate_hours_between_builds(self):
+    """Determine how often this builder runs, based on the past day's builds.
+
+    Returns:
+      float, the mean interval between recent runs of this builder in hours.
+    """
+    with self.m.step.nest('estimate time between builds') as presentation:
+
+      def _warn_about_default(message_prefix):
+        """Present a warning that we're using default values."""
+        presentation.step_text = '{}: assuming default {} hrs/build'.format(
+            message_prefix, DEFAULT_HOURS_BETWEEN_BUILDS)
+        presentation.status = self.m.step.WARNING
+
+      predicate = builds_service_pb2.BuildPredicate(
+          builder=self.m.buildbucket.build.builder,
+          create_time=common_pb2.TimeRange(
+              # Look back 1hr+1min to catch the 1hr-old build
+              start_time=timestamp_pb2.Timestamp(
+                  seconds=self.m.buildbucket.build.create_time.ToSeconds() -
+                  61 * 60,
+              ),
+              end_time=timestamp_pb2.Timestamp(
+                  seconds=self.m.buildbucket.build.create_time.ToSeconds() -
+                  1 * 60,
+              ),
+          ),
+      )
+      try:
+        recent_builds = self.m.buildbucket.search(
+            predicate, step_name="search for builds in past hour")
+      except self.m.step.StepFailure:  # pragma: no cover
+        _warn_about_default('Buildbucket search failed')
+        return DEFAULT_HOURS_BETWEEN_BUILDS
+
+      if not recent_builds:  # pragma: no cover
+        _warn_about_default('Buildbucket search returned no builds')
+        return DEFAULT_HOURS_BETWEEN_BUILDS
+      return 1.0 / len(recent_builds)

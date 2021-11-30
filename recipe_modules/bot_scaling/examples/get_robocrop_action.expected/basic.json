@@ -173,6 +173,36 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "estimate time between builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Buildbucket search returned no builds: assuming default 0.167 hrs/build@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1969-12-31T23:59:00Z\", \"startTime\": \"1969-12-31T22:59:00Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "estimate time between builds.search for builds in past hour",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "cmd": [
       "python",
       "-u",

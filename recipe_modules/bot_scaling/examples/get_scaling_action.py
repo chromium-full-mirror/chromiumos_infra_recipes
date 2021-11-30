@@ -6,10 +6,12 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'bot_scaling',
 ]
 
 from PB.chromiumos.bot_scaling import BotPolicy, ScalingAction
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 
 def RunSteps(api):
@@ -54,7 +56,8 @@ def RunSteps(api):
         scaling_action.regional_actions[3].bots_requested, 33)
 
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 2.1568)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
+                                     2.2466667)
 
     # Request - min(current - request, step size) is less than configured,
     # scaling down.
@@ -62,13 +65,14 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
     api.assertions.assertEqual(scaling_action.bots_requested, 65)
     api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
-                                     4.583200000000001)
+                                     4.7741671)
 
     # Request + step size is not less than configured.
     scaling_action = api.bot_scaling.get_scaling_action(70, policy, test_config)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
     api.assertions.assertEqual(scaling_action.bots_requested, 95)
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 2.9656)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
+                                     3.0891669)
 
     # Demand is equal to number of bots configured
     scaling_action = api.bot_scaling.get_scaling_action(60, policy, test_config)
@@ -83,7 +87,8 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.bots_requested, 125)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
 
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 1.348)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
+                                     1.4041667)
 
     # Bots requested equals ceiling but less than step size
     ceiling_config = api.bot_scaling.test_api.gce_provider_config_ceiling()
@@ -100,7 +105,8 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.bots_requested, 125)
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
 
-    api.assertions.assertAlmostEqual(scaling_action.estimated_savings, 1.348)
+    api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
+                                     1.4041667)
 
     # Request - min(configured - request, step size) is less than configured,
     # scaling down.
@@ -108,7 +114,7 @@ def RunSteps(api):
     api.assertions.assertEqual(scaling_action.actionable, ScalingAction.YES)
     api.assertions.assertEqual(scaling_action.bots_requested, 65)
     api.assertions.assertAlmostEqual(scaling_action.estimated_savings,
-                                     4.583200000000001)
+                                     4.7741671)
 
     # Monitored bot group
     policy.policy_mode = BotPolicy.MONITORED
@@ -117,4 +123,14 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(id=1),
+          build_pb2.Build(id=2),
+          build_pb2.Build(id=3),
+          build_pb2.Build(id=4),
+          build_pb2.Build(id=5),
+          build_pb2.Build(id=6),
+      ], 'estimate time between builds.search for builds in past hour'),
+  )
