@@ -516,6 +516,7 @@ def GenTests(api):
             }
         },
         'parent_build_id': 12345,
+        'parent_request_uid': 'TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq',
         'default_test_execution_behavior': default_behavior,
     }
 
@@ -590,6 +591,7 @@ def GenTests(api):
             }
         },
         'parent_build_id': 12345,
+        'parent_request_uid': 'TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq',
     }
 
   # Required for steps following `skylab_local_state load`.

@@ -16,6 +16,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"parentBuildId\": \"12345\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"parentRequestUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\", @@@",
       "@@@STEP_LOG_LINE@request@  \"deadline\": \"2045-02-03T00:00:55Z\", @@@",
       "@@@STEP_LOG_LINE@request@  \"prejob\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
@@ -77,7 +78,8 @@
       "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -154,7 +156,7 @@
       }
     },
     "name": "execution steps.publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
+    "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -883,7 +885,8 @@
       "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true@@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -912,7 +915,7 @@
       }
     },
     "name": "execution steps.original_test.publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
+    "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true, \n  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

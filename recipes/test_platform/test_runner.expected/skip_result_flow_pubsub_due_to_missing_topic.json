@@ -16,6 +16,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
       "@@@STEP_LOG_LINE@request@  \"parentBuildId\": \"12345\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"parentRequestUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\", @@@",
       "@@@STEP_LOG_LINE@request@  \"prejob\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"label1\": \"value1\"@@@",
