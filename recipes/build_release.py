@@ -58,7 +58,7 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
       'staging-upload-debug-symbols' if staging else 'upload-debug-symbols',
       bucket='staging' if staging else 'release', properties={
           'cipd_ref': 'staging' if staging else 'prod',
-          'google_storage_path': gs_debug_image_location,
+          'gs_path': gs_debug_image_location,
           'worker_count': worker_count,
           'retry_quota': retry_quota,
           'staging': staging,

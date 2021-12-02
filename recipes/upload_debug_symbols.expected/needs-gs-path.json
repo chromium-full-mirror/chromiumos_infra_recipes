@@ -1,5 +1,12 @@
 [
   {
+    "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "gs_path is a required parameter"

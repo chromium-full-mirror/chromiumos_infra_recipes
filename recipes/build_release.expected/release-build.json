@@ -9244,7 +9244,7 @@
       }
     },
     "name": "schedule debug symbols upload.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"upload-debug-symbols\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"cipd_ref\": \"prod\", \"dryrun\": false, \"google_storage_path\": \"gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/debug_breakpad.tar.xz\", \"retry_quota\": 1000.0, \"staging\": false, \"worker_count\": 200.0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"upload-debug-symbols\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"cipd_ref\": \"prod\", \"dryrun\": false, \"gs_path\": \"gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/debug_breakpad.tar.xz\", \"retry_quota\": 1000.0, \"staging\": false, \"worker_count\": 200.0}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9283,7 +9283,7 @@
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"cipd_ref\": \"prod\", @@@",
       "@@@STEP_LOG_LINE@request@          \"dryrun\": false, @@@",
-      "@@@STEP_LOG_LINE@request@          \"google_storage_path\": \"gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/debug_breakpad.tar.xz\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"gs_path\": \"gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/debug_breakpad.tar.xz\", @@@",
       "@@@STEP_LOG_LINE@request@          \"retry_quota\": 1000.0, @@@",
       "@@@STEP_LOG_LINE@request@          \"staging\": false, @@@",
       "@@@STEP_LOG_LINE@request@          \"worker_count\": 200.0@@@",

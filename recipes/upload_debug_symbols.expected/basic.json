@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "validate properties"
+  },
+  {
+    "cmd": [],
     "name": "fetch CIPD packages"
   },
   {

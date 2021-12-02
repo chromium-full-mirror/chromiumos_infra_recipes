@@ -52,9 +52,10 @@ def RunSteps(api, properties):
   """Invoke the upload debug symbols builder."""
   staging = properties.staging or api.cros_infra_config.is_staging
 
-  # Check input parameters for basic validity.
-  if not properties.gs_path:
-    raise StepFailure('gs_path is a required parameter')
+  with api.step.nest('validate properties'):
+    # Check input parameters for basic validity.
+    if not properties.gs_path:
+      raise StepFailure('gs_path is a required parameter')
 
   # This is the name of the package as known buy the CIPD package system.
   with api.step.nest('fetch CIPD packages'):
