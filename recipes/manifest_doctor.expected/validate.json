@@ -1,0 +1,16 @@
+[
+  {
+    "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "internal_buildspecs_bucket and external_buildspecs_bucket props must be used together"
+    },
+    "name": "$result"
+  }
+]

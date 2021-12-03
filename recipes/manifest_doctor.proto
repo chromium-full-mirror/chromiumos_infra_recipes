@@ -44,4 +44,11 @@ message ManifestDoctorProperties {
     // (non project) repositories.
     repeated string project_buildspec_watch_paths_other_repos = 10;
 
+    // Bucket to use for reading and writing internal buildspecs.
+    // If not set, the default set in the manifest_doctor CLI will be used.
+    string internal_buildspecs_bucket = 11;
+
+    // Bucket to use for reading and writing external buildspecs.
+    // If not set, the default set in the manifest_doctor CLI will be used.
+    string external_buildspecs_bucket = 12;
 }

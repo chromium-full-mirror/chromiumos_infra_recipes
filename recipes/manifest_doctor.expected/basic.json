@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "validate properties"
+  },
+  {
+    "cmd": [],
     "name": "ensure manifest_doctor"
   },
   {

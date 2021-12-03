@@ -6,6 +6,7 @@
 """Recipe for performing various manipulations on ChromeOS manifests."""
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/cipd',
@@ -48,6 +49,13 @@ def ensure_manifest_doctor(api, properties):
 
 
 def RunSteps(api, properties):
+  with api.step.nest('validate properties'):
+    if bool(properties.internal_buildspecs_bucket) != bool(
+        properties.external_buildspecs_bucket):
+      raise StepFailure(
+          'internal_buildspecs_bucket and external_buildspecs_bucket '
+          'props must be used together')
+
   manifest_doctor_path = ensure_manifest_doctor(api, properties)
   if len(properties.buildspec_watch_paths) > 0:
     with api.step.nest("create external buildspecs"):
@@ -55,6 +63,10 @@ def RunSteps(api, properties):
       cmd += ["--paths", ",".join(properties.buildspec_watch_paths)]
       if properties.push:
         cmd += ["--push"]
+      if properties.internal_buildspecs_bucket:
+        cmd += ["--internal-bucket", properties.internal_buildspecs_bucket]
+      if properties.external_buildspecs_bucket:
+        cmd += ["--external-bucket", properties.external_buildspecs_bucket]
 
       api.step("run manifest_doctor", cmd)
 
@@ -65,6 +77,10 @@ def RunSteps(api, properties):
       cmd += ["--legacy"]
       if properties.push:
         cmd += ["--push"]
+      if properties.internal_buildspecs_bucket:
+        cmd += ["--internal-bucket", properties.internal_buildspecs_bucket]
+      if properties.external_buildspecs_bucket:
+        cmd += ["--external-bucket", properties.external_buildspecs_bucket]
 
       api.step("run manifest_doctor", cmd)
 
@@ -121,6 +137,12 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+  yield api.test(
+      'validate',
+      api.properties(
+          **{"internal_buildspecs_bucket": "chromeos-manifest-versions"}),
+      api.post_check(post_process.StepFailure, 'validate properties'))
+
   yield api.test(
       'basic',
       api.properties(
@@ -182,6 +204,8 @@ def GenTests(api):
                   ["full/buildspecs/", "buildspecs/"],
               "project_buildspec_min_milestone": 90,
               "project_buildspecs": ["galaxy/", "foo/bar"],
+              "internal_buildspecs_bucket": "chromeos-manifest-versions",
+              "external_buildspecs_bucket": "chromiumos-manifest-versions",
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
@@ -191,12 +215,18 @@ def GenTests(api):
                    path='src/project/galaxy/milkyway'),
               dict(project='chromeos/foo', path='src/foo'),
           ]),
-      api.post_check(post_process.StepCommandContains,
-                     'create external buildspecs.run manifest_doctor',
-                     ['--push']),
-      api.post_check(post_process.StepCommandContains,
-                     'create external buildspecs (legacy).run manifest_doctor',
-                     ['--push']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'create external buildspecs.run manifest_doctor', [
+              '--push', '--internal-bucket', 'chromeos-manifest-versions',
+              '--external-bucket', 'chromiumos-manifest-versions'
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'create external buildspecs (legacy).run manifest_doctor', [
+              '--push', '--internal-bucket', 'chromeos-manifest-versions',
+              '--external-bucket', 'chromiumos-manifest-versions'
+          ]),
       api.post_check(post_process.StepCommandContains,
                      'create partner buildspecs.run manifest_doctor',
                      ['--push']),

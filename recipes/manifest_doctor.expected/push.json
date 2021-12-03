@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "validate properties"
+  },
+  {
+    "cmd": [],
     "name": "ensure manifest_doctor"
   },
   {
@@ -43,7 +47,11 @@
       "public-buildspec",
       "--paths",
       "release/,test/",
-      "--push"
+      "--push",
+      "--internal-bucket",
+      "chromeos-manifest-versions",
+      "--external-bucket",
+      "chromiumos-manifest-versions"
     ],
     "name": "create external buildspecs.run manifest_doctor",
     "~followup_annotations": [
@@ -61,7 +69,11 @@
       "--paths",
       "buildspecs/",
       "--legacy",
-      "--push"
+      "--push",
+      "--internal-bucket",
+      "chromeos-manifest-versions",
+      "--external-bucket",
+      "chromiumos-manifest-versions"
     ],
     "name": "create external buildspecs (legacy).run manifest_doctor",
     "~followup_annotations": [
