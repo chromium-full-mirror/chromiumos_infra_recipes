@@ -57,7 +57,7 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
   bb_request = api.buildbucket.schedule_request(
       'staging-upload-debug-symbols' if staging else 'upload-debug-symbols',
       bucket='staging' if staging else 'release', properties={
-          'cipd_ref': 'latest' if staging else 'prod',
+          'cipd_ref': 'staging' if staging else 'prod',
           'gs_path': gs_debug_image_location,
           'worker_count': worker_count,
           'retry_quota': retry_quota,
