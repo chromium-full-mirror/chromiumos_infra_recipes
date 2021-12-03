@@ -17,8 +17,9 @@ message Properties {
 // Config contains the complete instructions of how to perform the uprev.
 message Config {
   repeated Instruction instructions = 1;
-  // Whether to tag the packages with a release version.
-  bool tag_release_version = 2;
+  // Which tag to tag packages with, "ci_release_version" or
+  // "ctp_release_version".
+  string release_version_tag = 2;
 }
 
 // Response describes the outcome of the uprev.
