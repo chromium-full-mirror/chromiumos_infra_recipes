@@ -57,7 +57,7 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
   bb_request = api.buildbucket.schedule_request(
       'staging-upload-debug-symbols' if staging else 'upload-debug-symbols',
       bucket='staging' if staging else 'release', properties={
-          'cipd_ref': 'staging' if staging else 'prod',
+          'cipd_ref': 'latest' if staging else 'prod',
           'gs_path': gs_debug_image_location,
           'worker_count': worker_count,
           'retry_quota': retry_quota,
@@ -115,7 +115,6 @@ def DoRunSteps(api, config, properties):
 
   gs_image_dir = api.cros_release.push_and_sign_images(config,
                                                        api.build_menu.sysroot)
-  api.cros_release.schedule_payload_generation()
 
   with api.step.nest("schedule debug symbols upload") as presentation:
     # Launch the upload debug symbols builder
@@ -128,6 +127,8 @@ def DoRunSteps(api, config, properties):
     # Add link to builder in step
     builder_url = api.buildbucket.build_url(build_id=debug_builder.id)
     presentation.links["builder page"] = builder_url
+
+  api.cros_release.schedule_payload_generation()
 
 
 def GenTests(api):
@@ -220,7 +221,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.buildbucket.simulated_collect_output(
-          [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
+          [build_pb2.Build(id=8922054662172514001, status='FAILURE')],
           'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.StatusFailure),
       build_target='kukui-main',
