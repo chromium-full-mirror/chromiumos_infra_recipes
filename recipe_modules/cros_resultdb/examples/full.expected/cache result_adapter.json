@@ -57,9 +57,13 @@
       "rdb",
       "stream",
       "-var",
-      "test_suite:lacros_all_tast_tests",
+      "board:board",
+      "-var",
+      "build:board-cq/R11-123.45",
+      "-var",
+      "test_suite:fake-suite",
       "-tag",
-      "test_suite:cast_shell_browsertests",
+      "test_suite:fake-suite",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",
@@ -163,125 +167,6 @@
       }
     },
     "name": "upload test results to rdb.run rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload chromium test results to rdb (2)"
-  },
-  {
-    "cmd": [
-      "rdb",
-      "stream",
-      "-var",
-      "test_suite:lacros_all_tast_tests",
-      "-tag",
-      "test_suite:cast_shell_browsertests",
-      "-coerce-negative-duration",
-      "-exonerate-unexpected-pass",
-      "--",
-      "[START_DIR]/cipd/result_adapter/result_adapter",
-      "gtest",
-      "-result-file",
-      "dummy-results-dir/autoserv_test/chromium/results/output.json",
-      "-artifact-directory",
-      "dummy-results-dir/autoserv_test/chromium/debug",
-      "--",
-      "echo"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload chromium test results to rdb (2).run rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload test results to rdb (2)"
-  },
-  {
-    "cmd": [
-      "rdb",
-      "rpc",
-      "luci.resultdb.v1.Recorder",
-      "BatchCreateArtifacts",
-      "-include-update-token"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload test results to rdb (2).upload_invocation_artifacts",
-    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"stainless_logs\", \"contents\": \"Z3M6Ly9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi9VVUlEL2xvZ3M=\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@json.input@{@@@",
-      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@json.input@    {@@@",
-      "@@@STEP_LOG_LINE@json.input@      \"artifact\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"artifactId\": \"stainless_logs\", @@@",
-      "@@@STEP_LOG_LINE@json.input@        \"contents\": \"Z3M6Ly9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi9VVUlEL2xvZ3M=\"@@@",
-      "@@@STEP_LOG_LINE@json.input@      }, @@@",
-      "@@@STEP_LOG_LINE@json.input@      \"parent\": \"invocations/build:8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@json.input@    }@@@",
-      "@@@STEP_LOG_LINE@json.input@  ]@@@",
-      "@@@STEP_LOG_LINE@json.input@}@@@",
-      "@@@STEP_LOG_END@json.input@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rdb",
-      "stream",
-      "-coerce-negative-duration",
-      "-exonerate-unexpected-pass",
-      "--",
-      "[START_DIR]/cipd/result_adapter/result_adapter",
-      "tast",
-      "-result-file",
-      "dummy-result-dir/autoserv_test/tast/results/streamed_results.jsonl",
-      "-artifact-directory",
-      "dummy-result-dir/autoserv_test",
-      "--",
-      "echo"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload test results to rdb (2).run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

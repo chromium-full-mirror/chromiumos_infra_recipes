@@ -230,6 +230,7 @@
   * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds)
   * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full)
   * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations)
+  * [cros_resultdb:tests/extract_resultdb_settings](#recipes-cros_resultdb_tests_extract_resultdb_settings)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
@@ -8747,6 +8748,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#23)(api, properties):**
+### *recipes* / [cros\_resultdb:tests/extract\_resultdb\_settings](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py)
+
+[DEPS](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#15)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
