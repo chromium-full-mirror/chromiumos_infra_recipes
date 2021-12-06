@@ -51,7 +51,7 @@
       "-cl",
       "https://chromium-review.googlesource.com/c/src/projectB/+/456/7",
       "-out",
-      "[CLEANUP]/test_plan_tmp_1/output.jsonproto"
+      "[CLEANUP]/test_plan_tmp_1"
     ],
     "infra_step": true,
     "name": "find relevant plans.call test_plan",
@@ -67,14 +67,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/test_plan_tmp_1/output.jsonproto"
+      "[CLEANUP]/test_plan_tmp_1"
     ],
     "infra_step": true,
     "name": "find relevant plans.list output files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -86,11 +86,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb",
+      "[CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb",
+    "name": "find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -103,11 +103,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb",
+      "[CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb",
+    "name": "find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -167,7 +167,7 @@
       "-u",
       "RECIPE_MODULE[infra::docker]/resources/docker_login.py",
       "--server",
-      "gcr.io",
+      "us-docker.pkg.dev",
       "--service-account-token-file",
       "extra.secret.token.should.not.be.logged",
       "--config-file",
@@ -184,7 +184,7 @@
       "--config",
       "[CLEANUP]/.docker",
       "pull",
-      "gcr.io/chromeos-bot/testplan:prod"
+      "us-docker.pkg.dev/cros-registry/test-services/testplan:prod"
     ],
     "name": "generate coverage rules.ensure docker image.docker pull testplan:prod",
     "~followup_annotations": [
@@ -314,9 +314,9 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT"
+      "https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT"
     ],
-    "name": "generate coverage rules.write input files.fetch gitiles file (3).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/dut_attributes/generated/dut_attributes.jsonproto?format=TEXT",
+    "name": "generate coverage rules.write input files.fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -380,7 +380,7 @@
       "--config-file",
       "[CLEANUP]/.docker",
       "--image",
-      "gcr.io/chromeos-bot/testplan:prod",
+      "us-docker.pkg.dev/cros-registry/test-services/testplan:prod",
       "--dir-map",
       "[CLEANUP]/tmp_tmp_1",
       "/input",

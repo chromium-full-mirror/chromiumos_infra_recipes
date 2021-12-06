@@ -53,7 +53,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data(
-          'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_1.textpb',
+          'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb',
           api.raw_io.output(
               text_format.MessageToString(
                   api.cros_test_plan_v2.kernel_source_test_plan(),
@@ -61,7 +61,7 @@ def GenTests(api):
           ),
       ),
       api.step_data(
-          'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/output.jsonproto/relevant_plan_2.textpb',
+          'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb',
           api.raw_io.output(
               text_format.MessageToString(
                   api.cros_test_plan_v2.fp_source_test_plan(),
@@ -86,7 +86,7 @@ def GenTests(api):
               '-cl',
               'https://chromium-review.googlesource.com/c/src/projectB/+/456/7',
               '-out',
-              '[CLEANUP]/test_plan_tmp_1/output.jsonproto',
+              '[CLEANUP]/test_plan_tmp_1',
           ],
       ),
   )

@@ -123,8 +123,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       for gc in gerrit_changes:
         cmd += ['-cl', self.m.gerrit.parse_gerrit_change_url(gc)]
 
-      messages_path = self.m.path.mkdtemp(prefix='test_plan')
-      output = messages_path.join("output.jsonproto")
+      output = self.m.path.mkdtemp(prefix='test_plan')
 
       cmd += ['-out', output]
 
@@ -163,10 +162,13 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
         self._test_plan_path = cipd_dir.join('test_plan')
 
-  def _download_config_pb(self, path, output_dir, test_output_message):
-    """Fetch a protobuf from config-internal and write to a local temp file.
+  def _download_config_pb(self, host, project, path, output_dir,
+                          test_output_message):
+    """Fetch a protobuf from Gitiles and write to a local temp file.
 
     Args:
+      * host (str): Gerrit host, e.g. chrome-internal.googlesource.com.
+      * project (str): Gerrit project, e.g. chromiumos/chromite.
       * path (str): Path to the file within config-internal.
       * output_dir (str): Path to a directory to download the file to.
       * test_output_message (google.protobuf.Message): A message to write as
@@ -177,9 +179,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     """
     test_output_contents = base64.b64encode(
         json_format.MessageToJson(test_output_message))
-    contents = self.m.gitiles.get_file('chrome-internal.googlesource.com',
-                                       'chromeos/config-internal', path,
-                                       public=False,
+    contents = self.m.gitiles.get_file(host, project, path, public=False,
                                        test_output_data=test_output_contents)
 
     basename = self.m.path.basename(path)
@@ -197,7 +197,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       if version:
         presentation.logs['docker version'] = version
 
-      self.m.docker.login(project='chromeos-bot')
+      self.m.docker.login(server='us-docker.pkg.dev',
+                          project='cros-registry/test-services')
       self.m.docker.pull(self._docker_image)
 
   def generate_coverage_rules(self, source_test_plans):
@@ -224,19 +225,25 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         # the build when available. For now, just read the global one from
         # config-internal.
         build_metadata_list_path = self._download_config_pb(
+            'chrome-internal.googlesource.com',
+            'chromeos/config-internal',
             'build/generated/build_metadata.jsonproto',
             host_input_path,
             test_output_message=self.test_api.build_metadata_list(),
         )
 
         flat_config_list_path = self._download_config_pb(
+            'chrome-internal.googlesource.com',
+            'chromeos/config-internal',
             'hw_design/generated/flattened.binaryproto',
             host_input_path,
             test_output_message=self.test_api.flat_config_list(),
         )
 
         dut_attribute_list_path = self._download_config_pb(
-            'dut_attributes/generated/dut_attributes.jsonproto',
+            'chromium.googlesource.com',
+            'chromiumos/config',
+            'generated/dut_attributes.jsonproto',
             host_input_path,
             test_output_message=self.test_api.dut_attribute_list(),
         )

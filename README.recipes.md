@@ -3727,7 +3727,7 @@ Returns true if test planning v2 is enabled on gerrit_changes.
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#203)(self, source_test_plans):**
+&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#204)(self, source_test_plans):**
 
 Runs the platform testplan Docker image to get CoverageRules.
 
