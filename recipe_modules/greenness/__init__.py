@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.greenness.greenness import GreennessProperties
 DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
+    'cros_tags',
     'easy',
 ]
 
