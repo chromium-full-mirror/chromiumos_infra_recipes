@@ -23,8 +23,9 @@ def RunSteps(api):
       api.json.dumps({
           'result_format': 'tast',
       }))
-  api.assertions.assertRaises(
-      api.cros_resultdb.extract_resultdb_settings(bad_test_args))
+  api.assertions.assertRaises(ValueError,
+                              api.cros_resultdb.extract_resultdb_settings,
+                              bad_test_args)
 
 
 def GenTests(api):

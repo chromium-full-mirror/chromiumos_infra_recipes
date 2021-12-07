@@ -32,10 +32,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
     """Extract resultdb settings from test_args.
 
     Args:
-        test_args - A string of extra autotest arguments. See upload().
+      test_args (str): A string of extra autotest arguments.
 
     Returns:
-        json string
+      A dictionary wrapping all ResultDB upload parameters.
+
+    Raises:
+      ValueError: If resultdb settings are not found in the test_args.
     """
     arg_re = re.compile(r'(\w+)[:=](.*)$')
     args_dict = {}
@@ -43,7 +46,11 @@ class ResultDBCommand(recipe_api.RecipeApi):
       match = arg_re.match(arg)
       if match:
         args_dict[match.group(1).lower()] = match.group(2)
-    return base64.b64decode(args_dict.get('resultdb_settings', ''))
+    rdb_settings = base64.b64decode(args_dict.get('resultdb_settings', ''))
+    if not rdb_settings:
+      raise ValueError('test_args should contain resultdb_settings to '
+                       'upload result to resultdb. Got %s')
+    return self.m.json.loads(rdb_settings)
 
   def upload_chromium_tests(self, test_args, base_dir):
     """Wrapper for uploading chromium tests to resultDB.
@@ -63,10 +70,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
           base_dir/autoserv_test/chromium/results.
     """
     with self.m.step.nest('upload chromium test results to rdb'):
-      rdb_settings = self.extract_resultdb_settings(test_args)
-      assert rdb_settings, ('test_args should contain resultdb_settings to '
-                            'upload result to resultdb. Got %s' % test_args)
-      config = self.m.json.loads(rdb_settings)
+      config = self.extract_resultdb_settings(test_args)
       return self._upload(config, base_dir)
 
   def upload_chromeos_tests(self, base_dir, stainless_url=None):

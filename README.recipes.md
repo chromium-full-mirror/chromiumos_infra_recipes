@@ -2877,7 +2877,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#204)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#208)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -2903,12 +2903,15 @@ Return the current invocation's id.
 Extract resultdb settings from test_args.
 
 Args:
-    test_args - A string of extra autotest arguments. See upload().
+  test_args (str): A string of extra autotest arguments.
 
 Returns:
-    json string
+  A dictionary wrapping all ResultDB upload parameters.
 
-&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#72)(self, base_dir, stainless_url=None):**
+Raises:
+  ValueError: If resultdb settings are not found in the test_args.
+
+&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#76)(self, base_dir, stainless_url=None):**
 
 Wrapper for uploading Chrome OS tests to resultDB.
 
@@ -2918,7 +2921,7 @@ Args:
   base_dir (string): The path of the base test results on the drone server.
   stainless_url (string): Link to the Stainless logs for the test run.
 
-&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#48)(self, test_args, base_dir):**
+&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#55)(self, test_args, base_dir):**
 
 Wrapper for uploading chromium tests to resultDB.
 
