@@ -10197,15 +10197,15 @@ Updates test plan rules to reflect new risk-based rules
 &mdash; **def [RunSteps](/recipes/test_plan_filtering.py#234)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#38): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#38): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#301)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#305)(api, properties):**
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#197)(api, requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#201)(api, requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -10215,23 +10215,23 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#263)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#267)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#323)(api):**
+&mdash; **def [link\_to\_parent](/recipes/test_platform/cros_test_platform.py#327)(api):**
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#61)(api):**
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#65)(api):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#332)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#336)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#240)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#244)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -10240,15 +10240,15 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#436)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#444)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#513)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#521)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#372)(api, enumerations, responses):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#376)(api, enumerations, responses):**
 
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#80)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#84)(api, properties):**
 
 Get and validate requests from input properties.
 

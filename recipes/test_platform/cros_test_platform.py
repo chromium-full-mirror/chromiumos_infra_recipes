@@ -44,9 +44,10 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
-    'result_flow',
+    'cros_infra_config',
     'cros_tags',
     'cros_test_platform',
+    'result_flow',
     'service_version',
 ]
 
@@ -56,6 +57,9 @@ CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
+
+# TODO(b/201608160): Remove upon completion of rollout.
+CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
 
 
 def output_ctp_release_timestamp_tag(api):
@@ -388,7 +392,11 @@ def summarize(api, enumerations, responses):
           ]
           step.presentation.status = api.step.FAILURE
 
-    if invocations and api.resultdb.enabled:
+    # TODO(b/201608160): In order for test results to appear on Gerrit they must
+    # be inherited by the cros_test_platform builder.
+    # Remove check for experiment when go/cros-gerrit-results rollout concludes.
+    if (invocations and api.resultdb.enabled and
+        CROS_GERRIT_RESULTS_EXP in api.cros_infra_config.experiments):
       api.resultdb.include_invocations(api.resultdb.invocation_ids(invocations))
 
     if failures:
