@@ -338,22 +338,29 @@ class OrchMenuApi(RecipeApi):
             pres.text = 'failed to push. continuing'
 
   def _update_test_summary(self):
-    """Updates criticality on the output test_summary"""
-    # Output the number of updates in order to measure impact.
-    update_count = 0
-    non_fatal_failures = [
+    """Updates criticality on the output test_summary.
+
+    Returns the names of the test configs whose results have been updated.
+    """
+    updated_tests = []
+    non_fatal_failures = {
         f.id for f in self.builds_status.failures if not f.fatal
-    ]
+    }
     test_summary = self.m.cros_test_proctor.test_summary
     for test in test_summary:
       if test['status'] == 'FAILURE' and test['critical']:
-        if test.get('name') in non_fatal_failures:
+        name = test.get('name')
+        if name in non_fatal_failures:
           test['critical'] = False
-          update_count += 1
-    if update_count:
-      self.m.step.active_result.presentation.properties[
-          'test_criticality_update_count'] = update_count
+          updated_tests.append(name)
+
+    # Output the number of updates in order to measure impact.
+    self.m.step.active_result.presentation.properties[
+        'test_criticality_update_count'] = len(updated_tests)
+    if updated_tests:
       self.m.cros_test_proctor.test_summary = test_summary
+
+    return updated_tests
 
   def _non_critical_test_check(self):
     """Update failures in builds_status based on the current criticality."""

@@ -52,6 +52,7 @@ def RunSteps(api):
   api.cros_test_plan.get_target_test_requirements_file()
   api.cros_test_plan.generate([Build()], [GerritChange()],
                               GitilesCommit(id='1234abcd'))
+  _ = api.cros_test_plan.test_api.reduced_criticality_generate_test_plan_response
   _ = api.cros_test_plan.test_api.all_non_critical_generate_test_plan_response
 
 

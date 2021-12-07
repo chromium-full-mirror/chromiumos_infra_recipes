@@ -167,8 +167,22 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
+  summary = ('1 hw test failed\n\n- ttarget.hw.some-other-suite:')
   yield api.orch_menu.test(
-      'non-crit-test-check-updates', data.ctp_failure,
+      'non-crit-test-check-updates-some', data.ctp_failure,
+      api.step_data(
+          'clean up orchestrator.non-critical test check.generate test plan.read output file',
+          api.file.read_raw(
+              api.cros_test_plan.reduced_criticality_generate_test_plan_response
+              .SerializeToString())),
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(status=common_pb2.FAILURE,
+                                               summary_markdown=summary))),
+      api.post_check(post_process.StatusAnyFailure))
+
+  yield api.orch_menu.test(
+      'non-crit-test-check-updates-all', data.ctp_failure,
       api.step_data(
           'clean up orchestrator.non-critical test check.generate test plan.read output file',
           api.file.read_raw(
