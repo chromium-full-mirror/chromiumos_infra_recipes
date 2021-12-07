@@ -1401,7 +1401,7 @@
       "-n",
       "1000",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tatl-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
     ],
@@ -1438,7 +1438,7 @@
       "-n",
       "1000",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tael-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
     ],

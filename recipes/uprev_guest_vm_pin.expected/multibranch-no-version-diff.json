@@ -1401,7 +1401,7 @@
       "-n",
       "1000",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"general\", \"builder\": \"LegacyRelease\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"cbb_config\", \"value\": \"tatl-release\"}]}"
     ],
@@ -1444,7 +1444,7 @@
       "-n",
       "1000",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"general\", \"builder\": \"LegacyRelease\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"cbb_config\", \"value\": \"tael-release\"}]}"
     ],

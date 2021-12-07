@@ -659,7 +659,7 @@
       "-n",
       "1",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-Annealing\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],
@@ -1105,7 +1105,7 @@
       "-n",
       "1",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-release-triggerer\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
     ],

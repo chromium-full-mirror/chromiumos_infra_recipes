@@ -10,7 +10,7 @@
       "-n",
       "1",
       "-fields",
-      "builder,create_time,created_by,critical,end_time,id,input,number,output,start_time,status,update_time",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
       "{\"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"fake-snapshot-id\"}]}"
     ],
