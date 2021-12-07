@@ -146,6 +146,8 @@
       "board:board",
       "-var",
       "build:board-cq/R11-123.45",
+      "-var",
+      "test_config:board-cq.hw.fake-suite",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",

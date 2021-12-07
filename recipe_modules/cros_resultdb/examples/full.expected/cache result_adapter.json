@@ -142,6 +142,8 @@
     "cmd": [
       "rdb",
       "stream",
+      "-var",
+      "test_config:board-cq.hw.fake-suite",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",

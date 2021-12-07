@@ -2877,7 +2877,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#208)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#229)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -2911,7 +2911,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#76)(self, base_dir, stainless_url=None):**
+&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#76)(self, base_dir, request, stainless_url=None):**
 
 Wrapper for uploading Chrome OS tests to resultDB.
 
@@ -2919,6 +2919,7 @@ Currently only supports Tast tests.
 
 Args:
   base_dir (string): The path of the base test results on the drone server.
+  request (Request): The test Request that the results belong to.
   stainless_url (string): Link to the Stainless logs for the test run.
 
 &mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#55)(self, test_args, base_dir):**
@@ -8748,11 +8749,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#24)(api, expected_builders):**
 ### *recipes* / [cros\_resultdb:examples/full](/recipe_modules/cros_resultdb/examples/full.py)
 
-[DEPS](/recipe_modules/cros_resultdb/examples/full.py#9): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_resultdb/examples/full.py#11): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#22)(api):**
 ### *recipes* / [cros\_resultdb:tests/apply\_exonerations](/recipe_modules/cros_resultdb/tests/apply_exonerations.py)
 
 [DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#13): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
@@ -10308,7 +10309,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#387)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#388)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#114)(api, interface, test_metadata, result):**
 
@@ -10324,7 +10325,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#318)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#319)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -10340,7 +10341,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#289)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#290)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 

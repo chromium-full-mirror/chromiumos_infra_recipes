@@ -6,6 +6,8 @@
 import base64
 from recipe_engine import post_process
 
+from PB.test_platform.skylab_test_runner.request import Request
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/json',
@@ -21,7 +23,10 @@ def RunSteps(api):
   api.cros_resultdb.upload_chromium_tests(
       api.properties.get('test_args'), 'dummy-results-dir')
   api.cros_resultdb.upload_chromeos_tests(
-      'dummy-result-dir', 'gs://chromeos-test-logs/common-env/UUID/logs')
+      'dummy-result-dir',
+      Request(parent_request_uid='TestPlanRuns/1234/board-cq.hw.fake-suite'),
+      'gs://chromeos-test-logs/common-env/UUID/logs')
+
 
 def GenTests(api):
 

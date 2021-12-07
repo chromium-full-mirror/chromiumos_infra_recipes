@@ -73,36 +73,57 @@ class ResultDBCommand(recipe_api.RecipeApi):
       config = self.extract_resultdb_settings(test_args)
       return self._upload(config, base_dir)
 
-  def upload_chromeos_tests(self, base_dir, stainless_url=None):
+  def upload_chromeos_tests(self, base_dir, request, stainless_url=None):
     """Wrapper for uploading Chrome OS tests to resultDB.
 
     Currently only supports Tast tests.
 
     Args:
       base_dir (string): The path of the base test results on the drone server.
+      request (Request): The test Request that the results belong to.
       stainless_url (string): Link to the Stainless logs for the test run.
     """
     with self.m.step.nest('upload test results to rdb'):
-
-      base_variant = {}
-
-      # TODO(b/196956525): Pass in desired variant information via config.
-      board = self.m.cros_tags.get_values('label-board')
-      if board:
-        base_variant['board'] = board[0]
-
-      build = self.m.cros_tags.get_values('build')
-      if build:
-        base_variant['build'] = build[0]
-
-      # TODO(b/200703493): Only Chrome OS Tast tests are currently supported.
-      # Calling rdb-stream with other result formats will fail to upload, but
-      # not fail the test run.
-      config = {
-          'result_format': 'tast',
-          'base_variant': base_variant,
-      }
+      config = self._generate_resultdb_config(request)
       return self._upload(config, base_dir, stainless_url)
+
+  def _generate_resultdb_config(self, request):
+    """Generate the parameters for uploading results to ResultDB.
+
+    Args:
+      request (Request): The test Request that the results belong to.
+
+    Returns:
+      config (dict): A dict wrapping resultdb upload parameters.
+    """
+    base_variant = {}
+
+    board = self.m.cros_tags.get_values('label-board')
+    if board:
+      base_variant['board'] = board[0]
+
+    build = self.m.cros_tags.get_values('build')
+    if build:
+      base_variant['build'] = build[0]
+
+    # The template of a parent_request_uid is
+    # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
+    # tagged_request key is the test config's display_name in
+    # the GenerateTestPlanResponse. See http://shortn/_oPSae8w6Xc for more info.
+    test_config_display_name = (
+        request.parent_request_uid.split('/')[-1]
+        if request.parent_request_uid else '')
+    base_variant['test_config'] = test_config_display_name
+
+    # TODO(b/200703493): Only Chrome OS Tast tests are currently supported.
+    # Calling rdb-stream with other result formats will fail to upload, but
+    # not fail the test run.
+    config = {
+        'result_format': 'tast',
+        'base_variant': base_variant,
+    }
+
+    return config
 
   def _upload(self, config, base_dir, stainless_url=None):
     """Call the resultDB module to upload test result
