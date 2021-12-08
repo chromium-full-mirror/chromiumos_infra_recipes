@@ -6,12 +6,23 @@ import base64
 import os
 import re
 
+from google.protobuf.json_format import MessageToDict
+
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.test_platform.request import Request
 
 TestExecutionBehavior = Request.Params.TestExecutionBehavior
+
+# Map of TestExecutionBehaviors and their priority where a higher value equals a
+# higher priority. When multiple TestExecutionBehaviors apply to a single test
+# result the TestExecutionBehavior with the highest ordering takes precedence.
+TEST_EXEC_BEHAVIOR_ORDERING = {
+    TestExecutionBehavior.BEHAVIOR_UNSPECIFIED: 0,
+    TestExecutionBehavior.CRITICAL: 1,
+    TestExecutionBehavior.NON_CRITICAL: 2,
+}
 
 
 class ResultDBCommand(recipe_api.RecipeApi):
@@ -228,7 +239,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
   def apply_exonerations(self, invocation_ids, default_behavior=Request.Params
                          .TestExecutionBehavior.BEHAVIOR_UNSPECIFIED,
-                         behavior_overrides_map=None):
+                         behavior_overrides_map=None, variant_filter=None):
     """Exonerate unexpected test failures for the given invocations.
 
     Currently only supports exonerating tests based on criticality.
@@ -243,6 +254,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
           tests in the test_runner build.
       behavior_overrides_map (dict{str: TestExecutionBehavior}): Test-specific
           behavior overrides that supersede the default behavior.
+      variant_filter (dict): Attributes which must all be present in the test
+          result variant definition in order to exonerate.
     """
     with self.m.step.nest('exonerate ResultDB results') as presentation:
 
@@ -259,21 +272,33 @@ class ResultDBCommand(recipe_api.RecipeApi):
         try:
           self._apply_exonerations(
               invocation_ids, default_behavior,
-              behavior_overrides_map=behavior_overrides_map or {})
+              behavior_overrides_map=behavior_overrides_map or {},
+              variant_filter=variant_filter or {})
           break
         except self.m.step.StepFailure:
           status = 'WARNING'
       presentation.status = status
 
   def _apply_exonerations(self, invocation_ids, default_behavior,
-                          behavior_overrides_map):
+                          behavior_overrides_map, variant_filter):
 
-    def _is_exonerable(test_name):
-      if default_behavior == TestExecutionBehavior.NON_CRITICAL:
-        return True
-      test_behavior = behavior_overrides_map.get(
+    def _test_exec_behavior(test_name):
+      override_behavior = behavior_overrides_map.get(
           test_name, TestExecutionBehavior.BEHAVIOR_UNSPECIFIED)
-      return test_behavior == TestExecutionBehavior.NON_CRITICAL
+      return max(TEST_EXEC_BEHAVIOR_ORDERING[default_behavior],
+                 TEST_EXEC_BEHAVIOR_ORDERING[override_behavior])
+
+    def _is_exonerable(test_result):
+      test_exec_behavior = _test_exec_behavior(test_result.test_id)
+      is_non_critical = test_exec_behavior == TestExecutionBehavior.NON_CRITICAL
+
+      # A test results's variant must contain all attributes of the
+      # variant_filter.
+      variant = MessageToDict(test_result.variant).get('def', {})
+      contains_variant_filter = set(variant_filter.items()) <= set(
+          variant.items())
+
+      return is_non_critical and contains_variant_filter
 
     # ResultDB test_id represents the name of the test case.
     inv_bundle = self.m.resultdb.query(inv_ids=invocation_ids,
@@ -290,8 +315,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
               explanation_html='failed but is not critical')
           for result in unexpected_results
           # Unexpected passes are currently exonerated by default.
-          if result.status == test_result_pb2.FAIL and
-          _is_exonerable(result.test_id)
+          if result.status == test_result_pb2.FAIL and _is_exonerable(result)
       ])
     self.m.resultdb.exonerate(test_exonerations,
                               step_name="exonerate non-critical failures")

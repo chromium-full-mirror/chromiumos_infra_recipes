@@ -34,7 +34,7 @@
     "name": "exonerate ResultDB results.rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\"}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -60,7 +60,7 @@
       }
     },
     "name": "exonerate ResultDB results.exonerate non-critical failures",
-    "stdin": "{\"invocation\": \"invocations/build:123\", \"requestId\": \"00000000-0000-0000-0000-000000001337\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/1\", \"variant\": {}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:123\", \"requestId\": \"00000000-0000-0000-0000-000000001337\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",

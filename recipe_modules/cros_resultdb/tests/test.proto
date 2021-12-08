@@ -14,5 +14,8 @@ message TestInputProperties {
 
   // Maps the name of a test case to a TestExecutionBehavior.
   map<string, test_platform.Request.Params.TestExecutionBehavior> behavior_overrides_map = 2;
+
+  // Variant attributes which must all be present in a test results variant.
+  map<string, string> variant_filter = 3;
 }
 

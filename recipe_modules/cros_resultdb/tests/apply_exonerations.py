@@ -5,6 +5,9 @@
 
 from recipe_engine import post_process
 
+from google.protobuf import json_format
+
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.recipe_modules.chromeos.cros_resultdb.tests.test import (
     TestInputProperties)
@@ -12,6 +15,7 @@ from PB.test_platform.request import Request
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/resultdb',
     'recipe_engine/properties',
     'cros_resultdb',
@@ -24,19 +28,21 @@ def RunSteps(api, properties):
   api.cros_resultdb.apply_exonerations(
       [api.cros_resultdb.current_invocation_id],
       default_behavior=properties.default_behavior,
-      behavior_overrides_map=properties.behavior_overrides_map)
+      behavior_overrides_map=properties.behavior_overrides_map,
+      variant_filter=properties.variant_filter)
 
 
 def GenTests(api):
+
+  variant_json = api.json.dumps({'def': {'board': 'fake-board'}})
 
   inv_bundle = {
       'build:123':
           api.resultdb.Invocation(test_results=[
               test_result_pb2.TestResult(
-                  test_id='test/1',
-                  expected=False,
-                  status=test_result_pb2.FAIL,
-              ),
+                  test_id='test/1', expected=False,
+                  status=test_result_pb2.FAIL, variant=json_format.Parse(
+                      variant_json, common_pb2.Variant())),
           ]),
   }
 
@@ -92,22 +98,38 @@ def GenTests(api):
       api.buildbucket.try_build(build_id=123),
       api.resultdb.query(inv_bundle,
                          step_name='exonerate ResultDB results.rdb query'),
-      api.properties(behavior_overrides_map={
-          'test/1': Request.Params.TestExecutionBehavior.NON_CRITICAL
-      }),
+      api.properties(
+          behavior_overrides_map={
+              'test/1': Request.Params.TestExecutionBehavior.NON_CRITICAL
+          }, variant_filter={'board': 'fake-board'}),
       api.post_process(
           post_process.StepSuccess,
           'exonerate ResultDB results.exonerate non-critical failures'),
   )
 
   yield api.test(
-      'no-matching-exoneration',
+      'no-matching-exoneration-behavior',
       api.buildbucket.try_build(build_id=123),
       api.resultdb.query(inv_bundle,
                          step_name='exonerate ResultDB results.rdb query'),
-      api.properties(behavior_overrides_map={
-          'test/2': Request.Params.TestExecutionBehavior.NON_CRITICAL
-      }),
+      api.properties(
+          behavior_overrides_map={
+              'test/2': Request.Params.TestExecutionBehavior.NON_CRITICAL
+          }, variant_filter={'board': 'fake-board'}),
+      api.post_process(
+          post_process.DoesNotRun,
+          'exonerate ResultDB results.exonerate non-critical failures'),
+  )
+
+  yield api.test(
+      'no-matching-exoneration-variant-filter',
+      api.buildbucket.try_build(build_id=123),
+      api.resultdb.query(inv_bundle,
+                         step_name='exonerate ResultDB results.rdb query'),
+      api.properties(
+          behavior_overrides_map={
+              'test/1': Request.Params.TestExecutionBehavior.NON_CRITICAL
+          }, variant_filter={'board': 'another-fake-board'}),
       api.post_process(
           post_process.DoesNotRun,
           'exonerate ResultDB results.exonerate non-critical failures'),

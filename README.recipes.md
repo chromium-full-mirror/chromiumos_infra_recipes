@@ -2898,11 +2898,11 @@ Whether there are toolchain CLs applied to the source tree.
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#229)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#240)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -2918,12 +2918,14 @@ Args:
       tests in the test_runner build.
   behavior_overrides_map (dict{str: TestExecutionBehavior}): Test-specific
       behavior overrides that supersede the default behavior.
+  variant_filter (dict): Attributes which must all be present in the test
+      result variant definition in order to exonerate.
 
-&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#24)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#35)(self):**
 
 Return the current invocation's id.
 
-&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#31)(self, test_args):**
+&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#42)(self, test_args):**
 
 Extract resultdb settings from test_args.
 
@@ -2936,7 +2938,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#76)(self, base_dir, request, stainless_url=None):**
+&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#87)(self, base_dir, request, stainless_url=None):**
 
 Wrapper for uploading Chrome OS tests to resultDB.
 
@@ -2947,7 +2949,7 @@ Args:
   request (Request): The test Request that the results belong to.
   stainless_url (string): Link to the Stainless logs for the test run.
 
-&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#55)(self, test_args, base_dir):**
+&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#66)(self, test_args, base_dir):**
 
 Wrapper for uploading chromium tests to resultDB.
 
@@ -8788,11 +8790,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#22)(api):**
 ### *recipes* / [cros\_resultdb:tests/apply\_exonerations](/recipe_modules/cros_resultdb/tests/apply_exonerations.py)
 
-[DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#13): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
+[DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#16): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#27)(api, properties):**
 ### *recipes* / [cros\_resultdb:tests/extract\_resultdb\_settings](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py)
 
 [DEPS](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
