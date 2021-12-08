@@ -15,26 +15,35 @@ from PB.chromiumos.test.plan.source_test_plan import SourceTestPlan
 BuildMetadata = SystemImage.BuildMetadata
 BuildMetadataList = SystemImage.BuildMetadataList
 BuildTarget = SystemImage.BuildTarget
-Requirements = SourceTestPlan.Requirements
+TestPlanStarlarkFile = SourceTestPlan.TestPlanStarlarkFile
 
 
 class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
 
   @staticmethod
   def kernel_source_test_plan():
-    return SourceTestPlan(
-        requirements=Requirements(
-            kernel_versions=Requirements.KernelVersions(),
+    return SourceTestPlan(test_plan_starlark_files=[
+        TestPlanStarlarkFile(
+            host="chromium.googlesource.com",
+            project="platform/testrepoA",
+            path="a/b/kernel1.star",
         ),
-    )
+        TestPlanStarlarkFile(
+            host="chromium.googlesource.com",
+            project="platform/testrepoB",
+            path="kernel2.star",
+        )
+    ])
 
   @staticmethod
   def fp_source_test_plan():
-    return SourceTestPlan(
-        requirements=Requirements(
-            fingerprint=Requirements.Fingerprint(),
-        ),
-    )
+    return SourceTestPlan(test_plan_starlark_files=[
+        TestPlanStarlarkFile(
+            host="chromium.googlesource.com",
+            project="platform/testrepoB",
+            path="dir/fp.star",
+        )
+    ])
 
   @staticmethod
   def build_metadata_list():

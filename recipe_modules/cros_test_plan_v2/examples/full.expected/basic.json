@@ -346,7 +346,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "requirements {\n  kernel_versions {\n  }\n}\n",
+      "test_plan_starlark_files {\n  host: \"chromium.googlesource.com\"\n  project: \"platform/testrepoA\"\n  path: \"a/b/kernel1.star\"\n}\ntest_plan_starlark_files {\n  host: \"chromium.googlesource.com\"\n  project: \"platform/testrepoB\"\n  path: \"kernel2.star\"\n}\n",
       "[CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb"
     ],
     "infra_step": true,
@@ -363,7 +363,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "requirements {\n  fingerprint {\n  }\n}\n",
+      "test_plan_starlark_files {\n  host: \"chromium.googlesource.com\"\n  project: \"platform/testrepoB\"\n  path: \"dir/fp.star\"\n}\n",
       "[CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb"
     ],
     "infra_step": true,
