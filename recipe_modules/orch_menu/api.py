@@ -15,6 +15,7 @@ from recipe_engine.recipe_api import RecipeApi, StepFailure
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
+from PB.test_platform.request import Request
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
@@ -383,7 +384,21 @@ class OrchMenuApi(RecipeApi):
           self.builds_status.failures, test_plan_summary)
 
       self.builds_status.update(failures=updated_failures)
-      self._update_test_summary()
+
+      updated_test_config_names = self._update_test_summary()
+
+      self._exonerate_resultdb_results(updated_test_config_names)
+
+  def _exonerate_resultdb_results(self, test_config_names):
+    """Apply exonerations to test results for which are now non-critical."""
+    if not test_config_names:
+      return
+
+    for t in test_config_names:
+      self.m.cros_resultdb.apply_exonerations(
+          [self.m.cros_resultdb.current_invocation_id],
+          Request.Params.TestExecutionBehavior.NON_CRITICAL,
+          variant_filter={'test_config': t})
 
   def _non_critical_build_check(self, step_name, builds, failures):
     """Update failures based on the current criticality of the builders.

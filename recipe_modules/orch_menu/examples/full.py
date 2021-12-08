@@ -8,17 +8,16 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/properties',
+    'recipe_engine/resultdb',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'cros_source',
     'cros_tags',
     'cros_test_plan',
     'gerrit',
     'git_footers',
     'orch_menu',
-    'skylab',
-    'test_util',
 ]
 
 from google.protobuf import json_format
@@ -28,6 +27,8 @@ from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
 from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 
 PROPERTIES = FullProperties
 
@@ -167,14 +168,45 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
+  variant_1 = api.json.dumps({'def': {'test_config': 'htarget.hw.bvt-cq'}})
+  variant_2 = api.json.dumps({'def': {'test_config': 'htarget.hw.bvt-inline'}})
+  variant_3 = api.json.dumps(
+      {'def': {
+          'test_config': 'ttarget.hw.some-other-suite'
+      }})
+
+  inv_bundle = {
+      'build:123':
+          api.resultdb.Invocation(test_results=[
+              test_result_pb2.TestResult(
+                  test_id='test/1', expected=False, status=test_result_pb2.FAIL,
+                  variant=json_format.Parse(variant_1,
+                                            resultdb_common_pb2.Variant())),
+              test_result_pb2.TestResult(
+                  test_id='test/2', expected=False, status=test_result_pb2.FAIL,
+                  variant=json_format.Parse(variant_2,
+                                            resultdb_common_pb2.Variant())),
+              test_result_pb2.TestResult(
+                  test_id='test/3', expected=False, status=test_result_pb2.FAIL,
+                  variant=json_format.Parse(variant_3,
+                                            resultdb_common_pb2.Variant())),
+          ]),
+  }
   summary = ('1 hw test failed\n\n- ttarget.hw.some-other-suite:')
   yield api.orch_menu.test(
       'non-crit-test-check-updates-some', data.ctp_failure,
       api.step_data(
-          'clean up orchestrator.non-critical test check.generate test plan.read output file',
+          'clean up orchestrator.'
+          'non-critical test check.generate test plan.read output file',
           api.file.read_raw(
               api.cros_test_plan.reduced_criticality_generate_test_plan_response
               .SerializeToString())),
+      api.resultdb.query(
+          inv_bundle, step_name='clean up orchestrator.'
+          'non-critical test check.exonerate ResultDB results.rdb query'),
+      api.resultdb.query(
+          inv_bundle, step_name='clean up orchestrator.'
+          'non-critical test check.exonerate ResultDB results (2).rdb query'),
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
@@ -184,10 +216,20 @@ def GenTests(api):
   yield api.orch_menu.test(
       'non-crit-test-check-updates-all', data.ctp_failure,
       api.step_data(
-          'clean up orchestrator.non-critical test check.generate test plan.read output file',
+          'clean up orchestrator.'
+          'non-critical test check.generate test plan.read output file',
           api.file.read_raw(
               api.cros_test_plan.all_non_critical_generate_test_plan_response
               .SerializeToString())),
+      api.resultdb.query(
+          inv_bundle, step_name='clean up orchestrator.'
+          'non-critical test check.exonerate ResultDB results.rdb query'),
+      api.resultdb.query(
+          inv_bundle, step_name='clean up orchestrator.'
+          'non-critical test check.exonerate ResultDB results (2).rdb query'),
+      api.resultdb.query(
+          inv_bundle, step_name='clean up orchestrator.'
+          'non-critical test check.exonerate ResultDB results (3).rdb query'),
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.SUCCESS))),

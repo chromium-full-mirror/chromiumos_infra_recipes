@@ -21,6 +21,7 @@ DEPS = [
     'cros_history',
     'cros_infra_config',
     'cros_release',
+    'cros_resultdb',
     'cros_source',
     'cros_tags',
     'cros_test_plan',
