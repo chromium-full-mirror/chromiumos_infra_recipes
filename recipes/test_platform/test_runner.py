@@ -35,6 +35,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'recipe_engine/resultdb',
     'recipe_engine/step',
     'recipe_engine/time',
     'recipe_engine/uuid',
@@ -53,7 +54,12 @@ _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
 _24_HOURS = 24 * 60 * 60
 
-RESULTDB_EXPERIMENT = 'chromeos.cros_test_platform.add_resultdb_settings'
+# TODO(b/201608160): Remove upon completion of rollout.
+CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
+# TODO(b/209718660): Remove once uploading non-CQ test results is stable.
+RESULTDB_UPLOAD_EXP = 'chromeos.test_runner.upload_to_resultdb'
+RESULTDB_EXPS = [CROS_GERRIT_RESULTS_EXP, RESULTDB_UPLOAD_EXP]
+
 
 
 # API STEP HELPERS
@@ -260,13 +266,15 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
                      result=result)
 
     # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
-    if (test_metadata.test.autotest.test_args and
+    if api.resultdb.enabled and (
+        test_metadata.test.autotest.test_args and
         'resultdb_settings' in test_metadata.test.autotest.test_args):
       api.cros_resultdb.upload_chromium_tests(
           test_metadata.test.autotest.test_args,
           interface.get_results_directory(test_metadata))
     # Don't try to upload if there are no results.
-    elif RESULTDB_EXPERIMENT in api.cros_infra_config.experiments and result:
+    elif api.resultdb.enabled and result and any(
+        x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
       api.cros_resultdb.upload_chromeos_tests(
           base_dir=interface.get_results_directory(test_metadata),
           request=properties.request,
@@ -675,7 +683,7 @@ def GenTests(api):
 
   yield api.test(
       'success-with-resultdb',
-      _set_build(bid=42, experiments=[RESULTDB_EXPERIMENT], tags={
+      _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
           'label-board': 'eve',
           'build': 'eve-cq/R11-123.45'
       }),
@@ -758,7 +766,7 @@ def GenTests(api):
 
   yield api.test(
       'prejob_crash',
-      _set_build(bid=42, experiments=[RESULTDB_EXPERIMENT]),
+      _set_build(bid=42, experiments=[CROS_GERRIT_RESULTS_EXP]),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
