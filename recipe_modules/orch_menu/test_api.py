@@ -362,8 +362,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ctp_normal += self.m.buildbucket.simulated_collect_output([
         _skylab_resp(
             id2, suite_names=[
-                'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
-                'htarget.hw.some-suite'
+                'htarget.hw.bvt-cq',
+                'htarget.hw.bvt-inline',
+                'htarget.hw.some-suite',
+                'ttarget.hw.some-other-suite',
             ])
     ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
     ctp_bisect += self.m.buildbucket.simulated_collect_output(
@@ -372,8 +374,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ctp_failure += self.m.buildbucket.simulated_collect_output([
         _skylab_resp(
             id2, suite_names=[
-                'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
-                'htarget.hw.some-suite'
+                'htarget.hw.bvt-cq',
+                'htarget.hw.bvt-inline',
+                'htarget.hw.some-suite',
+                'ttarget.hw.some-other-suite',
             ], passed=False)
     ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
 

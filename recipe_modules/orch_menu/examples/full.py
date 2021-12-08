@@ -151,8 +151,9 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
-  summary = ('2 hw tests failed\n\n- htarget.hw.bvt-cq:'
-             '\n\n- htarget.hw.bvt-inline:')
+  summary = ('3 hw tests failed\n\n- htarget.hw.bvt-cq:'
+             '\n\n- htarget.hw.bvt-inline:'
+             '\n\n- ttarget.hw.some-other-suite:')
   yield api.orch_menu.test(
       'test-failure', data.ctp_failure,
       api.properties(

@@ -18,7 +18,7 @@ DEPS = [
 PROPERTIES = {
     'passed_tests': Property(default=[]),
     'is_retry': Property(default=False),
-    'expected_tests_run_count': Property(default=7),
+    'expected_tests_run_count': Property(default=8),
 }
 
 
@@ -46,7 +46,7 @@ def GenTests(api):
       'vtarget.vm.auto',
       'vtarget.vm.another-auto',
   ]
-  expected_tests_run = ['htarget.hw.bvt-inline']
+  expected_tests_run = ['htarget.hw.bvt-inline', 'ttarget.hw.some-other-suite']
 
   yield api.test(
       'retry',

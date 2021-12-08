@@ -16,6 +16,8 @@ def RunSteps(api):
       api.cros_test_plan.test_api.another_hw_test_unit.hw_test_cfg.hw_test[0],
       api.cros_test_plan.test_api.non_critical_hw_test_unit.hw_test_cfg
       .hw_test[0],
+      api.cros_test_plan.test_api.some_other_hw_test_unit.hw_test_cfg
+      .hw_test[0],
       # Tast VM tests
       api.cros_test_plan.test_api.direct_tast_vm_test_unit.tast_vm_test_cfg
       .tast_vm_test[0],

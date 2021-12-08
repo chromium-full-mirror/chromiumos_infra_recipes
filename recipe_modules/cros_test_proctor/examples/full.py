@@ -107,8 +107,10 @@ def GenTests(api):
   hw_tests = [
       api.skylab.test_with_multi_response(
           bid=4321, names=[
-              'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
-              'htarget.hw.some-suite'
+              'htarget.hw.bvt-cq',
+              'htarget.hw.bvt-inline',
+              'htarget.hw.some-suite',
+              'ttarget.hw.some-other-suite',
           ]),
   ]
 
@@ -184,7 +186,7 @@ def GenTests(api):
       api.skylab.test_with_multi_response(
           bid=1234, names=[
               'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
-              'htarget.hw.some-suite'
+              'htarget.hw.some-suite', 'ttarget.hw.some-other-suite'
           ]),
   ]
 
@@ -206,15 +208,20 @@ def GenTests(api):
 
   hw_tests = [
       api.skylab.test_with_multi_response(
-          bid=4321, names=['htarget.hw.bvt-cq', 'htarget.hw.bvt-inline'],
-          task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
+          bid=4321, names=[
+              'htarget.hw.bvt-cq',
+              'htarget.hw.bvt-inline',
+              'ttarget.hw.some-other-suite',
+          ], task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
   hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
       api.skylab.test_with_multi_response(
-          bid=1234, names=['htarget.hw.bvt-cq'],
-          task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
+          bid=1234, names=[
+              'htarget.hw.bvt-cq',
+              'ttarget.hw.some-other-suite',
+          ], task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
   builds = [
