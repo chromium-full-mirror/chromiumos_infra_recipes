@@ -10,6 +10,7 @@ from PB.chromiumos.config.api.design import Design
 from PB.chromiumos.config.payload.flat_config import FlatConfigList, FlatConfig
 from PB.chromiumos.test.api.dut_attribute import DutAttributeList, DutAttribute
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
+from PB.chromiumos.test.api.v1.plan import HWTestPlan
 from PB.chromiumos.test.plan.source_test_plan import SourceTestPlan
 
 BuildMetadata = SystemImage.BuildMetadata
@@ -64,8 +65,17 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
         dut_attributes=[DutAttribute(id=DutAttribute.Id(value='attribute1'))])
 
   @staticmethod
-  def coverage_rules():
+  def hw_test_plans():
     return [
-        CoverageRule(name='kernel:4.4'),
-        CoverageRule(name='kernel:5.2'),
+        HWTestPlan(
+            coverage_rules=[
+                CoverageRule(name='kernel:4.4'),
+                CoverageRule(name='kernel:5.2'),
+            ],
+        ),
+        HWTestPlan(
+            coverage_rules=[
+                CoverageRule(name='wifiA'),
+            ],
+        ),
     ]

@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'cros_test_proctor',
 ]
 
@@ -32,4 +33,13 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.step_data(
+          'run tests.schedule tests.find relevant plans.list output files',
+          api.file.listdir(['relevant_plan_1.textpb',
+                            'relevant_plan_2.textpb']),
+      ),
+  )
+
+  yield api.test('no starlark files')

@@ -7,6 +7,8 @@ from PB.recipe_modules.chromeos.cros_test_proctor.proctor import ProctorProperti
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/step',
     'cros_bisect',
     'cros_history',
@@ -15,6 +17,7 @@ DEPS = [
     'cros_test_plan',
     'cros_test_plan_v2',
     'easy',
+    'gitiles',
     'gerrit',
     'greenness',
     'failures',

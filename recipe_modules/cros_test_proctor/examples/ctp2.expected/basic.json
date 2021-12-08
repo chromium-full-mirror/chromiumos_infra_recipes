@@ -3,8 +3,24 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@coverage_rules@@@@",
-      "@@@STEP_LOG_END@coverage_rules@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@{@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\": [@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"kernel:4.4\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    }, @@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"kernel:5.2\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    }@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  ]@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@}@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@{@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\": [@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"wifiA\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    }@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  ]@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@}@@@",
+      "@@@STEP_LOG_END@hw_test_plans@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -134,14 +150,158 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate coverage rules",
+    "name": "run tests.schedule tests.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.fetch gitiles file.curl https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/tmp_tmp_1/kernel1.star"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.write starlark file kernel1.star",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate coverage rules.ensure docker image",
+    "name": "run tests.schedule tests.fetch gitiles file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.fetch gitiles file (2).curl https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/tmp_tmp_1/kernel2.star"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.write starlark file kernel2.star",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.fetch gitiles file (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.fetch gitiles file (3).curl https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/tmp_tmp_2/kernel1.star"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.write starlark file kernel1.star (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.fetch gitiles file (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@data@@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT"
+    ],
+    "name": "run tests.schedule tests.fetch gitiles file (4).curl https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "",
+      "[CLEANUP]/tmp_tmp_2/kernel2.star"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.write starlark file kernel2.star (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@docker version@1.2.3@@@",
@@ -153,7 +313,7 @@
       "which",
       "docker"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.ensure docker installed",
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.ensure docker installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -163,7 +323,7 @@
       "docker",
       "version"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.docker version",
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_TEXT@1.2.3@@@"
@@ -179,7 +339,7 @@
       "3m"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.get access token for default account",
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -196,7 +356,7 @@
       "--config-file",
       "[CLEANUP]/.docker"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.docker login",
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker login",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -209,21 +369,21 @@
       "pull",
       "us-docker.pkg.dev/cros-registry/test-services/testplan:prod"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.ensure docker image.docker pull testplan:prod",
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker pull testplan:prod",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate coverage rules.write input files",
+    "name": "run tests.schedule tests.generate hw test plans.write input files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
@@ -247,7 +407,7 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -261,17 +421,17 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"values\": [\n    {\n      \"buildTarget\": {\n        \"portageBuildTarget\": {\n          \"overlayName\": \"overlayA\"\n        }\n      }\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto"
+      "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.write input files.write build_metadata.jsonproto",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write build_metadata.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (2)",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
@@ -293,7 +453,7 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -307,17 +467,17 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"values\": [\n    {\n      \"hwDesign\": {\n        \"name\": \"design1\"\n      }\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_1/flattened.binaryproto"
+      "[CLEANUP]/tmp_tmp_3/flattened.binaryproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.write input files.write flattened.binaryproto",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write flattened.binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (3)",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
@@ -339,7 +499,7 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.write input files.fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -353,10 +513,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_1/dut_attributes.jsonproto"
+      "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.write input files.write dut_attributes.jsonproto",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write dut_attributes.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -369,11 +529,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
-      "[CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb"
+      "[CLEANUP]/tmp_tmp_1/kernel1.star",
+      "[CLEANUP]/tmp_tmp_3/kernel1.star"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_0.textpb",
+    "name": "run tests.schedule tests.generate hw test plans.copy kernel1.star",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -386,11 +546,45 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
-      "[CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb"
+      "[CLEANUP]/tmp_tmp_1/kernel2.star",
+      "[CLEANUP]/tmp_tmp_3/kernel2.star"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.write [CLEANUP]/tmp_tmp_1/source_test_plans_1.textpb",
+    "name": "run tests.schedule tests.generate hw test plans.copy kernel2.star",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_2/kernel1.star",
+      "[CLEANUP]/tmp_tmp_3/kernel1.star"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate hw test plans.copy kernel1.star (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_2/kernel2.star",
+      "[CLEANUP]/tmp_tmp_3/kernel2.star"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate hw test plans.copy kernel2.star (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -405,7 +599,7 @@
       "--image",
       "us-docker.pkg.dev/cros-registry/test-services/testplan:prod",
       "--dir-map",
-      "[CLEANUP]/tmp_tmp_1",
+      "[CLEANUP]/tmp_tmp_3",
       "/input",
       "--",
       "generate",
@@ -419,13 +613,17 @@
       "-flatconfiglist",
       "/input/flattened.binaryproto",
       "-out",
-      "/input/coverage_rules.jsonproto",
+      "/input/hw_test_plans.jsonproto",
       "-plan",
-      "/input/source_test_plans_0.textpb",
+      "/input/kernel1.star",
       "-plan",
-      "/input/source_test_plans_1.textpb"
+      "/input/kernel2.star",
+      "-plan",
+      "/input/kernel1.star",
+      "-plan",
+      "/input/kernel2.star"
     ],
-    "name": "run tests.schedule tests.generate coverage rules.docker run",
+    "name": "run tests.schedule tests.generate hw test plans.docker run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -438,11 +636,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto",
+      "[CLEANUP]/tmp_tmp_3/hw_test_plans.jsonproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate coverage rules.read output [CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto",
+    "name": "run tests.schedule tests.generate hw test plans.read output [CLEANUP]/tmp_tmp_3/hw_test_plans.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

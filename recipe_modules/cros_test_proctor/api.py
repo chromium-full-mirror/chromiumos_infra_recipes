@@ -51,6 +51,36 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._test_summary = test_summary
     self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: self._test_summary})
 
+  def _fetch_starlark_files(self, test_plan_starlark_files):
+    """Fetches a list of TestPlanStarlarkFiles to a local temp directory.
+
+    Args:
+      test_plan_starlark_files (list[TestPlanStarlarkFile]):
+        TestPlanStarlarkFiles to fetch.
+
+    Returns:
+      A list of Paths to the fetched files.
+    """
+    output_dir = self.m.path.mkdtemp()
+    output_paths = []
+
+    for starlark_file in test_plan_starlark_files:
+      # gitiles.get_file requires all args to be type str. These fields of
+      # TestPlanStarlarkFiles are string in the proto schema, but unicode in
+      # Python 2, so cast to str. This may change in Python 3.
+      contents = self.m.gitiles.get_file(
+          str(starlark_file.host), str(starlark_file.project),
+          str(starlark_file.path))
+
+      basename = self.m.path.basename(starlark_file.path)
+      output_path = self.m.path.join(output_dir, basename)
+      self.m.file.write_raw('write starlark file {}'.format(basename),
+                            output_path, contents)
+
+      output_paths.append(output_path)
+
+    return output_paths
+
   def run_proctor_v2(self, gerrit_changes):
     """Runs the test platform v2 for a set of GerritChanges.
 
@@ -60,11 +90,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     with self.m.step.nest('run tests') as pres:
       with self.m.step.nest('schedule tests'):
         relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
-        coverage_rules = self.m.cros_test_plan_v2.generate_coverage_rules(
-            relevant_plans)
 
-        pres.logs['coverage_rules'] = '\n'.join(
-            json_format.MessageToJson(cr) for cr in coverage_rules)
+        starlark_files = []
+        for plan in relevant_plans:
+          starlark_files.extend(
+              self._fetch_starlark_files(plan.test_plan_starlark_files))
+
+        if starlark_files:
+          hw_test_plans = self.m.cros_test_plan_v2.generate_hw_test_plans(
+              starlark_files)
+
+          pres.logs['hw_test_plans'] = '\n'.join(
+              json_format.MessageToJson(p) for p in hw_test_plans)
+        else:
+          pres.step_text = 'No starlark files found.'
 
         # TODO(b/182898188): Call CTP2 when it is available.
         raise ValueError('CTP2 not implemented')

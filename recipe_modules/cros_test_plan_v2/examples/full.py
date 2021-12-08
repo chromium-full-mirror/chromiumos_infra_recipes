@@ -4,6 +4,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'recipe_engine/raw_io',
     'cros_test_plan_v2',
 ]
@@ -14,6 +15,7 @@ from google.protobuf import text_format, json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
+from PB.chromiumos.test.api.v1.plan import HWTestPlan
 
 
 def RunSteps(api):
@@ -40,11 +42,23 @@ def RunSteps(api):
       ],
   )
 
-  coverage_rules = api.cros_test_plan_v2.generate_coverage_rules(relevant_plans)
+  hw_test_plans = api.cros_test_plan_v2.generate_hw_test_plans(
+      ["example1.star", "example2.star"])
   api.assertions.assertEqual(
-      coverage_rules,
-      [CoverageRule(name='kernel:4.4'),
-       CoverageRule(name='kernel:5.2')],
+      hw_test_plans,
+      [
+          HWTestPlan(
+              coverage_rules=[
+                  CoverageRule(name='kernel:4.4'),
+                  CoverageRule(name='kernel:5.2')
+              ],
+          ),
+          HWTestPlan(
+              coverage_rules=[
+                  CoverageRule(name='wifiA'),
+              ],
+          ),
+      ],
   )
 
 
@@ -52,6 +66,11 @@ def GenTests(api):
 
   yield api.test(
       'basic',
+      api.step_data(
+          'find relevant plans.list output files',
+          api.file.listdir(['relevant_plan_1.textpb',
+                            'relevant_plan_2.textpb']),
+      ),
       api.step_data(
           'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb',
           api.raw_io.output(
@@ -69,10 +88,11 @@ def GenTests(api):
           ),
       ),
       api.step_data(
-          'generate coverage rules.read output [CLEANUP]/tmp_tmp_1/coverage_rules.jsonproto',
+          'generate hw test plans.read output [CLEANUP]/tmp_tmp_1/hw_test_plans.jsonproto',
           api.raw_io.output('\n'.join(
               json_format.MessageToJson(rule).replace('\n', '')
-              for rule in api.cros_test_plan_v2.coverage_rules()))),
+              for rule in api.cros_test_plan_v2.hw_test_plans())),
+      ),
       api.post_process(
           post_process.StepCommandContains,
           'find relevant plans.call test_plan',

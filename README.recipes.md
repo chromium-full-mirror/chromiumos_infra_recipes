@@ -3758,16 +3758,17 @@ Returns true if test planning v2 is enabled on gerrit_changes.
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&mdash; **def [generate\_coverage\_rules](/recipe_modules/cros_test_plan_v2/api.py#204)(self, source_test_plans):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#208)(self, starlark_files):**
 
-Runs the platform testplan Docker image to get CoverageRules.
+Runs the testplan Docker image to get HWTestPlans.
 
 Args:
-  * source_test_plans (list[source_test_plan_pb2.SourceTestPlan]):
-      SourceTestPlans to include in the request.
+  * starlark_files (list[Path]): Paths to Starlark files to evaluate to get
+    HWTestPlans.
+
 
 Returns:
-  A list of generated CoverageRules.
+  A list of generated HWTestPlans.
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#24)(self):**
 
@@ -3849,13 +3850,13 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#448)(self, test_plan):**
+&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#487)(self, test_plan):**
 
 Returns the number of critical tests in the build plan.
 
@@ -3867,7 +3868,7 @@ Args:
 Returns:
   test_count (int): Number of critical tests ran.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#295)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#334)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3876,7 +3877,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#72)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#111)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -3896,14 +3897,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#54)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#84)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#234)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#273)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False):**
 
 Schedule all tests from the test_plan.
 
@@ -6002,7 +6003,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#770)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#773)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -9007,11 +9008,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/enabled_on_changes.py#33)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#21)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#6): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9028,11 +9029,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_test_postprocess/examples/full.py#12)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/ctp2](/recipe_modules/cros_test_proctor/examples/ctp2.py)
 
-[DEPS](/recipe_modules/cros_test_proctor/examples/ctp2.py#6): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_proctor/examples/ctp2.py#6): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/ctp2.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/ctp2.py#15)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/full](/recipe_modules/cros_test_proctor/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_proctor/examples/full.py#23): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

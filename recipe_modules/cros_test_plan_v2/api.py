@@ -10,7 +10,7 @@ from recipe_engine import recipe_api
 from google.protobuf import json_format
 from google.protobuf import text_format
 
-from PB.chromiumos.test.api import coverage_rule as coverage_rule_pb2
+from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 
 
@@ -133,12 +133,16 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       output_files = self.m.file.listdir(
           'list output files',
           output,
-          test_data=['relevant_plan_1.textpb', 'relevant_plan_2.textpb'],
       )
       relevant_plans = []
 
       for f in output_files:
-        output_raw = self.m.file.read_raw('read output {}'.format(f), f)
+        output_raw = self.m.file.read_raw(
+            'read output {}'.format(f),
+            f,
+            test_data=text_format.MessageToString(
+                self.test_api.kernel_source_test_plan()),
+        )
 
         plan = source_test_plan_pb2.SourceTestPlan()
         text_format.Parse(output_raw, plan, allow_unknown_field=True)
@@ -201,17 +205,18 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                           project='cros-registry/test-services')
       self.m.docker.pull(self._docker_image)
 
-  def generate_coverage_rules(self, source_test_plans):
-    """Runs the platform testplan Docker image to get CoverageRules.
+  def generate_hw_test_plans(self, starlark_files):
+    """Runs the testplan Docker image to get HWTestPlans.
 
     Args:
-      * source_test_plans (list[source_test_plan_pb2.SourceTestPlan]):
-          SourceTestPlans to include in the request.
+      * starlark_files (list[Path]): Paths to Starlark files to evaluate to get
+        HWTestPlans.
+
 
     Returns:
-      A list of generated CoverageRules.
+      A list of generated HWTestPlans.
     """
-    with self.m.step.nest('generate coverage rules'):
+    with self.m.step.nest('generate hw test plans'):
       self._ensure_docker_image()
 
       # The testplan executable requires files for some input args. Write the
@@ -248,32 +253,28 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             test_output_message=self.test_api.dut_attribute_list(),
         )
 
-      coverage_rules_path = self.m.path.join(host_input_path,
-                                             'coverage_rules.jsonproto')
+      hw_test_plans_path = self.m.path.join(host_input_path,
+                                            'hw_test_plans.jsonproto')
 
       # A list of tuples, mapping an input flag for testplan to the path to the
       # input file on the host. Some flags, such as '-plan' can be specified
       # multiple times, so use a list of tuples instead of a dict.
       #
-      # Note that the same mechanism is used for the CoverageRules output of
-      # testplan.
+      # Note that the same mechanism is used for the output of testplan.
       arg_to_host_path = [
           ('-dutattributes', dut_attribute_list_path),
           ('-buildmetadata', build_metadata_list_path),
           ('-flatconfiglist', flat_config_list_path),
-          ('-out', coverage_rules_path),
+          ('-out', hw_test_plans_path),
       ]
 
-      # Write each SourceTestPlan to a file in the host input dir, and add to
+      # Copy each Starlark file to the host input dir, and add to
       # arg_to_host_path.
-      for i, source_test_plan in enumerate(source_test_plans):
-        source_test_plan_path = self.m.path.join(
-            host_input_path, 'source_test_plans_{}.textpb'.format(i))
-        self.m.file.write_raw('write {}'.format(source_test_plan_path),
-                              source_test_plan_path,
-                              text_format.MessageToString(source_test_plan))
-
-        arg_to_host_path.append(('-plan', source_test_plan_path))
+      for starlark_file in starlark_files:
+        basename = self.m.path.basename(starlark_file)
+        dest = self.m.path.join(host_input_path, basename)
+        self.m.file.copy('copy ' + basename, starlark_file, dest)
+        arg_to_host_path.append(('-plan', dest))
 
       # Build a list of args to pass to docker run. For each (flag, host path)
       # tuple in arg_to_host_path, add args [<flag>, <container path>]
@@ -293,14 +294,17 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           dir_mapping=[(host_input_path, container_input_path)],
       )
 
-      # Read the output CoverageRules, which are readable on the host because
+      # Read the output HWTestPlans, which are readable on the host because
       # of the mounted directory.
-      coverage_rules = []
+      hw_test_plans = []
       output = self.m.file.read_raw(
-          'read output {}'.format(coverage_rules_path), coverage_rules_path)
+          'read output ' + hw_test_plans_path, hw_test_plans_path,
+          test_data='\n'.join(
+              json_format.MessageToJson(rule).replace('\n', '')
+              for rule in self.test_api.hw_test_plans()))
       for line in output.splitlines():
-        coverage_rule = coverage_rule_pb2.CoverageRule()
-        json_format.Parse(line, coverage_rule)
-        coverage_rules.append(coverage_rule)
+        plan = plan_pb2.HWTestPlan()
+        json_format.Parse(line, plan)
+        hw_test_plans.append(plan)
 
-      return coverage_rules
+      return hw_test_plans

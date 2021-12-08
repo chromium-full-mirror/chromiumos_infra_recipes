@@ -403,3 +403,15 @@ def GenTests(api):
           builder='postsubmit-orchestrator',
           tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
       collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'ctp2_enabled',
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.ResultReasonRE, 'CTP2 not implemented'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test')),
+      builder='postsubmit-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      experiments=['chromeos.orch_menu.ctp2'],
+  )
