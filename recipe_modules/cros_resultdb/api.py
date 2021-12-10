@@ -82,10 +82,16 @@ class ResultDBCommand(recipe_api.RecipeApi):
     """
     with self.m.step.nest('upload chromium test results to rdb'):
       config = self.extract_resultdb_settings(test_args)
-      return self._upload(config, base_dir)
+      result_format = config.get('result_format')
+      artifact_directory = config.get('artifact_directory')
+      config['result_file'] = self._get_drone_result_file(
+          base_dir, result_format)
+      config['artifact_directory'] = self._get_drone_artifact_directory(
+          base_dir, result_format, artifact_directory)
+      return self._upload(config)
 
-  def upload_chromeos_tests(self, base_dir, request, stainless_url=None):
-    """Wrapper for uploading Chrome OS tests to resultDB.
+  def upload_chromeos_hw_tests(self, base_dir, request, stainless_url=None):
+    """Wrapper for uploading Chrome OS hw test results to ResultDB.
 
     Currently only supports Tast tests.
 
@@ -95,10 +101,58 @@ class ResultDBCommand(recipe_api.RecipeApi):
       stainless_url (string): Link to the Stainless logs for the test run.
     """
     with self.m.step.nest('upload test results to rdb'):
-      config = self._generate_resultdb_config(request)
-      return self._upload(config, base_dir, stainless_url)
+      config = self._generate_resultdb_config(request, base_dir)
+      return self._upload(config, stainless_url)
 
-  def _generate_resultdb_config(self, request):
+  def _get_drone_result_file(self, base_dir, result_format):
+    """Get the path to the test results file on the drone.
+
+    There are hardcoded for tast and gtest in this module.
+
+    Args:
+      base_dir (Path): The path of the base test results on the drone server.
+          For example, Chromium gtest result can be found at
+          base_dir/autoserv_test/chromium/results.
+      result_format (str): The format of the test results.
+
+    Returns:
+      Path to the test results file on the drone server.
+    """
+    # Test results on Drone server are not stored in swarming [start_dir],
+    # e.g. "/usr/local/autotest/results/swarming-12345678/1".
+    # So use general os.path to join.
+    base = os.path.join(base_dir, 'autoserv_test')
+    result_file_by_type = {
+        'gtest': os.path.join(base, 'chromium/results/output.json'),
+        'tast': os.path.join(base, 'tast/results/streamed_results.jsonl'),
+    }
+    return result_file_by_type.get(result_format)
+
+  def _get_drone_artifact_directory(self, base_dir, result_format=None,
+                                    artifact_directory=''):
+    """Get the path to the test results artifact directory on the drone.
+
+    Currently only supports Tast and Gtest.
+
+    Args:
+      base_dir (Path): The path of the base test results on the drone server.
+          For example, Chromium gtest result can be found at
+          base_dir/autoserv_test/chromium/results.
+      result_format (str): The format of the test results.
+      artifact_directory (Path): rel path relative to autotest result folder.
+          ONLY for gtest, E.g. chromium/debug. For tast test, we rely on
+          it to pass the runtime result path to adapter. So we do
+          not accept user defined artifact fed to this module.
+
+    Returns:
+      Path to the test results artifact directory on the drone server.
+    """
+    base = os.path.join(base_dir, 'autoserv_test')
+    if result_format == 'tast':
+      return base
+    return os.path.join(base, artifact_directory)
+
+  def _generate_resultdb_config(self, request, base_dir):
     """Generate the parameters for uploading results to ResultDB.
 
     Args:
@@ -129,43 +183,37 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # TODO(b/200703493): Only Chrome OS Tast tests are currently supported.
     # Calling rdb-stream with other result formats will fail to upload, but
     # not fail the test run.
+    result_format = 'tast'
     config = {
-        'result_format': 'tast',
-        'base_variant': base_variant,
+        'result_format':
+            result_format,
+        'base_variant':
+            base_variant,
+        'result_file':
+            self._get_drone_result_file(base_dir, result_format),
+        'artifact_directory':
+            self._get_drone_artifact_directory(base_dir, result_format)
     }
 
     return config
 
-  def _upload(self, config, base_dir, stainless_url=None):
-    """Call the resultDB module to upload test result
+  def _upload(self, config, stainless_url=None):
+    """Call the ResultDB module to upload test result
 
     Args:
-      config (dict) A dict wrapping all resultdb parameters. The below two are
-          handled differently on CrOS:
-          * result_file: hardcoded for tast and gtest in this module. It
-            should be user invisible.
-          * artifact_directory: rel path relative to autotest result folder.
-            ONLY for gtest, E.g. chromium/debug. For tast test, we rely on
-            it to pass the runtime result path to adapter. So we do
-            not accept user defined artifact fed to this module.
-          For other supported parameters, refer recipe_engine/resultdb module.
-      base_dir - The path of the base test results on the drone server.
-          For example, Chromium gtest result can be found at
-          base_dir/autoserv_test/chromium/results.
+      config (dict) A dict wrapping all resultdb parameters. For a list of
+          supported parameters refer to the recipe_engine/resultdb module.
       stainless_url (string): Link to the Stainless logs for the test run.
     """
+    if not self.m.resultdb.enabled:
+      pres = self.m.step.active_result.presentation
+      pres.step_text = 'resultdb is not enabled on this builder'
+      pres.status = self.m.step.WARNING
+      return
     assert config.get('result_format') in [
         'gtest', 'json', 'single', 'tast'
     ], ('result_format must be gtest, json, single or tast, '
         'got %s' % config.get('result_format'))
-    # Test results on Drone server are not stored in swarming [start_dir],
-    # e.g. "/usr/local/autotest/results/swarming-12345678/1".
-    # So use general os.path to join.
-    base = os.path.join(base_dir, 'autoserv_test')
-    result_file_by_type = {
-        'gtest': os.path.join(base, 'chromium/results/output.json'),
-        'tast': os.path.join(base, 'tast/results/streamed_results.jsonl'),
-    }
 
     # ResultDB in CrOS recipes only supports uploading result file,
     # so the cmd must accompany the result_adapter.
@@ -174,18 +222,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
         self._result_adapter,
         config.get('result_format'),
         '-result-file',
-        result_file_by_type.get(config.get('result_format')),
+        config.get('result_file'),
     ]
-
-    artifact_path = ['-artifact-directory']
-    if config.get('result_format') == 'tast':
-      artifact_path += [base]
-    elif config.get('artifact_directory'):
-      artifact_path += [
-          os.path.join(base, config.get('artifact_directory', '')),
+    if config.get('artifact_directory'):
+      result_adapter += [
+          '-artifact-directory',
+          config.get('artifact_directory')
       ]
-    if len(artifact_path) > 1:
-      result_adapter.extend(artifact_path)
 
     # Skylab tests can not wrap directly by rdb now. We only care the
     # result file from the test runs.

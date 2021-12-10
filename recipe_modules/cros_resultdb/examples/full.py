@@ -22,7 +22,7 @@ DEPS = [
 def RunSteps(api):
   api.cros_resultdb.upload_chromium_tests(
       api.properties.get('test_args'), 'dummy-results-dir')
-  api.cros_resultdb.upload_chromeos_tests(
+  api.cros_resultdb.upload_chromeos_hw_tests(
       'dummy-result-dir',
       Request(parent_request_uid='TestPlanRuns/1234/board-cq.hw.fake-suite'),
       'gs://chromeos-test-logs/common-env/UUID/logs')
@@ -39,6 +39,19 @@ def GenTests(api):
           'build': 'board-cq/R11-123.45',
       },
   })
+
+  yield api.test(
+      'not-enabled',
+      api.properties(test_args='resultdb_settings=%s' %
+                     base64.b64encode(rdb_settings)),
+      api.post_process(post_process.StepWarning,
+                       'upload chromium test results to rdb'),
+      api.post_process(post_process.DoesNotRun,
+                       'upload chromium test results to rdb.run rdb'),
+      api.post_process(post_process.StepWarning, 'upload test results to rdb'),
+      api.post_process(post_process.DoesNotRun,
+                       'upload test results to rdb.run rdb'),
+  )
 
   yield api.test(
       'basic_tast',

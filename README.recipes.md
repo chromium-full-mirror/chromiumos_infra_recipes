@@ -2902,7 +2902,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#240)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#283)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -2938,9 +2938,9 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [upload\_chromeos\_tests](/recipe_modules/cros_resultdb/api.py#87)(self, base_dir, request, stainless_url=None):**
+&mdash; **def [upload\_chromeos\_hw\_tests](/recipe_modules/cros_resultdb/api.py#93)(self, base_dir, request, stainless_url=None):**
 
-Wrapper for uploading Chrome OS tests to resultDB.
+Wrapper for uploading Chrome OS hw test results to ResultDB.
 
 Currently only supports Tast tests.
 

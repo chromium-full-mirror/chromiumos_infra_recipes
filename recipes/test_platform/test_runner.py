@@ -275,7 +275,7 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     # Don't try to upload if there are no results.
     elif api.resultdb.enabled and result and any(
         x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
-      api.cros_resultdb.upload_chromeos_tests(
+      api.cros_resultdb.upload_chromeos_hw_tests(
           base_dir=interface.get_results_directory(test_metadata),
           request=properties.request,
           stainless_url=str(result.get_stainless_log_url()))
