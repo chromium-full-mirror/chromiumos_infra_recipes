@@ -11365,10 +11365,10 @@
     "name": "clean up orchestrator.non-critical test check.exonerate ResultDB results.rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -11453,10 +11453,10 @@
     "name": "clean up orchestrator.non-critical test check.exonerate ResultDB results (2).rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -11541,10 +11541,10 @@
     "name": "clean up orchestrator.non-critical test check.exonerate ResultDB results (3).rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

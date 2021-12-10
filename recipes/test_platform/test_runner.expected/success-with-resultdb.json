@@ -910,7 +910,7 @@
     "name": "execution steps.original_test.exonerate ResultDB results.rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

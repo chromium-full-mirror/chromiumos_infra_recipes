@@ -34,8 +34,8 @@
     "name": "exonerate ResultDB results.rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "name": "exonerate ResultDB results.rdb query (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

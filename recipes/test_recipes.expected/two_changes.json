@@ -1767,6 +1767,12 @@
       "fake-id-1",
       "fake-id-3"
     ],
+    "cost": {
+      "cpu": 100,
+      "disk": 0,
+      "memory": 50,
+      "net": 0
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
