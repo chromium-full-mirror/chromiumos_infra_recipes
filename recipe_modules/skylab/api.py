@@ -35,6 +35,11 @@ class SkylabApi(recipe_api.RecipeApi):
   # enable an experiment.
   CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
 
+  @property
+  def resultdb_elegible_projects(self):
+    """Returns the names of the repos elegible for go/cros-gerrit-results."""
+    return self._resultdb_elegible_projects
+
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account

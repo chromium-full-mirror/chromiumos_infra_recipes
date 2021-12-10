@@ -20,6 +20,7 @@ from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
 
 def RunSteps(api):
+  _ = api.skylab.resultdb_elegible_projects
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'my_first_little_hwtest'

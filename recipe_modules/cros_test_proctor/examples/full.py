@@ -13,6 +13,7 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
+from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 from PB.test_platform.taskstate import TaskState
 
 from recipe_engine import post_process
@@ -147,6 +148,11 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
+      api.properties(
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(resultdb_elegible_projects=['chromeos'])
+          }),
       api.properties(
           need_tests_builds_serialized=serialize_builds([
               api.cros_history.build_with_passed_tests(
