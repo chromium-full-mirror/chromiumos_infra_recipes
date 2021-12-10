@@ -66,6 +66,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     with self.m.step.nest('process tast output'):
       test_results = self._read_results_json(test_results_path)
       test_cases = [self.convert_to_testcaseresult(r) for r in test_results]
+      self.upload_to_resultdb(test_results_path, suite_name)
 
       # If even one test failed, the suite should report failure.
       all_verdicts = [t.verdict for t in test_cases]
@@ -281,3 +282,25 @@ class TastResultsApi(recipe_api.RecipeApi):
       # Make the tests list unique.
       tests_to_retry = list(set(tests_to_retry))
       return tests_to_retry, requires_restart
+
+  def upload_to_resultdb(self, test_results_path, suite_name):
+    """Upload the test results to ResultDB.
+
+    Args:
+      test_results_path (Path): Path to test_results/.
+      suite_name (str): Name of the whole test suite.
+    """
+    # TODO(b/201608160): Remove upon completion of rollout.
+    if not self.m.cros_infra_config.is_staging:
+      return
+
+    config = {
+        'result_format': 'tast',
+        'result_file': test_results_path.join('streamed_results.jsonl'),
+        'artifact_directory': self.m.path.abspath(test_results_path),
+        # TODO(b/210041348): Determine which variant attributes to pass.
+        'base_variant': {
+            'test_config': suite_name,
+        },
+    }
+    self.m.cros_resultdb.upload(config)

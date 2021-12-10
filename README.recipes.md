@@ -2902,7 +2902,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#283)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#293)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -2937,6 +2937,14 @@ Returns:
 
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
+
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#200)(self, config, step_name='upload test results to rdb'):**
+
+Wrapper for uploading test results to resultDB.
+
+Args:
+  config (dict) A dict wrapping all resultdb parameters.
+  step_name (str): The name of the step or None for default.
 
 &mdash; **def [upload\_chromeos\_hw\_tests](/recipe_modules/cros_resultdb/api.py#93)(self, base_dir, request, stainless_url=None):**
 
@@ -7171,7 +7179,7 @@ Returns:
     the results were empty.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
-[DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -7194,7 +7202,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#128)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#129)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -7204,7 +7212,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#153)(self, task_result, exclude_tests=None):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#154)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Failure objects and dicts.
 
@@ -7232,7 +7240,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#238)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#239)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -7243,7 +7251,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [missing\_test\_cases](/recipe_modules/tast_results/api.py#110)(self, tests, test_cases):**
+&mdash; **def [missing\_test\_cases](/recipe_modules/tast_results/api.py#111)(self, tests, test_cases):**
 
 Create missing tests cases.
 
@@ -7253,7 +7261,7 @@ Args:
 
 Returns: list(TestCaseResult) the missing tests cases.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#187)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#188)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -7261,12 +7269,20 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#212)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#213)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
+
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#286)(self, test_results_path, suite_name):**
+
+Upload the test results to ResultDB.
+
+Args:
+  test_results_path (Path): Path to test_results/.
+  suite_name (str): Name of the whole test suite.
 ### *recipe_modules* / [test\_util](/recipe_modules/test_util)
 
 [DEPS](/recipe_modules/test_util/__init__.py#6): [cros\_tags](#recipe_modules-cros_tags), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -8798,11 +8814,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#27)(api, properties):**
 ### *recipes* / [cros\_resultdb:tests/extract\_resultdb\_settings](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py)
 
-[DEPS](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#16)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]

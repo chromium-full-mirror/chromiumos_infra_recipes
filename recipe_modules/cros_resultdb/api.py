@@ -197,6 +197,16 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     return config
 
+  def upload(self, config, step_name='upload test results to rdb'):
+    """Wrapper for uploading test results to resultDB.
+
+    Args:
+      config (dict) A dict wrapping all resultdb parameters.
+      step_name (str): The name of the step or None for default.
+    """
+    with self.m.step.nest(step_name):
+      return self._upload(config)
+
   def _upload(self, config, stainless_url=None):
     """Call the ResultDB module to upload test result
 
