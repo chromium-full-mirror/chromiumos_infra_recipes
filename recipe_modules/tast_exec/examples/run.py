@@ -6,6 +6,7 @@
 
 DEPS = [
     'recipe_engine/path',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'tast_exec',
 ]
@@ -46,12 +47,17 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'basic', api.properties(**{'$chromeos/tast_exec': {
+      'basic',
+      api.buildbucket.ci_build(),
+      api.properties(**{'$chromeos/tast_exec': {
           'should_retry': True
-      }}))
+      }}),
+  )
 
   yield api.test(
       'public',
+      api.buildbucket.ci_build(),
       api.properties(**{'$chromeos/tast_exec': {
           'public_builder': True
-      }}))
+      }}),
+  )

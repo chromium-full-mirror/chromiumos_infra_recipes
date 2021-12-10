@@ -16,6 +16,18 @@
       "[CLEANUP]/temp_tmp_1/autotest_server_package.tar.bz2"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup tast.gsutil download tast bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -29,6 +41,18 @@
       "--directory",
       "[CLEANUP]/temp_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup tast.untar tast",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -51,6 +75,18 @@
       "[CLEANUP]/temp_tmp_2/image.zip"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup vm image.gsutil download image bundle from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -66,6 +102,18 @@
       "--json-output",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup vm image.unzip image bundle",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -89,6 +137,18 @@
       "[CLEANUP]/temp_tmp_2/image/chromiumos_test_image.bin",
       "[CLEANUP]/temp_tmp_2/image/qcow2.img"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup vm image.convert image to qcow format",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -100,6 +160,18 @@
       "400",
       "[CLEANUP]/temp_tmp_2/image/id_rsa"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "setup vm image.calibrate ssh key permissions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -148,6 +220,18 @@
       "none"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.launch image as vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -174,6 +258,18 @@
       "true"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.connect via ssh",
     "timeout": 300,
     "~followup_annotations": [
@@ -194,6 +290,18 @@
       "localhost:9222",
       "!informational"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.tast list",
     "timeout": 300,
     "~followup_annotations": [
@@ -223,6 +331,18 @@
       "localhost:9222",
       "!informational"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.tast run",
     "timeout": 5400,
     "~followup_annotations": [
@@ -254,6 +374,18 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.gather artifacts on VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -280,6 +412,18 @@
       "[CLEANUP]/test-results_tmp_1/artifacts.tar"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.download artifacts from VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -292,6 +436,18 @@
       "-F",
       "[CLEANUP]/kvm-pid_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.kill vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -320,6 +476,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -338,6 +506,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -363,6 +543,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.process tast output.read results.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -470,7 +662,7 @@
     "name": "first tast iteration.process tast output.GS upload first_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/first_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results@@@"
     ]
   },
   {
@@ -487,9 +679,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive//0/first_results"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration.process tast output.GS upload first_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -549,6 +753,18 @@
       "--format",
       "text"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "tests to retry.fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -598,6 +814,18 @@
       "none"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.launch image as vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -624,6 +852,18 @@
       "true"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.connect via ssh",
     "timeout": 300,
     "~followup_annotations": [
@@ -644,6 +884,18 @@
       "localhost:9222",
       "arc.Boot"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.tast list",
     "timeout": 300,
     "~followup_annotations": [
@@ -673,6 +925,18 @@
       "localhost:9222",
       "arc.Boot"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.tast run",
     "timeout": 5400,
     "~followup_annotations": [
@@ -704,6 +968,18 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.gather artifacts on VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -730,6 +1006,18 @@
       "[CLEANUP]/test-results_tmp_2/artifacts.tar"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.download artifacts from VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -742,6 +1030,18 @@
       "-F",
       "[CLEANUP]/kvm-pid_tmp_2"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.kill vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -770,6 +1070,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -788,6 +1100,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -813,6 +1137,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.process tast output.read results.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -920,7 +1256,7 @@
     "name": "second tast iteration.process tast output.GS upload second_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/second_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/second_results@@@"
     ]
   },
   {
@@ -937,9 +1273,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_2",
-      "gs://chromeos-vmtest-archive//0/second_results"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration.process tast output.GS upload second_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -965,7 +1313,7 @@
     "cmd": [],
     "name": "record logs",
     "~followup_annotations": [
-      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
     ]
   },
   {
@@ -977,6 +1325,18 @@
       "/var/log",
       "[CLEANUP]/var-log-dump_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record logs.copy logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -991,6 +1351,18 @@
       "777",
       "[CLEANUP]/var-log-dump_tmp_1"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record logs.loosen permission",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1001,7 +1373,7 @@
     "name": "record logs.GS upload system_logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
     ]
   },
   {
@@ -1018,9 +1390,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/var-log-dump_tmp_1",
-      "gs://chromeos-vmtest-archive//0/system_logs"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/system_logs"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record logs.GS upload system_logs.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -1066,6 +1450,18 @@
       "none"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "launch image as vm"
   },
   {
@@ -1089,6 +1485,18 @@
       "true"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "connect via ssh",
     "timeout": 300
   },
@@ -1106,6 +1514,18 @@
       "localhost:9222",
       "!informational"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "tast list",
     "timeout": 300
   },
@@ -1132,6 +1552,18 @@
       "localhost:9222",
       "!informational"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "tast run",
     "timeout": 5400
   },
@@ -1160,6 +1592,18 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "gather artifacts on VM",
     "timeout": 300
   },
@@ -1183,6 +1627,18 @@
       "[CLEANUP]/temp_tmp_3/artifacts.tar"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "download artifacts from VM",
     "timeout": 300
   },
@@ -1192,6 +1648,18 @@
       "-F",
       "[CLEANUP]/kvm-pid_tmp_3"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "kill vm"
   },
   {
@@ -1216,6 +1684,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1234,6 +1714,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1279,6 +1771,18 @@
       "none"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "launch image as vm (2)"
   },
   {
@@ -1302,6 +1806,18 @@
       "true"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "connect via ssh (2)",
     "timeout": 300
   },
@@ -1319,6 +1835,18 @@
       "localhost:9222",
       "example.Pass"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "tast list (2)",
     "timeout": 300
   },
@@ -1346,6 +1874,18 @@
       "localhost:9222",
       "example.Pass"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "tast run (2)",
     "timeout": 5400
   },
@@ -1374,6 +1914,18 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "gather artifacts on VM (2)",
     "timeout": 300
   },
@@ -1397,6 +1949,18 @@
       "[CLEANUP]/temp_tmp_3/artifacts.tar"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "download artifacts from VM (2)",
     "timeout": 300
   },
@@ -1406,6 +1970,18 @@
       "-F",
       "[CLEANUP]/kvm-pid_tmp_4"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "kill vm (2)"
   },
   {
@@ -1430,6 +2006,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "qemu logs (2).reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1448,6 +2036,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "qemu logs (2).reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1479,6 +2079,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).create instance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1565,6 +2177,18 @@
       "true"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).connect via ssh",
     "timeout": 300,
     "~followup_annotations": [
@@ -1585,6 +2209,18 @@
       "172.16.0.15:22",
       "!informational"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).tast list",
     "timeout": 300,
     "~followup_annotations": [
@@ -1614,6 +2250,18 @@
       "172.16.0.15:22",
       "!informational"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).tast run",
     "timeout": 5400,
     "~followup_annotations": [
@@ -1645,6 +2293,18 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).gather artifacts on VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -1671,6 +2331,18 @@
       "[CLEANUP]/test-results_tmp_3/artifacts.tar"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).download artifacts from VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -1700,6 +2372,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).get instance serial output.gcloud compute instances get-serial-port-output",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1720,6 +2404,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).delete instance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1744,6 +2440,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).process tast output.read results.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1851,7 +2559,7 @@
     "name": "first tast iteration (2).process tast output.GS upload first_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/first_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results@@@"
     ]
   },
   {
@@ -1868,9 +2576,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_3",
-      "gs://chromeos-vmtest-archive//0/first_results"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "first tast iteration (2).process tast output.GS upload first_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -1930,6 +2650,18 @@
       "--format",
       "text"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "tests to retry (2).fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -1961,6 +2693,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).create instance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2047,6 +2791,18 @@
       "true"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).connect via ssh",
     "timeout": 300,
     "~followup_annotations": [
@@ -2067,6 +2823,18 @@
       "172.16.0.15:22",
       "arc.Boot"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).tast list",
     "timeout": 300,
     "~followup_annotations": [
@@ -2096,6 +2864,18 @@
       "172.16.0.15:22",
       "arc.Boot"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).tast run",
     "timeout": 5400,
     "~followup_annotations": [
@@ -2127,6 +2907,18 @@
       "/var/spool/crash"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).gather artifacts on VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -2153,6 +2945,18 @@
       "[CLEANUP]/test-results_tmp_4/artifacts.tar"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).download artifacts from VM",
     "timeout": 300,
     "~followup_annotations": [
@@ -2182,6 +2986,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).get instance serial output.gcloud compute instances get-serial-port-output",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2202,6 +3018,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).delete instance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2226,6 +3054,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).process tast output.read results.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2333,7 +3173,7 @@
     "name": "second tast iteration (2).process tast output.GS upload second_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/second_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/second_results@@@"
     ]
   },
   {
@@ -2350,9 +3190,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_4",
-      "gs://chromeos-vmtest-archive//0/second_results"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "second tast iteration (2).process tast output.GS upload second_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
@@ -2378,7 +3230,7 @@
     "cmd": [],
     "name": "record logs (2)",
     "~followup_annotations": [
-      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
     ]
   },
   {
@@ -2390,6 +3242,18 @@
       "/var/log",
       "[CLEANUP]/var-log-dump_tmp_2"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record logs (2).copy logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2404,6 +3268,18 @@
       "777",
       "[CLEANUP]/var-log-dump_tmp_2"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record logs (2).loosen permission",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2414,7 +3290,7 @@
     "name": "record logs (2).GS upload system_logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/system_logs@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
     ]
   },
   {
@@ -2431,9 +3307,21 @@
       "rsync",
       "-r",
       "[CLEANUP]/var-log-dump_tmp_2",
-      "gs://chromeos-vmtest-archive//0/system_logs"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/system_logs"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record logs (2).GS upload system_logs.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [

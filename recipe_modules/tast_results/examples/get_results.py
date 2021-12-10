@@ -6,6 +6,7 @@
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/path',
     'tast_results',
 ]
@@ -66,4 +67,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.buildbucket.ci_build())
