@@ -20,13 +20,13 @@
       "----",
       "cp",
       "gs://chromeos-image-archive/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2",
-      "gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2"
+      "gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50/ti50.tar.bz2"
     ],
     "infra_step": true,
     "name": "copy artifacts to release bucket.gsutil copy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50/ti50.tar.bz2@@@"
     ]
   },
   {
@@ -67,7 +67,7 @@
       "----",
       "cp",
       "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions",
-      "gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
+      "gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
     "name": "upload gsc instructions.gsutil cp",
@@ -91,7 +91,7 @@
       "/path/to/tmp/json",
       "copy",
       "",
-      "[CLEANUP]/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
+      "[CLEANUP]/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ti50,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
     "name": "trigger gsc signing.trigger file",
@@ -108,8 +108,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions",
-      "gs://chromeos-releases/tobesigned/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
+      "[CLEANUP]/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ti50,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions",
+      "gs://chromeos-releases/tobesigned/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ti50,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
     "name": "trigger gsc signing.gsutil cp",

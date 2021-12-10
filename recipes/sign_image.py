@@ -165,7 +165,13 @@ def RunSteps(api, properties):
   # Copy artifact to release bucket if archive is in non release bucket.
   if non_release_signer_bucket:
     with api.step.nest('copy artifacts to release bucket') as presentation:
+      # Update gs bucket for new archive.
       new_archive = archive.replace(non_release_gs.bucket, gs.bucket)
+      # Add new directory and copy the artifact.
+      base = os.path.basename(new_archive)
+      new_archive = os.path.join(
+          os.path.dirname(new_archive),
+          base.split('.')[0], base)
       api.gsutil.copy(non_release_gs.bucket, non_release_gs.rel_path(archive),
                       gs.bucket, gs.rel_path(new_archive))
       # Update archive.
