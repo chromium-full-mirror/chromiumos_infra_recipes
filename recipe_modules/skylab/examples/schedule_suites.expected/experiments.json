@@ -8,6 +8,48 @@
   },
   {
     "cmd": [],
+    "name": "schedule skylab tests v2.create test requests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "schedule skylab tests v2.get CL 123456 description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

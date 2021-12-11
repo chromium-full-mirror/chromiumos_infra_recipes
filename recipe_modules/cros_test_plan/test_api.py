@@ -29,6 +29,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
             artifacts_gs_bucket='chromeos-image-archive',
             artifacts_gs_path='target-cq/R12-3.4.5-6789',
         ),
+        builder_name="test-builder",
     )
     artifacts = artifacts or BuilderConfig.Artifacts.ArtifactTypes.values()
     for artifact in artifacts:

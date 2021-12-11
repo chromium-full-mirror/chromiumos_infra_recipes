@@ -9,7 +9,6 @@ DEPS = [
     'metadata',
 ]
 
-
 def RunSteps(api):
   api.assertions.assertEqual(
       api.metadata.gspath(
@@ -17,6 +16,9 @@ def RunSteps(api):
       ),
       'metadata/containers.jsonpb',
   )
+
+  # Force coverage on mock metadata
+  _ = api.metadata.test_api.mock_metadata()
 
 
 def GenTests(api):

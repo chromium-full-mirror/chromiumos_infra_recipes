@@ -394,6 +394,7 @@
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
+  * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target)
   * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
   * [src_state:examples/build_manifest](#recipes-src_state_examples_build_manifest)
   * [src_state:examples/external_manifest](#recipes-src_state_examples_external_manifest)
@@ -3876,7 +3877,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#487)(self, test_plan):**
+&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#509)(self, test_plan):**
 
 Returns the number of critical tests in the build plan.
 
@@ -3888,7 +3889,7 @@ Args:
 Returns:
   test_count (int): Number of critical tests ran.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#334)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#350)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3897,7 +3898,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#111)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#111)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -3914,6 +3915,8 @@ Args:
       successful tests on images with the same build inputs.
   run_async (bool): whether to stop and collect, if set we return no
       failures (an empty list).
+  container_metadata (ContainerMetadata): Information on container
+    images used for test execution.
 Returns
   list[failures.Failure]: failures encountered running tests
 
@@ -3924,7 +3927,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#273)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#281)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None):**
 
 Schedule all tests from the test_plan.
 
@@ -3941,6 +3944,8 @@ Args:
   is_retry (bool): Whether this is a CQ retry.
   run_async (bool): whether to stop and collect, if set we return no
       failures (an empty list).
+  container_metadata (ContainerMetadata): Information on container
+    images used for test execution.
 
 Returns:
   MetaTestTuple of lists of the tests scheduled.
@@ -6023,7 +6028,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#773)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#778)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6078,7 +6083,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#723)(self, testable_builds=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#723)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6087,6 +6092,8 @@ Run tests on the testable_builds identified by plan_and_run_children.
 Args:
   testable_builds (list[Build]): The list of builds to consider,
     or None to use the current results.
+  container_metadata (ContainerMetadata): Information on container
+    images used for test execution.
 
 Returns:
   (BuildsStatus): The current status of the builds.
@@ -6707,7 +6714,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for issuing commands to Skylab
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#41)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#42)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -6724,7 +6731,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#92)(self, unit_hw_tests, timeout, name=None, async_suite_run=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#93)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -6734,15 +6741,17 @@ Args:
 * name (str): The step name. Defaults to 'schedule skylab tests v2'
 * async_suite_run (bool): If set, indicates that caller does not intend to wait for
   the scheduled suites to complete, and the child build can outlive the parent build.
+* container_metadata (ContainerMetadata): Information on container
+    images used for test execution.
 
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#37)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#38)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#198)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#246)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -9690,7 +9699,7 @@ Recipe for performing various manipulations on ChromeOS manifests.
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/metadata/examples/full.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata/examples/full.py#12)(api):**
 ### *recipes* / [metadata\_json:examples/add\_stage\_results](/recipe_modules/metadata_json/examples/add_stage_results.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -10045,11 +10054,11 @@ Recipe for signing ChromeOS images.
 &mdash; **def [RunSteps](/recipes/signing.py#14)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
-[DEPS](/recipe_modules/skylab/examples/schedule_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/skylab/examples/schedule_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#22)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites](/recipe_modules/skylab/examples/wait_on_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -10064,6 +10073,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#15)(api):**
+### *recipes* / [skylab:tests/no\_build\_target](/recipe_modules/skylab/tests/no_build_target.py)
+
+[DEPS](/recipe_modules/skylab/tests/no_build_target.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/tests/no_build_target.py#23)(api):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
 [DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

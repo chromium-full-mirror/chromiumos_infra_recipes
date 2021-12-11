@@ -29,6 +29,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
     self._resultdb_elegible_projects = properties.resultdb_elegible_projects
+    self._enable_container_support = properties.enable_container_support
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -90,7 +91,7 @@ class SkylabApi(recipe_api.RecipeApi):
     return self.m.buildbucket.schedule([bb_request])[0]
 
   def schedule_suites(self, unit_hw_tests, timeout, name=None,
-                      async_suite_run=False):
+                      async_suite_run=False, container_metadata=None):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
@@ -99,49 +100,96 @@ class SkylabApi(recipe_api.RecipeApi):
     * name (str): The step name. Defaults to 'schedule skylab tests v2'
     * async_suite_run (bool): If set, indicates that caller does not intend to wait for
       the scheduled suites to complete, and the child build can outlive the parent build.
+    * container_metadata (ContainerMetadata): Information on container
+        images used for test execution.
 
     Returns:
       list[SkylabTask]: with buildbucket_id of the recipe launched.
     """
+
+    def create_test_request(uht):
+      """Create test Request message from UnitHwTest instance
+
+      Args:
+        uht (UnitHwTest): Hardware test suite configuration to execute
+
+      Return
+        Request instance for test that can be scheduled.
+      """
+      req = Request()
+      req.params.hardware_attributes.model = ''
+      req.params.time.maximum_duration.seconds = timeout.seconds
+      image_path = uht.unit.common.build_payload.artifacts_gs_path
+      image_bucket = uht.unit.common.build_payload.artifacts_gs_bucket
+      gs_url = ('gs://' + image_bucket + '/' + image_path)
+      req.params.metadata.test_metadata_url = gs_url
+      req.params.metadata.debug_symbols_archive_url = gs_url
+      self._set_pool(req.params.scheduling, uht.hw_test.pool)
+      sw_dep = req.params.software_dependencies.add()
+      sw_dep.chromeos_build = image_path
+      sw_dep_gsc_bucket = req.params.software_dependencies.add()
+      sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
+      req.params.scheduling.qs_account = self._qs_account
+      if uht.hw_test.common.critical.value:
+        req.params.test_execution_behavior = (
+            Request.Params.TestExecutionBehavior.CRITICAL)
+      else:
+        req.params.test_execution_behavior = (
+            Request.Params.TestExecutionBehavior.NON_CRITICAL)
+      req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
+      suite_to_create = req.test_plan.suite.add()
+      suite_to_create.name = uht.hw_test.suite
+      self._set_license_labels(req, uht.hw_test.licenses)
+
+      tags = self._get_ctp_tags(uht.hw_test, image_path)
+      request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
+      req.params.decorations.tags.extend(request_tags)
+      if self._enable_retries:
+        self._enable_test_retries(req)
+
+      return req
+
+    ####
+    # Start of main body
+
+    # Unless we're specifically opted-in to container support, ignore container
+    # metadata.
+    if not self._enable_container_support:
+      container_metadata = None
+
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
       # str -> (Request dict)
       reqs = {}
 
-      for uht in unit_hw_tests:
-        req = Request()
-        req.params.hardware_attributes.model = ''
-        req.params.time.maximum_duration.seconds = timeout.seconds
-        image_path = uht.unit.common.build_payload.artifacts_gs_path
-        image_bucket = uht.unit.common.build_payload.artifacts_gs_bucket
-        gs_url = ('gs://' + image_bucket + '/' + image_path)
-        req.params.metadata.test_metadata_url = gs_url
-        req.params.metadata.debug_symbols_archive_url = gs_url
-        self._set_pool(req.params.scheduling, uht.hw_test.pool)
-        sw_dep = req.params.software_dependencies.add()
-        sw_dep.chromeos_build = image_path
-        sw_dep_gsc_bucket = req.params.software_dependencies.add()
-        sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
-        req.params.scheduling.qs_account = self._qs_account
-        if uht.hw_test.common.critical.value:
-          req.params.test_execution_behavior = (
-              Request.Params.TestExecutionBehavior.CRITICAL)
-        else:
-          req.params.test_execution_behavior = (
-              Request.Params.TestExecutionBehavior.NON_CRITICAL)
-        req.params.software_attributes.build_target.name = uht.hw_test.skylab_board
-        suite_to_create = req.test_plan.suite.add()
-        suite_to_create.name = uht.hw_test.suite
-        self._set_license_labels(req, uht.hw_test.licenses)
+      with self.m.step.nest('create test requests'):
+        for uht in unit_hw_tests:
+          step_name = 'configure {}'.format(uht.unit.common.builder_name)
+          with self.m.step.nest(step_name) as configure_step:
+            request = create_test_request(uht)
 
-        tags = self._get_ctp_tags(uht.hw_test, image_path)
-        request_tags = [
-            '{}:{}'.format(key, value) for key, value in tags.items()
-        ]
-        req.params.decorations.tags.extend(request_tags)
-        if self._enable_retries:
-          self._enable_test_retries(req)
-        reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(req)
+            # If container metadata has been provided, then we can handle
+            # requests to opt-in test execution via containers.
+            #
+            # If a test config has run_via_container set, then check that we have
+            # container metadata for the build target we're testing, and pass it
+            # through via the Request's execution parameters.
+            if container_metadata is not None and uht.hw_test.run_via_container:
+              build_target = uht.unit.common.build_target.name
+              if not build_target in container_metadata.containers:
+                configure_step.status = self.m.step.FAILURE
+                configure_step.step_summary_text = \
+                  "Execution via container requested, " + \
+                  "but no container metadata for build target '{}'".format(build_target)
+                continue
+
+              # The 'cros-test' container contains the autoserv binary we'll use
+              container_image_map = container_metadata.containers[build_target]
+              request.params.execution_param.container_image_info.CopyFrom(
+                  container_image_map.images['cros-test'],
+              )
+
+            reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(request)
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)

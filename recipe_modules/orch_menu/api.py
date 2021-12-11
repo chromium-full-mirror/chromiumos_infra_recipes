@@ -720,7 +720,7 @@ class OrchMenuApi(RecipeApi):
         self._builds_status.update(builds, failures)
       return builds[0]
 
-  def plan_and_run_tests(self, testable_builds=None):
+  def plan_and_run_tests(self, testable_builds=None, container_metadata=None):
     """Plan, schedule, and run tests.
 
     Run tests on the testable_builds identified by plan_and_run_children.
@@ -728,6 +728,8 @@ class OrchMenuApi(RecipeApi):
     Args:
       testable_builds (list[Build]): The list of builds to consider,
         or None to use the current results.
+      container_metadata (ContainerMetadata): Information on container
+        images used for test execution.
 
     Returns:
       (BuildsStatus): The current status of the builds.
@@ -743,9 +745,12 @@ class OrchMenuApi(RecipeApi):
     else:
       test_failures = self.m.cros_test_proctor.run_proctor(
           testable_builds or self._builds_status.testable_builds,
-          self.gitiles_commit, self.gerrit_changes,
+          self.gitiles_commit,
+          self.gerrit_changes,
           self._properties.enable_history,
-          run_async=self._properties.run_tests_async)
+          run_async=self._properties.run_tests_async,
+          container_metadata=container_metadata,
+      )
     self._builds_status.update([], test_failures)
 
     if not self._collect_remaining_children().fatal_failures:

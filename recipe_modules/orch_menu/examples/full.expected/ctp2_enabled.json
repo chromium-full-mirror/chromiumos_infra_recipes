@@ -2498,7 +2498,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/examples/full.py\", line 95, in RunSteps",
       "    builds_status = api.orch_menu.plan_and_run_tests()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 742, in plan_and_run_tests",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 744, in plan_and_run_tests",
       "    self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_test_proctor/api.py\", line 109, in run_proctor_v2",
       "    raise ValueError('CTP2 not implemented')",

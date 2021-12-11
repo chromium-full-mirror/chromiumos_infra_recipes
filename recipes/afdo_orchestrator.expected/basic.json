@@ -2888,6 +2888,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    hw_test {@@@",
@@ -3356,6 +3357,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    hw_test {@@@",
@@ -3823,6 +3825,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    hw_test {@@@",
@@ -4290,6 +4293,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    hw_test {@@@",
@@ -4756,6 +4760,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    vm_test {@@@",
@@ -5220,6 +5225,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    vm_test {@@@",
@@ -5683,6 +5689,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  tast_vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    tast_vm_test {@@@",
@@ -6150,6 +6157,7 @@
       "@@@STEP_LOG_LINE@planner_output@        }@@@",
       "@@@STEP_LOG_LINE@planner_output@      }@@@",
       "@@@STEP_LOG_LINE@planner_output@    }@@@",
+      "@@@STEP_LOG_LINE@planner_output@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@  tast_vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@planner_output@    tast_vm_test {@@@",
@@ -6317,6 +6325,41 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/4321@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.create test requests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -7964,6 +8007,7 @@
       "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@return value@  hw_test {@@@",
@@ -8456,6 +8500,7 @@
       "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@return value@  hw_test {@@@",
@@ -8947,6 +8992,7 @@
       "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@return value@  hw_test {@@@",
@@ -9437,6 +9483,7 @@
       "@@@STEP_LOG_LINE@return value@      }@@@",
       "@@@STEP_LOG_LINE@return value@    }@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
+      "@@@STEP_LOG_LINE@return value@  builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@return value@  hw_test {@@@",

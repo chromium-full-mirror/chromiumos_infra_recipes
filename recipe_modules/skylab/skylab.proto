@@ -17,4 +17,8 @@ message SkylabProperties {
   // TODO(b/201608160): Remove upon experiment completion.
   // Projects on which to enable uploading to resultdb in prod.
   repeated string resultdb_elegible_projects = 8;
+
+  // TODO(b/209497087): Experiment flag to enable passing container information
+  // to CTP, remove once support is stabilized.
+  bool enable_container_support = 9;
 }

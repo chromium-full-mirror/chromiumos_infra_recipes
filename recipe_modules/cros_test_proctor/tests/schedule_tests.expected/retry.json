@@ -12,6 +12,27 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "schedule hardware tests.schedule skylab tests v2.create test requests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",

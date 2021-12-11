@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_test_plan',
     'git_footers',
+    'metadata',
     'skylab',
 ]
 
@@ -47,21 +48,51 @@ def RunSteps(api):
 
   api.skylab.set_qs_account('a_new_quota_account')
 
-  tasks = api.skylab.schedule_suites([
-      unit_hw_test, another_unit_hw_test, non_crit_unit_hw_test,
-      unit_hw_test_with_license
-  ], timeout=duration_pb2.Duration(seconds=3600))
-  api.assertions.assertEqual(len(tasks), 4)
+  # HW Test Unit opted-in to running via container
+  hw_test_unit_container = api.cros_test_plan.test_api.hw_test_unit
+  hw_test_container = hw_test_unit_with_license.hw_test_cfg.hw_test[0]
+  hw_test_container.run_via_container = True
+  unit_hw_test_container = api.skylab.UnitHwTest(
+      unit=hw_test_unit_container,
+      hw_test=hw_test_container,
+  )
+
+  tasks = api.skylab.schedule_suites(
+      [
+          unit_hw_test,
+          another_unit_hw_test,
+          non_crit_unit_hw_test,
+          unit_hw_test_with_license,
+          unit_hw_test_container,
+      ],
+      timeout=duration_pb2.Duration(seconds=3600),
+      container_metadata=api.metadata.test_api.mock_metadata(target="target"),
+  )
+
+  api.assertions.assertEqual(len(tasks), 5)
   api.assertions.assertCountEqual(
       [x.test for x in tasks],
-      [hw_test, another_hw_test, non_crit_hw_test, hw_test_with_license])
+      [
+          hw_test,
+          another_hw_test,
+          non_crit_hw_test,
+          hw_test_with_license,
+          hw_test_container,
+      ],
+  )
 
 
 def GenTests(api):
   yield api.test(
       'basic',
       api.properties(
-          **{'$chromeos/skylab': SkylabProperties(enable_retries=True)}))
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(
+                      enable_retries=True,
+                      enable_container_support=True,
+                  )
+          }))
 
   build = api.buildbucket.try_build_message(project='chromeos',
                                             bucket='chromeos',

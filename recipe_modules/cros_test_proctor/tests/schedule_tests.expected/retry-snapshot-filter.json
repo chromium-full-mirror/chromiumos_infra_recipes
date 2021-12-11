@@ -454,6 +454,7 @@
       "@@@STEP_LOG_LINE@filtered test plan@        }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@      }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    }@@@",
+      "@@@STEP_LOG_LINE@filtered test plan@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  hw_test_cfg {@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    hw_test {@@@",
@@ -921,6 +922,7 @@
       "@@@STEP_LOG_LINE@filtered test plan@        }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@      }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    }@@@",
+      "@@@STEP_LOG_LINE@filtered test plan@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    vm_test {@@@",
@@ -1385,6 +1387,7 @@
       "@@@STEP_LOG_LINE@filtered test plan@        }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@      }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    }@@@",
+      "@@@STEP_LOG_LINE@filtered test plan@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    vm_test {@@@",
@@ -1848,6 +1851,7 @@
       "@@@STEP_LOG_LINE@filtered test plan@        }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@      }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    }@@@",
+      "@@@STEP_LOG_LINE@filtered test plan@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  tast_vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
@@ -2303,6 +2307,7 @@
       "@@@STEP_LOG_LINE@filtered test plan@        }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@      }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@    }@@@",
+      "@@@STEP_LOG_LINE@filtered test plan@    builder_name: \"test-builder\"@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  tast_vm_test_cfg {@@@",
       "@@@STEP_LOG_LINE@filtered test plan@  }@@@",
@@ -2320,6 +2325,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule hardware tests.schedule skylab tests v2.create test requests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
