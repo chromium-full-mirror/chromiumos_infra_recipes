@@ -114,7 +114,8 @@ def RunSteps(api, properties):
           for project in all_projects:
             if project.name.startswith(
                 "chromeos/project/") or project.name.startswith(
-                    "chromeos/program/"):
+                    "chromeos/program/") or project.name.startswith(
+                        "chromeos/overlays/chipset-"):
               project_paths.append(project.path)
 
           nproc = api.step(
