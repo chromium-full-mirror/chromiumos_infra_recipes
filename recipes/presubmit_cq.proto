@@ -15,4 +15,7 @@ message PresubmitCqProperties {
   // depot_tools/recipes/recipe_modules/presubmit/properties.proto for details.
   // Passed to presubmit as timeout_s.
   int32 timeout_s = 2;
+
+  // Projects to always run infra-fullcheckout-presubmit for.
+  repeated string fullcheckout_projects = 3;
 }

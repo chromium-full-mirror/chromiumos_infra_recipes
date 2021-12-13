@@ -19,6 +19,7 @@ DEPS = [
 ]
 
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_cq import PresubmitCqProperties
 
@@ -31,8 +32,13 @@ def RunSteps(api, properties):
   input_props = {}
   bucket = 'infra'
 
+  force_fullcheckout = False
+  if len(
+      changes) == 1 and changes[0].project in properties.fullcheckout_projects:
+    force_fullcheckout = True
+
   with api.step.nest('validate inputs') as presentation:
-    if len(changes) == 1:
+    if len(changes) == 1 and not force_fullcheckout:
       presentation.step_text = 'One CL, using Infra Presubmit'
       builder = 'Infra Presubmit'
       # Do not inherit our version tag for Infra Presubmit, use the builder
@@ -42,14 +48,18 @@ def RunSteps(api, properties):
         input_props['runhooks'] = properties.runhooks
       if properties.timeout_s > 0:
         input_props['timeout_s'] = properties.timeout_s
-    elif len(changes) > 1:
-      presentation.step_text = (
-          'Multiple changes, using infra-fullcheckout-presubmit')
-      builder = 'infra-fullcheckout-presubmit'
-      exe_cipd_version = api.buildbucket.INHERIT
-    else:
+    elif len(changes) == 0:
       presentation.step_text = 'No build'
       raise StepFailure('No changes present')
+    else:
+      if len(changes) == 1:
+        presentation.step_text = (
+            'One CL, project configured for infra-fullcheckout-presubmit')
+      else:
+        presentation.step_text = (
+            'Multiple changes, using infra-fullcheckout-presubmit')
+      builder = 'infra-fullcheckout-presubmit'
+      exe_cipd_version = api.buildbucket.INHERIT
 
   with api.step.nest('run {}'.format(builder)) as presentation:
     child_props = api.cq.props_for_child_build
@@ -92,6 +102,17 @@ def GenTests(api):
   yield api.test(
       'normal_one_change_and_props',
       api.test_util.test_build(cq=True, input_properties=props).build)
+
+  yield api.test(
+      'one_change_fullcheckout',
+      api.properties(fullcheckout_projects=['chromeos/config-internal']),
+      api.test_util.test_build(
+          cq=True, gerrit_changes=[
+              common_pb2.GerritChange(change=1234,
+                                      project='chromeos/config-internal')
+          ]).build,
+      api.post_check(post_process.StepSuccess,
+                     'run infra-fullcheckout-presubmit'))
 
   yield api.test(
       'normal_two_changes',
