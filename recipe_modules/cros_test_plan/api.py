@@ -37,11 +37,13 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         default_ref)
 
   def get_target_test_requirements_file(self):
-    """Fetch contents of target test requirements file.
+    """Fetch contents of target test requirements config.
 
     Returns:
       JSON structure of target test requirements.
     """
+    if self._properties.generate_target_test_requirements_from_source:
+      return self.generate_target_test_requirements_config()
     with self.m.step.nest('fetch target test requirements file'):
       source_gitiles_repo = (
           str(self._properties.source_gitiles_repo)
@@ -62,6 +64,39 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       if data:
         return json.loads(data)
       return None
+
+  def generate_target_test_requirements_config(self):
+    """Generate target test requirements config in config-internal using
+      ./board_config/generate_test_config.
+
+      Args:
+        builders list[str]: list of builder names to generate config for, e.g.
+          coral-release-main or staging-kevin-release-main.
+
+    Returns:
+      JSON structure of target test requirements or None.
+    """
+    with self.m.step.nest('generate target test requirements'):
+      with self.m.context(cwd=self.m.src_state.workspace_path):
+        project_info = self.m.repo.project_info('chromeos/config-internal')
+
+        builder_name = self.m.buildbucket.build.builder.builder
+        builders = []
+        if 'orchestrator' in builder_name:
+          # If the build is an orchestrator, we want the config for all of the
+          # child builders.
+          builders = [
+              spec.name for spec in
+              self.m.cros_infra_config.config.orchestrator.child_specs
+          ]
+        else:
+          # Otherwise, assume we want config for the invoking builder.
+          builders = [builder_name]
+        with self.m.context(
+            cwd=self.m.src_state.workspace_path.join(project_info.path)):
+          cmd = ['./board_config/generate_test_config', ','.join(builders)]
+          data = self.m.easy.stdout_step('generate_test_config', cmd)
+          return json.loads(data) if data else None
 
   def generate(self, builds, gerrit_changes, manifest_commit, name=None):
     """Generate test plan.
@@ -126,6 +161,12 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
             '--target_test_requirements',
             self._properties.target_test_requirements_path
         ])
+      if self._properties.generate_target_test_requirements_from_source:
+        with self.m.context(cwd=self.m.src_state.workspace_path):
+          project_info = self.m.repo.project_info('chromeos/config-internal')
+          config_internal_path = self.m.src_state.workspace_path.join(
+              project_info.path)
+          cmd.extend(['--target_test_requirements_repo', config_internal_path])
 
       self.m.step('call test_planner', cmd, infra_step=True)
 

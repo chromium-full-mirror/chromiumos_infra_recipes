@@ -39,4 +39,8 @@ message CrosTestPlanProperties {
 
     // Which branch from the repo to use (e.g. release-R93-14092.B).
     string source_gitiles_branch = 8;
+
+    // Whether or not to generate target rest requirements at runtime from
+    // src/config-internal. Takes precedent over all other properties.
+    bool generate_target_test_requirements_from_source = 9;
 }

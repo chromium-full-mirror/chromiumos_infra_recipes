@@ -12,9 +12,11 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/raw_io',
     'recipe_engine/properties',
     'cros_test_plan',
     'gitiles',
+    'repo',
 ]
 
 TEST_TARGET_TEST_REQUIREMENTS_DATA = '''{
@@ -96,6 +98,106 @@ def GenTests(api):
               "something/sttp.binary_proto", "--target_test_requirements",
               "something/ttrp.binary_proto"
           ]))
+
+  generate_test_config_output = """{
+    "perTargetTestRequirements": [
+        {
+            "targetCriteria": {
+                "buildTarget": "atlas-kernelnext",
+                "builderName": "atlas-kernelnext-release-main"
+            },
+            "hwTestCfg": {
+                "hwTest": [
+                    {
+                        "common": {
+                            "displayName": "atlas-kernelnext-release-main.hw.bvt-tast-cq",
+                            "critical": false,
+                            "testSuiteGroups": [
+                                {
+                                    "testSuiteGroup": "default-tast-suites"
+                                }
+                            ]
+                        },
+                        "suite": "bvt-tast-cq",
+                        "skylabBoard": "atlas",
+                        "hwTestSuiteType": "TAST",
+                        "pool": "DUT_POOL_QUOTA"
+                    }
+                ]
+            }
+        }
+    ]
+}"""
+
+  yield api.test(
+      'generate-test-config',
+      api.properties(
+          **{
+              "$chromeos/cros_test_plan": {
+                  "board_priority_config_path":
+                      "something/bpcp.binary_proto",
+                  "source_tree_test_config_path":
+                      "something/sttp.binary_proto",
+                  "target_test_requirements_path":
+                      "something/ttrp.binary_proto",
+                  "source_gitiles_repo":
+                      "chromeos/infra/config",
+                  "source_gitiles_branch":
+                      "release-R93-14092.B",
+                  "generate_target_test_requirements_from_source":
+                      True,
+              }
+          }),
+      api.buildbucket.ci_build(project='chromeos', bucket='staging',
+                               builder='main-release-orchestrator'),
+      api.repo.project_infos_step_data('generate test plan', [{
+          'project': 'chromeos/config-internal',
+          'path': 'src/config-internal'
+      }]),
+      api.step_data('generate target test requirements.generate_test_config',
+                    stdout=api.raw_io.output_text(generate_test_config_output)),
+      api.post_check(post_process.StepCommandContains,
+                     'generate target test requirements.generate_test_config', [
+                         './board_config/generate_test_config',
+                         'eve-main-release,kukui-main-release'
+                     ]),
+      api.post_check(post_process.StepCommandContains,
+                     'generate test plan.call test_planner', [
+                         '--target_test_requirements_repo',
+                         '[CLEANUP]/chromiumos_workspace/src/config-internal'
+                     ]))
+
+  yield api.test(
+      'generate-test-config-child',
+      api.properties(
+          **{
+              "$chromeos/cros_test_plan": {
+                  "board_priority_config_path":
+                      "something/bpcp.binary_proto",
+                  "source_tree_test_config_path":
+                      "something/sttp.binary_proto",
+                  "target_test_requirements_path":
+                      "something/ttrp.binary_proto",
+                  "source_gitiles_repo":
+                      "chromeos/infra/config",
+                  "source_gitiles_branch":
+                      "release-R93-14092.B",
+                  "generate_target_test_requirements_from_source":
+                      True,
+              }
+          }),
+      api.buildbucket.ci_build(project='chromeos', bucket='staging',
+                               builder='eve-main-release'),
+      api.repo.project_infos_step_data('generate test plan', [{
+          'project': 'chromeos/config-internal',
+          'path': 'src/config-internal'
+      }]),
+      api.step_data('generate target test requirements.generate_test_config',
+                    stdout=api.raw_io.output_text(generate_test_config_output)),
+      api.post_check(
+          post_process.StepCommandContains,
+          'generate target test requirements.generate_test_config',
+          ['./board_config/generate_test_config', 'eve-main-release']))
 
   yield api.test(
       'staging',
