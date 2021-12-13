@@ -5986,24 +5986,7 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "import sys; sys.exit(0)"
-    ],
-    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
+    "cmd": [],
     "name": "upload code coverage data (code coverage llvm json).upload absolute coverage to chromium coverage.Set builder output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

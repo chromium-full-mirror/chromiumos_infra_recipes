@@ -416,8 +416,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           (self._gs_bucket, gs_path))
 
       # Set the output properties
-      result = self.m.python.succeeding_step('Set builder output properties',
-                                             '')
+      result = self.m.step('Set builder output properties', None)
       result.presentation.properties['coverage_metadata_gs_paths'] = [gs_path]
       result.presentation.properties['mimic_builder_names'] = [
           self.m.buildbucket.build.builder.builder
