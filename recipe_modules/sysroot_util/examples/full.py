@@ -99,19 +99,50 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'install packages', 'SysrootService/InstallPackages',
           json.dumps(
-              dict(failedPackages=[{
-                  "category": "chromeos-base",
-                  "packageName": "thislongpackagenameomg",
-                  "version": "0.0.1-r199",
-              }, {
-                  "category": "safari-base",
-                  "packageName": "thisotherexceedinglylongpackage",
-                  "version": "0.0.1-r129",
-              }, {
-                  "category": "edge-base",
-                  "packageName": "shortpackagename",
-                  "version": "0.0.1-r197",
-              }]))))
+              dict(
+                  failedPackages=[{
+                      "category": "chromeos-base",
+                      "packageName": "thislongpackagenameomg",
+                      "version": "0.0.1-r199",
+                  }, {
+                      "category": "safari-base",
+                      "packageName": "thisotherexceedinglylongpackage",
+                      "version": "0.0.1-r129",
+                  }, {
+                      "category": "edge-base",
+                      "packageName": "shortpackagename",
+                      "version": "0.0.1-r197",
+                  }], failedPackageData=[{
+                      "name": {
+                          "category": "chromeos-base",
+                          "packageName": "thislongpackagenameomg",
+                          "version": "0.0.1-r199",
+                      },
+                      "log_path": {
+                          "path": "/all/your/package/are/belong/to/us",
+                          "location": 1,
+                      },
+                  }, {
+                      "name": {
+                          "category": "safari-base",
+                          "packageName": "thisotherexceedinglylongpackage",
+                          "version": "0.0.1-r129",
+                      },
+                      "log_path": {
+                          "path": "/all/your/ebuild/are/belong/to/us",
+                          "location": 1,
+                      },
+                  }, {
+                      "name": {
+                          "category": "edge-base",
+                          "packageName": "shortpackagename",
+                          "version": "0.0.1-r197",
+                      },
+                      "log_path": {
+                          "path": "/all/your/overlay/are/belong/to/us",
+                          "location": 1,
+                      },
+                  }]))))
 
   yield api.test(
       'no_goma', test_build(),

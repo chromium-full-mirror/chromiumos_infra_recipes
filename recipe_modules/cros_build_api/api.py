@@ -270,7 +270,34 @@ class CrosBuildApiApi(RecipeApi):
     self._version = self.Version(version.major, version.minor, version.bug)
     return self._version
 
-  # Define a function to append the failure step with the failed packages
+  @staticmethod
+  def failed_pkg_logs(input_proto, output_proto, read_raw_fn):
+    """Function to cat log file and retrieve package name.
+
+    To use this, pass failed_pkg_lambda=api.cros_build_api.failed_pkg_logs to
+    the build api call.
+
+    Args:
+      input_proto (a BuildAPI request): A Request that contains a
+          chromiumos.Chroot attribute called 'chroot'.
+      output_proto (a BuildAPI response): A Response that has a
+          'failed_package_data' attribute.
+      read_raw_fn (the LUCI file module's read_raw function): Utility function
+          for reading log file inside the chroot.
+
+    Returns:
+      A list of tuples containing the package name and corresponding build log.
+    """
+    logs = []
+    for failed_pkg in output_proto.failed_package_data:
+      name = '%s/%s' % (failed_pkg.name.category, failed_pkg.name.package_name)
+      content = read_raw_fn(
+          'read log for %s' % name,
+          '%s%s' % (input_proto.chroot.path, failed_pkg.log_path.path),
+          'test data for %s log file' % name)
+      logs.append((failed_pkg.name, content))
+    return logs
+
   @staticmethod
   def failed_pkg_names(output_proto):
     """Function to append a list of failed package to the failure step.
@@ -302,7 +329,7 @@ class CrosBuildApiApi(RecipeApi):
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False, timeout=None,
-               response_lambda=None):
+               response_lambda=None, pkg_logs_lambda=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -324,6 +351,9 @@ class CrosBuildApiApi(RecipeApi):
       response_lambda (fn(output_proto)->str): A function that appends a string
           to the build api response step. Used to make failure step names unique
           across differing root causes.
+      pkg_logs_lambda (fn(failed_package_data, fn, chroot_path)->(str, str)): a
+          function which takes information about a failed package and its log
+          and produces the {cp} name of the package and the log's contents.
 
     Returns:
       google.protobuf: The parsed response proto.
@@ -336,6 +366,7 @@ class CrosBuildApiApi(RecipeApi):
       _ = self._endpoints
 
     response_lambda = response_lambda or (lambda op: '')
+    pkg_logs_lambda = pkg_logs_lambda or (lambda *args: [])
 
     with self.m.step.nest(name or 'call %s' % endpoint) as presentation:
       messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
@@ -414,6 +445,12 @@ class CrosBuildApiApi(RecipeApi):
 
           with self.m.step.nest(resp_step_name) as resp_pres:
             resp_pres.logs['build api stdout'] = file_contents or ''
+            pkg_logs = pkg_logs_lambda(input_proto, output_proto,
+                                       self.m.file.read_raw)
+            resp_pres.logs.update({
+                '%s/%s log' % (p.category, p.package_name): log_contents
+                for (p, log_contents) in pkg_logs
+            })
             if call_step.exc_result.retcode != 0:
               resp_pres.status = self.m.step.FAILURE
 

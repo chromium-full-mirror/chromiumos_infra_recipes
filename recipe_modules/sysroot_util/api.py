@@ -230,6 +230,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         response = self.m.cros_build_api.SysrootService.InstallPackages(
             install_pkg_request,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
+            pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
             timeout=timeout_sec)
 
         # Process goma response to upload logs, stats, and counterz.

@@ -1536,7 +1536,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failedPackages\": [{\"category\": \"chromeos-base\", \"packageName\": \"thislongpackagenameomg\", \"version\": \"0.0.1-r199\"}, {\"category\": \"safari-base\", \"packageName\": \"thisotherexceedinglylongpackage\", \"version\": \"0.0.1-r129\"}, {\"category\": \"edge-base\", \"packageName\": \"shortpackagename\", \"version\": \"0.0.1-r197\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failedPackageData\": [{\"log_path\": {\"path\": \"/all/your/package/are/belong/to/us\", \"location\": 1}, \"name\": {\"category\": \"chromeos-base\", \"packageName\": \"thislongpackagenameomg\", \"version\": \"0.0.1-r199\"}}, {\"log_path\": {\"path\": \"/all/your/ebuild/are/belong/to/us\", \"location\": 1}, \"name\": {\"category\": \"safari-base\", \"packageName\": \"thisotherexceedinglylongpackage\", \"version\": \"0.0.1-r129\"}}, {\"log_path\": {\"path\": \"/all/your/overlay/are/belong/to/us\", \"location\": 1}, \"name\": {\"category\": \"edge-base\", \"packageName\": \"shortpackagename\", \"version\": \"0.0.1-r197\"}}], \"failedPackages\": [{\"category\": \"chromeos-base\", \"packageName\": \"thislongpackagenameomg\", \"version\": \"0.0.1-r199\"}, {\"category\": \"safari-base\", \"packageName\": \"thisotherexceedinglylongpackage\", \"version\": \"0.0.1-r129\"}, {\"category\": \"edge-base\", \"packageName\": \"shortpackagename\", \"version\": \"0.0.1-r197\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1643,7 +1643,115 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
+      "@@@STEP_LOG_END@build api stdout@@@",
+      "@@@STEP_LOG_LINE@edge-base&#x2f;shortpackagename log@test data for edge-base/shortpackagename log file@@@",
+      "@@@STEP_LOG_END@edge-base&#x2f;shortpackagename log@@@",
+      "@@@STEP_LOG_LINE@chromeos-base&#x2f;thislongpackagenameomg log@test data for chromeos-base/thislongpackagenameomg log file@@@",
+      "@@@STEP_LOG_END@chromeos-base&#x2f;thislongpackagenameomg log@@@",
+      "@@@STEP_LOG_LINE@safari-base&#x2f;thisotherexceedinglylongpackage log@test data for safari-base/thisotherexceedinglylongpackage log file@@@",
+      "@@@STEP_LOG_END@safari-base&#x2f;thisotherexceedinglylongpackage log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/chroot/all/your/package/are/belong/to/us",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call response: shortpackagename,thislongpackagenameomg,thisothere...(d1a9).read log for chromeos-base/thislongpackagenameomg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/chroot/all/your/ebuild/are/belong/to/us",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call response: shortpackagename,thislongpackagenameomg,thisothere...(d1a9).read log for safari-base/thisotherexceedinglylongpackage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/cros_chroot/chroot/all/your/overlay/are/belong/to/us",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call response: shortpackagename,thislongpackagenameomg,thisothere...(d1a9).read log for edge-base/shortpackagename",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1686,6 +1794,41 @@
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"failedPackageData\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"logPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"path\": \"/all/your/package/are/belong/to/us\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"location\": \"INSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"category\": \"chromeos-base\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"packageName\": \"thislongpackagenameomg\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"version\": \"0.0.1-r199\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      }, @@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"logPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"path\": \"/all/your/ebuild/are/belong/to/us\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"location\": \"INSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"category\": \"safari-base\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"packageName\": \"thisotherexceedinglylongpackage\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"version\": \"0.0.1-r129\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      }, @@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"logPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"path\": \"/all/your/overlay/are/belong/to/us\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"location\": \"INSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }, @@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"category\": \"edge-base\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"packageName\": \"shortpackagename\", @@@",
+      "@@@STEP_LOG_LINE@published event@          \"version\": \"0.0.1-r197\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ], @@@",
       "@@@STEP_LOG_LINE@published event@    \"failedPackages\": [@@@",
       "@@@STEP_LOG_LINE@published event@      {@@@",
       "@@@STEP_LOG_LINE@published event@        \"category\": \"chromeos-base\", @@@",
@@ -1714,7 +1857,7 @@
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CvsBChMKCi9idWlsZC9ldmUSBQoDZXZlEgIYASIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9v\\ndCISW1NUQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5hbDKaAQoVW1NUQVJUX0RJUl0v\\nY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2aWNlLWFjY291bnQtZ29tYS1j\\nbGllbnQuanNvbiABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlw\\ncm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SnAEKMwoWdGhpc2xvbmdwYWNrYWdlbmFtZW9tZxIN\\nY2hyb21lb3MtYmFzZRoKMC4wLjEtcjE5OQo6Ch90aGlzb3RoZXJleGNlZWRpbmdseWxvbmdwYWNr\\nYWdlEgtzYWZhcmktYmFzZRoKMC4wLjEtcjEyOQopChBzaG9ydHBhY2thZ2VuYW1lEgllZGdlLWJh\\nc2UaCjAuMC4xLXIxOTcaBgjVgMT9BCIMCNaAxP0EEIDKte4B0ALQ7IDZrvG1knzaAldpbnN0YWxs\\nIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdl\\nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CvsBChMKCi9idWlsZC9ldmUSBQoDZXZlEgIYASIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9v\\ndCISW1NUQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5hbDKaAQoVW1NUQVJUX0RJUl0v\\nY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2aWNlLWFjY291bnQtZ29tYS1j\\nbGllbnQuanNvbiABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlw\\ncm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8StQMKMwoWdGhpc2xvbmdwYWNrYWdlbmFtZW9tZxIN\\nY2hyb21lb3MtYmFzZRoKMC4wLjEtcjE5OQo6Ch90aGlzb3RoZXJleGNlZWRpbmdseWxvbmdwYWNr\\nYWdlEgtzYWZhcmktYmFzZRoKMC4wLjEtcjEyOQopChBzaG9ydHBhY2thZ2VuYW1lEgllZGdlLWJh\\nc2UaCjAuMC4xLXIxOTciXQozChZ0aGlzbG9uZ3BhY2thZ2VuYW1lb21nEg1jaHJvbWVvcy1iYXNl\\nGgowLjAuMS1yMTk5EiYKIi9hbGwveW91ci9wYWNrYWdlL2FyZS9iZWxvbmcvdG8vdXMQASJjCjoK\\nH3RoaXNvdGhlcmV4Y2VlZGluZ2x5bG9uZ3BhY2thZ2USC3NhZmFyaS1iYXNlGgowLjAuMS1yMTI5\\nEiUKIS9hbGwveW91ci9lYnVpbGQvYXJlL2JlbG9uZy90by91cxABIlMKKQoQc2hvcnRwYWNrYWdl\\nbmFtZRIJZWRnZS1iYXNlGgowLjAuMS1yMTk3EiYKIi9hbGwveW91ci9vdmVybGF5L2FyZS9iZWxv\\nbmcvdG8vdXMQARoGCNWAxP0EIgwI1oDE/QQQgMq17gHQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFj\\na2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNh\\nbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -1745,7 +1888,7 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CvsBChMKCi9idWlsZC9ldmUSBQoDZXZlEgIYASIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9v\\ndCISW1NUQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5hbDKaAQoVW1NUQVJUX0RJUl0v\\nY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2aWNlLWFjY291bnQtZ29tYS1j\\nbGllbnQuanNvbiABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlw\\ncm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SnAEKMwoWdGhpc2xvbmdwYWNrYWdlbmFtZW9tZxIN\\nY2hyb21lb3MtYmFzZRoKMC4wLjEtcjE5OQo6Ch90aGlzb3RoZXJleGNlZWRpbmdseWxvbmdwYWNr\\nYWdlEgtzYWZhcmktYmFzZRoKMC4wLjEtcjEyOQopChBzaG9ydHBhY2thZ2VuYW1lEgllZGdlLWJh\\nc2UaCjAuMC4xLXIxOTcaBgjVgMT9BCIMCNaAxP0EEIDKte4B0ALQ7IDZrvG1knzaAldpbnN0YWxs\\nIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdl\\nc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CvsBChMKCi9idWlsZC9ldmUSBQoDZXZlEgIYASIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9v\\ndCISW1NUQVJUX0RJUl0vY2hyb21lKhEKD2Nocm9tZV9pbnRlcm5hbDKaAQoVW1NUQVJUX0RJUl0v\\nY2lwZC9nb21hEjgvY3JlZHMvc2VydmljZV9hY2NvdW50cy9zZXJ2aWNlLWFjY291bnQtZ29tYS1j\\nbGllbnQuanNvbiABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlw\\ncm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8StQMKMwoWdGhpc2xvbmdwYWNrYWdlbmFtZW9tZxIN\\nY2hyb21lb3MtYmFzZRoKMC4wLjEtcjE5OQo6Ch90aGlzb3RoZXJleGNlZWRpbmdseWxvbmdwYWNr\\nYWdlEgtzYWZhcmktYmFzZRoKMC4wLjEtcjEyOQopChBzaG9ydHBhY2thZ2VuYW1lEgllZGdlLWJh\\nc2UaCjAuMC4xLXIxOTciXQozChZ0aGlzbG9uZ3BhY2thZ2VuYW1lb21nEg1jaHJvbWVvcy1iYXNl\\nGgowLjAuMS1yMTk5EiYKIi9hbGwveW91ci9wYWNrYWdlL2FyZS9iZWxvbmcvdG8vdXMQASJjCjoK\\nH3RoaXNvdGhlcmV4Y2VlZGluZ2x5bG9uZ3BhY2thZ2USC3NhZmFyaS1iYXNlGgowLjAuMS1yMTI5\\nEiUKIS9hbGwveW91ci9lYnVpbGQvYXJlL2JlbG9uZy90by91cxABIlMKKQoQc2hvcnRwYWNrYWdl\\nbmFtZRIJZWRnZS1iYXNlGgowLjAuMS1yMTk3EiYKIi9hbGwveW91ci9vdmVybGF5L2FyZS9iZWxv\\nbmcvdG8vdXMQARoGCNWAxP0EIgwI1oDE/QQQgMq17gHQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFj\\na2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNh\\nbGwgYnVpbGQgQVBJIHNjcmlwdA==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
