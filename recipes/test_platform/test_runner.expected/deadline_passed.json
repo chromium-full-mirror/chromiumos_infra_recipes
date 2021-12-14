@@ -391,7 +391,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "prejob or test failed"
+      "humanReason": "prejob failed"
     },
     "name": "$result"
   }

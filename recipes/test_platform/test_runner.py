@@ -405,6 +405,10 @@ def RunSteps(api, properties):
 
   if result.has_any_failures():
     with api.step.nest('build status'):
+      if result.test_failed():
+        raise api.step.StepFailure('test failed')
+      if result.prejob_failed():
+        raise api.step.StepFailure('prejob failed')
       raise api.step.StepFailure('prejob or test failed')
 
 

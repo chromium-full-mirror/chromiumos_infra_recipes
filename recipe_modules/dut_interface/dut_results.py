@@ -126,16 +126,16 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: bool
     """
-    return self.is_failure() or self._prejob_failed() or self._test_failed()
+    return self.is_failure() or self.prejob_failed() or self.test_failed()
 
-  def _prejob_failed(self):
+  def prejob_failed(self):
     """Whether the prejob has a failure.
 
     Returns: bool
     """
     return self.prejob_response.is_failure() if self.prejob_response else False
 
-  def _test_failed(self):
+  def test_failed(self):
     """Whether any test has a failure.
 
     Returns: bool
