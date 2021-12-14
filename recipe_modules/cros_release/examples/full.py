@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/properties',
     'build_menu',
     'cros_release',
+    'git',
     'test_util',
 ]
 
@@ -66,7 +67,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
-          }),
+          }), api.git.diff_check(True),
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request', [

@@ -2685,7 +2685,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#198)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#208)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2705,7 +2705,7 @@ Return:
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#148)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#158)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -8726,11 +8726,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_provenance/examples/full.py#12)(api):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#26)(api):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
