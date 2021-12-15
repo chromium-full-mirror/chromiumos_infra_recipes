@@ -9,6 +9,7 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromite.api.android import GetLatestBuildRequest
 from PB.chromite.api.android import MarkStableRequest
 from PB.chromite.api.android import MarkStableStatusType
+from PB.chromite.api.android import WriteLKGBRequest
 from PB.chromite.api.packages import GetAndroidMetadataRequest
 from PB.chromite.api.packages import GetTargetVersionsRequest
 
@@ -183,3 +184,22 @@ class AndroidApi(recipe_api.RecipeApi):
       pres.step_text = 'found ab/{} for package {}'.format(
           response.android_version, android_package)
       return response.android_version
+
+  def write_lkgb(self, android_package, android_version):
+    """Sets LKGB of given Android package to given version.
+
+    Args:
+      android_package (str): The Android package to set LKGB for.
+      android_version (str): The LKGB Android version.
+
+    Returns:
+      List[str]: list of modified files.
+    """
+    with self.m.step.nest('write android lkgb') as pres:
+      request = WriteLKGBRequest(android_package=android_package,
+                                 android_version=android_version)
+      response = self.m.cros_build_api.AndroidService.WriteLKGB(request)
+
+      if not response.modified_files:
+        pres.step_text = 'no files were modified'
+      return response.modified_files

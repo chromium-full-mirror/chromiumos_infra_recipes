@@ -8,6 +8,7 @@ from recipe_engine import recipe_test_api
 
 from PB.chromite.api.android import MarkStableResponse
 from PB.chromite.api.android import MarkStableStatusType
+from PB.chromite.api.android import WriteLKGBResponse
 
 
 class AndroidApiTestApi(recipe_test_api.RecipeTestApi):
@@ -42,3 +43,9 @@ class AndroidApiTestApi(recipe_test_api.RecipeTestApi):
   def set_mark_stable_early_exit(self):
     return self._mark_stable_response(
         MarkStableStatusType.MARK_STABLE_STATUS_EARLY_EXIT)
+
+  def set_write_lkgb_response(self, modified_files):
+    response = WriteLKGBResponse(modified_files=modified_files)
+    return self.m.cros_build_api.set_api_return(
+        'write android lkgb', 'AndroidService/WriteLKGB',
+        json_format.MessageToJson(response))

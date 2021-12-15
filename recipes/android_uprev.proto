@@ -7,6 +7,10 @@ syntax = "proto3";
 package recipes.chromeos.android_uprev;
 
 message AndroidUprevProperties {
+  // The Android package and the version to uprev to.
   string android_package = 1;
   string android_version = 2;
+
+  // Orchestrator only: whether to actually submit an uprev on successful run.
+  bool submit_uprev = 3;
 }

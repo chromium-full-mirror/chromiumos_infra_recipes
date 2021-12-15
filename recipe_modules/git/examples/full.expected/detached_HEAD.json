@@ -511,6 +511,16 @@
   {
     "cmd": [
       "git",
+      "rebase",
+      "--strategy-option",
+      "strategy-option"
+    ],
+    "infra_step": true,
+    "name": "git rebase (3)"
+  },
+  {
+    "cmd": [
+      "git",
       "config",
       "--global",
       "upstream.hammer-branch",

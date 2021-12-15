@@ -73,6 +73,7 @@ def RunSteps(api):
       'AndroidService': {
           'GetLatestBuild': android.GetLatestBuildResponse,
           'MarkStable': android.MarkStableResponse,
+          'WriteLKGB': android.WriteLKGBResponse,
       },
       'ArtifactsService': {
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,

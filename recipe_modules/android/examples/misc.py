@@ -10,7 +10,10 @@ DEPS = [
 
 def RunSteps(api):
   api.android.get_latest_build('android-package')
+  api.android.write_lkgb('android-package', 'android-version')
 
 
 def GenTests(api):
   yield api.test('basic')
+  yield api.test('write-lkgb-unmodified',
+                 api.android.set_write_lkgb_response(modified_files=[]))

@@ -80,6 +80,7 @@ def RunSteps(api):
   api.git.repository_root()
   api.git.rebase(force=True)
   api.git.rebase(force=True, branch='feature-branch')
+  api.git.rebase(strategy_option='strategy-option')
   api.git.set_global_config(['upstream.hammer-branch', '1'])
 
   commit = api.git.gitiles_commit(test_url='https://example.com/pro/ject/')

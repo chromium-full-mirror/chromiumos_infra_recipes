@@ -633,18 +633,22 @@ class GitApi(recipe_api.RecipeApi):
       args += ['--progress']
     self._step(args, timeout=timeout_sec)
 
-  def rebase(self, force=False, branch=None):
+  def rebase(self, force=False, branch=None, strategy_option=None):
     """Run `git rebase` with the given arguments.
 
     Args:
       force (bool): If True, set --force.
       branch (str): If set, rebase from specific branch.
+      strategy_option (str): If set, sets the --strategy-option flag. See
+        `git help rebase` for details.
     """
     cmd = ['rebase']
     if force:
       cmd.append('--force-rebase')
     if branch:
       cmd.append(branch)
+    if strategy_option:
+      cmd.extend(['--strategy-option', strategy_option])
     self._step(cmd)
 
   def set_global_config(self, args):

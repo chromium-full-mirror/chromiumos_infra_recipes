@@ -59,6 +59,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     'package_name': 'android-vm-rvc',
                     'version': '7123456-r1',
                 }),
+        'WriteLKGB':
+            jsonify(modified_files=[self.src_path('src/overlay/modified-file')]
+                   ),
     }
     return ret
 

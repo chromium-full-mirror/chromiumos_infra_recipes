@@ -90,7 +90,10 @@
   },
   {
     "cmd": [],
-    "name": "write android lkgb"
+    "name": "write android lkgb",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no files were modified@@@"
+    ]
   },
   {
     "cmd": [],
@@ -102,7 +105,7 @@
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"android-version\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"modified_files\": [\"[CLEANUP]/chromiumos_workspace/src/overlay/modified-file\"]}@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

@@ -510,9 +510,9 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AndroidApi](/recipe_modules/android/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#170)(self, android_package):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#171)(self, android_package):**
 
 Retrieves the latest Android version for the given Android package.
 
@@ -522,7 +522,7 @@ Args:
 Returns:
   str: The latest Android version (build ID).
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#136)(self, chroot, sysroot, android_package, android_version):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#137)(self, chroot, sysroot, android_package, android_version):**
 
 Uprev the given Android package to the given version.
 
@@ -535,7 +535,7 @@ Args:
 Returns:
   bool: If the android package has been uprevved.
 
-&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#102)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#103)(self, chroot, sysroot, patch_sets):**
 
 Uprev Android if changes are found in the unstable ebuild.
 
@@ -543,6 +543,17 @@ Args:
   chroot (chromiumos.Chroot): Information on the chroot for the build.
   sysroot (Sysroot): The Sysroot being used.
   patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
+
+&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#188)(self, android_package, android_version):**
+
+Sets LKGB of given Android package to given version.
+
+Args:
+  android_package (str): The Android package to set LKGB for.
+  android_version (str): The LKGB Android version.
+
+Returns:
+  List[str]: list of modified files.
 ### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
 
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -5091,7 +5102,7 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [author\_email](/recipe_modules/git/api.py#772)(self, commit_id):**
+&mdash; **def [author\_email](/recipe_modules/git/api.py#776)(self, commit_id):**
 
 Returns the email of the author of the given commit.
 
@@ -5176,7 +5187,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#658)(self, refspec, default=None):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#662)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -5226,7 +5237,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#677)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#681)(self, branch):**
 
 Creates the full refspec for a branch.
 
@@ -5254,7 +5265,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#692)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#696)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -5268,7 +5279,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#717)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#721)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -5287,7 +5298,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#706)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#710)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -5388,13 +5399,15 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#636)(self, force=False, branch=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#636)(self, force=False, branch=None, strategy_option=None):**
 
 Run `git rebase` with the given arguments.
 
 Args:
   force (bool): If True, set --force.
   branch (str): If set, rebase from specific branch.
+  strategy_option (str): If set, sets the --strategy-option flag. See
+    `git help rebase` for details.
 
 &mdash; **def [remote\_head](/recipe_modules/git/api.py#422)(self, remote='.', test_stdout=None):**
 
@@ -5415,7 +5428,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#740)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#744)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -5435,14 +5448,14 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#650)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#654)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#756)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#760)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -7723,7 +7736,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#16)(api):**
 ### *recipes* / [android\_uprev\_orchestrator](/recipes/android_uprev_orchestrator.py)
 
-[DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -7737,9 +7750,9 @@ Once all builds and tests passed, it submits a CL to update the Android LKGB
 file. The change will in turn trigger the PUpr generator to publish an actual
 Android uprev.
 
-&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#38)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#46)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#39)(api, properties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
