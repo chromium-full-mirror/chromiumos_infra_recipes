@@ -31,6 +31,7 @@ TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -204,6 +205,50 @@ def _collect_tests(request):
   return tests
 
 
+def _upload_to_resultdb(api, result, properties, interface, test_metadata):
+  """Upload test results to ResultDB.
+
+  Args:
+    api (RecipeScriptApi): Ubiquitous recipe api.
+    result (DUTResult): The results of the test.
+    properties (TestRunnerProperties): Recipe input properties.
+    interface (DUTInterface): The interface to run commands on the DUT.
+    test_metadata (DUTTestMetadata): All metadata needed for the interface
+        apposite a test.
+  """
+
+  # Don't try to upload if there are no results.
+  if not result:
+    return
+
+  # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
+  if (test_metadata.test.autotest.test_args and
+      'resultdb_settings' in test_metadata.test.autotest.test_args):
+    return api.cros_resultdb.upload_chromium_tests(
+        test_metadata.test.autotest.test_args,
+        interface.get_results_directory(test_metadata))
+
+  # TODO(b/): Remove after go/cros-gerrit-results rollout.
+  if not any(x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
+    return
+
+  # Write the result to a file which can be read by result_adapter.
+  # TODO(b/204893406): Once https://crrev.com/c/3339748 lands, pass this file
+  # to result_adapter.
+  temp_dir = api.path.mkdtemp()
+  test_runner_result_file = temp_dir.join('test_runner_result.json')
+  api.file.write_proto('write skylab_test_runner result',
+                       test_runner_result_file, result.data, 'JSONPB')
+
+  api.cros_resultdb.upload_chromeos_hw_tests(
+      base_dir=interface.get_results_directory(test_metadata),
+      request=properties.request,
+      stainless_url=str(result.get_stainless_log_url()))
+  api.cros_resultdb.apply_exonerations(
+      [api.cros_resultdb.current_invocation_id],
+      properties.request.default_test_execution_behavior)
+
+
 def _execution_steps_for_test(api, properties, interface, test_metadata,
                               max_duration_sec, dut_state,
                               container_image_info):
@@ -265,23 +310,7 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
 
-    # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
-    if api.resultdb.enabled and (
-        test_metadata.test.autotest.test_args and
-        'resultdb_settings' in test_metadata.test.autotest.test_args):
-      api.cros_resultdb.upload_chromium_tests(
-          test_metadata.test.autotest.test_args,
-          interface.get_results_directory(test_metadata))
-    # Don't try to upload if there are no results.
-    elif api.resultdb.enabled and result and any(
-        x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
-      api.cros_resultdb.upload_chromeos_hw_tests(
-          base_dir=interface.get_results_directory(test_metadata),
-          request=properties.request,
-          stainless_url=str(result.get_stainless_log_url()))
-      api.cros_resultdb.apply_exonerations(
-          [api.cros_resultdb.current_invocation_id],
-          properties.request.default_test_execution_behavior)
+    _upload_to_resultdb(api, result, properties, interface, test_metadata)
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
