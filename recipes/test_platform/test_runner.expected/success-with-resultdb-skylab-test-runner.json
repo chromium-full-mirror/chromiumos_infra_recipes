@@ -886,11 +886,9 @@
       "-exonerate-unexpected-pass",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
-      "tast",
+      "skylab-test-runner",
       "-result-file",
-      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
-      "-artifact-directory",
-      "dummy-results-dir/autoserv_test",
+      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
       "--",
       "echo"
     ],

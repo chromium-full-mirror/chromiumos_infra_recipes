@@ -5,6 +5,7 @@
 
 """Recipe for the ChromeOS Skylab Test Runner."""
 import base64
+import os
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
@@ -205,6 +206,38 @@ def _collect_tests(request):
   return tests
 
 
+def _generate_resultdb_variant_def(api, request):
+  """Generate the variant defintions for the test results.
+
+  Args:
+    api (RecipeScriptApi): Ubiquitous recipe api.
+    request (Request): The test Request that the results belong to.
+
+  Returns:
+    base_variant (dict): Variant attributes for the test results.
+  """
+  base_variant = {}
+
+  board = api.cros_tags.get_values('label-board')
+  if board:
+    base_variant['board'] = board[0]
+
+  build = api.cros_tags.get_values('build')
+  if build:
+    base_variant['build'] = build[0]
+
+  # The template of a parent_request_uid is
+  # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
+  # tagged_request key is the test config's display_name in
+  # the GenerateTestPlanResponse. See http://shortn/_oPSae8w6Xc for more info.
+  test_config_display_name = (
+      request.parent_request_uid.split('/')[-1]
+      if request.parent_request_uid else '')
+  base_variant['test_config'] = test_config_display_name
+
+  return base_variant
+
+
 def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
@@ -221,29 +254,43 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   if not result:
     return
 
+  base_dir = interface.get_results_directory(test_metadata)
+
   # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
   if (test_metadata.test.autotest.test_args and
       'resultdb_settings' in test_metadata.test.autotest.test_args):
     return api.cros_resultdb.upload_chromium_tests(
-        test_metadata.test.autotest.test_args,
-        interface.get_results_directory(test_metadata))
+        test_metadata.test.autotest.test_args, base_dir)
 
-  # TODO(b/): Remove after go/cros-gerrit-results rollout.
+  # TODO(b/201608160): Remove after go/cros-gerrit-results rollout.
   if not any(x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
     return
 
-  # Write the result to a file which can be read by result_adapter.
-  # TODO(b/204893406): Once https://crrev.com/c/3339748 lands, pass this file
-  # to result_adapter.
-  temp_dir = api.path.mkdtemp()
-  test_runner_result_file = temp_dir.join('test_runner_result.json')
-  api.file.write_proto('write skylab_test_runner result',
-                       test_runner_result_file, result.data, 'JSONPB')
+  tast_result_file = api.cros_resultdb.get_drone_result_file(base_dir, 'tast')
+  if os.path.exists(tast_result_file) or api.properties.get(
+      'result_format') == 'tast':
+    result_format = 'tast'
+    result_file = tast_result_file
+    artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
+        base_dir, result_format)
+  else:
+    # Write the result to a file which can be read by result_adapter.
+    temp_dir = api.path.mkdtemp()
+    test_runner_result_file = temp_dir.join('test_runner_result.json')
+    api.file.write_proto('write skylab_test_runner result',
+                         test_runner_result_file, result.data, 'JSONPB')
+    result_format = 'skylab-test-runner'
+    result_file = test_runner_result_file
+    artifact_directory = None
 
-  api.cros_resultdb.upload_chromeos_hw_tests(
-      base_dir=interface.get_results_directory(test_metadata),
-      request=properties.request,
-      stainless_url=str(result.get_stainless_log_url()))
+  config = {
+      'result_format': result_format,
+      'base_variant': _generate_resultdb_variant_def(api, properties.request),
+      'result_file': result_file,
+      'artifact_directory': artifact_directory,
+  }
+
+  api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
   api.cros_resultdb.apply_exonerations(
       [api.cros_resultdb.current_invocation_id],
       properties.request.default_test_execution_behavior)
@@ -715,11 +762,28 @@ def GenTests(api):
   )
 
   yield api.test(
-      'success-with-resultdb',
+      'success-with-resultdb-skylab-test-runner',
       _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
           'label-board': 'eve',
           'build': 'eve-cq/R11-123.45'
       }),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb-tast',
+      _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
+          'label-board': 'eve',
+          'build': 'eve-cq/R11-123.45'
+      }),
+      api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
           TestExecutionBehavior.NON_CRITICAL),

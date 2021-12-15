@@ -24,6 +24,10 @@ TEST_EXEC_BEHAVIOR_ORDERING = {
     TestExecutionBehavior.NON_CRITICAL: 2,
 }
 
+RESULT_ADAPTER_FORMATS = [
+    'gtest', 'json', 'single', 'tast', 'skylab-test-runner'
+]
+
 
 class ResultDBCommand(recipe_api.RecipeApi):
   """Module for chromium tests on skylab to upload result to Result DB."""
@@ -84,27 +88,15 @@ class ResultDBCommand(recipe_api.RecipeApi):
       config = self.extract_resultdb_settings(test_args)
       result_format = config.get('result_format')
       artifact_directory = config.get('artifact_directory')
-      config['result_file'] = self._get_drone_result_file(
-          base_dir, result_format)
-      config['artifact_directory'] = self._get_drone_artifact_directory(
-          base_dir, result_format, artifact_directory)
+      if result_format in {'tast', 'gtest'}:
+        config['result_file'] = self.get_drone_result_file(
+            base_dir, result_format)
+        config['artifact_directory'] = self.get_drone_artifact_directory(
+            base_dir, result_format,
+            artifact_directory) or config.get('artifact_directory')
       return self._upload(config)
 
-  def upload_chromeos_hw_tests(self, base_dir, request, stainless_url=None):
-    """Wrapper for uploading Chrome OS hw test results to ResultDB.
-
-    Currently only supports Tast tests.
-
-    Args:
-      base_dir (string): The path of the base test results on the drone server.
-      request (Request): The test Request that the results belong to.
-      stainless_url (string): Link to the Stainless logs for the test run.
-    """
-    with self.m.step.nest('upload test results to rdb'):
-      config = self._generate_resultdb_config(request, base_dir)
-      return self._upload(config, stainless_url)
-
-  def _get_drone_result_file(self, base_dir, result_format):
+  def get_drone_result_file(self, base_dir, result_format):
     """Get the path to the test results file on the drone.
 
     There are hardcoded for tast and gtest in this module.
@@ -128,8 +120,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
     }
     return result_file_by_type.get(result_format)
 
-  def _get_drone_artifact_directory(self, base_dir, result_format=None,
-                                    artifact_directory=''):
+  def get_drone_artifact_directory(self, base_dir, result_format=None,
+                                   artifact_directory=''):
     """Get the path to the test results artifact directory on the drone.
 
     Currently only supports Tast and Gtest.
@@ -152,60 +144,17 @@ class ResultDBCommand(recipe_api.RecipeApi):
       return base
     return os.path.join(base, artifact_directory)
 
-  def _generate_resultdb_config(self, request, base_dir):
-    """Generate the parameters for uploading results to ResultDB.
-
-    Args:
-      request (Request): The test Request that the results belong to.
-
-    Returns:
-      config (dict): A dict wrapping resultdb upload parameters.
-    """
-    base_variant = {}
-
-    board = self.m.cros_tags.get_values('label-board')
-    if board:
-      base_variant['board'] = board[0]
-
-    build = self.m.cros_tags.get_values('build')
-    if build:
-      base_variant['build'] = build[0]
-
-    # The template of a parent_request_uid is
-    # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
-    # tagged_request key is the test config's display_name in
-    # the GenerateTestPlanResponse. See http://shortn/_oPSae8w6Xc for more info.
-    test_config_display_name = (
-        request.parent_request_uid.split('/')[-1]
-        if request.parent_request_uid else '')
-    base_variant['test_config'] = test_config_display_name
-
-    # TODO(b/200703493): Only Chrome OS Tast tests are currently supported.
-    # Calling rdb-stream with other result formats will fail to upload, but
-    # not fail the test run.
-    result_format = 'tast'
-    config = {
-        'result_format':
-            result_format,
-        'base_variant':
-            base_variant,
-        'result_file':
-            self._get_drone_result_file(base_dir, result_format),
-        'artifact_directory':
-            self._get_drone_artifact_directory(base_dir, result_format)
-    }
-
-    return config
-
-  def upload(self, config, step_name='upload test results to rdb'):
+  def upload(self, config, stainless_url=None,
+             step_name='upload test results to rdb'):
     """Wrapper for uploading test results to resultDB.
 
     Args:
       config (dict) A dict wrapping all resultdb parameters.
+      stainless_url (string): Link to the Stainless logs for the test run.
       step_name (str): The name of the step or None for default.
     """
     with self.m.step.nest(step_name):
-      return self._upload(config)
+      return self._upload(config, stainless_url)
 
   def _upload(self, config, stainless_url=None):
     """Call the ResultDB module to upload test result
@@ -215,15 +164,16 @@ class ResultDBCommand(recipe_api.RecipeApi):
           supported parameters refer to the recipe_engine/resultdb module.
       stainless_url (string): Link to the Stainless logs for the test run.
     """
+    pres = self.m.step.active_result.presentation
     if not self.m.resultdb.enabled:
-      pres = self.m.step.active_result.presentation
       pres.step_text = 'resultdb is not enabled on this builder'
       pres.status = self.m.step.WARNING
       return
-    assert config.get('result_format') in [
-        'gtest', 'json', 'single', 'tast'
-    ], ('result_format must be gtest, json, single or tast, '
-        'got %s' % config.get('result_format'))
+    if config.get('result_format') not in RESULT_ADAPTER_FORMATS:
+      pres.step_text = 'result_format must be one of %s got %s' % (
+          ', '.join(RESULT_ADAPTER_FORMATS), config.get('result_format'))
+      pres.status = self.m.step.WARNING
+      return
 
     # ResultDB in CrOS recipes only supports uploading result file,
     # so the cmd must accompany the result_adapter.

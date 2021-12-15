@@ -6,8 +6,6 @@
 import base64
 from recipe_engine import post_process
 
-from PB.test_platform.skylab_test_runner.request import Request
-
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/json',
@@ -22,15 +20,14 @@ DEPS = [
 def RunSteps(api):
   api.cros_resultdb.upload_chromium_tests(
       api.properties.get('test_args'), 'dummy-results-dir')
-  api.cros_resultdb.upload_chromeos_hw_tests(
-      'dummy-result-dir',
-      Request(parent_request_uid='TestPlanRuns/1234/board-cq.hw.fake-suite'),
-      'gs://chromeos-test-logs/common-env/UUID/logs')
+  rdb_config = api.json.loads(api.properties.get('rdb_config'))
+  api.cros_resultdb.upload(rdb_config,
+                           'gs://chromeos-test-logs/common-env/UUID/logs')
 
 
 def GenTests(api):
 
-  rdb_settings = api.json.dumps({
+  rdb_config = {
       'result_format': 'tast',
       'base_tags': ['test_suite:fake-suite'],
       'base_variant': {
@@ -38,12 +35,16 @@ def GenTests(api):
           'board': 'board',
           'build': 'board-cq/R11-123.45',
       },
-  })
+      'result_file': '/path/to/results',
+      'artifact_directory': '/path/to/results',
+  }
+  rdb_config_json = api.json.dumps(rdb_config)
 
   yield api.test(
       'not-enabled',
-      api.properties(test_args='resultdb_settings=%s' %
-                     base64.b64encode(rdb_settings)),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
       api.post_process(post_process.StepWarning,
                        'upload chromium test results to rdb'),
       api.post_process(post_process.DoesNotRun,
@@ -60,30 +61,39 @@ def GenTests(api):
               'label-board': 'board',
               'build': 'board-cq/R11-123.45'
           })),
-      api.properties(test_args='resultdb_settings=%s' %
-                     base64.b64encode(rdb_settings)),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
       api.post_process(post_process.StepSuccess,
                        'upload chromium test results to rdb'),
       api.post_process(post_process.MustRun,
                        'upload chromium test results to rdb.run rdb'),
   )
 
-  rdb_settings = api.json.dumps({
-      'result_format': 'gtest',
-      'base_tags': ['test_suite:fake-suite'],
-      'base_variant': {
-          'test_suite': 'fake-suite',
-          'board': 'board',
-          'build': 'board-cq/R11-123.45',
-      },
-      'artifact_directory': 'chromium/debug',
-  })
+  rdb_config['result_format'] = 'gtest'
+  rdb_config_json = api.json.dumps(rdb_config)
 
   yield api.test(
-      'basic_gtest',
+      'basic-gtest',
       api.buildbucket.ci_build(),
-      api.properties(test_args='resultdb_settings=%s' %
-                     base64.b64encode(rdb_settings)),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
+      api.post_process(post_process.StepSuccess,
+                       'upload chromium test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload chromium test results to rdb.run rdb'),
+  )
+
+  rdb_config['result_format'] = 'skylab-test-runner'
+  rdb_config_json = api.json.dumps(rdb_config)
+
+  yield api.test(
+      'basic-skylab-test-runner',
+      api.buildbucket.ci_build(),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
       api.post_process(post_process.StepSuccess,
                        'upload chromium test results to rdb'),
       api.post_process(post_process.MustRun,
@@ -93,8 +103,9 @@ def GenTests(api):
   yield api.test(
       'rdb_failure',
       api.buildbucket.ci_build(),
-      api.properties(test_args='resultdb_settings=%s' %
-                     base64.b64encode(rdb_settings)),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
       api.step_data('upload chromium test results to rdb.run rdb', retcode=1),
   )
 
@@ -102,8 +113,11 @@ def GenTests(api):
       'cache result_adapter',
       api.buildbucket.ci_build(),
       api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
+      api.properties(
           result_adapter_cached=True,
-          test_args='resultdb_settings=%s' % base64.b64encode(rdb_settings)),
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json)),
       api.post_process(post_process.StepSuccess,
                        'upload chromium test results to rdb'),
       api.post_process(
@@ -112,3 +126,14 @@ def GenTests(api):
       api.post_process(post_process.MustRun,
                        'upload chromium test results to rdb.run rdb'),
   )
+
+  rdb_config['result_format'] = 'not-supported'
+  rdb_config_json = api.json.dumps(rdb_config)
+
+  yield api.test(
+      'not-supported-format', api.buildbucket.ci_build(),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json),
+      api.post_process(post_process.StepWarning,
+                       'upload chromium test results to rdb'))
