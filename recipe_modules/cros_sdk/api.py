@@ -399,7 +399,7 @@ class CrosSdkApi(RecipeApi):
       use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       timeout_sec (int): Step timeout (in seconds).  Default: None if
-          bootstrap is True, otherwise 90 minutes.
+          bootstrap is True, otherwise 3 hours.
       test_data (str): test response (JSON) from the SdkService.Create call, or
           None to use the default in cros_build_api/test_api.py.
       test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
@@ -416,7 +416,7 @@ class CrosSdkApi(RecipeApi):
       try:
         self.build_chmod_chroot()
         if timeout_sec == 'DEFAULT':
-          timeout_sec = None if bootstrap else 90 * 60
+          timeout_sec = None if bootstrap else 180 * 60
 
         # Determine whether a cached root could be reused.
         no_replace = self._check_sdk_cache_state(version)
@@ -482,7 +482,7 @@ class CrosSdkApi(RecipeApi):
           or None.
       timeout_sec (int): Step timeout (in seconds), or None for no step timeout.
           Default: 24 hours if building from source or a toolchain change is
-          detected, otherwise 90 minutes.
+          detected, otherwise 3 hours.
       test_data (str): test response (JSON) from the SdkService.Update call, or
           None to use the default in cros_build_api/test_api.py.
       test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
@@ -499,7 +499,7 @@ class CrosSdkApi(RecipeApi):
         pres.step_text = 'Forcing toolchain_changed=False'
         toolchain_cls = False
       if timeout_sec == 'DEFAULT':
-        timeout_sec = 24 * 60 * 60 if self._long_timeouts else 90 * 60
+        timeout_sec = 24 * 60 * 60 if self._long_timeouts else 180 * 60
 
       try:
         self.m.cros_build_api.SdkService.Update(

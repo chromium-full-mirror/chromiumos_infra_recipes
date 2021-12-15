@@ -3102,7 +3102,7 @@ Args:
   use_image (boolean): Mount the SDK file as an image.  Default: True.
   bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
   timeout_sec (int): Step timeout (in seconds).  Default: None if
-      bootstrap is True, otherwise 90 minutes.
+      bootstrap is True, otherwise 3 hours.
   test_data (str): test response (JSON) from the SdkService.Create call, or
       None to use the default in cros_build_api/test_api.py.
   test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
@@ -3229,7 +3229,7 @@ Args:
       or None.
   timeout_sec (int): Step timeout (in seconds), or None for no step timeout.
       Default: 24 hours if building from source or a toolchain change is
-      detected, otherwise 90 minutes.
+      detected, otherwise 3 hours.
   test_data (str): test response (JSON) from the SdkService.Update call, or
       None to use the default in cros_build_api/test_api.py.
   test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
