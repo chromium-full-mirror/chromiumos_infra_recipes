@@ -263,6 +263,23 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         android_branch='git_rvc-arc',
         android_version='7123456',
     )
+    responses['GetBuilderMetadata'] = jsonify(
+        build_target_metadata=[{
+            'android_container_branch': 'git_rvc-arc',
+            'android_container_target': 'bertha',
+            'android_container_version': '7978506',
+            'arc_use_set': True,
+            'build_target': 'eve',
+            'ec_firmware_version': 'eve_v1.1.6659-ba2088ed3',
+            'kernel_version': '5.4.163-r2827',
+            'main_firmware_version': 'Google_Eve.9584.230.0',
+        }], model_metadata=[{
+            'ec_firmware_version': 'eve_v1.1.6659-ba2088ed3',
+            'firmware_key_id': 'EVE',
+            'main_readonly_firmware_version': 'Google_Eve.9584.107.0',
+            'main_readwrite_firmware_version': 'Google_Eve.9584.230.0',
+            'model_name': 'eve',
+        }])
     responses['GetBestVisible'] = jsonify(package_info={
         'package_name': 'package',
         'category': 'category',

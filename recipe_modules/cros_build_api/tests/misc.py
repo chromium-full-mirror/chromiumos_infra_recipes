@@ -120,6 +120,7 @@ def RunSteps(api):
       'PackageService': {
           'BuildsChrome': packages.BuildsChromeResponse,
           'GetAndroidMetadata': packages.GetAndroidMetadataResponse,
+          'GetBuilderMetadata': packages.GetBuilderMetadataResponse,
           'GetBestVisible': packages.GetBestVisibleResponse,
           'GetChromeVersion': packages.GetChromeVersionResponse,
           'GetTargetVersions': packages.GetTargetVersionsResponse,

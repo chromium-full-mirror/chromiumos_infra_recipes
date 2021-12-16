@@ -12,6 +12,8 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/swarming',
     'cros_infra_config',
+    'cros_build_api',
+    'cros_sdk',
     'build_menu',
     'build_reporting',
     'cros_release',
@@ -19,7 +21,7 @@ DEPS = [
     'test_util',
 ]
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import (MessageToDict, MessageToJson)
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -28,6 +30,7 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
+from PB.chromite.api.packages import GetBuilderMetadataRequest
 
 StepDetails = BuildReport.StepDetails
 PROPERTIES = BuildReleaseProperties
@@ -47,7 +50,7 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
     dryrun (bool):      Should the builder dryrun the upload?
     **kwargs:           Extra args for buildbucket.schedule_request().
 
-  Return:
+  Returns:
     `Build` message describing the launched builder. See
     https://chromium.googlesource.com/infra/luci/luci-go/+/HEAD/buildbucket/proto/build.proto
     for more info.
@@ -66,6 +69,34 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
       }, **kwargs)
 
   return api.buildbucket.schedule([bb_request])[0]
+
+
+def _look_up_builder_metadata(api, presentation=None):
+  """Looks up builder metadata for the provided build_target.
+
+  If presentation is provided, emits the builder metadata into the step.
+
+  Important - a prerequisite for this method being able to return builder
+  metadata is that `install_packages` has already been called.
+
+  Note - this method is currently used only once. If there is an additional
+  usage being added, it's worth considering whether this should be ejected into
+  a reusable module. Also, in that case it might be worth memoizing this call,
+  as builder metadata does not change within the lifecycle of a build.
+
+  Args:
+    presentation (StepPresentation): (optional) for the current step.
+
+  Returns:
+    builder_metadata proto describing build and model for the current target.
+  """
+  builder_metadata = api.cros_build_api.PackageService.GetBuilderMetadata(
+      GetBuilderMetadataRequest(build_target=api.build_menu.build_target,
+                                chroot=api.cros_sdk.chroot))
+  if presentation:
+    presentation.logs["builder_metadata"] = MessageToJson(builder_metadata)
+
+  return builder_metadata
 
 
 def RunSteps(api, properties):
@@ -92,6 +123,11 @@ def DoRunSteps(api, config, properties):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
+      with api.step.nest("determine build and model metadata") as presentation:
+        # First look up builder metadata from build-api.
+        builder_metadata = _look_up_builder_metadata(api, presentation)  # pylint: disable=unused-variable
+        # Then fire off a pub/sub call with that builder meta.
+        # api.build_reporting.publish_metadata(builder_metadata)
       api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
