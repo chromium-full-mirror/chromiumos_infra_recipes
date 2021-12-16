@@ -111,6 +111,7 @@ class CrosSourceApi(RecipeApi):
         MirroredManifestFile('full.xml', 'full.xml'),
         MirroredManifestFile('external_full.xml', 'full.xml'),
         MirroredManifestFile('_kernel_upstream.xml', '_kernel_upstream.xml'),
+        MirroredManifestFile('_remotes.xml', '_remotes.xml'),
     ]
 
   @property

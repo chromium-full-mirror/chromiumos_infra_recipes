@@ -1471,6 +1471,24 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/_remotes.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.Copy manifest-internal/_remotes.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "rev-parse",
       "--show-toplevel"
@@ -1550,6 +1568,42 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "sync manifests.diff check (2).git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.diff check (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.diff check (3).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.diff check (3).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
