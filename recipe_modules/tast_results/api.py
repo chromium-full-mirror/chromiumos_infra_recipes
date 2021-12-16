@@ -15,6 +15,9 @@ from PB.tast.test_result import TestResult
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
+# TODO(b/201608160): Remove upon completion of rollout.
+CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
+
 
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
@@ -291,7 +294,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       suite_name (str): Name of the whole test suite.
     """
     # TODO(b/201608160): Remove upon completion of rollout.
-    if not self.m.cros_infra_config.is_staging:
+    if not CROS_GERRIT_RESULTS_EXP in self.m.cros_infra_config.experiments:
       return
 
     config = {

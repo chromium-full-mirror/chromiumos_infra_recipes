@@ -69,4 +69,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic', api.buildbucket.ci_build())
 
-  yield api.test('staging', api.buildbucket.ci_build(bucket='staging'))
+  yield api.test(
+      'experiment-enabled',
+      api.buildbucket.ci_build(
+          experiments=['chromeos.cros_test_platform.add_resultdb_settings']))

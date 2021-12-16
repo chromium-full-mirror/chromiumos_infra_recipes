@@ -17,7 +17,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -150,7 +150,7 @@
       "-root",
       "[START_DIR]/cipd/result_adapter",
       "-ensure-file",
-      "infra/tools/result_adapter/${platform} staging",
+      "infra/tools/result_adapter/${platform} prod",
       "-max-threads",
       "0",
       "-json-output",
@@ -159,7 +159,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -176,7 +176,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -205,7 +205,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -247,7 +247,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -335,7 +335,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -391,7 +391,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -425,7 +425,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -564,7 +564,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -606,7 +606,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "project:staging"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
