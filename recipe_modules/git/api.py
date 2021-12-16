@@ -240,7 +240,7 @@ class GitApi(recipe_api.RecipeApi):
                            test_stdout='%s\n' % self.test_api.test_commit_id)
     return step_data.stdout.strip()
 
-  @exponential_retry(retries=3, delay=timedelta(minutes=1))
+  @exponential_retry(retries=20, delay=timedelta(minutes=1))
   def remote_update(self, step_name, timeout_sec=None):
     """Runs 'git remote update'.
 
