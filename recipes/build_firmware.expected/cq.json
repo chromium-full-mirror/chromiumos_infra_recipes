@@ -3539,6 +3539,13 @@
   },
   {
     "cmd": [],
+    "name": "output got_revision",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@got_revision@\"snapshot-HEAD-SHA\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "test firmware",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",

@@ -16,6 +16,7 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'easy',
+    'src_state',
     'test_util',
 ]
 
@@ -50,6 +51,9 @@ def RunSteps(api, properties):
     if binary_sizes:
       api.easy.set_properties_step(binary_sizes=binary_sizes,
                                    step_name='output binary sizes')
+    snapshot_sha = api.src_state.gitiles_commit.id
+    api.easy.set_properties_step(got_revision=snapshot_sha,
+                                 step_name='output got_revision')
 
     service.TestAllFirmware(
         TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
@@ -175,4 +179,5 @@ def GenTests(api):
       )))
 
   yield test('output_binary_sizes', api.post_check(post_process.StatusSuccess),
-             api.post_check(post_process.MustRun, 'output binary sizes'))
+             api.post_check(post_process.MustRun, 'output binary sizes'),
+             api.post_check(post_process.MustRun, 'output got_revision'))
