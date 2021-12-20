@@ -96,7 +96,8 @@ class SkylabApi(recipe_api.RecipeApi):
     return self.m.buildbucket.schedule([bb_request])[0]
 
   def schedule_suites(self, unit_hw_tests, timeout, name=None,
-                      async_suite_run=False, container_metadata=None):
+                      async_suite_run=False, container_metadata=None,
+                      require_stable_devices=False):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
@@ -107,6 +108,8 @@ class SkylabApi(recipe_api.RecipeApi):
       the scheduled suites to complete, and the child build can outlive the parent build.
     * container_metadata (ContainerMetadata): Information on container
         images used for test execution.
+    * require_stable_devices (bool): If set, only run on devices with
+        label-device-stable: True
 
     Returns:
       list[SkylabTask]: with buildbucket_id of the recipe launched.
@@ -123,6 +126,7 @@ class SkylabApi(recipe_api.RecipeApi):
       """
       req = Request()
       req.params.hardware_attributes.model = ''
+      req.params.hardware_attributes.require_stable_device = require_stable_devices
       req.params.time.maximum_duration.seconds = timeout.seconds
       image_path = uht.unit.common.build_payload.artifacts_gs_path
       image_bucket = uht.unit.common.build_payload.artifacts_gs_bucket

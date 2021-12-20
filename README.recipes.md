@@ -3887,7 +3887,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#525)(self, test_plan):**
+&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#537)(self, test_plan):**
 
 Returns the number of critical tests in the build plan.
 
@@ -3899,7 +3899,7 @@ Args:
 Returns:
   test_count (int): Number of critical tests ran.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#354)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#362)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -3908,7 +3908,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#115)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#115)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -3927,6 +3927,8 @@ Args:
       failures (an empty list).
   container_metadata (ContainerMetadata): Information on container
     images used for test execution.
+  require_stable_devices (bool): whether to only run on devices with
+    label-device-stable: True
 Returns
   list[failures.Failure]: failures encountered running tests
 
@@ -3937,7 +3939,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#285)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#289)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -3956,6 +3958,8 @@ Args:
       failures (an empty list).
   container_metadata (ContainerMetadata): Information on container
     images used for test execution.
+  require_stable_devices (bool): whether to only run on devices with
+    label-device-stable: True
 
 Returns:
   MetaTestTuple of lists of the tests scheduled.
@@ -6038,7 +6042,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#778)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#780)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6745,7 +6749,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#98)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#98)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -6757,6 +6761,8 @@ Args:
   the scheduled suites to complete, and the child build can outlive the parent build.
 * container_metadata (ContainerMetadata): Information on container
     images used for test execution.
+* require_stable_devices (bool): If set, only run on devices with
+    label-device-stable: True
 
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
@@ -6765,7 +6771,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#251)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#255)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

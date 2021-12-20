@@ -748,6 +748,8 @@ class OrchMenuApi(RecipeApi):
           self.gitiles_commit,
           self.gerrit_changes,
           self._properties.enable_history,
+          require_stable_devices=self.config.orchestrator
+          .require_stable_devices,
           run_async=self._properties.run_tests_async,
           container_metadata=container_metadata,
       )

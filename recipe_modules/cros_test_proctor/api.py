@@ -113,7 +113,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         raise ValueError('CTP2 not implemented')
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
-                  enable_history, run_async=False, container_metadata=None):
+                  enable_history, run_async=False, container_metadata=None,
+                  require_stable_devices=False):
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the Chrome OS infra test platform via recipes.
@@ -131,6 +132,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           failures (an empty list).
       container_metadata (ContainerMetadata): Information on container
         images used for test execution.
+      require_stable_devices (bool): whether to only run on devices with
+        label-device-stable: True
     Returns
       list[failures.Failure]: failures encountered running tests
     """
@@ -156,6 +159,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             is_retry=is_retry,
             run_async=run_async,
             container_metadata=container_metadata,
+            require_stable_devices=require_stable_devices,
         )
       if run_async:
         return []
@@ -284,7 +288,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def schedule_tests(self, test_plan, passed_tests, timeout,
                      test_to_build_map=None, snapshot=None, is_retry=False,
-                     run_async=False, container_metadata=None):
+                     run_async=False, container_metadata=None,
+                     require_stable_devices=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -302,6 +307,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           failures (an empty list).
       container_metadata (ContainerMetadata): Information on container
         images used for test execution.
+      require_stable_devices (bool): whether to only run on devices with
+        label-device-stable: True
 
     Returns:
       MetaTestTuple of lists of the tests scheduled.
@@ -315,6 +322,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         is_retry,
         run_async=run_async,
         container_metadata=container_metadata,
+        require_stable_devices=require_stable_devices,
     )
     autotest_vm_tests = self._schedule_autotest_vm_tests(
         test_plan, passed_tests, snapshot, test_to_build_map, is_retry)
@@ -366,7 +374,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
                              test_to_build_map=None, is_retry=False,
-                             run_async=False, container_metadata=None):
+                             run_async=False, container_metadata=None,
+                             require_stable_devices=False):
     """Schedule skylab tests from the test_plan.
 
     Args:
@@ -382,6 +391,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           on the termination of the parent (this caller).
       container_metadata (ContainerMetadata): Information on container
         images used for test execution.
+      require_stable_devices (bool): whether to only run on devices with
+        label-device-stable: True
 
     Returns:
       list[SkylabTask] of the tests scheduled.
@@ -410,6 +421,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                 timeout,
                 async_suite_run=run_async,
                 container_metadata=container_metadata,
+                require_stable_devices=require_stable_devices,
             ))
       self.m.easy.set_properties_step(
           hw_test_build_targets=len(hw_build_targets))
