@@ -49,6 +49,13 @@
   },
   {
     "cmd": [],
+    "name": "set up.validate properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate binary config"
   },
   {

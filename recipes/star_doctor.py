@@ -15,6 +15,7 @@ import json
 from google.protobuf.text_format import MessageToString
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 from PB.recipes.chromeos.star_doctor import (StarDoctorProperties,
                                              RemoteConfigFile)
@@ -70,28 +71,9 @@ def RunSteps(api, properties):
     # Clone shallowly to avoid running out of storage: see crbug/1154700.
     config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL, depth=1)
 
-  remote_config_files = properties.remote_config_files
-  # If remote_config_files is not specified, build them based on the ge_bucket
-  # and branches properties. Note that if remote_config_files is specified,
-  # ge_bucket and branches should not be.
-  if not remote_config_files:
-    remote_config_files.add(
-        bucket_name=properties.ge_bucket,
-        object_name='build_config.ToT.json',
-        dest_path='release/ge_jsons/build_config.ToT.json',
-    )
+    _validate_properties(api, properties)
 
-    for branch in properties.branches:
-      branched_config = 'build_config.release-{}.json'.format(branch)
-      remote_config_files.add(
-          bucket_name=properties.ge_bucket,
-          object_name=branched_config,
-          dest_path='release/ge_jsons/{}'.format(branched_config),
-      )
-  else:
-    if properties.ge_bucket or properties.branches:
-      raise ValueError(
-          'ge_bucket and branches cannot be set if remote_config_files is set.')
+  remote_config_files = _get_remote_config_files(properties)
 
   with api.step.nest('generate binary config'):
     with api.step.nest('copy remote configs') as presentation:
@@ -203,6 +185,48 @@ def _get_clone(api, repo_url, **kwargs):
   return repo_dir
 
 
+def _validate_properties(api, props):
+  """Check that the input properties don't contain any contradictions."""
+  with api.step.nest('validate properties'):
+    if props.remote_config_files and (props.ge_bucket or props.branches):
+      raise StepFailure(
+          'ge_bucket and branches cannot be set if remote_config_files is set.')
+
+
+def _get_remote_config_files(properties):
+  """Determine remote config files based on input properties.
+
+  If properties.remote_config_files is not specified, build them based on the
+  ge_bucket and branches properties. Note that if remote_config_files is
+  specified, ge_bucket and branches should not be.
+
+  Args:
+    properties (StarDoctorProperties): Input properties to the recipe.
+
+  Returns:
+    A list of config files to download from Google Storage.
+
+  Raises:
+    StepFailure: If input properties specify remote_config_files and either
+      ge_bucket or branches.
+  """
+  remote_config_files = properties.remote_config_files
+  if not remote_config_files:
+    remote_config_files.add(
+        bucket_name=properties.ge_bucket,
+        object_name='build_config.ToT.json',
+        dest_path='release/ge_jsons/build_config.ToT.json',
+    )
+    for branch in properties.branches:
+      branched_config = 'build_config.release-{}.json'.format(branch)
+      remote_config_files.add(
+          bucket_name=properties.ge_bucket,
+          object_name=branched_config,
+          dest_path='release/ge_jsons/{}'.format(branched_config),
+      )
+  return remote_config_files
+
+
 def _update_release_time(api, tl_cfg_fpath):
   """Update the infra/config/releases/timeline_configuration.json time field."""
   with api.step.nest("update configured release time"):
@@ -298,7 +322,7 @@ def GenTests(api):
                   )
               ],
           )),
-      api.expect_exception('ValueError'),
+      api.post_process(post_process.StepFailure, 'set up.validate properties'),
       api.post_process(post_process.ResultReasonRE,
                        ('.*ge_bucket and branches cannot be set if'
                         ' remote_config_files is set..*')),
