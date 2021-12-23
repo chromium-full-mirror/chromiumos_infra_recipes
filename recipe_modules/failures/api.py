@@ -158,7 +158,8 @@ class FailuresApi(RecipeApi):
 
     Args:
       enclosing_step (step): The enclosing step to mutate.
-      packages (list[chromiumos.common.PackageInfo]): The failed packages.
+      packages (list[tuple[chromiumos.common.PackageInfo, str]]): The failed
+        packages.
 
     Raises:
       StepFailure: If failed_packages is not empty.
@@ -168,14 +169,19 @@ class FailuresApi(RecipeApi):
 
     if len(packages) == 1:
       long_message = 'failed to install {}'.format(
-          self.m.naming.get_package_title(packages[0]))
+          self.m.naming.get_package_title(packages[0][0]))
     else:
       long_message = 'failed to install {} packages'.format(len(packages))
 
     enclosing_step.presentation.step_text = long_message
     enclosing_step.presentation.status = self.m.step.FAILURE
     enclosing_step.presentation.logs['list of failed packages'] = map(
-        self.m.naming.get_package_title, packages)
+        self.m.naming.get_package_title, [p[0] for p in packages])
+    for p in packages:
+      if not p[1]:
+        continue
+      enclosing_step.presentation.logs['%s/%s log' % (p[0].category,
+                                                      p[0].package_name)] = p[1]
     raise StepFailure(long_message)
 
   def raise_failed_image_tests(self, failed_images):

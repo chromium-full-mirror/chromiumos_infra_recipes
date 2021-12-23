@@ -571,8 +571,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
             timeout=3 * 60 * 60,
             response_lambda=self.m.cros_build_api.failed_pkg_names)
-        self.m.failures.set_failed_packages(presentation,
-                                            response.failed_packages)
+        self.m.failures.set_failed_packages(
+            presentation, [(p, '') for p in response.failed_packages])
 
   def upload_artifacts(self, config=None, private_bundle_func=None,
                        sysroot=None):

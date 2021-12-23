@@ -5,6 +5,7 @@
 
 DEPS = [
     'recipe_engine/cq',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
     'android',

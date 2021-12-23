@@ -338,3 +338,22 @@ def GenTests(api):
     ),
     cq=True,
   )
+
+  yield api.build_menu.test(
+    'buildtargetunittest-failure',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='atlas',
+        container_version_format=\
+        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+      )
+    ),
+
+    # Simulate a failure running unit tests
+    api.cros_build_api.set_api_return(
+      'run ebuild tests',
+      endpoint='TestService/BuildTargetUnitTest',
+      data='{ "failed_packages": [{"package_name": "bar", "category": "foo", "version": "1.0-r1"}] }'
+    ),
+    cq=True,
+  )

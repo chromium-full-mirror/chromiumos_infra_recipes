@@ -36,7 +36,8 @@ def RunSteps(api):
                   testable_packages_optional=False,
                   filter_only_cros_workon=False)),
           response_lambda=api.cros_build_api.failed_pkg_names)
-      api.failures.set_failed_packages(step, response.failed_packages)
+      api.failures.set_failed_packages(
+          step, [(p, '') for p in response.failed_packages])
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()
 
