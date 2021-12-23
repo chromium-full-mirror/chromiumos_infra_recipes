@@ -36,14 +36,21 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         self._properties.test_plan_generator_cipd_ref.encode('utf-8') or
         default_ref)
 
-  def get_target_test_requirements_file(self):
-    """Fetch contents of target test requirements config.
+  def get_target_test_requirements(self, builders=None):
+    """Fetch target test requirements config.
 
+    Args:
+      builders (list[str]): optional list of builder names to generate config for,
+        e.g. coral-release-main or staging-kevin-release-main. If not specified,
+        either the invoking builder or its children (if the invoking builder name
+        contains 'orchestrator') will be used.
     Returns:
       JSON structure of target test requirements.
     """
     if self._properties.generate_target_test_requirements_from_source:
-      return self.generate_target_test_requirements_config()
+      return self.generate_target_test_requirements_config(builders=builders)
+    # TODO(b/209487309): Remove this logic -- we know all callers of this
+    # function (just paygen) and we'd like to switch to generation anyways.
     with self.m.step.nest('fetch target test requirements file'):
       source_gitiles_repo = (
           str(self._properties.source_gitiles_repo)
@@ -65,14 +72,15 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         return json.loads(data)
       return None
 
-  def generate_target_test_requirements_config(self):
+  def generate_target_test_requirements_config(self, builders=None):
     """Generate target test requirements config in config-internal using
       ./board_config/generate_test_config.
 
-      Args:
-        builders list[str]: list of builder names to generate config for, e.g.
-          coral-release-main or staging-kevin-release-main.
-
+    Args:
+      builders (list[str]): optional list of builder names to generate config for,
+        e.g. coral-release-main or staging-kevin-release-main. If not specified,
+        either the invoking builder or its children (if the invoking builder name
+        contains 'orchestrator') will be used.
     Returns:
       JSON structure of target test requirements or None.
     """
@@ -80,18 +88,18 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info('chromeos/config-internal')
 
-        builder_name = self.m.buildbucket.build.builder.builder
-        builders = []
-        if 'orchestrator' in builder_name:
-          # If the build is an orchestrator, we want the config for all of the
-          # child builders.
-          builders = [
-              spec.name for spec in
-              self.m.cros_infra_config.config.orchestrator.child_specs
-          ]
-        else:
-          # Otherwise, assume we want config for the invoking builder.
-          builders = [builder_name]
+        if not builders:
+          builder_name = self.m.buildbucket.build.builder.builder
+          if 'orchestrator' in builder_name:
+            # If the build is an orchestrator, we want the config for all of the
+            # child builders.
+            builders = [
+                spec.name for spec in
+                self.m.cros_infra_config.config.orchestrator.child_specs
+            ]
+          else:
+            # Otherwise, assume we want config for the invoking builder.
+            builders = [builder_name]
         with self.m.context(
             cwd=self.m.src_state.workspace_path.join(project_info.path)):
           cmd = ['./board_config/generate_test_config', ','.join(builders)]

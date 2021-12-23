@@ -803,8 +803,15 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     # Fetch target test requirements to get the proper build target.
     # We can't take the build target directly from the artifact because it won't
     # necessarily match what CTP expects (e.g. atlas-kernelnext vs atlas).
+    # TODO(b/209487309): Simplify finding the proper build target, ideally we
+    # wouldn't need to look at test config to figure this out.
     test_build_target = build_target_name
-    target_test_reqs = self.m.cros_test_plan.get_target_test_requirements_file()
+
+    # Construct Rubik child builder name.
+    target_test_reqs = self.m.cros_test_plan.get_target_test_requirements(
+        builders=[
+            self.m.cros_release_util.release_builder_name(build_target_name)
+        ])
     for target_requirements in target_test_reqs['perTargetTestRequirements']:
       if target_requirements.get('targetCriteria',
                                  {}).get('buildTarget',

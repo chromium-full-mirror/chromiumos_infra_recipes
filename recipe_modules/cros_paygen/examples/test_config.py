@@ -7,12 +7,14 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_paygen',
     'cros_storage',
     'gitiles',
 ]
 
+from recipe_engine import post_process
 from PB.chromiumos.common import DeltaType, ImageType
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
 
@@ -100,6 +102,63 @@ def GenTests(api):
           'discover gs artifacts (2).gsutil list',
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),
+  )
+
+  generate_test_config_output = """{
+    "perTargetTestRequirements": [
+        {
+            "targetCriteria": {
+                "buildTarget": "zork",
+                "builderName": "zork-release-main"
+            },
+            "hwTestCfg": {
+                "hwTest": [
+                    {
+                        "common": {
+                            "displayName": "zork-release-main.hw.bvt-tast-cq",
+                            "critical": false,
+                            "testSuiteGroups": [
+                                {
+                                    "testSuiteGroup": "default-tast-suites"
+                                }
+                            ]
+                        },
+                        "suite": "bvt-tast-cq",
+                        "skylabBoard": "zork",
+                        "hwTestSuiteType": "TAST",
+                        "pool": "DUT_POOL_QUOTA"
+                    }
+                ]
+            }
+        }
+    ]
+}"""
+
+  yield api.test(
+      'generate',
+      api.properties(
+          builder_name='zork', expected_test_build_target='zork', **{
+              '$chromeos/cros_test_plan': {
+                  'generate_target_test_requirements_from_source': True,
+              },
+          }),
+      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.step_data('generate target test requirements.generate_test_config',
+                    stdout=api.raw_io.output_text(generate_test_config_output)),
+      api.step_data(
+          'generate target test requirements (2).generate_test_config',
+          stdout=api.raw_io.output_text(generate_test_config_output)),
+      api.cros_storage.test_listing(
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      api.cros_storage.test_listing(
+          'discover gs artifacts (2).gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'generate target test requirements.generate_test_config',
+          ['./board_config/generate_test_config', 'zork-release-main']),
   )
 
   yield api.test(

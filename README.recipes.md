@@ -31,6 +31,7 @@
   * [cros_provenance](#recipe_modules-cros_provenance) &mdash; API for adding provenenace to generated artifacts.
   * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
+  * [cros_release_util](#recipe_modules-cros_release_util) &mdash; An API for providing release related utility functions.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_resultdb](#recipe_modules-cros_resultdb)
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
@@ -225,6 +226,7 @@
   * [cros_release:examples/full](#recipes-cros_release_examples_full)
   * [cros_release:tests/util](#recipes-cros_release_tests_util)
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
+  * [cros_release_util:examples/full](#recipes-cros_release_util_examples_full)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/forced_relevance](#recipes-cros_relevance_examples_forced_relevance)
   * [cros_relevance:examples/package_dependencies](#recipes-cros_relevance_examples_package_dependencies)
@@ -2437,7 +2439,7 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#50)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
-[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2581,7 +2583,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#825)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#832)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -2753,6 +2755,27 @@ config in chromite as well as the Rubik starlark config in infra/config.
 
 Args:
 release_branch (str): Release branch, e.g. "release-R89-13729.B".
+### *recipe_modules* / [cros\_release\_util](/recipe_modules/cros_release_util)
+
+[DEPS](/recipe_modules/cros_release_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source)
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+An API for providing release related utility functions.
+
+#### **class [CrosReleaseUtilApi](/recipe_modules/cros_release_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [release\_builder\_name](/recipe_modules/cros_release_util/api.py#13)(self, build_target, branch=None, staging=False):**
+
+Determine the Rubik child builder name for the given build_target.
+
+Args:
+  build_target (string): name of the build target, e.g. zork or kevin-kernelnext
+  branch (string): optional, branch we're on.
+  staging (string): optional, whether or not we're in staging.
+
+Return:
+  The Rubik child builder, e.g. zork-release-main.
 ### *recipe_modules* / [cros\_relevance](/recipe_modules/cros_relevance)
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3751,7 +3774,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#101)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#109)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -3765,26 +3788,32 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#68)(self):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#75)(self, builders=None):**
 
 Generate target test requirements config in config-internal using
   ./board_config/generate_test_config.
 
-  Args:
-    builders list[str]: list of builder names to generate config for, e.g.
-      coral-release-main or staging-kevin-release-main.
-
+Args:
+  builders (list[str]): optional list of builder names to generate config for,
+    e.g. coral-release-main or staging-kevin-release-main. If not specified,
+    either the invoking builder or its children (if the invoking builder name
+    contains 'orchestrator') will be used.
 Returns:
   JSON structure of target test requirements or None.
 
-&mdash; **def [get\_target\_test\_requirements\_file](/recipe_modules/cros_test_plan/api.py#39)(self):**
+&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#39)(self, builders=None):**
 
-Fetch contents of target test requirements config.
+Fetch target test requirements config.
 
+Args:
+  builders (list[str]): optional list of builder names to generate config for,
+    e.g. coral-release-main or staging-kevin-release-main. If not specified,
+    either the invoking builder or its children (if the invoking builder name
+    contains 'orchestrator') will be used.
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#195)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#203)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -8782,11 +8811,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/schedule_au_tests.py#19)(api):**
 ### *recipes* / [cros\_paygen:examples/test\_config](/recipe_modules/cros_paygen/examples/test_config.py)
 
-[DEPS](/recipe_modules/cros_paygen/examples/test_config.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [cros\_storage](#recipe_modules-cros_storage), [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/examples/test_config.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [cros\_storage](#recipe_modules-cros_storage), [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/test_config.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/test_config.py#24)(api, properties):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -8840,6 +8869,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#15)(\*blocks):**
 
 &mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#82)(\*blocks):**
+### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
+
+[DEPS](/recipe_modules/cros_release_util/examples/full.py#6): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release_util/examples/full.py#12)(api):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
