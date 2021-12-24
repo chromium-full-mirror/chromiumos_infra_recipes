@@ -24,6 +24,7 @@ def RunSteps(api):
   api.git.clone(remote, branch='release')
   api.git.clone(remote, single_branch=True)
   api.git.clone(remote, verbose=True, progress=True)
+  api.git.clone(remote, depth=1)
   api.git.fetch('remote')
   api.assertions.assertEqual(
       api.git.fetch_ref('remote', 'refs/heads/branch'), commit_id)

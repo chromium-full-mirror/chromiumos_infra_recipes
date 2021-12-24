@@ -5041,7 +5041,7 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [author\_email](/recipe_modules/git/api.py#769)(self, commit_id):**
+&mdash; **def [author\_email](/recipe_modules/git/api.py#772)(self, commit_id):**
 
 Returns the email of the author of the given commit.
 
@@ -5066,7 +5066,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#596)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, timeout_sec=None, verbose=False, progress=False):**
+&mdash; **def [clone](/recipe_modules/git/api.py#596)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
 
 Clones a Git repo into the current directory.
 
@@ -5079,6 +5079,7 @@ Args:
   branch (string): If set, performs a single branch clone of that branch.
   single_branch (bool): If set, performs a single branch clone of the
      default branch.
+  depth (int): If set, creates a shallow clone at the specified depth.
   timeout_sec (int): Timeout in seconds.
   verbose (bool): If set, run git clone as verbose.
   progress (bool): If set, print progress to stdout.
@@ -5125,7 +5126,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#655)(self, refspec, default=None):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#658)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -5175,7 +5176,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#674)(self, branch):**
+&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#677)(self, branch):**
 
 Creates the full refspec for a branch.
 
@@ -5203,7 +5204,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#689)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#692)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -5217,7 +5218,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#714)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#717)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -5236,7 +5237,7 @@ Returns the HEAD commit ID.
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#703)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#706)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -5337,7 +5338,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#633)(self, force=False, branch=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#636)(self, force=False, branch=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -5364,7 +5365,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#737)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#740)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -5384,14 +5385,14 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#647)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#650)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#753)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#756)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
