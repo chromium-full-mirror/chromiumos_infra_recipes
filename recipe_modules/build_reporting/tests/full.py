@@ -15,6 +15,8 @@ import datetime
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.common import Channel
+from PB.chromite.api.packages import GetBuilderMetadataResponse
+from recipe_engine.recipe_api import StepFailure
 
 BuildStatus = BuildReport.BuildStatus
 
@@ -55,8 +57,23 @@ def RunSteps(api):
       BuildReport.BUILD_TYPE_RELEASE,
   )
 
+  # Test that we can't send process builder meta with multiple build targets.
+  response = GetBuilderMetadataResponse()
+  response.build_target_metadata.add()
+  response.build_target_metadata.add()
+  api.assertions.assertRaisesRegexp(
+      StepFailure, "build_target_metadata must have a single element",
+      api.build_reporting.publish_build_target_and_model_metadata, 'branch',
+      response)
+
   api.build_reporting.publish_status(BuildStatus.RUNNING)
-  api.build_reporting.publish_config('atlas', 'release-R12-12345.B', None)
+  response = GetBuilderMetadataResponse()
+  build = response.build_target_metadata.add()
+  build.fingerprints.append('fingerprint')
+  build.android_container_target = 'target-1234'
+  response.model_metadata.add()
+  api.build_reporting.publish_build_target_and_model_metadata(
+      'release-R12-12345.B', response)
 
   # check that we can create a raw build report instance
   build_report = api.build_reporting.create_build_report()
@@ -114,6 +131,8 @@ def RunSteps(api):
   api.assertions.assertTrue(build_report.HasField("config"))
   api.assertions.assertTrue(build_report.HasField("steps"))
   api.assertions.assertEqual(len(build_report.steps.info), 1)
+  api.assertions.assertEqual(build_report.config.android_container_target.name,
+                             'target-1234')
 
 
 def GenTests(api):

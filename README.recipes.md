@@ -1117,7 +1117,7 @@ Create BuildReport instance that can be .published().
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#306)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#285)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1145,7 +1145,7 @@ Args:
 Return:
   Reference to input message
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#270)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#249)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
@@ -1161,23 +1161,20 @@ Throws:
 Return:
   Nothing
 
-&mdash; **def [publish\_config](/recipe_modules/build_reporting/api.py#225)(self, build_target, branch, builder_config):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#378)(self, branch, builder_metadata):**
 
-Publish and merge basic build configuration.
+Publish and merge info about the build target and models of a build.
 
 Args:
-  build_target (str): The build target (e.g. atlas).
   branch (str): The branch name (e.g. release-R97-14324.B).
-  builder_config (BuilderConfig): The config sourced from infra/config.
-
-Returns:
-  None
+  builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
+      build-api.
 
 &mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#217)(self, status):**
 
 Publish and merge build status.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#246)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#225)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1199,7 +1196,7 @@ Set the type for the build, must be set once and only once.
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#341)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#320)(self, step_name):**
 
 Create a context manager to automatically send out step status.
 
@@ -8012,7 +8009,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#116)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#113)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#102)(api, properties):**
 
@@ -8061,7 +8058,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#24)(api):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

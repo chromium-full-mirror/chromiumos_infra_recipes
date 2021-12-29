@@ -107,9 +107,6 @@ def RunSteps(api, properties):
     with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
       with api.build_menu.configure_builder() as config, \
           api.build_menu.setup_workspace_and_chroot():
-        api.build_reporting.publish_config(api.build_menu.build_target,
-                                           api.cros_source.manifest_branch,
-                                           config)
         return DoRunSteps(api, config, properties)
 
 
@@ -123,11 +120,12 @@ def DoRunSteps(api, config, properties):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
-      with api.step.nest("determine build and model metadata") as presentation:
+      with api.step.nest('determine build and model metadata') as presentation:
         # First look up builder metadata from build-api.
-        builder_metadata = _look_up_builder_metadata(api, presentation)  # pylint: disable=unused-variable
+        builder_metadata = _look_up_builder_metadata(api, presentation)
         # Then fire off a pub/sub call with that builder meta.
-        # api.build_reporting.publish_metadata(builder_metadata)
+        api.build_reporting.publish_build_target_and_model_metadata(
+            api.cros_source.manifest_branch, builder_metadata)
       api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
@@ -189,6 +187,8 @@ def GenTests(api):
           }),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun,
+                     'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
