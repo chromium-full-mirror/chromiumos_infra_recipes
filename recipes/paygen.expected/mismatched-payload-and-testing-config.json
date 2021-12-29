@@ -901,6 +901,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "chromeos/config-internal",
       "chromiumos/chromite",
       "--ignore-missing",
       "-j",
@@ -930,6 +931,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "chromeos/config-internal",
       "chromiumos/chromite",
       "--ignore-missing",
       "-j",
@@ -972,6 +974,7 @@
       "8",
       "--force-remove-dirty",
       "--prune",
+      "chromeos/config-internal",
       "chromiumos/chromite"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

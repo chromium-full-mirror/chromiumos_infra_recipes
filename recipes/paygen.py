@@ -35,9 +35,9 @@ def RunSteps(api, properties):
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
     with api.step.nest('initialization'):
 
-      # Sync chromite only.
+      # Sync chromite and config-internal only.
       api.cros_source.ensure_synced_cache(
-          projects=['chromiumos/chromite'],
+          projects=['chromeos/config-internal', 'chromiumos/chromite'],
           cache_path_override=api.src_state.workspace_path,
       )
 
