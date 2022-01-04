@@ -1,0 +1,15 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.kernel_checkconfig;
+
+import "chromiumos/common.proto";
+
+message KernelCheckconfigProperties {
+  // Path to the kernel source to test, relative to the checkout root. e.g.,
+  // "src/third_party/kernel/v5.15". Required.
+  string source_path = 1;
+}

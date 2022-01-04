@@ -1,0 +1,63 @@
+# -*- coding: utf-8 -*-
+# Copyright 2022 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Recipe for testing the kernel splitconfig normalization.
+
+The kernel split config design is documented at
+https://www.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-configuration/
+and go/mini-splitconfigs.
+"""
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+from PB.recipes.chromeos.kernel_checkconfig import KernelCheckconfigProperties
+
+DEPS = [
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'build_menu',
+    'cros_build_api',
+    'cros_sdk',
+    'cros_source',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
+PROPERTIES = KernelCheckconfigProperties
+
+
+def RunSteps(api, properties):
+  with api.step.nest('validate properties') as presentation:
+    if not properties.source_path:
+      raise StepFailure('must set source_path')
+
+    presentation.step_text = 'all properties good'
+
+  with api.build_menu.configure_builder(missing_ok=True), \
+    api.build_menu.setup_workspace_and_chroot():
+
+    api.cros_source.ensure_synced_cache()
+    api.step('kernelconfig checkconfig', [
+        api.cros_sdk.cros_sdk_path, '--working-dir', properties.source_path,
+        '--log-level', api.cros_build_api.log_level, '--',
+        './chromeos/scripts/kernelconfig', 'checkconfig'
+    ])
+
+
+def GenTests(api):
+  props = {
+      'source_path': 'src/third_party/kernel/v5.15',
+  }
+  yield api.test(
+      'basic', api.properties(**props),
+      api.post_check(post_process.MustRun, 'kernelconfig checkconfig'),
+      api.post_check(post_process.StatusSuccess))
+
+  props = {}
+  yield api.test(
+      'no_source_path', api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'kernelconfig checkconfig'),
+      api.post_check(post_process.StatusAnyFailure),
+      api.post_check(post_process.StatusFailure))
