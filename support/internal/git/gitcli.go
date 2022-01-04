@@ -114,7 +114,7 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 		"7z", "aiqb", "a", "bin", "binaryproto", "bmp", "bz2", "csbin", "db", "ddc", "dll",
 		"docx", "dv", "efi", "elf", "exe", "fw", "gif", "hex", "jar", "jpeg",
 		"jpg", "jsonproto", "lib", "mp3", "mp4", "ogg", "opus", "pcap", "pdf", "png", "pnvm",
-		"rar", "raw", "rtf", "sbin", "sfi", "so", "svg", "sys", "tlv", "ucode", "wav",
+		"rar", "raw", "rtf", "sbin", "sfi", "so", "svg", "sys", "tlv", "ucode", "vbt", "wav",
 		"whl", "xlsx", "xz", "zip",
 	}
 	for _, filetype := range ignore_filetypes {
