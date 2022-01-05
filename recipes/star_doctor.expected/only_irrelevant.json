@@ -4,6 +4,13 @@
     "name": "set up"
   },
   {
+    "cmd": [],
+    "name": "set up.validate properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "clone",
@@ -43,13 +50,6 @@
     "infra_step": true,
     "name": "set up.git clone (3)",
     "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set up.validate properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

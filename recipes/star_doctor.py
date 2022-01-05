@@ -10,6 +10,7 @@ json files.
 """
 
 import base64
+from collections import namedtuple
 import functools
 import json
 from google.protobuf.text_format import MessageToString
@@ -54,119 +55,53 @@ CONFIG_UPDATE_HASHTAG = 'config_update'
 INFRA_CONFIG_URL = '{}/{}'.format(INTERNAL_HOST, INFRA_CONFIG_PROJECT)
 SUITE_SCHEDULER_URL = '{}/{}'.format(EXTERNAL_HOST, SUITE_SCHEDULER_PROJECT)
 CONFIG_INTERNAL_URL = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
+TIMELINE_FILENAME = 'release/timeline_configuration.json'
 
 PROPERTIES = StarDoctorProperties
 
+RepoDirs = namedtuple('RepoDirs',
+                      ('infra_config', 'suite_scheduler', 'config_internal'))
+
 
 def RunSteps(api, properties):
-
   with api.step.nest('set up'):
-    # Files that won't alone trigger a commit and upload.
-    irrelevant_files = set()
-
-    infra_config_dir = _get_clone(api, INFRA_CONFIG_URL)
-    ss_dir = _get_clone(api, SUITE_SCHEDULER_URL)
-    # We don't really need the full clone yet. But, it is assumed that configs
-    # will need to be regenerated here at some point.
-    # Clone shallowly to avoid running out of storage: see crbug/1154700.
-    config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL, depth=1)
-
     _validate_properties(api, properties)
-
+    repo_dirs = _clone_repos(api)
   remote_config_files = _get_remote_config_files(properties)
 
   with api.step.nest('generate binary config'):
-    with api.step.nest('copy remote configs') as presentation:
-      for remote_config_file in remote_config_files:
-        api.gsutil.download(
-            remote_config_file.bucket_name, remote_config_file.object_name,
-            infra_config_dir.join(remote_config_file.dest_path),
-            name='download {}/{}'.format(
-                remote_config_file.bucket_name,
-                remote_config_file.object_name,
-            ))
-    with api.step.nest('fetch chromiumos schedule') as presentation:
-      # Stay 10 milestones ahead.
-      schedule_fname = api.path.join(infra_config_dir,
-                                     'release/schedule/schedule.textproto')
-      last_mstone = api.cros_schedule.get_last_branched_mstone_n()
-      fetch_n = last_mstone - 70 + 10
-      mstones = api.cros_schedule.json_to_proto(
-          api.cros_schedule.fetch_chromiumdash_schedule(start_mstone=70,
-                                                        fetch_n=fetch_n))
-      api.file.write_text('write textproto', schedule_fname,
-                          MessageToString(mstones))
+    _copy_remote_configs(api, repo_dirs, remote_config_files)
+    _fetch_and_write_chromiumos_schedule(api, repo_dirs)
+    _fetch_and_write_keyset_config(api, repo_dirs)
+    _update_release_time(api, repo_dirs)
+    _regenerate_configs(api, repo_dirs)
+    _copy_ini_configs(api, repo_dirs)
 
-    with api.step.nest('fetch and write keyset configuration'):
-      keyset_json = api.gitiles.get_file(
-          INTERNAL_HOST_DOMAIN, 'chromeos/platform/release-keys',
-          'generated/keyset.json', public=False,
-          test_output_data=base64.b64encode('{"abc": 123}'))
-      # Ensure it's json afterall, then write.
-      validated_keys = json.dumps(
-          json.loads(keyset_json), sort_keys=True, indent=2)
-      keyset_fname = api.path.join(infra_config_dir,
-                                   'release/signing/keyset.json')
-      api.file.write_text('write keyset json', keyset_fname, validated_keys)
-
-    # Update the release configuration time.
-    tl_file = 'release/timeline_configuration.json'
-    tl_cfg_fpath = api.path.join(infra_config_dir, tl_file)
-    _update_release_time(api, tl_cfg_fpath)
-    irrelevant_files.add(tl_file)
-
-    # We need lucicfg from depot_tools.
-    with api.depot_tools.on_path():
-      # We need protoc from cipd.
-      cipd_dir = api.path.mkdtemp()
-      pkgs = api.cipd.EnsureFile()
-      pkgs.add_package('infra/tools/protoc/linux-amd64',
-                       'protobuf_version:v3.11.4')
-      api.cipd.ensure(cipd_dir, pkgs)
-      with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
-        with api.context(cwd=infra_config_dir):
-          api.step('regenerate configs',
-                   ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=3 * 60)
-
-    with api.step.nest('copy INI configs') as presentation:
-      dest_ini = api.path.join(ss_dir, 'generated_configs')
-      orig_ini = api.path.join(config_internal_dir, 'test', 'suite_scheduler',
-                               'generated')
-      api.file.copy('lab_config.ini', api.path.join(orig_ini, 'lab_config.ini'),
-                    dest_ini)
-      api.file.copy('suite_scheduler.ini',
-                    api.path.join(orig_ini, 'suite_scheduler.ini'), dest_ini)
-
-  with api.step.nest('commit changes') as presentation:
-    if not properties.commit_changes:
-      presentation.step_text = 'not configured to commit changes'
-      return
-
-    infra_config_labels = ['l=Bot-Commit+1', 'l=Commit-Queue+2']
-    ss_labels = infra_config_labels + ['l=Verified+1']
-    _commit_changed_files(api, infra_config_dir, INFRA_CONFIG_PROJECT,
-                          infra_config_labels,
-                          irrelevant_files=irrelevant_files)
-    _commit_changed_files(api, ss_dir, SUITE_SCHEDULER_PROJECT, ss_labels,
-                          irrelevant_files=irrelevant_files)
+  irrelevant_files = set()
+  irrelevant_files.add(TIMELINE_FILENAME)
+  _commit_all_changes(api, properties, repo_dirs, irrelevant_files)
 
 
-def _abandon_old_changes(api, project):
-  # Abandon older changes that never landed. These are changes
-  # created by stardoctor in previous iterations and did not merge
-  # for *some* reason.
-  host = (
-      INTERNAL_REVIEW_HOST
-      if project.startswith('chromeos') else EXTERNAL_REVIEW_HOST)
-  changes = api.gerrit.query_changes(host, [
-      ('project', project),
-      ('owner', CI_PROD_SERVICE_ACCOUNT),
-      ('topic', STARDOCTOR_TOPIC),
-      ('hashtag', CONFIG_UPDATE_HASHTAG),
-      ('status', 'open'),
-  ])
-  for change in changes:
-    api.gerrit.abandon_change(change)
+def _clone_repos(api):
+  """Clone any necessary repos.
+
+  Args:
+    api: The recipe modules API.
+
+  Returns:
+    A namedtuple (RepoDirs) of the local checkout locations.
+  """
+  infra_config_dir = _get_clone(api, INFRA_CONFIG_URL)
+  ss_dir = _get_clone(api, SUITE_SCHEDULER_URL)
+  # We don't really need the full clone yet. But, it is assumed that configs
+  # will need to be regenerated here at some point.
+  # Clone shallowly to avoid running out of storage: see crbug/1154700.
+  config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL, depth=1)
+  return RepoDirs(
+      infra_config=infra_config_dir,
+      suite_scheduler=ss_dir,
+      config_internal=config_internal_dir,
+  )
 
 
 def _get_clone(api, repo_url, **kwargs):
@@ -227,8 +162,59 @@ def _get_remote_config_files(properties):
   return remote_config_files
 
 
-def _update_release_time(api, tl_cfg_fpath):
+def _copy_remote_configs(api, repo_dirs, remote_config_files):
+  """Download the specified files from gsutil.
+
+  Args:
+    api: The recipe modules API.
+    repo_dirs: A namedtuple (RepoDirs) containing local checkout locations.
+    remote_config_files: List[RemoteConfigFile] representing config files to
+      download from Google Storage.
+  """
+  with api.step.nest('copy remote configs'):
+    for remote_config_file in remote_config_files:
+      api.gsutil.download(
+          remote_config_file.bucket_name, remote_config_file.object_name,
+          api.path.join(repo_dirs.infra_config, remote_config_file.dest_path),
+          name='download {}/{}'.format(
+              remote_config_file.bucket_name,
+              remote_config_file.object_name,
+          ))
+
+
+def _fetch_and_write_chromiumos_schedule(api, repo_dirs):
+  """Read the release schedule from Cr-, and write it to infra/config."""
+  with api.step.nest('fetch chromiumos schedule'):
+    # Stay 10 milestones ahead.
+    schedule_fname = api.path.join(repo_dirs.infra_config,
+                                   'release/schedule/schedule.textproto')
+    last_mstone = api.cros_schedule.get_last_branched_mstone_n()
+    fetch_n = last_mstone - 70 + 10
+    mstones = api.cros_schedule.json_to_proto(
+        api.cros_schedule.fetch_chromiumdash_schedule(start_mstone=70,
+                                                      fetch_n=fetch_n))
+    api.file.write_text('write textproto', schedule_fname,
+                        MessageToString(mstones))
+
+
+def _fetch_and_write_keyset_config(api, repo_dirs):
+  """Read release keys from platform, and write it to infra/config."""
+  with api.step.nest('fetch and write keyset configuration'):
+    keyset_json = api.gitiles.get_file(
+        INTERNAL_HOST_DOMAIN, 'chromeos/platform/release-keys',
+        'generated/keyset.json', public=False,
+        test_output_data=base64.b64encode('{"abc": 123}'))
+    # Ensure it's json after all, then write.
+    validated_keys = json.dumps(
+        json.loads(keyset_json), sort_keys=True, indent=2)
+    keyset_fname = api.path.join(repo_dirs.infra_config,
+                                 'release/signing/keyset.json')
+    api.file.write_text('write keyset json', keyset_fname, validated_keys)
+
+
+def _update_release_time(api, repo_dirs):
   """Update the infra/config/releases/timeline_configuration.json time field."""
+  tl_cfg_fpath = api.path.join(repo_dirs.infra_config, TIMELINE_FILENAME)
   with api.step.nest("update configured release time"):
     step_result = api.json.read(
         'read json', tl_cfg_fpath, step_test_data=lambda: api.json.test_api.
@@ -239,9 +225,76 @@ def _update_release_time(api, tl_cfg_fpath):
                         tl_cfg_fpath, json.dumps(tl_cfg, indent=2))
 
 
-def _commit_changed_files(api, repo_dir, project, labels,
-                          irrelevant_files=None):
-  """Commit and push changed files.
+def _regenerate_configs(api, repo_dirs):
+  """Runs the regenerate_configs.sh script in infra/config."""
+  # We need lucicfg from depot_tools.
+  with api.depot_tools.on_path():
+    # We need protoc from cipd.
+    cipd_dir = _ensure_cipd_packages(api)
+    with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
+      with api.context(cwd=repo_dirs.infra_config):
+        api.step('regenerate configs',
+                 ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=3 * 60)
+
+
+def _ensure_cipd_packages(api):
+  """Ensure that any necessary CIPD packages are installed.
+
+  Args:
+    api: The recipe modules API.
+
+  Returns:
+    The full path to the CIPD directory.
+  """
+  cipd_dir = api.path.mkdtemp()
+  pkgs = api.cipd.EnsureFile()
+  pkgs.add_package('infra/tools/protoc/linux-amd64', 'protobuf_version:v3.11.4')
+  api.cipd.ensure(cipd_dir, pkgs)
+  return cipd_dir
+
+
+def _copy_ini_configs(api, repo_dirs):
+  """Copy .ini files from internal config to the suite_scheduler repo.
+
+  Args:
+    api: The recipe modules API.
+    repo_dirs: A namedtuple (RepoDirs) containing local checkout locations.
+  """
+  with api.step.nest('copy INI configs'):
+    orig_dir = api.path.join(repo_dirs.config_internal, 'test',
+                             'suite_scheduler', 'generated')
+    dest_dir = api.path.join(repo_dirs.suite_scheduler, 'generated_configs')
+    api.file.copy('lab_config.ini', api.path.join(orig_dir, 'lab_config.ini'),
+                  dest_dir)
+    api.file.copy('suite_scheduler.ini',
+                  api.path.join(orig_dir, 'suite_scheduler.ini'), dest_dir)
+
+
+def _commit_all_changes(api, properties, repo_dirs, irrelevant_files=None):
+  """Commit and push changed files in all repos.
+
+  Args:
+    api: The recipe modules API.
+    properties: StarDoctorProperties, a proto containing input properties.
+    repo_dirs: A namedtuple (RepoDirs) containing local checkout locations.
+    irrelevant_files(set(files)): Files that alone, shouldn't trigger a commit.
+  """
+  with api.step.nest('commit changes') as presentation:
+    if not properties.commit_changes:
+      presentation.step_text = 'not configured to commit changes'
+      return
+
+    infra_config_labels = ['l=Bot-Commit+1', 'l=Commit-Queue+2']
+    ss_labels = infra_config_labels + ['l=Verified+1']
+    _commit_repo_changes(api, repo_dirs.infra_config, INFRA_CONFIG_PROJECT,
+                         infra_config_labels, irrelevant_files=irrelevant_files)
+    _commit_repo_changes(api, repo_dirs.suite_scheduler,
+                         SUITE_SCHEDULER_PROJECT, ss_labels,
+                         irrelevant_files=irrelevant_files)
+
+
+def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
+  """Commit and push changed files in one repo.
 
   Args:
     repo_dir(Path): Path to the repository to push.
@@ -285,6 +338,30 @@ def _commit_changed_files(api, repo_dir, project, labels,
       api.git.push(repo_url,
                    'HEAD:refs/for/{}%{}'.format(branch, ','.join(labels)))
       presentation.links['change committed'] = gerrit_change_url
+
+
+def _abandon_old_changes(api, project):
+  """Abandon older changes that never landed.
+
+  These are changes created by previous iterations of StarDoctor, which did not
+  merge for some reason.
+
+  Args:
+    api: The recipe modules API.
+    project: Project name of the repo.
+  """
+  host = (
+      INTERNAL_REVIEW_HOST
+      if project.startswith('chromeos') else EXTERNAL_REVIEW_HOST)
+  changes = api.gerrit.query_changes(host, [
+      ('project', project),
+      ('owner', CI_PROD_SERVICE_ACCOUNT),
+      ('topic', STARDOCTOR_TOPIC),
+      ('hashtag', CONFIG_UPDATE_HASHTAG),
+      ('status', 'open'),
+  ])
+  for change in changes:
+    api.gerrit.abandon_change(change)
 
 
 def GenTests(api):

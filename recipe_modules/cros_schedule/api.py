@@ -61,7 +61,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
         raise StepFailure('fetch schedule response was not json')
       try:
         mstones_returned = len(json_data['mstones'])
-      except Exception:
+      except KeyError:
         raise self.m.step.StepFailure('fetch schedule response json format bad')
       if mstones_returned != fetch_n:
         raise self.m.step.StepFailure(
