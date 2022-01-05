@@ -28,7 +28,7 @@ def RunSteps(api):
     with api.step.nest('run SDK package unit tests') as step:
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
           BuildTargetUnitTestRequest(
-              build_target=BuildTarget(name='host'), chroot=api.cros_sdk.chroot,
+              build_target=BuildTarget(name=None), chroot=api.cros_sdk.chroot,
               package_blocklist=[], packages=[],
               result_path=str(api.path.mkdtemp()),
               flags=BuildTargetUnitTestRequest.Flags(
