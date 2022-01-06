@@ -165,32 +165,40 @@ class SkylabApi(recipe_api.RecipeApi):
     # metadata.
     if not self._enable_container_support:
       container_metadata = None
+    have_container_metadata = container_metadata is not None
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
+      presentation.logs['container metadata'] = [
+          json_format.MessageToJson(container_metadata)
+      ] if have_container_metadata else '{}'
+
       # str -> (Request dict)
       reqs = {}
-
       with self.m.step.nest('create test requests'):
         for uht in unit_hw_tests:
           step_name = 'configure {}'.format(uht.unit.common.builder_name)
           with self.m.step.nest(step_name) as configure_step:
             request = create_test_request(uht)
 
-            # If container metadata has been provided, then we can handle
+            # If container execution support is enabled, then we can handle
             # requests to opt-in test execution via containers.
             #
             # If a test config has run_via_container set, then check that we have
             # container metadata for the build target we're testing, and pass it
             # through via the Request's execution parameters.
-            if container_metadata is not None and uht.hw_test.run_via_container:
+            if self._enable_container_support and uht.hw_test.run_via_container:
               build_target = uht.unit.common.build_target.name
-              if not build_target in container_metadata.containers:
+
+              if (not have_container_metadata or
+                  not build_target in container_metadata.containers):
                 configure_step.status = self.m.step.FAILURE
                 configure_step.step_summary_text = \
                   "Execution via container requested, " + \
                   "but no container metadata for build target '{}'".format(build_target)
                 continue
+              else:
+                configure_step.step_summary_text = "(Executing via container)"
 
               # The 'cros-test' container contains the autoserv binary we'll use
               container_image_map = container_metadata.containers[build_target]
@@ -198,6 +206,9 @@ class SkylabApi(recipe_api.RecipeApi):
                   container_image_map.images['cros-test'],
               )
 
+            configure_step.logs['request'] = [
+                json_format.MessageToJson(request)
+            ]
             reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(request)
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
