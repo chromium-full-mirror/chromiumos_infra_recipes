@@ -17,8 +17,6 @@ This recipe is invoked as part of uprev_parallels_pin.
 """
 from collections import namedtuple
 
-import json
-
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
@@ -27,6 +25,7 @@ from PB.test_platform.taskstate import TaskState
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -173,7 +172,7 @@ def build_vm_image(api, properties):
         'sha256sum':
             sha256,
     }
-    presentation.logs['metadata'] = json.dumps(results, indent=2)
+    presentation.logs['metadata'] = api.json.dumps(results, indent=2)
   return image_name, size, sha256
 
 
@@ -302,7 +301,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
   )
 
-  failureJson = json.loads('''[{
+  failureJson = api.json.loads('''[{
     "name": "pita.CreateFromIso.uprev",
     "pkg": "chromiumos/tast/local/bundles/pita",
     "additionalTime": 30000000000,
@@ -331,6 +330,8 @@ def GenTests(api):
     "skipReason": ""
   }]''')
 
+  failureJsonl = '\n'.join(api.json.dumps(x) for x in failureJson)
+
   # Tast fails
   yield api.test(
       'tast-failure',
@@ -338,13 +339,14 @@ def GenTests(api):
       api.properties(**good_props),
       api.phosphorus.properties(),
       api.post_check(post_process.MustRun, 'provision DUT'),
-      api.step_data('invoke tast.process tast output.read results.json',
-                    api.file.read_json(failureJson)),
+      api.step_data(
+          'invoke tast.process tast output.read streamed_results.jsonl',
+          api.file.read_text(failureJsonl)),
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'upload image'),
   )
 
-  successJson = json.loads('''[{
+  successJson = api.json.loads('''[{
     "name": "pita.CreateFromIso.uprev",
     "pkg": "chromiumos/tast/local/bundles/pita",
     "additionalTime": 30000000000,
@@ -369,14 +371,17 @@ def GenTests(api):
     "skipReason": ""
   }]''')
 
+  successJsonl = '\n'.join(api.json.dumps(x) for x in successJson)
+
   # Tast appears to succeed, but not VM image was produced.
   yield api.test(
       'tast-no-image',
       api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**good_props), api.phosphorus.properties(),
       api.post_check(post_process.MustRun, 'provision DUT'),
-      api.step_data('invoke tast.process tast output.read results.json',
-                    api.file.read_json(successJson)),
+      api.step_data(
+          'invoke tast.process tast output.read streamed_results.jsonl',
+          api.file.read_text(successJsonl)),
       api.step_data('invoke tast.rename VM image', retcode=1),
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'upload image'))
@@ -386,8 +391,9 @@ def GenTests(api):
       'success',
       api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**good_props), api.phosphorus.properties(),
-      api.step_data('invoke tast.process tast output.read results.json',
-                    api.file.read_json(successJson)),
+      api.step_data(
+          'invoke tast.process tast output.read streamed_results.jsonl',
+          api.file.read_text(successJsonl)),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.post_check(post_process.MustRun, 'upload image'),
       api.post_check(post_process.MustRun, 'compute image size and sha256'),

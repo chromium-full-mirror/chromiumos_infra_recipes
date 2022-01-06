@@ -322,7 +322,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tast-results_tmp_1/results.json",
+      "[CLEANUP]/tast-results_tmp_1/streamed_results.jsonl",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -338,36 +338,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "invoke tast.process tast output.read results.json",
+    "name": "invoke tast.process tast output.read streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@results.json@[@@@",
-      "@@@STEP_LOG_LINE@results.json@  {@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"additionalTime\": 30000000000,@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"attr\": [@@@",
-      "@@@STEP_LOG_LINE@results.json@      \"name:pita.CreateFromIso.uprev\",@@@",
-      "@@@STEP_LOG_LINE@results.json@      \"bundle:cros\",@@@",
-      "@@@STEP_LOG_LINE@results.json@      \"dep:chrome\"@@@",
-      "@@@STEP_LOG_LINE@results.json@    ],@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"contacts\": [@@@",
-      "@@@STEP_LOG_LINE@results.json@      \"someone@chromium.org\"@@@",
-      "@@@STEP_LOG_LINE@results.json@    ],@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"data\": null,@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"desc\": \"Description\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"end\": \"2020-01-27T15:16:33.420622341-08:00\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"errors\": null,@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"name\": \"pita.CreateFromIso.uprev\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"pkg\": \"chromiumos/tast/local/bundles/pita\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"skipReason\": \"\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"softwareDeps\": [@@@",
-      "@@@STEP_LOG_LINE@results.json@      \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@results.json@    ],@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"start\": \"2020-01-27T15:16:15.146771555-08:00\",@@@",
-      "@@@STEP_LOG_LINE@results.json@    \"timeout\": 300000000000@@@",
-      "@@@STEP_LOG_LINE@results.json@  }@@@",
-      "@@@STEP_LOG_LINE@results.json@]@@@",
-      "@@@STEP_LOG_END@results.json@@@"
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:pita.CreateFromIso.uprev\", \"bundle:cros\", \"dep:chrome\"], \"contacts\": [\"someone@chromium.org\"], \"data\": null, \"desc\": \"Description\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": null, \"name\": \"pita.CreateFromIso.uprev\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/pita.CreateFromIso.uprev\", \"pkg\": \"chromiumos/tast/local/bundles/pita\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000}@@@",
+      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
     ]
   },
   {

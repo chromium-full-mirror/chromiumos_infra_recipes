@@ -53,7 +53,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       return pantheon_url
 
   def get_results(self, test_results_path, suite_name, tag, tests):
-    """Return the test results decoded from the results.json.
+    """Return the test results decoded from the streamed_results.jsonl.
 
     Args:
       test_results_path (Path): Path to test_results/.
@@ -87,7 +87,7 @@ class TastResultsApi(recipe_api.RecipeApi):
                                         test_cases=test_cases)
 
   def _read_results_json(self, test_results_path):
-    """Read the results.json file and return structured contents.
+    """Read the streamed_results.jsonl file and return structured contents.
 
     Args:
       test_results_path (Path): Path to test_results/.
@@ -98,13 +98,14 @@ class TastResultsApi(recipe_api.RecipeApi):
     """
     list_of_results = []
     try:
-      list_of_results = self.m.file.read_json(
-          'read results.json', test_results_path.join('results.json'),
-          test_data=self.test_api.test_results_json)
-      # Handle empty results.json file.
-      list_of_results = list_of_results or []
+      list_of_results = self.m.file.read_text(
+          'read streamed_results.jsonl',
+          test_results_path.join('streamed_results.jsonl'),
+          test_data=self.test_api.test_streamed_results_jsonl).splitlines()
+      # Handle empty streamed_results.jsonl file.
+      list_of_results = [self.m.json.loads(x) for x in list_of_results or []]
     except self.m.file.Error:  # pragma: nocover
-      # Carry on if results.json doesn't exist.
+      # Carry on if streamed_results.jsonl doesn't exist.
       pass
     return [
         jsonpb.ParseDict(result, TestResult(), ignore_unknown_fields=True)
@@ -116,7 +117,7 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     Args:
       tests list(str): list of tests that should have run.
-      test_cases list(TestCaseResult): test_cases in the results.json.
+      test_cases list(TestCaseResult): test_cases in the streamed_results.jsonl.
 
     Returns: list(TestCaseResult) the missing tests cases.
     """

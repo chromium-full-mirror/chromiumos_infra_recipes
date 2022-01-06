@@ -12,6 +12,7 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the tast_results module."""
 
   gsutil_timeout_seconds = 120
+
   test_results_json = json.loads("""
 [
   {
@@ -110,3 +111,7 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
   }
 ]
 """)
+
+  @property
+  def test_streamed_results_jsonl(self):
+    return "\n".join([json.dumps(x) for x in self.test_results_json])
