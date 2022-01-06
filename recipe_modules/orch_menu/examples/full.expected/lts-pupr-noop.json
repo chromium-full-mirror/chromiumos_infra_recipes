@@ -1737,6 +1737,13 @@
   },
   {
     "cmd": [],
+    "name": "check test planning v2 enabled",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no migration config found for (chromium-review.googlesource.com, project-a), not enabling test planning v2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
       "@@@STEP_TEXT@all tests passed.@@@"

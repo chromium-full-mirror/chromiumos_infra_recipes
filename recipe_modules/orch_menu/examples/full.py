@@ -404,14 +404,46 @@ def GenTests(api):
           tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
       collect_builds=data.builds)
 
+  input_props = orch_menu_properties(
+      update_manifest_refs=dict(test='refs/heads/test'))
+  input_props.update({
+      '$chromeos/cros_test_plan_v2': {
+          'migration_configs': [{
+              'host': 'chromium.googlesource.com',
+              'project': 'chromiumos/platform',
+              'file_allowlist_regexps': ['a/b/.*']
+          },]
+      }
+  })
+
+  gerrit_changes = [
+      GerritChange(
+          host='chromium.googlesource.com',
+          project='chromiumos/platform',
+          change=1234,
+          patchset=5,
+      ),
+  ]
+
   yield api.orch_menu.test(
       'ctp2_enabled',
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE, 'CTP2 not implemented'),
-      input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'check test planning v2 enabled',
+          gerrit_changes,
+          {
+              1234: {
+                  'patch_set': 5,
+                  'files': {
+                      'a/b/d/test.txt': {},
+                  }
+              },
+          },
+      ),
+      input_properties=input_props,
       builder='postsubmit-orchestrator',
       with_manifest_refs=True,
       with_history=True,
-      experiments=['chromeos.orch_menu.ctp2'],
+      extra_changes=gerrit_changes,
   )

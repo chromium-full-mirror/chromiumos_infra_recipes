@@ -25,6 +25,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'cros_test_plan',
+    'cros_test_plan_v2',
     'cros_test_proctor',
     'cros_version',
     'easy',

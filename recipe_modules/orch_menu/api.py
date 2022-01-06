@@ -740,7 +740,8 @@ class OrchMenuApi(RecipeApi):
                                   self.m.buildbucket.build.tags):
       self.m.skylab.set_qs_account('pupr')
 
-    if 'chromeos.orch_menu.ctp2' in self.m.cros_infra_config.experiments:
+    if self.gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
+        self.gerrit_changes):
       self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)
     else:
       test_failures = self.m.cros_test_proctor.run_proctor(
