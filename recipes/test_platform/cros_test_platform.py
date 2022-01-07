@@ -384,6 +384,25 @@ _REQUEST_STATES = [
 ]
 
 
+def _is_incomplete_result(task_result):
+  """Determine whether the task failed without completing the test execution."""
+  if task_result.state.life_cycle != TaskState.LIFE_CYCLE_COMPLETED:
+    return True
+
+  # There are cases in which the task's lifecycle is complete, but no test cases
+  # ran due to an autoserv error (e.g. http://go/bbid/8825690244767207153).
+  if not task_result.test_cases:
+    return True
+
+  # There are cases in which the task failed to launch Tast, but the lifecycle
+  # is marked as complete (e.g. http://go/bbid/8825690244767207153).
+  if (len(task_result.test_cases) == 1 and
+      task_result.test_cases[0].name == 'tast'):
+    return True
+
+  return False
+
+
 def _classify_request_failure(consolidated_results):
   """Determine the state of the failed request based on the task results.
 
@@ -393,12 +412,12 @@ def _classify_request_failure(consolidated_results):
   Returns:
     The state for the given request based on the results.
   """
+
   for result in consolidated_results:
     if all(t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED
            for t in result.attempts):
       return _REQUEST_REJECTED_PARAMETERS
-    elif all(t.state.life_cycle != TaskState.LIFE_CYCLE_COMPLETED
-             for t in result.attempts):
+    elif all(_is_incomplete_result(t) for t in result.attempts):
       # If any enumeration only produced incomplete results, the entire request
       # will be classified as incomplete, so we don't have to continue looking
       # at the other results.
@@ -765,6 +784,64 @@ def _incomplete_failure_execute_response():
                       ])
 
 
+def _failure_with_no_test_cases():
+  tr_1 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+  tr_2 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+
+  return ExecuteResponse(
+      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                      verdict='VERDICT_FAILED'), task_results=[
+                          tr_1,
+                          tr_2,
+                      ],
+      consolidated_results=[
+          ExecuteResponse.ConsolidatedResult(attempts=[tr_1, tr_2]),
+      ])
+
+
+def _tast_incomplete_failure_execute_response():
+  tr_1 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='bar-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_ABORTED'),
+  )
+  tr_2 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='bar-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+      test_cases=[
+          ExecuteResponse.TaskResult.TestCaseResult(
+              name='tast', verdict=TaskState.VERDICT_FAILED)
+      ],
+  )
+
+  return ExecuteResponse(
+      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                      verdict='VERDICT_FAILED'), task_results=[
+                          tr_1,
+                          tr_2,
+                      ],
+      consolidated_results=[
+          ExecuteResponse.ConsolidatedResult(attempts=[tr_1, tr_2]),
+      ])
+
+
 def _complete_failure_execute_response():
   tr_1 = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
@@ -779,6 +856,10 @@ def _complete_failure_execute_response():
       name='bar-fail',
       state=TaskState(verdict="VERDICT_FAILED",
                       life_cycle='LIFE_CYCLE_COMPLETED'),
+      test_cases=[
+          ExecuteResponse.TaskResult.TestCaseResult(
+              name='failed-test-case', verdict=TaskState.VERDICT_FAILED)
+      ],
   )
 
   return ExecuteResponse(
@@ -1190,6 +1271,10 @@ def GenTests(api):
           name='foo-failed',
           state=TaskState(verdict="VERDICT_FAILED",
                           life_cycle='LIFE_CYCLE_COMPLETED'),
+          test_cases=[
+              ExecuteResponse.TaskResult.TestCaseResult(
+                  name='failed-test-case', verdict=TaskState.VERDICT_FAILED)
+          ],
       ),
       ExecuteResponse.TaskResult(
           task_url='foo://bar/baz/b101',
@@ -1198,6 +1283,10 @@ def GenTests(api):
           attempt=1,
           state=TaskState(verdict="VERDICT_FAILED",
                           life_cycle='LIFE_CYCLE_COMPLETED'),
+          test_cases=[
+              ExecuteResponse.TaskResult.TestCaseResult(
+                  name='failed-test-case', verdict=TaskState.VERDICT_FAILED)
+          ],
       ),
   ]
   yield api.test(
@@ -1514,6 +1603,8 @@ def GenTests(api):
                   'second': _complete_failure_execute_response(),
                   'third': _incomplete_failure_execute_response(),
                   'fourth': _parameters_rejected_execute_response(),
+                  'fifth': _failure_with_no_test_cases(),
+                  'sixth': _tast_incomplete_failure_execute_response(),
               }),
       ),
       api.post_check(lambda check, steps: check(
