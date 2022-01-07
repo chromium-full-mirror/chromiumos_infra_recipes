@@ -10,12 +10,14 @@ from google.protobuf import json_format
 class GceProviderTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the GCE Provider module."""
 
-  def get_current_config_step_test_data(self):
-    """Returns a dict of current config.
+  def get_current_config_step_test_data(self, prefix):
+    """Returns a dict of current config based on the prefix.
 
     Returns:
-      config(dict): Dictionary of GCE Provider config
+      config(dict)|None: Dictionary of GCE Provider config
     """
+    if prefix == "prefix-should-return-none":
+      return None
     return {
         "amount": {
             "max": 100,

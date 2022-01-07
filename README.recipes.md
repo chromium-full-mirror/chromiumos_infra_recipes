@@ -300,6 +300,7 @@
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full)
+  * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config)
   * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
   * [gcloud:examples/full](#recipes-gcloud_examples_full)
   * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks)
@@ -4461,14 +4462,14 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [GceProvider](/recipe_modules/gce_provider/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GceProvider](/recipe_modules/gce_provider/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that interacts with the GCE Provider config service.
 
 Depends on 'prpc' binary available in $PATH:
 https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
-&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#60)(self, ids):**
+&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#70)(self, ids):**
 
 Function to retrieve the current config from GCE Provider.
 
@@ -4478,7 +4479,10 @@ Args:
 Returns:
   Configs, list of GCE Provide Config objects.
 
-&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#24)(self, bid, config):**
+Raises:
+  NoneConfigFailure: If the GCE Provider Get call returns None.
+
+&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#33)(self, bid, config):**
 
 Function to update the config in GCE Provider.
 
@@ -9428,6 +9432,13 @@ See https://crbug.com/1068743.
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#14)(api):**
+### *recipes* / [gce\_provider:tests/get\_current\_config](/recipe_modules/gce_provider/tests/get_current_config.py)
+
+[DEPS](/recipe_modules/gce_provider/tests/get_current_config.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/gce_provider/tests/get_current_config.py#19)(api, properties):**
 ### *recipes* / [gce\_test](/recipes/gce_test.py)
 
 [DEPS](/recipes/gce_test.py#10): [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

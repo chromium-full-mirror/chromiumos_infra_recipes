@@ -1,0 +1,33 @@
+[
+  {
+    "cmd": [],
+    "name": "getting config for prefix-should-return-none",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "gce-provider.appspot.com",
+      "config.Configuration.Get"
+    ],
+    "infra_step": true,
+    "name": "getting config for prefix-should-return-none.gce-provider.config.Get",
+    "stdin": "{\"id\": \"prefix-should-return-none\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@null@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "No config found for prefix prefix-should-return-none"
+    },
+    "name": "$result"
+  }
+]

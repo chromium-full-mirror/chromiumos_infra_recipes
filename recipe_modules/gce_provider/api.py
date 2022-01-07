@@ -13,6 +13,14 @@ from google.protobuf import json_format
 GCE_PROVIDER_URL = 'gce-provider.appspot.com'
 
 
+class NoneConfigFailure(recipe_api.StepFailure):
+  """Error class for when GCE Provider returns None for a Configuration.Get"""
+
+  def __init__(self, config_prefix):
+    super(NoneConfigFailure,
+          self).__init__("No config found for prefix {}".format(config_prefix))
+
+
 class GceProvider(recipe_api.RecipeApi):
   """A module that interacts with the GCE Provider config service.
 
@@ -20,6 +28,7 @@ class GceProvider(recipe_api.RecipeApi):
   https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
   """
+  NoneConfigFailure = NoneConfigFailure
 
   def update_gce_config(self, bid, config):
     """Function to update the config in GCE Provider.
@@ -54,7 +63,8 @@ class GceProvider(recipe_api.RecipeApi):
     """
     req = {'id': prefix}
     step = self._run(
-        'Get', req, test_stdout=self.test_api.get_current_config_step_test_data)
+        'Get', req, test_stdout=lambda: self.test_api.
+        get_current_config_step_test_data(prefix))
     return step
 
   def get_current_config(self, ids):
@@ -65,6 +75,9 @@ class GceProvider(recipe_api.RecipeApi):
 
     Returns:
       Configs, list of GCE Provide Config objects.
+
+    Raises:
+      NoneConfigFailure: If the GCE Provider Get call returns None.
     """
     configs = []
     futures = {}
@@ -72,9 +85,11 @@ class GceProvider(recipe_api.RecipeApi):
       fut = self.m.futures.spawn(self._make_gce_config_call, prefix=prefix)
       futures[fut] = prefix
     for fut in self.m.futures.iwait(futures.keys()):
+      stdout = fut.result()
+      if stdout is None:
+        raise NoneConfigFailure(futures[fut])
       configs.append(
-          json_format.ParseDict(fut.result(), Config(),
-                                ignore_unknown_fields=True))
+          json_format.ParseDict(stdout, Config(), ignore_unknown_fields=True))
     return Configs(vms=configs)
 
   def _run(self, method, stdin_json, step_name=None, test_stdout=None):
