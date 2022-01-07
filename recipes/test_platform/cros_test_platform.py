@@ -372,11 +372,52 @@ _SUCCESSFUL_VERDICTS = (TaskState.VERDICT_PASSED,
                         TaskState.VERDICT_PASSED_ON_RETRY,
                         TaskState.VERDICT_NO_VERDICT)
 
+_REQUEST_SUCCESS = 'Succeeded'
+_REQUEST_FAILURE = 'Failed with complete results'
+_REQUEST_INCOMPLETE_FAILURE = 'Failed with incomplete results'
+_REQUEST_REJECTED_PARAMETERS = 'Bot parameters rejected'
+_REQUEST_STATES = [
+    _REQUEST_SUCCESS,
+    _REQUEST_FAILURE,
+    _REQUEST_INCOMPLETE_FAILURE,
+    _REQUEST_REJECTED_PARAMETERS,
+]
+
+
+def _classify_request_failure(consolidated_results):
+  """Determine the state of the failed request based on the task results.
+
+  Args:
+    consolidated_results (list[ExecuteResponse.ConsolidatedResult]): The grouped
+        results for each enumeration.
+  Returns:
+    The state for the given request based on the results.
+  """
+  for result in consolidated_results:
+    if all(t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED
+           for t in result.attempts):
+      return _REQUEST_REJECTED_PARAMETERS
+    elif all(t.state.life_cycle != TaskState.LIFE_CYCLE_COMPLETED
+             for t in result.attempts):
+      # If any enumeration only produced incomplete results, the entire request
+      # will be classified as incomplete, so we don't have to continue looking
+      # at the other results.
+      return _REQUEST_INCOMPLETE_FAILURE
+
+  # If no failures with incomplete results or rejected parameters are detected,
+  # then we can say the request failed with complete results.
+  return _REQUEST_FAILURE
+
 
 def summarize(api, enumerations, responses):
   # Failures in summarization are non-infra related.
   failures = 0
   invocations = []
+
+  request_classifications = collections.OrderedDict()
+  for state in _REQUEST_STATES:
+    request_classifications[state] = 0
+
   with api.step.nest('summarize') as step:
     for tag, response in sorted(responses.iteritems()):
       with api.step.nest('%s task results' % tag):
@@ -385,11 +426,16 @@ def summarize(api, enumerations, responses):
         # TODO(b/201608160): Remove conditional upon experiment completion.
         if api.cros_test_platform.add_to_resultdb:
           invocations.extend(_get_rdb_invocations(response.task_results))
-        if response.state.verdict not in _SUCCESSFUL_VERDICTS:
+        if response.state.verdict in _SUCCESSFUL_VERDICTS:
+          request_classifications[_REQUEST_SUCCESS] += 1
+        else:
           failures += 1
           step.logs['overall verdict'] = [
               TaskState.Verdict.Name(response.state.verdict)
           ]
+          classification = _classify_request_failure(
+              response.consolidated_results)
+          request_classifications[classification] += 1
           step.presentation.status = api.step.FAILURE
 
     # TODO(b/201608160): In order for test results to appear on Gerrit they must
@@ -400,11 +446,18 @@ def summarize(api, enumerations, responses):
       api.resultdb.include_invocations(api.resultdb.invocation_ids(invocations))
 
     if failures:
-      raise api.step.StepFailure('%s out of %s requests were unsuccessful' %
-                                 (failures, len(responses)))
+      summary_lines = [
+          '%s out of %s requests were unsuccessful' % (failures, len(responses))
+      ]
+      for state, val in request_classifications.items():
+        if val > 0:
+          summary_lines.append('- %s: %s request%s' %
+                               (state, val, '' if val == 1 else 's'))
+      summary_markdown = '\n\n'.join(summary_lines)
+      raise api.step.StepFailure(summary_markdown)
+
     if not responses:
       raise api.step.StepFailure('No requests ran')
-
 
 def _get_requests_from_properties(api, properties):
   if properties.HasField('request'):
@@ -627,6 +680,116 @@ def _test_config(tag):
   return Config(
       skylab_worker=Config.SkylabWorker(luci_project='%s luci project' % tag),
   )
+
+
+def _succeeded_request_execute_response():
+  tr = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='foo-passed',
+      state=TaskState(verdict="VERDICT_PASSED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+  return ExecuteResponse(
+      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                      verdict='VERDICT_PASSED'), task_results=[
+                          tr,
+                      ], consolidated_results=[
+                          ExecuteResponse.ConsolidatedResult(attempts=[
+                              tr,
+                          ]),
+                      ])
+
+
+def _parameters_rejected_execute_response():
+  tr = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='foo-rejected',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_REJECTED'),
+  )
+  return ExecuteResponse(
+      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                      verdict='VERDICT_FAILED'), task_results=[
+                          tr,
+                      ], consolidated_results=[
+                          ExecuteResponse.ConsolidatedResult(attempts=[
+                              tr,
+                          ]),
+                      ])
+
+
+def _incomplete_failure_execute_response():
+  complete_tr_1 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+  complete_tr_2 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+
+  incomplete_tr_1 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_ABORTED'),
+  )
+  incomplete_tr_2 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_PENDING'),
+  )
+  return ExecuteResponse(
+      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                      verdict='VERDICT_FAILED'), task_results=[
+                          complete_tr_1,
+                          complete_tr_2,
+                          incomplete_tr_1,
+                          incomplete_tr_2,
+                      ], consolidated_results=[
+                          ExecuteResponse.ConsolidatedResult(
+                              attempts=[complete_tr_1, complete_tr_2]),
+                          ExecuteResponse.ConsolidatedResult(
+                              attempts=[incomplete_tr_1, incomplete_tr_2])
+                      ])
+
+
+def _complete_failure_execute_response():
+  tr_1 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='bar-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_ABORTED'),
+  )
+  tr_2 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='bar-fail',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+
+  return ExecuteResponse(
+      state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                      verdict='VERDICT_FAILED'), task_results=[
+                          tr_1,
+                          tr_2,
+                      ],
+      consolidated_results=[
+          ExecuteResponse.ConsolidatedResult(attempts=[tr_1, tr_2]),
+      ])
 
 
 def _generic_enumerate_response(api):
@@ -1325,13 +1488,6 @@ def GenTests(api):
               }),
       ))
 
-  task_result_foo = ExecuteResponse.TaskResult(
-      task_url='foo://bar/baz/b100',
-      log_url='logs://bar/baz',
-      name='foo-passed',
-      state=TaskState(verdict="VERDICT_PASSED",
-                      life_cycle='LIFE_CYCLE_COMPLETED'),
-  )
   yield api.test(
       'end-to-end multi-requests',
       api.properties(
@@ -1354,17 +1510,10 @@ def GenTests(api):
           'execute',
           ExecuteResponses(
               tagged_responses={
-                  'first':
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_PASSED'),
-                          task_results=[
-                              task_result_foo,
-                          ], consolidated_results=[
-                              ExecuteResponse.ConsolidatedResult(attempts=[
-                                  task_result_foo,
-                              ]),
-                          ])
+                  'first': _succeeded_request_execute_response(),
+                  'second': _complete_failure_execute_response(),
+                  'third': _incomplete_failure_execute_response(),
+                  'fourth': _parameters_rejected_execute_response(),
               }),
       ),
       api.post_check(lambda check, steps: check(

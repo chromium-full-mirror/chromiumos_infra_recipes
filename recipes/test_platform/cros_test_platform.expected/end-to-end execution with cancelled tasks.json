@@ -441,7 +441,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 1 requests were unsuccessful"
+      "humanReason": "1 out of 1 requests were unsuccessful\n\n- Failed with incomplete results: 1 request"
     },
     "name": "$result"
   }

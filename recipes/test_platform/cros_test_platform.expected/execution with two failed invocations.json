@@ -670,7 +670,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "2 out of 2 requests were unsuccessful"
+      "humanReason": "2 out of 2 requests were unsuccessful\n\n- Failed with complete results: 2 requests"
     },
     "name": "$result"
   }

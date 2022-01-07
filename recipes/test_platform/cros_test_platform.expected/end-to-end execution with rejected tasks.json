@@ -528,7 +528,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 1 requests were unsuccessful"
+      "humanReason": "1 out of 1 requests were unsuccessful\n\n- Bot parameters rejected: 1 request"
     },
     "name": "$result"
   }
