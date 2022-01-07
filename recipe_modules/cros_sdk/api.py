@@ -627,6 +627,8 @@ class CrosSdkApi(RecipeApi):
           chroot.path = str(chroot_link)
           with self.m.step.nest('clean up rogue chroot'):
             self.unmount_chroot(chroot=chroot)
+            # Printing the chroot directory for b/212587066.
+            self.m.file.listdir('list chroot contents', chroot_link)
             self.m.step('remove directory',
                         ['sudo', '-n', 'rmdir', chroot.path])
 
