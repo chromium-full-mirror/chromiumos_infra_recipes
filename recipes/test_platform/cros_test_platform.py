@@ -651,6 +651,15 @@ def _empty_enumerate_response(api):
 
 
 def _generic_passing_execute_response(api):
+  task_results = [
+      ExecuteResponse.TaskResult(
+          task_url='foo://bar/baz/b100',
+          log_url='logs://bar/baz',
+          name='foo-passed',
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+  ]
   return api.cros_test_platform.set_execute_luciexe_response(
       'execute',
       ExecuteResponses(
@@ -659,17 +668,10 @@ def _generic_passing_execute_response(api):
                   ExecuteResponse(
                       state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                       verdict='VERDICT_PASSED'),
-                      task_results=[
-                          ExecuteResponse.TaskResult(
-                              task_url='foo://bar/baz/b100',
-                              log_url='logs://bar/baz',
-                              name='foo-passed',
-                              state=TaskState(
-                                  verdict="VERDICT_PASSED",
-                                  life_cycle='LIFE_CYCLE_COMPLETED'),
-                          ),
-                      ],
-                  )
+                      task_results=task_results, consolidated_results=[
+                          ExecuteResponse.ConsolidatedResult(
+                              attempts=task_results)
+                      ])
           }))
 
 
@@ -858,6 +860,21 @@ def GenTests(api):
               config=Config(pubsub=Config.PubSub(topic='foo-topic')))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
+  task_result_1 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='foo-passed',
+      state=TaskState(verdict="VERDICT_PASSED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+
+  task_result_2 = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b101',
+      log_url='logs://bar/baz1',
+      name='foo-skipped',
+      state=TaskState(verdict="VERDICT_NO_VERDICT",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
   # TODO(b/201608160): Remove upon experiment completion.
   yield api.test(
       'end-to-end execution with resultdb experiment enabled',
@@ -877,24 +894,14 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_PASSED'),
                           task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-passed',
-                                  state=TaskState(
-                                      verdict="VERDICT_PASSED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b101',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-skipped',
-                                  state=TaskState(
-                                      verdict="VERDICT_NO_VERDICT",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
+                              task_result_1,
+                              task_result_2,
+                          ], consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[task_result_1]),
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[task_result_2])
+                          ])
               }),
       ))
 
@@ -914,6 +921,7 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_PASSED'),
                           task_results=[],
+                          consolidated_results=[],
                       )
               })),
       api.override_step_data(
@@ -943,6 +951,7 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_PASSED'),
                           task_results=[],
+                          consolidated_results=[],
                       )
               })),
       api.override_step_data(
@@ -958,6 +967,20 @@ def GenTests(api):
                                      config=_test_config('foo'))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
+  passed_task_result = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='foo-passed',
+      state=TaskState(verdict="VERDICT_PASSED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+  skipped_task_result = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b101',
+      log_url='logs://bar/baz1',
+      name='foo-skipped',
+      state=TaskState(verdict="VERDICT_NO_VERDICT",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
   yield api.test(
       'end-to-end execution with passed and skipped tasks',
       api.properties(
@@ -973,22 +996,14 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_PASSED'),
                           task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-passed',
-                                  state=TaskState(
-                                      verdict="VERDICT_PASSED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b101',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-skipped',
-                                  state=TaskState(
-                                      verdict="VERDICT_NO_VERDICT",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
+                              passed_task_result,
+                              skipped_task_result,
+                          ],
+                          consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[passed_task_result]),
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[skipped_task_result]),
                           ],
                       )
               }),
@@ -1005,6 +1020,23 @@ def GenTests(api):
           ExecuteResponses(tagged_responses={}),
       ))
 
+  failed_task_results = [
+      ExecuteResponse.TaskResult(
+          task_url='foo://bar/baz/b100',
+          log_url='logs://bar/baz',
+          name='foo-failed',
+          state=TaskState(verdict="VERDICT_FAILED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='foo://bar/baz/b101',
+          log_url='logs://bar/baz1',
+          name='foo-failed',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_FAILED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+  ]
   yield api.test(
       'end-to-end execution with failed tasks',
       api.properties(
@@ -1019,65 +1051,31 @@ def GenTests(api):
                       ExecuteResponse(
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_FAILED'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-failed',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b101',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-failed',
-                                  attempt=1,
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
+                          task_results=failed_task_results,
+                          consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=failed_task_results)
+                          ])
               }),
       ))
 
-  yield api.test(
-      'end-to-end execution with tests with duplicate names',
-      api.properties(
-          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
-                                     config=_test_config('foo'))),
-      _generic_enumerate_response(api),
-      api.cros_test_platform.set_execute_luciexe_response(
-          'execute',
-          ExecuteResponses(
-              tagged_responses={
-                  'default':
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_FAILED'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-failed',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b101',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-failed',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
-              }),
-      ))
-
+  retried_task_results = [
+      ExecuteResponse.TaskResult(
+          task_url='foo://bar/baz/b100',
+          log_url='logs://bar/baz',
+          name='foo-retried',
+          state=TaskState(verdict="VERDICT_FAILED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='foo://bar/baz/b101',
+          log_url='logs://bar/baz1',
+          name='foo-retried',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+  ]
   yield api.test(
       'end-to-end execution with failed then passed tasks',
       api.properties(
@@ -1092,66 +1090,26 @@ def GenTests(api):
                       ExecuteResponse(
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_PASSED_ON_RETRY'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-retried',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b101',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-retried',
-                                  attempt=1,
-                                  state=TaskState(
-                                      verdict="VERDICT_PASSED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
+                          task_results=retried_task_results,
+                          consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=retried_task_results)
+                          ])
               }),
       ))
 
-  yield api.test(
-      'end-to-end execution with retried tasks',
-      api.properties(
-          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
-                                     config=_test_config('foo'))),
-      _generic_enumerate_response(api),
-      api.cros_test_platform.set_execute_luciexe_response(
-          'execute',
-          ExecuteResponses(
-              tagged_responses={
-                  'default':
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_PASSED_ON_RETRY'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-retried',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b101',
-                                  log_url='logs://bar/baz1',
-                                  name='foo-retried',
-                                  attempt=1,
-                                  state=TaskState(
-                                      verdict="VERDICT_PASSED_ON_RETRY",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
-              }),
-      ))
-
+  task_result_baz = ExecuteResponse.TaskResult(
+      name='baz',
+      state=TaskState(life_cycle="LIFE_CYCLE_REJECTED"),
+  )
+  task_result_foo = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100', log_url='logs://bar/baz', name='foo',
+      state=TaskState(life_cycle="LIFE_CYCLE_REJECTED"), rejected_dimensions=[
+          ExecuteResponse.TaskResult.RejectedTaskDimension(
+              key='dim1', value='val1'),
+          ExecuteResponse.TaskResult.RejectedTaskDimension(
+              key='dim2', value='val2'),
+      ])
   yield api.test(
       'end-to-end execution with rejected tasks',
       api.properties(
@@ -1169,29 +1127,25 @@ def GenTests(api):
                           task_results=[
                               # Include one result with task_url and
                               # rejected_task_dimensions, and one without.
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz', name='foo',
-                                  state=TaskState(
-                                      life_cycle="LIFE_CYCLE_REJECTED"),
-                                  rejected_dimensions=[
-                                      ExecuteResponse.TaskResult
-                                      .RejectedTaskDimension(
-                                          key='dim1', value='val1'),
-                                      ExecuteResponse.TaskResult
-                                      .RejectedTaskDimension(
-                                          key='dim2', value='val2'),
-                                  ]),
-                              ExecuteResponse.TaskResult(
-                                  name='baz',
-                                  state=TaskState(
-                                      life_cycle="LIFE_CYCLE_REJECTED"),
-                              ),
+                              task_result_foo,
+                              task_result_baz,
+                          ],
+                          consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[task_result_foo]),
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[task_result_baz]),
                           ],
                       )
               }),
       ))
 
+  pending_task_result = ExecuteResponse.TaskResult(
+      task_url=None,
+      log_url=None,
+      name='foo-pending',
+      state=TaskState(life_cycle="LIFE_CYCLE_PENDING"),
+  )
   yield api.test(
       'end-to-end execution with pending tasks',
       api.properties(
@@ -1207,18 +1161,24 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_PENDING',
                                           verdict='VERDICT_FAILED'),
                           task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url=None,
-                                  log_url=None,
-                                  name='foo-pending',
-                                  state=TaskState(
-                                      life_cycle="LIFE_CYCLE_PENDING"),
-                              ),
+                              pending_task_result,
+                          ],
+                          consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[pending_task_result]),
                           ],
                       )
               }),
       ))
 
+  task_results = [
+      ExecuteResponse.TaskResult(
+          task_url=None,
+          log_url=None,
+          name='foo-cancelled',
+          state=TaskState(life_cycle="LIFE_CYCLE_CANCELLED"),
+      ),
+  ]
   yield api.test(
       'end-to-end execution with cancelled tasks',
       api.properties(
@@ -1233,18 +1193,21 @@ def GenTests(api):
                       ExecuteResponse(
                           state=TaskState(life_cycle='LIFE_CYCLE_CANCELLED',
                                           verdict='VERDICT_FAILED'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url=None,
-                                  log_url=None,
-                                  name='foo-cancelled',
-                                  state=TaskState(
-                                      life_cycle="LIFE_CYCLE_CANCELLED"),
-                              ),
+                          task_results=task_results,
+                          consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=task_results),
                           ],
-                      )
+                      ),
               }),
       ))
+
+  aborted_task_result = ExecuteResponse.TaskResult(
+      task_url=None,
+      log_url=None,
+      name='foo-aborted',
+      state=TaskState(life_cycle="LIFE_CYCLE_ABORTED"),
+  )
   yield api.test(
       'end-to-end execution with aborted tasks',
       api.properties(
@@ -1259,16 +1222,11 @@ def GenTests(api):
                       ExecuteResponse(
                           state=TaskState(life_cycle='LIFE_CYCLE_ABORTED',
                                           verdict='VERDICT_FAILED'),
-                          task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url=None,
-                                  log_url=None,
-                                  name='foo-aborted',
-                                  state=TaskState(
-                                      life_cycle="LIFE_CYCLE_ABORTED"),
-                              ),
-                          ],
-                      )
+                          task_results=[aborted_task_result
+                                       ], consolidated_results=[
+                                           ExecuteResponse.ConsolidatedResult(
+                                               attempts=task_results)
+                                       ])
               }),
       ))
 
@@ -1308,6 +1266,20 @@ def GenTests(api):
               }),
       ))
 
+  task_result_foo = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='foo-failed',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
+  task_result_baz = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='baz-failed',
+      state=TaskState(verdict="VERDICT_FAILED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
   yield api.test(
       'execution with two failed invocations',
       api.properties(
@@ -1340,34 +1312,26 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_FAILED'),
                           task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-failed',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      ),
+                              task_result_foo,
+                          ]),
                   'second':
                       ExecuteResponse(
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_FAILED'),
                           task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='baz-failed',
-                                  state=TaskState(
-                                      verdict="VERDICT_FAILED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
+                              task_result_baz,
                           ],
                       ),
               }),
       ))
 
+  task_result_foo = ExecuteResponse.TaskResult(
+      task_url='foo://bar/baz/b100',
+      log_url='logs://bar/baz',
+      name='foo-passed',
+      state=TaskState(verdict="VERDICT_PASSED",
+                      life_cycle='LIFE_CYCLE_COMPLETED'),
+  )
   yield api.test(
       'end-to-end multi-requests',
       api.properties(
@@ -1395,16 +1359,12 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_PASSED'),
                           task_results=[
-                              ExecuteResponse.TaskResult(
-                                  task_url='foo://bar/baz/b100',
-                                  log_url='logs://bar/baz',
-                                  name='foo-passed',
-                                  state=TaskState(
-                                      verdict="VERDICT_PASSED",
-                                      life_cycle='LIFE_CYCLE_COMPLETED'),
-                              ),
-                          ],
-                      )
+                              task_result_foo,
+                          ], consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(attempts=[
+                                  task_result_foo,
+                              ]),
+                          ])
               }),
       ),
       api.post_check(lambda check, steps: check(
