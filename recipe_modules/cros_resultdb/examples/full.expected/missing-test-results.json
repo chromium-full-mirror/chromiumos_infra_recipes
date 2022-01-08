@@ -1,0 +1,292 @@
+[
+  {
+    "cmd": [],
+    "name": "upload chromium test results to rdb"
+  },
+  {
+    "cmd": [],
+    "name": "upload chromium test results to rdb.ensure result_adapter",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_adapter",
+      "-ensure-file",
+      "infra/tools/result_adapter/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload chromium test results to rdb.ensure result_adapter.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-var",
+      "board:board",
+      "-var",
+      "build:board-cq/R11-123.45",
+      "-var",
+      "test_suite:fake-suite",
+      "-tag",
+      "test_suite:fake-suite",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "skylab-test-runner",
+      "-result-file",
+      "/path/to/results",
+      "-artifact-directory",
+      "/path/to/results",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload chromium test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload test results to rdb"
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateArtifacts",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test results to rdb.upload_invocation_artifacts",
+    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"stainless_logs\", \"contents\": \"Z3M6Ly9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi9VVUlEL2xvZ3M=\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"artifact\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"artifactId\": \"stainless_logs\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"contents\": \"Z3M6Ly9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi9VVUlEL2xvZ3M=\"@@@",
+      "@@@STEP_LOG_LINE@json.input@      }, @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"parent\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-var",
+      "board:board",
+      "-var",
+      "build:board-cq/R11-123.45",
+      "-var",
+      "test_suite:fake-suite",
+      "-tag",
+      "test_suite:fake-suite",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "skylab-test-runner",
+      "-result-file",
+      "/path/to/results",
+      "-artifact-directory",
+      "/path/to/results",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload missing test cases",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"missing-test\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"some-key\": \"some-value\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"another-missing-test\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"some-key\": \"some-value\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload missing test cases (2)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"missing-test\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"some-key\": \"some-value\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"another-missing-test\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"some-key\": \"some-value\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/missing-test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"missing-test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/another-missing-test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"another-missing-test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"missing-test\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"board\": \"fake-board\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"some-key\": \"some-value\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }, @@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"another-missing-test\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"board\": \"fake-board\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"some-key\": \"some-value\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

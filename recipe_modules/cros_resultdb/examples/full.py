@@ -23,6 +23,11 @@ def RunSteps(api):
   rdb_config = api.json.loads(api.properties.get('rdb_config'))
   api.cros_resultdb.upload(rdb_config,
                            'gs://chromeos-test-logs/common-env/UUID/logs')
+  api.cros_resultdb.report_missing_test_cases(
+      api.properties.get('missing_test_names'), base_variant={
+          'some-key': 'some-value',
+          'board': 'fake-board'
+      })
 
 
 def GenTests(api):
@@ -98,6 +103,18 @@ def GenTests(api):
                        'upload chromium test results to rdb'),
       api.post_process(post_process.MustRun,
                        'upload chromium test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'missing-test-results',
+      api.buildbucket.ci_build(),
+      api.properties(
+          test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
+          rdb_config=rdb_config_json,
+          missing_test_names=['missing-test', 'another-missing-test']),
+      api.step_data('upload missing test cases', api.raw_io.stream_output('{}'),
+                    retcode=1),
+      api.post_process(post_process.MustRun, 'upload missing test cases (2)'),
   )
 
   yield api.test(

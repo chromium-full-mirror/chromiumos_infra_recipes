@@ -59,7 +59,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       test_results_path (Path): Path to test_results/.
       suite_name (str): Name of the whole test suite.
       tag (str): Tag for this execution. Used to distinguish archive folders.
-      tests list(str): List of tests that were executed.
+      tests list(str): List of tests that should have been executed.
 
     Returns:
       A consolidated Data Structure summarizing all results from a run.
@@ -69,7 +69,12 @@ class TastResultsApi(recipe_api.RecipeApi):
     with self.m.step.nest('process tast output'):
       test_results = self._read_results_json(test_results_path)
       test_cases = [self.convert_to_testcaseresult(r) for r in test_results]
-      self.upload_to_resultdb(test_results_path, suite_name)
+      reported_tests = set([tc.name for tc in test_cases])
+      missing_test_names = [
+          test for test in tests if test not in reported_tests
+      ]
+
+      self.upload_to_resultdb(test_results_path, suite_name, missing_test_names)
 
       # If even one test failed, the suite should report failure.
       all_verdicts = [t.verdict for t in test_cases]
@@ -79,7 +84,7 @@ class TastResultsApi(recipe_api.RecipeApi):
 
       if len(test_cases) < len(tests):  #pragma: nocover
         overall_state.verdict = TaskState.VERDICT_FAILED
-        test_cases += self.missing_test_cases(tests, test_cases)
+        test_cases += self.create_missing_test_results(missing_test_names)
       elif TaskState.VERDICT_FAILED in all_verdicts:
         overall_state.verdict = TaskState.VERDICT_FAILED
       return ExecuteResponse.TaskResult(name=suite_name, state=overall_state,
@@ -112,22 +117,20 @@ class TastResultsApi(recipe_api.RecipeApi):
         for result in list_of_results
     ]
 
-  def missing_test_cases(self, tests, test_cases):
-    """Create missing tests cases.
+  def create_missing_test_results(self, missing_test_names):
+    """Create test results for the missing test cases.
 
     Args:
-      tests list(str): list of tests that should have run.
-      test_cases list(TestCaseResult): test_cases in the streamed_results.jsonl.
+      missing_test_names list(str): Tests that should have run but didn't.
 
-    Returns: list(TestCaseResult) the missing tests cases.
+    Returns:
+      list(TestCaseResult) Test results for the missing tests cases.
     """
-    reported_tests = set([tc.name for tc in test_cases])
     return [
         ExecuteResponse.TaskResult.TestCaseResult(
             name=test, verdict=TaskState.VERDICT_FAILED,
             human_readable_summary='Test did not run')
-        for test in tests
-        if test not in reported_tests
+        for test in missing_test_names
     ]
 
   def convert_to_testcaseresult(self, test_result):
@@ -287,7 +290,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       tests_to_retry = list(set(tests_to_retry))
       return tests_to_retry, requires_restart
 
-  def upload_to_resultdb(self, test_results_path, suite_name):
+  def upload_to_resultdb(self, test_results_path, suite_name,
+                         missing_test_names):
     """Upload the test results to ResultDB.
 
     Args:
@@ -308,3 +312,5 @@ class TastResultsApi(recipe_api.RecipeApi):
         },
     }
     self.m.cros_resultdb.upload(config)
+    self.m.cros_resultdb.report_missing_test_cases(missing_test_names,
+                                                   config.get('base_variant'))

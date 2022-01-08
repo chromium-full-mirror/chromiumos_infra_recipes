@@ -6,10 +6,12 @@ import base64
 import os
 import re
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, ParseDict
 
 from recipe_engine import recipe_api
 
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.test_platform.request import Request
 
@@ -322,3 +324,59 @@ class ResultDBCommand(recipe_api.RecipeApi):
       ])
     self.m.resultdb.exonerate(test_exonerations,
                               step_name="exonerate non-critical failures")
+
+  def report_missing_test_cases(self, test_names, base_variant):
+    """Upload test results for missing test cases to ResultDB.
+
+    Args:
+      test_names (str): The names of the tests that should have run but did not.
+      base_variant (dict): Variant key-value pairs to attach to the test
+          results.
+    """
+    # Return early if there are no missing tests.
+    if not test_names:
+      return
+
+    variant = ParseDict({'def': base_variant},
+                        common_pb2.Variant()) if base_variant else None
+    reqs = []
+    for test in test_names:
+      test_result = test_result_pb2.TestResult(
+          test_id=test, result_id=str(self.m.buildbucket.build.id),
+          status=test_result_pb2.SKIP, expected=False, variant=variant)
+      test_result_req = recorder_pb2.CreateTestResultRequest(
+          invocation=self.m.resultdb.current_invocation,
+          test_result=test_result)
+      reqs.append(test_result_req)
+    req = recorder_pb2.BatchCreateTestResultsRequest(
+        invocation=self.m.resultdb.current_invocation, requests=reqs)
+
+    step_test_data = self.m.json.dumps({
+        'testResults': [{
+            'name':
+                '%s/test/%s/results/%s' %
+                (self.m.resultdb.current_invocation, test,
+                 str(self.m.buildbucket.build.id)),
+            'resultId':
+                str(self.m.buildbucket.build.id),
+            'status':
+                'SKIP',
+            'testId':
+                test,
+        } for test in test_names]
+    })
+    # ResultDB step failures should not fail the build.
+    # TODO(b/206989022): Consider refactoring this to use the exponential
+    # retries decorator.
+    upload_status = 'SUCCESS'
+    for _ in range(2):
+      try:
+        self.m.resultdb._rpc(  # pylint: disable=protected-access
+            'upload missing test cases', 'luci.resultdb.v1.Recorder',
+            'BatchCreateTestResults', req=MessageToDict(req),
+            include_update_token=True, step_test_data=lambda: self.m.raw_io.
+            test_api.stream_output(step_test_data))
+        break
+      except self.m.step.StepFailure:
+        upload_status = 'WARNING'
+    self.m.step.active_result.presentation.status = upload_status

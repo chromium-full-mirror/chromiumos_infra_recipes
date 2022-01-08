@@ -62,6 +62,7 @@ CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
 RESULTDB_UPLOAD_EXP = 'chromeos.test_runner.upload_to_resultdb'
 RESULTDB_EXPS = [CROS_GERRIT_RESULTS_EXP, RESULTDB_UPLOAD_EXP]
 
+TAST_MISSING_TEST_KEY = 'tast_missing_test'
 
 
 # API STEP HELPERS
@@ -234,6 +235,28 @@ def _generate_resultdb_variant_def(api, request):
   return base_variant
 
 
+def _upload_missing_tast_results(api, base_dir, base_variant):
+  """Upload test results for missing Tast test cases to ResultDB.
+
+  Args:
+    base_dir (string): The path of the base test results on the drone server.
+    base_variant (dict): Variant key-value pairs to attach to the test
+          results.
+  """
+  keyval_file = os.path.join(base_dir, 'autoserv_test', 'keyval')
+  try:
+    content = api.file.read_text('read keyval file', keyval_file,
+                                 test_data='').splitlines()
+  except api.file.Error:
+    content = []
+  missing_tests = []
+  for line in content:
+    if line.startswith(TAST_MISSING_TEST_KEY):
+      test = line.split('=')[-1]
+      missing_tests.append(test)
+  api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant)
+
+
 def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
@@ -287,10 +310,10 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   }
 
   api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
+  _upload_missing_tast_results(api, base_dir, config.get('base_variant'))
   api.cros_resultdb.apply_exonerations(
       [api.cros_resultdb.current_invocation_id],
       properties.request.default_test_execution_behavior)
-
 
 def _execution_steps_for_test(api, properties, interface, test_metadata,
                               max_duration_sec, dut_state,
@@ -502,6 +525,27 @@ def GenTests(api):
         id=22,
         execution_timeout=duration_pb2.Duration(seconds=timeout_s),
     )
+
+  def _keyval_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.read keyval file',
+        api.file.read_text("""
+parent_job_id=58067d9ab42aca11
+build=board-cq/R00-0.0.0
+suite=sweet-cq
+synchronous_log_data_stainless_url=https://path/to/stainless
+synchronous_log_data_url=gs://path/to/test/logs
+label=board-cq/R00-0.0.0/sweet-cq/test-case
+drone=skylab-drone-xyz
+hostname=chromeos0-row0-rack0-host0
+job_started=0
+status_version=0
+user=test-user
+tast_missing_test.0=foo.SomeTest
+tast_missing_test.1=foo.SomeOtherTest
+tast_missing_test.2=bar.DifferentTest
+tast_missing_test.3=bar.YetAnotherTest
+    """))
 
   # Required for initial module set up.
   def _misc_properties():
@@ -774,11 +818,30 @@ def GenTests(api):
   )
 
   yield api.test(
+      'success-with-resultdb-no-tast-keyval-file',
+      _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
+          'label-board': 'eve',
+          'build': 'eve-cq/R11-123.45'
+      }),
+      api.step_data('execution steps.original_test.read keyval file',
+                    api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
       'success-with-resultdb-tast',
       _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
           'label-board': 'eve',
           'build': 'eve-cq/R11-123.45'
       }),
+      _keyval_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
