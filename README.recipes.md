@@ -1105,22 +1105,22 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#97)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#99)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#111)(build_config, kind, value):**
+&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#113)(build_config, kind, value):**
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#126)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#128)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#205)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#207)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#285)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#287)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1133,9 +1133,9 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#130)(self):**
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#132)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#155)(self, build_report):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#157)(self, build_report):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1148,7 +1148,7 @@ Args:
 Return:
   Reference to input message
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#249)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#251)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
@@ -1164,7 +1164,7 @@ Throws:
 Return:
   Nothing
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#378)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#380)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1173,11 +1173,11 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#217)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#219)(self, status):**
 
 Publish and merge build status.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#225)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#227)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1187,19 +1187,19 @@ Args:
 Return:
   Nothing
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#118)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#120)(self):**
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#122)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#124)(self):**
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#134)(self, build_type):**
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#136)(self, build_type):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#106)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#108)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#320)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#322)(self, step_name):**
 
 Create a context manager to automatically send out step status.
 

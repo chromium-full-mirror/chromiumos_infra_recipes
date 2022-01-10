@@ -431,6 +431,14 @@
       "@@@STEP_LOG_LINE@message@        \"value\": \"78.0.3877.0\"@@@",
       "@@@STEP_LOG_LINE@message@      }, @@@",
       "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\", @@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"78\"@@@",
+      "@@@STEP_LOG_LINE@message@      }, @@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\", @@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"12438.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      }, @@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
       "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\", @@@",
       "@@@STEP_LOG_LINE@message@        \"value\": \"5812377\"@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
@@ -446,7 +454,7 @@
     "name": "build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAiHjIPCAESCzc4LjAuMzg3Ny4wMgsIAxIHNTgxMjM3N0AG\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAiNTIPCAESCzc4LjAuMzg3Ny4wMgYIBRICNzgyDQgEEgkxMjQzOC4wLjAyCwgDEgc1ODEyMzc3\\nQAY=\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -471,7 +479,7 @@
       }
     },
     "name": "build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAiHjIPCAESCzc4LjAuMzg3Ny4wMgsIAxIHNTgxMjM3N0AG\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAiNTIPCAESCzc4LjAuMzg3Ny4wMgYIBRICNzgyDQgEEgkxMjQzOC4wLjAyCwgDEgc1ODEyMzc3\\nQAY=\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
