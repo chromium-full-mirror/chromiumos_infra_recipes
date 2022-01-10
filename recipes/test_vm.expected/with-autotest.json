@@ -4091,7 +4091,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -5080,7 +5080,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

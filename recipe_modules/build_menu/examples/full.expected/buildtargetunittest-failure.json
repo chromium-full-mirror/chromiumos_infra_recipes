@@ -4644,7 +4644,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -5667,7 +5667,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_packages\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -6046,7 +6046,7 @@
   },
   {
     "cmd": [],
-    "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call response",
+    "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call response: bar",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -6085,7 +6085,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call response.read log for foo/bar",
+    "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call response: bar.read log for foo/bar",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

@@ -190,6 +190,7 @@
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
   * [cros_build_api:examples/set_api_return](#recipes-cros_build_api_examples_set_api_return)
   * [cros_build_api:tests/bad_retcodes](#recipes-cros_build_api_tests_bad_retcodes)
+  * [cros_build_api:tests/failed_pkg_data_names](#recipes-cros_build_api_tests_failed_pkg_data_names)
   * [cros_build_api:tests/failed_pkg_log_retrieval](#recipes-cros_build_api_tests_failed_pkg_log_retrieval)
   * [cros_build_api:tests/failed_pkg_names](#recipes-cros_build_api_tests_failed_pkg_names)
   * [cros_build_api:tests/misc](#recipes-cros_build_api_tests_misc)
@@ -2042,7 +2043,7 @@ The version is always queried, and the result cached.
 Returns:
   CrosBuildApi.Version, the version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#333)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#362)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None):**
 
 Call the build API with the given input proto.
 
@@ -2072,6 +2073,20 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#304)(output_proto):**
+
+Function to append a list of failed package to the failure step.
+
+To use this, pass response_lambda=api.cros_build_api.failed_pkg_data_names
+to the build api call.
+
+Args:
+  output_proto (a BuildAPI response): A Response that has a
+      'failed_package_data' attribute.
+
+Returns:
+  A string to append to the response step name.
+
 &emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#273)(input_proto, output_proto, read_raw_fn):**
 
 Function to cat log file and retrieve package name.
@@ -2090,7 +2105,7 @@ Args:
 Returns:
   A list of tuples containing the package name and corresponding build log.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#304)(output_proto):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#333)(output_proto):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2104,7 +2119,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#477)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#506)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2135,7 +2150,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#474)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#503)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#223)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -7493,7 +7508,7 @@ Args:
   response_lambda (fn(output_proto)->str): A function that appends a string
       to the build api response step. Used to make failure step names unique
       across differing root causes.  Default:
-      cros_build_api.failed_pkg_names.
+      cros_build_api.failed_pkg_data_names.
   timeout_sec (int): Step timeout, in seconds, or None for default.
   test_data (str): test response (JSON) from the
       SysrootService/InstallToolchain call, or None to use the default in
@@ -8991,6 +9006,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/bad_retcodes.py#20)(api):**
+### *recipes* / [cros\_build\_api:tests/failed\_pkg\_data\_names](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py)
+
+[DEPS](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py#16)(api):**
 ### *recipes* / [cros\_build\_api:tests/failed\_pkg\_log\_retrieval](/recipe_modules/cros_build_api/tests/failed_pkg_log_retrieval.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/failed_pkg_log_retrieval.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
