@@ -2454,7 +2454,7 @@
       "-p",
       "topic=StarDoctor",
       "-p",
-      "hashtag=config_update",
+      "hashtag=config-update",
       "-p",
       "status=open"
     ],
@@ -2640,7 +2640,7 @@
       "--topic",
       "StarDoctor",
       "--hashtag",
-      "config_update"
+      "config-update"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "env_suffixes": {
@@ -2720,7 +2720,7 @@
       "-p",
       "topic=StarDoctor",
       "-p",
-      "hashtag=config_update",
+      "hashtag=config-update",
       "-p",
       "status=open"
     ],
@@ -2906,7 +2906,7 @@
       "--topic",
       "StarDoctor",
       "--hashtag",
-      "config_update"
+      "config-update"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
