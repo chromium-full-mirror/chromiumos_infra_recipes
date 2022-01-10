@@ -17,7 +17,7 @@ def RunSteps(api):
       'package_name': 'a_test_package'
   }])
   output_proto = api.cros_build_api.SysrootService.InstallPackages(input_proto)
-  api.assertions.assertEqual(len(output_proto.failed_packages), 0)
+  api.assertions.assertEqual(len(output_proto.failed_package_data), 0)
 
 
 def GenTests(api):

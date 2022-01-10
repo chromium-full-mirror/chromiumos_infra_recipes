@@ -387,8 +387,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             },
         },
     )
-    responses['InstallToolchain'] = jsonify(failed_packages=[])
-    responses['InstallPackages'] = jsonify(failed_packages=[])
+    responses['InstallToolchain'] = jsonify(failed_package_data=[])
+    responses['InstallPackages'] = jsonify(failed_package_data=[])
     return responses
 
   @property

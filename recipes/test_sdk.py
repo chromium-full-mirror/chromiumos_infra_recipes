@@ -54,7 +54,7 @@ def RunSteps(api):
               code_coverage=False, empty_sysroot=False,
               testable_packages_optional=False, filter_only_cros_workon=False))
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
-          request, response_lambda=api.cros_build_api.failed_pkg_names,
+          request, response_lambda=api.cros_build_api.failed_pkg_data_names,
           pkg_logs_lambda=api.cros_build_api.failed_pkg_logs)
       pkgs = api.cros_build_api.failed_pkg_logs(request, response,
                                                 api.file.read_raw)

@@ -302,6 +302,35 @@ class CrosBuildApiApi(RecipeApi):
     return logs
 
   @staticmethod
+  def failed_pkg_data_names(output_proto):
+    """Function to append a list of failed package to the failure step.
+
+    To use this, pass response_lambda=api.cros_build_api.failed_pkg_data_names
+    to the build api call.
+
+    Args:
+      output_proto (a BuildAPI response): A Response that has a
+          'failed_package_data' attribute.
+
+    Returns:
+      A string to append to the response step name.
+    """
+    # sort package names, join them with ',', and limit to 50 chars.
+    failed_packages = ','.join(
+        sorted(p.name.package_name for p in output_proto.failed_package_data))
+
+    # Add to the default response step name like: ": package1,package2"
+    # If it's extremely long add elipsis and a fancy sha to make unique.
+    if len(failed_packages) > 50:
+      fp_sha = hashlib.sha256()
+      fp_sha.update(failed_packages)
+      failed_packages = (
+          failed_packages[:50] + ('...(%s)' % fp_sha.hexdigest()[0:4]))
+    if failed_packages:
+      failed_packages = ': ' + failed_packages
+    return failed_packages
+
+  @staticmethod
   def failed_pkg_names(output_proto):
     """Function to append a list of failed package to the failure step.
 

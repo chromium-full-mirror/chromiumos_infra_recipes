@@ -128,7 +128,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       response_lambda (fn(output_proto)->str): A function that appends a string
           to the build api response step. Used to make failure step names unique
           across differing root causes.  Default:
-          cros_build_api.failed_pkg_names.
+          cros_build_api.failed_pkg_data_names.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       test_data (str): test response (JSON) from the
           SysrootService/InstallToolchain call, or None to use the default in
@@ -138,7 +138,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     # If no timeout was given, it is either unlimited, or 30 minutes.
     if timeout_sec == 'DEFAULT':
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 30 * 60
-    response_lambda = response_lambda or self.m.cros_build_api.failed_pkg_names
+    response_lambda = response_lambda or self.m.cros_build_api.failed_pkg_data_names
 
     with self.m.step.nest(name or 'install toolchain') as pres:
       toolchain_cls = self.m.workspace_util.toolchain_cls_applied
@@ -233,7 +233,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         install_pkg_request = _InstallPackagesRequest(dryrun=dryrun)
         response = self.m.cros_build_api.SysrootService.InstallPackages(
             install_pkg_request,
-            response_lambda=self.m.cros_build_api.failed_pkg_names,
+            response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
             timeout=timeout_sec)
 
@@ -248,7 +248,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             '{}|call chromite.api.SysrootService/InstallPackages|{}'.format(
                 name,
                 self.m.cros_build_api.response_step_name(
-                    response, self.m.cros_build_api.failed_pkg_names)))
+                    response, self.m.cros_build_api.failed_pkg_data_names)))
 
         self.m.cros_bisect.set_compile_failures(response.failed_packages,
                                                 step_name,

@@ -621,7 +621,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             request,
             # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
             timeout=3 * 60 * 60,
-            response_lambda=self.m.cros_build_api.failed_pkg_names,
+            response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
                                                      self.m.file.read_raw)
