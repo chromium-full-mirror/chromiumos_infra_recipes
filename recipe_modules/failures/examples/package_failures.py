@@ -19,16 +19,13 @@ def RunSteps(api):
 
     api.assertions.assertRaises(api.step.StepFailure,
                                 api.failures.set_failed_packages, test_step,
-                                [(PackageInfo(package_name='package'), 'test')])
+                                [PackageInfo(package_name='package')])
   with api.step.nest('test2') as test_step:
-    api.assertions.assertRaises(
-        api.step.StepFailure, api.failures.set_failed_packages, test_step,
-        [(PackageInfo(package_name='package1'), 'test log for package1'),
-         (PackageInfo(package_name='package2'), 'test log for package2')])
-  with api.step.nest('test3') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,
-                                api.failures.set_failed_packages, test_step,
-                                [(PackageInfo(package_name='package'), '')])
+                                api.failures.set_failed_packages, test_step, [
+                                    PackageInfo(package_name='package1'),
+                                    PackageInfo(package_name='package2')
+                                ])
 
 
 def GenTests(api):

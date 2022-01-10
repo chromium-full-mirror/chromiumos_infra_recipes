@@ -148,15 +148,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       flags = InstallToolchainRequest.Flags(compile_source=compile_source,
                                             toolchain_changed=toolchain_cls)
-      request = InstallToolchainRequest(sysroot=self.sysroot,
-                                        chroot=self.m.cros_sdk.chroot,
-                                        flags=flags)
       response = self.m.cros_build_api.SysrootService.InstallToolchain(
-          request, response_lambda=response_lambda, timeout=timeout_sec,
+          InstallToolchainRequest(sysroot=self.sysroot,
+                                  chroot=self.m.cros_sdk.chroot, flags=flags),
+          response_lambda=response_lambda, timeout=timeout_sec,
           test_output_data=test_data)
-      pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
-                                                   self.m.file.read_raw)
-      self.m.failures.set_failed_packages(pres, pkgs)
+      self.m.failures.set_failed_packages(pres, response.failed_packages)
 
   def install_packages(self, config, dep_graph, packages=None,
                        artifact_build=False, package_indexes=None,
@@ -252,10 +249,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         self.m.cros_bisect.set_compile_failures(response.failed_packages,
                                                 step_name,
                                                 config.general.critical.value)
-        pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
-                                                     response,
-                                                     self.m.file.read_raw)
-        self.m.failures.set_failed_packages(presentation, pkgs)
+        self.m.failures.set_failed_packages(presentation,
+                                            response.failed_packages)
 
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
                    disk_layout, version=None, timeout_sec=60 * 60,
@@ -286,21 +281,19 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                   for x in image_types
               ]))
       with self.m.step.nest(name or 'build images') as pres:
-        request = CreateImageRequest(
-            build_target=self.sysroot.build_target,
-            chroot=self.m.cros_sdk.chroot,
-            image_types=image_types,
-            builder_path=builder_path,
-            disable_rootfs_verification=disable_rootfs_verification,
-            disk_layout=disk_layout,
-            version=version,
-        )
         response = self.m.cros_build_api.ImageService.Create(
-            request, timeout=timeout_sec,
+            CreateImageRequest(
+                build_target=self.sysroot.build_target,
+                chroot=self.m.cros_sdk.chroot,
+                image_types=image_types,
+                builder_path=builder_path,
+                disable_rootfs_verification=disable_rootfs_verification,
+                disk_layout=disk_layout,
+                version=version,
+            ), timeout=timeout_sec,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
             test_output_data=build_test_data)
-        self.m.failures.set_failed_packages(
-            pres, [(p, '') for p in response.failed_packages])
+        self.m.failures.set_failed_packages(pres, response.failed_packages)
 
         to_test = [
             image for image in response.images if image.type == IMAGE_TYPE_BASE
