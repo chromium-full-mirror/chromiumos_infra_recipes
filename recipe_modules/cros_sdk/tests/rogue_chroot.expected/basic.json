@@ -371,7 +371,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/workspace/chroot"
+      "[CLEANUP]/workspace/chroot",
+      "--recursive"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.unlink chroot in workspace.clean up rogue chroot.list chroot contents",
