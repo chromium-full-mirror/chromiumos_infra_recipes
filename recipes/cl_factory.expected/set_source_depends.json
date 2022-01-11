@@ -2956,6 +2956,47 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate project change lists.working on project project-a.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project-a.check if project [CLEANUP]/chromiumos_workspace/src/project-a exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/project-a"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate project change lists.working on project project-a.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project-a.check if project [CLEANUP]/chromiumos_workspace/src/project-a exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -3269,6 +3310,47 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate project change lists.working on project project-b.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project-b.check if project [CLEANUP]/chromiumos_workspace/src/project-b exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/project-b"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate project change lists.working on project project-b.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project-b.check if project [CLEANUP]/chromiumos_workspace/src/project-b exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -3579,6 +3661,47 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate project change lists.working on project project-c.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project-c.check if project [CLEANUP]/chromiumos_workspace/src/project-c exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/project-c"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate project change lists.working on project project-c.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project-c.check if project [CLEANUP]/chromiumos_workspace/src/project-c exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

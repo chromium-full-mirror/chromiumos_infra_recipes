@@ -8770,6 +8770,47 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "update VERSION-PIN.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay/app-emulation/parallels-desktop.check if project [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay/app-emulation/parallels-desktop exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay/app-emulation/parallels-desktop"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "update VERSION-PIN.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay/app-emulation/parallels-desktop.check if project [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay/app-emulation/parallels-desktop exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",

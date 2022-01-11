@@ -1571,6 +1571,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/config-internal.check if project [CLEANUP]/chromiumos_workspace/src/config-internal exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/config-internal.check if project [CLEANUP]/chromiumos_workspace/src/config-internal exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -2213,6 +2242,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public.check if project [CLEANUP]/chromiumos_workspace/src/project_public exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/project_public"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do replicate_public_config and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/project_public.check if project [CLEANUP]/chromiumos_workspace/src/project_public exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -2522,6 +2580,35 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Do regenerate_test_plan and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/config-internal/test/plans.check if project [CLEANUP]/chromiumos_workspace/src/config-internal/test/plans exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/plans"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Do regenerate_test_plan and create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/config-internal/test/plans.check if project [CLEANUP]/chromiumos_workspace/src/config-internal/test/plans exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

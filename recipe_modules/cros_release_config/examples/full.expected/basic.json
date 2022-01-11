@@ -347,6 +347,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.check if project [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.check if project [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -488,6 +517,35 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.check if project [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.check if project [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {

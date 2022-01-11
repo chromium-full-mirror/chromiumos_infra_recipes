@@ -14,6 +14,7 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.repo.examples.project_infos import (
     ProjectInfo, ProjectInfosProperties)
+from recipe_engine.recipe_api import StepFailure
 
 PROPERTIES = ProjectInfosProperties
 
@@ -26,6 +27,12 @@ def RunSteps(api, properties):
   # api.repo.project_info() instead of project_infos().
   if len(properties.projects) == 1 and not properties.regexes:
     infos = [api.repo.project_info(properties.projects[0])]
+    api.assertions.assertTrue(api.repo.project_exists(properties.projects[0]))
+    api.assertions.assertFalse(api.repo.project_exists('foo/bar'))
+    try:
+      api.assertions.assertFalse(api.repo.project_exists('blah'))
+    except StepFailure:
+      pass
   else:
     infos = api.repo.project_infos(
         projects=list(properties.projects), regexes=list(properties.regexes))
@@ -71,7 +78,12 @@ def GenTests(api):
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
                               branch=api.src_state.default_ref,
                               rrev=api.src_state.default_ref)
-              ])))
+              ])),
+      api.step_data('check if project foo/bar exists.repo info',
+                    stderr=api.raw_io.output('project foo/bar not found')),
+      api.step_data('check if project blah exists.repo info',
+                    stderr=api.raw_io.output('spooky phantom error')),
+  )
 
   test_hash = '0123456789ABCDEFabcdef555555555555555555'
   with_hash = 'galaxy|src/galaxy|cros|%s|%s' % (test_hash,
@@ -87,7 +99,12 @@ def GenTests(api):
               projects=['galaxy'], expected_infos=[
                   ProjectInfo(name='galaxy', path='src/galaxy', remote='cros',
                               branch=api.src_state.default_ref, rrev=test_hash),
-              ])))
+              ])),
+      api.step_data('check if project foo/bar exists.repo info',
+                    stderr=api.raw_io.output('project foo/bar not found')),
+      api.step_data('check if project blah exists.repo info',
+                    stderr=api.raw_io.output('spooky phantom error')),
+  )
 
   yield api.test(
       'two-projects',

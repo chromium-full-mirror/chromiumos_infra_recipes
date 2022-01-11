@@ -4858,7 +4858,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#640)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#676)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -4866,13 +4866,15 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#562)(self, gerrit_change, comment):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#599)(self, gerrit_change, comment, project_path=None):**
 
 Add a comment to the given Gerrit change.
 
 Args:
   gerrit_change (GerritChange): The change to post to.
   comment (str): The comment to post.
+  project_path (Path): If set, will use this as the project path rather than
+    any value inferred from the gerrit_change.
 
 Returns:
   str: The new message ref (primarily for testing).
@@ -4887,7 +4889,7 @@ Args:
 Raises:
   StepFailure if the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#420)(self, project, reviewers=None, ccs=None, topic=None, branch=None, hashtags=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#420)(self, project, reviewers=None, ccs=None, topic=None, branch=None, hashtags=None, project_path=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -4895,7 +4897,8 @@ Assumes one or more local commits exists in the project. The commit message
 is always used as the CL description.
 
 Args:
-  project (str|Path): Any path within the project of interest.
+  project (str|Path): Any path within the project of interest, or the
+    project name.
   reviewers (list[str]): List of reviewer emails. If specified, gerrit will
       email the reviewers.
   ccs (list[str]): List of cc emails. If specified, gerrit will cc the
@@ -4903,6 +4906,8 @@ Args:
   topic (str): Topic to set for the CL.
   branch: Branch argument to be passed to git cl upload
   hashtags (list[str]): List of hashtags to set for the CL.
+  project_path (Path): If set, will use this as the project path rather than
+    any value inferred from the gerrit_change.
 
 Returns:
   GerritChange: The newly created change.
@@ -4944,7 +4949,7 @@ The gerrit patches last fetched.
 
 These may or may not include files, but always include commit info.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#583)(self, gerrit_change, memoize=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#619)(self, gerrit_change, memoize=False):**
 
 Get the description of the given Gerrit change.
 
@@ -4989,7 +4994,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#678)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#716)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -5002,7 +5007,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#611)(self, gerrit_change, description, amend_local=False):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#647)(self, gerrit_change, description, amend_local=False, project_path=None):**
 
 Set the description of the given Gerrit change.
 
@@ -5012,10 +5017,15 @@ Args:
       includes the Change-Id and other essential metadata.
   amend_local (bool): Should you amend the description of the HEAD local
       change as well.
+  project_path (Path): If set, will use this as the project path rather than
+    any value inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#528)(self, gerrit_change, labels, branch=None, ref=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#547)(self, gerrit_change, labels, branch=None, ref=None):**
 
-Set the given labels for the given Gerrit change.
+(Deprecated) Set the given labels for the given Gerrit change.
+
+  This function is deprecated. Use `set_change_labels_remote` where
+  possible.
 
 Args:
   gerrit_change (GerritChange): The change of interest.
@@ -5026,7 +5036,7 @@ Args:
 Returns:
   str: The refspec used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#460)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#479)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
   set_change_labels only works when the change exists in the local checkout.
@@ -5039,12 +5049,15 @@ Args:
 Returns:
   str: The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#654)(self, gerrit_change, retries=0):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#690)(self, gerrit_change, retries=0, project_path=None):**
 
 Submits the given change.
 
 Args:
   gerrit_change (GerritChange): The change to submit.
+  retries (int): How many times to retry `git cl land` should it fail.
+  project_path (Path): If set, will use this as the project path rather than
+    any value inferred from the gerrit_change.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
 [DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6540,11 +6553,11 @@ API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#324)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#325)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -6552,13 +6565,13 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#277)(self, manifest_data):**
+&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#278)(self, manifest_data):**
 
 Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#510)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#535)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -6576,7 +6589,7 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#617)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#642)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -6584,7 +6597,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#468)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#493)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -6604,9 +6617,9 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#70)(self):**
+&emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#71)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#410)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#435)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -6624,7 +6637,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#680)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#705)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -6639,7 +6652,7 @@ Args:
   final_cleanup (bool): Used by cache builder to ensure that all locks
     and uncommitted files are cleaned up after the sync.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#143)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
+&mdash; **def [init](/recipe_modules/repo/api.py#144)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
 Executes 'repo init' with the given arguments.
 
@@ -6658,9 +6671,9 @@ Args:
     concern. Ignored as of go/cros-source-cache-health.
   verbose (bool): Whether to produce verbose output.
 
-&mdash; **def [initialize](/recipe_modules/repo/api.py#59)(self):**
+&mdash; **def [initialize](/recipe_modules/repo/api.py#60)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#437)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#462)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -6677,11 +6690,21 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#674)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#699)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#395)(self, project=None):**
+&mdash; **def [project\_exists](/recipe_modules/repo/api.py#411)(self, project):**
+
+Use 'repo info' to determine if the project exists in the checkout.
+
+Args:
+  project (str): Project name or path to return info for.
+
+Returns:
+  (bool): whether or not the project exists.
+
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#396)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -6692,7 +6715,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#338)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#339)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -6712,9 +6735,9 @@ Args:
 Returns:
   list[ProjectInfo]: Requested project infos.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#66)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#67)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#310)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#311)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -6722,7 +6745,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#217)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False, force_remove_dirty=False, prune=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#218)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False, force_remove_dirty=False, prune=None):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -6744,7 +6767,7 @@ Args:
     uncommitted modifications if projects no longer exist in the manifest.
   prune (bool): Delete refs that no longer exist on the remote.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#291)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#292)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
@@ -6753,7 +6776,7 @@ Args:
   manifest_data (str): Manifest XML data to use for the sync.
   kwargs: Keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [version](/recipe_modules/repo/api.py#139)(self):**
+&mdash; **def [version](/recipe_modules/repo/api.py#140)(self):**
 
 Prints the current version information of repo.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
@@ -9530,11 +9553,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#15)(api):**
 ### *recipes* / [gerrit:examples/create\_change](/recipe_modules/gerrit/examples/create_change.py)
 
-[DEPS](/recipe_modules/gerrit/examples/create_change.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gerrit/examples/create_change.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#15)(api):**
 ### *recipes* / [gerrit:examples/fetch\_patch\_sets](/recipe_modules/gerrit/examples/fetch_patch_sets.py)
 
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10104,7 +10127,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos.py#22)(api, properties):**
 ### *recipes* / [repo:tests/find\_root](/recipe_modules/repo/tests/find_root.py)
 
 [DEPS](/recipe_modules/repo/tests/find_root.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]

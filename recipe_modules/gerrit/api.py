@@ -418,14 +418,15 @@ class GerritApi(RecipeApi):
       return
 
   def create_change(self, project, reviewers=None, ccs=None, topic=None,
-                    branch=None, hashtags=None):
+                    branch=None, hashtags=None, project_path=None):
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
     is always used as the CL description.
 
     Args:
-      project (str|Path): Any path within the project of interest.
+      project (str|Path): Any path within the project of interest, or the
+        project name.
       reviewers (list[str]): List of reviewer emails. If specified, gerrit will
           email the reviewers.
       ccs (list[str]): List of cc emails. If specified, gerrit will cc the
@@ -433,16 +434,32 @@ class GerritApi(RecipeApi):
       topic (str): Topic to set for the CL.
       branch: Branch argument to be passed to git cl upload
       hashtags (list[str]): List of hashtags to set for the CL.
+      project_path (Path): If set, will use this as the project path rather than
+        any value inferred from the gerrit_change.
 
     Returns:
       GerritChange: The newly created change.
     """
     with self.m.step.nest('create gerrit change for %s' % project) as pres:
+      project_info = None
+      # Attempt to get project_info. If the project does not exist, we'll assume
+      # `project` is the project name and use `project_path` as our cwd.
+      # Otherwise, we'll infer the information from the repo.project_info
+      # results.
       with self.m.context(cwd=self.m.src_state.workspace_path):
-        project_info = self.m.repo.project_info(project)
+        if self.m.repo.project_exists(project):
+          project_info = self.m.repo.project_info(project)
 
-      with self.m.context(
-          cwd=self.m.src_state.workspace_path.join(project_info.path)):
+      if project_path:
+        cwd = project_path
+      else:
+        if not project_info:
+          raise StepFailure(
+              'project {} does not exist in checkout and `project_path` was not supplied'
+              .format(project))
+        cwd = self.m.src_state.workspace_path.join(project_info.path)
+
+      with self.m.context(cwd=cwd):
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True,
                              target_branch=branch)
@@ -454,7 +471,9 @@ class GerritApi(RecipeApi):
 
         # The URL does not always include the project name, so always set it.
         change = self.parse_gerrit_change(gerrit_change_url)
-        change.project = project_info.name
+        # If there's no project_info (i.e. we're outside of a repo checkout),
+        # use the project kwarg as the project name.
+        change.project = project_info.name if project_info else project
         return change
 
   def set_change_labels_remote(self, gerrit_change, labels):
@@ -526,7 +545,10 @@ class GerritApi(RecipeApi):
     return data
 
   def set_change_labels(self, gerrit_change, labels, branch=None, ref=None):
-    """Set the given labels for the given Gerrit change.
+    """(Deprecated) Set the given labels for the given Gerrit change.
+
+      This function is deprecated. Use `set_change_labels_remote` where
+      possible.
 
     Args:
       gerrit_change (GerritChange): The change of interest.
@@ -542,6 +564,7 @@ class GerritApi(RecipeApi):
           ['%s+%d' % (label.key, value) for label, value in labels.iteritems()])
       pres.logs['labels'] = ','.join(full_labels)
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
+
       with self.m.context(cwd=self.m.src_state.workspace_path):
         project_info = self.m.repo.project_info(gerrit_change.project)
 
@@ -559,12 +582,28 @@ class GerritApi(RecipeApi):
         self.m.git.push(project_info.remote, ref)
       return ref
 
-  def add_change_comment(self, gerrit_change, comment):
+  def _get_project_path(self, gerrit_change):
+    """Return the path of the project associated with the given gerrit_change.
+
+    Args:
+      gerrit_change (GerritChange): The change of interest.
+
+    Returns:
+      Path: The path of the project.
+    """
+    with self.m.context(cwd=self.m.src_state.workspace_path):
+      project_info = self.m.repo.project_info(gerrit_change.project)
+
+    return self.m.src_state.workspace_path.join(project_info.path)
+
+  def add_change_comment(self, gerrit_change, comment, project_path=None):
     """Add a comment to the given Gerrit change.
 
     Args:
       gerrit_change (GerritChange): The change to post to.
       comment (str): The comment to post.
+      project_path (Path): If set, will use this as the project path rather than
+        any value inferred from the gerrit_change.
 
     Returns:
       str: The new message ref (primarily for testing).
@@ -573,11 +612,8 @@ class GerritApi(RecipeApi):
       pres.logs['comment text'] = [comment]
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
 
-      with self.m.context(cwd=self.m.src_state.workspace_path):
-        project_info = self.m.repo.project_info(gerrit_change.project)
-
-      with self.m.context(
-          cwd=self.m.src_state.workspace_path.join(project_info.path)):
+      cwd = project_path or self._get_project_path(gerrit_change)
+      with self.m.context(cwd=cwd):
         self.m.git_cl('comment', ['-i', gerrit_change.change, '-a', comment])
 
   def get_change_description(self, gerrit_change, memoize=False):
@@ -609,7 +645,7 @@ class GerritApi(RecipeApi):
       return description
 
   def set_change_description(self, gerrit_change, description,
-                             amend_local=False):
+                             amend_local=False, project_path=None):
     """Set the description of the given Gerrit change.
 
     Args:
@@ -618,6 +654,9 @@ class GerritApi(RecipeApi):
           includes the Change-Id and other essential metadata.
       amend_local (bool): Should you amend the description of the HEAD local
           change as well.
+      project_path (Path): If set, will use this as the project path rather than
+        any value inferred from the gerrit_change.
+
     """
     with self.m.step.nest('set CL %d description' %
                           gerrit_change.change) as pres:
@@ -628,11 +667,8 @@ class GerritApi(RecipeApi):
       pres.links['gerrit change'] = gerrit_change_url
       pres.logs['description text'] = [description]
 
-      with self.m.context(cwd=self.m.src_state.workspace_path):
-        project_info = self.m.repo.project_info(gerrit_change.project)
-
-      with self.m.context(
-          cwd=self.m.src_state.workspace_path.join(project_info.path)):
+      cwd = project_path or self._get_project_path(gerrit_change)
+      with self.m.context(cwd=cwd):
         self.m.git_cl.set_description(description, patch_url=gerrit_change_url)
         if amend_local:
           self.m.git.amend_head_message(description)
@@ -651,19 +687,21 @@ class GerritApi(RecipeApi):
           self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
           message=message)
 
-  def submit_change(self, gerrit_change, retries=0):
+  def submit_change(self, gerrit_change, retries=0, project_path=None):
     """Submits the given change.
 
     Args:
       gerrit_change (GerritChange): The change to submit.
+      retries (int): How many times to retry `git cl land` should it fail.
+      project_path (Path): If set, will use this as the project path rather than
+        any value inferred from the gerrit_change.
+
     """
     with self.m.step.nest('submit CL %d' % gerrit_change.change) as pres:
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
-      with self.m.context(cwd=self.m.src_state.workspace_path):
-        project_info = self.m.repo.project_info(gerrit_change.project)
 
-      with self.m.context(
-          cwd=self.m.src_state.workspace_path.join(project_info.path)):
+      cwd = project_path or self._get_project_path(gerrit_change)
+      with self.m.context(cwd=cwd):
         self.m.git_cl('issue', [gerrit_change.change])
         # If retries are requested, attempt `git cl land` until it lands or we
         # run out of tries.

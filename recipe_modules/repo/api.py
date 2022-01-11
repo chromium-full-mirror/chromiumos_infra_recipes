@@ -16,6 +16,7 @@ import types
 from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import StepFailure
 from xml.etree import cElementTree as ElementTree
 
 MANIFEST_MOCK = """
@@ -406,6 +407,30 @@ class RepoApi(recipe_api.RecipeApi):
     project_infos = self.project_infos(projects=[project])
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]
+
+  def project_exists(self, project):
+    """Use 'repo info' to determine if the project exists in the checkout.
+
+    Args:
+      project (str): Project name or path to return info for.
+
+    Returns:
+      (bool): whether or not the project exists.
+    """
+    with self.m.step.nest('check if project {} exists'.format(project)):
+      cmd = ['info', project]
+      step_data = self._step(cmd,
+                             stderr=self.m.raw_io.output(add_output_log=True),
+                             ok_ret=[0, 1])
+
+      stderr = step_data.stderr
+      if stderr.strip():
+        errmsg = 'project {} not found'.format(project)
+        # Non-empty stderr
+        if errmsg not in stderr:
+          raise StepFailure('unexpected error: {}'.format(stderr))
+        return False
+      return True
 
   def ensure_pinned_manifest(self, projects=None, regexes=None, test_data=None,
                              step_name=None):
