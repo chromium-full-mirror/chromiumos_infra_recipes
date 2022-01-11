@@ -14,6 +14,7 @@ DEPS = [
     'cros_artifacts',
     'cros_paygen',
     'cros_version',
+    'gerrit',
     'git',
     'repo',
     'src_state',

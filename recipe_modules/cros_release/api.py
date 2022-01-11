@@ -93,8 +93,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         manifest_data = self.m.repo.manifest(step_name='create pinned manifest',
                                              pinned=True)
 
-      tmp_dir = self.m.path.mkdtemp(prefix='manifest-versions')
-      with self.m.context(cwd=tmp_dir):
+      manifest_versions_checkout = self.m.path.mkdtemp(
+          prefix='manifest-versions')
+      with self.m.context(cwd=manifest_versions_checkout):
         # Clone manifest-versions repo to current path.
         with self.m.step.nest('clone manifest-versions'):
           self.m.git.clone(self.manifest_versions_url, branch=branch,
@@ -103,7 +104,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
         version = self.m.cros_version.version
         manifest_file = self.m.path.join(specs_dir, version.buildspec_filename)
-        manifest_path = self.m.path.join(tmp_dir, manifest_file)
+        manifest_path = self.m.path.join(manifest_versions_checkout,
+                                         manifest_file)
         manifest_dir = self.m.path.dirname(manifest_path)
         self.m.file.ensure_directory('ensure {} exists'.format(manifest_dir),
                                      manifest_dir)
@@ -133,9 +135,18 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 manifest_file, branch)):
               self.m.git.add([manifest_file])
               self.m.git.commit(commit_message)
-              self.m.git.push('origin',
-                              'HEAD:refs/for/{}%submit'.format(branch),
-                              dry_run=dry_run)
+              if not dry_run:
+                refspec = self.m.git.get_branch_refspec(branch)
+                change = self.m.gerrit.create_change(
+                    'chromeos/manifest-versions', branch=refspec,
+                    project_path=manifest_versions_checkout)
+                labels = {
+                    self.m.gerrit.Label.BOT_COMMIT: 1,
+                    self.m.gerrit.Label.VERIFIED: 1,
+                }
+                self.m.gerrit.set_change_labels_remote(change, labels)
+                self.m.gerrit.submit_change(
+                    change, project_path=manifest_versions_checkout)
 
         manifest_gs_path = ''
         if gs_location:
