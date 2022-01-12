@@ -879,8 +879,6 @@
       "-var",
       "board:eve",
       "-var",
-      "build:eve-cq/R11-123.45",
-      "-var",
       "test_config:fake_board-cq.hw.bvt-tast-cq",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",

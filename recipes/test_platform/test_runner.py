@@ -222,10 +222,6 @@ def _generate_resultdb_variant_def(api, request):
   if board:
     base_variant['board'] = board[0]
 
-  build = api.cros_tags.get_values('build')
-  if build:
-    base_variant['build'] = build[0]
-
   # The template of a parent_request_uid is
   # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
   # tagged_request key is the test config's display_name in

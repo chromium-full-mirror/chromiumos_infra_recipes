@@ -10533,7 +10533,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#472)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#468)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#122)(api, interface, test_metadata, result):**
 
@@ -10549,7 +10549,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#403)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#399)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -10565,7 +10565,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#374)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#370)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
