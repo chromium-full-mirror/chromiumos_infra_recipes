@@ -413,6 +413,10 @@ def _classify_request_failure(consolidated_results):
     The state for the given request based on the results.
   """
 
+  # There were no tests attempted for the suite (e.g. enumeration errors).
+  if not consolidated_results:
+    return _REQUEST_INCOMPLETE_FAILURE
+
   for result in consolidated_results:
     if all(t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED
            for t in result.attempts):
@@ -1501,7 +1505,6 @@ def GenTests(api):
   {
     "tagged_responses": {
       "default": {
-        "autotest_invocations": [{"test": {"name": "foo-test"}}],
         "error_summary": "some tests are missing"
       }
     }
@@ -1514,7 +1517,7 @@ def GenTests(api):
                   'default':
                       ExecuteResponse(
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_PASSED'))
+                                          verdict='VERDICT_FAILED'))
               }),
       ))
 
@@ -1565,6 +1568,9 @@ def GenTests(api):
                                           verdict='VERDICT_FAILED'),
                           task_results=[
                               task_result_foo,
+                          ], consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[task_result_foo])
                           ]),
                   'second':
                       ExecuteResponse(
@@ -1572,8 +1578,10 @@ def GenTests(api):
                                           verdict='VERDICT_FAILED'),
                           task_results=[
                               task_result_baz,
-                          ],
-                      ),
+                          ], consolidated_results=[
+                              ExecuteResponse.ConsolidatedResult(
+                                  attempts=[task_result_baz])
+                          ]),
               }),
       ))
 
