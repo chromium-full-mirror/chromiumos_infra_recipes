@@ -111,11 +111,12 @@ func FetchAndCherryPick(ctx context.Context, revision *gerrit.RevisionInfo, url 
 	// This tool should probably be rewritten anyways.
 	args := []string{"apply", "--3way", "--ignore-whitespace", patchFile}
 	ignore_filetypes := []string{
-		"7z", "aiqb", "a", "bin", "binaryproto", "bmp", "bz2", "csbin", "db", "ddc", "dll",
-		"docx", "dv", "efi", "elf", "exe", "fw", "gif", "hex", "jar", "jpeg",
-		"jpg", "jsonproto", "lib", "mp3", "mp4", "ogg", "opus", "pcap", "pdf", "png", "pnvm",
-		"rar", "raw", "rtf", "sbin", "sfi", "so", "spkg", "svg", "sys", "tlv", "ucode",
-		"vbt", "wav", "whl", "xlsx", "xz", "zip",
+		"7z", "aiqb", "a", "bin", "binaryproto", "bmp", "bz2", "csbin",
+		"db", "ddc", "dll", "docx", "dv", "efi", "elf", "exe", "fw",
+		"gif", "hex", "jar", "jpeg", "jpg", "jsonproto", "lib", "mp3",
+		"mp4", "ogg", "opus", "pcap", "pdf", "pkg", "png", "pnvm",
+		"rar", "raw", "rtf", "sbin", "sfi", "so", "spkg", "svg", "sys",
+		"tlv", "ucode", "vbt", "wav", "whl", "xlsx", "xz", "zip",
 	}
 	for _, filetype := range ignore_filetypes {
 		args = append(args, "--exclude", "*."+filetype)
