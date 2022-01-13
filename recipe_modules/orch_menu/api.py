@@ -270,6 +270,16 @@ class OrchMenuApi(RecipeApi):
           # Any changes we have must be submittable.
           self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
 
+          # Add 'hide-test-results-in-gerrit' tag if not yet elegible for
+          # go/cros-gerrit-results.
+          # TODO(b/214090478): Remove after go/cros-gerrit-results-rollout.
+          if not (self.m.skylab.resultdb_elegible_projects and
+                  all(x.project in self.m.skylab.resultdb_elegible_projects
+                      for x in self.gerrit_changes)):
+            self.m.cros_tags.add_tags_to_current_build(
+                **{'hide-test-results-in-gerrit': 'true'})
+
+
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()
 

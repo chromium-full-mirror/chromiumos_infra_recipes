@@ -1737,6 +1737,13 @@
   },
   {
     "cmd": [],
+    "name": "buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-test-results-in-gerrit\": [\"true\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "find inflight orchestrator",
     "~followup_annotations": [
       "@@@STEP_TEXT@found no inflight run@@@"

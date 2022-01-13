@@ -1780,6 +1780,13 @@
   },
   {
     "cmd": [],
+    "name": "buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-test-results-in-gerrit\": [\"true\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@3 new, 0 recycled@@@"
@@ -3084,9 +3091,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/examples/full.py\", line 95, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/examples/full.py\", line 96, in RunSteps",
       "    builds_status = api.orch_menu.plan_and_run_tests()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 745, in plan_and_run_tests",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 755, in plan_and_run_tests",
       "    self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_test_proctor/api.py\", line 113, in run_proctor_v2",
       "    raise ValueError('CTP2 not implemented')",

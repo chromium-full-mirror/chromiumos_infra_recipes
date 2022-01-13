@@ -1637,6 +1637,13 @@
   },
   {
     "cmd": [],
+    "name": "buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-test-results-in-gerrit\": [\"true\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 new, 0 recycled@@@"
