@@ -116,7 +116,7 @@ def _get_clone(api, repo_url, **kwargs):
     The path to the newly cloned Git checkout.
   """
   repo_dir = api.path.mkdtemp()
-  api.git.clone(repo_url, target_path=repo_dir, timeout_sec=3 * 60, **kwargs)
+  api.git.clone(repo_url, target_path=repo_dir, **kwargs)
   return repo_dir
 
 
