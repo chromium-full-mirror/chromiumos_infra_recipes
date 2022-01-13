@@ -285,11 +285,11 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   if not any(x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
     return
 
-  tast_result_file = api.cros_resultdb.get_drone_result_file(base_dir, 'tast')
-  if os.path.exists(tast_result_file) or api.properties.get(
+  tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
+  if os.path.exists(tast_results_dir) or api.properties.get(
       'result_format') == 'tast':
     result_format = 'tast'
-    result_file = tast_result_file
+    result_file = api.cros_resultdb.get_drone_result_file(base_dir, 'tast')
     artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
         base_dir, result_format)
   else:
