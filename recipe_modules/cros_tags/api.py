@@ -22,11 +22,12 @@ class CrosTagsApi(recipe_api.RecipeApi):
       list[StringPair] to pass as buildbucket tags
     """
     # None of these tags is order specific.
-    tag_dict = dict(
-        parent_buildbucket_id=str(self.m.buildbucket.build.id),
-        snapshot=snapshot.id,
-        commit_position=str(snapshot.position),
-    )
+    tag_dict = {
+        'parent_buildbucket_id': str(self.m.buildbucket.build.id),
+        'snapshot': snapshot.id,
+        'commit_position': str(snapshot.position),
+        'hide-test-results-in-gerrit': 'true',
+    }
 
     # TODO(b/186218358): Reevaluate if we need to create buildsets.
     if inherit_buildsets:

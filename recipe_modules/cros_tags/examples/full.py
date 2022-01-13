@@ -29,11 +29,13 @@ def RunSteps(api, properties):
   snapshot = bbcommon_pb2.GitilesCommit(host='host', project='proj',
                                         id='deadbeef')
   expected_tags = api.cros_tags.tags(
-      parent_buildbucket_id=str(api.buildbucket.build.id),
-      snapshot=snapshot.id,
-      commit_position=str(snapshot.position),
-      buildset='commit/gitiles/host/proj/+/deadbeef',
-  )
+      **{
+          'parent_buildbucket_id': str(api.buildbucket.build.id),
+          'snapshot': snapshot.id,
+          'commit_position': str(snapshot.position),
+          'buildset': 'commit/gitiles/host/proj/+/deadbeef',
+          'hide-test-results-in-gerrit': 'true'
+      })
   if properties.cq_cl_group_key:
     expected_tags.extend(
         api.cros_tags.tags(cq_cl_group_key=str(properties.cq_cl_group_key)))

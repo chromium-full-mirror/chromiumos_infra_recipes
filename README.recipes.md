@@ -3735,25 +3735,25 @@ API for generating tags.
 
 A module for generating tags.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#109)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#110)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#84)(self, cl_tag_key, tags):**
+&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#85)(self, cl_tag_key, tags):**
 
 Returns the value for the given cq_cl_tag, if it is found.
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#92)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#93)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
 Returns:
   (str) cq_equivalent_cl_group_key, or None
 
-&mdash; **def [get\_values](/recipe_modules/cros_tags/api.py#58)(self, key, tags=None, default=None):**
+&mdash; **def [get\_values](/recipe_modules/cros_tags/api.py#59)(self, key, tags=None, default=None):**
 
 Return a value from a list of tags.
 
@@ -3769,7 +3769,7 @@ Args:
 Returns
   List of tag values, or [default] if none found.
 
-&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#51)(self, key, value, tags):**
+&mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#52)(self, key, value, tags):**
 
 Returns whether tags contains a tag with key and value.
 
@@ -3784,7 +3784,7 @@ Args:
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#126)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#127)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
