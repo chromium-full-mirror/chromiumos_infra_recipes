@@ -58,10 +58,10 @@ def DoRunSteps(api):
   )
 
   # Aggregate any metadata produced by the child builds into our own GS bucket
-  api.orch_menu.aggregate_metadata(builds_status.completed_builds)
+  metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
 
   # Run any HW tests.
-  api.orch_menu.plan_and_run_tests()
+  api.orch_menu.plan_and_run_tests(container_metadata=metadata)
 
   # Launch any specified follow on orchestrator.
   api.orch_menu.run_follow_on_orchestrator()

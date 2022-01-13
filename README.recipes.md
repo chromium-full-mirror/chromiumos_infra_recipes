@@ -6140,6 +6140,9 @@ together.  Upload the resulting message as our own metadata.
 Args:
   child_builds ([BuildStatus]): BuildStatus instances for child builds
 
+Returns:
+  (ContainerMetadata): Aggregated container metadata
+
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#154)(self):**
 
 &mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#174)(self):**

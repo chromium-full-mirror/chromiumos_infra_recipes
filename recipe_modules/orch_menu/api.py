@@ -786,6 +786,9 @@ class OrchMenuApi(RecipeApi):
 
     Args:
       child_builds ([BuildStatus]): BuildStatus instances for child builds
+
+    Returns:
+      (ContainerMetadata): Aggregated container metadata
     """
 
     def get_property(pathspec, props):
@@ -935,3 +938,5 @@ class OrchMenuApi(RecipeApi):
 
         aggregate_step.logs['{} metadata (log)'.format(metadata_info.name)] = \
           json_format.MessageToJson(aggregated)
+
+    return aggregated
