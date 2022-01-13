@@ -26,7 +26,9 @@ class DupItApi(recipe_api.RecipeApi):
         Gentoo distfiles.
     """
     assert (rsync_mirror_address.endswith('distfiles') or
-            rsync_mirror_address.endswith('distfiles/'))
+            rsync_mirror_address.endswith('distfiles/') or
+            rsync_mirror_address.endswith('archlinux') or
+            rsync_mirror_address.endswith('archlinux/'))
     self._rsync_mirror_address = rsync_mirror_address
     self._rsync_mirror_rate_limit = rsync_mirror_rate_limit
     self._gs_distfiles_uri = gs_distfiles_uri
