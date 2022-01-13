@@ -603,7 +603,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
             ]
         request = BuildTargetUnitTestRequest(
             build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
-            result_path=str(self.m.path.mkdtemp()),
             package_blocklist=unit_tests.package_blocklist,
             packages=relevant_testable_packages,
             flags=BuildTargetUnitTestRequest.Flags(
