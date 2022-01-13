@@ -135,3 +135,12 @@ class CrosTagsApi(recipe_api.RecipeApi):
       (list[StringPair]) tags.
     """
     return self.m.buildbucket.tags(**tags)
+
+  def add_tags_to_current_build(self, **tags):
+    """Adds arbitrary tags during the runtime of a build.
+
+    Args:
+      tags (dict): Dict mapping keys to values.  If the value is a list,
+          multiple tags for the same key will be created.
+    """
+    self.m.buildbucket.add_tags_to_current_build(self.tags(**tags))

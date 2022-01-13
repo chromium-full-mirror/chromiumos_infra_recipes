@@ -26,6 +26,7 @@ def _string_pairs(*pairs):
 
 
 def RunSteps(api, properties):
+  api.cros_tags.add_tags_to_current_build(**{'tag': 'you-are-it'})
   snapshot = bbcommon_pb2.GitilesCommit(host='host', project='proj',
                                         id='deadbeef')
   expected_tags = api.cros_tags.tags(

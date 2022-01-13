@@ -410,9 +410,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Adding relevance to tags to help cros_fleet and others search for
     # latest postsubmit image. See b/205142684.
     if config.id.type == BuilderConfig.Id.POSTSUBMIT:
-      relevance_tags = self.m.cros_tags.tags(**dict(
+      self.m.cros_tags.add_tags_to_current_build(**dict(
           relevance='{}relevant'.format('not ' if pointless else '')))
-      self.m.buildbucket.add_tags_to_current_build(relevance_tags)
 
     return _env_info(pointless, packages)
 

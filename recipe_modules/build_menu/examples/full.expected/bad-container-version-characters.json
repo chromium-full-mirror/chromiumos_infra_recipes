@@ -7179,7 +7179,7 @@
       "    return DoRunSteps(api, properties)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 60, in DoRunSteps",
       "    api.build_menu.create_containers()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 616, in create_containers",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 615, in create_containers",
       "    if self.container_version:",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 117, in container_version",
       "    raise RuntimeError('Invalid tag format: \\'{}\\''.format(version))",
