@@ -469,3 +469,13 @@ def GenTests(api):
           post_process.MustRun,
           'buildbucket.add_tags_to_current_build',
       ), cq=True)
+
+  yield api.orch_menu.test(
+      'cq-resultdb-experiment-footer-value', data.ctp_normal,
+      api.git_footers.simulated_get_footers(
+          ['chromeos.cros_test_platform.add_resultdb_settings']),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.DoesNotRun,
+          'buildbucket.add_tags_to_current_build',
+      ), cq=True)
