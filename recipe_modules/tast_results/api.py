@@ -8,16 +8,13 @@ from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
+from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
 
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
-
-# TODO(b/201608160): Remove upon completion of rollout.
-CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
-
 
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
@@ -298,8 +295,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       test_results_path (Path): Path to test_results/.
       suite_name (str): Name of the whole test suite.
     """
-    # TODO(b/201608160): Remove upon completion of rollout.
-    if not CROS_GERRIT_RESULTS_EXP in self.m.cros_infra_config.experiments:
+    if not self.m.resultdb.enabled:
       return
 
     config = {
@@ -314,3 +310,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     self.m.cros_resultdb.upload(config)
     self.m.cros_resultdb.report_missing_test_cases(missing_test_names,
                                                    config.get('base_variant'))
+    if not self.m.buildbucket.is_critical():
+      behavior = TestPlatformRequest.Params.TestExecutionBehavior.NON_CRITICAL
+      self.m.cros_resultdb.apply_exonerations(
+          [self.m.cros_resultdb.current_invocation_id], behavior)

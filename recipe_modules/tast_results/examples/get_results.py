@@ -10,7 +10,7 @@ DEPS = [
     'recipe_engine/path',
     'tast_results',
 ]
-
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
@@ -69,7 +69,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic', api.buildbucket.ci_build())
 
-  yield api.test(
-      'experiment-enabled',
-      api.buildbucket.ci_build(
-          experiments=['chromeos.cros_test_platform.add_resultdb_settings']))
+  yield api.test('resultdb-not-enabled')
+
+  build = api.buildbucket.ci_build_message()
+  build.critical = common_pb2.NO
+  yield api.test('non-critical', api.buildbucket.build(build))

@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/path',
+    'recipe_engine/resultdb',
     'recipe_engine/step',
     'cros_infra_config',
     'cros_resultdb',
