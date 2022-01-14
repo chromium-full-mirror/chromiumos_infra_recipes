@@ -10569,9 +10569,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#491)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#483)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#123)(api, interface, test_metadata, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#117)(api, interface, test_metadata, result):**
 
 Archive all test logs to Google Storage, updating result in the process.
 
@@ -10585,7 +10585,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#422)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#414)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -10601,7 +10601,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#393)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#385)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -10612,7 +10612,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#81)(step, name, link):**
+&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#75)(step, name, link):**
 
 Add a link `link` named `link_name` to the `step` if it exists.
 
@@ -10621,7 +10621,7 @@ Args:
 * name (str): Link name.
 * link (str): Like URI to add.
 
-&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#69)(step, name, log):**
+&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#63)(step, name, log):**
 
 Add a `log` to a `step`'s log under `name` is it exists.
 
@@ -10630,7 +10630,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#184)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#178)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -10638,7 +10638,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#143)(api, result):**
+&mdash; **def [summarize\_results](/recipes/test_platform/test_runner.py#137)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -10646,7 +10646,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#108)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#102)(api, test):**
 
 Validate the TestRunnerProperties.
 

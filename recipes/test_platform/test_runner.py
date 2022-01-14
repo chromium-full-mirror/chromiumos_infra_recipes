@@ -56,12 +56,6 @@ _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
 _24_HOURS = 24 * 60 * 60
 
-# TODO(b/201608160): Remove upon completion of rollout.
-CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
-# TODO(b/209718660): Remove once uploading non-CQ test results is stable.
-RESULTDB_UPLOAD_EXP = 'chromeos.test_runner.upload_to_resultdb'
-RESULTDB_EXPS = [CROS_GERRIT_RESULTS_EXP, RESULTDB_UPLOAD_EXP]
-
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 
 
@@ -268,6 +262,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     test_metadata (DUTTestMetadata): All metadata needed for the interface
         apposite a test.
   """
+  if not api.resultdb.enabled:
+    return
 
   # Don't try to upload if there are no results.
   if not result:
@@ -280,10 +276,6 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       'resultdb_settings' in test_metadata.test.autotest.test_args):
     return api.cros_resultdb.upload_chromium_tests(
         test_metadata.test.autotest.test_args, base_dir)
-
-  # TODO(b/201608160): Remove after go/cros-gerrit-results rollout.
-  if not any(x in api.cros_infra_config.experiments for x in RESULTDB_EXPS):
-    return
 
   tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
   if os.path.exists(tast_results_dir) or api.properties.get(
@@ -801,25 +793,10 @@ tast_missing_test.3=bar.YetAnotherTest
       _successful_logs_archive_step(),
   )
 
-  yield api.test(
-      'success-with-resultdb-skylab-test-runner',
-      _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
-          'label-board': 'eve',
-          'build': 'eve-cq/R11-123.45'
-      }),
-      _misc_properties(),
-      _request_properties_with_test_exec_behavior(
-          TestExecutionBehavior.NON_CRITICAL),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _successful_run_test_step(),
-      _successful_fetch_crashes_step(),
-      _successful_logs_archive_step(),
-  )
 
   yield api.test(
-      'success-with-resultdb-no-tast-keyval-file',
-      _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
+      'no-tast-keyval-file',
+      _set_build(bid=42, tags={
           'label-board': 'eve',
           'build': 'eve-cq/R11-123.45'
       }),
@@ -837,7 +814,7 @@ tast_missing_test.3=bar.YetAnotherTest
 
   yield api.test(
       'success-with-resultdb-tast',
-      _set_build(bid=42, experiments=[RESULTDB_UPLOAD_EXP], tags={
+      _set_build(bid=42, tags={
           'label-board': 'eve',
           'build': 'eve-cq/R11-123.45'
       }),
@@ -922,7 +899,7 @@ tast_missing_test.3=bar.YetAnotherTest
 
   yield api.test(
       'prejob_crash',
-      _set_build(bid=42, experiments=[CROS_GERRIT_RESULTS_EXP]),
+      _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
