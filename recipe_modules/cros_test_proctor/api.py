@@ -468,7 +468,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               test_harness=VmTestRequest.AUTOTEST,
                               build_payload=unit.common.build_payload,
                               expressions=['suite:' + test.test_suite]))),
-                  tags=self._tags_for_child_build()))
+                  tags=self.m.cros_tags.make_schedule_tags(snapshot)))
 
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule autotest vm tests',
@@ -528,7 +528,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               name=test_name, build_target=build_target,
                               build_payload=unit.common.build_payload,
                               expressions=expressions))),
-                  tags=self._tags_for_child_build()))
+                  tags=self.m.cros_tags.make_schedule_tags(snapshot)))
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_build_title)
@@ -644,8 +644,3 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """
     properties.update(self.m.cq.props_for_child_build)
     return properties
-
-  def _tags_for_child_build(self):
-    """Tags to add to created child builds."""
-    bb_tags = dict(parent_buildbucket_id=str(self.m.buildbucket.build.id))
-    return self.m.cros_tags.tags(**bb_tags)
