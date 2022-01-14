@@ -47,6 +47,13 @@ def GenTests(api):
   }
 
   yield api.test(
+      'not-enabled',
+      api.post_process(
+          post_process.DoesNotRun,
+          'exonerate ResultDB results.exonerate non-critical failures'),
+  )
+
+  yield api.test(
       'basic',
       api.buildbucket.try_build(build_id=123),
       api.post_process(

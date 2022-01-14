@@ -49,7 +49,7 @@ def GenTests(api):
       'not-enabled',
       api.properties(
           test_args='resultdb_settings=%s' % base64.b64encode(rdb_config_json),
-          rdb_config=rdb_config_json),
+          rdb_config=rdb_config_json, missing_test_names=['missing-test']),
       api.post_process(post_process.StepWarning,
                        'upload chromium test results to rdb'),
       api.post_process(post_process.DoesNotRun,

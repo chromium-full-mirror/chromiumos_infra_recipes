@@ -2957,7 +2957,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#245)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#248)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -2980,7 +2980,7 @@ Args:
 
 Return the current invocation's id.
 
-&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#48)(self, test_args):**
+&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#51)(self, test_args):**
 
 Extract resultdb settings from test_args.
 
@@ -2993,7 +2993,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#125)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#128)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -3012,7 +3012,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#101)(self, base_dir, result_format):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#104)(self, base_dir, result_format):**
 
 Get the path to the test results file on the drone.
 
@@ -3027,7 +3027,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#328)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#334)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB.
 
@@ -3036,7 +3036,7 @@ Args:
   base_variant (dict): Variant key-value pairs to attach to the test
       results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#149)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#152)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 
@@ -3045,7 +3045,7 @@ Args:
   stainless_url (string): Link to the Stainless logs for the test run.
   step_name (str): The name of the step or None for default.
 
-&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#72)(self, test_args, base_dir):**
+&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#75)(self, test_args, base_dir):**
 
 Wrapper for uploading chromium tests to resultDB.
 

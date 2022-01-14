@@ -41,6 +41,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
   @property
   def current_invocation_id(self):
     """Return the current invocation's id."""
+    if not self.m.resultdb.enabled:
+      return
+
     inv_id = self.m.resultdb.invocation_ids(
         [self.m.resultdb.current_invocation])
     return str(inv_id[0])
@@ -264,6 +267,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
     """
     with self.m.step.nest('exonerate ResultDB results') as presentation:
 
+      if not (self.m.resultdb.enabled and invocation_ids):
+        return
+
       # If no test execution behavior is specified, assume the tests are
       # critical and therefore not exonerable.
       if not (default_behavior or behavior_overrides_map):
@@ -333,6 +339,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
       base_variant (dict): Variant key-value pairs to attach to the test
           results.
     """
+    if not self.m.resultdb.enabled:
+      return
+
     # Return early if there are no missing tests.
     if not test_names:
       return
