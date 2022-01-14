@@ -3006,7 +3006,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to buildspecs-internal/release/",
+    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to chromeos-manifest-versions/rubik/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3021,7 +3021,7 @@
       "----",
       "cp",
       "[CLEANUP]/manifest-versions_tmp_1/releasespecs/99/1234.56.0.xml",
-      "gs://buildspecs-internal/release/99/1234.56.0.xml"
+      "gs://chromeos-manifest-versions/rubik/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -3037,10 +3037,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to buildspecs-internal/release/.gsutil upload",
+    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to chromeos-manifest-versions/rubik/.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/buildspecs-internal/release/99/1234.56.0.xml@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/rubik/99/1234.56.0.xml@@@"
     ]
   },
   {

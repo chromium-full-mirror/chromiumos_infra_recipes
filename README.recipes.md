@@ -3669,8 +3669,8 @@ Args:
   manifest_path (string): Path (relative to repository root) of manifest
     file, e.g. releasespecs/91/13818.0.0.xml.
   manifest_gs_path (string): GS Path of manifest, e.g.
-    gs://buildspecs-internal/release/91/13818.0.0.xml. Takes precendence over
-    manifest_url/branch/path.
+    gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
+    Takes precendence over manifest_url/branch/path.
 
 &mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1481)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
 

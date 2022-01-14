@@ -21,7 +21,7 @@ _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
 # GS path for internal buildspecs.
-BUILDSPEC_GS_PATH = 'buildspecs-internal/release/'
+BUILDSPEC_GS_PATH = 'chromeos-manifest-versions/rubik/'
 
 
 class BuildsStatus(object):

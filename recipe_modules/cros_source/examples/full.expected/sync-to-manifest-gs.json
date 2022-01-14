@@ -1736,7 +1736,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://buildspecs-internal/release/91/13818.0.0.xml"
+      "gs://chromeos-manifest-versions/release/91/13818.0.0.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2190,7 +2190,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_to_manifest\", \"manifest_gs_path\": \"gs://buildspecs-internal/release/91/13818.0.0.xml\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_to_manifest\", \"manifest_gs_path\": \"gs://chromeos-manifest-versions/release/91/13818.0.0.xml\"}@@@"
     ]
   },
   {

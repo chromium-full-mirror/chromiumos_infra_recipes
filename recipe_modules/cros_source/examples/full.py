@@ -330,6 +330,6 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       cros_source_properties=CrosSourceProperties(
           sync_to_manifest=ManifestLocation(
-              manifest_gs_path='gs://buildspecs-internal/release/91/13818.0.0.xml'
+              manifest_gs_path='gs://chromeos-manifest-versions/release/91/13818.0.0.xml'
           ),
       ))

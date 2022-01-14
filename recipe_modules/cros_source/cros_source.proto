@@ -20,7 +20,7 @@ message ManifestLocation {
   string manifest_file = 3;
 
   // GS path of the manifest to sync to, e.g.
-  // gs://buildspecs-internal/release/91/13818.0.0.xml.
+  // gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
   string manifest_gs_path = 4;
 }
 

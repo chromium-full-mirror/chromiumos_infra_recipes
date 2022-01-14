@@ -1248,8 +1248,8 @@ class CrosSourceApi(RecipeApi):
       manifest_path (string): Path (relative to repository root) of manifest
         file, e.g. releasespecs/91/13818.0.0.xml.
       manifest_gs_path (string): GS Path of manifest, e.g.
-        gs://buildspecs-internal/release/91/13818.0.0.xml. Takes precendence over
-        manifest_url/branch/path.
+        gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
+        Takes precendence over manifest_url/branch/path.
     """
     with self.m.step.nest('sync to specified manifest'), self.m.context(
         cwd=self.workspace_path):
