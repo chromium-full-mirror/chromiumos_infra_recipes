@@ -21,7 +21,7 @@ _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
 # GS path for internal buildspecs.
-BUILDSPEC_GS_PATH = 'chromeos-manifest-versions/rubik/'
+DEFAULT_BUILDSPEC_GS_PATH = 'gs://chromeos-manifest-versions/rubik/'
 
 
 class BuildsStatus(object):
@@ -249,7 +249,8 @@ class OrchMenuApi(RecipeApi):
               staging=self.m.cros_infra_config.is_staging):
             self.m.cros_version.bump_version()
             self.m.cros_release.create_releasespec(
-                gs_location=BUILDSPEC_GS_PATH)
+                gs_location=self._properties.buildspec_gs_path or
+                DEFAULT_BUILDSPEC_GS_PATH)
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):

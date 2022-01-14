@@ -150,7 +150,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
         manifest_gs_path = ''
         if gs_location:
-          with self.m.step.nest('upload {} to {}'.format(
+          if gs_location.startswith('gs://'):
+            gs_location = gs_location[len('gs://'):]
+          with self.m.step.nest('upload {} to gs://{}'.format(
               manifest_file, gs_location)):
             # Split bucket off, and then append buildspec to the rest of the path (if any).
             # If a filename is not supplied in gs_location, we use the buildspec_filename.

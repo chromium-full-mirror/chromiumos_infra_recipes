@@ -3006,7 +3006,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to chromeos-manifest-versions/rubik/",
+    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/rubik/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3037,7 +3037,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to chromeos-manifest-versions/rubik/.gsutil upload",
+    "name": "set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/rubik/.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/rubik/99/1234.56.0.xml@@@"

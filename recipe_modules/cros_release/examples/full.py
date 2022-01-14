@@ -31,6 +31,9 @@ def RunSteps(api):
   api.cros_release.create_releasespec(gs_location='bucket/foo/')
   api.assertions.assertIsNotNone(api.cros_release.releasespec)
 
+  api.cros_release.create_releasespec(gs_location='gs://bucket/foo/')
+  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+
   api.cros_release.create_releasespec(gs_location='bucket/foo/bar.xml')
   api.assertions.assertIsNotNone(api.cros_release.releasespec)
 

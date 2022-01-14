@@ -131,16 +131,25 @@ def GenTests(api):
       with_history=True)
 
   yield api.orch_menu.test(
-      'release-orchestrator', data.ctp_normal,
+      'release-orchestrator',
+      data.ctp_normal,
       api.properties(
           FullProperties(is_release_orchestrator=True, use_extra_props=True)),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
+      api.post_check(
+          post_process.MustRun,
+          'set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/'
+      ),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test')),
-      builder='main-release-orchestrator', with_manifest_refs=True,
-      with_history=True, bot_size='medium')
+          update_manifest_refs=dict(test='refs/heads/test'),
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/'),
+      builder='main-release-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+  )
 
   yield api.orch_menu.test(
       'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
