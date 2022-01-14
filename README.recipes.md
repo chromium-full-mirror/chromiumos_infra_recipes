@@ -7136,7 +7136,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#260)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=(60 \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#260)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 

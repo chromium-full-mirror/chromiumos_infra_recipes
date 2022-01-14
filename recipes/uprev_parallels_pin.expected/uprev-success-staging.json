@@ -5399,7 +5399,7 @@
       }
     },
     "name": "build chromiumos with upreved Parallels.build images.call chromite.api.ImageService/Create.call build API script",
-    "timeout": 3600,
+    "timeout": 7200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
