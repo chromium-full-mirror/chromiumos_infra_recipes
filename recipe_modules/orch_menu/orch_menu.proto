@@ -48,4 +48,8 @@ message OrchMenuProperties {
   // GS path to upload buildspecs to. Only used for release builders.
   // Defaults to 'gs://chromeos-manifest-versions/release/'.
   string buildspec_gs_path = 7;
+
+  // Whether to bump the version for a release builder. Will be ignored if
+  // the builder is a staging builder.
+  bool bump_version = 8;
 }

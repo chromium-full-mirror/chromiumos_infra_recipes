@@ -19,7 +19,7 @@ def RunSteps(api):
     _ = api.cros_version.read_workspace_version()
 
   with api.assertions.assertRaises(StepFailure):
-    api.cros_version.bump_version()
+    api.cros_version.bump_version(dry_run=False)
 
 
 def GenTests(api):
