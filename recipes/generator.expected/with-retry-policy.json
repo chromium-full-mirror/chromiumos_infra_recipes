@@ -1918,7 +1918,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",

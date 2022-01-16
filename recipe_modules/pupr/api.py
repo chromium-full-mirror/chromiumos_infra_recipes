@@ -5,9 +5,13 @@
 
 """APIs for PUpr."""
 
+from enum import Enum
+
 from PB.recipes.chromeos.generator import (
     RETRY_LATEST_OR_LATEST_PINNED,
     RETRY_LATEST_PINNED,
+    FULL_RUN,
+    DRY_RUN,
 )
 
 from recipe_engine import recipe_api
@@ -31,6 +35,12 @@ PASSED_DRY_RUN_RE = re.compile(
     r"^Patch Set \d+:\s*Dry run: This CL passed the C[QV] dry run")
 
 
+class RunState(Enum):
+  RUNNING = 1
+  FAILED = 2
+  PASSED = 3
+
+
 def get_patterns(dry_run):
   """
   Get appropriate tag/regexes for the CQ mode (CQ+1 or CQ+2).
@@ -43,64 +53,70 @@ def get_patterns(dry_run):
 
 def is_failed_cl(c, dry_run=False):
   """
-  Determine if the CL in question has previously failed for a full/dry run.
-  Note that if dry_run is False (i.e. we're looking for CQ+2 failures)
-  and the most recent failure is a CQ+1 failure, this function will return False.
-  Similarly, if dry_run is True and the most recent failure is a CQ+2
-  failure, this function will return false.
+  Determine if the CL in question's most recent result is failed for the given
+  run type (full or dry). If the most recent state was of the other run type or
+  is of the given run type but is not failed, this function will return False.
   """
-  for m in sorted(c.messages, key=lambda m: m["date"], reverse=True):
-    if "tag" not in m or (not DRY_RUN_TAG_RE.match(m["tag"]) and
-                          not FULL_RUN_TAG_RE.match(m["tag"])):
-      continue  # pragma: nocover
-    # If there's a CQ+2 failure, return True if dry_run = False and False o.w.
-    if FAILED_RE.match(m["message"]):
-      return not dry_run
-    # If there's a CQ+1 failure, return True if dry_run = True and False o.w.
-    elif FAILED_DRY_RUN_RE.match(m["message"]):
-      return dry_run
-  return False
+  return is_cl_in_state(c, RunState.FAILED, dry_run)
 
 
 def is_running_cl(c, dry_run=False):
   """
-  Determine if the CL in question is currently running.
-  Checks either for CQ+1 or CQ+2 depending on the value of dry_run.
+  Determine if the CL in question's most recent result is running for the given
+  run type (full or dry). If the most recent state was of the other run type or
+  is of the given run type but is not running, this function will return False.
+  """
+  return is_cl_in_state(c, RunState.RUNNING, dry_run)
+
+
+def is_passed_cl(c, dry_run=False):
+  """
+  Determine if the CL in question's most recent result is passed for the given
+  run type (full or dry). If the most recent state was of the other run type or
+  is of the given run type but is not passed, this function will return False.
+  """
+  return is_cl_in_state(c, RunState.PASSED, dry_run)
+
+
+def is_cl_in_state(c, desired_state, dry_run=False):
+  """
+  Determine if the CL in question's most recent state is the desired state
+  for a full/dry run. If the most recent state was of the other run type or
+  is of the given run type but is not the desired state, this function will
+  return False.
   """
   run_tag_re, failed_re, running_re, passed_re = get_patterns(dry_run)
+  all_state_res = (failed_re, running_re, passed_re)
+  inverse_run_tag_re, _, _, _ = get_patterns(not dry_run)
+
+  desired_state_re = {
+      RunState.RUNNING: running_re,
+      RunState.PASSED: passed_re,
+      RunState.FAILED: failed_re,
+  }.get(desired_state)
+  undesired_state_res = [state_re for state_re in all_state_res \
+    if state_re != desired_state_re]
 
   for m in sorted(c.messages, key=lambda m: m["date"], reverse=True):
-    if "tag" not in m or not run_tag_re.match(m["tag"]):
-      continue  # pragma: nocover
-    # If the CQ run has concluded (pass or fail), not running.
-    if failed_re.match(m["message"]) or passed_re.match(m["message"]):
+    if "tag" not in m:
+      continue
+    # If the most recent run is of the other run type (full/dry), then the CL
+    # is not in the desired state for this run type.
+    if inverse_run_tag_re.match(m["tag"]):
       return False
-    # If we encounter a running message first, running.
-    elif running_re.match(m["message"]):
+    # If the tag is neither a dry run tag nor a full run tag, try the next one.
+    if not run_tag_re.match(m["tag"]):
+      continue  # pragma: nocover
+
+    # If we encounter a message of the desired type, then the CL is in that
+    # state for this run type.
+    if desired_state_re.match(m["message"]):
       return True
-  return False
-
-
-def needs_retry(c, dry_run=False):
-  """
-    Determine if the CL in question needs a retry
-    (i.e. it is not running or passed).
-    Assumes that is_failed(c) = True or is_failed(c, dry_run=True) = True,
-    and that the dry_run parameter has the same value as whichever is_failed
-    call returned true.
-  """
-  run_tag_re, failed_re, running_re, passed_re = get_patterns(dry_run)
-
-  for m in sorted(c.messages, key=lambda m: m["date"], reverse=True):
-    if "tag" not in m or not run_tag_re.match(m["tag"]):
-      continue  # pragma: nocover
-    # If we hit a try message before a failed message, the change
-    # hasn't failed yet for the most recent run.
-    if running_re.match(m["message"]) or passed_re.match(m["message"]):
+    # Else if we encounter a message of any of the undesired types, then the CL
+    # is not in that state for this run type.
+    elif any(re.match(m["message"]) for re in undesired_state_res):
       return False
-    if failed_re.match(m["message"]):
-      break
-  return True
+  return False
 
 
 def sorted_cls(cls):
@@ -124,26 +140,42 @@ class PuprApi(recipe_api.RecipeApi):
     """
     return any([self.HASHTAG_FREEZE_RETRIES in c.hashtags for c in changes])
 
-  def identify_retry(self, retry_policy, open_cls):
+  def identify_retry(self, retry_policy, no_existing_cls_policy, open_cls):
     """Identify the CL to be retried based on retry_policy.
+
+    Precedence order:
+      * If a pinned CL exists, most recent pinned CL if failed, or None if most
+          recent pinned CL is not failed.
+      * Most recent CL with a passed dry run, if no_existing_cls_policy ==
+          FULL_RUN.
+      * Most recent CL with a failed full run.
+      * Most recent CL with a failed dry run.
 
     Args:
       retry_policy (RetryClPolicy): The retry policy to follow. Can be NO_RETRY,
         LATEST_OR_LATEST_PINNED, or LATEST_PINNED.
+      no_existing_cls_policy (RetryClPolicy): The policy this PUpr builder
+        follows when no CL exists. If FULL_RUN, we will look for any successful
+        dry runs, allowing us to retry the latest one as a full run. If no
+        successful dry run is found or if DRY_RUN, we will look for a failed CL.
       open_cls (List[gerrit.PatchSet]): List of CLs.
 
     Returns:
-      (PatchSet, int, str): (The CL to be retried (or None if no retry),
-                             CQ label to be applied,
-                             The description of the action)
+      (PatchSet, int, str, bool): (The CL to be retried (or None if no retry),
+                                   CQ label to be applied,
+                                   The description of the action,
+                                   Whether the CL, if any, is currently passed)
     """
     if retry_policy not in [RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED]:
-      return (None, 0, 'Not set to retry.')
+      return (None, 0, 'Not set to retry.', False)
+
+    open_cls = sorted_cls(open_cls)
 
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
     retry_cl = None
     is_dry_run = False
+    retry_cl_is_passed = False
     for cl in open_cls:
       if self.HASHTAG_PINNED_RETRY in cl.hashtags:
         # (Most recent) pinned CL identified. If the CL has not previously
@@ -157,7 +189,8 @@ class PuprApi(recipe_api.RecipeApi):
           is_dry_run = True
         else:  # Pinned CL has not failed, do not attempt any retry.
           return (None, 0,
-                  'Pinned retry CL {} has not failed.'.format(cl.display_url))
+                  'Pinned retry CL {} has not failed.'.format(cl.display_url),
+                  False)
         break
 
     # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
@@ -165,25 +198,35 @@ class PuprApi(recipe_api.RecipeApi):
     running_cls = filter(is_running_cl, open_cls)
     if running_cls:
       return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
-          [cl.display_url for cl in running_cls])))
+          [cl.display_url for cl in running_cls])), False)
 
-    # If we haven't identified a pinned CL and the retry policy is not RETRY_PINNED_ONLY
-    # (i.e it is RETRY_LATEST_OR_LATEST_PINNED) find most recent failed CL.
-    # CQ+2 retries take priority over CQ+1 retries, so look for a failed CQ+2 run first.
-    # If there are no CLs whose most recent failure is CQ+2, look for failed CQ+1 runs.
+    # If no_existing_cls_policy is FULL_RUN, then CLs that were dry run instead
+    # (because a full run was in progress when they were created) and passed
+    # their dry run take precedence over retrying failures.
+    if no_existing_cls_policy == FULL_RUN and not retry_cl:
+      retry_cl = next((cl for cl in open_cls if is_passed_cl(cl, dry_run=True)),
+                      None)
+      retry_cl_is_passed = (retry_cl is not None)
+
+    # If none exists, find the most recent failed CQ+2 CL, or if none exist
+    # then the most recent failed CQ+1 CL if no newer dry run is ongoing, as
+    # long as the retry strategy is not RETRY_LATEST_PINNED.
     if retry_policy != RETRY_LATEST_PINNED and not retry_cl:
+      # First look for passed dry runs.
       # Look for CLs with failed full runs first.
-      failed_cls = list(filter(is_failed_cl, open_cls))
-      if failed_cls:
-        retry_cl = sorted_cls(failed_cls)[0]
-      else:  # Look for failed dry runs.
-        failed_cls = [c for c in open_cls if is_failed_cl(c, dry_run=True)]
-        if failed_cls:
-          retry_cl = sorted_cls(failed_cls)[0]
-          is_dry_run = True
+      retry_cl = next(iter(filter(is_failed_cl, open_cls)), None)
+      if not retry_cl:
+        # Look for failed dry runs, as long as no newer dry run is ongoing.
+        retry_cl = next((c for c in open_cls if is_failed_cl(c, dry_run=True)),
+                        None)
+        if retry_cl:
+          if any(cl for cl in open_cls if cl.created > retry_cl.created and
+                 is_running_cl(cl, dry_run=True)):
+            retry_cl = None
+          else:
+            is_dry_run = no_existing_cls_policy == DRY_RUN
 
-    # Only want to retry a CL that has not passed/is currently running.
-    if retry_cl and needs_retry(retry_cl, dry_run=is_dry_run):
+    if retry_cl:
       return (retry_cl, 1 if is_dry_run else 2,
-              'Found cl: {}'.format(retry_cl.display_url))
-    return (None, 0, 'No open CL was found to retry.')
+              'Found cl: {}'.format(retry_cl.display_url), retry_cl_is_passed)
+    return (None, 0, 'No open CL was found to retry.', False)

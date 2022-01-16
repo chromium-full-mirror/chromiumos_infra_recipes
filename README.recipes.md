@@ -6521,25 +6521,38 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 APIs for PUpr.
 
-#### **class [PuprApi](/recipe_modules/pupr/api.py#111)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PuprApi](/recipe_modules/pupr/api.py#127)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for PUpr steps.
 
-&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#127)(self, retry_policy, open_cls):**
+&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#143)(self, retry_policy, no_existing_cls_policy, open_cls):**
 
 Identify the CL to be retried based on retry_policy.
+
+Precedence order:
+  * If a pinned CL exists, most recent pinned CL if failed, or None if most
+      recent pinned CL is not failed.
+  * Most recent CL with a passed dry run, if no_existing_cls_policy ==
+      FULL_RUN.
+  * Most recent CL with a failed full run.
+  * Most recent CL with a failed dry run.
 
 Args:
   retry_policy (RetryClPolicy): The retry policy to follow. Can be NO_RETRY,
     LATEST_OR_LATEST_PINNED, or LATEST_PINNED.
+  no_existing_cls_policy (RetryClPolicy): The policy this PUpr builder
+    follows when no CL exists. If FULL_RUN, we will look for any successful
+    dry runs, allowing us to retry the latest one as a full run. If no
+    successful dry run is found or if DRY_RUN, we will look for a failed CL.
   open_cls (List[gerrit.PatchSet]): List of CLs.
 
 Returns:
-  (PatchSet, int, str): (The CL to be retried (or None if no retry),
-                         CQ label to be applied,
-                         The description of the action)
+  (PatchSet, int, str, bool): (The CL to be retried (or None if no retry),
+                               CQ label to be applied,
+                               The description of the action,
+                               Whether the CL, if any, is currently passed)
 
-&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#116)(self, changes):**
+&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#132)(self, changes):**
 
 Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
 
@@ -9585,7 +9598,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#70)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#404)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#394)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
@@ -9671,7 +9684,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#36)(api):**
 ### *recipes* / [gerrit:examples/set\_change\_description](/recipe_modules/gerrit/examples/set_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/set_change_description.py#8): [gerrit](#recipe_modules-gerrit)
@@ -10124,9 +10137,9 @@ Recipe for invoking the per project buildspec tool.
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#29)(api):**
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#31)(api):**
 
-&mdash; **def [patch\_set\_from\_dict](/recipe_modules/pupr/examples/identify_retry.py#21)(api, changes):**
+&mdash; **def [patch\_set\_from\_dict](/recipe_modules/pupr/examples/identify_retry.py#23)(api, changes):**
 ### *recipes* / [pupr:examples/retries\_frozen](/recipe_modules/pupr/examples/retries_frozen.py)
 
 [DEPS](/recipe_modules/pupr/examples/retries_frozen.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -210,7 +210,6 @@ def RunSteps(api, properties):
     Ebuilds = namedtuple('Ebuilds', 'path version commit_info')
 
     topic = policy.topic or cpv
-    existing_cls_policy = policy.existing_cls_policy
     no_existing_cls_policy = policy.no_existing_cls_policy
     outdated_cls_policy = policy.outdated_cls_policy
     retry_cl_policy = policy.retry_cl_policy or NO_RETRY
@@ -297,31 +296,15 @@ def RunSteps(api, properties):
             ci.display_id for ci in outdated_cls
         ]
 
-    if outdated_cls and not retry_only_run:
+    if outdated_cls:
       with api.step.nest('act on outdated CLs with policy: {}'.format(
           OutdatedClsPolicy.Name(outdated_cls_policy))) as pres:
-        for outdated_cl in outdated_cls:
-          if outdated_cls_policy == OUTDATED_LEAVE_COMMENT:
-            outdated_comment_message = (
-                'This CL has been obviated by: {}\n\n'
-                'PUpr has been set to remind you that it'
-                ' likely should be abandoned.').format(mrm.display_url)
-            api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
-                                          outdated_comment_message)
-          elif outdated_cls_policy == OUTDATED_ABANDON:
-            outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                        'PUpr has been set to abandon.').format(
-                                            mrm.display_url)
-            api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
-                                      message=outdated_comment_message)
-            abandoned_cls.append(outdated_cl)
+        _abandon_cls(api, outdated_cls, mrm, outdated_cls_policy, \
+            retry_only_run, abandoned_cls)
 
     existing_cls = open_changes and len(abandoned_cls) < len(open_changes)
-    send_to_cq_policy = (
-        existing_cls_policy if existing_cls else no_existing_cls_policy)
 
-    # If send_to_cq_policy is FULL_RUN the new CL will be itself submitted to the CQ, so a retry is not useful.
-    if retry_cl_policy != NO_RETRY and send_to_cq_policy != FULL_RUN:
+    if retry_cl_policy != NO_RETRY:
       with api.step.nest('apply retry policy {}'.format(
           RetryClPolicy.Name(retry_cl_policy))) as presentation:
         if open_changes:
@@ -333,8 +316,8 @@ def RunSteps(api, properties):
           open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
 
           if not api.pupr.retries_frozen(open_ci):
-            retry_ci, cq_label, message = api.pupr.identify_retry(
-                retry_cl_policy, open_ci)
+            retry_ci, cq_label, message, retry_cl_is_passed = api.pupr.identify_retry(
+                retry_cl_policy, no_existing_cls_policy, open_ci)
             presentation.step_text = message
 
             if retry_ci:
@@ -354,6 +337,13 @@ def RunSteps(api, properties):
                         retry_cl,
                         labels,
                     )
+              if retry_cl_is_passed:
+                cls_to_abandon = [cl for cl in open_ci \
+                    if cl.created < retry_ci.created]
+                if cls_to_abandon:
+                  with api.step.nest("abandon CLs before passed CQ+1 CL"):
+                    _abandon_cls(api, cls_to_abandon, retry_cl, \
+                        outdated_cls_policy, retry_only_run)
     if not retry_only_run:
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
                         existing_cls)
@@ -409,6 +399,26 @@ def response_has_changes(api, response):
       if api.git.diff_check(path):
         return True
   return False
+
+
+def _abandon_cls(api, outdated_cls, mrm, outdated_cls_policy, retry_only_run,
+                 abandoned_cls=None):
+  for outdated_cl in outdated_cls:
+    if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not retry_only_run:
+      outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                  'PUpr has been set to remind you that it'
+                                  ' likely should be abandoned.').format(
+                                      mrm.display_url)
+      api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
+                                    outdated_comment_message)
+    elif outdated_cls_policy == OUTDATED_ABANDON:
+      outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                  'PUpr has been set to abandon.').format(
+                                      mrm.display_url)
+      api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                message=outdated_comment_message)
+      if abandoned_cls != None:
+        abandoned_cls.append(outdated_cl)
 
 
 def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
@@ -970,9 +980,24 @@ def GenTests(api):
       GerritChange(change=2, host='chromium-review.googlesource.com'),
   ]
 
+  gerrit_changes_json = [
+      {
+          '_number': 1,
+          'change_number': 1,
+          'project': 'chromium/src',
+          'host': 'chromium-review.googlesource.com',
+      },
+      {
+          '_number': 2,
+          'change_number': 2,
+          'project': 'chromium/src',
+          'host': 'chromium-review.googlesource.com',
+      },
+  ]
+
   value_dict = {
       1: {
-          'change_id': '1',
+          'change_id': 1,
           'created': '2020-10-22 18:54:00.000000000',
           'messages': [{
               'message': 'Quote: Patch Set 3:\n\nFailed builds: ...',
@@ -1024,6 +1049,32 @@ def GenTests(api):
       api.git.diff_check(True),
   )
 
+  value_dict = {
+      1: {
+          'change_id': 1,
+          'created': '2020-10-22 18:54:00.000000000',
+          'messages': [{
+              'message': 'Quote: Patch Set 3:\n\nFailed builds: ...',
+              'date': '2020-10-26T18:54:00Z',
+          }, {
+              'message': 'Patch Set 3:\n\nCQ is trying the patch...',
+              'date': '2020-10-24T18:54:00Z',
+              'tag': 'autogenerated:cq:full-run'
+          }, {
+              'message': 'Patch Set 3:\n\nFailed builds: ...',
+              'date': '2020-10-25T18:54:00Z',
+              'tag': 'autogenerated:cq:full-run'
+          }],
+          'revision_info': {
+              'ref': 'refs/change/foo',
+          },
+      },
+      2: {
+          'change_id': 2,
+          'created': '2020-10-23 18:54:00.000000000',
+      },
+  }
+
   yield api.test(
       'cron-trigger',
       _props(
@@ -1036,6 +1087,79 @@ def GenTests(api):
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+  )
+
+  value_dict = {
+      1: {
+          'change_id': 1,
+          'created': '2020-10-22 18:54:00.000000000',
+          'messages': [{
+              'message': 'Quote: Patch Set 3:\n\nFailed builds: ...',
+              'date': '2020-10-26T18:54:00Z',
+          }, {
+              'message': 'Patch Set 3:\n\nCQ is trying the patch...',
+              'date': '2020-10-24T18:54:00Z',
+              'tag': 'autogenerated:cq:full-run'
+          }, {
+              'message': 'Patch Set 3:\n\nFailed builds: ...',
+              'date': '2020-10-25T18:54:00Z',
+              'tag': 'autogenerated:cq:full-run'
+          }],
+          'revision_info': {
+              'ref': 'refs/change/foo',
+          },
+      },
+      2: {
+          'change_id': 2,
+          'created': '2020-10-23 18:54:00.000000000',
+          'messages': [{
+              'message': 'Quote: Patch Set 3:\n\nDry run: Failed builds: ...',
+              'date': '2020-10-26T18:54:00Z',
+          }, {
+              'message': 'Patch Set 3:\n\nDry run: CQ is trying the patch...',
+              'date': '2020-10-24T18:54:00Z',
+              'tag': 'autogenerated:cq:dry-run'
+          }, {
+              'message':
+                  'Patch Set 3:\n\nDry run: This CL passed the CV dry run',
+              'date':
+                  '2020-10-25T18:54:00Z',
+              'tag':
+                  'autogenerated:cq:dry-run'
+          }],
+          'revision_info': {
+              'ref': 'refs/change/foo',
+          },
+      },
+  }
+
+  yield api.test(
+      'cron-trigger-discard-before-passed-dry-run',
+      _props(
+          branch_policies=[
+              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                      existing_cls_policy=DRY_RUN,
+                      no_existing_cls_policy=FULL_RUN)
+          ], retry_ref=retry_ref),
+      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          changes, value_dict),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
           value_dict),
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),

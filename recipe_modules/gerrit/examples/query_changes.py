@@ -9,6 +9,30 @@ DEPS = [
 ]
 
 
+gerrit_changes_json = [
+    {
+        '_number': 91827,
+        'project': 'chromium/src',
+    },
+]
+
+values_dict = {
+    91827:
+        dict(
+            status='NEW', created='2021-01-25 13:11:20.000000000',
+            change_id='Ideadbeef', project='chromium/src',
+            has_review_started=False, branch='main', subject='Overridden title',
+            revisions={
+                '184ebe53805e102605d11f6b143486d15c23a09c': {
+                    '_number': '23981',
+                    'commit': {
+                        'message': 'Overridden change commit message',
+                    }
+                }
+            }),
+}
+
+
 def RunSteps(api):
   changes = api.gerrit.query_changes('https://chromium-review.googlesource.com',
                                      [('topic', 'pupr')])
@@ -16,4 +40,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.gerrit.set_query_changes_response(
+          '', gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          values_dict))

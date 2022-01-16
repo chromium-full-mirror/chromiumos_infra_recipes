@@ -10,7 +10,8 @@ from .api import PatchSet
 
 class ChangesTestApi(recipe_test_api.RecipeTestApi):
 
-  def test_response(self, request, gerrit_change, values_dict=None):
+  def test_fetch_changes_response(self, request, gerrit_change,
+                                  values_dict=None):
     project = gerrit_change.project if gerrit_change else ''
     values = dict(project=project or 'chromium/src')
     values.update(values_dict or {})
@@ -71,6 +72,27 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         })
     return resp
 
+  def test_query_changes_response(self, request, gerrit_change,
+                                  values_dict=None):
+    project = values_dict.get('project',
+                              None) if values_dict is not None else None
+    project = gerrit_change.project if project is None and gerrit_change is not None else 'chromium/src'
+    values = dict(project=project)
+    values.update(values_dict or {})
+    change_number = request['_number']
+    resp = request.copy()
+    resp['_number'] = change_number
+    resp['status'] = values.get('status', 'NEW')
+    resp['created'] = values.get('created', '2017-01-30 13:11:20.000000000')
+    resp['change_id'] = values.get('change_id', 'Ideadbeef')
+    resp['project'] = values.get('project', 'chromium/src')
+    resp['has_review_started'] = values.get('has_review_started', False)
+    resp['branch'] = values.get('branch', self.m.src_state.default_branch)
+    resp['subject'] = values.get('subject', 'Change title')
+    if 'revisions' in values:
+      resp['revisions'] = values.get('revisions')
+    return resp
+
   def set_gerrit_fetch_changes_response(self, step_name, changes,
                                         values_dict=None, iteration=1):
     """Set the response from gerrit-fetch-changes.
@@ -79,7 +101,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       step_name (str): name of the step calling gerrit.fetch_patch_sets.
       changes (list[GerritChange]): The list of changes which will be found.
       values_dict (dict): Dictionary of {change_number: values} to provide field
-          values to test_response.
+          values to test_fetch_changes_response.
       iteration (int): Which call this applies to for this step/endpoint.
 
     Returns:
@@ -92,21 +114,50 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
                      patch_set=change.patchset)
       values = dict(project=change.project) if change.project else {}
       values.update(values_dict.get(change.change, {}))
-      respList.append(self.test_response(request, change, values))
+      respList.append(self.test_fetch_changes_response(request, change, values))
 
     respDict = dict(changes=respList)
     prefix = '%s.' % step_name if step_name else ''
     step_name = '%sgerrit-fetch-changes%s' % (prefix, iteration)
     return self.step_data(step_name, stdout=self.m.json.output(respDict))
 
+  def set_query_changes_response(self, step_name, changes, host_url,
+                                 values_dict=None, iteration=1):
+    """Set the response from query_changes.
+
+    Args:
+      step_name (str): name of the step calling gerrit.fetch_patch_sets.
+      changes (list[GerritChange]): The list of changes which will be found.
+      host_url (str): URL for the Gerrit host.
+      values_dict (dict): Dictionary of {change_number: values} to provide field
+          values to test_query_changes_response.
+      iteration (int): Which call this applies to for this step/endpoint.
+
+    Returns:
+      (StepTestData) test data instance for the test.
+    """
+    iteration = '' if iteration == 1 else ' (%d)' % iteration
+    respList = []
+    for change in changes:
+      request = change.copy()
+      values = dict(project=change['project']) if change['project'] else {}
+      values.update(values_dict.get(change["_number"], {}))
+      respList.append(self.test_query_changes_response(request, change, values))
+
+    prefix = '%s.' % step_name if step_name else ''
+    step_name = '%squery %s%s.gerrit changes' % (prefix, host_url, iteration)
+    return self.override_step_data(step_name, self.m.json.output(respList))
+
   def test_gerrit_fetch_changes(self, request, gerrit_changes):
     return {
-        'changes': map(self.test_response, request['changes'], gerrit_changes)
+        'changes':
+            map(self.test_fetch_changes_response, request['changes'],
+                gerrit_changes)
     }
 
   def test_patch_set(self):
     return PatchSet(
-        self.test_response(
+        self.test_fetch_changes_response(
             {
                 'host': 'chromium',
                 'change_number': 12345,
