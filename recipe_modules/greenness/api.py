@@ -14,6 +14,7 @@ from PB.chromiumos.greenness import AggregateGreenness
 from recipe_engine import recipe_api
 
 GreennessTuple = namedtuple('GreennessTuple', ['score', 'critical', 'relevant'])
+EXCLUDE_VARIANTS = ['-asan-', '-ubsan-']
 
 
 class GreennessApi(recipe_api.RecipeApi):
@@ -40,6 +41,13 @@ class GreennessApi(recipe_api.RecipeApi):
     """
     return self._greenness_dict.get(target, None)
 
+  def _is_excluded(self, builder_name):
+    for variant in EXCLUDE_VARIANTS:
+      if variant in builder_name:
+        return True
+
+    return False
+
   def update_build_info(self, builds):
     """Update Grenness with build information.
 
@@ -49,6 +57,8 @@ class GreennessApi(recipe_api.RecipeApi):
     """
     for build in builds:
       bt = str(self.m.cros_infra_config.get_build_target_name(build))
+      if self._is_excluded(build.builder.builder):
+        continue
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
       if self.m.cros_tags.has_entry('relevance', 'relevant', build.tags):

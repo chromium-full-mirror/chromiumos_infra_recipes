@@ -24,7 +24,12 @@ def RunSteps(api):
           build_target_name='eve-kernelnext-not-relevant', status='SUCCESS',
           tags=api.cros_tags.tags(**{
               'relevance': 'not relevant',
-          })).message
+          })).message,
+      api.test_util.test_api.test_child_build(
+          builder='eve-asan-postsubmit', build_target_name='eve',
+          status='SUCCESS', tags=api.cros_tags.tags(**{
+              'relevance': 'relevant',
+          })).message,
   ]
   api.greenness.update_build_info(builds)
   api.assertions.assertEqual(

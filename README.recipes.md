@@ -5795,11 +5795,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#32)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#33)(self, target):**
 
 Returns the greenness metric for a specific target.
 
@@ -5809,17 +5809,17 @@ Args:
 Returns: Metric of the target or None if the target wasn't
 launched.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#28)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#29)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#95)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#105)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#102)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#112)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#43)(self, builds):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#51)(self, builds):**
 
 Update Grenness with build information.
 
@@ -5827,14 +5827,14 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#59)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#69)(self, results):**
 
 Update Grenness with HW test information.
 
 Args:
   results([SkylabResult]): Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#82)(self, results):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#92)(self, results):**
 
 Update Grenness with VM test information.
 
