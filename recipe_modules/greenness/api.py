@@ -13,7 +13,7 @@ from PB.chromiumos.greenness import AggregateGreenness
 
 from recipe_engine import recipe_api
 
-GreennessTuple = namedtuple('GreennessTuple', ['score', 'critical'])
+GreennessTuple = namedtuple('GreennessTuple', ['score', 'critical', 'relevant'])
 
 
 class GreennessApi(recipe_api.RecipeApi):
@@ -52,7 +52,9 @@ class GreennessApi(recipe_api.RecipeApi):
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
       if self.m.cros_tags.has_entry('relevance', 'relevant', build.tags):
-        self._greenness_dict[bt] = GreennessTuple(green_metric, critical)
+        self._greenness_dict[bt] = GreennessTuple(green_metric, critical, True)
+      else:
+        self._greenness_dict[bt] = GreennessTuple(0, critical, False)
 
   def update_hwtest_info(self, results):
     """Update Grenness with HW test information.
@@ -75,7 +77,7 @@ class GreennessApi(recipe_api.RecipeApi):
     for bt, test_cases in hwtest_dict.items():
       if test_cases:
         score = int(sum(test_cases) * 100 / len(test_cases))
-        self._greenness_dict[str(bt)] = GreennessTuple(score, True)
+        self._greenness_dict[str(bt)] = GreennessTuple(score, True, True)
 
   def update_vmtest_info(self, results):
     """Update Grenness with VM test information.
@@ -87,7 +89,8 @@ class GreennessApi(recipe_api.RecipeApi):
       bt = self.m.cros_infra_config.get_build_target_name(build=res)
       if 'greenness' in res.output.properties:
         greenness = res.output.properties['greenness']
-        self._greenness_dict[str(bt)] = GreennessTuple(int(greenness), True)
+        self._greenness_dict[str(bt)] = GreennessTuple(
+            int(greenness), True, True)
 
   def print_step(self):
     """Print comprehensive greenness info in a step."""
@@ -104,10 +107,12 @@ class GreennessApi(recipe_api.RecipeApi):
       target_greenness = agg_greenness.target_greenness.add()
       target_greenness.target = bt
       target_greenness.metric = green_tuple.score
-      if green_tuple.critical:
+      if not green_tuple.relevant:
+        target_greenness.context = AggregateGreenness.Greenness.IRRELEVANT
+      if green_tuple.critical and green_tuple.relevant:
         critical_scores.append(green_tuple.score)
 
     if critical_scores:
-      AggregateGreenness.aggregate_metric = int(
+      agg_greenness.aggregate_metric = int(
           sum(critical_scores) / len(critical_scores))
     self.m.easy.set_properties_step(greenness=agg_greenness)

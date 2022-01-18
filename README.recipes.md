@@ -5817,11 +5817,11 @@ launched.
 
 &emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#28)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#92)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#95)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#99)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#102)(self):**
 
 Publish greenness to output properties.
 
@@ -5833,14 +5833,14 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#57)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#59)(self, results):**
 
 Update Grenness with HW test information.
 
 Args:
   results([SkylabResult]): Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#80)(self, results):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#82)(self, results):**
 
 Update Grenness with VM test information.
 
