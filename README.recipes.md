@@ -10587,7 +10587,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#483)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#484)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#117)(api, interface, test_metadata, result):**
 

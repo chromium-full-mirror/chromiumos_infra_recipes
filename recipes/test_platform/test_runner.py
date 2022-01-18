@@ -463,7 +463,8 @@ def execution_steps(api, properties):
               test_metadata=test_metadata,
               max_duration_sec=max_duration_sec,
               dut_state=dut_state,
-              container_image_info=properties.request.container_image_info,
+              container_image_info=properties.request.execution_param
+              .container_image_info,
           )
           global_result.add_result(test_id, result)
         else:
