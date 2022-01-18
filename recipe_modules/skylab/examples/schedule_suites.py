@@ -23,6 +23,7 @@ def RunSteps(api):
   _ = api.skylab.resultdb_elegible_projects
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
+  hw_test.skylab_board = 'specific-model'
   hw_test.common.display_name = 'my_first_little_hwtest'
   unit_hw_test = api.skylab.UnitHwTest(unit=hw_test_unit, hw_test=hw_test)
 

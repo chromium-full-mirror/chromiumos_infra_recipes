@@ -178,6 +178,9 @@ class SkylabApi(recipe_api.RecipeApi):
       with self.m.step.nest('create test requests'):
         for uht in unit_hw_tests:
           step_name = 'configure {}'.format(uht.unit.common.builder_name)
+          skylab_board = uht.hw_test.skylab_board
+          if skylab_board != uht.unit.common.build_target.name:
+            step_name = step_name + ' ({})'.format(skylab_board)
           with self.m.step.nest(step_name) as configure_step:
             request = create_test_request(uht)
 
