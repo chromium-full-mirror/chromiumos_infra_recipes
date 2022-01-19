@@ -2970,6 +2970,14 @@
   },
   {
     "cmd": [],
+    "name": "generate CLs.set generated_cls",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@generated_cls@[{\"change\": \"1\", \"host\": \"chromium-review.googlesource.com\", \"project\": \"src/overlay\"}, {\"change\": \"1\", \"host\": \"chromium-review.googlesource.com\", \"project\": \"src/private-overlay\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "cq-depend generated CLs"
   },
   {

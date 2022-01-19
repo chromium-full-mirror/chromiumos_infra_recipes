@@ -544,6 +544,8 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
               reviewers=[reviewer.email for reviewer in policy.reviewers],
               topic=topic,
           ))
+    api.easy.set_properties_step(
+        generated_cls=[MessageToDict(change) for change in changes])
 
   if changes:
     with api.step.nest('cq-depend generated CLs'):
