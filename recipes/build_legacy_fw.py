@@ -183,7 +183,7 @@ class FirmwareBuilder(object):
 
   def _bump_version(self):
     dry_run = self._is_staging or self.m.cq.active
-    self.m.cros_version.bump_version(dry_run=dry_run)
+    self.m.cros_version.bump_version(production=True, dry_run=dry_run)
     if self.m.cq.active:
       with self.m.step.nest('CQ run: not pushing buildspec'):
         return
@@ -531,7 +531,7 @@ def GenTests(api):
       'release',
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(post_process.StepTextEquals, 'bump version', ''),
+      api.post_check(post_process.MustRun, 'bump version'),
       api.post_check(post_process.MustRun, 'create buildspec'),
       suite_scheduling(True),
       api.post_check(post_process.StepCommandContains,
@@ -546,8 +546,7 @@ def GenTests(api):
       'staging-release',
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(post_process.StepTextEquals, 'bump version',
-                     'dry-run only'),
+      api.post_check(post_process.MustRun, 'bump version'),
       api.post_check(post_process.MustRun, 'create buildspec'),
       suite_scheduling(False),
       api.post_check(post_process.StepCommandContains,

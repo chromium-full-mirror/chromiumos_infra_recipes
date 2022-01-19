@@ -129,14 +129,20 @@ class CrosVersionApi(RecipeApi):
 
         self._version_bumper_path = cipd_dir.join('version_bumper')
 
-  def bump_version(self, dry_run=True):
+  def bump_version(self, production=False, dry_run=False):
     """Bumps the chromeos version (as represented in chromeos_version.sh)
       and pushes the change to the chromiumos-overlay repo.
 
       Which component is bumped depends on the branch the invoking recipe
       is running for (main/tot --> build, release-* --> branch).
 
+      The updated version file is currently pushed to the 'rubik-staging'
+      branch of the chromiumos-overlays repo.
+
       Args:
+        production (bool): Whether to use the checked out overlay. The default
+          is to increment the version on the 'rubik-staging' branch, having no
+          effect on the source tree.
         dry_run (bool): Whether the git push is --dry-run.
     """
     with self.m.step.nest('bump version') as pres:
@@ -151,6 +157,18 @@ class CrosVersionApi(RecipeApi):
 
       # By default, we push to the manifest branch.
       push_branch = self.m.cros_source.manifest_push
+
+      # This cloning logic can be removed when rubik-staging is no
+      # longer in use, as the repo in the full checkout will be for
+      # the correct branch.
+      if not production:
+        push_branch = CHROMIUMOS_OVERLAY_RUBIK_BRANCH
+        # Overwrite to our separately cloned copy of the repo.
+        overlay_path = self.m.path.mkdtemp(prefix='chromiumos-overlay')
+        with self.m.context(cwd=overlay_path):
+          # Clone chromiumos-overlay repo to current path.
+          with self.m.step.nest('clone chromiumos-overlay'):
+            self.m.git.clone(CHROMIUMOS_OVERLAY_REMOTE, branch=push_branch)
 
       cmd = [
           self._version_bumper_path,
@@ -182,16 +200,8 @@ class CrosVersionApi(RecipeApi):
         with self.m.step.nest('commit {}'.format(CHROMEOS_VERSION_FILE)):
           self.m.git.add([CHROMEOS_VERSION_FILE])
           self.m.git.commit(commit_message)
-          if not dry_run:
-            refspec = self.m.git.get_branch_refspec(push_branch)
-            change = self.m.gerrit.create_change(
-                'chromiumos/overlays/chromiumos-overlay', branch=refspec,
-                project_path=overlay_path)
-            labels = {
-                self.m.gerrit.Label.BOT_COMMIT: 1,
-                self.m.gerrit.Label.VERIFIED: 1,
-            }
-            self.m.gerrit.set_change_labels_remote(change, labels)
-            self.m.gerrit.submit_change(change, project_path=overlay_path)
-          else:
-            pres.step_text = 'dry-run only'
+          self.m.git.push(CHROMIUMOS_OVERLAY_REMOTE,
+                          'HEAD:refs/heads/{}'.format(push_branch),
+                          dry_run=dry_run)
+        if dry_run:
+          pres.step_text = 'dry-run only'
