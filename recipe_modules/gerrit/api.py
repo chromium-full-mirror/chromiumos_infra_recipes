@@ -446,9 +446,13 @@ class GerritApi(RecipeApi):
       # `project` is the project name and use `project_path` as our cwd.
       # Otherwise, we'll infer the information from the repo.project_info
       # results.
-      with self.m.context(cwd=self.m.src_state.workspace_path):
-        if self.m.repo.project_exists(project):
-          project_info = self.m.repo.project_info(project)
+      if self.m.path.exists(self.m.src_state.workspace_path):
+        # Need to check that the ChromeOS workspace path exists. In some cases
+        # it doesn't, like for StarDoctor. Then we definitely can't get project
+        # info.
+        with self.m.context(cwd=self.m.src_state.workspace_path):
+          if self.m.repo.project_exists(project):
+            project_info = self.m.repo.project_info(project)
 
       if project_path:
         cwd = project_path

@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'gerrit',
+    'src_state',
 ]
 
 def RunSteps(api):
@@ -39,6 +40,7 @@ def GenTests(api):
       api.gerrit.simulated_create_change(
           'create gerrit change for bar',
           'https://host-review.googlesource.com/c/bar/+/456'),
+      api.path.exists(api.src_state.workspace_path),
       api.step_data(
           'create gerrit change for foo.check if project foo exists.repo info',
           stderr=api.raw_io.output('project foo not found')),

@@ -2689,7 +2689,7 @@
     "name": "commit changes.committing to chromiumos/infra/suite_scheduler",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@change committed@https://crrev.com/i/somenumber@@@"
+      "@@@STEP_LINK@change uploaded@https://crrev.com/i/somenumber@@@"
     ]
   },
   {
@@ -2780,60 +2780,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.check if project chromiumos/infra/suite_scheduler exists",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info",
-      "chromiumos/infra/suite_scheduler"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.check if project chromiumos/infra/suite_scheduler exists.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromiumos/infra/suite_scheduler",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/infra/suite_scheduler|src/chromiumos/infra/suite_scheduler|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
@@ -2949,59 +2895,6 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "name": "commit changes.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.submit CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/suite_scheduler/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "issue",
-      "1"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.submit CL 1.git_cl issue",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "land",
-      "-f",
-      "1"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

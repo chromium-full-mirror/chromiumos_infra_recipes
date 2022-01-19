@@ -338,12 +338,11 @@ def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
           project, topic=STARDOCTOR_TOPIC, hashtags=[CONFIG_UPDATE_HASHTAG],
           branch=api.git.get_branch_refspec(branch), project_path=repo_dir)
       api.gerrit.set_change_labels_remote(change, labels)
-      api.gerrit.submit_change(change, project_path=repo_dir)
       gerrit_change_url = api.git_cl.status(
           field='url', fast=True,
           step_test_data=functools.partial(api.raw_io.test_api.stream_output,
                                            'https://crrev.com/i/somenumber'))
-      presentation.links['change committed'] = gerrit_change_url
+      presentation.links['change uploaded'] = gerrit_change_url
 
 
 def _abandon_old_changes(api, project):
