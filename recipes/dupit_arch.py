@@ -21,8 +21,11 @@ Mirror = namedtuple("Mirror", "uri rate")
 # list of of (uri, rate limit) for mirrors to try, in order
 MIRRORS = [
     Mirror('rsync://ord.mirror.rackspace.com/archlinux/', '50m'),
-    Mirror('rsync://dfw.mirror.rackspace.com/archlinux/', '50m'),
     Mirror('rsync://mirrors.kernel.org/archlinux/', '50m'),
+    Mirror('rsync://arch.mirror.constant.com/archlinux/', '50m'),
+    Mirror('rsync://mirror.sfo12.us.leaseweb.net/archlinux/', '50m'),
+    Mirror('rsync://dfw.mirror.rackspace.com/archlinux/', '50m'),
+    Mirror('rsync://mirrors.rit.edu/archlinux/', '50m'),
 ]
 
 GS_DISTFILES = 'gs://chromeos-mirror/archlinux/'
@@ -102,6 +105,21 @@ def GenTests(api):
           (MIRRORS[2].uri, MIRRORS[2].uri),
           retcode=1,
       ),
+      api.step_data(
+          'mirror from %s.list distfiles in %s' %
+          (MIRRORS[3].uri, MIRRORS[3].uri),
+          retcode=1,
+      ),
+      api.step_data(
+          'mirror from %s.list distfiles in %s' %
+          (MIRRORS[4].uri, MIRRORS[4].uri),
+          retcode=1,
+      ),
+      api.step_data(
+          'mirror from %s.list distfiles in %s' %
+          (MIRRORS[5].uri, MIRRORS[5].uri),
+          retcode=1,
+      ),
       api.post_process(
           post_process.DoesNotRun,
           'mirror from %s.rsync distfiles from %s' %
@@ -116,6 +134,21 @@ def GenTests(api):
           post_process.DoesNotRun,
           'mirror from %s.rsync distfiles from %s' %
           (MIRRORS[2].uri, MIRRORS[2].uri),
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'mirror from %s.rsync distfiles from %s' %
+          (MIRRORS[3].uri, MIRRORS[3].uri),
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'mirror from %s.rsync distfiles from %s' %
+          (MIRRORS[4].uri, MIRRORS[4].uri),
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'mirror from %s.rsync distfiles from %s' %
+          (MIRRORS[5].uri, MIRRORS[5].uri),
       ),
       api.post_process(post_process.StatusFailure),
   )

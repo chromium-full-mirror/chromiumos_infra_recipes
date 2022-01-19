@@ -67,72 +67,6 @@
   },
   {
     "cmd": [],
-    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@mirroring of rsync://dfw.mirror.rackspace.com/archlinux/ failed@@@",
-      "@@@STEP_WARNINGS@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "-r",
-      "gs://chromeos-mirror/archlinux/**"
-    ],
-    "infra_step": true,
-    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cut",
-      "-c32-",
-      "[CLEANUP]/distfile_lists_tmp_2/gs.txt"
-    ],
-    "infra_step": true,
-    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.remove gs://... prefix",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sort",
-      "[CLEANUP]/distfile_lists_tmp_2/gs_relative.txt"
-    ],
-    "infra_step": true,
-    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.sort gs distfiles",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rsync",
-      "--list-only",
-      "--no-motd",
-      "--recursive",
-      "--links",
-      "--safe-links",
-      "rsync://dfw.mirror.rackspace.com/archlinux/**"
-    ],
-    "infra_step": true,
-    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.list distfiles in rsync://dfw.mirror.rackspace.com/archlinux/",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "mirror from rsync://mirrors.kernel.org/archlinux/",
     "~followup_annotations": [
       "@@@STEP_TEXT@mirroring of rsync://mirrors.kernel.org/archlinux/ failed@@@",
@@ -161,7 +95,7 @@
     "cmd": [
       "cut",
       "-c32-",
-      "[CLEANUP]/distfile_lists_tmp_3/gs.txt"
+      "[CLEANUP]/distfile_lists_tmp_2/gs.txt"
     ],
     "infra_step": true,
     "name": "mirror from rsync://mirrors.kernel.org/archlinux/.remove gs://... prefix",
@@ -172,7 +106,7 @@
   {
     "cmd": [
       "sort",
-      "[CLEANUP]/distfile_lists_tmp_3/gs_relative.txt"
+      "[CLEANUP]/distfile_lists_tmp_2/gs_relative.txt"
     ],
     "infra_step": true,
     "name": "mirror from rsync://mirrors.kernel.org/archlinux/.sort gs distfiles",
@@ -192,6 +126,270 @@
     ],
     "infra_step": true,
     "name": "mirror from rsync://mirrors.kernel.org/archlinux/.list distfiles in rsync://mirrors.kernel.org/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@mirroring of rsync://arch.mirror.constant.com/archlinux/ failed@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://chromeos-mirror/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c32-",
+      "[CLEANUP]/distfile_lists_tmp_3/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.remove gs://... prefix",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_3/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.sort gs distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://arch.mirror.constant.com/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.list distfiles in rsync://arch.mirror.constant.com/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mirror from rsync://mirror.sfo12.us.leaseweb.net/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@mirroring of rsync://mirror.sfo12.us.leaseweb.net/archlinux/ failed@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://chromeos-mirror/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirror.sfo12.us.leaseweb.net/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c32-",
+      "[CLEANUP]/distfile_lists_tmp_4/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirror.sfo12.us.leaseweb.net/archlinux/.remove gs://... prefix",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_4/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirror.sfo12.us.leaseweb.net/archlinux/.sort gs distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://mirror.sfo12.us.leaseweb.net/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirror.sfo12.us.leaseweb.net/archlinux/.list distfiles in rsync://mirror.sfo12.us.leaseweb.net/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@mirroring of rsync://dfw.mirror.rackspace.com/archlinux/ failed@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://chromeos-mirror/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c32-",
+      "[CLEANUP]/distfile_lists_tmp_5/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.remove gs://... prefix",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_5/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.sort gs distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://dfw.mirror.rackspace.com/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://dfw.mirror.rackspace.com/archlinux/.list distfiles in rsync://dfw.mirror.rackspace.com/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mirror from rsync://mirrors.rit.edu/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@mirroring of rsync://mirrors.rit.edu/archlinux/ failed@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://chromeos-mirror/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirrors.rit.edu/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c32-",
+      "[CLEANUP]/distfile_lists_tmp_6/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirrors.rit.edu/archlinux/.remove gs://... prefix",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_6/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirrors.rit.edu/archlinux/.sort gs distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://mirrors.rit.edu/archlinux/**"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirrors.rit.edu/archlinux/.list distfiles in rsync://mirrors.rit.edu/archlinux/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"

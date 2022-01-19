@@ -9349,7 +9349,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for syncing Archlinux to our local cache for Borealis VM image.
 
-&mdash; **def [RunSteps](/recipes/dupit_arch.py#31)(api):**
+&mdash; **def [RunSteps](/recipes/dupit_arch.py#34)(api):**
 ### *recipes* / [dut\_interface:tests/full](/recipe_modules/dut_interface/tests/full.py)
 
 [DEPS](/recipe_modules/dut_interface/tests/full.py#6): [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
