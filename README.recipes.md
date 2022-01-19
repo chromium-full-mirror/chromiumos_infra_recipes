@@ -145,6 +145,7 @@
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
+  * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
@@ -8481,6 +8482,15 @@ Recipe for building and testing a BuildTarget's packages.
 &mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#49)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#27)(api):**
+### *recipes* / [build\_toolchain](/recipes/build_toolchain.py)
+
+[DEPS](/recipes/build_toolchain.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Builds and uploads the Chromium OS toolchain.
+
+&mdash; **def [RunSteps](/recipes/build_toolchain.py#22)(api):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

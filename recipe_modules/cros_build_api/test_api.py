@@ -371,6 +371,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['CreateSnapshot'] = jsonify(
         snapshot_token={'value': 'TEST_SNAPSHOT'})
     responses['RestoreSnapshot'] = '{}'
+    responses['BuildPrebuilts'] = '{}'
+    responses['UploadPrebuiltPackages'] = '{}'
     return responses
 
   @property

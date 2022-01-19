@@ -139,11 +139,13 @@ def RunSteps(api):
       'SdkService': {
           'Clean': sdk.CleanResponse,
           'Create': sdk.CreateResponse,
+          'BuildPrebuilts': sdk.BuildPrebuiltsResponse,
           'Delete': sdk.UpdateResponse,
           'Unmount': sdk.UnmountResponse,
           'Update': sdk.UpdateResponse,
           'CreateSnapshot': sdk.CreateSnapshotResponse,
           'RestoreSnapshot': sdk.RestoreSnapshotResponse,
+          'UploadPrebuiltPackages': sdk.UploadPrebuiltPackagesResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
