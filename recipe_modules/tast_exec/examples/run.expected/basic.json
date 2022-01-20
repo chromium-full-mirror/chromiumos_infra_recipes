@@ -366,11 +366,54 @@
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_1/*"
     ],
     "infra_step": true,
     "luci_context": {
@@ -387,6 +430,34 @@
     },
     "name": "first tast iteration.gather artifacts on VM",
     "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.remove temporary artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -957,11 +1028,54 @@
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_2/*"
     ],
     "infra_step": true,
     "luci_context": {
@@ -978,6 +1092,34 @@
     },
     "name": "second tast iteration.gather artifacts on VM",
     "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.remove temporary artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1529,11 +1671,51 @@
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_3"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "rsync artifacts to a temporary location on the VM",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_3/*"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1550,6 +1732,31 @@
     },
     "name": "gather artifacts on VM",
     "timeout": 300
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_3"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove temporary artifacts"
   },
   {
     "cmd": [
@@ -1850,11 +2057,51 @@
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@localhost",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_4"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "rsync artifacts to a temporary location on the VM (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_4/*"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1871,6 +2118,31 @@
     },
     "name": "gather artifacts on VM (2)",
     "timeout": 300
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_4"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove temporary artifacts (2)"
   },
   {
     "cmd": [
@@ -2228,11 +2500,54 @@
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@172.16.0.15",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_5"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_5/*"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2249,6 +2564,34 @@
     },
     "name": "first tast iteration (2).gather artifacts on VM",
     "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_5"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).remove temporary artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2790,11 +3133,54 @@
       "[CLEANUP]/temp_tmp_2/image/id_rsa",
       "root@172.16.0.15",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_6"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@172.16.0.15",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_6/*"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2811,6 +3197,34 @@
     },
     "name": "second tast iteration (2).gather artifacts on VM",
     "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_6"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).remove temporary artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

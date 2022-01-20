@@ -279,15 +279,62 @@
       "[CLEANUP]/test-artifacts_tmp_1/autotest/utils/frozen_chromite/ssh_keys/testing_rsa",
       "root@172.16.0.15",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "[CLEANUP]/vm-artifacts_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.first tast iteration.rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/test-artifacts_tmp_1/autotest/utils/frozen_chromite/ssh_keys/testing_rsa",
+      "root@172.16.0.15",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "[CLEANUP]/vm-artifacts_tmp_1/*"
     ],
     "infra_step": true,
     "name": "run tast tests.first tast iteration.gather artifacts on VM",
     "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/vm-artifacts_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.first tast iteration.remove temporary artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
