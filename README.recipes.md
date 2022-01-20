@@ -189,6 +189,7 @@
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
+  * [cros_dupit:examples/arch](#recipes-cros_dupit_examples_arch)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
   * [cros_history:examples/get_annealing_from_snapshot](#recipes-cros_history_examples_get_annealing_from_snapshot)
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
@@ -2118,7 +2119,7 @@ API for DupIt script. See the design of this recipe in go/cros-dupit.
 
 A module for the DupIt script.
 
-&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#17)(self, rsync_mirror_address, rsync_mirror_rate_limit, gs_distfiles_uri):**
+&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#17)(self, rsync_mirror_address, rsync_mirror_rate_limit, gs_distfiles_uri, ignore_missing_args=False, filter_missing_links=False):**
 
 Configure the DupIt script module.
 
@@ -2128,16 +2129,20 @@ Args:
   * rsync_mirror_rate_limit: the rate limit of syncing from public mirror.
   * gs_distfiles_uri: the Google cloud storage URI which stores all
     Gentoo distfiles.
+  * ignore_missing_args: have rsync ignore files that go missing during
+    synchronization.
+  * filter_missing_links: filter out symlinks that are missing (such
+    as directories).
 
-&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#265)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#290)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#257)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#282)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#261)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#286)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#253)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#278)(self):**
 
-&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#269)(self):**
+&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#294)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8739,13 +8744,20 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#23)(api):**
+### *recipes* / [cros\_dupit:examples/arch](/recipe_modules/cros_dupit/examples/arch.py)
+
+[DEPS](/recipe_modules/cros_dupit/examples/arch.py#6): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/arch.py#14)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#6): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#14)(api):**
 ### *recipes* / [cros\_history:examples/get\_annealing\_from\_snapshot](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#7): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

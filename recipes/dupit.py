@@ -34,6 +34,8 @@ def RunSteps(api):
           rsync_mirror_address=mirror.uri,
           rsync_mirror_rate_limit=mirror.rate,
           gs_distfiles_uri='gs://chromeos-mirror/gentoo/distfiles/',
+          ignore_missing_args=False,
+          filter_missing_links=False,
       )
       api.cros_dupit.run()
       break

@@ -20,12 +20,12 @@ Mirror = namedtuple("Mirror", "uri rate")
 
 # list of of (uri, rate limit) for mirrors to try, in order
 MIRRORS = [
-    Mirror('rsync://ord.mirror.rackspace.com/archlinux/', '50m'),
-    Mirror('rsync://mirrors.kernel.org/archlinux/', '50m'),
     Mirror('rsync://arch.mirror.constant.com/archlinux/', '50m'),
     Mirror('rsync://mirror.sfo12.us.leaseweb.net/archlinux/', '50m'),
-    Mirror('rsync://dfw.mirror.rackspace.com/archlinux/', '50m'),
     Mirror('rsync://mirrors.rit.edu/archlinux/', '50m'),
+    Mirror('rsync://ord.mirror.rackspace.com/archlinux/', '50m'),
+    Mirror('rsync://mirrors.kernel.org/archlinux/', '50m'),
+    Mirror('rsync://dfw.mirror.rackspace.com/archlinux/', '50m'),
 ]
 
 GS_DISTFILES = 'gs://chromeos-mirror/archlinux/'
@@ -40,6 +40,8 @@ def RunSteps(api):
             rsync_mirror_address=mirror.uri,
             rsync_mirror_rate_limit=mirror.rate,
             gs_distfiles_uri='gs://chromeos-mirror/archlinux/',
+            ignore_missing_args=True,
+            filter_missing_links=True,
         )
         api.cros_dupit.run()
         mirror_success = True

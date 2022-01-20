@@ -1,7 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/"
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/"
   },
   {
     "cmd": [
@@ -16,7 +16,7 @@
       "gs://chromeos-mirror/archlinux/**"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -28,7 +28,7 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.remove gs://... prefix",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.remove gs://... prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -39,7 +39,7 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.sort gs distfiles",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.sort gs distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -52,10 +52,10 @@
       "--recursive",
       "--links",
       "--safe-links",
-      "rsync://ord.mirror.rackspace.com/archlinux/**"
+      "rsync://arch.mirror.constant.com/archlinux/**"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.list distfiles in rsync://ord.mirror.rackspace.com/archlinux/",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.list distfiles in rsync://arch.mirror.constant.com/archlinux/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -67,7 +67,7 @@
       "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.remove perms/size/timestamp prefix",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.remove perms/size/timestamp prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -78,7 +78,7 @@
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.sort gentoo distfiles",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.sort gentoo distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -91,7 +91,7 @@
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.get list of files in gentoo that are not in gs",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.get list of files in gentoo that are not in gs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -112,11 +112,12 @@
       "--timeout=180",
       "--bwlimit=50m",
       "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
-      "rsync://ord.mirror.rackspace.com/archlinux/",
+      "--ignore-missing-args",
+      "rsync://arch.mirror.constant.com/archlinux/",
       "[CLEANUP]/distfiles_tmp_1"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.rsync distfiles from rsync://ord.mirror.rackspace.com/archlinux/",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.rsync distfiles from rsync://arch.mirror.constant.com/archlinux/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -129,17 +130,32 @@
       "l",
       "-ls"
     ],
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.list symlink distfiles",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.list symlink distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.copy new distfiles to gs",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@No new distfiles to upload@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      "[CLEANUP]/distfiles_tmp_1/",
+      "-xtype",
+      "l",
+      "-ls",
+      "-delete"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.filtering missing symlinks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -153,7 +169,7 @@
       "[CLEANUP]/distfiles_tmp_1"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://ord.mirror.rackspace.com/archlinux/.copy new distfiles to gs.list new distfiles",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.list new distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@listdir@@@"

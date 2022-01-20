@@ -1,0 +1,172 @@
+[
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-r",
+      "gs://stark-trek/the-ultimate-computer/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "gsutil list distfiles in gs://stark-trek/the-ultimate-computer/distfiles/"
+  },
+  {
+    "cmd": [
+      "cut",
+      "-c49-",
+      "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
+    ],
+    "infra_step": true,
+    "name": "remove gs://... prefix"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gs distfiles"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--list-only",
+      "--no-motd",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "rsync://mirrors.do.not.exists/distfiles/**"
+    ],
+    "infra_step": true,
+    "name": "list distfiles in rsync://mirrors.do.not.exists/distfiles"
+  },
+  {
+    "cmd": [
+      "awk",
+      "match($1, /^[^d]/) { print $5 }",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
+    ],
+    "infra_step": true,
+    "name": "remove perms/size/timestamp prefix"
+  },
+  {
+    "cmd": [
+      "sort",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
+    ],
+    "infra_step": true,
+    "name": "sort gentoo distfiles"
+  },
+  {
+    "cmd": [
+      "comm",
+      "-13",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
+    ],
+    "infra_step": true,
+    "name": "get list of files in gentoo that are not in gs"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "--perms",
+      "--times",
+      "--compress",
+      "--stats",
+      "--progress",
+      "--human-readable",
+      "--ignore-existing",
+      "--timeout=180",
+      "--bwlimit=1m",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
+      "--ignore-missing-args",
+      "rsync://mirrors.do.not.exists/distfiles/",
+      "[CLEANUP]/distfiles_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "rsync distfiles from rsync://mirrors.do.not.exists/distfiles"
+  },
+  {
+    "cmd": [
+      "find",
+      "[CLEANUP]/distfiles_tmp_1/",
+      "-type",
+      "l",
+      "-ls"
+    ],
+    "name": "list symlink distfiles"
+  },
+  {
+    "cmd": [],
+    "name": "copy new distfiles to gs"
+  },
+  {
+    "cmd": [
+      "find",
+      "[CLEANUP]/distfiles_tmp_1/",
+      "-xtype",
+      "l",
+      "-ls",
+      "-delete"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.filtering missing symlinks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/distfiles_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.list new distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/distfiles_tmp_1/new_distfile.tar.gz@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-n",
+      "-a",
+      "public-read",
+      "[CLEANUP]/distfiles_tmp_1/*",
+      "gs://stark-trek/the-ultimate-computer/distfiles/"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.gsutil upload new distfiles to gs://stark-trek/the-ultimate-computer/distfiles/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

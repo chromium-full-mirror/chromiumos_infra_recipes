@@ -15,7 +15,8 @@ class DupItApi(recipe_api.RecipeApi):
     super(DupItApi, self).__init__(*args, **kwargs)
 
   def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
-                gs_distfiles_uri):
+                gs_distfiles_uri, ignore_missing_args=False,
+                filter_missing_links=False):
     """Configure the DupIt script module.
 
     Args:
@@ -24,6 +25,10 @@ class DupItApi(recipe_api.RecipeApi):
       * rsync_mirror_rate_limit: the rate limit of syncing from public mirror.
       * gs_distfiles_uri: the Google cloud storage URI which stores all
         Gentoo distfiles.
+      * ignore_missing_args: have rsync ignore files that go missing during
+        synchronization.
+      * filter_missing_links: filter out symlinks that are missing (such
+        as directories).
     """
     assert (rsync_mirror_address.endswith('distfiles') or
             rsync_mirror_address.endswith('distfiles/') or
@@ -34,6 +39,8 @@ class DupItApi(recipe_api.RecipeApi):
     self._gs_distfiles_uri = gs_distfiles_uri
     self._tmp_distfile_lists_path = self.m.path.mkdtemp('distfile_lists')
     self._tmp_distfiles_path = self.m.path.mkdtemp('distfiles')
+    self._ignore_missing_args = ignore_missing_args
+    self._filter_missing_links = filter_missing_links
 
   def _get_list_of_gs_distfiles(self):
     """Get relative, sorted list of distfile paths from Google Storage bucket"""
@@ -148,7 +155,7 @@ class DupItApi(recipe_api.RecipeApi):
     return gentoo_distfile_relative_sorted_list_path
 
   def _get_rsync_cmd(self, files_from):
-    return [
+    cmd = [
         'rsync',
         # Make sure we copy files recursively.
         '--recursive',
@@ -174,10 +181,16 @@ class DupItApi(recipe_api.RecipeApi):
         # Set rate-limit
         '--bwlimit=%s' % self.rsync_mirror_rate_limit,
         '--files-from=%s' % files_from,
+    ]
+    if self._ignore_missing_args:
+      # Ignore files that vanish during large syncs.
+      cmd.append('--ignore-missing-args')
+    cmd.extend([
         # Ensure trailing slash on mirror address.
         self.m.path.join(self.rsync_mirror_address, ''),
         self.tmp_distfiles_path,
-    ]
+    ])
+    return cmd
 
   def _rsync_new_distfiles_from_gentoo(self):
     """Rsync distfiles that are in Gentoo but not in GS to tmp dir"""
@@ -231,6 +244,18 @@ class DupItApi(recipe_api.RecipeApi):
   def _copy_new_distfiles_to_gs(self):
     """Copy new distfiles from tmpdir to gs"""
     with self.m.step.nest('copy new distfiles to gs') as presentation:
+      if self._filter_missing_links:
+        # Remove any dangling symlinks.
+        filter_cmd = [
+            'find',
+            self.m.path.join(self.tmp_distfiles_path, ''),
+            '-xtype',
+            'l',
+            '-ls',
+            '-delete',
+        ]
+        filter_name = 'filtering missing symlinks'
+        self.m.step(cmd=filter_cmd, infra_step=True, name=filter_name)
       if self.m.file.listdir('list new distfiles', self.tmp_distfiles_path):
         gsutil_cp_cmd = [
             'cp',
