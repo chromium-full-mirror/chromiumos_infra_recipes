@@ -87,7 +87,6 @@ def DoRunSteps(api, properties):
     with api.context(cwd=workspace_path):
       # As of today |modified_files| should contain exactly one file.
       info = api.repo.project_info(project=api.path.dirname(modified_files[0]))
-      api.repo.start('lkgb', projects=[info.path])
 
     commit_lines = [
         '{}: Mark version {} as LKGB.'.format(android_package, android_version),
@@ -102,6 +101,9 @@ def DoRunSteps(api, properties):
 
     project_path = workspace_path.join(info.path)
     with api.context(cwd=project_path):
+      # Commit the change onto a new branch tracking upstream.
+      api.git.checkout('HEAD', branch='lkgb')
+      api.git.set_upstream(info.remote, info.branch_name)
       api.git.add(list(modified_files))
       api.git.commit(commit_message)
 
