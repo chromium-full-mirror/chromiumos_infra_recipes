@@ -253,15 +253,62 @@
       "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost",
       "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.first tast iteration.rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "root@localhost",
+      "--",
       "tar",
       "cf",
       "/tmp/artifacts.tar",
-      "/var/log",
-      "/var/spool/crash"
+      "/tmp/vm-artifacts/*"
     ],
     "infra_step": true,
     "name": "run tast tests.first tast iteration.gather artifacts on VM",
     "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.first tast iteration.remove temporary artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
