@@ -90,6 +90,7 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@need 3 new builds (filtered 0)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
+      "@@@STEP_LOG_LINE@filter log@CQ looks experiment not enabled@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },

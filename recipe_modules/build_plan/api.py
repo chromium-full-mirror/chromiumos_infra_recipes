@@ -3,9 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from PB.chromiumos.builder_config import BuilderConfig
+
+from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
 from collections import defaultdict
@@ -117,6 +121,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
+      # Check if CQ looks experiment is enabled
+      if 'chromeos.cros_infra_config.cq_looks' in child_exps:
+        # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
+        # wait-only CQ looks behaviors.
+        cq_looks_enabled = True
+        snapshot_ids = set()
+        filter_log.append('CQ looks experiment enabled')
+      else:
+        cq_looks_enabled = False
+        filter_log.append('CQ looks experiment not enabled')
 
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
@@ -177,6 +191,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
             BuilderConfig.General.PUBLIC):
           child_build_snapshot = external_snapshot
 
+        # If CQ Looks is enabled, collect a set of snapshot ids that will be
+        # used in this build plan so we can validate they are green snapshots.
+        # TODO(b/211620738): Refine to consider history of snapshots within
+        # lookback window.
+        if cq_looks_enabled:
+          filter_log.append('CQ looks: found snapshot {} for build {}'.format(
+              child_build_snapshot.id, child_spec.name))
+          snapshot_ids.add(child_build_snapshot.id)
+
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
 
         # Technically per current approaches a bisecting orchestrator doing hw
@@ -207,6 +230,27 @@ class BuildPlanApi(recipe_api.RecipeApi):
                 gerrit_changes=gerrit_changes, critical=critical, tags=tags,
                 properties=properties, experiments=child_exps,
                 swarming_parent_run_id=parent_run_id))
+
+      # TODO(b/211620738): Refine buildbucket query to determine if
+      # snapshots are complete. Parameterize LOOKBACK_HOURS in config.
+      # Add additional queries to change snapshot based on CQ looks business
+      # logic.
+      if cq_looks_enabled:
+        fields = frozenset({'id', 'status', 'builder', 'critical'})
+        LOOKBACK_HOURS = 14
+        for sid in snapshot_ids:
+          predicate = builds_service_pb2.BuildPredicate(
+              create_time=common_pb2.TimeRange(
+                  start_time=timestamp_pb2.Timestamp(
+                      seconds=self.m.buildbucket.build.create_time.ToSeconds() -
+                      LOOKBACK_HOURS * 60 * 60,
+                  )), tags=self.m.buildbucket.tags(snapshot=str(sid)))
+          predicate.builder.project = self.m.buildbucket.build.builder.project
+          predicate.builder.bucket = 'postsubmit'
+          builds = self.m.buildbucket.search(predicate, fields=fields)
+          filter_log.append(
+              'For snapshot {} in the last {} hours, found builds {}'.format(
+                  sid, LOOKBACK_HOURS, builds))
       presentation.logs['filter log'] = filter_log
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.

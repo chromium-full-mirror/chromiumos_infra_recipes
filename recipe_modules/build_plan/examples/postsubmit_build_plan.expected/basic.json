@@ -96,6 +96,7 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@need 2 new builds (filtered 1)@@@",
       "@@@STEP_LOG_LINE@filter log@from 4 -> 1 joinable after dedup and prioritization@@@",
+      "@@@STEP_LOG_LINE@filter log@CQ looks experiment not enabled@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic exists, will join on it@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]

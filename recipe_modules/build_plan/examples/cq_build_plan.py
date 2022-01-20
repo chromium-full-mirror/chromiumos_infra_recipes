@@ -318,3 +318,32 @@ def GenTests(api):
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
+
+  yield api.test(
+      'cq-looks-enabled',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['chromeos.cros_infra_config.cq_looks']),
+      api.properties(
+          expected_build_requests=[
+              'atlas-cq',
+              'arm64-generic-cq',
+          ], expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ], expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'arm-generic-cq',
+          'arm64-generic-cq',
+          'atlas-cq',
+          'cave-cq',
+      ]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
