@@ -186,7 +186,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
@@ -222,7 +222,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
@@ -276,7 +276,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "recurse",
@@ -314,7 +314,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "recurse",
