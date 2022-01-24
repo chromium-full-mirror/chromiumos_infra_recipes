@@ -252,7 +252,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
       gs_image_dir = gs_image_dir_template.format(gs_bucket=gs_bucket,
                                                   gs_path=gs_path)
-      presentation.step_text = (
+      presentation.links['gs image dir'] = (
           'https://console.cloud.google.com/storage/browser/{gs_path}'.format(
               gs_path=gs_image_dir[len('gs://'):]))
       sysroot = Sysroot(build_target=self.m.build_menu.build_target)
@@ -264,6 +264,14 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       kwargs = {}
       if CHANNEL_RUBIK in self._channels:
         kwargs['channels'] = self._channels
+
+      # Emit release bucket for each channel.
+      for channel in self._channels:
+        channel_name = self.channel_dash_suffix(channel)
+        presentation.links['gs release dir: %s' % Channel.Name(channel)] = (
+            'https://console.cloud.google.com/storage/browser/%s/%s/%s/%s' %
+            (self._release_bucket, channel_name, sysroot.build_target.name,
+             str(self.m.cros_version.version.platform_version)))
 
       self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,

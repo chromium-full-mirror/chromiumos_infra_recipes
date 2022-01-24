@@ -1008,7 +1008,8 @@
     "cmd": [],
     "name": "push images",
     "~followup_annotations": [
-      "@@@STEP_TEXT@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0@@@"
+      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0@@@",
+      "@@@STEP_LINK@gs release dir: CHANNEL_RUBIK@https://console.cloud.google.com/storage/browser//rubik-channel/amd64-generic/1234.56.0@@@"
     ]
   },
   {
