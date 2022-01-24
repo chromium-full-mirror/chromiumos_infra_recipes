@@ -584,7 +584,7 @@ def _get_rdb_invocations(task_results):
   invs = []
   for t in task_results:
     res = re.search(BUILD_ID_REGEX, t.task_url)
-    if res.group('build_id'):
+    if res and res.group('build_id'):
       inv = 'invocations/build-%s' % res.group('build_id')
       invs.append(inv)
   return invs
