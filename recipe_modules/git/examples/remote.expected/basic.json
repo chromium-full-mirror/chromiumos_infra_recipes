@@ -1,0 +1,35 @@
+[
+  {
+    "cmd": [],
+    "name": "single remote"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "single remote.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "multiple remotes"
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "infra_step": true,
+    "name": "multiple remotes.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

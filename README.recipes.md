@@ -324,8 +324,10 @@
   * [gerrit:examples/set_change_labels](#recipes-gerrit_examples_set_change_labels)
   * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change)
   * [git:examples/bad_ref](#recipes-git_examples_bad_ref)
+  * [git:examples/branch_exists](#recipes-git_examples_branch_exists)
   * [git:examples/fetch_refs](#recipes-git_examples_fetch_refs)
   * [git:examples/full](#recipes-git_examples_full)
+  * [git:examples/remote](#recipes-git_examples_remote)
   * [git:tests/set_upstream](#recipes-git_tests_set_upstream)
   * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
   * [git_cl:examples/status](#recipes-git_cl_examples_status)
@@ -5117,6 +5119,15 @@ Args:
 
 Returns: (str): commit author email.
 
+&mdash; **def [branch\_exists](/recipe_modules/git/api.py#816)(self, branch):**
+
+Check if a branch exists.
+
+Args:
+  * branch (str): Name of the branch to check.
+
+Returns: (bool) Whether or not the branch exists.
+
 &mdash; **def [checkout](/recipe_modules/git/api.py#253)(self, commit, force=False, branch=None):**
 
 Runs 'git checkout'.
@@ -5161,6 +5172,16 @@ Args:
   author (str): The author to use in the commit. Ordinarily not used,
     added to test permission oddities by forcing forged commit failure.
   kwargs (dict): Passed to recipe_engine/step.
+
+&mdash; **def [create\_branch](/recipe_modules/git/api.py#802)(self, branch, remote_branch=None):**
+
+Create a branch.
+
+Args:
+  * branch (str): Name of the branch to be created, e.g. mybranch. This
+    branch may not already exist.
+  * remote_branch (str): Name of the remote branch to track, e.g.
+    origin/main or cros/mybranch.
 
 &mdash; **def [create\_bundle](/recipe_modules/git/api.py#582)(self, output_path, from_commit, to_ref):**
 
@@ -5414,6 +5435,12 @@ Args:
   branch (str): If set, rebase from specific branch.
   strategy_option (str): If set, sets the --strategy-option flag. See
     `git help rebase` for details.
+
+&mdash; **def [remote](/recipe_modules/git/api.py#788)(self):**
+
+Return the name of the remote.
+
+Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
 
 &mdash; **def [remote\_head](/recipe_modules/git/api.py#422)(self, remote='.', test_stdout=None):**
 
@@ -9673,6 +9700,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/git/examples/bad_ref.py#15)(api):**
+### *recipes* / [git:examples/branch\_exists](/recipe_modules/git/examples/branch_exists.py)
+
+[DEPS](/recipe_modules/git/examples/branch_exists.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/git/examples/branch_exists.py#13)(api):**
 ### *recipes* / [git:examples/fetch\_refs](/recipe_modules/git/examples/fetch_refs.py)
 
 [DEPS](/recipe_modules/git/examples/fetch_refs.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9687,6 +9721,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/git/examples/full.py#19)(api):**
+### *recipes* / [git:examples/remote](/recipe_modules/git/examples/remote.py)
+
+[DEPS](/recipe_modules/git/examples/remote.py#6): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/git/examples/remote.py#16)(api):**
 ### *recipes* / [git:tests/set\_upstream](/recipe_modules/git/tests/set_upstream.py)
 
 [DEPS](/recipe_modules/git/tests/set_upstream.py#6): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

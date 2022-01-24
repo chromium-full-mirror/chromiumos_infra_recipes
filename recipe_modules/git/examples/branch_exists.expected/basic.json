@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [
+      "git",
+      "branch"
+    ],
+    "infra_step": true,
+    "name": "git branch"
+  },
+  {
+    "name": "$result"
+  }
+]

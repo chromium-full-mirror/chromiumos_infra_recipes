@@ -73,6 +73,16 @@
   {
     "cmd": [
       "git",
+      "branch",
+      "branch",
+      "cros/branch"
+    ],
+    "infra_step": true,
+    "name": "git branch"
+  },
+  {
+    "cmd": [
+      "git",
       "fetch",
       "remote"
     ],

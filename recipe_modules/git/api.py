@@ -784,3 +784,43 @@ class GitApi(recipe_api.RecipeApi):
     return self._step(['log', '--format=%aE', '-n', '-1', commit_id],
                       stdout=self.m.raw_io.output(), test_stdout='%s\n' %
                       self.test_api.test_author_email).stdout.strip()
+
+  def remote(self):
+    """Return the name of the remote.
+
+    Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
+    """
+    result = self._step(['remote'], stdout=self.m.raw_io.output())
+
+    remotes = result.stdout.strip().split('\n')
+    if len(remotes) > 1:
+      raise recipe_api.StepFailure(
+          'more than one remote ({}), not sure which to return'.format(
+              ','.join(remotes)))
+    return remotes[0]
+
+  def create_branch(self, branch, remote_branch=None):
+    """Create a branch.
+
+    Args:
+      * branch (str): Name of the branch to be created, e.g. mybranch. This
+        branch may not already exist.
+      * remote_branch (str): Name of the remote branch to track, e.g.
+        origin/main or cros/mybranch.
+    """
+    cmd = ['branch', branch]
+    if remote_branch:
+      cmd.append(remote_branch)
+    self._step(cmd)
+
+  def branch_exists(self, branch):
+    """Check if a branch exists.
+
+    Args:
+      * branch (str): Name of the branch to check.
+
+    Returns: (bool) Whether or not the branch exists.
+    """
+    result = self._step(['branch'], stdout=self.m.raw_io.output())
+    branches = [b.lstrip('* ') for b in result.stdout.strip().split('\n')]
+    return branch in branches
