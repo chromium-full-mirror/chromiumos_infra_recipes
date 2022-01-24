@@ -2605,10 +2605,8 @@
   {
     "cmd": [
       "git",
-      "push",
-      "--dry-run",
-      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
-      "HEAD:refs/heads/firmware-board-9999.B"
+      "branch",
+      "--set-upstream-to=cros/firmware-board-9999.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
@@ -2624,7 +2622,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "bump version.commit chromeos/config/chromeos_version.sh.git push",
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -86,6 +86,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -328,6 +330,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -571,6 +575,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -814,6 +820,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],

@@ -2636,6 +2636,44 @@
   },
   {
     "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.committing to chromeos/infra/config.create gerrit change for chromeos/infra/config.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.committing to chromeos/infra/config.create gerrit change for chromeos/infra/config.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "main",
+      "/main"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "infra_step": true,
+    "name": "commit changes.committing to chromeos/infra/config.create gerrit change for chromeos/infra/config.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
@@ -2660,6 +2698,28 @@
       ]
     },
     "name": "commit changes.committing to chromeos/infra/config.create gerrit change for chromeos/infra/config.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "commit changes.committing to chromeos/infra/config.create gerrit change for chromeos/infra/config.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2986,6 +3046,44 @@
   },
   {
     "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "main",
+      "/main"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "infra_step": true,
+    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
@@ -3010,6 +3108,28 @@
       ]
     },
     "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_2",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "commit changes.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

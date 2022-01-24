@@ -245,9 +245,10 @@ class OrchMenuApi(RecipeApi):
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           self._is_release_orchestrator = True
-          with self.m.workspace_util.sync_to_commit(
-              staging=self.m.cros_infra_config.is_staging):
-            self.m.cros_version.bump_version()
+          is_staging = self.m.cros_infra_config.is_staging
+          with self.m.workspace_util.sync_to_commit(staging=is_staging):
+            bump_version = self._properties.bump_version and not is_staging
+            self.m.cros_version.bump_version(dry_run=not bump_version)
             self.m.cros_release.create_releasespec(
                 gs_location=self._properties.buildspec_gs_path or
                 DEFAULT_BUILDSPEC_GS_PATH)

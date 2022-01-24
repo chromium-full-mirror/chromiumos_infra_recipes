@@ -99,7 +99,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         # Clone manifest-versions repo to current path.
         with self.m.step.nest('clone manifest-versions'):
           self.m.git.clone(self.manifest_versions_url, branch=branch,
-                           single_branch=True)
+                           single_branch=True, depth=1)
           branch = branch or self.m.git.current_branch()
 
         version = self.m.cros_version.version
@@ -136,9 +136,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               self.m.git.add([manifest_file])
               self.m.git.commit(commit_message)
               if not dry_run:
-                refspec = self.m.git.get_branch_refspec(branch)
                 change = self.m.gerrit.create_change(
-                    'chromeos/manifest-versions', branch=refspec,
+                    'chromeos/manifest-versions',
+                    ref=self.m.git.get_branch_refspec(branch),
                     project_path=manifest_versions_checkout)
                 labels = {
                     self.m.gerrit.Label.BOT_COMMIT: 1,

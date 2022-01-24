@@ -334,9 +334,10 @@ def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
       api.git.commit(commit_msg)
       # Upload using git cl so that we can add topic and hashtags.
       # These are used to abandon unlanded changes later.
-      change = api.gerrit.create_change(
-          project, topic=STARDOCTOR_TOPIC, hashtags=[CONFIG_UPDATE_HASHTAG],
-          branch=api.git.get_branch_refspec(branch), project_path=repo_dir)
+      change = api.gerrit.create_change(project, topic=STARDOCTOR_TOPIC,
+                                        hashtags=[CONFIG_UPDATE_HASHTAG],
+                                        ref=api.git.get_branch_refspec(branch),
+                                        project_path=repo_dir)
       api.gerrit.set_change_labels_remote(change, labels)
       gerrit_change_url = api.git_cl.status(
           field='url', fast=True,

@@ -223,6 +223,179 @@
   },
   {
     "cmd": [],
+    "name": "create gerrit change for baz",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gerrit change@https://host-review.googlesource.com/c/baz/+/789@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create gerrit change for baz.check if project baz exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "baz"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create gerrit change for baz.check if project baz exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "baz",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create gerrit change for baz.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@baz|src/baz|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/baz",
+    "infra_step": true,
+    "name": "create gerrit change for baz.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/baz",
+    "infra_step": true,
+    "name": "create gerrit change for baz.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "remotebranch",
+      "/remotebranch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/baz",
+    "infra_step": true,
+    "name": "create gerrit change for baz.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail",
+      "--target-branch",
+      "refs/heads/remotebranch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/baz",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create gerrit change for baz.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/baz",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create gerrit change for baz.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast",
+      "--issue",
+      "123"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/baz",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create gerrit change for baz.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create gerrit change for foo",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -259,10 +432,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "project foo does not exist in checkout and `project_path` was not supplied"
-    },
     "name": "$result"
   }
 ]

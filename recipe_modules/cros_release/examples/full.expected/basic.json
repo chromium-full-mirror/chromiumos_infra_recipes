@@ -86,6 +86,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -326,6 +328,80 @@
   },
   {
     "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec.commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec.commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "release",
+      "/release"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec.commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
@@ -358,6 +434,40 @@
       }
     },
     "name": "create releasespec.commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec.commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -627,6 +737,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -829,6 +941,80 @@
   },
   {
     "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_2",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (2).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_2",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (2).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "release",
+      "/release"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_2",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (2).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
@@ -861,6 +1047,40 @@
       }
     },
     "name": "create releasespec (2).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_2",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (2).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1169,6 +1389,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -1371,6 +1593,80 @@
   },
   {
     "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_3",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (3).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_3",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (3).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "release",
+      "/release"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_3",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (3).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
@@ -1403,6 +1699,40 @@
       }
     },
     "name": "create releasespec (3).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_3",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (3).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1711,6 +2041,8 @@
       "--branch",
       "release",
       "--single-branch",
+      "--depth",
+      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
       "."
     ],
@@ -1913,6 +2245,80 @@
   },
   {
     "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_4",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (4).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_4",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (4).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "release",
+      "/release"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_4",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (4).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
@@ -1945,6 +2351,40 @@
       }
     },
     "name": "create releasespec (4).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_4",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create releasespec (4).commit buildspec.commit releasespecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

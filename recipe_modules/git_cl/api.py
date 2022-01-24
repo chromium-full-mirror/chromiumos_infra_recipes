@@ -51,7 +51,8 @@ class GitClApi(recipe_api.RecipeApi):
       ccs (list[str]): Optional list of --cc to set.
       hashtags (list[str]): Optional list of --hashtags to set.
       send_mail (bool): If true, set --send-mail.
-      target_branch (str): Optional --target-branch to send to.
+      target_branch (str): Optional --target-branch to send to. Needs to be a
+        full ref (e.g. refs/heads/branch), not the branch name (e.g. branch).
       kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
       dry_run (bool): If true, set --cq-dry-run.
 

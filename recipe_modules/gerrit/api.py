@@ -418,7 +418,7 @@ class GerritApi(RecipeApi):
       return
 
   def create_change(self, project, reviewers=None, ccs=None, topic=None,
-                    branch=None, hashtags=None, project_path=None):
+                    ref=None, hashtags=None, project_path=None):
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -432,7 +432,8 @@ class GerritApi(RecipeApi):
       ccs (list[str]): List of cc emails. If specified, gerrit will cc the
           individuals.
       topic (str): Topic to set for the CL.
-      branch: Branch argument to be passed to git cl upload
+      ref: --target-branch argument to be passed to git cl upload. Should be
+        a full git ref, e.g. refs/heads/main (NOT just 'main').
       hashtags (list[str]): List of hashtags to set for the CL.
       project_path (Path): If set, will use this as the project path rather than
         any value inferred from the gerrit_change.
@@ -464,11 +465,28 @@ class GerritApi(RecipeApi):
         cwd = self.m.src_state.workspace_path.join(project_info.path)
 
       with self.m.context(cwd=cwd):
+        branch = None
+        if ref:
+          branch = self.m.git.extract_branch(ref)
+          # `branch` needs to exist locally and track the corresponding remote
+          # branch, or `git cl` will fail.
+          if not self.m.git.branch_exists(branch):
+            remote_branch = '{}/{}'.format(self.m.git.remote(), branch)
+            self.m.git.create_branch(branch, remote_branch)
+
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True,
-                             target_branch=branch)
+                             target_branch=ref)
+        issue = None
+        if ref:
+          # Try to find the issue number for the appropriate branch, which
+          # will make `git_cl status` pass with higher probability.
+          issue_map = self.m.git_cl.issues()
+          if ref in issue_map:
+            issue = issue_map[ref]
         gerrit_change_url = self.m.git_cl.status(
-            field='url', fast=True, step_test_data=functools.partial(
+            field='url', fast=True, issue=issue,
+            step_test_data=functools.partial(
                 self.m.raw_io.test_api.stream_output,
                 self.test_api.test_gerrit_change_url()))
         pres.links['gerrit change'] = gerrit_change_url

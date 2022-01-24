@@ -4112,7 +4112,7 @@ Checks if cros_test_runner is enabled for use.
 Returns: bool
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
-[DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -4122,7 +4122,7 @@ API for working with CrOS version numbers.
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#132)(self, production=False, dry_run=False):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#132)(self, dry_run=True):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
 and pushes the change to the chromiumos-overlay repo.
@@ -4130,13 +4130,7 @@ and pushes the change to the chromiumos-overlay repo.
 Which component is bumped depends on the branch the invoking recipe
 is running for (main/tot --> build, release-* --> branch).
 
-The updated version file is currently pushed to the 'rubik-staging'
-branch of the chromiumos-overlays repo.
-
 Args:
-  production (bool): Whether to use the checked out overlay. The default
-    is to increment the version on the 'rubik-staging' branch, having no
-    effect on the source tree.
   dry_run (bool): Whether the git push is --dry-run.
 
 &mdash; **def [initialize](/recipe_modules/cros_version/api.py#51)(self):**
@@ -4886,7 +4880,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#680)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#698)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -4894,7 +4888,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#603)(self, gerrit_change, comment, project_path=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#621)(self, gerrit_change, comment, project_path=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -4917,7 +4911,7 @@ Args:
 Raises:
   StepFailure if the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#420)(self, project, reviewers=None, ccs=None, topic=None, branch=None, hashtags=None, project_path=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#420)(self, project, reviewers=None, ccs=None, topic=None, ref=None, hashtags=None, project_path=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -4932,7 +4926,8 @@ Args:
   ccs (list[str]): List of cc emails. If specified, gerrit will cc the
       individuals.
   topic (str): Topic to set for the CL.
-  branch: Branch argument to be passed to git cl upload
+  ref: --target-branch argument to be passed to git cl upload. Should be
+    a full git ref, e.g. refs/heads/main (NOT just 'main').
   hashtags (list[str]): List of hashtags to set for the CL.
   project_path (Path): If set, will use this as the project path rather than
     any value inferred from the gerrit_change.
@@ -4977,7 +4972,7 @@ The gerrit patches last fetched.
 
 These may or may not include files, but always include commit info.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#623)(self, gerrit_change, memoize=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#641)(self, gerrit_change, memoize=False):**
 
 Get the description of the given Gerrit change.
 
@@ -5022,7 +5017,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#720)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#738)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -5035,7 +5030,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#651)(self, gerrit_change, description, amend_local=False, project_path=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#669)(self, gerrit_change, description, amend_local=False, project_path=None):**
 
 Set the description of the given Gerrit change.
 
@@ -5048,7 +5043,7 @@ Args:
   project_path (Path): If set, will use this as the project path rather than
     any value inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#551)(self, gerrit_change, labels, branch=None, ref=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#569)(self, gerrit_change, labels, branch=None, ref=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -5064,7 +5059,7 @@ Args:
 Returns:
   str: The refspec used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#483)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#501)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
   set_change_labels only works when the change exists in the local checkout.
@@ -5077,7 +5072,7 @@ Args:
 Returns:
   str: The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#694)(self, gerrit_change, retries=0, project_path=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#712)(self, gerrit_change, retries=0, project_path=None):**
 
 Submits the given change.
 
@@ -5527,7 +5522,7 @@ API for working with git cl.
 
 A module for interacting with git cl.
 
-&mdash; **def [issues](/recipe_modules/git_cl/api.py#121)(self):**
+&mdash; **def [issues](/recipe_modules/git_cl/api.py#122)(self):**
 
 Run `git cl issue`.
 
@@ -5535,7 +5530,7 @@ Returns:
   dict: Map between branch (full refspec) and issue number, e.g.
     {'refs/heads/main': '3402394'}.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#94)(self, field=None, fast=False, issue=None, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#95)(self, field=None, fast=False, issue=None, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
@@ -5561,7 +5556,8 @@ Args:
   ccs (list[str]): Optional list of --cc to set.
   hashtags (list[str]): Optional list of --hashtags to set.
   send_mail (bool): If true, set --send-mail.
-  target_branch (str): Optional --target-branch to send to.
+  target_branch (str): Optional --target-branch to send to. Needs to be a
+    full ref (e.g. refs/heads/branch), not the branch name (e.g. branch).
   kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
   dry_run (bool): If true, set --cq-dry-run.
 
@@ -6207,7 +6203,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#802)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#803)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6228,7 +6224,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#134)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#300)(self):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#301)(self):**
 
 Create the correct return value for RunSteps.
 
@@ -6251,7 +6247,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#158)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#479)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#480)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -6265,7 +6261,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#744)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#745)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6280,11 +6276,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#673)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#674)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#679)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#680)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -9646,11 +9642,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#15)(api):**
 ### *recipes* / [gerrit:examples/create\_change](/recipe_modules/gerrit/examples/create_change.py)
 
-[DEPS](/recipe_modules/gerrit/examples/create_change.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/gerrit/examples/create_change.py#6): [gerrit](#recipe_modules-gerrit), [git\_cl](#recipe_modules-git_cl), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#18)(api):**
 ### *recipes* / [gerrit:examples/fetch\_patch\_sets](/recipe_modules/gerrit/examples/fetch_patch_sets.py)
 
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
