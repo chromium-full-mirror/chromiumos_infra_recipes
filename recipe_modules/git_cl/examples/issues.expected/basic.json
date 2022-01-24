@@ -4,12 +4,8 @@
       "vpython",
       "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast",
-      "--issue",
-      "3402394"
+      "issue",
+      "-r"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -19,7 +15,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "git cl status"
+    "name": "git_cl issue"
   },
   {
     "name": "$result"

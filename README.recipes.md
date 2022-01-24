@@ -330,6 +330,7 @@
   * [git:examples/remote](#recipes-git_examples_remote)
   * [git:tests/set_upstream](#recipes-git_tests_set_upstream)
   * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
+  * [git_cl:examples/issues](#recipes-git_cl_examples_issues)
   * [git_cl:examples/status](#recipes-git_cl_examples_status)
   * [git_cl:examples/upload](#recipes-git_cl_examples_upload)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
@@ -5517,23 +5518,32 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 API for working with git cl.
 
-#### **class [GitClApi](/recipe_modules/git_cl/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitClApi](/recipe_modules/git_cl/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with git cl.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#90)(self, field=None, fast=False, \*\*kwargs):**
+&mdash; **def [issues](/recipe_modules/git_cl/api.py#121)(self):**
+
+Run `git cl issue`.
+
+Returns:
+  dict: Map between branch (full refspec) and issue number, e.g.
+    {'refs/heads/main': '3402394'}.
+
+&mdash; **def [status](/recipe_modules/git_cl/api.py#94)(self, field=None, fast=False, issue=None, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
 Args:
   field: Set --field to this value.
   fast: Set --fast.
+  issue: Set --issue to this value.
   kwargs: Passed to recipe_engine/step. May NOT set stdout.
 
 Returns:
   str: The command output.
 
-&mdash; **def [upload](/recipe_modules/git_cl/api.py#37)(self, topic=None, reviewers=None, ccs=None, hashtags=None, send_mail=False, target_branch=None, dry_run=False, \*\*kwargs):**
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#41)(self, topic=None, reviewers=None, ccs=None, hashtags=None, send_mail=False, target_branch=None, dry_run=False, \*\*kwargs):**
 
 Run `git cl upload`.
 
@@ -9755,6 +9765,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/git_cl/examples/forwarding.py#11)(api):**
+### *recipes* / [git\_cl:examples/issues](/recipe_modules/git_cl/examples/issues.py)
+
+[DEPS](/recipe_modules/git_cl/examples/issues.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/issues.py#14)(api):**
 ### *recipes* / [git\_cl:examples/status](/recipe_modules/git_cl/examples/status.py)
 
 [DEPS](/recipe_modules/git_cl/examples/status.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

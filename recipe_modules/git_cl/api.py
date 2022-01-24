@@ -5,7 +5,11 @@
 
 """API for working with git cl."""
 
+import re
+
 from recipe_engine import recipe_api
+
+ISSUE_LINE_RE = r"Branch for issue number (?P<issue>\d+): (?P<ref>.+)"
 
 
 class GitClApi(recipe_api.RecipeApi):
@@ -87,12 +91,13 @@ class GitClApi(recipe_api.RecipeApi):
 
     return self('upload', args, **kwargs).stdout.strip()
 
-  def status(self, field=None, fast=False, **kwargs):
+  def status(self, field=None, fast=False, issue=None, **kwargs):
     """Run `git cl status` with given arguments.
 
     Args:
       field: Set --field to this value.
       fast: Set --fast.
+      issue: Set --issue to this value.
       kwargs: Passed to recipe_engine/step. May NOT set stdout.
 
     Returns:
@@ -107,4 +112,23 @@ class GitClApi(recipe_api.RecipeApi):
     if fast:
       args.append('--fast')
 
+    if issue:
+      args.append('--issue')
+      args.append(issue)
+
     return self('status', args, **kwargs).stdout.strip()
+
+  def issues(self):
+    """Run `git cl issue`.
+
+    Returns:
+      dict: Map between branch (full refspec) and issue number, e.g.
+        {'refs/heads/main': '3402394'}.
+    """
+    issue_re = re.compile(ISSUE_LINE_RE)
+    issue_map = {}
+    for line in self('issue', ['-r']).stdout.strip().split('\n'):
+      m = issue_re.match(line)
+      if m:
+        issue_map[m.group('ref')] = m.group('issue')
+    return issue_map

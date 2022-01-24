@@ -10,7 +10,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  output = api.git_cl.status(field='url', fast=True, step_name='git cl status')
+  output = api.git_cl.status(field='url', fast=True, issue='3402394',
+                             step_name='git cl status')
   api.assertions.assertEqual(output, 'foo')
 
 
