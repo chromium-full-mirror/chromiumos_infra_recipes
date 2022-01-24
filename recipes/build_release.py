@@ -10,27 +10,24 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
-    'cros_infra_config',
-    'cros_build_api',
-    'cros_sdk',
     'build_menu',
     'build_reporting',
+    'builder_metadata',
+    'cros_infra_config',
     'cros_release',
+    'cros_sdk',
     'cros_source',
-    'test_util',
 ]
 
-from google.protobuf.json_format import (MessageToDict, MessageToJson)
+from google.protobuf.json_format import MessageToDict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
-from PB.chromite.api.packages import GetBuilderMetadataRequest
 
 StepDetails = BuildReport.StepDetails
 PROPERTIES = BuildReleaseProperties
@@ -71,34 +68,6 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
   return api.buildbucket.schedule([bb_request])[0]
 
 
-def _look_up_builder_metadata(api, presentation=None):
-  """Looks up builder metadata for the provided build_target.
-
-  If presentation is provided, emits the builder metadata into the step.
-
-  Important - a prerequisite for this method being able to return builder
-  metadata is that `install_packages` has already been called.
-
-  Note - this method is currently used only once. If there is an additional
-  usage being added, it's worth considering whether this should be ejected into
-  a reusable module. Also, in that case it might be worth memoizing this call,
-  as builder metadata does not change within the lifecycle of a build.
-
-  Args:
-    presentation (StepPresentation): (optional) for the current step.
-
-  Returns:
-    builder_metadata proto describing build and model for the current target.
-  """
-  builder_metadata = api.cros_build_api.PackageService.GetBuilderMetadata(
-      GetBuilderMetadataRequest(build_target=api.build_menu.build_target,
-                                chroot=api.cros_sdk.chroot))
-  if presentation:
-    presentation.logs["builder_metadata"] = MessageToJson(builder_metadata)
-
-  return builder_metadata
-
-
 def RunSteps(api, properties):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
@@ -122,7 +91,7 @@ def DoRunSteps(api, config, properties):
     if api.build_menu.install_packages(config, env_info.packages):
       with api.step.nest('determine build and model metadata') as presentation:
         # First look up builder metadata from build-api.
-        builder_metadata = _look_up_builder_metadata(api, presentation)
+        builder_metadata = api.builder_metadata.look_up_builder_metadata()
         # Then fire off a pub/sub call with that builder meta.
         api.build_reporting.publish_build_target_and_model_metadata(
             api.cros_source.manifest_branch, builder_metadata)

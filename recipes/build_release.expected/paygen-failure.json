@@ -5631,8 +5631,14 @@
   },
   {
     "cmd": [],
-    "name": "determine build and model metadata",
+    "name": "determine build and model metadata"
+  },
+  {
+    "cmd": [],
+    "name": "determine build and model metadata.look up builder metadata",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@No builder metadata cached. Querying Build API PackageService/GetBuilderMetadata.@@@",
       "@@@STEP_LOG_LINE@builder_metadata@{@@@",
       "@@@STEP_LOG_LINE@builder_metadata@  \"modelMetadata\": [@@@",
       "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
@@ -5661,9 +5667,9 @@
   },
   {
     "cmd": [],
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"kukui-main\"@@@",
@@ -5716,9 +5722,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.write input file",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -5753,9 +5759,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.call build API script",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -5791,25 +5797,25 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.read output file",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.call response",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:56Z\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
@@ -5836,7 +5842,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"determine build and model metadata|call chromite.api.PackageService/GetBuilderMetadata|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"determine build and model metadata|look up builder metadata|call chromite.api.PackageService/GetBuilderMetadata|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getBuilderMetadataRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"kukui-main\"@@@",
@@ -5863,10 +5869,10 @@
   },
   {
     "cmd": [],
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYI5IDE/QQiDAjlgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJsZGV0ZXJtaW5lIGJ1aWxkIGFuZCBt\\nb2RlbCBtZXRhZGF0YXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRCdWlsZGVy\\nTWV0YWRhdGF8Y2FsbCBidWlsZCBBUEkgc2NyaXB0qgNkClQKGltDQUNIRV0vY3Jvc19jaHJvb3Qv\\nY2hyb290GiIKEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVnIhJbU1RBUlRfRElSXS9j\\naHJvbWUSDAoKa3VrdWktbWFpbrIDuQEKZAoDZXZlEgtnaXRfcnZjLWFyYxoGYmVydGhhIgc3OTc4\\nNTA2KAEyF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzQg01LjQuMTYzLXIyODI3ShVHb29nbGVfRXZl\\nLjk1ODQuMjMwLjASUQoDZXZlEhdldmVfdjEuMS42NjU5LWJhMjA4OGVkMxoDRVZFIhVHb29nbGVf\\nRXZlLjk1ODQuMTA3LjAqFUdvb2dsZV9FdmUuOTU4NC4yMzAuMA==\\n',@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI5IDE/QQiDAjlgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKFAWRldGVybWluZSBidWlsZCBhbmQg\\nbW9kZWwgbWV0YWRhdGF8bG9vayB1cCBidWlsZGVyIG1ldGFkYXRhfGNhbGwgY2hyb21pdGUuYXBp\\nLlBhY2thZ2VTZXJ2aWNlL0dldEJ1aWxkZXJNZXRhZGF0YXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSq\\nA2QKVAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaIgoRCg9jaHJvbWVfaW50ZXJuYWwKDQoL\\nLWNyb3MtZGVidWciEltTVEFSVF9ESVJdL2Nocm9tZRIMCgprdWt1aS1tYWlusgO5AQpkCgNldmUS\\nC2dpdF9ydmMtYXJjGgZiZXJ0aGEiBzc5Nzg1MDYoATIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDNC\\nDTUuNC4xNjMtcjI4MjdKFUdvb2dsZV9FdmUuOTU4NC4yMzAuMBJRCgNldmUSF2V2ZV92MS4xLjY2\\nNTktYmEyMDg4ZWQzGgNFVkUiFUdvb2dsZV9FdmUuOTU4NC4xMDcuMCoVR29vZ2xlX0V2ZS45NTg0\\nLjIzMC4w\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -5900,10 +5906,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine build and model metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJsZGV0ZXJtaW5lIGJ1aWxkIGFuZCBt\\nb2RlbCBtZXRhZGF0YXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRCdWlsZGVy\\nTWV0YWRhdGF8Y2FsbCBidWlsZCBBUEkgc2NyaXB0qgNkClQKGltDQUNIRV0vY3Jvc19jaHJvb3Qv\\nY2hyb290GiIKEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVnIhJbU1RBUlRfRElSXS9j\\naHJvbWUSDAoKa3VrdWktbWFpbrIDuQEKZAoDZXZlEgtnaXRfcnZjLWFyYxoGYmVydGhhIgc3OTc4\\nNTA2KAEyF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzQg01LjQuMTYzLXIyODI3ShVHb29nbGVfRXZl\\nLjk1ODQuMjMwLjASUQoDZXZlEhdldmVfdjEuMS42NjU5LWJhMjA4OGVkMxoDRVZFIhVHb29nbGVf\\nRXZlLjk1ODQuMTA3LjAqFUdvb2dsZV9FdmUuOTU4NC4yMzAuMA==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "determine build and model metadata.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKFAWRldGVybWluZSBidWlsZCBhbmQg\\nbW9kZWwgbWV0YWRhdGF8bG9vayB1cCBidWlsZGVyIG1ldGFkYXRhfGNhbGwgY2hyb21pdGUuYXBp\\nLlBhY2thZ2VTZXJ2aWNlL0dldEJ1aWxkZXJNZXRhZGF0YXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSq\\nA2QKVAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaIgoRCg9jaHJvbWVfaW50ZXJuYWwKDQoL\\nLWNyb3MtZGVidWciEltTVEFSVF9ESVJdL2Nocm9tZRIMCgprdWt1aS1tYWlusgO5AQpkCgNldmUS\\nC2dpdF9ydmMtYXJjGgZiZXJ0aGEiBzc5Nzg1MDYoATIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDNC\\nDTUuNC4xNjMtcjI4MjdKFUdvb2dsZV9FdmUuOTU4NC4yMzAuMBJRCgNldmUSF2V2ZV92MS4xLjY2\\nNTktYmEyMDg4ZWQzGgNFVkUiFUdvb2dsZV9FdmUuOTU4NC4xMDcuMCoVR29vZ2xlX0V2ZS45NTg0\\nLjIzMC4w\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

@@ -12,6 +12,7 @@
   * [build_plan](#recipe_modules-build_plan)
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats)
+  * [builder_metadata](#recipe_modules-builder_metadata)
   * [chrome](#recipe_modules-chrome)
   * [chromite](#recipe_modules-chromite)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
@@ -142,6 +143,7 @@
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
+  * [builder_metadata:examples/full](#recipes-builder_metadata_examples_full) &mdash; Basic tests for the builder_metadata recipe module.
   * [check_fit_image](#recipes-check_fit_image) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync)
@@ -1278,6 +1280,28 @@ Args:
 
 Returns:
   The number of builds (int) in the given bucket with given status.
+### *recipe_modules* / [builder\_metadata](/recipe_modules/builder_metadata)
+
+[DEPS](/recipe_modules/builder_metadata/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+#### **class [BuilderMetadataApi](/recipe_modules/builder_metadata/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to get builder metadata.
+
+&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#20)(self):**
+
+Looks up builder metadata for the provided build_target.
+
+Builder metadata does not change within the lifecycle of a build, so
+builder metadata is looked up once and cached.
+
+Important - a prerequisite for this method being able to return builder
+metadata is that `install_packages` has already been called.
+
+Returns:
+  builder_metadata proto describing build and model for the current target.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8139,17 +8163,17 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#22)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#113)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#82)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#102)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#71)(api, properties):**
 
-&mdash; **def [launch\_debug\_symbols](/recipes/build_release.py#39)(api, gs_image_dir, worker_count, retry_quota, staging=False, dryrun=False, \*\*kwargs):**
+&mdash; **def [launch\_debug\_symbols](/recipes/build_release.py#36)(api, gs_image_dir, worker_count, retry_quota, staging=False, dryrun=False, \*\*kwargs):**
 
 Asynchronously launch the upload debug symbols builder.
 
@@ -8227,6 +8251,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_build_count.py#17)(api):**
+### *recipes* / [builder\_metadata:examples/full](/recipe_modules/builder_metadata/examples/full.py)
+
+[DEPS](/recipe_modules/builder_metadata/examples/full.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Basic tests for the builder_metadata recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/examples/full.py#20)(api):**
 ### *recipes* / [check\_fit\_image](/recipes/check_fit_image.py)
 
 [DEPS](/recipes/check_fit_image.py#43): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
