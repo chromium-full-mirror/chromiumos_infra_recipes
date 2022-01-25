@@ -23,6 +23,7 @@ DEPS = [
     'android',
     'build_menu',
     'cros_source',
+    'easy',
     'gerrit',
     'git',
     'orch_menu',
@@ -53,6 +54,9 @@ def DoRunSteps(api, properties):
       api.android.get_latest_build(android_package))
 
   submit_uprev = properties.submit_uprev
+
+  # Save android_version in output for dashboard queries.
+  api.easy.set_properties_step(android_version=android_version)
 
   # Update LKGB here. If no files were modified i.e. LKGB is already the same
   # version, there's nothing to do.
@@ -119,6 +123,12 @@ def DoRunSteps(api, properties):
     if submit_uprev:
       api.gerrit.set_change_labels(change, {api.gerrit.Label.BOT_COMMIT: 1})
       api.gerrit.submit_change(change)
+
+      # The dashboard takes the commit hash of the LKGB update we just published
+      # to find the PUpr generator build it triggers. Query gerrit to find the
+      # commit hash of the latest (submitted) patchset and save in output props.
+      patch_sets = api.gerrit.fetch_patch_sets([change])
+      api.easy.set_properties_step(lkgb_commit=patch_sets[0].current_revision)
     else:
       api.gerrit.abandon_change(change)
 

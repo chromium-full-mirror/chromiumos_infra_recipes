@@ -1743,6 +1743,13 @@
   },
   {
     "cmd": [],
+    "name": "set android_version",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@android_version@\"7123456\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "write android lkgb"
   },
   {
