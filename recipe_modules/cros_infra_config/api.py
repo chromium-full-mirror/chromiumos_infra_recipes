@@ -9,6 +9,7 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
+from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import UseFlag
@@ -560,6 +561,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                          BuildMenuProperties(),
                          ignore_unknown_fields=True).build_target
       return target
+
+    # VM test builders do not use the build_menu module.
+    target = ParseDict(build.input.properties, TastVmProperties(),
+                       ignore_unknown_fields=True).build_target
+    return target
 
   def get_build_target_name(self, build=None):
     """Return the build target name from input properties.
