@@ -17,6 +17,7 @@ DEPS = [
     'cros_test_plan',
     'cros_test_plan_v2',
     'easy',
+    'git',
     'gitiles',
     'gerrit',
     # TODO(b/201608160): Remove dependency upon completion of experiment.

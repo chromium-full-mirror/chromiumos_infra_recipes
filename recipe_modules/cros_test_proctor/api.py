@@ -64,27 +64,29 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         TestPlanStarlarkFiles to fetch.
 
     Returns:
-      A list of Paths to the fetched files.
+      A list of StarlarkPackages for the fetched files.
     """
     output_dir = self.m.path.mkdtemp()
-    output_paths = []
+    starlark_packages = []
 
     for starlark_file in test_plan_starlark_files:
-      # gitiles.get_file requires all args to be type str. These fields of
-      # TestPlanStarlarkFiles are string in the proto schema, but unicode in
-      # Python 2, so cast to str. This may change in Python 3.
-      contents = self.m.gitiles.get_file(
-          str(starlark_file.host), str(starlark_file.project),
-          str(starlark_file.path))
+      target_path = self.m.path.join(output_dir, starlark_file.project)
+      self.m.git.clone(
+          'https://{}/{}'.format(starlark_file.host, starlark_file.project),
+          target_path=target_path,
+          single_branch=True,
+          depth=1,
+          verbose=True,
+          progress=True,
+      )
+      starlark_packages.append(
+          self.m.cros_test_plan_v2.StarlarkPackage(
+              root=target_path,
+              main=starlark_file.path,
+          ),
+      )
 
-      basename = self.m.path.basename(starlark_file.path)
-      output_path = self.m.path.join(output_dir, basename)
-      self.m.file.write_raw('write starlark file {}'.format(basename),
-                            output_path, contents)
-
-      output_paths.append(output_path)
-
-    return output_paths
+    return starlark_packages
 
   def run_proctor_v2(self, gerrit_changes):
     """Runs the test platform v2 for a set of GerritChanges.

@@ -7,6 +7,8 @@ import re
 
 from recipe_engine import recipe_api
 
+from collections import namedtuple
+
 from google.protobuf import json_format
 from google.protobuf import text_format
 
@@ -205,12 +207,22 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                           project='cros-registry/test-services')
       self.m.docker.pull(self._docker_image)
 
-  def generate_hw_test_plans(self, starlark_files):
+  # Defines a collection of Starlark files under the same root. All load
+  # statements must use paths relative to 'root', and 'main' is the main file
+  # that is executed. Note that 'main' does not need to be in the top-level dir
+  # of 'root'; this allows the common case where 'root' is the root of a repo
+  # and 'main' is a file within the repo (and all the load paths are included
+  # in the repo).
+  StarlarkPackage = namedtuple('StarlarkPackage', ['root', 'main'])
+
+  def generate_hw_test_plans(self, starlark_packages):
     """Runs the testplan Docker image to get HWTestPlans.
 
     Args:
-      * starlark_files (list[Path]): Paths to Starlark files to evaluate to get
-        HWTestPlans.
+      * starlark_packages (list[StarlarkPackage]): Paths to Starlark files to
+        evaluate to get HWTestPlans. Note that StarlarkPackages must be used
+        instead of single files because the Starlark files can import each
+        other.
 
 
     Returns:
@@ -256,34 +268,39 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       hw_test_plans_path = self.m.path.join(host_input_path,
                                             'hw_test_plans.jsonproto')
 
-      # A list of tuples, mapping an input flag for testplan to the path to the
-      # input file on the host. Some flags, such as '-plan' can be specified
-      # multiple times, so use a list of tuples instead of a dict.
+      # A map from input flag for testplan to the path to the input file on the
+      # host.
       #
       # Note that the same mechanism is used for the output of testplan.
-      arg_to_host_path = [
-          ('-dutattributes', dut_attribute_list_path),
-          ('-buildmetadata', build_metadata_list_path),
-          ('-flatconfiglist', flat_config_list_path),
-          ('-out', hw_test_plans_path),
-      ]
-
-      # Copy each Starlark file to the host input dir, and add to
-      # arg_to_host_path.
-      for starlark_file in starlark_files:
-        basename = self.m.path.basename(starlark_file)
-        dest = self.m.path.join(host_input_path, basename)
-        self.m.file.copy('copy ' + basename, starlark_file, dest)
-        arg_to_host_path.append(('-plan', dest))
+      arg_to_host_path = {
+          '-dutattributes': dut_attribute_list_path,
+          '-buildmetadata': build_metadata_list_path,
+          '-flatconfiglist': flat_config_list_path,
+          '-out': hw_test_plans_path,
+      }
 
       # Build a list of args to pass to docker run. For each (flag, host path)
       # tuple in arg_to_host_path, add args [<flag>, <container path>]
       args = ['generate', '-alsologtostderr', '-v', '2']
 
-      for arg, host_path in arg_to_host_path:
+      for arg, host_path in arg_to_host_path.items():
         args.extend([
             arg, '{}/{}'.format(container_input_path,
                                 self.m.path.basename(host_path))
+        ])
+
+      # Copy each Starlark package to the host input dir, and a '-plan' flag
+      # pointing to the main file.
+      for package in starlark_packages:
+        basename = self.m.path.basename(package.root)
+        dest = self.m.path.join(host_input_path, basename)
+        # Some repos contain symlinks to parent directories, leave symlinks as
+        # symlinks instead of following them, to avoid infinite recursion.
+        self.m.file.copytree('copy ' + basename, package.root, dest,
+                             symlinks=True)
+        args.extend([
+            '-plan', '{}/{}/{}'.format(container_input_path, basename,
+                                       package.main)
         ])
 
       # Run the docker image. The directory with the input files is mounted to

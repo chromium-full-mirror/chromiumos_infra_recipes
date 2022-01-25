@@ -345,12 +345,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "example1.star",
-      "[CLEANUP]/tmp_tmp_1/example1.star"
+      "copytree",
+      "--symlinks",
+      "root1",
+      "[CLEANUP]/tmp_tmp_1/root1"
     ],
     "infra_step": true,
-    "name": "generate hw test plans.copy example1.star",
+    "name": "generate hw test plans.copy root1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -362,12 +363,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "example2.star",
-      "[CLEANUP]/tmp_tmp_1/example2.star"
+      "copytree",
+      "--symlinks",
+      "root2",
+      "[CLEANUP]/tmp_tmp_1/root2"
     ],
     "infra_step": true,
-    "name": "generate hw test plans.copy example2.star",
+    "name": "generate hw test plans.copy root2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -389,18 +391,18 @@
       "-alsologtostderr",
       "-v",
       "2",
+      "-flatconfiglist",
+      "/input/flattened.binaryproto",
       "-dutattributes",
       "/input/dut_attributes.jsonproto",
       "-buildmetadata",
       "/input/build_metadata.jsonproto",
-      "-flatconfiglist",
-      "/input/flattened.binaryproto",
       "-out",
       "/input/hw_test_plans.jsonproto",
       "-plan",
-      "/input/example1.star",
+      "/input/root1/example1.star",
       "-plan",
-      "/input/example2.star"
+      "/input/root2/example2.star"
     ],
     "name": "generate hw test plans.docker run",
     "~followup_annotations": [

@@ -42,8 +42,10 @@ def RunSteps(api):
       ],
   )
 
-  hw_test_plans = api.cros_test_plan_v2.generate_hw_test_plans(
-      ["example1.star", "example2.star"])
+  hw_test_plans = api.cros_test_plan_v2.generate_hw_test_plans([
+      api.cros_test_plan_v2.StarlarkPackage(root='root1', main='example1.star'),
+      api.cros_test_plan_v2.StarlarkPackage(root='root2', main="example2.star"),
+  ])
   api.assertions.assertEqual(
       hw_test_plans,
       [

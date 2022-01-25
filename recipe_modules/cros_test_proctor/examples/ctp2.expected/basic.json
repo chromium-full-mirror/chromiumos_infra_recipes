@@ -149,145 +149,73 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@data@@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT"
-    ],
-    "name": "run tests.schedule tests.fetch gitiles file.curl https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CLEANUP]/tmp_tmp_1/kernel1.star"
+      "git",
+      "clone",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chromium.googlesource.com/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "-v",
+      "--progress"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.write starlark file kernel1.star",
+    "name": "run tests.schedule tests.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.fetch gitiles file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@data@@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT"
-    ],
-    "name": "run tests.schedule tests.fetch gitiles file (2).curl https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CLEANUP]/tmp_tmp_1/kernel2.star"
+      "git",
+      "clone",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chromium.googlesource.com/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoB",
+      "-v",
+      "--progress"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.write starlark file kernel2.star",
+    "name": "run tests.schedule tests.git clone (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.fetch gitiles file (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@data@@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT"
-    ],
-    "name": "run tests.schedule tests.fetch gitiles file (3).curl https://chromium.googlesource.com/platform/testrepoA/+/HEAD/a/b/kernel1.star?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CLEANUP]/tmp_tmp_2/kernel1.star"
+      "git",
+      "clone",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chromium.googlesource.com/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoA",
+      "-v",
+      "--progress"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.write starlark file kernel1.star (2)",
+    "name": "run tests.schedule tests.git clone (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.fetch gitiles file (4)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@data@@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT"
-    ],
-    "name": "run tests.schedule tests.fetch gitiles file (4).curl https://chromium.googlesource.com/platform/testrepoB/+/HEAD/kernel2.star?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[CLEANUP]/tmp_tmp_2/kernel2.star"
+      "git",
+      "clone",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chromium.googlesource.com/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "-v",
+      "--progress"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.write starlark file kernel2.star (2)",
+    "name": "run tests.schedule tests.git clone (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -528,12 +456,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_1/kernel1.star",
-      "[CLEANUP]/tmp_tmp_3/kernel1.star"
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_3/testrepoA"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy kernel1.star",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -545,12 +474,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_1/kernel2.star",
-      "[CLEANUP]/tmp_tmp_3/kernel2.star"
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/testrepoB"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy kernel2.star",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -562,12 +492,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_2/kernel1.star",
-      "[CLEANUP]/tmp_tmp_3/kernel1.star"
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_3/testrepoA"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy kernel1.star (2)",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -579,12 +510,13 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_2/kernel2.star",
-      "[CLEANUP]/tmp_tmp_3/kernel2.star"
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/testrepoB"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy kernel2.star (2)",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -606,22 +538,22 @@
       "-alsologtostderr",
       "-v",
       "2",
+      "-flatconfiglist",
+      "/input/flattened.binaryproto",
       "-dutattributes",
       "/input/dut_attributes.jsonproto",
       "-buildmetadata",
       "/input/build_metadata.jsonproto",
-      "-flatconfiglist",
-      "/input/flattened.binaryproto",
       "-out",
       "/input/hw_test_plans.jsonproto",
       "-plan",
-      "/input/kernel1.star",
+      "/input/testrepoA/a/b/kernel1.star",
       "-plan",
-      "/input/kernel2.star",
+      "/input/testrepoB/kernel2.star",
       "-plan",
-      "/input/kernel1.star",
+      "/input/testrepoA/a/b/kernel1.star",
       "-plan",
-      "/input/kernel2.star"
+      "/input/testrepoB/kernel2.star"
     ],
     "name": "run tests.schedule tests.generate hw test plans.docker run",
     "~followup_annotations": [
