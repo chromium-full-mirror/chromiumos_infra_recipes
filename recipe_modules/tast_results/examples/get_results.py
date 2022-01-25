@@ -67,10 +67,11 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic', api.buildbucket.ci_build())
+  build = api.buildbucket.ci_build_message()
+  build.input.properties['buildTarget'] = {'name': 'amd64-generic'}
+  yield api.test('basic', api.buildbucket.build(build))
 
   yield api.test('resultdb-not-enabled')
 
-  build = api.buildbucket.ci_build_message()
   build.critical = common_pb2.NO
   yield api.test('non-critical', api.buildbucket.build(build))

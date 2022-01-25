@@ -11,6 +11,7 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
@@ -560,6 +561,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                          BuildMenuProperties(),
                          ignore_unknown_fields=True).build_target
       return target
+
+    # VM test builders do not use the build_menu module.
+    target = (
+        ParseDict(build.input.properties['buildTarget'], BuildTarget())
+        if 'buildTarget' in build.input.properties else None)
+    return target
 
   def get_build_target_name(self, build=None):
     """Return the build target name from input properties.

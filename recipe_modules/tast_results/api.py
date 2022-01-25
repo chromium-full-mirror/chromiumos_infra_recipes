@@ -298,14 +298,20 @@ class TastResultsApi(recipe_api.RecipeApi):
     if not self.m.resultdb.enabled:
       return
 
+    # TODO(b/216325938): Add the board.
+    base_variant = {
+        'test_config': suite_name,
+    }
+
+    build_target = self.m.cros_infra_config.get_build_target_name()
+    if build_target:
+      base_variant['build_target'] = build_target
+
     config = {
         'result_format': 'tast',
         'result_file': test_results_path.join('streamed_results.jsonl'),
         'artifact_directory': self.m.path.abspath(test_results_path),
-        # TODO(b/210041348): Determine which variant attributes to pass.
-        'base_variant': {
-            'test_config': suite_name,
-        },
+        'base_variant': base_variant,
     }
     self.m.cros_resultdb.upload(config)
     self.m.cros_resultdb.report_missing_test_cases(missing_test_names,

@@ -2252,14 +2252,14 @@ Generate start time in seconds.
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#578)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#585)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -2270,7 +2270,7 @@ Args:
 
 Returns: a dict(str, Build) of build_target names.
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#109)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#110)(self):**
 
 Return the config for this builder.
 
@@ -2280,7 +2280,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#122)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#123)(self):**
 
 Config or default config.
 
@@ -2290,7 +2290,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#477)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#478)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
 
 Configure the builder.
 
@@ -2312,36 +2312,36 @@ Args:
 Returns:
   BuilderConfig or None
 
-&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#170)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#171)(self):**
 
 Get the builder group for the currently running builder.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#189)(self, filename, step_test_data, timeout=None, application='ChromeOS', message=None):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#190)(self, filename, step_test_data, timeout=None, application='ChromeOS', message=None):**
 
 Helper method to fetch a file from gititles.
 
-&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#97)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#98)(self):**
 
 Return the list of experiments active for this build.
 
-&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#104)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#105)(self):**
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#294)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#295)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#143)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#144)(self):**
 
 Return a freshly loaded config for this builder.
 
 Returns:
   BuilderConfig for this builder, freshly reloaded.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#94)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#304)(self, application='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#305)(self, application='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -2349,7 +2349,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#546)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#547)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -2360,7 +2360,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#564)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#571)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -2371,7 +2371,7 @@ Args:
 Returns:
   (str) The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#244)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#245)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from HEAD.
 
@@ -2394,41 +2394,41 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#332)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#333)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#321)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#322)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
 Returns:
   SuiteRetryCfg as defined in the config repo.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#90)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#60)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#61)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#81)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#82)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#139)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#140)(self):**
 
-&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#85)(self):**
+&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#86)(self):**
 
-&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#175)(self):**
+&emsp; **@property**<br>&mdash; **def [parent\_builder\_group](/recipe_modules/cros_infra_config/api.py#176)(self):**
 
 Get the builder group for the parent builder.
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#155)(self):**
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#156)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#272)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#273)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from HEAD.
 
@@ -2442,11 +2442,11 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#301)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#302)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#298)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#299)(self, run_spec):**
 
-&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#180)(self):**
+&emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#181)(self):**
 
 Get the builder group for the target builder.
 
@@ -8896,11 +8896,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/configure_builder.py#23)(api, properties):**
 ### *recipes* / [cros\_infra\_config:tests/get\_build\_target](/recipe_modules/cros_infra_config/tests/get_build_target.py)
 
-[DEPS](/recipe_modules/cros_infra_config/tests/get_build_target.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_infra_config/tests/get_build_target.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/get_build_target.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/get_build_target.py#16)(api):**
 ### *recipes* / [cros\_infra\_config:tests/utils](/recipe_modules/cros_infra_config/tests/utils.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/utils.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -10679,7 +10679,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#484)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#488)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#117)(api, interface, test_metadata, result):**
 
@@ -10695,7 +10695,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#414)(api, properties):**
+&mdash; **def [execution\_steps](/recipes/test_platform/test_runner.py#418)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -10711,7 +10711,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#385)(api, config, request, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#389)(api, config, request, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
