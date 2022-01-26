@@ -11,6 +11,8 @@ DEPS = [
     'tast_exec',
 ]
 
+from recipe_engine import post_process
+
 
 def RunSteps(api):
   test_artifacts = api.path.mkdtemp(prefix='temp')
@@ -47,12 +49,10 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'basic',
-      api.buildbucket.ci_build(),
+      'basic', api.buildbucket.ci_build(),
       api.properties(**{'$chromeos/tast_exec': {
           'should_retry': True
-      }}),
-  )
+      }}), api.post_check(post_process.MustRun, 'second tast iteration'))
 
   yield api.test(
       'public',
