@@ -51,6 +51,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
 
     self._cl_affected_sysroot_packages = None
+    # Installed packages can be a prereq for methods in other modules, such as
+    # builder_metadata.
+    self.packages_installed = False
 
   def initialize(self):
     self._force_empty_toolchain_targets |= (
@@ -492,8 +495,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
             artifact_build=self.artifact_build,
             package_indexes=self._package_indexes, timeout_sec=timeout_sec,
             name=name, dryrun=dryrun)
-
-    return not self.m.cros_infra_config.should_exit(install_packages.run_spec)
+    self.packages_installed = not self.m.cros_infra_config.should_exit(
+        install_packages.run_spec)
+    return self.packages_installed
 
   def build_and_test_images(self, config=None, include_version=False):
     """Build the image and run ebuild tests.

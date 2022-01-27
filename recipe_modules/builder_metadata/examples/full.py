@@ -19,10 +19,15 @@ from recipe_engine import post_process
 
 def RunSteps(api):
   with api.step.nest('first-lookup'):
-    first_metadata = api.builder_metadata.look_up_builder_metadata()
+    first_metadata = api.builder_metadata.look_up_builder_metadata(
+        test_data=True)
   with api.step.nest('second-lookup'):
-    second_metadata = api.builder_metadata.look_up_builder_metadata()
-  api.assertions.assertEqual(first_metadata, second_metadata)
+    second_result = api.builder_metadata.look_up_builder_metadata(
+        test_data=True)
+  api.assertions.assertEqual(first_metadata, second_result)
+  api.build_menu.packages_installed = False
+  with api.assertions.assertRaises(api.step.StepFailure):
+    api.builder_metadata.look_up_builder_metadata()
 
 
 def GenTests(api):
@@ -50,10 +55,9 @@ def GenTests(api):
       'first-lookup',
       api.builder_metadata.look_up_builder_metadata('first-lookup',
                                                     builder_metadata),
-      api.post_check(
-          post_process.MustRun,
-          'first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata'
-      ))
+      api.post_check(post_process.MustRun,
+                     ('first-lookup.look up builder metadata.call chromite.api.'
+                      'PackageService/GetBuilderMetadata')))
 
   yield api.test(
       'second-lookup',
@@ -61,5 +65,5 @@ def GenTests(api):
                      'second-lookup.look up builder metadata'),
       api.post_check(
           post_process.DoesNotRun,
-          'second-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata'
-      ))
+          ('second-lookup.look up builder metadata.call chromite.api.'
+           'PackageService/GetBuilderMetadata')))

@@ -7110,9 +7110,9 @@
       "    return DoRunSteps(api, properties)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/examples/full.py\", line 60, in DoRunSteps",
       "    api.build_menu.create_containers()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 615, in create_containers",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 619, in create_containers",
       "    if self.container_version:",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 108, in container_version",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/build_menu/api.py\", line 111, in container_version",
       "    ','.join([\"'{}'\".format(field) for field in fields]),",
       "RuntimeError('Unknown fields found in version format string: '{unknown-field}'')"
     ]
