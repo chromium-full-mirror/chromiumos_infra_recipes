@@ -883,8 +883,6 @@
       "-var",
       "board:eve",
       "-var",
-      "build_target:fake_board",
-      "-var",
       "test_config:fake_board-cq.hw.bvt-tast-cq",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",

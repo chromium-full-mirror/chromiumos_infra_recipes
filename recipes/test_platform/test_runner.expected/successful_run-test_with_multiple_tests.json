@@ -877,8 +877,6 @@
       "rdb",
       "stream",
       "-var",
-      "build_target:fake_board",
-      "-var",
       "test_config:",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",

@@ -217,10 +217,6 @@ def _generate_resultdb_variant_def(api, request):
   if board:
     base_variant['board'] = board[0]
 
-  build_target = request.prejob.software_attributes.build_target.name
-  if build_target:
-    base_variant['build_target'] = build_target
-
   # The template of a parent_request_uid is
   # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
   # tagged_request key is the test config's display_name in
