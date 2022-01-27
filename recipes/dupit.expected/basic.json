@@ -1,5 +1,13 @@
 [
   {
+    "cmd": [],
+    "name": "validate properties"
+  },
+  {
+    "cmd": [],
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles"
+  },
+  {
     "cmd": [
       "python",
       "-u",
@@ -12,7 +20,10 @@
       "gs://chromeos-mirror/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -21,7 +32,10 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
     "infra_step": true,
-    "name": "remove gs://... prefix"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.remove gs://... prefix",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -29,7 +43,10 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
     "infra_step": true,
-    "name": "sort gs distfiles"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.sort gs distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -42,7 +59,10 @@
       "rsync://mirrors.rit.edu/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -51,7 +71,10 @@
       "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
     ],
     "infra_step": true,
-    "name": "remove perms/size/timestamp prefix"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.remove perms/size/timestamp prefix",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -59,7 +82,10 @@
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
     ],
     "infra_step": true,
-    "name": "sort gentoo distfiles"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.sort gentoo distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -69,7 +95,10 @@
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
     ],
     "infra_step": true,
-    "name": "get list of files in gentoo that are not in gs"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.get list of files in gentoo that are not in gs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -91,7 +120,10 @@
       "[CLEANUP]/distfiles_tmp_1"
     ],
     "infra_step": true,
-    "name": "rsync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.rsync distfiles from rsync://mirrors.rit.edu/gentoo/distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -101,12 +133,16 @@
       "l",
       "-ls"
     ],
-    "name": "list symlink distfiles"
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.list symlink distfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "copy new distfiles to gs",
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy new distfiles to gs",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@No new distfiles to upload@@@"
     ]
   },
@@ -121,9 +157,9 @@
       "[CLEANUP]/distfiles_tmp_1"
     ],
     "infra_step": true,
-    "name": "copy new distfiles to gs.list new distfiles",
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy new distfiles to gs.list new distfiles",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },

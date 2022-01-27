@@ -9425,13 +9425,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/disk_usage/examples/full.py#12)(api):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
-[DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for syncing remote, distributed tarballs to our local cache.
 
-&mdash; **def [RunSteps](/recipes/dupit.py#30)(api):**
+&mdash; **def [RunSteps](/recipes/dupit.py#23)(api, properties):**
 ### *recipes* / [dupit\_arch](/recipes/dupit_arch.py)
 
 [DEPS](/recipes/dupit_arch.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

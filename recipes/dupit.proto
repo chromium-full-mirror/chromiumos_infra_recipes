@@ -1,0 +1,31 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.dupit;
+
+import "chromiumos/builder_config.proto";
+
+message DupitProperties {
+  // List of mirror sources.
+  repeated Mirror mirrors = 1;
+
+  // Google Storage URI to store the mirror at.
+  string gs_uri = 2;
+
+  // Ignore files that go missing during the synchronization process.
+  bool ignore_missing_args = 3;
+
+  // Filter out symlinks that do not point to a valid target.
+  bool filter_missing_links = 4;
+}
+
+message Mirror {
+  // Rsync URI to mirror from.
+  string uri = 1;
+
+  // Rsync rate to limit synchronization at. (eg "50m")
+  string rate = 2;
+}

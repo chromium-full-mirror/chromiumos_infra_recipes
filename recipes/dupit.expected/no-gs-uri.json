@@ -1,0 +1,16 @@
+[
+  {
+    "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "must set gs_uri"
+    },
+    "name": "$result"
+  }
+]
