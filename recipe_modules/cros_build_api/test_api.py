@@ -396,9 +396,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['ChromitePytest'] = '{}'
     responses['ChromiteUnitTest'] = '{}'
     responses['DebugInfoTest'] = '{}'
-    responses['GetCoverageRules'] = jsonify(coverage_rules=[{
-        'name': 'kernel:4.4',
-    }])
     responses['VmTest'] = '{}'
     responses['MoblabVmTest'] = '{}'
     return responses
