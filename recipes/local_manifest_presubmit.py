@@ -104,7 +104,7 @@ def RunSteps(api, properties):
         if properties.presubmit_all_files:
           cmd.append('--all_files')
         api.step('presubmit_support', cmd,
-                 stdout=api.raw_io.output(add_output_log=True))
+                 stdout=api.raw_io.output(name='stdout', add_output_log=True))
 
 
 def GenTests(api):
