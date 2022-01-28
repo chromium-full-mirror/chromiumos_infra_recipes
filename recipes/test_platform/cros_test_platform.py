@@ -599,8 +599,21 @@ def sort_task_results_by_state(task_results):
       passed=[], flaked=[], failed_all_attempts=[], skipped=[],
       bot_parameters_rejected=[], timed_out_waiting_for_dut=[],
       cancelled_before_run=[], cancelled_during_run=[], other=[])
-  failed_at_least_once = []
+  unsuccessful_at_least_once = []
   for tr in task_results:
+    if tr.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED and tr.state.verdict in _PASSED_VERDICTS:
+      task_results_by_state.passed.append(tr)
+      continue
+    # Don't assign state to unsuccessful tasks at this point, since we don't
+    # know if they passed on retry or not.
+    unsuccessful_at_least_once.append(tr)
+
+  passed_set = set([x.name for x in task_results_by_state.passed])
+  for tr in unsuccessful_at_least_once:
+    if tr.name in passed_set:
+      task_results_by_state.flaked.append(tr)
+      continue
+
     task_run_status = tr.state.life_cycle
     if task_run_status == TaskState.LIFE_CYCLE_REJECTED:
       task_results_by_state.bot_parameters_rejected.append(tr)
@@ -611,24 +624,12 @@ def sort_task_results_by_state(task_results):
     elif task_run_status == TaskState.LIFE_CYCLE_PENDING:
       task_results_by_state.timed_out_waiting_for_dut.append(tr)
     elif task_run_status == TaskState.LIFE_CYCLE_COMPLETED:
-      task_verdict = tr.state.verdict
-      if task_verdict in _PASSED_VERDICTS:
-        task_results_by_state.passed.append(tr)
-      elif task_verdict == TaskState.VERDICT_NO_VERDICT:
+      if tr.state.verdict == TaskState.VERDICT_NO_VERDICT:
         task_results_by_state.skipped.append(tr)
-      elif task_verdict in _FAILED_VERDICTS:
-        # Don't assign state to failed tasks at this point, since we don't
-        # know if they passed on retry or not.
-        failed_at_least_once.append(tr)
+      elif tr.state.verdict in _FAILED_VERDICTS:
+        task_results_by_state.failed_all_attempts.append(tr)
     else:  # pragma: no cover
       task_results_by_state.other.append(tr)
-
-  passed_set = set([x.name for x in task_results_by_state.passed])
-  for tr in failed_at_least_once:
-    if tr.name in passed_set:
-      task_results_by_state.flaked.append(tr)
-    else:
-      task_results_by_state.failed_all_attempts.append(tr)
 
   return task_results_by_state
 
@@ -1317,16 +1318,87 @@ def GenTests(api):
 
   retried_task_results = [
       ExecuteResponse.TaskResult(
-          task_url='foo://bar/baz/b100',
-          log_url='logs://bar/baz',
-          name='foo-retried',
+          task_url='foo://foo/foo/0',
+          log_url='logs://foo/foo',
+          name='foo-test',
           state=TaskState(verdict="VERDICT_FAILED",
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
-          task_url='foo://bar/baz/b101',
-          log_url='logs://bar/baz1',
-          name='foo-retried',
+          task_url='foo://foo/foo/1',
+          log_url='logs://foo/foo1',
+          name='foo-test',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='bar://bar/bar/0',
+          log_url='logs://bar/bar',
+          name='bar-test',
+          state=TaskState(verdict="VERDICT_NO_VERDICT",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='bar://bar/bar/1',
+          log_url='logs://bar/bar1',
+          name='bar-test',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='baz://baz/baz/0',
+          log_url='logs://baz/baz',
+          name='baz-test',
+          state=TaskState(life_cycle='LIFE_CYCLE_REJECTED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='baz://baz/baz/1',
+          log_url='logs://baz/baz1',
+          name='baz-test',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='haha://haha/haha/0',
+          log_url='logs://haha/haha',
+          name='haha-test',
+          state=TaskState(life_cycle='LIFE_CYCLE_CANCELLED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='haha://haha/haha/1',
+          log_url='logs://haha/haha1',
+          name='haha-test',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='lol://lol/lol/0',
+          log_url='logs://lol/lol',
+          name='lol-test',
+          state=TaskState(life_cycle='LIFE_CYCLE_ABORTED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='lol://lol/lol/1',
+          log_url='logs://lol/lol1',
+          name='lol-test',
+          attempt=1,
+          state=TaskState(verdict="VERDICT_PASSED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='lmao://lmao/lmao/0',
+          log_url='logs://lmao/lmao',
+          name='lmao-test',
+          state=TaskState(life_cycle='LIFE_CYCLE_PENDING'),
+      ),
+      ExecuteResponse.TaskResult(
+          task_url='lmao://lmao/lmao/1',
+          log_url='logs://lmao/lmao1',
+          name='lmao-test',
           attempt=1,
           state=TaskState(verdict="VERDICT_PASSED",
                           life_cycle='LIFE_CYCLE_COMPLETED'),
