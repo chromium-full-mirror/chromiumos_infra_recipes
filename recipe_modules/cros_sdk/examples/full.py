@@ -164,7 +164,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'mount overlay cros_chroot'))
 
   yield api.test(
-      'remaining-test-data', api.cros_sdk.is_chroot_usable(['False', 'True']),
+      'remaining-test-data', api.cros_sdk.is_chroot_usable([False, True]),
       api.post_check(post_process.StepFailure, 'clean up SDK chroot'))
 
   yield api.test(
