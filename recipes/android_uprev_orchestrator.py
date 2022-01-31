@@ -111,11 +111,12 @@ def DoRunSteps(api, properties):
       api.git.add(list(modified_files))
       api.git.commit(commit_message)
 
-      # Pull and rebase onto latest upstream. Discard any conflicting upstream
-      # changes by setting --strategy-option=theirs (see `git help rebase` for
-      # detail.) No one else should be touching these files after all.
-      api.git.fetch(info.remote)
-      api.git.rebase(strategy_option='theirs')
+      if submit_uprev:
+        # Pull and rebase onto latest upstream. Discard any conflicting upstream
+        # changes by setting --strategy-option=theirs (see `git help rebase` for
+        # detail.) No one else should be touching these files after all.
+        api.git.fetch(info.remote)
+        api.git.rebase(strategy_option='theirs')
 
     # Create a CL, and submit if needed.
     change = api.gerrit.create_change(info.path,
