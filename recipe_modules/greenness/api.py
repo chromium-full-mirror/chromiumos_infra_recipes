@@ -61,10 +61,10 @@ class GreennessApi(recipe_api.RecipeApi):
         continue
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
-      if self.m.cros_tags.has_entry('relevance', 'relevant', build.tags):
-        self._greenness_dict[bt] = GreennessTuple(green_metric, critical, True)
-      else:
+      if self.m.cros_tags.has_entry('relevance', 'not relevant', build.tags):
         self._greenness_dict[bt] = GreennessTuple(0, critical, False)
+      else:
+        self._greenness_dict[bt] = GreennessTuple(green_metric, critical, True)
 
   def update_hwtest_info(self, results):
     """Update Grenness with HW test information.

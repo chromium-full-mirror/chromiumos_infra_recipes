@@ -13888,7 +13888,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@{'None': GreennessTuple(score=0, critical=False, relevant=False), 'target': GreennessTuple(score=100, critical=True, relevant=True)}@@@",
+      "@@@STEP_LOG_LINE@greenness@{'None': GreennessTuple(score=100, critical=False, relevant=True), 'target': GreennessTuple(score=100, critical=True, relevant=True)}@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },
