@@ -229,7 +229,6 @@ class TastExecApi(RecipeApi):
                     build_artifacts_url, test_results_dir, run_args)
     return tests
 
-  @exponential_retry(retries=2)
   def _archive_vm_artifacts(self, host, port, private_key_path, output_dir):
     # b/204628226: Work-around tar's (non) handling of open file descriptors by
     # rsyncing artifacts to a temporary location before tarring.
