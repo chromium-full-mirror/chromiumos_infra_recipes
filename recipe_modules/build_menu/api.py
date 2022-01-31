@@ -159,6 +159,37 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def dep_graph(self):
     return self._dep_graph
 
+  def is_cq_build_relevant(self, packages=None, include_rev_deps=False):
+    """Determine whether the CQ build is relevant.
+
+    CQ builds are relevant when the changes affect any of the packages in the
+    depgraph for the build target. They can also be forced relevant via an input
+    property or CL footer.
+
+    Args:
+      packages (list[PackageInfo]): The list of packages for which to get
+        dependencies. If none are specified the standard list of packages is
+        used.
+      include_rev_deps (bool): Whether to also calculate reverse dependencies.
+
+    """
+    if self._force_relevant_build:
+      return True
+
+    if self.m.cros_relevance.check_force_relevance_footer(
+        self.gerrit_changes, [self.config_or_default]):
+      return True
+
+    if self.m.cros_relevance.toolchain_cls_applied:
+      return True
+
+    cl_affected_packages = self.get_cl_affected_sysroot_packages(
+        packages, include_rev_deps)
+
+    relevant = bool(cl_affected_packages)
+    self.m.easy.set_properties_step(exp_cq_relevance=relevant)
+    return relevant
+
   # TODO(b/189363718): This function is catered towards the slim build use case.
   # Refactor so that it can be applied to other use cases. For example, the
   # decision to include reverse dependencies should come from the config.
@@ -408,6 +439,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
         config=self.m.cros_infra_config.config_or_default,
         force_relevant=force_rel)
+
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()
     # Adding relevance to tags to help cros_fleet and others search for

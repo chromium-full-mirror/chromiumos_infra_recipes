@@ -34,6 +34,10 @@ def RunSteps(api):
 
 def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+
+  # TODO(b/205159611): Experiment doing relevancy checks via the Build API.
+  api.build_menu.is_cq_build_relevant(env_info.packages, include_rev_deps=True)
+
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
                      summary_markdown='Build was pointless.')
