@@ -6,24 +6,40 @@
 """Recipe for building a BuildTarget image for CQ."""
 
 DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/runtime',
     'build_menu',
+    'cros_tags',
     'test_util',
 ]
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_api import StepFailure, InfraFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):
-  with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot() as is_relevant:
-    if is_relevant:
-      return DoRunSteps(api, config)
+  try:
+    with api.build_menu.configure_builder() as config, \
+        api.build_menu.setup_workspace_and_chroot() as is_relevant:
+      if is_relevant:
+        return DoRunSteps(api, config)
+      else:
+        return RawResult(status=common.SUCCESS,
+                         summary_markdown='Build was not relevant.')
+  except InfraFailure:
+    # If the parent build is cancelled, by default the child build will have an
+    # INFRA_FAILURE status. Check if this build was cancelled because its
+    # parent was cancelled, and set the status.
+    parent = api.cros_tags.get_values('parent_buildbucket_id')
+    if parent and api.runtime.in_global_shutdown:
+      return RawResult(
+          status=common.CANCELED,
+          summary_markdown='Parent orchestrator ({}) cancelled'.format(
+              api.buildbucket.build_url(build_id=parent[0])))
     else:
-      return RawResult(status=common.SUCCESS,
-                       summary_markdown='Build was not relevant.')
+      raise
 
 
 def DoRunSteps(api, config):
@@ -68,8 +84,7 @@ def GenTests(api):
 
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(
-      'cq-build',
-      api.post_check(post_process.MustRun, 'build images'),
+      'cq-build', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -115,8 +130,7 @@ def GenTests(api):
 
   # CQ build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail',
-      api.post_check(post_process.MustRun, 'build images'),
+      'bundle-fail', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return('upload artifacts',
@@ -136,3 +150,18 @@ def GenTests(api):
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       cq=True, build_target='coral')
+
+  yield api.build_menu.test(
+      'parent-cancelled',
+      api.runtime.global_shutdown_on_step(
+          'configure builder.gitiles-fetch-ref'),
+      api.post_check(
+          post_process.ResultReason,
+          'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
+      ),
+      api.post_process(post_process.StatusException),
+      api.post_process(post_process.DropExpectation),
+      tags=api.cros_tags.tags(parent_buildbucket_id='123'),
+      cq=True,
+      build_target='coral',
+  )
