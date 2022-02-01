@@ -12,6 +12,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -45,18 +46,19 @@ def RunSteps(api):
                        summary_markdown='build was pointless.')
 
     with api.step.nest('run SDK package unit tests') as step:
+      request = BuildTargetUnitTestRequest(
+          build_target=BuildTarget(name=None), chroot=api.cros_sdk.chroot,
+          package_blocklist=[], packages=[],
+          result_path=str(api.path.mkdtemp()),
+          flags=BuildTargetUnitTestRequest.Flags(
+              code_coverage=False, empty_sysroot=False,
+              testable_packages_optional=False, filter_only_cros_workon=False))
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
-          BuildTargetUnitTestRequest(
-              build_target=BuildTarget(name=None), chroot=api.cros_sdk.chroot,
-              package_blocklist=[], packages=[],
-              result_path=str(api.path.mkdtemp()),
-              flags=BuildTargetUnitTestRequest.Flags(
-                  code_coverage=False, empty_sysroot=False,
-                  testable_packages_optional=False,
-                  filter_only_cros_workon=False)),
-          response_lambda=api.cros_build_api.failed_pkg_names)
-      api.failures.set_failed_packages(
-          step, [(p, '') for p in response.failed_packages])
+          request, response_lambda=api.cros_build_api.failed_pkg_names,
+          pkg_logs_lambda=api.cros_build_api.failed_pkg_logs)
+      pkgs = api.cros_build_api.failed_pkg_logs(request, response,
+                                                api.file.read_raw)
+      api.failures.set_failed_packages(step, pkgs)
 
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()

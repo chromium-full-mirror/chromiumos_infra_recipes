@@ -355,7 +355,7 @@ def GenTests(api):
     api.cros_build_api.set_api_return(
       'run ebuild tests',
       endpoint='TestService/BuildTargetUnitTest',
-      data='{ "failed_packages": [{"package_name": "bar", "category": "foo", "version": "1.0-r1"}] }'
+      data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
     ),
     cq=True,
   )

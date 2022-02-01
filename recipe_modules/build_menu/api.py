@@ -596,22 +596,25 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 if PackageInfo(category=x.category, package_name=x.package_name)
                 in list(unit_tests.packages)
             ]
+        request = BuildTargetUnitTestRequest(
+            build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
+            result_path=str(self.m.path.mkdtemp()),
+            package_blocklist=unit_tests.package_blocklist,
+            packages=relevant_testable_packages,
+            flags=BuildTargetUnitTestRequest.Flags(
+                code_coverage=self._test_with_code_coverage,
+                empty_sysroot=unit_tests.empty_sysroot,
+                testable_packages_optional=testable_packages_optional,
+                filter_only_cros_workon=filter_only_cros_workon))
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
-            BuildTargetUnitTestRequest(
-                build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
-                result_path=str(self.m.path.mkdtemp()),
-                package_blocklist=unit_tests.package_blocklist,
-                packages=relevant_testable_packages,
-                flags=BuildTargetUnitTestRequest.Flags(
-                    code_coverage=self._test_with_code_coverage,
-                    empty_sysroot=unit_tests.empty_sysroot,
-                    testable_packages_optional=testable_packages_optional,
-                    filter_only_cros_workon=filter_only_cros_workon)),
+            request,
             # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
             timeout=3 * 60 * 60,
-            response_lambda=self.m.cros_build_api.failed_pkg_names)
-        self.m.failures.set_failed_packages(
-            presentation, [(p, '') for p in response.failed_packages])
+            response_lambda=self.m.cros_build_api.failed_pkg_names,
+            pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
+        pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
+                                                     self.m.file.read_raw)
+        self.m.failures.set_failed_packages(presentation, pkgs)
 
   def upload_artifacts(self, config=None, private_bundle_func=None,
                        sysroot=None):
