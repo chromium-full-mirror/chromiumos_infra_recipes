@@ -10,6 +10,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'build_menu',
@@ -32,8 +33,11 @@ PROPERTIES = BuildFirmwareProperties
 
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot():
+  with api.build_menu.configure_builder() \
+     as config, api.build_menu.setup_workspace():
+    chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
+    api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
+
     service = api.cros_build_api.FirmwareService
     chroot = api.cros_sdk.chroot
     location = properties.firmware_location or config.general.firmware_location
@@ -93,6 +97,15 @@ def RunSteps(api, properties):
         api.buildbucket.schedule(requests)
 
 
+def _read_chromiumos_sdk_pin(api, properties):
+  if properties.chromiumos_sdk_pin_file:
+    with api.step.nest('read chromiumos-sdk pin'):
+      filepath = api.src_state.workspace_path.join(
+          properties.chromiumos_sdk_pin_file)
+      return api.file.read_text('read {}'.format(filepath), filepath).strip()
+  return None
+
+
 def _invoke_signing_for_current_build(builder_name, uploaded_artifacts,
                                       properties):
   '''
@@ -143,6 +156,17 @@ def GenTests(api):
   yield test('postsubmit',)
 
   yield test('cq', cq=True, builder='fw-ec-cq')
+
+  sdk_pin_path = 'src/platform/ti50/sdk-version'
+  yield test(
+      'firmware-ti50-cq',
+      api.step_data(
+          'read chromiumos-sdk pin.read [CLEANUP]/chromiumos_workspace/{}'
+          .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
+      cq=True, builder='firmware-ti50-cq', input_properties=dict(
+          firmware_location=3,
+          chromiumos_sdk_pin_file=sdk_pin_path,
+      ))
 
   yield test(
       'upload_fail',

@@ -387,7 +387,7 @@ class CrosSdkApi(RecipeApi):
       return reuse
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
-                    timeout_sec='DEFAULT', test_data=None,
+                    sdk_version=None, timeout_sec='DEFAULT', test_data=None,
                     test_toolchain_cls=None, name=None):
     """Initialize the chroot and link it into the workspace.
 
@@ -400,6 +400,8 @@ class CrosSdkApi(RecipeApi):
           care what version the SDK is, they just need any SDK.
       use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
+      sdk_version (string): Optional. Specific SDK version to include in the
+        CreateSdkRequest, e.g. 2022.01.20.073008.
       timeout_sec (int): Step timeout (in seconds).  Default: None if
           bootstrap is True, otherwise 3 hours.
       test_data (str): test response (JSON) from the SdkService.Create call, or
@@ -421,7 +423,9 @@ class CrosSdkApi(RecipeApi):
           timeout_sec = None if bootstrap else 180 * 60
 
         # Determine whether a cached root could be reused.
-        no_replace = self._check_sdk_cache_state(version)
+        # If we're requesting a specific SDK version, we probably want to
+        # rebuild the chroot regardless.
+        no_replace = self._check_sdk_cache_state(version) and not sdk_version
         # SdkService/Create will create a chroot if one does not already exist
         # or no_replace is False.
         response = self.m.cros_build_api.SdkService.Create(
@@ -429,8 +433,8 @@ class CrosSdkApi(RecipeApi):
                 flags=CreateSdkRequest.Flags(no_replace=no_replace,
                                              no_use_image=not use_image,
                                              bootstrap=bootstrap),
-                chroot=self.chroot), timeout=timeout_sec,
-            test_output_data=test_data)
+                chroot=self.chroot, sdk_version=sdk_version),
+            timeout=timeout_sec, test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         self._chroot_initialized = True
         self._write_sdk_cache_state(version)

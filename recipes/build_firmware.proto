@@ -25,4 +25,9 @@ message BuildFirmwareProperties {
 
   // Builder names for which signing will be invoked (Currently only being used for TI50).
   repeated string signing_allowed_builder_names = 5;
+
+  // Location of the file containing the chromiumos-sdk pin (relative to the
+  // workspace root).
+  // Currently only being used for TI50, see b/217247914 for context.
+  string chromiumos_sdk_pin_file = 6;
 }

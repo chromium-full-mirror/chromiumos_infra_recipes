@@ -335,12 +335,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
       yield
 
-  def setup_chroot(self, no_chroot_timeout=False):
+  def setup_chroot(self, no_chroot_timeout=False, sdk_version=None):
     """Setup the chroot for the builder.
 
     Args:
       no_chroot_timeout (bool): whether to allow unlimited time to create the
           chroot.
+      sdk_version (string): Optional. Specific SDK version to include in
+        the sdk CreateRequest, e.g. 2022.01.20.073008.
 
     Returns:
       (bool): Whether the build is relevant.
@@ -359,6 +361,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_sdk.uprev_packages()
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, use_image=self.is_staging,
+          sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
           no_chroot_timeout else 'DEFAULT')
       self._chroot_created = True
