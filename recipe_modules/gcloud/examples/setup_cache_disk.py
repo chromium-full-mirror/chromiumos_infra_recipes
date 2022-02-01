@@ -83,11 +83,11 @@ def GenTests(api):
       'create-disk-step-failure',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.step_data((
-          'setup source cache disk.create disk from snapshot image.check whether'
+          'source cache.setup source cache disk.create disk from snapshot image.check whether'
           + ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-cros'),
                     retcode=404),
       api.step_data(
-          'setup source cache disk.create disk from snapshot image.create disk from image',
+          'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           retcode=3),
   )
   yield api.test(
@@ -107,7 +107,7 @@ def GenTests(api):
       'missing-version-file-in-storage',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.step_data((
-          'setup source cache disk.retrieve image version from storage.gsutil cat'
+          'source cache.setup source cache disk.retrieve image version from storage.gsutil cat'
       ), retcode=3),
   )
   yield api.test(
@@ -120,7 +120,7 @@ def GenTests(api):
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
-          'determine whether to reset overlayfs directories.read overlayfs branch'
+          'source cache.determine whether to reset overlayfs directories.read overlayfs branch'
       ), retcode=3),
   )
   yield api.test(
@@ -128,7 +128,7 @@ def GenTests(api):
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
-          'setup source cache disk (4).create disk from snapshot image.check whether'
+          'source cache (4).setup source cache disk.create disk from snapshot image.check whether'
           +
           ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize'
       ), retcode=404),

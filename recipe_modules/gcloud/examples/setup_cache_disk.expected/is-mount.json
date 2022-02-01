@@ -36,15 +36,23 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused",
+    "name": "source cache"
+  },
+  {
+    "cmd": [],
+    "name": "source cache.determine whether cache is mounted and can be reused",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine whether to reset overlayfs directories"
+    "name": "source cache.determine whether to reset overlayfs directories",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -58,9 +66,9 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories.read overlayfs branch",
+    "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
@@ -94,8 +102,13 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (2)",
+    "name": "source cache (2)"
+  },
+  {
+    "cmd": [],
+    "name": "source cache (2).determine whether cache is mounted and can be reused",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
     ]
@@ -129,8 +142,13 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (3)",
+    "name": "source cache (3)"
+  },
+  {
+    "cmd": [],
+    "name": "source cache (3).determine whether cache is mounted and can be reused",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
     ]
@@ -150,15 +168,23 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (4)",
+    "name": "source cache (4)"
+  },
+  {
+    "cmd": [],
+    "name": "source cache (4).determine whether cache is mounted and can be reused",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos-stabilize-rust-13836-b@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos-stabilize-rust-13836-b@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine whether to reset overlayfs directories (2)"
+    "name": "source cache (4).determine whether to reset overlayfs directories",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -172,9 +198,9 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (2).read overlayfs branch",
+    "name": "source cache (4).determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
@@ -186,9 +212,9 @@
       "[CACHE]/chromiumos/upperdir"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs upperdir",
+    "name": "source cache (4).determine whether to reset overlayfs directories.cleanup overlayfs upperdir",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -198,9 +224,9 @@
       "[CACHE]/chromiumos/workdir"
     ],
     "infra_step": true,
-    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs workdir",
+    "name": "source cache (4).determine whether to reset overlayfs directories.cleanup overlayfs workdir",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -234,8 +260,13 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (5)",
+    "name": "source cache (5)"
+  },
+  {
+    "cmd": [],
+    "name": "source cache (5).determine whether cache is mounted and can be reused",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
     ]

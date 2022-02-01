@@ -710,6 +710,103 @@ class GcloudApi(recipe_api.RecipeApi):
           'failed to get zone from swarming host: {}'.format(self.infra_host))
     self._zone = m.group('zone')
 
+  def _create_new_cache_disk(self, cache_name, disk_type, recipe_mount):
+    """Create a new cache disk.
+
+    New cache disk is based on snapshot image stored in Google Storage, or
+    recovery snapshot.
+
+    Args:
+      cache_name(str): Name of the cache file to use.
+      disk_type(str): Type of GCE disk to create, defaults to standard
+        persistent disk.
+      recipe_mount(bool): Whether mount needs to be in the path to use within
+        a recipe.
+
+    Returns:
+      Str containing the name of the snapshot.
+    """
+    with self.m.step.nest('setup source cache disk'):
+      self._disk = '{}-{}'.format(self.infra_host, self._short_name)
+      self._disk = self._disk[:self.gce_name_limit] if len(
+          self._disk) > self.gce_name_limit else self._disk
+      recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
+      with self.m.step.nest('retrieve image version from storage'):
+        try:
+          remote_version = self.m.gsutil.cat(
+              'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
+              infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
+        except self.m.step.StepFailure:
+          self.m.step.active_result.presentation.status = 'SUCCESS'
+          with self.m.step.nest(
+              'unable to find version file in GS bucket') as pres:
+            # This is intended behavior if a new cache builder is added.
+            # Rather than fail, default to an initial snapshot.
+            pres.logs['version file not found'] = self._version_file
+            remote_version = recovery_snapshot
+      with self.m.step.nest('create disk from snapshot image'):
+        snapshot = remote_version
+        if not self.image_exists(image=snapshot):
+          snapshot = recovery_snapshot
+        self.m.easy.set_properties_step(snapshot_version=snapshot)
+        disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
+        if disk_exists and recipe_mount:
+          if self.disk_attached(disk_name=self._short_name):
+            self.detach_disk(instance=self.infra_host, disk=self._disk,
+                             zone=self._zone)
+          self.delete_disk(disk=self._disk, zone=self._zone)
+          disk_exists = False
+        if not disk_exists:
+          # Create the disk but in the event of a stockout of SSD, catch the
+          # exception and create a standard spinning disk.
+          try:
+            self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                        image=snapshot, disk_type=disk_type)
+          except self.m.step.StepFailure:
+            self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                        image=snapshot, disk_type='pd-standard')
+        return snapshot
+
+  def _setup_new_cache_mount_outide_path(self, recipe_mount_path):
+    """Perform cache setup when mount is allowed to be outside the path.
+
+    Args:
+      recipe_mount_path(path): Location (in recipes) to mount the attached disk.
+    """
+    self.update_fstab(mount_path=recipe_mount_path, name=self._short_name)
+    self.m.file.write_text(
+        'write overlayfs branch file',
+        self.snapshot_version_path.join(self._overlay_branch_file),
+        self._branch)
+    self.set_disk_autodelete(instance=self.infra_host, disk=self._disk,
+                             zone=self._zone)
+
+  def _reset_overlayfs_if_needed(self, cache_name):
+    """Reset overlayfs to named cache.
+
+    Changing branches necessitates reseting overlayfs to the named cache
+    because we expect the upper dir source code to change substantially
+    from branch to branch.
+
+    Args:
+      cache_name(str): Name of the cache file to use.
+    """
+    with self.m.step.nest('determine whether to reset overlayfs directories'):
+      overlayfs_branch = 'main'
+      try:
+        overlayfs_branch = self.m.file.read_text(
+            'read overlayfs branch',
+            self.snapshot_version_path.join(self._overlay_branch_file),
+            test_data='main')
+      except self.m.step.StepFailure:
+        self.m.step.active_result.presentation.status = 'SUCCESS'
+        with self.m.step.nest('branch not set for overlay, defaulting') as pres:
+          # This is intended behavior if a new cache builder is added.
+          # Rather than fail, default to an initial snapshot.
+          pres.logs['overlay branch not found'] = overlayfs_branch
+      if overlayfs_branch != self._branch:
+        self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
+
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
                        disk_size=None, recipe_mount=False):
     """Create disk from snapshot, reuse if still attached.
@@ -726,6 +823,7 @@ class GcloudApi(recipe_api.RecipeApi):
       recipe_mount(bool): Whether mount needs to be in the path to use within
         a recipe.
     """
+    # Set properties we need for cache disk setup.
     if not self._zone or not self.infra_host:
       self._swarming_information()
     self.set_gce_project(GCE_BUILD_PROJECT)
@@ -733,7 +831,6 @@ class GcloudApi(recipe_api.RecipeApi):
     if branch == 'master':
       self._branch = 'main'
     is_staging = self.m.cros_infra_config.is_staging
-    recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
     if not self._is_rfc1035_compliant(branch):
       self._branch = self._scrub_special_characters(self._branch)
     if self._branch == 'main' or recipe_mount:
@@ -748,85 +845,30 @@ class GcloudApi(recipe_api.RecipeApi):
     if is_staging:
       self._version_file = '{}-{}'.format('staging', self._version_file)
     recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
-    self._cache_mounted = self.check_for_disk_mount(
-        mount_path=recipe_mount_path)
-    if not self._cache_mounted:
-      with self.m.step.nest('setup source cache disk'):
-        self._disk = '{}-{}'.format(self.infra_host, self._short_name)
-        self._disk = self._disk[:self.gce_name_limit] if len(
-            self._disk) > self.gce_name_limit else self._disk
+    with self.m.step.nest('source cache'):
+      self._cache_mounted = self.check_for_disk_mount(
+          mount_path=recipe_mount_path)
+      # No cache case.
+      if not self._cache_mounted:
         local_version_path = self.snapshot_version_path.join(self._version_file)
+        snapshot = self._create_new_cache_disk(cache_name, disk_type,
+                                               recipe_mount)
 
-        with self.m.step.nest('retrieve image version from storage'):
-          try:
-            remote_version = self.m.gsutil.cat(
-                'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
-                infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
-          except self.m.step.StepFailure:
-            self.m.step.active_result.presentation.status = 'SUCCESS'
-            with self.m.step.nest(
-                'unable to find version file in GS bucket') as pres:
-              # This is intended behavior if a new cache builder is added.
-              # Rather than fail, default to an initial snapshot.
-              pres.logs['version file not found'] = self._version_file
-              remote_version = recovery_snapshot
-        with self.m.step.nest('create disk from snapshot image'):
-          snapshot = remote_version
-          if not self.image_exists(image=snapshot):
-            snapshot = recovery_snapshot
-          self.m.easy.set_properties_step(snapshot_version=snapshot)
-          disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
-          if disk_exists and recipe_mount:
-            if self.disk_attached(disk_name=self._short_name):
-              self.detach_disk(instance=self.infra_host, disk=self._disk,
-                               zone=self._zone)
-            self.delete_disk(disk=self._disk, zone=self._zone)
-            disk_exists = False
-          if not disk_exists:
-            # Create the disk but in the event of a stockout of SSD, catch the
-            # exception and create a standard spinning disk.
-            try:
-              self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                          image=snapshot, disk_type=disk_type)
-            except self.m.step.StepFailure:
-              self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                          image=snapshot,
-                                          disk_type='pd-standard')
-          self.attach_disk(name=self._short_name, instance=self.infra_host,
-                           disk=self._disk, zone=self._zone)
-          self.mount_disk(name=self._short_name, mount_path=mount_path,
-                          recipe_mount=recipe_mount)
-          if not recipe_mount:
-            self.update_fstab(mount_path=recipe_mount_path,
-                              name=self._short_name)
-            self.m.file.write_text(
-                'write overlayfs branch file',
-                self.snapshot_version_path.join(self._overlay_branch_file),
-                self._branch)
-            self.set_disk_autodelete(instance=self.infra_host, disk=self._disk,
-                                     zone=self._zone)
-          if disk_size:
-            self.resize_disk(disk=self._disk, zone=self._zone, size=disk_size)
-          self.m.file.write_text('write version file', local_version_path,
-                                 snapshot)
-    if not recipe_mount:
-      with self.m.step.nest('determine whether to reset overlayfs directories'):
-        overlayfs_branch = 'main'
-        try:
-          overlayfs_branch = self.m.file.read_text(
-              'read overlayfs branch',
-              self.snapshot_version_path.join(self._overlay_branch_file),
-              test_data='main')
-        except self.m.step.StepFailure:
-          self.m.step.active_result.presentation.status = 'SUCCESS'
-          with self.m.step.nest(
-              'branch not set for overlay, defaulting') as pres:
-            # This is intended behavior if a new cache builder is added.
-            # Rather than fail, default to an initial snapshot.
-            pres.logs['overlay branch not found'] = overlayfs_branch
-        if overlayfs_branch != self._branch:
-          self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
-    return recipe_mount_path
+        self.attach_disk(name=self._short_name, instance=self.infra_host,
+                         disk=self._disk, zone=self._zone)
+        self.mount_disk(name=self._short_name, mount_path=mount_path,
+                        recipe_mount=recipe_mount)
+        if not recipe_mount:
+          self._setup_new_cache_mount_outide_path(recipe_mount_path)
+
+        if disk_size:
+          self.resize_disk(disk=self._disk, zone=self._zone, size=disk_size)
+
+        self.m.file.write_text('write version file', local_version_path,
+                               snapshot)
+      if not recipe_mount:
+        self._reset_overlayfs_if_needed(cache_name)
+      return recipe_mount_path
 
   @contextlib.contextmanager
   def cleanup_gce_disks(self):

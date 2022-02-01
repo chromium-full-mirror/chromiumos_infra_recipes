@@ -336,17 +336,27 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused"
+    "name": "source cache"
   },
   {
     "cmd": [],
-    "name": "setup source cache disk"
-  },
-  {
-    "cmd": [],
-    "name": "setup source cache disk.retrieve image version from storage",
+    "name": "source cache.determine whether cache is mounted and can be reused",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache.setup source cache disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache.setup source cache disk.retrieve image version from storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -373,16 +383,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.retrieve image version from storage.gsutil cat",
+    "name": "source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "setup source cache disk.create disk from snapshot image",
+    "name": "source cache.setup source cache disk.create disk from snapshot image",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -409,9 +419,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.check whether image exists: ",
+    "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
@@ -431,9 +441,9 @@
   },
   {
     "cmd": [],
-    "name": "setup source cache disk.create disk from snapshot image.set snapshot_version",
+    "name": "source cache.setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromiumos-source-snapshot\"@@@"
     ]
   },
@@ -461,9 +471,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -472,9 +482,9 @@
   },
   {
     "cmd": [],
-    "name": "setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "name": "source cache.look up device name to device id map",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -499,9 +509,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.ensure mount directory exists",
+    "name": "source cache.ensure mount directory exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -529,9 +539,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.mount disk cros",
+    "name": "source cache.mount disk cros",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -559,9 +569,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.determine UUID",
+    "name": "source cache.determine UUID",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -587,10 +597,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.update fstab for /dev/sdz",
+    "name": "source cache.update fstab for /dev/sdz",
     "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -617,9 +627,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.write overlayfs branch file",
+    "name": "source cache.write overlayfs branch file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
@@ -651,9 +661,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.set disk to autodelete",
+    "name": "source cache.set disk to autodelete",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -680,16 +690,19 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup source cache disk.create disk from snapshot image.write version file",
+    "name": "source cache.write version file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine whether to reset overlayfs directories"
+    "name": "source cache.determine whether to reset overlayfs directories",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -715,9 +728,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine whether to reset overlayfs directories.read overlayfs branch",
+    "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
