@@ -5,6 +5,14 @@
   },
   {
     "cmd": [],
+    "name": "pointless build check.depgraph relevance check",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no Gerrit changes to check for relevancy@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "pointless build check.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

@@ -212,13 +212,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       # build was pointless, and we're calling a function that returns True if
       # the build is relevant.  We want to pass True in the case where the
       # argument is None.
-      if gerrit_changes:
-        relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
-                                             dep_graph,
-                                             test_value=not test_value)
-      else:
-        # CQ runs with no changes applied are pointless.
-        relevant = False
+      relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
+                                           dep_graph, test_value=not test_value)
       # Do this in a step instead of a presentaion to avoid multiple lines in
       # the output properties (in led jobs).
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx
@@ -299,6 +294,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       bool: Whether the given Gerrit Change affects any of the relevant paths.
     """
     with self.m.step.nest(name or 'path relevancy check') as presentation:
+      if not gerrit_changes:
+        presentation.step_text = 'no Gerrit changes to check for relevancy'
+        return False
+
       self._ensure_binaries()
       gitiles_commit = gitiles_commit or bbcommon_pb2.GitilesCommit()
       check_request = PointlessBuildCheckRequest(
