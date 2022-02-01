@@ -187,6 +187,10 @@ class CrosVersionApi(RecipeApi):
           self.m.git.set_upstream('cros', push_branch)
           if dry_run:
             pres.step_text = 'dry-run only'
+            # version_bumper switched us to `tmp_checkin_branch`, but we're
+            # not pushing this SHA to the remote so we need to checkout
+            # the original branch in order to create a valid buildspec.
+            self.m.git.checkout(push_branch)
             return
           change = self.m.gerrit.create_change(
               'chromiumos/overlays/chromiumos-overlay',

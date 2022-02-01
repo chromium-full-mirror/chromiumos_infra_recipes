@@ -2641,6 +2641,31 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "checkout",
+      "firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "CQ run: not pushing buildspec"
   },
