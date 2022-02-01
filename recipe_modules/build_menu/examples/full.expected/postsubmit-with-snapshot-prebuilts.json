@@ -3920,15 +3920,6 @@
   },
   {
     "cmd": [],
-    "name": "check force relevance",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@force relevant 0 target(s)@@@",
-      "@@@STEP_LOG_LINE@found footer builders@found build(s): @@@",
-      "@@@STEP_LOG_END@found footer builders@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "buildbucket.add_tags_to_current_build",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"relevance\": [\"relevant\"]}@@@"

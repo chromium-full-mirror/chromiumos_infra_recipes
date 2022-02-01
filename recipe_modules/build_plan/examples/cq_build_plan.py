@@ -122,6 +122,38 @@ def GenTests(api):
   )
 
   yield api.test(
+      'force-relevant',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(
+          expected_build_requests=[
+              'atlas-cq',
+              'arm64-generic-cq',
+              'eve-cq',
+          ],
+          expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ],
+      ),
+      api.git_footers.simulated_get_footers(['eve-cq'],
+                                            'check force relevance'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'arm-generic-cq',
+          'arm64-generic-cq',
+          'atlas-cq',
+          'coral-cq',
+          'cave-cq',
+      ]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
+
+  yield api.test(
       'force-rebuild-non-critical-builder',
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),

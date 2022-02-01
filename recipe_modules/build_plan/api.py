@@ -69,12 +69,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
               b.id for b in builder_configs if 'pointless' not in b.id.name
           ])
     # Handle forced relevancy.
-    forced_necessary = self.m.cros_relevance.check_force_relevance_footer(
+    forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
         gerrit_changes, builder_configs)
-    necessary_builders = list(set(necessary_builders) | set(forced_necessary))
+    necessary_builders = list(set(necessary_builders) | set(forced_relevant))
 
     slim_eligible_run = any(x.endswith('slim-cq') for x in necessary_builders)
 
+    forced_rebuilds = set()
     if enable_history:
       if gerrit_changes:
         forced_rebuilds = self.get_forced_rebuilds(gerrit_changes)
@@ -148,6 +149,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         child_builder_config = self.m.cros_infra_config.get_builder_config(
             child_builder_name)
         critical = child_builder_config.general.critical.value
+        force_rebuild = child_builder_name in forced_rebuilds or 'all' in forced_rebuilds
+        force_relevant = child_builder_name in forced_relevant
 
         # now we have a list of build names such as ['buddy-postsubmit', ...]
         # whereas snapshot_builds and completed_builds might be postfixed
@@ -179,8 +182,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           continue
 
         # Don't retry non-critical builds unless recycling is disabled.
-        if not critical and is_retry and not (
-            child_builder_name in forced_rebuilds or 'all' in forced_rebuilds):
+        if is_retry and not (critical or force_rebuild):
           filter_log.append('{} is non-critical and this is a CQ rerun'.format(
               child_builder_name))
           count_skip_noncritical_on_rerun += 1
@@ -219,6 +221,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # Build the properties for the child.
         properties = self.m.cq.props_for_child_build
         properties.update(self.m.cros_infra_config.props_for_child_build)
+        if force_relevant:
+          properties.update(
+              {'$chromeos/build_menu': {
+                  'force_relevant_build': True
+              }})
 
         if child_builder_name.endswith('-slim-cq'):
           count_scheduled_slim_builds += 1

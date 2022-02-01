@@ -176,10 +176,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if self._force_relevant_build:
       return True
 
-    if self.m.cros_relevance.check_force_relevance_footer(
-        self.gerrit_changes, [self.config_or_default]):
-      return True
-
     if self.m.cros_relevance.toolchain_cls_applied:
       return True
 
@@ -429,17 +425,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # 2. output_properties.testing_toolchain is True (now tracked in
     #    cros_relevance), and/or
     # 3. output_properties.artifact_prep is True.
-    # 4. The gerrit change contains the appropriate footer.
-    force_rel = (
-        self._force_relevant_build or
-        config.id.name in self.m.cros_relevance.check_force_relevance_footer(
-            self.gerrit_changes, [config]))
-
+    #    TODO(b/205159611): We don't currently check for artifact_prep when
+    #    determining relevance. Investigate whether this check is now obsolete
+    #    or should be added.
+    # 4. The gerrit change contains the appropriate footer. The footers are read
+    #    in the orchestrator and passed in as an input property (1) therefore we
+    #    do not need to read the footers here.
     pointless = self.m.cros_relevance.is_build_pointless(
         self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
         config=self.m.cros_infra_config.config_or_default,
-        force_relevant=force_rel)
-
+        force_relevant=self._force_relevant_build)
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()
     # Adding relevance to tags to help cros_fleet and others search for

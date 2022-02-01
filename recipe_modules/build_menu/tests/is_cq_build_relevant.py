@@ -42,15 +42,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'force-relevant-footers',
-      api.buildbucket.try_build(builder='amd64-generic-cq'),
-      api.git_footers.simulated_get_footers(['amd64-generic-cq'],
-                                            'check force relevance'),
-      api.properties(expected_relevance=True),
-      api.post_check(post_process.DoesNotRun, 'get package dependencies'),
-  )
-
-  yield api.test(
       'no-relevant-packages',
       api.cros_build_api.set_api_return('get package dependencies',
                                         endpoint='DependencyService/List',
