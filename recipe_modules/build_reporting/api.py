@@ -187,20 +187,20 @@ class BuildReportingApi(recipe_api.RecipeApi):
     # Add counter to message for ordering
     build_report.count = self._msg_counter()
 
+    # Aggregate sent messages so we have a copy of the final status on our side.
+    self._build_report.MergeFrom(build_report)
+
     with self.m.step.nest('build status pubsub update') as pres:
-      pres.logs['message'] = MessageToJson(build_report)
+      pres.logs['message'] = MessageToJson(self._build_report)
       self.m.cloud_pubsub.publish_message(
           self.pubsub_project,
           self.pubsub_topic,
           # The publish-message binary requires that messages be base64 encoded to
           # avoid issues with binary data and strings.
-          build_report.SerializeToString().encode('base64'),
+          self._build_report.SerializeToString().encode('base64'),
           ordering_key=str(self.m.buildbucket.build.id or 'led-launch'),
           endpoint=PUBSUB_ENDPOINT,
       )
-
-    # Aggregate sent messages so we have a copy of the final status on our side.
-    self._build_report.MergeFrom(build_report)
 
     return build_report
 

@@ -181,6 +181,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"3\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_RELEASE\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\", @@@",
       "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"STEP_SYNC\": {@@@",
@@ -191,8 +193,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  }, @@@",
-      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@  }@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
     ]
@@ -202,7 +203,7 @@
     "name": "build status pubsub update (3).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAqHhIcCglTVEVQX1NZTkMSDwgCEMgBGggKBgjGgMT9BEAD\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQASoeEhwKCVNURVBfU1lOQxIPCAIQyAEaCAoGCMaAxP0EQAM=\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -216,7 +217,7 @@
     ],
     "infra_step": true,
     "name": "build status pubsub update (3).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAqHhIcCglTVEVQX1NZTkMSDwgCEMgBGggKBgjGgMT9BEAD\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQASoeEhwKCVNURVBfU1lOQxIPCAIQyAEaCAoGCMaAxP0EQAM=\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -231,6 +232,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"4\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_RELEASE\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\", @@@",
       "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"STEP_SYNC\": {@@@",
@@ -242,8 +245,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 2@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  }, @@@",
-      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@  }@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
     ]
@@ -253,7 +255,7 @@
     "name": "build status pubsub update (4).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAqKxIpCglTVEVQX1NZTkMSHAgCEGUaFgoGCMaAxP0EEgwIx4DE/QQQgMq17gFABA==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQASorEikKCVNURVBfU1lOQxIcCAIQZRoWCgYIxoDE/QQSDAjHgMT9BBCAyrXuAUAE\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -267,7 +269,7 @@
     ],
     "infra_step": true,
     "name": "build status pubsub update (4).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAqKxIpCglTVEVQX1NZTkMSHAgCEGUaFgoGCMaAxP0EEgwIx4DE/QQQgMq17gFABA==\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQASorEikKCVNURVBfU1lOQxIcCAIQZRoWCgYIxoDE/QQSDAjHgMT9BBCAyrXuAUAE\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -282,6 +284,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"5\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_RELEASE\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\", @@@",
       "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"STEP_SYNC\": {@@@",
@@ -292,8 +296,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 3@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  }, @@@",
-      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@  }@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
     ]
@@ -303,7 +306,7 @@
     "name": "build status pubsub update (5).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAqHhIcCglTVEVQX1NZTkMSDwgDEMgBGggKBgjJgMT9BEAF\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQASoeEhwKCVNURVBfU1lOQxIPCAMQyAEaCAoGCMmAxP0EQAU=\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -317,7 +320,7 @@
     ],
     "infra_step": true,
     "name": "build status pubsub update (5).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAqHhIcCglTVEVQX1NZTkMSDwgDEMgBGggKBgjJgMT9BEAF\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQASoeEhwKCVNURVBfU1lOQxIPCAMQyAEaCAoGCMmAxP0EQAU=\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -332,6 +335,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"6\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_RELEASE\", @@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\", @@@",
       "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"STEP_SYNC\": {@@@",
@@ -343,8 +348,7 @@
       "@@@STEP_LOG_LINE@message@        \"order\": 3@@@",
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  }, @@@",
-      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@message@  }@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
     ]
@@ -354,7 +358,7 @@
     "name": "build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAqKxIpCglTVEVQX1NZTkMSHAgDEGYaFgoGCMmAxP0EEgwIyoDE/QQQgMq17gFABg==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQASorEikKCVNURVBfU1lOQxIcCAMQZhoWCgYIyYDE/QQSDAjKgMT9BBCAyrXuAUAG\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -368,7 +372,7 @@
     ],
     "infra_step": true,
     "name": "build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAqKxIpCglTVEVQX1NZTkMSHAgDEGYaFgoGCMmAxP0EEgwIyoDE/QQQgMq17gFABg==\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQASorEikKCVNURVBfU1lOQxIcCAMQZhoWCgYIyYDE/QQSDAjKgMT9BBCAyrXuAUAG\\n\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
