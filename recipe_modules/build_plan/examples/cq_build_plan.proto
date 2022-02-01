@@ -15,4 +15,15 @@ message CqBuildPlanProperties {
 
   // The builder names of the expected completed builds.
   repeated string expected_completed_builds = 3;
+
+  // The IDs of snapshots to use for the build plan.
+  repeated string snapshot_ids = 4;
+
+  // The IDs of expected unfinished snapshots.
+  repeated string expected_unfinished_snapshots = 5;
+
+  // The IDs of expected failed snapshots.
+  repeated string expected_failed_snapshots = 6;
+
+
 }

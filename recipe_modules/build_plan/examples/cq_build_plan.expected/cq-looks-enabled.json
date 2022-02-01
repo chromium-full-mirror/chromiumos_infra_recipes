@@ -957,7 +957,6 @@
       "@@@STEP_LOG_LINE@filter log@cave already passed@@@",
       "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@For snapshot  in the last 14 hours, found builds []@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -989,6 +988,23 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "filter builds.CQ looks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.CQ looks.unfinished or failed snapshots",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot  in the last 14 hours, did not find any builds. Treating as unfinished.@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@CQ looks: Found 1 unfinished and 0 failed snapshots.@@@",
+      "@@@STEP_LOG_END@unfinished or failed snapshots@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "ls",
@@ -999,7 +1015,7 @@
       "-n",
       "1000",
       "-fields",
-      "builder,critical,id,status",
+      "builder,critical,id,status,tags",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\"}]}"
     ],
@@ -1016,9 +1032,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.buildbucket.search",
+    "name": "filter builds.CQ looks.unfinished or failed snapshots.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

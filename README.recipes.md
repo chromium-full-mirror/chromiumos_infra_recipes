@@ -130,6 +130,7 @@
   * [build_parallels_image](#recipes-build_parallels_image) &mdash; Recipe for building a Parallels image for testing.
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
+  * [build_plan:examples/cq_looks](#recipes-build_plan_examples_cq_looks)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
@@ -1063,7 +1064,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#283)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#271)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1077,7 +1078,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#375)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#363)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1093,7 +1094,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#414)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#402)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1104,7 +1105,19 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#336)(self, builds):**
+&mdash; **def [get\_unfinished\_or\_failed\_snapshot\_ids](/recipe_modules/build_plan/api.py#415)(self, snapshot_ids):**
+
+Returns a set of unfinished or failed snapshot ids.
+
+Args:
+  snapshot_ids (set): The set of snapshot ids to be used in build plan.
+
+Returns:
+  A tuple of two sets:
+    A set of snapshot ids referring to builds that are unfinished.
+    A set of snapshot ids referring to builds that are failed.
+
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#324)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -8153,6 +8166,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#31)(api, properties):**
+### *recipes* / [build\_plan:examples/cq\_looks](/recipe_modules/build_plan/examples/cq_looks.py)
+
+[DEPS](/recipe_modules/build_plan/examples/cq_looks.py#12): [build\_plan](#recipe_modules-build_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_looks.py#23)(api, properties):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
 [DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#16): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
