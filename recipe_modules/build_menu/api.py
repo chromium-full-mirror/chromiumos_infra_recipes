@@ -206,6 +206,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Returns:
       (List[PackageInfo]): A list of packages affected by the CLs.
     """
+    # If no CLs in the CQ run are applied, then no packages are affected. An
+    # example is when a CQ builder that uses the public manifest contains only
+    # private changes.
+    if not self.m.workspace_util.patch_sets:
+      return []
+
     packages = packages or self.config_or_default.build.install_packages.packages
     if self._cl_affected_sysroot_packages:
       return list(self._cl_affected_sysroot_packages)

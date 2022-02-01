@@ -2804,6 +2804,13 @@
   },
   {
     "cmd": [],
+    "name": "set exp_cq_relevance",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@exp_cq_relevance@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install toolchain"
   },
   {

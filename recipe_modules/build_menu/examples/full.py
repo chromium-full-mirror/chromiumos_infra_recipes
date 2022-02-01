@@ -44,8 +44,10 @@ def DoRunSteps(api, properties):
       cherry_pick_changes=cherry_pick_changes) as relevant:
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
+    experiment_relevance = api.build_menu.is_cq_build_relevant()
     if properties.forced_relevant:
       api.assertions.assertTrue(relevant)
+      api.assertions.assertTrue(experiment_relevance)
 
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
