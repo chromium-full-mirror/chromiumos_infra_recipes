@@ -22,6 +22,11 @@ _SWARMING_HOST_REGEXP = (r'^chromeos-'
 
 _DEFAULT_TEST_BOT_ID = 'chromeos-ci-infra-us-central1-b-x16-0-nvcj'
 
+# TODO(b/216558719): Consider removing this when gcloud issue is resolved.
+_RE_DISK_SIZE = re.compile('New disk size \'(?P<first>[0-9]+)\' GiB must be '
+                           'larger than existing size \'(?P<second>[0-9]+)\' '
+                           'GiB.')
+
 
 class GcloudApi(recipe_api.RecipeApi):
   """A module to interact with Google Cloud."""
@@ -569,11 +574,26 @@ class GcloudApi(recipe_api.RecipeApi):
       zone(str): GCE zone which the disk is located.
       size(str): New size of the disk in GB.
     """
+
+    def _is_set_size(gcloud_str):
+      """Check the stdout if the actual is same as requested size."""
+      re_match = _RE_DISK_SIZE.search(gcloud_str)
+      if re_match and re_match.group('first') and re_match.group('second'):
+        if re_match.group('first') == re_match.group('second'):
+          return True
+      return False
+
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('resize GCE disk', [
-          'gcloud', 'compute', 'disks', 'resize', disk,
-          '--size={}'.format(size), '--zone={}'.format(zone), '--quiet'
-      ], infra_step=True)
+      try:
+        self.m.easy.stdout_step('resize GCE disk', [
+            'gcloud', 'compute', 'disks', 'resize', disk,
+            '--size={}'.format(size), '--zone={}'.format(zone), '--quiet'
+        ], infra_step=True)
+      except self.m.step.InfraFailure as e:
+        # Check output that indicates we've actually succeded.
+        if not _is_set_size(e.result.stdout):
+          raise
+
       self.m.easy.stdout_step(
           'execute resize2fs on resized disk',
           ['sudo', 'resize2fs', '/dev/{}'.format(self._dev_ref)],

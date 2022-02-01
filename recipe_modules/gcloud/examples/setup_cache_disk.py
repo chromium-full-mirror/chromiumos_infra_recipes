@@ -90,6 +90,21 @@ def GenTests(api):
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           retcode=3),
   )
+
+  yield api.test(
+      'resize-disk-but-same-size',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
+      api.step_data((
+          'source cache.setup source cache disk.create disk from snapshot image.check whether'
+          + ' disk exists: chromeos-ci-infra-us-central1-b-x16-0-lmno-cros'),
+                    retcode=404),
+      api.step_data('source cache.resize GCE disk', retcode=1),
+      api.step_data(
+          'source cache.resize GCE disk (2)', stdout=api.raw_io.output(
+              'Some non-sequitur message to the disk size.\n'
+              'New disk size \'10\' GiB must be larger '
+              'than existing size \'10\' GiB.\n'), retcode=1),
+  )
   yield api.test(
       'staging-execution',
       api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
