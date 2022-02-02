@@ -9,6 +9,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/path',
@@ -130,6 +131,8 @@ def RunSteps(api, properties):
               properties.local_manifest_branching_min_milestone
           ]
           cmd += ["--projects", ",".join(project_paths)]
+          if api.buildbucket.build.id:
+            cmd += ["--bbid", str(api.buildbucket.build.id)]
           cmd += ["-j", nproc]
 
           if properties.push:
@@ -138,6 +141,8 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+  _test_build_id = 8812345
+
   yield api.test(
       'validate',
       api.properties(
@@ -156,6 +161,11 @@ def GenTests(api):
               "project_buildspec_min_milestone": 90,
               "project_buildspecs": ["galaxy/", "foo/bar"],
               "project_buildspec_watch_paths_other_repos": ["chromeos/foo"],
+              "$recipe_engine/buildbucket": {
+                  "build": {
+                      "id": _test_build_id
+                  }
+              }
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
@@ -191,6 +201,9 @@ def GenTests(api):
                      ['--min_milestone', '90']),
       api.post_check(post_process.StepCommandContains,
                      'branch local manifests.run manifest_doctor', ['-j', '8']),
+      api.post_check(post_process.StepCommandContains,
+                     'branch local manifests.run manifest_doctor',
+                     ['--bbid', str(_test_build_id)]),
   )
 
   yield api.test(
