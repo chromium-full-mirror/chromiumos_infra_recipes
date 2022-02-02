@@ -86,6 +86,8 @@ class GcloudApi(recipe_api.RecipeApi):
 
   @property
   def gce_disk(self):
+    if self._test_data.get('is_mount'):
+      return '{}-{}'.format(self.infra_host, self._short_name)
     return self._disk
 
   @property
@@ -682,22 +684,23 @@ class GcloudApi(recipe_api.RecipeApi):
       disk_suffix = '{}{}'.format(disk_suffix, 'stabilize')
     return disk_suffix
 
-  def check_for_disk_mount(self, mount_path, mock_mount=False):
+  def check_for_disk_mount(self, mount_path):
     """Check whether there is a disk mounted on given path.
 
     Args:
       mount_path (str): System path on which the disk is mounted.
-      mock_mount (bool): Testing flag to mock a disk being mounted.
 
     Returns:
       Bool indicating whether there is a disk mounted on the path.
     """
     with self.m.step.nest(
         'determine whether cache is mounted and can be reused') as pres:
-      if os.path.ismount(mount_path) or mock_mount:
+      is_mount = os.path.ismount(mount_path)
+      if self._test_data.enabled:
+        is_mount = self._test_data.get('is_mount', False)
+      if is_mount:
         pres.logs['{}'.format(mount_path)] = 'is a mounted disk'
-        return True
-    return False
+    return is_mount
 
   def _swarming_information(self):
     """Set Swarming variables based on hostname."""

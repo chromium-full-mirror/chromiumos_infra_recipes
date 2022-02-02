@@ -26,8 +26,6 @@ def RunSteps(api):
   api.assertions.assertEqual(api.gcloud.host_zone, 'us-central1-b')
   api.assertions.assertEqual(api.gcloud.disk_short_name, 'cros')
   if api.build_menu.is_staging:
-    api.assertions.assertTrue(
-        api.gcloud.check_for_disk_mount(mount_path='/tmp/', mock_mount=True))
     api.assertions.assertRegexpMatches(
         api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-\w*-cros')
     api.assertions.assertEqual(
@@ -70,6 +68,13 @@ def GenTests(api):
       'basic',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
+
+  yield api.test(
+      'is-mount',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.is_mount(True),
+  )
+
   yield api.test(
       'failed-to-get-zone-from-host',
       api.gcloud.infra_host('chromeos-ci-infra-x16-0-nvcj'),

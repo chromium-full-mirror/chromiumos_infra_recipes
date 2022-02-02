@@ -1,0 +1,246 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
+      "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine whether to reset overlayfs directories"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/infra_versions/overlay_branch.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "determine whether to reset overlayfs directories.read overlayfs branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "unmount disk cros",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /snapshot_mounts/chromiumos]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project (2)"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
+      "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "unmount disk cros-r90",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /snapshot_mounts/chromiumos]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project (3)"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
+      "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project (4)"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos-stabilize-rust-13836-b@is a mounted disk@@@",
+      "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos-stabilize-rust-13836-b@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine whether to reset overlayfs directories (2)"
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/infra_versions/overlay_branch.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "determine whether to reset overlayfs directories (2).read overlayfs branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/upperdir"
+    ],
+    "infra_step": true,
+    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rm",
+      "-rf",
+      "[CACHE]/chromiumos/workdir"
+    ],
+    "infra_step": true,
+    "name": "determine whether to reset overlayfs directories (2).cleanup overlayfs workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "delete disk"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project (5)"
+  },
+  {
+    "cmd": [],
+    "name": "determine whether cache is mounted and can be reused (5)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
+      "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -290,3 +290,9 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
   @staticmethod
   def infra_host(value):
     return value
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def is_mount(value):
+    """Whether to assume the disk is mounted when testing."""
+    return value

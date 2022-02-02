@@ -505,14 +505,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (2)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@&#x2f;tmp&#x2f;@is a mounted disk@@@",
-      "@@@STEP_LOG_END@&#x2f;tmp&#x2f;@@@"
-    ]
-  },
-  {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "/snapshot_mounts/chromiumos"
@@ -562,7 +554,7 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (3)"
+    "name": "determine whether cache is mounted and can be reused (2)"
   },
   {
     "cmd": [],
@@ -955,7 +947,7 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (4)"
+    "name": "determine whether cache is mounted and can be reused (3)"
   },
   {
     "cmd": [],
@@ -1321,7 +1313,7 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (5)"
+    "name": "determine whether cache is mounted and can be reused (4)"
   },
   {
     "cmd": [],
@@ -1850,7 +1842,7 @@
   },
   {
     "cmd": [],
-    "name": "determine whether cache is mounted and can be reused (6)"
+    "name": "determine whether cache is mounted and can be reused (5)"
   },
   {
     "cmd": [],
