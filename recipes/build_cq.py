@@ -15,7 +15,7 @@ DEPS = [
 ]
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure, InfraFailure
+from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
@@ -29,18 +29,17 @@ def RunSteps(api):
       else:
         return RawResult(status=common.SUCCESS,
                          summary_markdown='Build was not relevant.')
-  except InfraFailure:
+  finally:
     # If the parent build is cancelled, by default the child build will have an
     # INFRA_FAILURE status. Check if this build was cancelled because its
     # parent was cancelled, and set the status.
     parent = api.cros_tags.get_values('parent_buildbucket_id')
     if parent and api.runtime.in_global_shutdown:
+      # pylint: disable=lost-exception
       return RawResult(
           status=common.CANCELED,
           summary_markdown='Parent orchestrator ({}) cancelled'.format(
               api.buildbucket.build_url(build_id=parent[0])))
-    else:
-      raise
 
 
 def DoRunSteps(api, config):

@@ -8019,7 +8019,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#46)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#45)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#23)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
