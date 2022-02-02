@@ -895,6 +895,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         channels (list(Channel)): The channels to use, or empty list.
 
         For more context on this parameters, see chromite/scripts/pushimage.py.
+
+      Returns:
+        PushImageResponse
       """
     request = PushImageRequest(
         chroot=chroot,
@@ -907,4 +910,4 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         channels=channels,
         is_staging=self.m.cros_infra_config.is_staging,
     )
-    self.m.cros_build_api.ImageService.PushImage(request, test_output_data='{}')
+    return self.m.cros_build_api.ImageService.PushImage(request)

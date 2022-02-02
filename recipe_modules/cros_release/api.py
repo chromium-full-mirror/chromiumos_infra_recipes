@@ -231,7 +231,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       sysroot (Sysroot): sysroot to use.
 
     Return:
-      The GS directory the image was pushed from.
+      Tuple of (gs_image_dir, instructions_uris):
+        gs_image_dir is the GS directory the image was pushed from.
+        instructions_uris is a list of URIs to instructions files for the
+          pushed images.
     """
     with self.m.step.nest('push images') as presentation:
       gs_bucket = self.m.build_menu.config.artifacts.artifacts_gs_bucket
@@ -273,9 +276,12 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             (self._release_bucket, channel_name, sysroot.build_target.name,
              str(self.m.cros_version.version.platform_version)))
 
-      self.m.cros_artifacts.push_image(
+      response = self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
           sign_types=self._sign_types,
           dest_bucket='gs://' + self._release_bucket, **kwargs)
+      instructions_uris = [
+          i.instructions_file_path for i in response.instructions
+      ]
 
-      return gs_image_dir
+      return (gs_image_dir, instructions_uris)

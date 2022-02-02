@@ -116,8 +116,8 @@ def DoRunSteps(api, config, properties):
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
-  gs_image_dir = api.cros_release.push_and_sign_images(config,
-                                                       api.build_menu.sysroot)
+  gs_image_dir, _ = api.cros_release.push_and_sign_images(
+      config, api.build_menu.sysroot)
 
   with api.step.nest("schedule debug symbols upload") as presentation:
     # Launch the upload debug symbols builder

@@ -239,6 +239,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         ],
         failed_packages=[],
     )
+    responses['PushImage'] = jsonify(
+        instructions=[
+            {
+                "instructions_file_path":
+                    "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
+            },
+            {
+                "instructions_file_path":
+                    "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions",
+            },
+        ],
+    )
     responses['Test'] = jsonify(success=True)
     return responses
 

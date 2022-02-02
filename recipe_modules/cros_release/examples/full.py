@@ -59,7 +59,17 @@ def RunSteps(api):
           )))
   sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='amd64-generic'))
 
-  api.cros_release.push_and_sign_images(config, sysroot)
+  # Test data for instruction files are defined in
+  # recipe_modules/cros_build_api/test_api.py.
+  _, instructions = api.cros_release.push_and_sign_images(config, sysroot)
+  api.assertions.assertEqual(
+      instructions,
+      [
+          "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
+          "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions",
+      ],
+  )
+
   api.cros_release.schedule_payload_generation()
 
 

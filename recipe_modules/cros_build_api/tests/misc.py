@@ -113,6 +113,7 @@ def RunSteps(api):
       },
       'ImageService': {
           'Create': image.CreateImageResult,
+          'PushImage': image.PushImageResponse,
           'Test': image.TestImageResult,
       },
       'MethodService': {

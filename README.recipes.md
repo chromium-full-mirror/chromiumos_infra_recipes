@@ -1714,6 +1714,9 @@ Args:
 
   For more context on this parameters, see chromite/scripts/pushimage.py.
 
+Returns:
+  PushImageResponse
+
 &mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#547)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None):**
 
 Bundle and upload the given artifacts for the given build target.
@@ -2791,7 +2794,10 @@ Args:
   sysroot (Sysroot): sysroot to use.
 
 Return:
-  The GS directory the image was pushed from.
+  Tuple of (gs_image_dir, instructions_uris):
+    gs_image_dir is the GS directory the image was pushed from.
+    instructions_uris is a list of URIs to instructions files for the
+      pushed images.
 
 &emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#69)(self):**
 
