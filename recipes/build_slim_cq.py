@@ -36,7 +36,9 @@ def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
 
   # TODO(b/205159611): Experiment doing relevancy checks via the Build API.
-  api.build_menu.is_cq_build_relevant(env_info.packages, include_rev_deps=True)
+  if api.cros_infra_config.is_staging:
+    api.build_menu.is_cq_build_relevant(env_info.packages,
+                                        include_rev_deps=True)
 
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
@@ -160,7 +162,7 @@ def GenTests(api):
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess),
       cq=True,
-      build_target='atlas-slim',
+      build_target='staging-amd64-generic',
       pointless=True,
   )
 

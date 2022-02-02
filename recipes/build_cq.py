@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/runtime',
     'build_menu',
+    'cros_infra_config',
     'cros_tags',
     'test_util',
 ]
@@ -46,7 +47,9 @@ def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
 
   # TODO(b/205159611): Experiment doing relevancy checks via the Build API.
-  api.build_menu.is_cq_build_relevant(env_info.packages, include_rev_deps=False)
+  if api.cros_infra_config.is_staging:
+    api.build_menu.is_cq_build_relevant(env_info.packages,
+                                        include_rev_deps=False)
 
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
@@ -115,8 +118,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
-      pointless=True)
+      api.post_check(post_process.StatusSuccess), cq=True,
+      build_target='staging-amd64-generic', pointless=True)
 
   # CQ build with install-packages failure.
   yield api.build_menu.test(
