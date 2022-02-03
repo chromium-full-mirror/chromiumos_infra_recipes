@@ -58,40 +58,6 @@
     ],
     "infra_step": true,
     "name": "get git revision for chromeos-chrome ToT.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal\", \"project\": \"chrome/src-internal\"}}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"internal1234revision\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
-    ],
-    "infra_step": true,
-    "name": "get git revision for chromeos-chrome ToT.gitiles-fetch-ref (2)",
-    "stdin": "{\"branch\": {\"branch\": \"trunk\", \"host\": \"chromium\", \"project\": \"chromium\"}}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"public5678revision\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
-    ],
-    "infra_step": true,
-    "name": "get git revision for chromeos-chrome ToT.gitiles-fetch-ref (3)",
     "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chromium\", \"project\": \"chromium/src\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -153,7 +119,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n# chromium/src rev: publicsrc9012revision\n\nsample file contents",
+      "# chromium/src rev:\n# crrev.com/publicsrc9012revision\n\nsample file contents",
       "[CLEANUP]/tmp_tmp_1/chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -188,7 +154,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromeos-chrome uprev dry-run with Chrome ToT\n\n# chrome-internal rev: internal1234revision\n# chromium rev: public5678revision\n# chromium/src rev: publicsrc9012revision\n\nCq-Cl-Tag: swiftr:chrome-uprev-dry-run\nCq-Cl-Tag: chromium_src_ref:publicsrc9012revision",
+      "chromeos-chrome: Informational uprev to publicsr\n\n# chromium/src rev:\n# crrev.com/publicsrc9012revision\n\nCq-Cl-Tag: swiftr:chrome-uprev-dry-run\nCq-Cl-Tag: chromium_src_ref:publicsrc9012revision",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -196,11 +162,10 @@
     "name": "commit changes.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@chromeos-chrome uprev dry-run with Chrome ToT@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@chromeos-chrome: Informational uprev to publicsr@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chrome-internal rev: internal1234revision@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium rev: public5678revision@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium/src rev: publicsrc9012revision@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# chromium/src rev:@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@# crrev.com/publicsrc9012revision@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: swiftr:chrome-uprev-dry-run@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cq-Cl-Tag: chromium_src_ref:publicsrc9012revision@@@",

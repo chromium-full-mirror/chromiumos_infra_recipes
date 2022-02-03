@@ -39,25 +39,13 @@ _FAKE_GERRIT_CHANGE_ID = '12341234'
 
 def RunSteps(api):
   with api.step.nest('get git revision for chromeos-chrome ToT'):
-    internal_revision = api.gitiles.fetch_revision(
-        'chrome-internal', 'chrome/src-internal', 'main',
-        test_output_data={'branch': {
-            'revision': 'internal1234revision'
-        }})
-    public_revision = api.gitiles.fetch_revision(
-        'chromium', 'chromium', 'trunk',
-        test_output_data={'branch': {
-            'revision': 'public5678revision'
-        }})
-    public_src_revision = api.gitiles.fetch_revision(
+    src_revision = api.gitiles.fetch_revision(
         'chromium', 'chromium/src', 'main',
         test_output_data={'branch': {
             'revision': 'publicsrc9012revision'
         }})
-    rev_info = '# chrome-internal rev: %s\n' \
-               '# chromium rev: %s\n' \
-               '# chromium/src rev: %s' % (
-                 internal_revision, public_revision, public_src_revision)
+    rev_info = '# chromium/src rev:\n' \
+               '# crrev.com/%s' % (src_revision)
 
   with api.context(cwd=api.path.mkdtemp()):
     with api.step.nest('clone %s' % _CHROMEOS_OVERLAY_PROJECT):
@@ -72,10 +60,16 @@ def RunSteps(api):
 
     with api.step.nest('commit changes'):
       api.git.add([_CHROMEOS_CHROME_EBUILD_PATH])
-      message = 'chromeos-chrome uprev dry-run with Chrome ToT' \
-          '\n\n%s\n\nCq-Cl-Tag: %s\nCq-Cl-Tag: chromium_src_ref:%s' % (
-            rev_info, _INFO_UPREV_TAG, public_src_revision)
-      api.git.commit(message, files=[_CHROMEOS_CHROME_EBUILD_PATH])
+      message_lines = [
+          'chromeos-chrome: Informational uprev to %s' % src_revision[:8],
+          '',
+          rev_info,
+          '',
+          'Cq-Cl-Tag: %s' % _INFO_UPREV_TAG,
+          'Cq-Cl-Tag: chromium_src_ref:%s' % src_revision,
+      ]
+      api.git.commit('\n'.join(message_lines),
+                     files=[_CHROMEOS_CHROME_EBUILD_PATH])
 
     with api.step.nest('upload CL and trigger CQ dry run') as step:
       api.git_cl.upload(reviewers=_UPREV_CL_REVIEWERS, dry_run=True,
