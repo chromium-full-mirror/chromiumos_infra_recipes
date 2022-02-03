@@ -15,6 +15,8 @@ from PB.chromiumos.builder_config import BuilderConfigs
 from PB.recipe_modules.chromeos.cros_infra_config.examples.full import (
     FullProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = FullProperties
 
 

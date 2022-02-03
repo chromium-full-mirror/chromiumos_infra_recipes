@@ -15,3 +15,5 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2'

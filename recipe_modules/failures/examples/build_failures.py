@@ -22,6 +22,8 @@ from PB.recipe_modules.chromeos.failures.examples.build_failures import (
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = BuildProperties
 
 

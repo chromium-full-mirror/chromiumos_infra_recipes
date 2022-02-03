@@ -17,4 +17,6 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = SkylabProperties

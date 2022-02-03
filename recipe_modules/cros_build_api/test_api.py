@@ -547,4 +547,4 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       (mod_test_data) to pass to api.test.
     """
     assert not isinstance(value, str), 'endpoint must not be type str'
-    return set('chromite.api.{}'.format(x).decode('utf-8') for x in value)
+    return set('chromite.api.{}'.format(x) for x in value)

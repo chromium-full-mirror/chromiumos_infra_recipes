@@ -45,4 +45,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = OrchMenuProperties

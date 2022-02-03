@@ -37,6 +37,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = {
     'need_tests_builds_serialized':
         Property(kind=list, help='List of serialized Build protos', default=[]),

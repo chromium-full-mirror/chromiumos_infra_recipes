@@ -31,6 +31,8 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = FullProperties
 
 

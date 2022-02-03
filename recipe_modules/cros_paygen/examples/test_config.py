@@ -18,6 +18,8 @@ from recipe_engine import post_process
 from PB.chromiumos.common import DeltaType, ImageType
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = TestPaygenProperties
 
 

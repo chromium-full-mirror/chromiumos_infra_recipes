@@ -46,6 +46,8 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = ConfigBackfillProperties
 
 CROS_EXTERNAL = 'https://chromium.googlesource.com/chromiumos'

@@ -27,6 +27,8 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 
 DEPS = [

@@ -64,6 +64,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 PROPERTIES = GeneratorProperties
 
 

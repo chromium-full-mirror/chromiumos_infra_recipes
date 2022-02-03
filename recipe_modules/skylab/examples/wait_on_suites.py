@@ -14,6 +14,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.test_platform.taskstate import TaskState
 from google.protobuf import duration_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 
 def RunSteps(api):
   # Unused, but needed for coverage

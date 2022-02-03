@@ -16,6 +16,8 @@ DEPS = [
     'cros_tags',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2'
+
 
 def RunSteps(api):
   api.cros_resultdb.upload_chromium_tests(
