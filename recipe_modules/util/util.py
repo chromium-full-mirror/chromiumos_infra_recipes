@@ -10,6 +10,7 @@
 from collections import namedtuple
 import datetime
 import functools
+import random
 import time
 
 # Give this back as a default, creating a simple named tuple without tests
@@ -58,6 +59,9 @@ class exponential_retry(object):
               getattr(args[0], '_test_data', _NO_TEST_DATA), 'enabled', True):
             time.sleep(retry_delay.total_seconds())  # pragma: nocover
 
-          retry_delay *= 2
+          # Add jitter to retries 2x +- 12.5%.
+          new_retry_ms = retry_delay.total_seconds() * (2 + ((
+              (random.random() - 0.5)) / 2.0)) * 1000.0
+          retry_delay = datetime.timedelta(milliseconds=new_retry_ms)
 
     return wrapper
