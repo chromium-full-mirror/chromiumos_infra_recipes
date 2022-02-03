@@ -13,4 +13,7 @@ message Properties {
 
     // Number of CTP builds to replay. Defaults to 5.
     int32 ctp_num_replay_builds = 2;
+
+    // CTP builder (e.g. "cros_test_platform-staging") to replay prod runs in.
+    string ctp_builder = 3;
 }

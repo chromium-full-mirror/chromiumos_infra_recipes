@@ -35,36 +35,38 @@ def RunSteps(api, properties):
   ctp_replay_max_runtime = properties.ctp_replay_max_runtime or DEFAULT_CTP_REPLAY_MAX_RUNTIME
   ctp_num_replay_builds = properties.ctp_num_replay_builds or CTP_BUILDS_TO_REPLAY
 
-  # Replay the last two successful production CTP builds in staging to
-  # seed staging with real requests.
+  # Replay the last two successful production CTP builds in the replay builder
+  # (e.g. cros_test_platform-staging) to seed it with real requests.
   with api.step.nest('replay prod CTP run'):
-    _replay_successful_ctp_builds_in_staging(api, ctp_num_replay_builds,
-                                             ctp_replay_max_runtime)
+    _replay_successful_ctp_builds_in_replay_builder(api, properties.ctp_builder,
+                                                    ctp_num_replay_builds,
+                                                    ctp_replay_max_runtime)
 
 
-def _get_last_successful_ctp_builds(api, num_builds=CTP_BUILDS_TO_REPLAY,
-                                    time_limit_seconds=TIMEOUT_SECONDS):
+def _get_last_successful_ctp_prod_builds(api, replay_builder,
+                                         num_builds=CTP_BUILDS_TO_REPLAY,
+                                         time_limit_seconds=TIMEOUT_SECONDS):
   # Only search up to 6 hrs back to make sure we replay relevant prod CTP data.
   six_hours_back = _bb_time_range(api, 6 * 60)
-  ctp_builder = 'cros_test_platform'
-  successful_builds = api.buildbucket.search(
+  ctp_prod_builder = 'cros_test_platform'
+  successful_prod_builds = api.buildbucket.search(
       bb_service.BuildPredicate(
           builder={
               'project': 'chromeos',
               'bucket': 'testplatform',
-              'builder': ctp_builder,
+              'builder': ctp_prod_builder,
           }, status=bb_common.SUCCESS,
           create_time=six_hours_back), fields=['*'], limit=100,
-      step_name='find recent green %s builds' % ctp_builder)
-  if not successful_builds:
+      step_name='find recent green %s builds' % ctp_prod_builder)
+  if not successful_prod_builds:
     raise api.step.StepFailure('No successful builds found for builder %s' %
-                               ctp_builder)
+                               ctp_prod_builder)
 
   already_replayed_build_ids = _already_replayed_ctp_build_ids(
-      api, six_hours_back)
+      api, replay_builder, six_hours_back)
 
   builds = []
-  for build in successful_builds:
+  for build in successful_prod_builds:
     run_time = build.end_time.seconds - build.start_time.seconds
     # If run time is less than time_limit_seconds, use the build.
     # Otherwise keep looking.
@@ -75,23 +77,23 @@ def _get_last_successful_ctp_builds(api, num_builds=CTP_BUILDS_TO_REPLAY,
   if not builds:
     raise api.step.StepFailure(
         'No new successful builds with completion time under {}s found for builder {}'
-        .format(time_limit_seconds, ctp_builder))
+        .format(time_limit_seconds, ctp_prod_builder))
   return builds
 
 
-def _already_replayed_ctp_build_ids(api, time_range):
-  ctp_staging_builds = api.buildbucket.search(
+def _already_replayed_ctp_build_ids(api, replay_builder, time_range):
+  ctp_builds_in_replay_builder = api.buildbucket.search(
       bb_service.BuildPredicate(
           builder={
               'project': 'chromeos',
               'bucket': 'testplatform',
-              'builder': 'cros_test_platform-staging',
+              'builder': replay_builder,
           }, create_time=time_range), fields=['*'],
       step_name='filter out already-replayed builds')
 
   replayed_prod_build_ids = []
-  for staging_build in ctp_staging_builds:
-    for tag in staging_build.tags:
+  for build in ctp_builds_in_replay_builder:
+    for tag in build.tags:
       if tag.key == REPLAYED_PROD_BUILD_ID_TAG:
         replayed_prod_build_ids.append(int(tag.value))
         break
@@ -107,10 +109,11 @@ def _bb_time_range(api, start_minutes_back, end_minutes_back=0):
                                        60 * end_minutes_back))
 
 
-def _replay_successful_ctp_builds_in_staging(api, ctp_num_replay_builds,
-                                             time_limit_seconds):
-  builds = _get_last_successful_ctp_builds(
-      api, num_builds=ctp_num_replay_builds,
+def _replay_successful_ctp_builds_in_replay_builder(api, replay_builder,
+                                                    ctp_num_replay_builds,
+                                                    time_limit_seconds):
+  builds = _get_last_successful_ctp_prod_builds(
+      api, replay_builder, num_builds=ctp_num_replay_builds,
       time_limit_seconds=time_limit_seconds)
   for build in builds:
     reqs = MessageToDict(build.input.properties["requests"])
@@ -221,12 +224,12 @@ def GenTests(api):
           input={'properties': ctp_input_properties},
       )
   ]
-  previous_ctp_staging_runs = [
+  previous_replayed_runs = [
       build_pb2.Build(
           builder={
               'project': 'chromeos',
               'bucket': 'testplatform',
-              'builder': 'cros_test_platform-staging',
+              'builder': 'cros_test_platform_foo_env',
           }, tags=[
               bb_common.StringPair(key=REPLAYED_PROD_BUILD_ID_TAG, value='100')
           ]),
@@ -234,16 +237,19 @@ def GenTests(api):
 
   yield api.test(
       'successful run',
-      api.properties(**{
-          'ctp_replay_max_runtime': 70 * 60,
-          'ctp_num_replay_builds': 3,
-      }),
+      api.properties(
+          **{
+              'ctp_replay_max_runtime': 70 * 60,
+              'ctp_num_replay_builds': 3,
+              'ctp_builder': 'cros_test_platform-foo_env',
+              '$chromeos/skylab': dict(ctp_builder='cros_test_platform-foo_env')
+          }),
       api.buildbucket.simulated_search_results(
           green_ctp_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
-          previous_ctp_staging_runs,
+          previous_replayed_runs,
           step_name='replay prod CTP run.filter out already-replayed builds'),
   )
 
@@ -256,15 +262,17 @@ def GenTests(api):
 
   yield api.test(
       'ctp build not found matching runtime limit',
-      api.properties(**{
-          'ctp_replay_max_runtime': 60 * 10,
-      }),
+      api.properties(
+          **{
+              'ctp_replay_max_runtime': 60 * 10,
+              'ctp_builder': 'cros_test_platform-foo_env',
+          }),
       api.buildbucket.simulated_search_results(
           green_ctp_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
-          previous_ctp_staging_runs,
+          previous_replayed_runs,
           step_name='replay prod CTP run.filter out already-replayed builds'),
       api.post_check(post_process.StepFailure, 'replay prod CTP run'),
   )
