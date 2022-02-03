@@ -290,11 +290,14 @@ class CrosBuildApiApi(RecipeApi):
     """
     logs = []
     for failed_pkg in output_proto.failed_package_data:
-      name = '%s/%s' % (failed_pkg.name.category, failed_pkg.name.package_name)
-      content = read_raw_fn(
-          'read log for %s' % name,
-          '%s%s' % (input_proto.chroot.path, failed_pkg.log_path.path),
-          'test data for %s log file' % name)
+      content = ''
+      if failed_pkg.log_path.path:
+        name = '%s/%s' % (failed_pkg.name.category,
+                          failed_pkg.name.package_name)
+        content = read_raw_fn(
+            'read log for %s' % name,
+            '%s%s' % (input_proto.chroot.path, failed_pkg.log_path.path),
+            'test data for %s log file' % name)
       logs.append((failed_pkg.name, content))
     return logs
 
