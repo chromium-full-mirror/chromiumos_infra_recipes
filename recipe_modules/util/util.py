@@ -7,10 +7,15 @@
 
 """
 
+from collections import namedtuple
 import datetime
 import functools
 import time
 
+# Give this back as a default, creating a simple named tuple without tests
+# enabled.
+_NO_TEST_DATA = namedtuple('_NO_TEST_DATA', 'enabled')
+_NO_TEST_DATA.__new__.__defaults__ = (False,)
 
 # Shamelessly stolen from recipe_engine/util.py, which we should not be using.
 # This differs in that it does not call logging.exception.
@@ -40,11 +45,19 @@ class exponential_retry(object):
       for i in xrange(self.retries):
         try:
           return f(*args, **kwargs)
-        # pylint: disable=broad-except
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
           if (i + 1) >= self.retries or not self.condition(e):
             raise
-          time.sleep(retry_delay.total_seconds())
+          # Detect running in a testing context and elide the sleep itself.
+          #
+          # Do this by pulling out the first argument (should be 'self', then
+          # trying to snag the testing enablement flag. If this fails just
+          # use the _NO_TEST_DATA default which defines tests as not being
+          # enabled and do the sleep.
+          if not args or args and not getattr(
+              getattr(args[0], '_test_data', _NO_TEST_DATA), 'enabled', True):
+            time.sleep(retry_delay.total_seconds())  # pragma: nocover
+
           retry_delay *= 2
 
     return wrapper
