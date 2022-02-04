@@ -438,11 +438,11 @@ class FirmwareBuilder(object):
       if dry_run:
         cmd.append('-n')
       cmd.extend(profile(self._config.build.portage_profile.profile))
-      cmd.extend([
-          '--sign-types={}'.format(
-              common_pb2.ImageType.Name(x).lower().replace('image_type_', ''))
-          for x in sign_types
-      ])
+      if sign_types:
+        cmd.append('--sign-types')
+        cmd.extend(
+            common_pb2.ImageType.Name(x).lower().replace('image_type_', '')
+            for x in sign_types)
       if has_dest_bucket:
         cmd.append('--dest-bucket={}'.format(dest))
       cmd.append('gs://{}/{}/{}'.format(

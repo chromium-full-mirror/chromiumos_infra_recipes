@@ -3101,8 +3101,9 @@
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
       "-n",
-      "--sign-types=firmware",
-      "--sign-types=accessory_rwsig",
+      "--sign-types",
+      "firmware",
+      "accessory_rwsig",
       "--dest-bucket=gs://chromeos-releases",
       "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/target"
     ],
