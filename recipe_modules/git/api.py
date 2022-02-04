@@ -169,12 +169,12 @@ class GitApi(recipe_api.RecipeApi):
       args += refspecs
     self._step(args, timeout=timeout_sec)
 
-  def fetch(self, remote, refspecs=None, timeout_sec=None, retries=3):
+  def fetch(self, remote, refs=None, timeout_sec=None, retries=3):
     """Runs 'git fetch'.
 
     Args:
       remote (str): The remote repository to fetch from.
-      refspecs (list[str]): The refspecs to fetch.
+      refs (list[str]): The refs to fetch.
       timeout_sec (int): Timeout in seconds.
       retry (int): Number of times to retry.
     """
@@ -182,7 +182,7 @@ class GitApi(recipe_api.RecipeApi):
     if retries:
       delay = timedelta(seconds=1)
       func = exponential_retry(retries=retries, delay=delay)(func)
-    return func(remote, refspecs, timeout_sec)
+    return func(remote, refs, timeout_sec)
 
   def fetch_refs(self, remote, ref, timeout_sec=None, count=1, test_ids=None):
     """Fetch a list of remote refs.
@@ -678,16 +678,16 @@ class GitApi(recipe_api.RecipeApi):
       return refspec
     return default
 
-  def get_branch_refspec(self, branch):
-    """Creates the full refspec for a branch.
+  def get_branch_ref(self, branch):
+    """Creates the full ref for a branch.
 
-    Returns a refspec of the form refs/heads/{branch}.
+    Returns a ref of the form refs/heads/{branch}.
 
     Args:
       branch (str): branch to split the branch from.
 
     Returns:
-      (str): The refspec for the branch.
+      (str): The ref for the branch.
     """
     if branch.startswith('refs/heads/'):
       return branch

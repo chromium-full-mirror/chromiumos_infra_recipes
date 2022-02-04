@@ -194,7 +194,7 @@ class CrosVersionApi(RecipeApi):
             return
           change = self.m.gerrit.create_change(
               'chromiumos/overlays/chromiumos-overlay',
-              ref=self.m.git.get_branch_refspec(push_branch),
+              ref=self.m.git.get_branch_ref(push_branch),
               project_path=overlay_path)
           labels = {
               self.m.gerrit.Label.BOT_COMMIT: 1,

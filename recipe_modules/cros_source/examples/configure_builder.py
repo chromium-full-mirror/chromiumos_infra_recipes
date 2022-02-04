@@ -33,15 +33,15 @@ def GenTests(api):
 
   branch = 'firmware-board-11111.B'
   revision = '{}-HEAD-SHA'.format(branch)
-  refspec = 'refs/heads/{}'.format(branch)
+  ref = 'refs/heads/{}'.format(branch)
 
   R90_branch = 'release-R90-13816.B'
   R90_revision = '{}-HEAD-SHA'.format(R90_branch)
-  R90_refspec = 'refs/heads/{}'.format(R90_branch)
+  R90_ref = 'refs/heads/{}'.format(R90_branch)
 
   stabilize_branch = 'stabilize-13817.B'
   stabilize_revision = '{}-HEAD-SHA'.format(stabilize_branch)
-  stabilize_refspec = 'refs/heads/{}'.format(stabilize_branch)
+  stabilize_ref = 'refs/heads/{}'.format(stabilize_branch)
 
   manifest_branch = 'snapshot'
 
@@ -74,14 +74,13 @@ def GenTests(api):
       revision=None)
 
   yield api.cros_source.test(
-      'change-on-branch', manifest_branch, props(ref=refspec, cid=revision),
+      'change-on-branch', manifest_branch, props(ref=ref, cid=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1], values_dict={555: dict(branch=branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
-      'change-on-two-branches', manifest_branch, props(ref=refspec,
-                                                       cid=revision),
+      'change-on-two-branches', manifest_branch, props(ref=ref, cid=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
           555: dict(branch=branch),
@@ -89,8 +88,7 @@ def GenTests(api):
       }), gerrit_changes=[change1, change2], revision=None)
 
   yield api.cros_source.test(
-      'change-on-diff-branches', manifest_branch,
-      props(ref=refspec, cid=revision),
+      'change-on-diff-branches', manifest_branch, props(ref=ref, cid=revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
           555: dict(branch=branch),
@@ -117,14 +115,14 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'change-on-release-branch', manifest_branch,
-      props(ref=R90_refspec, cid=R90_revision),
+      props(ref=R90_ref, cid=R90_revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1], values_dict={555: dict(branch=R90_branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-stabilize-branch', manifest_branch,
-      props(ref=stabilize_refspec, cid=stabilize_revision),
+      props(ref=stabilize_ref, cid=stabilize_revision),
       api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1],
                      values_dict={555: dict(branch=stabilize_branch)}),

@@ -66,8 +66,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       data = self.m.gitiles.get_file(
           'chrome-internal.googlesource.com', source_gitiles_repo,
           target_test_requirements_path,
-          ref=self.m.git.get_branch_refspec(source_gitiles_branch),
-          public=False)
+          ref=self.m.git.get_branch_ref(source_gitiles_branch), public=False)
       if data:
         return json.loads(data)
       return None

@@ -138,7 +138,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               if not dry_run:
                 change = self.m.gerrit.create_change(
                     'chromeos/manifest-versions',
-                    ref=self.m.git.get_branch_refspec(branch),
+                    ref=self.m.git.get_branch_ref(branch),
                     project_path=manifest_versions_checkout)
                 labels = {
                     self.m.gerrit.Label.BOT_COMMIT: 1,

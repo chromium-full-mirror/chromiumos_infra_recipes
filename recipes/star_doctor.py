@@ -336,7 +336,7 @@ def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
       # These are used to abandon unlanded changes later.
       change = api.gerrit.create_change(project, topic=STARDOCTOR_TOPIC,
                                         hashtags=[CONFIG_UPDATE_HASHTAG],
-                                        ref=api.git.get_branch_refspec(branch),
+                                        ref=api.git.get_branch_ref(branch),
                                         project_path=repo_dir)
       api.gerrit.set_change_labels_remote(change, labels)
       gerrit_change_url = api.git_cl.status(

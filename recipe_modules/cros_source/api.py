@@ -302,7 +302,7 @@ class CrosSourceApi(RecipeApi):
             # error, we should add a git footer to allow it.
             branches = sorted(branches)
             branch = branches[0]
-            branch_ref = self.m.git.get_branch_refspec(branch)
+            branch_ref = self.m.git.get_branch_ref(branch)
             pres.step_text = 'Using manifest branch {}.  Found {}'.format(
                 branch, ' '.join(branches))
             # Override gitiles_commit to use the appropriate ref/id.
@@ -845,7 +845,7 @@ class CrosSourceApi(RecipeApi):
       # Construct a ref like 'refs/changes/89/123456789/13'.
       change_ref = 'refs/changes/{}/{}/{}'.format(
           str(change.change)[-2:], change.change, change.patchset)
-      self.m.git.fetch(remote_url, refspecs=[change_ref])
+      self.m.git.fetch(remote_url, refs=[change_ref])
       self.m.git.checkout('FETCH_HEAD')
 
   def _apply_manifest_patch_sets(self, patch_sets):
@@ -1674,7 +1674,7 @@ class CrosSourceApi(RecipeApi):
       step_name(string):    Step name overide for the git push.
       branch(string):       Branch name to push to.
       is_staging(bool):     If annealing is running in staging or not.
-      namespace(string):    The namespace for the refspec ('heads' or '
+      namespace(string):    The namespace for the ref ('heads' or '
         staging-infra').
     """
     current_branch = self.m.git.current_branch() or self.m.git.head_commit()

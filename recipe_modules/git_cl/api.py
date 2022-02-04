@@ -123,7 +123,7 @@ class GitClApi(recipe_api.RecipeApi):
     """Run `git cl issue`.
 
     Returns:
-      dict: Map between branch (full refspec) and issue number, e.g.
+      dict: Map between ref and issue number, e.g.
         {'refs/heads/main': '3402394'}.
     """
     issue_re = re.compile(ISSUE_LINE_RE)

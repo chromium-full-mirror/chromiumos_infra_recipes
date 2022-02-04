@@ -579,7 +579,7 @@ class GerritApi(RecipeApi):
       ref (str): The remote ref to update.
 
     Returns:
-      str: The refspec used to push the labels.
+      str: The ref used to push the labels.
     """
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
       full_labels = sorted(

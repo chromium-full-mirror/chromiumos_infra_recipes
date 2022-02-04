@@ -3876,7 +3876,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#109)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#108)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -3890,7 +3890,7 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#75)(self, builders=None):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#74)(self, builders=None):**
 
 Generate target test requirements config in config-internal using
   ./board_config/generate_test_config.
@@ -3915,7 +3915,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#203)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#202)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -5102,7 +5102,7 @@ Args:
   ref (str): The remote ref to update.
 
 Returns:
-  str: The refspec used to push the labels.
+  str: The ref used to push the labels.
 
 &mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#501)(self, gerrit_change, labels):**
 
@@ -5274,13 +5274,13 @@ Args:
 Returns:
   (str): the extracted branch name.
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#172)(self, remote, refspecs=None, timeout_sec=None, retries=3):**
+&mdash; **def [fetch](/recipe_modules/git/api.py#172)(self, remote, refs=None, timeout_sec=None, retries=3):**
 
 Runs 'git fetch'.
 
 Args:
   remote (str): The remote repository to fetch from.
-  refspecs (list[str]): The refspecs to fetch.
+  refs (list[str]): The refs to fetch.
   timeout_sec (int): Timeout in seconds.
   retry (int): Number of times to retry.
 
@@ -5310,17 +5310,17 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_refspec](/recipe_modules/git/api.py#681)(self, branch):**
+&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#681)(self, branch):**
 
-Creates the full refspec for a branch.
+Creates the full ref for a branch.
 
-Returns a refspec of the form refs/heads/{branch}.
+Returns a ref of the form refs/heads/{branch}.
 
 Args:
   branch (str): branch to split the branch from.
 
 Returns:
-  (str): The refspec for the branch.
+  (str): The ref for the branch.
 
 &mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#115)(self, from_rev=None, to_rev=None, test_stdout=None):**
 
@@ -5572,7 +5572,7 @@ A module for interacting with git cl.
 Run `git cl issue`.
 
 Returns:
-  dict: Map between branch (full refspec) and issue number, e.g.
+  dict: Map between ref and issue number, e.g.
     {'refs/heads/main': '3402394'}.
 
 &mdash; **def [status](/recipe_modules/git_cl/api.py#95)(self, field=None, fast=False, issue=None, \*\*kwargs):**
