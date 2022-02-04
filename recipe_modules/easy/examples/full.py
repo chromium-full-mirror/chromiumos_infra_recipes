@@ -12,13 +12,15 @@ DEPS = [
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.easy.step('passthru', ['cat'], ok_ret=(0, 1))
 
   stdout = api.easy.stdout_step('raw', ['gzip'], stdin_data='uncompressed',
                                 test_stdout=lambda: 'compressed')
-  api.assertions.assertEqual(stdout, 'compressed')
+  api.assertions.assertEqual(stdout, b'compressed')
 
   proto_out = api.easy.stdout_jsonpb_step('jsonpb', ['foo'], Int32Value,
                                           test_output=Int32Value(value=1))

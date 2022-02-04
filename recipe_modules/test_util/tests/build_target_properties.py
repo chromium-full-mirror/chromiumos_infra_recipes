@@ -10,6 +10,8 @@ DEPS = [
 
 from PB.chromiumos import common
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.assertRaises(ValueError,

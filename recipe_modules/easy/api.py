@@ -26,11 +26,11 @@ class EasyApi(recipe_api.RecipeApi):
     """
     if not step_name:
       if len(kwargs) == 1:
-        step_name = 'set ' + kwargs.keys()[0]
+        step_name = 'set ' + list(kwargs.keys())[0]
       else:
         step_name = 'set properties'
     step = self.m.step(step_name, cmd=None)
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
       step.presentation.properties[k] = v
     return step
 

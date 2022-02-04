@@ -10,3 +10,5 @@ DEPS = [
     'cros_tags',
     'src_state',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

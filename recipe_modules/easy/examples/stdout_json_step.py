@@ -8,6 +8,8 @@ DEPS = [
     'easy',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   json_stdout = api.easy.stdout_json_step('json', ['ls'],

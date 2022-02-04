@@ -40,7 +40,7 @@
   * [cros_som](#recipe_modules-cros_som)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_storage](#recipe_modules-cros_storage) &mdash; API featuring shared helpers for locating and naming stored artifacts.
-  * [cros_tags](#recipe_modules-cros_tags) &mdash; API for generating tags.
+  * [cros_tags](#recipe_modules-cros_tags) (Python3 ✅) &mdash; API for generating tags.
   * [cros_test_plan](#recipe_modules-cros_test_plan)
   * [cros_test_plan_v2](#recipe_modules-cros_test_plan_v2)
   * [cros_test_platform](#recipe_modules-cros_test_platform)
@@ -51,7 +51,7 @@
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [disk_usage](#recipe_modules-disk_usage)
   * [dut_interface](#recipe_modules-dut_interface)
-  * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
+  * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider)
   * [gcloud](#recipe_modules-gcloud)
@@ -82,14 +82,14 @@
   * [skylab](#recipe_modules-skylab)
   * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
   * [stable_version](#recipe_modules-stable_version)
-  * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
+  * [support](#recipe_modules-support) (Python3 ✅) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli)
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
   * [tast_results](#recipe_modules-tast_results)
-  * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing Chrome OS recipes.
+  * [test_util](#recipe_modules-test_util) (Python3 ✅) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
-  * [util](#recipe_modules-util) &mdash; Module providing importable utilities.
+  * [util](#recipe_modules-util) (Python3 ✅) &mdash; Module providing importable utilities.
   * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
 
 **[Recipes](#Recipes)**
@@ -265,7 +265,7 @@
   * [cros_source:tests/mismatch_args](#recipes-cros_source_tests_mismatch_args)
   * [cros_storage:examples/discover](#recipes-cros_storage_examples_discover)
   * [cros_storage:examples/full](#recipes-cros_storage_examples_full)
-  * [cros_tags:examples/full](#recipes-cros_tags_examples_full)
+  * [cros_tags:examples/full](#recipes-cros_tags_examples_full) (Python3 ✅)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
   * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes)
@@ -287,9 +287,9 @@
   * [dupit_arch](#recipes-dupit_arch) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
   * [dut_interface:tests/full](#recipes-dut_interface_tests_full)
   * [dut_tracker](#recipes-dut_tracker) &mdash; Recipe for the Star Doctor.
-  * [easy:examples/full](#recipes-easy_examples_full)
-  * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step)
-  * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step)
+  * [easy:examples/full](#recipes-easy_examples_full) (Python3 ✅)
+  * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
+  * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -443,8 +443,8 @@
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
-  * [test_util:examples/full](#recipes-test_util_examples_full)
-  * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties)
+  * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
+  * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
   * [upload_debug_symbols](#recipes-upload_debug_symbols) &mdash; Recipe for uploading debug symbols to the crash service.
@@ -452,7 +452,7 @@
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
-  * [util:tests/util](#recipes-util_tests_util)
+  * [util:tests/util](#recipes-util_tests_util) (Python3 ✅)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
   * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups)
@@ -3791,7 +3791,7 @@ Returns:
 
 [DEPS](/recipe_modules/cros_tags/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for generating tags.
 
@@ -4261,7 +4261,7 @@ Returns:
 
 [DEPS](/recipe_modules/easy/__init__.py#6): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for easy steps.
 
@@ -7140,9 +7140,9 @@ Returns: response: raw string as the stdout data.
 Validate the remote stable version config file.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
-[DEPS](/recipe_modules/support/__init__.py#1): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/support/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for running recipes/support tools.
 
@@ -7560,7 +7560,7 @@ Args:
 
 [DEPS](/recipe_modules/test_util/__init__.py#6): [cros\_tags](#recipe_modules-cros_tags), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API to simpify testing Chrome OS recipes.
 
@@ -7643,7 +7643,7 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [util](/recipe_modules/util)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Module providing importable utilities.
 
@@ -9320,9 +9320,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cros_tags/examples/full.py#12): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#30)(api, properties):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -9485,23 +9485,23 @@ json files.
 
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#18)(api):**
 ### *recipes* / [easy:examples/stdout\_json\_step](/recipe_modules/easy/examples/stdout_json_step.py)
 
 [DEPS](/recipe_modules/easy/examples/stdout_json_step.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_json_step.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_json_step.py#14)(api):**
 ### *recipes* / [easy:examples/stdout\_jsonpb\_step](/recipe_modules/easy/examples/stdout_jsonpb_step.py)
 
 [DEPS](/recipe_modules/easy/examples/stdout_jsonpb_step.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#16)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10844,16 +10844,16 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 [DEPS](/recipe_modules/test_util/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/test_util/examples/full.py#26)(api, properties):**
 ### *recipes* / [test\_util:tests/build\_target\_properties](/recipe_modules/test_util/tests/build_target_properties.py)
 
 [DEPS](/recipe_modules/test_util/tests/build_target_properties.py#6): [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/test_util/tests/build_target_properties.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/test_util/tests/build_target_properties.py#16)(api):**
 ### *recipes* / [test\_vm](/recipes/test_vm.py)
 
 [DEPS](/recipes/test_vm.py#28): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -11062,9 +11062,9 @@ Basic tests for the urls recipe module.
 
 [DEPS](/recipe_modules/util/tests/util.py#6): [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#17)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

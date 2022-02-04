@@ -10,6 +10,8 @@ DEPS = [
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   out = api.easy.stdout_jsonpb_step('foo', ['foo'], Int32Value)

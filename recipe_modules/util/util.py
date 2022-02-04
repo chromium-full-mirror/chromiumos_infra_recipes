@@ -43,7 +43,7 @@ class exponential_retry(object):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
       retry_delay = self.delay
-      for i in xrange(self.retries):
+      for i in range(self.retries):
         try:
           return f(*args, **kwargs)
         except Exception as e:  # pylint: disable=broad-except

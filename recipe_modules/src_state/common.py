@@ -64,8 +64,9 @@ class ManifestProject(object):
     # There are several attributes that are redundant:
     # - host, project: url handles these.
     # - relpath: path handles this.
-    return (self.url == other.url and self.path == other.path and
-            self.ref == other.ref and self.gerrit_host == other.gerrit_host)
+    return (isinstance(other, ManifestProject) and self.url == other.url and
+            self.path == other.path and self.ref == other.ref and
+            self.gerrit_host == other.gerrit_host)
 
   def __contains__(self, change):
     """Return whether |change| applies to this manifest.

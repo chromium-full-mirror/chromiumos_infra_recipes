@@ -6,3 +6,5 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
