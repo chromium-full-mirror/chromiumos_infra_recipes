@@ -9,6 +9,8 @@ DEPS = [
     'swarming_cli',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos.bot_scaling import SwarmingDimension
 
 

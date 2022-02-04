@@ -11,17 +11,16 @@ class BreakpadTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(
         'symbolicate dump.symbolicate dumps from {}.find .dmp files'.format(
             test_result.log_data.gs_url),
-        stdout=self.m.raw_io.output_text('\n'.join(filenames)))
+        stdout=self.m.raw_io.output(b'\n'.join(filenames)))
 
   def minidump_stackwalk_test_data(self, test_result, filename, retcode=None):
     return self.step_data(
         'symbolicate dump.symbolicate dumps from {}.symbolicate {}.minidump_stackwalk'
         .format(test_result.log_data.gs_url, filename),
-        stdout=self.m.raw_io.output_text('TEST_MINIDUMP_STDOUT'),
-        retcode=retcode)
+        stdout=self.m.raw_io.output(b'TEST_MINIDUMP_STDOUT'), retcode=retcode)
 
   def gsutil_download_test_data(self, retcode=None):
     return self.step_data(
         'symbolicate dump.gsutil download_url',
-        stdout=self.m.raw_io.output_text('TEST_GSUTIL_DOWNLOAD_STDOUT'),
+        stdout=self.m.raw_io.output(b'TEST_GSUTIL_DOWNLOAD_STDOUT'),
         retcode=retcode)

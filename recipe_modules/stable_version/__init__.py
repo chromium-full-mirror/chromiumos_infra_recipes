@@ -9,3 +9,5 @@ DEPS = [
     'recipe_engine/step',
     'easy',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

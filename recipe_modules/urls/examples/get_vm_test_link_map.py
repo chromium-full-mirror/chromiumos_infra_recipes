@@ -17,6 +17,8 @@ DEPS = [
     'urls',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   build = build_pb2.Build(

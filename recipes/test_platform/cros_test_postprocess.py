@@ -102,7 +102,7 @@ def GenTests(api):
       api.properties(req),
       _mock_gs_dmp_files(tr, ['./a/b/c.dmp', './a/b/d.dmp']),
       api.breakpad.find_dmp_files_test_data(
-          test_result=tr, filenames=['./a/b/c.dmp', './a/b/d.dmp']),
+          test_result=tr, filenames=[b'./a/b/c.dmp', b'./a/b/d.dmp']),
       api.breakpad.minidump_stackwalk_test_data(test_result=tr,
                                                 filename='./a/b/c.dmp'),
       api.breakpad.minidump_stackwalk_test_data(test_result=tr,

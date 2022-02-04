@@ -5,9 +5,9 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service)
   * [android](#recipe_modules-android)
-  * [bot_cost](#recipe_modules-bot_cost)
+  * [bot_cost](#recipe_modules-bot_cost) (Python3 ✅)
   * [bot_scaling](#recipe_modules-bot_scaling)
-  * [breakpad](#recipe_modules-breakpad)
+  * [breakpad](#recipe_modules-breakpad) (Python3 ✅)
   * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan)
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
@@ -81,14 +81,14 @@
   * [service_version](#recipe_modules-service_version)
   * [skylab](#recipe_modules-skylab)
   * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
-  * [stable_version](#recipe_modules-stable_version)
+  * [stable_version](#recipe_modules-stable_version) (Python3 ✅)
   * [support](#recipe_modules-support) (Python3 ✅) &mdash; APIs for running recipes/support tools.
-  * [swarming_cli](#recipe_modules-swarming_cli)
+  * [swarming_cli](#recipe_modules-swarming_cli) (Python3 ✅)
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
   * [tast_results](#recipe_modules-tast_results)
   * [test_util](#recipe_modules-test_util) (Python3 ✅) &mdash; API to simpify testing Chrome OS recipes.
-  * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
+  * [urls](#recipe_modules-urls) (Python3 ✅) &mdash; API for creating task URLs out of complex data structures.
   * [util](#recipe_modules-util) (Python3 ✅) &mdash; Module providing importable utilities.
   * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
 
@@ -101,9 +101,9 @@
   * [android:examples/uprev](#recipes-android_examples_uprev)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
-  * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
-  * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
-  * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size)
+  * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) (Python3 ✅)
+  * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost) (Python3 ✅)
+  * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size) (Python3 ✅)
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
   * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config)
   * [bot_scaling:examples/get_quota_usage](#recipes-bot_scaling_examples_get_quota_usage)
@@ -114,8 +114,8 @@
   * [bot_scaling:examples/update_bot_policy_config](#recipes-bot_scaling_examples_update_bot_policy_config)
   * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs)
   * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
-  * [breakpad:examples/full](#recipes-breakpad_examples_full)
-  * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols)
+  * [breakpad:examples/full](#recipes-breakpad_examples_full) (Python3 ✅)
+  * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols) (Python3 ✅)
   * [build_android_uprev](#recipes-build_android_uprev) &mdash; Recipe for building a BuildTarget image for Android uprev.
   * [build_borealis_rootfs](#recipes-build_borealis_rootfs) &mdash; Recipe for building a Borealis rootfs image.
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
@@ -416,10 +416,10 @@
   * [src_state:examples/internal_manifest](#recipes-src_state_examples_internal_manifest)
   * [src_state:examples/workspace_path](#recipes-src_state_examples_workspace_path)
   * [src_state:tests/test_api](#recipes-src_state_tests_test_api)
-  * [stable_version:examples/full](#recipes-stable_version_examples_full)
+  * [stable_version:examples/full](#recipes-stable_version_examples_full) (Python3 ✅)
   * [star_doctor](#recipes-star_doctor) &mdash; Recipe for the Star Doctor.
   * [support:examples/full](#recipes-support_examples_full)
-  * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
+  * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full) (Python3 ✅)
   * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot)
   * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
@@ -450,8 +450,8 @@
   * [upload_debug_symbols](#recipes-upload_debug_symbols) &mdash; Recipe for uploading debug symbols to the crash service.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
-  * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
-  * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
+  * [urls:examples/full](#recipes-urls_examples_full) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
+  * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [util:tests/util](#recipes-util_tests_util) (Python3 ✅)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
@@ -564,7 +564,7 @@ Returns:
 
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [BotCostApi](/recipe_modules/bot_cost/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -761,7 +761,7 @@ Returns:
 
 [DEPS](/recipe_modules/breakpad/__init__.py#5): [easy](#recipe_modules-easy), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [BreakpadApi](/recipe_modules/breakpad/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -7121,7 +7121,7 @@ and is discarded after the build.
 
 [DEPS](/recipe_modules/stable_version/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [StableVersionApi](/recipe_modules/stable_version/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -7173,7 +7173,7 @@ Ensure the CIPD support package is installed.
 
 [DEPS](/recipe_modules/swarming_cli/__init__.py#6): [easy](#recipe_modules-easy), [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -7571,7 +7571,7 @@ A module providing test methods to simplify testing Chrome OS recipes.
 
 [DEPS](/recipe_modules/urls/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for creating task URLs out of complex data structures.
 
@@ -7878,23 +7878,23 @@ The annealing builders run in serial and do the following:
 
 [DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#27)(api, properties):**
 ### *recipes* / [bot\_cost:examples/calculate\_cq\_run\_cost](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py)
 
 [DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#25)(api):**
 ### *recipes* / [bot\_cost:tests/bot\_size](/recipe_modules/bot_cost/tests/bot_size.py)
 
 [DEPS](/recipe_modules/bot_cost/tests/bot_size.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#20)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_bot_request.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -7971,16 +7971,16 @@ Recipe for creating a new ChromeOS branch.
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/breakpad/examples/full.py#21)(api):**
 ### *recipes* / [breakpad:examples/no\_symbols](/recipe_modules/breakpad/examples/no_symbols.py)
 
 [DEPS](/recipe_modules/breakpad/examples/no_symbols.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/breakpad/examples/no_symbols.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/breakpad/examples/no_symbols.py#18)(api):**
 ### *recipes* / [build\_android\_uprev](/recipes/build_android_uprev.py)
 
 [DEPS](/recipes/build_android_uprev.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -10487,9 +10487,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/stable_version/examples/full.py#6): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/stable_version/examples/full.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/stable_version/examples/full.py#14)(api):**
 ### *recipes* / [star\_doctor](/recipes/star_doctor.py)
 
 [DEPS](/recipes/star_doctor.py#24): [cros\_schedule](#recipe_modules-cros_schedule), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -10513,9 +10513,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/swarming_cli/examples/full.py#6): [bot\_scaling](#recipe_modules-bot_scaling), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#17)(api):**
 ### *recipes* / [sysroot\_util:examples/create\_sysroot](/recipe_modules/sysroot_util/examples/create_sysroot.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11044,20 +11044,20 @@ Args:
 
 [DEPS](/recipe_modules/urls/examples/full.py#13): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#24)(api):**
 ### *recipes* / [urls:examples/get\_vm\_test\_link\_map](/recipe_modules/urls/examples/get_vm_test_link_map.py)
 
 [DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#15): [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#23)(api):**
 ### *recipes* / [util:tests/util](/recipe_modules/util/tests/util.py)
 
 [DEPS](/recipe_modules/util/tests/util.py#6): [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

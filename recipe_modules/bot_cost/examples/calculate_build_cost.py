@@ -19,6 +19,8 @@ from PB.recipe_modules.chromeos.bot_cost.examples.test import TestProperties
 
 from google.protobuf import timestamp_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestProperties
 
 

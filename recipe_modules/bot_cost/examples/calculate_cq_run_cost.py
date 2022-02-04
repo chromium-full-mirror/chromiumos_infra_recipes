@@ -19,6 +19,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import timestamp_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   output = build_pb2.Build.Output()

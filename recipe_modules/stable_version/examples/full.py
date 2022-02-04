@@ -8,12 +8,14 @@ DEPS = [
     'stable_version',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   resp = api.stable_version.validate_stable_version()
   api.assertions.assertEqual(resp, api.stable_version.VALIDATE_TEST_SENTINEL)
   resp = api.stable_version.fetch_and_commit()
-  api.assertions.assertEqual(resp, 'http://CL/123')
+  api.assertions.assertEqual(resp, b'http://CL/123')
 
 
 def GenTests(api):

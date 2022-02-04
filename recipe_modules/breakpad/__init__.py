@@ -13,3 +13,5 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

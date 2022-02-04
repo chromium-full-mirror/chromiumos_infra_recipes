@@ -182,7 +182,7 @@
     "name": "symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@caught StepFailure@StepFailure(\"Step('symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp.minidump_stackwalk') (retcode: 1)\",)@@@",
+      "@@@STEP_LOG_LINE@caught StepFailure@Step('symbolicate dump.symbolicate dumps from gs://chromeos-autotest-results/swarming-1234.symbolicate ./a/b/corrupted.dmp.minidump_stackwalk') (retcode: 1)@@@",
       "@@@STEP_LOG_END@caught StepFailure@@@",
       "@@@STEP_FAILURE@@@"
     ]

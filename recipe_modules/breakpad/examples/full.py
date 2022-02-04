@@ -13,6 +13,8 @@ DEPS = [
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult
 from PB.test_platform.common.task import TaskLogData
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 TEST_RESULT_PATH = 'gs://chromeos-autotest-results/swarming-1234'
 
 
@@ -38,7 +40,7 @@ def GenTests(api):
       'basic',
       api.breakpad.find_dmp_files_test_data(
           test_result=tr,
-          filenames=['./a/b/c.dmp', './a/b/d.dmp', './a/b/corrupted.dmp']),
+          filenames=[b'./a/b/c.dmp', b'./a/b/d.dmp', b'./a/b/corrupted.dmp']),
       api.breakpad.minidump_stackwalk_test_data(test_result=tr,
                                                 filename='./a/b/c.dmp'),
       api.breakpad.minidump_stackwalk_test_data(test_result=tr,

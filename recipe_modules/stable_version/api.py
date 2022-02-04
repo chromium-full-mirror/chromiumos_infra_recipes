@@ -9,7 +9,7 @@ from recipe_engine import recipe_api
 class StableVersionApi(recipe_api.RecipeApi):
   """Module for issuing stable_version commands"""
 
-  VALIDATE_TEST_SENTINEL = "sentinel-386b2cca-9482-44cf-be26-6066d2c3796a"
+  VALIDATE_TEST_SENTINEL = b'sentinel-386b2cca-9482-44cf-be26-6066d2c3796a'
 
   def initialize(self):
     self._cmd = None
