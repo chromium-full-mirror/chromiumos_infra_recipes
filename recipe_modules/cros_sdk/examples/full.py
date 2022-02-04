@@ -49,8 +49,9 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(api.cros_sdk.long_timeouts,
                                api.workspace_util.toolchain_cls_applied)
 
+    api.cros_sdk.set_chrome_root('/chrome_dir')
     if properties.check_remoteexec:
-      api.cros_sdk.configure_remoteexec('/chrome_dir')
+      api.cros_sdk.configure_remoteexec()
       api.cros_sdk.set_use_flags([common.UseFlag(flag='remoteexec')])
       with api.cros_sdk.snapshot():
         remoteexec = api.cros_sdk.remoteexec_config
@@ -60,9 +61,8 @@ def RunSteps(api, properties):
                                    str(api.remoteexec.reproxy_cfg_file))
         api.assertions.assertTrue(api.cros_sdk.has_remoteexec_config())
     else:
-      api.assertions.assertRaises(ValueError, api.cros_sdk.configure_remoteexec,
-                                  '/chrome_dir')
-      api.cros_sdk.configure_goma('/chrome_dir')
+      api.assertions.assertRaises(ValueError, api.cros_sdk.configure_remoteexec)
+      api.cros_sdk.configure_goma()
       api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
       chroot = api.cros_sdk.chroot
       with api.cros_sdk.snapshot():

@@ -208,10 +208,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
                                self.sysroot.build_target,
                                config.chrome.internal)
+            self.m.cros_sdk.set_chrome_root(chrome_root)
             if install_packages.use_remoteexec:
-              self.m.cros_sdk.configure_remoteexec(chrome_root)
+              self.m.cros_sdk.configure_remoteexec()
             elif not install_packages.disable_goma:
-              self.m.cros_sdk.configure_goma(chrome_root)
+              self.m.cros_sdk.configure_goma()
 
         if self.m.cq.active:
           self.m.android.uprev_if_unstable_ebuild_changed(

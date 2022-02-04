@@ -170,18 +170,24 @@ class CrosSdkApi(RecipeApi):
                             self._sdk_cache_state_file, state, 'JSONPB')
     self._sdk_cache_state = state
 
-  def configure_goma(self, chrome_root):
+  def set_chrome_root(self, chrome_root):
+    """Set chrome root with synced sources.
+
+    This is a helper function to set up a chrome root.
+
+    Args:
+      chrome_root (Path): Directory with the Chrome source.
+    """
+    self._chrome_root = chrome_root
+
+  def configure_goma(self):
     """Configure goma for Chrome.
 
     This is a helper function to do the various bits of cros_sdk configuration
     needed for Chrome to be built with goma.
 
     Must be run with cwd inside a chromiumos source root.
-
-    Args:
-      chrome_root (Path): Directory with the Chrome source.
     """
-    self._chrome_root = chrome_root
     self.set_goma_config(self.m.goma.goma_dir, self.m.goma.goma_client_json,
                          self.m.goma.goma_approach,
                          self.m.path.mkdtemp(prefix='goma-logs-'),
@@ -222,13 +228,8 @@ class CrosSdkApi(RecipeApi):
         counterz_file=self._goma_counterz_file,
     )
 
-  def configure_remoteexec(self, chrome_root):
-    """Configure remoteexec for Chrome.
-
-    Args:
-      chrome_root (Path): Directory with the Chrome source.
-    """
-    self._chrome_root = chrome_root
+  def configure_remoteexec(self):
+    """Configure remoteexec for Chrome."""
     self.set_remoteexec_config(self.m.remoteexec.reclient_dir,
                                self.m.remoteexec.reproxy_cfg_file)
 
