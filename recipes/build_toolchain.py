@@ -15,9 +15,14 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
+PREBUILT_UPLOAD_BUCKET = 'gs://chromeos-prebuilt'
+# The chromeos-sdk builder uses 'chroot' as VERSION_PREFIX.
+# We use a different prefix to avoid conflicts.
+VERSION_PREFIX = 'build_toolchain'
+
 from recipe_engine import post_process
 from PB.chromite.api.sdk import BuildPrebuiltsRequest, \
-  UploadPrebuiltPackagesRequest
+  CreateBinhostCLsRequest, UploadPrebuiltPackagesRequest
 
 
 def RunSteps(api):
@@ -35,14 +40,16 @@ def RunSteps(api):
 
     with api.step.nest('upload prebuilt packages'):
       api.cros_build_api.SdkService.UploadPrebuiltPackages(
-          UploadPrebuiltPackagesRequest(
-              chroot=api.cros_sdk.chroot,
-              # Upload to a different location than chromiumos-sdk.
-              # TODO(b/218322901): Decide if we want to keep this
-              # location or change it.
-              prepend_version='test-chroot',
-              version=version,
-              upload_location='gs://chromeos-prebuilt'))
+          UploadPrebuiltPackagesRequest(chroot=api.cros_sdk.chroot,
+                                        prepend_version=VERSION_PREFIX,
+                                        version=version,
+                                        upload_location=PREBUILT_UPLOAD_BUCKET))
+
+    with api.step.nest('create binhost CLs'):
+      api.cros_build_api.SdkService.CreateBinhostCLs(
+          CreateBinhostCLsRequest(prepend_version=VERSION_PREFIX,
+                                  version=version,
+                                  upload_location=PREBUILT_UPLOAD_BUCKET))
 
 
 def GenTests(api):
@@ -50,6 +57,7 @@ def GenTests(api):
       'sucessful-run', api.post_check(post_process.MustRun,
                                       'build SDK packages'),
       api.post_check(post_process.MustRun, 'upload prebuilt packages'),
+      api.post_check(post_process.MustRun, 'create binhost CLs'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
@@ -57,6 +65,7 @@ def GenTests(api):
       'build_sdk_packages-failed',
       api.post_check(post_process.MustRun, 'build SDK packages'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
+      api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('build SDK packages',
                                           'SdkService/BuildPrebuilts',
@@ -65,8 +74,16 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'upload_prebuilt_packages-failed',
+      api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('upload prebuilt packages',
                                           'SdkService/UploadPrebuiltPackages',
+                                          retcode=1),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.build_menu.test(
+      'create-binhost-cls-failed', api.post_check(post_process.StatusFailure),
+      api.build_menu.set_build_api_return('create binhost CLs',
+                                          'SdkService/CreateBinhostCLs',
                                           retcode=1),
       api.post_process(post_process.DropExpectation))

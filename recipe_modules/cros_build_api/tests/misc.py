@@ -146,6 +146,7 @@ def RunSteps(api):
           'Unmount': sdk.UnmountResponse,
           'Update': sdk.UpdateResponse,
           'CreateSnapshot': sdk.CreateSnapshotResponse,
+          'CreateBinhostCLs': sdk.CreateBinhostCLsResponse,
           'RestoreSnapshot': sdk.RestoreSnapshotResponse,
           'UploadPrebuiltPackages': sdk.UploadPrebuiltPackagesResponse,
       },
