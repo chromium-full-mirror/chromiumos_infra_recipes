@@ -119,17 +119,20 @@ def DoRunSteps(api, config, properties):
   gs_image_dir, _ = api.cros_release.push_and_sign_images(
       config, api.build_menu.sysroot)
 
-  with api.step.nest("schedule debug symbols upload") as presentation:
-    # Launch the upload debug symbols builder
-    debug_builder = launch_debug_symbols(api, gs_image_dir,
-                                         properties.debug_symbols.worker_count,
-                                         properties.debug_symbols.retry_quota,
-                                         staging,
-                                         properties.debug_symbols.dryrun)
+  with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
+    with api.step.nest("schedule debug symbols upload") as presentation:
+      # Launch the upload debug symbols builder.
+      # This builder is currently async, but we should fold it inline as it
+      # only takes a few minutes and that would allow us to judge the result
+      # status.
+      debug_builder = launch_debug_symbols(
+          api, gs_image_dir, properties.debug_symbols.worker_count,
+          properties.debug_symbols.retry_quota, staging,
+          properties.debug_symbols.dryrun)
 
-    # Add link to builder in step
-    builder_url = api.buildbucket.build_url(build_id=debug_builder.id)
-    presentation.links["builder page"] = builder_url
+      # Add link to builder in step
+      builder_url = api.buildbucket.build_url(build_id=debug_builder.id)
+      presentation.links["builder page"] = builder_url
 
   api.cros_release.schedule_payload_generation()
 
