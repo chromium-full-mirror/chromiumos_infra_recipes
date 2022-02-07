@@ -95,7 +95,8 @@ def DoRunSteps(api, config, properties):
         # Then fire off a pub/sub call with that builder meta.
         api.build_reporting.publish_build_target_and_model_metadata(
             api.cros_source.manifest_branch, builder_metadata)
-      api.build_menu.build_and_test_images(config, include_version=True)
+      with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
+        api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of
