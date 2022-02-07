@@ -229,59 +229,47 @@ class TastExecApi(RecipeApi):
                     build_artifacts_url, test_results_dir, run_args)
     return tests
 
+  @staticmethod
+  def _get_ssh_conn_args(private_key_path):
+    return [
+       '-oConnectionAttempts=4', \
+       '-oUserKnownHostsFile=/dev/null', \
+       '-oProtocol=2', \
+       '-oConnectTimeout=30', \
+       '-oServerAliveCountMax=8', \
+       '-oStrictHostKeyChecking=no', \
+       '-oServerAliveInterval=15', \
+       '-oNumberOfPasswordPrompts=0', \
+       '-oIdentitiesOnly=yes', \
+       '-i', private_key_path]
+
   def _archive_vm_artifacts(self, host, port, private_key_path, output_dir):
+    ssh_args = self._get_ssh_conn_args(private_key_path)
     # b/204628226: Work-around tar's (non) handling of open file descriptors by
     # rsyncing artifacts to a temporary location before tarring.
     self.m.step('rsync artifacts to a temporary location on the VM', [
         'ssh', \
-        '-p', port, \
-        '-oConnectionAttempts=4', \
-        '-oUserKnownHostsFile=/dev/null', \
-        '-oProtocol=2', \
-        '-oConnectTimeout=30', \
-        '-oServerAliveCountMax=8', \
-        '-oStrictHostKeyChecking=no', \
-        '-oServerAliveInterval=15', \
-        '-oNumberOfPasswordPrompts=0', \
-        '-oIdentitiesOnly=yes', \
-        '-i', private_key_path, \
-        'root@{}'.format(host), '--', 'rsync', '--links', \
-        '--recursive'] + \
+        '-p', port] + \
+        ssh_args + \
+        ['root@{}'.format(host), '--',
+        'rsync', '--links', '--recursive'] + \
         VM_ARTIFACT_LIST + \
         [VM_ARTIFACT_TEMPDIR],
         infra_step=True, timeout=5*60)
     self.m.step('gather artifacts on VM', [
         'ssh', \
-        '-p', port, \
-        '-oConnectionAttempts=4', \
-        '-oUserKnownHostsFile=/dev/null', \
-        '-oProtocol=2', \
-        '-oConnectTimeout=30', \
-        '-oServerAliveCountMax=8', \
-        '-oStrictHostKeyChecking=no', \
-        '-oServerAliveInterval=15', \
-        '-oNumberOfPasswordPrompts=0', \
-        '-oIdentitiesOnly=yes', \
-        '-i', private_key_path, \
-        'root@{}'.format(host), '--', 'tar', 'cf', VM_ARTIFACT_TARBALL, \
+        '-p', port] + \
+        ssh_args + \
+        ['root@{}'.format(host), '--', 'tar', 'cf', VM_ARTIFACT_TARBALL, \
         '{}/*'.format(VM_ARTIFACT_TEMPDIR)],
         infra_step=True, timeout=5*60)
     # Remove the tempdir.
     self.m.file.remove('remove temporary artifacts', VM_ARTIFACT_TEMPDIR)
     self.m.step('download artifacts from VM', [
         'scp', \
-        '-P', port, \
-        '-oConnectionAttempts=4', \
-        '-oUserKnownHostsFile=/dev/null', \
-        '-oProtocol=2', \
-        '-oConnectTimeout=30', \
-        '-oServerAliveCountMax=8', \
-        '-oStrictHostKeyChecking=no', \
-        '-oServerAliveInterval=15', \
-        '-oNumberOfPasswordPrompts=0', \
-        '-oIdentitiesOnly=yes', \
-        '-i', private_key_path, \
-        'root@{}:{}'.format(host, VM_ARTIFACT_TARBALL),
+        '-P', port] + \
+        ssh_args + \
+        ['root@{}:{}'.format(host, VM_ARTIFACT_TARBALL),
         str(output_dir.join(ARTIFACT_TARBALL_NAME))],
         infra_step=True, timeout=5*60)
 
@@ -461,18 +449,10 @@ class TastExecApi(RecipeApi):
 
   @exponential_retry(retries=3)
   def _test_ssh_conn(self, host, port, private_key_path):
+    ssh_args = self._get_ssh_conn_args(private_key_path)
     self.m.step('connect via ssh', [
         'ssh', \
-        '-p', port, \
-        '-oConnectionAttempts=4', \
-        '-oUserKnownHostsFile=/dev/null', \
-        '-oProtocol=2', \
-        '-oConnectTimeout=30', \
-        '-oServerAliveCountMax=8', \
-        '-oStrictHostKeyChecking=no', \
-        '-oServerAliveInterval=15', \
-        '-oNumberOfPasswordPrompts=0', \
-        '-oIdentitiesOnly=yes', \
-        '-i', private_key_path, \
-        'root@{}'.format(host), '--', 'true'
+        '-p', port] + \
+        ssh_args + \
+        ['root@{}'.format(host), '--', 'true'
     ], infra_step=True, timeout=5*60)
