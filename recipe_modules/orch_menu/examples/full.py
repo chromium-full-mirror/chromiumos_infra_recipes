@@ -488,7 +488,7 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
-      'cq-resultdb-experiment-elegible', data.ctp_normal,
+      'cq-resultdb-experiment-project-elegible', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.DoesNotRun,
@@ -499,6 +499,18 @@ def GenTests(api):
               '$chromeos/skylab':
                   SkylabProperties(resultdb_elegible_projects=['project-a'])
           }), cq=True)
+
+  yield api.orch_menu.test(
+      'cq-resultdb-experiment-all-elegible', data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.DoesNotRun,
+          'buildbucket.add_tags_to_current_build',
+      ),
+      api.properties(**{
+          '$chromeos/skylab':
+              SkylabProperties(resultdb_elegible_projects=['all'])
+      }), cq=True)
 
   yield api.orch_menu.test(
       'cq-resultdb-experiment-inelegible', data.ctp_normal,

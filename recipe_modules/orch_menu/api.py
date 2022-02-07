@@ -275,8 +275,8 @@ class OrchMenuApi(RecipeApi):
           # Add 'hide-test-results-in-gerrit' tag if not yet elegible for
           # go/cros-gerrit-results.
           # TODO(b/214090478): Remove after go/cros-gerrit-results-rollout.
-          is_elegible_project = (
-              self.m.skylab.resultdb_elegible_projects and
+          is_elegible_project = self.m.skylab.resultdb_elegible_projects and (
+              'all' in self.m.skylab.resultdb_elegible_projects or
               all(x.project in self.m.skylab.resultdb_elegible_projects
                   for x in self.gerrit_changes))
 
