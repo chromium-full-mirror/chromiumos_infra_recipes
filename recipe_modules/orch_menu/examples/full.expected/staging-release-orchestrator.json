@@ -655,7 +655,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "-u",
       "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
       "--json-file",
@@ -2250,7 +2250,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "-u",
       "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
       "--json-file",
@@ -3122,7 +3122,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "-u",
       "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
       "--json-file",
@@ -12572,7 +12572,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "-u",
       "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
       "--json-file",
