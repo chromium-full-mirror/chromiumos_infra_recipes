@@ -243,35 +243,32 @@ class TastExecApi(RecipeApi):
        '-oIdentitiesOnly=yes', \
        '-i', private_key_path]
 
+  def _get_scp_cmd(self, host, port, private_key_path, remote_path, local_path):
+    return ['scp', '-P', port] + self._get_ssh_conn_args(private_key_path) + \
+        ['root@{}:{}'.format(host, remote_path), local_path]
+
+  def _get_ssh_cmd(self, host, port, private_key_path, cmd):
+    return ['ssh', '-p', port] + self._get_ssh_conn_args(private_key_path) + \
+        ['root@{}'.format(host), '--'] + cmd
+
   def _archive_vm_artifacts(self, host, port, private_key_path, output_dir):
-    ssh_args = self._get_ssh_conn_args(private_key_path)
     # b/204628226: Work-around tar's (non) handling of open file descriptors by
     # rsyncing artifacts to a temporary location before tarring.
-    self.m.step('rsync artifacts to a temporary location on the VM', [
-        'ssh', \
-        '-p', port] + \
-        ssh_args + \
-        ['root@{}'.format(host), '--',
-        'rsync', '--links', '--recursive'] + \
-        VM_ARTIFACT_LIST + \
-        [VM_ARTIFACT_TEMPDIR],
-        infra_step=True, timeout=5*60)
-    self.m.step('gather artifacts on VM', [
-        'ssh', \
-        '-p', port] + \
-        ssh_args + \
-        ['root@{}'.format(host), '--', 'tar', 'cf', VM_ARTIFACT_TARBALL, \
-        '{}/*'.format(VM_ARTIFACT_TEMPDIR)],
-        infra_step=True, timeout=5*60)
+    cmd = self._get_ssh_cmd(host, port, private_key_path,
+                            ['rsync', '--links', '--recursive'] + \
+                            VM_ARTIFACT_LIST + [VM_ARTIFACT_TEMPDIR])
+    self.m.step('rsync artifacts to a temporary location on the VM', cmd,
+                infra_step=True, timeout=5 * 60)
+    cmd = self._get_ssh_cmd(
+        host, port, private_key_path,
+        ['tar', 'cf', VM_ARTIFACT_TARBALL, '{}/*'.format(VM_ARTIFACT_TEMPDIR)])
+    self.m.step('gather artifacts on VM', cmd, infra_step=True, timeout=5 * 60)
     # Remove the tempdir.
     self.m.file.remove('remove temporary artifacts', VM_ARTIFACT_TEMPDIR)
-    self.m.step('download artifacts from VM', [
-        'scp', \
-        '-P', port] + \
-        ssh_args + \
-        ['root@{}:{}'.format(host, VM_ARTIFACT_TARBALL),
-        str(output_dir.join(ARTIFACT_TARBALL_NAME))],
-        infra_step=True, timeout=5*60)
+    cmd = self._get_scp_cmd(host, port, private_key_path, VM_ARTIFACT_TARBALL,
+                            str(output_dir.join(ARTIFACT_TARBALL_NAME)))
+    self.m.step('download artifacts from VM', cmd, infra_step=True,
+                timeout=5 * 60)
 
   def _list_tests(self, dut_name, expressions, tast_dir, private_key_path,
                   build_artifacts_url):
@@ -449,10 +446,5 @@ class TastExecApi(RecipeApi):
 
   @exponential_retry(retries=3)
   def _test_ssh_conn(self, host, port, private_key_path):
-    ssh_args = self._get_ssh_conn_args(private_key_path)
-    self.m.step('connect via ssh', [
-        'ssh', \
-        '-p', port] + \
-        ssh_args + \
-        ['root@{}'.format(host), '--', 'true'
-    ], infra_step=True, timeout=5*60)
+    cmd = self._get_ssh_cmd(host, port, private_key_path, ['true'])
+    self.m.step('connect via ssh', cmd, infra_step=True, timeout=5 * 60)
