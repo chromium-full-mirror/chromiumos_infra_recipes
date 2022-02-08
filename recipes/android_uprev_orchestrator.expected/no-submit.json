@@ -12506,8 +12506,8 @@
       "upload",
       "--bypass-hooks",
       "--force",
-      "--reviewers",
-      "shaochuan@google.com",
+      "--hashtag",
+      "android-package",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/overlay",

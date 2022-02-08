@@ -121,8 +121,7 @@ def DoRunSteps(api, properties):
         api.git.rebase(strategy_option='theirs')
 
     # Create a CL, and submit if needed.
-    change = api.gerrit.create_change(info.path,
-                                      reviewers=['shaochuan@google.com'])
+    change = api.gerrit.create_change(info.path, hashtags=[android_package])
     if submit_uprev:
       api.gerrit.set_change_labels(change, {api.gerrit.Label.BOT_COMMIT: 1})
       api.gerrit.submit_change(change)
