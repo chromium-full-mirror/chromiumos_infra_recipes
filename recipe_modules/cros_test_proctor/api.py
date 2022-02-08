@@ -37,7 +37,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     super(CrosTestProctorApi, self).__init__(**kwargs)
     self.timeout = properties.timeout
     if not self.timeout.seconds:
-      self.timeout = duration_pb2.Duration(seconds=7 * 60 * 60)
+      self.timeout = duration_pb2.Duration(seconds=9 * 60 * 60)
     self._vm_bucket = properties.vm_bucket or "staging"
     self._test_summary = []
 

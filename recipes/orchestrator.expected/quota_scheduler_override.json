@@ -9137,7 +9137,7 @@
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"qsAccount\": \"pupr\", @@@",
@@ -9190,7 +9190,7 @@
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"qsAccount\": \"pupr\", @@@",
@@ -9243,7 +9243,7 @@
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"qsAccount\": \"pupr\", @@@",
@@ -9296,7 +9296,7 @@
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"qsAccount\": \"pupr\", @@@",
@@ -9371,7 +9371,7 @@
       }
     },
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"priority\": 30, \"properties\": {\"requests\": {\"htarget.hw.bvt-cq\": {\"params\": {\"decorations\": {\"tags\": [\"label-model:model\", \"suite:bvt-cq\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"pupr\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}, \"htarget.hw.bvt-inline\": {\"params\": {\"decorations\": {\"tags\": [\"suite:bvt-inline\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:my skylab pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"qsAccount\": \"pupr\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}, \"htarget.hw.some-suite\": {\"params\": {\"decorations\": {\"tags\": [\"suite:some-suite\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:my skylab pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"qsAccount\": \"pupr\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"NON_CRITICAL\", \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-suite\"}]}}, \"ttarget.hw.some-other-suite\": {\"params\": {\"decorations\": {\"tags\": [\"suite:some-other-suite\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:my skylab pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"qsAccount\": \"pupr\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-other-suite\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA\"}, {\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"priority\": 30, \"properties\": {\"requests\": {\"htarget.hw.bvt-cq\": {\"params\": {\"decorations\": {\"tags\": [\"label-model:model\", \"suite:bvt-cq\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:DUT_POOL_QUOTA\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"pupr\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}, \"htarget.hw.bvt-inline\": {\"params\": {\"decorations\": {\"tags\": [\"suite:bvt-inline\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:my skylab pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"qsAccount\": \"pupr\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}, \"htarget.hw.some-suite\": {\"params\": {\"decorations\": {\"tags\": [\"suite:some-suite\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:my skylab pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"qsAccount\": \"pupr\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"NON_CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-suite\"}]}}, \"ttarget.hw.some-other-suite\": {\"params\": {\"decorations\": {\"tags\": [\"suite:some-other-suite\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"label-pool:my skylab pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"scheduling\": {\"qsAccount\": \"pupr\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-other-suite\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA\"}, {\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9465,7 +9465,7 @@
       "@@@STEP_LOG_LINE@request@                ], @@@",
       "@@@STEP_LOG_LINE@request@                \"testExecutionBehavior\": \"CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@request@                \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@                }@@@",
       "@@@STEP_LOG_LINE@request@              }, @@@",
       "@@@STEP_LOG_LINE@request@              \"testPlan\": {@@@",
@@ -9510,7 +9510,7 @@
       "@@@STEP_LOG_LINE@request@                ], @@@",
       "@@@STEP_LOG_LINE@request@                \"testExecutionBehavior\": \"CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@request@                \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@                }@@@",
       "@@@STEP_LOG_LINE@request@              }, @@@",
       "@@@STEP_LOG_LINE@request@              \"testPlan\": {@@@",
@@ -9555,7 +9555,7 @@
       "@@@STEP_LOG_LINE@request@                ], @@@",
       "@@@STEP_LOG_LINE@request@                \"testExecutionBehavior\": \"NON_CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@request@                \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@                }@@@",
       "@@@STEP_LOG_LINE@request@              }, @@@",
       "@@@STEP_LOG_LINE@request@              \"testPlan\": {@@@",
@@ -9600,7 +9600,7 @@
       "@@@STEP_LOG_LINE@request@                ], @@@",
       "@@@STEP_LOG_LINE@request@                \"testExecutionBehavior\": \"CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@request@                \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@                }@@@",
       "@@@STEP_LOG_LINE@request@              }, @@@",
       "@@@STEP_LOG_LINE@request@              \"testPlan\": {@@@",
@@ -13191,7 +13191,7 @@
       }
     },
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.wait",
-    "timeout": 27000,
+    "timeout": 34200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -13388,7 +13388,7 @@
       }
     },
     "name": "run tests.collect tests.collect autotest vm tests.wait",
-    "timeout": 25200,
+    "timeout": 32400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -13509,7 +13509,7 @@
       }
     },
     "name": "run tests.collect tests.collect tast vm tests.wait",
-    "timeout": 25200,
+    "timeout": 32400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -13591,7 +13591,7 @@
       }
     },
     "name": "run tests.collect tests.collect tast GCE tests.wait",
-    "timeout": 25200,
+    "timeout": 32400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

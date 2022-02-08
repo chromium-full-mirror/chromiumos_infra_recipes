@@ -2109,7 +2109,7 @@
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"qsAccount\": \"pcq\", @@@",
@@ -2157,7 +2157,7 @@
       }
     },
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"requests\": {\"kip.hw.bvt-cq\": {\"params\": {\"decorations\": {\"tags\": [\"suite:bvt-cq\", \"build:path\", \"label-board:amd64-generic\", \"label-pool:bisect test pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://bucket/path\", \"testMetadataUrl\": \"gs://bucket/path\"}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"bisect test pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"amd64-generic\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"path\"}, {\"chromeosBuildGcsBucket\": \"bucket\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA\"}, {\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"requests\": {\"kip.hw.bvt-cq\": {\"params\": {\"decorations\": {\"tags\": [\"suite:bvt-cq\", \"build:path\", \"label-board:amd64-generic\", \"label-pool:bisect test pool\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"debugSymbolsArchiveUrl\": \"gs://bucket/path\", \"testMetadataUrl\": \"gs://bucket/path\"}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"bisect test pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"amd64-generic\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"path\"}, {\"chromeosBuildGcsBucket\": \"bucket\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA\"}, {\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2248,7 +2248,7 @@
       "@@@STEP_LOG_LINE@request@                ], @@@",
       "@@@STEP_LOG_LINE@request@                \"testExecutionBehavior\": \"CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@request@                \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"25200s\"@@@",
+      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"32400s\"@@@",
       "@@@STEP_LOG_LINE@request@                }@@@",
       "@@@STEP_LOG_LINE@request@              }, @@@",
       "@@@STEP_LOG_LINE@request@              \"testPlan\": {@@@",
@@ -2469,7 +2469,7 @@
       }
     },
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.wait",
-    "timeout": 27000,
+    "timeout": 34200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
