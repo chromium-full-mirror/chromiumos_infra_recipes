@@ -371,6 +371,7 @@
   * [metadata_json:examples/finalize_build_crashing_out](#recipes-metadata_json_examples_finalize_build_crashing_out)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
+  * [non_manifest_project_presubmit](#recipes-non_manifest_project_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full)
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
@@ -3561,6 +3562,20 @@ Args:
 Returns:
   List[ProjectCommit]: A list of commits from cherry-picked patch sets.
 
+&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1182)(self, patch, project_path, is_abs_path=False):**
+
+Apply a PatchSet to the git repo in ${CWD}.
+
+Args:
+  patch (PatchSet): The PatchSet to apply.
+  project_path (str): The path in which to apply the change.
+  is_abs_path (bool): Whether the project path is an absolute path. The
+      default is False meaning the project_path is relative to the
+      workspace.
+
+Returns:
+  (ProjectCommit) commit for the applied patch.
+
 &emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#125)(self):**
 
 Returns the Path to the manifest_file for this build.
@@ -3638,7 +3653,7 @@ Args:
     rather than the image preload directory.  Default: False
   disk_type (str): GCE disk type to use.  Default: pd-ssd
 
-&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1448)(self, archive_path):**
+&mdash; **def [checkout\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1452)(self, archive_path):**
 
 Checkout the commits in the given archive file into the workspace.
 
@@ -3678,7 +3693,7 @@ Args:
 Returns:
   BuilderConfig or None
 
-&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1405)(self, archive_path, project_commits):**
+&mdash; **def [create\_project\_commits\_archive](/recipe_modules/cros_source/api.py#1409)(self, archive_path, project_commits):**
 
 Creates an archive with the given project commits from the workspace.
 
@@ -3785,7 +3800,7 @@ The cached image checkout path.
 This is the cached version of source that is included in the base image of
 the bot, used as an initial reference path.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1502)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1506)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -3803,7 +3818,7 @@ Return:
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1214)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1218)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -3815,7 +3830,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1305)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1309)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -3826,7 +3841,7 @@ Args:
   manifest_url: URL of manifest repo.  Default: internal manifest
   kwargs (dict): additional args for repo.sync_manifest.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1236)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1240)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -3843,7 +3858,7 @@ Args:
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1481)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1485)(self, workspace_path, build_targets=None, timeout_sec=(10 \* 60), name='uprev ebuilds'):**
 
 Uprev packages.
 
@@ -10228,6 +10243,40 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#13)(api):**
+### *recipes* / [non\_manifest\_project\_presubmit](/recipes/non_manifest_project_presubmit.py)
+
+[DEPS](/recipes/non_manifest_project_presubmit.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Recipe for running presubmit on CLs for projects not in the manifest.
+
+&mdash; **def [RunSteps](/recipes/non_manifest_project_presubmit.py#34)(api, properties):**
+
+&mdash; **def [apply\_changes\_and\_run\_presubmits](/recipes/non_manifest_project_presubmit.py#83)(api, project, patch_sets):**
+
+For a given project, clone the repo, apply changes and run presubmits.
+
+Args:
+  api (RecipeApi): See RunSteps documentation.
+  project (str): The name of the Gerrit project.
+  patch_sets (list[PatchSet]): List of changes to apply for the given project.
+
+&mdash; **def [categorize\_changes](/recipes/non_manifest_project_presubmit.py#42)(api, properties, gerrit_changes):**
+
+Group changes by Gerrit project.
+
+Groups changes by Gerrit project and discards any changes to Gerrit projects
+not support by the builder as specified in the "projects" input property.
+
+Args:
+  properties (PresubmitTestProperties): Build input properties.
+  gerrit_changes (list[GerritChange]): The Gerrit changes passed in to the
+      build from CQ.
+
+Returns:
+  project_to_patchest_map (dict{str:list[PatchSet]}): Dict mapping the name of
+      the Gerrit project to a list of relevant PatchSets.
 ### *recipes* / [orch\_menu:examples/aggregate\_metadata](/recipe_modules/orch_menu/examples/aggregate_metadata.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/aggregate_metadata.py#7): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

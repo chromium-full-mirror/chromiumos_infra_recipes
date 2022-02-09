@@ -1175,22 +1175,26 @@ class CrosSourceApi(RecipeApi):
           project_paths = ([project_path] if project_path else
                            self.find_project_paths(patch.project, patch.branch))
           for path in project_paths:
-            self._apply_patch_set(patch, path)
+            self.apply_patch_set(patch, path)
         new_commits.extend(self._applied_patches[patch.display_id])
       return new_commits
 
-  def _apply_patch_set(self, patch, project_path):
+  def apply_patch_set(self, patch, project_path, is_abs_path=False):
     """Apply a PatchSet to the git repo in ${CWD}.
 
     Args:
       patch (PatchSet): The PatchSet to apply.
-      project_path (str): The path (relative to the workspace) in which to apply
-        the change.
+      project_path (str): The path in which to apply the change.
+      is_abs_path (bool): Whether the project path is an absolute path. The
+          default is False meaning the project_path is relative to the
+          workspace.
 
     Returns:
       (ProjectCommit) commit for the applied patch.
     """
-    with self.m.context(cwd=self.workspace_path.join(project_path)):
+    path = project_path if is_abs_path else self.workspace_path.join(
+        project_path)
+    with self.m.context(cwd=path):
       commit = self.m.git.fetch_ref(patch.git_fetch_url, patch.git_fetch_ref)
       merged = self.m.git.merge_silent_fail(commit, 'merge gerrit changes',
                                             infra_step=False)
