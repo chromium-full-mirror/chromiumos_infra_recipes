@@ -61,8 +61,6 @@ def DoRunSteps(api, properties):
   chroot_path = api.cros_source.workspace_path
   borealis_path = chroot_path.join('src/platform/borealis')
   with api.context(cwd=borealis_path), api.depot_tools.on_path():
-    api.cros_source.ensure_synced_cache()
-
     # This recipe should only run on bots with docker pre-installed.  Abort
     # immediately if that is not the case.
     api.step('check docker install', ['docker', 'help'])
