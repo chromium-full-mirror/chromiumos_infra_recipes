@@ -244,7 +244,7 @@
     "name": "build chromiumos with upreved Parallels.configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\"\\n}\"@@@"
     ]
   },
   {
@@ -390,7 +390,7 @@
     "name": "build chromiumos with upreved Parallels.configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
     ]
   },
   {

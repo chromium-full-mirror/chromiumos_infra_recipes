@@ -248,7 +248,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"BRANCH-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/BRANCH\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"id\\\": \\\"BRANCH-HEAD-SHA\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"ref\\\": \\\"refs/heads/BRANCH\\\"\\n}\"@@@"
     ]
   },
   {

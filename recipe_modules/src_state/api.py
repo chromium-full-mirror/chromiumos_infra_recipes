@@ -24,7 +24,7 @@ There are two classes of properties in this module.
 
 import json
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine import recipe_api
@@ -163,8 +163,11 @@ class SrcStateApi(recipe_api.RecipeApi):
     if gitiles_commit != self._gitiles_commit:
       with self.m.step.nest('update src_state.gitiles_commit'):
         step = self.m.step('set gitiles_commit', cmd=None)
-        step.presentation.properties['commit'] = MessageToDict(gitiles_commit or
-                                                               GitilesCommit())
+        # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
+        # fix the discripency between py2 and py3 MessageToJson.
+        step.presentation.properties['commit'] = MessageToJson(
+            gitiles_commit or GitilesCommit(),
+            sort_keys=True).replace(', ', ',')
         if gitiles_commit is None:
           self._gitiles_commit = None
         else:
@@ -200,7 +203,11 @@ class SrcStateApi(recipe_api.RecipeApi):
         list(self.gerrit_changes) != gerrit_changes):
       with self.m.step.nest('update src_state.gerrit_changes'):
         step = self.m.step('set gerrit_changes', cmd=None)
+        # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
+        # fix the discripency between py2 and py3 MessageToJson.
         step.presentation.properties['changes'] = json.dumps(
-            '' if gerrit_changes is None else
-            [MessageToDict(x) for x in gerrit_changes])
+            '' if gerrit_changes is None else [
+                MessageToJson(x, sort_keys=True).replace(', ', ',')
+                for x in gerrit_changes
+            ])
         self._gerrit_changes = gerrit_changes

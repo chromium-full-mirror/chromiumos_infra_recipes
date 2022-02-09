@@ -57,7 +57,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\"\\n}\"@@@"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {
@@ -3035,7 +3035,7 @@
     "name": "publish internal snapshot.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"id\\\": \\\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {

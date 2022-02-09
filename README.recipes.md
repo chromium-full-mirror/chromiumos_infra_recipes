@@ -80,7 +80,7 @@
   * [result_flow](#recipe_modules-result_flow)
   * [service_version](#recipe_modules-service_version)
   * [skylab](#recipe_modules-skylab)
-  * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
+  * [src_state](#recipe_modules-src_state) (Python3 ✅) &mdash; API providing frequently needed values, that we sometimes override.
   * [stable_version](#recipe_modules-stable_version) (Python3 ✅)
   * [support](#recipe_modules-support) (Python3 ✅) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli) (Python3 ✅)
@@ -7037,7 +7037,7 @@ Returns:
 
 [DEPS](/recipe_modules/src_state/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API providing frequently needed values, that we sometimes override.
 
@@ -7087,7 +7087,7 @@ Provides immutable information about the Chrome OS external manifest.
 Returns:
   (ManifestProject): information about the external manifest.
 
-&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#192)(self, gerrit_changes):**
+&emsp; **@gerrit_changes.setter**<br>&mdash; **def [gerrit\_changes](/recipe_modules/src_state/api.py#195)(self, gerrit_changes):**
 
 Set the gerrit_changes that will be used for the build.
 

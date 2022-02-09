@@ -8,7 +8,7 @@
     "name": "update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{\"host\": \"host\", \"id\": \"SHA\", \"project\": \"project\", \"ref\": \"refs/heads/foo\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"host\\\",\\n  \\\"id\\\": \\\"SHA\\\",\\n  \\\"project\\\": \\\"project\\\",\\n  \\\"ref\\\": \\\"refs/heads/foo\\\"\\n}\"@@@"
     ]
   },
   {
@@ -28,7 +28,7 @@
     "name": "update src_state.gitiles_commit (2).set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@commit@{}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{}\"@@@"
     ]
   },
   {
