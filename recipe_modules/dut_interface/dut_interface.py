@@ -175,10 +175,11 @@ class DUTInterface(object):  # pragma: no cover
     pass
 
   @abstractmethod
-  def load_skylab_local_state(self, test_id):
+  def load_skylab_local_state(self, test, test_id):
     """Get skylab local state from DUT for specific test.
 
     Args:
+    * test (skylab_test_runner.Request.Test): The actual test request.
     * test_id (str): The desired test to pull state from.
 
     Returns:

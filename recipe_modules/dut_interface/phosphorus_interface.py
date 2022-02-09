@@ -39,7 +39,7 @@ class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
                          image_storage_server=image_storage_server)
 
     self.load_response = interface.load_skylab_local_state(
-        test_id=self.passthrough_test_id)
+        test=test, test_id=self.passthrough_test_id)
     self.phosphorus_config = interface.build_config(
         self.load_response.results_dir)
     # A DeviceUnderTest namedtuple that represents primary DUT.
@@ -290,12 +290,23 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
           dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
           peer_duts=[dut.hostname for dut in metadata.peer_duts])
 
-  def load_skylab_local_state(self, test_id):
+  def load_skylab_local_state(self, test, test_id):
     with self._api.step.nest('Phosphorus: load skylab local state'):
       # Check for DUT topology experiment
-      use_dut_topo = self._properties.config.prejob_step.dut_topology_experiment.enabled
+      use_dut_topo = self.enable_dut_topology_experiment(test)
       with self._api.context(env={'USE_DUT_TOPO': use_dut_topo}):
         return self._api.phosphorus.load_skylab_local_state(test_id=test_id)
+
+  def enable_dut_topology_experiment(self, test):
+    # Experiment can be enabled via test/suite allowlists or an explicit flag.
+    flag_enabled = self._properties.config.prejob_step.dut_topology_experiment.enabled
+
+    test_allowlist = self._properties.config.prejob_step.dut_topology_experiment.test_allowlist
+    suite_allowlist = self._properties.config.prejob_step.dut_topology_experiment.suite_allowlist
+    test_allowlisted = test.autotest.name in test_allowlist
+    suite_allowlisted = test.autotest.keyvals['suite'] in suite_allowlist
+
+    return flag_enabled or test_allowlisted or suite_allowlisted
 
   def remove_autotest_results_dir(self):
     with self._api.step.nest('Phosphorus: remove autotest results dir'):

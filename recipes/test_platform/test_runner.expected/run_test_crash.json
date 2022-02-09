@@ -305,9 +305,10 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"autotest\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"keyvals\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"suite\": \"\", @@@",
       "@@@STEP_LOG_LINE@request@      \"key1\": \"value1\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"testArgs\": \"foo=bar\", @@@",
       "@@@STEP_LOG_LINE@request@    \"displayName\": \"fancy_name\", @@@",
@@ -346,7 +347,7 @@
       "/dev/stdout"
     ],
     "name": "execution steps.original_test.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"containerImageInfo\": {}, \n  \"dutHostnames\": [\n    \"fake_host\"\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:26Z\"\n}",
+    "stdin": "{\n  \"autotest\": {\n    \"keyvals\": {\n      \"suite\": \"\", \n      \"key1\": \"value1\", \n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }, \n    \"testArgs\": \"foo=bar\", \n    \"displayName\": \"fancy_name\", \n    \"name\": \"dummy_name\", \n    \"isClientTest\": true\n  }, \n  \"containerImageInfo\": {}, \n  \"dutHostnames\": [\n    \"fake_host\"\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:26Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_FAILURE@@@"

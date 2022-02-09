@@ -615,6 +615,11 @@ tast_missing_test.3=bar.YetAnotherTest
             request=_canned_test_runner_request(
                 default_behavior=default_behavior))))
 
+  def _request_properties_with_suite_name(suite_name):
+    request = _canned_test_runner_request()
+    request['test']['autotest']['keyvals']['suite'] = suite_name
+    return api.properties(TestRunnerProperties(request=request))
+
   def _canned_test_runner_request(
       test_arg='foo=bar',
       default_behavior=TestExecutionBehavior.BEHAVIOR_UNSPECIFIED):
@@ -1221,6 +1226,68 @@ tast_missing_test.3=bar.YetAnotherTest
                   'prejob_step': {
                       'dut_topology_experiment': {
                           'enabled': True,
+                          'test_allowlist': [],
+                          'suite_allowlist': [],
+                      }
+                  },
+                  'result_flow_pubsub': {
+                      'topic': 'foo-topic',
+                      'project': '',
+                  },
+                  'output': {
+                      'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
+                  },
+              })),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'dut_topology_test_allowlist',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      api.properties(
+          TestRunnerProperties(
+              config={
+                  'prejob_step': {
+                      'dut_topology_experiment': {
+                          'enabled': False,
+                          'test_allowlist': ['dummy_name'],
+                          'suite_allowlist': [],
+                      }
+                  },
+                  'result_flow_pubsub': {
+                      'topic': 'foo-topic',
+                      'project': '',
+                  },
+                  'output': {
+                      'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
+                  },
+              })),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'dut_topology_suite_allowlist',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties_with_suite_name('dummy_suite'),
+      api.properties(
+          TestRunnerProperties(
+              config={
+                  'prejob_step': {
+                      'dut_topology_experiment': {
+                          'enabled': False,
+                          'test_allowlist': [],
+                          'suite_allowlist': ['dummy_suite'],
                       }
                   },
                   'result_flow_pubsub': {
