@@ -360,21 +360,10 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
-      "120"
-    ],
-    "cwd": "[START_DIR]/chrome",
-    "name": "internal checkout passes retry.sync chrome.sleep",
+    "cmd": [],
+    "name": "internal checkout passes retry.sync chrome.sleep 120",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@python.inline@@@@",
-      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
-      "@@@STEP_LOG_LINE@python.inline@import time@@@",
-      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
-      "@@@STEP_LOG_END@python.inline@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -742,21 +731,10 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
-      "120"
-    ],
-    "cwd": "[START_DIR]/chrome",
-    "name": "external checkout passes retry.sync chrome.sleep",
+    "cmd": [],
+    "name": "external checkout passes retry.sync chrome.sleep 120",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@python.inline@@@@",
-      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
-      "@@@STEP_LOG_LINE@python.inline@import time@@@",
-      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
-      "@@@STEP_LOG_END@python.inline@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1124,21 +1102,10 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
-      "120"
-    ],
-    "cwd": "[START_DIR]/chrome",
-    "name": "internal checkout fails retry.sync chrome.sleep",
+    "cmd": [],
+    "name": "internal checkout fails retry.sync chrome.sleep 120",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@python.inline@@@@",
-      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
-      "@@@STEP_LOG_LINE@python.inline@import time@@@",
-      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
-      "@@@STEP_LOG_END@python.inline@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1507,21 +1474,10 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
-      "120"
-    ],
-    "cwd": "[START_DIR]/chrome",
-    "name": "external checkout fails retry.sync chrome.sleep",
+    "cmd": [],
+    "name": "external checkout fails retry.sync chrome.sleep 120",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@python.inline@@@@",
-      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
-      "@@@STEP_LOG_LINE@python.inline@import time@@@",
-      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
-      "@@@STEP_LOG_END@python.inline@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

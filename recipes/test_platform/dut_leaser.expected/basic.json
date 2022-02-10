@@ -139,20 +139,10 @@
     ]
   },
   {
-    "cmd": [
-      "python",
-      "-u",
-      "\nimport sys\nimport time\ntime.sleep(int(sys.argv[1]))\n",
-      "7378"
-    ],
-    "name": "lease DUT for 2 hr 3 min.sleep for remainder of lease.sleep",
+    "cmd": [],
+    "name": "lease DUT for 2 hr 3 min.sleep for remainder of lease.sleep 7378",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@python.inline@@@@",
-      "@@@STEP_LOG_LINE@python.inline@import sys@@@",
-      "@@@STEP_LOG_LINE@python.inline@import time@@@",
-      "@@@STEP_LOG_LINE@python.inline@time.sleep(int(sys.argv[1]))@@@",
-      "@@@STEP_LOG_END@python.inline@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
