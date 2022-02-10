@@ -278,7 +278,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           # need to do so before leaving the context.
           if (self._chroot_created and not self._dep_graph and
               self.m.workspace_util.patch_sets):
-            self._get_dep_graph([])
+            self.get_dep_graph([])
       else:
         # No config, and missing_ok is False.
         raise recipe_api.StepFailure('Missing configuration for {}'.format(
@@ -427,7 +427,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # crrev.com/c/2197226.
     packages = packages or (self.m.cros_bisect.get_packages() or
                             config.build.install_packages.packages)
-    dep_graph = self._get_dep_graph(packages)
+    dep_graph = self.get_dep_graph(packages)
 
     # In the cases where force_relevant is True:
     # 1. input_properties.force_relevant_build is True, and/or
@@ -454,7 +454,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     return _env_info(pointless, packages)
 
-  def _get_dep_graph(self, packages):
+  def get_dep_graph(self, packages):
     """Fetch the dependency graph, and validate the SDK for reuse.
 
     Args:

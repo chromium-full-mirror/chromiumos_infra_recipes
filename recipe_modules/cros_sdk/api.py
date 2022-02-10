@@ -89,6 +89,11 @@ class CrosSdkApi(RecipeApi):
           'sdk_cache_state.json')
 
   @property
+  def sdk_is_dirty(self):
+    """Return whether the SDK is dirty"""
+    return self._sdk_is_dirty
+
+  @property
   def long_timeouts(self):
     """Return whether timeouts should be long.
 

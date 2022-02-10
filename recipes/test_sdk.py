@@ -8,23 +8,42 @@
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
+from recipe_engine import post_process
+
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
+    'cros_relevance',
     'cros_sdk',
     'failures',
-    'test_util',
 ]
 
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):
   with api.build_menu.configure_builder(), \
       api.build_menu.setup_workspace_and_chroot():
+    dep_graph = api.build_menu.get_dep_graph([])
+
+    # Exit early if there are no changes to the SDK.
+    relevant = False
+    if api.build_menu.gerrit_changes:
+      relevant = api.cros_sdk.sdk_is_dirty
+    else:
+      relevant = api.cros_relevance.postsubmit_relevance_check(
+          api.build_menu.gitiles_commit, dep_graph.sdk)
+    if not relevant:
+      return RawResult(status=common.SUCCESS,
+                       summary_markdown='build was pointless.')
+
     with api.step.nest('run SDK package unit tests') as step:
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
           BuildTargetUnitTestRequest(
@@ -38,15 +57,44 @@ def RunSteps(api):
           response_lambda=api.cros_build_api.failed_pkg_names)
       api.failures.set_failed_packages(
           step, [(p, '') for p in response.failed_packages])
+
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()
 
 
 def GenTests(api):
 
-  def test(name, **kwargs):
-    return api.test(name, api.test_util.test_child_build(None, **kwargs).build)
+  yield api.test(
+      'not-relevant-cq',
+      api.buildbucket.try_build(builder='host-packages-cq'),
+      api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'),
+  )
 
-  yield test('cq', cq=True, builder='host-packages-cq')
+  yield api.test(
+      'not-relevant-postsubmit',
+      api.buildbucket.ci_build(builder='host-packages-cq'),
+      api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'),
+  )
 
-  yield test('builder-no-longer-exists', builder='none')
+  yield api.test(
+      'relevant-cq',
+      api.buildbucket.try_build(builder='host-packages-cq'),
+      api.build_menu.depgraph_relevance_return(
+          'validate SDK reuse.depgraph relevance check', pointless=False),
+      api.post_process(post_process.MustRun, 'run SDK package unit tests'),
+  )
+
+  yield api.test(
+      'relevant-postsubmit',
+      api.buildbucket.ci_build(builder='host-packages-cq'),
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+      api.post_process(post_process.MustRun, 'run SDK package unit tests'),
+  )
+
+  yield api.test(
+      'builder-no-longer-exists',
+      api.buildbucket.ci_build(builder='deleted-builder'),
+      api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'))

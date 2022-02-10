@@ -18,7 +18,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -75,7 +75,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -145,7 +145,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -182,7 +182,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -215,7 +215,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
@@ -264,13 +264,13 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0002@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
     ]
   },
   {
     "failure": {
       "failure": {},
-      "humanReason": "Missing configuration for none"
+      "humanReason": "Missing configuration for deleted-builder"
     },
     "name": "$result"
   }

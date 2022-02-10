@@ -197,10 +197,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     is_cq_run = config.id.type == BuilderConfig.Id.CQ
     is_postsubmit = config.id.type == BuilderConfig.Id.POSTSUBMIT
     if is_postsubmit:
-      if self._properties.force_postsubmit_relevance:
-        return False
-      else:
-        return not self.postsubmit_relevance_check(gitiles_commit, dep_graph)
+      return not self.postsubmit_relevance_check(gitiles_commit, dep_graph)
 
     if not is_cq_run or force_relevant or self.toolchain_cls_applied:
       # If it is not a CQ run it should never be treated as pointless. Likewise
@@ -242,8 +239,11 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
     Returns:
       bool: Whether any packages that target depends on have been upreved
-      in the latest snapshot.
+      in the latest snapshot or the build was forced relevant.
     """
+    if self._properties.force_postsubmit_relevance:
+      return True
+
     relevance_log = []
     with self.m.step.nest('postsubmit relevance check') as pres:
       builds = self.m.cros_history.get_annealing_from_snapshot(

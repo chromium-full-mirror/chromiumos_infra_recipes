@@ -30,6 +30,7 @@ PROPERTIES = TestInputProperties
 def RunSteps(api, properties):
   workspace = api.path['cleanup'].join('workspace')
 
+  api.assertions.assertFalse(api.cros_sdk.sdk_is_dirty)
   api.assertions.assertEqual(api.cros_sdk.chroot,
                              api.cros_sdk.test_api.chroot())
 
