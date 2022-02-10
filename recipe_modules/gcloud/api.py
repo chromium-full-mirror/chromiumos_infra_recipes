@@ -408,6 +408,13 @@ class GcloudApi(recipe_api.RecipeApi):
         mount_dir_cmd = ['mkdir', '-p', recipe_mount_path]
         self.m.step('ensure mount directory exists', mount_dir_cmd,
                     infra_step=True)
+
+      # If we're trying to mount a disk that wasn't mounted by this invocation
+      # try to look it up first from the systems disk-by-id inventory.
+      if not name in self._attached_disks:
+        self._dev_ref = self.lookup_device_id(disk_name=name)
+        self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)
+
       self.m.step('mount disk %s' % name, [
           'sudo', 'mount', '-o', 'discard,defaults', self._attached_disks[name],
           recipe_mount_path
@@ -787,7 +794,7 @@ class GcloudApi(recipe_api.RecipeApi):
                                         image=snapshot, disk_type='pd-standard')
         return snapshot
 
-  def _setup_new_cache_mount_outide_path(self, recipe_mount_path):
+  def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
     """Perform cache setup when mount is allowed to be outside the path.
 
     Args:
@@ -828,7 +835,8 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
 
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
-                       disk_size=None, recipe_mount=False):
+                       disk_size=None, recipe_mount=False,
+                       mount_existing=False):
     """Create disk from snapshot, reuse if still attached.
 
     Check if disk is attached, otherwise grab the matching snapshot, create,
@@ -842,6 +850,8 @@ class GcloudApi(recipe_api.RecipeApi):
       disk_size(str): Size of the disk to create in GB, defaults to image size.
       recipe_mount(bool): Whether mount needs to be in the path to use within
         a recipe.
+      mount_existing(bool): If we find an existing cache, mount it immediately
+        instead of relying on subsequent step.
     """
     # Set properties we need for cache disk setup.
     if not self._zone or not self.infra_host:
@@ -876,16 +886,18 @@ class GcloudApi(recipe_api.RecipeApi):
 
         self.attach_disk(name=self._short_name, instance=self.infra_host,
                          disk=self._disk, zone=self._zone)
-        self.mount_disk(name=self._short_name, mount_path=mount_path,
-                        recipe_mount=recipe_mount)
-        if not recipe_mount:
-          self._setup_new_cache_mount_outide_path(recipe_mount_path)
-
         if disk_size:
           self.resize_disk(disk=self._disk, zone=self._zone, size=disk_size)
 
         self.m.file.write_text('write version file', local_version_path,
                                snapshot)
+
+      if (not self._cache_mounted) or mount_existing:
+        self.mount_disk(name=self._short_name, mount_path=mount_path,
+                        recipe_mount=recipe_mount)
+        if not recipe_mount:
+          self._setup_new_cache_mount_outside_path(recipe_mount_path)
+
       if not recipe_mount:
         self._reset_overlayfs_if_needed(cache_name)
       return recipe_mount_path

@@ -333,6 +333,37 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache update.source cache.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@staging-chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
       "0777",
@@ -387,37 +418,6 @@
     "name": "source cache update.source cache.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache update.source cache.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@staging-chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {

@@ -213,6 +213,95 @@
   },
   {
     "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "resize",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--size=600GB",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache.resize GCE disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "resize2fs",
+      "/dev/sdz"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache.execute resize2fs on resized disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@staging-chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos"
@@ -388,95 +477,6 @@
     "name": "source cache.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "resize",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
-      "--size=600GB",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache.resize GCE disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "resize2fs",
-      "/dev/sdz"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache.execute resize2fs on resized disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@staging-chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -830,6 +830,37 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache (2).write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
       "0777",
@@ -884,37 +915,6 @@
     "name": "source cache (2).mount disk crosr90",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache (2).write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -1232,6 +1232,37 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache (3).write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
       "0777",
@@ -1286,37 +1317,6 @@
     "name": "source cache (3).mount disk crosr90",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache (3).write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@staging-chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -1539,6 +1539,37 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache (4).write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos-stabilize-rust-13836-b"
@@ -1714,37 +1745,6 @@
     "name": "source cache (4).set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache (4).write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@staging-chromiumos-stabilize-rust-13836-b-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -2150,6 +2150,37 @@
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "source cache (5).write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@staging-chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
       "0777",
@@ -2204,37 +2235,6 @@
     "name": "source cache (5).mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/staging-chromiumos-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache (5).write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@staging-chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@staging-chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {

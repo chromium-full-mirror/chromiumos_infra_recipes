@@ -402,55 +402,6 @@
   },
   {
     "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/snapshot/chromiumos"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "env_prefixes": {
-      "PATH": [
-        "[START_DIR]/python_bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "source cache.create mount path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "mount",
-      "-o",
-      "discard,defaults",
-      "/dev/sdz",
-      "[CLEANUP]/snapshot/chromiumos"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "env_prefixes": {
-      "PATH": [
-        "[START_DIR]/python_bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "source cache.mount disk cros",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "gcloud",
       "compute",
       "disks",
@@ -518,10 +469,59 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mount",
+      "-o",
+      "discard,defaults",
+      "/dev/sdz",
+      "[CLEANUP]/snapshot/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/python_bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache.mount disk cros",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "set recipe_mount_path",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@recipe_mount_path@[\"/snapshot_mounts/chromiumos\"]@@@"
+      "@@@SET_BUILD_PROPERTY@recipe_mount_path@\"/snapshot_mounts/chromiumos\"@@@"
     ]
   },
   {

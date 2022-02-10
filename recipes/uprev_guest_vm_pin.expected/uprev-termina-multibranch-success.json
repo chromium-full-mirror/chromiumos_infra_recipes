@@ -317,6 +317,25 @@
   },
   {
     "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "initial-chromiumos-source-snapshot",
+      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
+    ],
+    "infra_step": true,
+    "name": "source cache.write version file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos"
@@ -420,25 +439,6 @@
     "name": "source cache.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "source cache.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
