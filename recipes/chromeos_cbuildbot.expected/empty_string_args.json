@@ -555,7 +555,7 @@
     "cmd": [],
     "name": "set recipe_mount_path",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@recipe_mount_path@[\"/snapshot_mounts/chromiumos\"]@@@"
+      "@@@SET_BUILD_PROPERTY@recipe_mount_path@\"/snapshot_mounts/chromiumos\"@@@"
     ]
   },
   {
