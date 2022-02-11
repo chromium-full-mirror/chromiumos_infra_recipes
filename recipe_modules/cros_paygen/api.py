@@ -24,7 +24,9 @@ from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 import PB.chromiumos.common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.test_platform.request import Request
@@ -583,6 +585,54 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     # Run the buildbucket requests and return the build results.
     return self.m.buildbucket.run(cbr, timeout=self.paygen_children_timeout_sec,
                                   step_name='running children')
+
+  def create_paygen_build_report(self, paygen_build_results):
+    """Prepare payload information for the release pubsub.
+
+    Args:
+      paygen_build_results (list[build_pb2.Build]): The results of the child paygen builders
+        as returned by api.buildbucket.run.
+
+    Returns:
+      A list[BuildReport.Payload] containing payload information for the pubsub.
+    """
+    payloads = []
+    for res in paygen_build_results:
+      if res.status != bb_pb2.SUCCESS:
+        continue
+
+      # Determine payload type from the paygen request.
+      payload_request = json.loads(res.input.properties['request'])
+      payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
+      if payload_request.get('minios', False):
+        payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
+      elif 'tgtDlcImage' in payload_request:
+        payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
+
+      payload_uri = res.output.properties['payload_uri']
+      payload_json_path = '{}.json'.format(payload_uri)
+      payload_info = self.m.gsutil.cat(
+          payload_json_path, name='cat {}'.format(payload_json_path),
+          stdout=self.m.raw_io.output(add_output_log=True)).stdout
+      payload_info = json.loads(payload_info)
+
+      is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_FULL
+      if payload_info.get('is_delta', False):
+        is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_DELTA
+
+      payload = BuildReport.Payload(
+          payload=BuildReport.BuildArtifact(
+              type=is_delta,
+              uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
+              sha256=payload_info['sha256_hex'],
+          ), payload_type=payload_type, appid=payload_info['appid'],
+          metadata_signature=payload_info['metadata_signature'],
+          metadata_size=payload_info['metadata_size'],
+          source_version=payload_info['source_version'],
+          target_version=payload_info['target_version'],
+          size=payload_info['size'])
+      payloads.append(payload)
+    return payloads
 
   def _schedule_delta_test_payloads(
       self, gen_reqs, configured_payloads,

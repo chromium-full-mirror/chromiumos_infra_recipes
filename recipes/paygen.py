@@ -18,6 +18,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'cros_storage',
+    'easy',
     'gitiles',
     'src_state',
     'workspace_util',
@@ -51,6 +52,7 @@ def RunSteps(api, properties):
       # Execute build api endpoint for paygen.
       response = api.cros_build_api.PayloadService.GeneratePayload(
           properties.request, name='making single payload')
+      api.easy.set_properties_step(payload_uri=response.remote_uri)
 
     with api.step.nest('testing paygen') as presentation:
       if properties.request.dryrun:

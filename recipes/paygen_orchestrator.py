@@ -11,6 +11,7 @@ import json
 from os import path
 
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
+from PB.chromite.api.payload import GenerationRequest
 from PB.chromiumos.common import Channel, DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -23,12 +24,14 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_build_api',
     'cros_paygen',
     'cros_release',
     'cros_source',
     'cros_storage',
+    'easy',
     'workspace_util',
 ]
 
@@ -163,6 +166,11 @@ def RunSteps(api, properties):
     fail = [x for x in res if x.status != common_pb2.SUCCESS]
     pres.step_text = '%s of %s passed' % (len(suc), (len(suc) + len(fail)))
 
+    with api.step.nest('set `payloads` output property'):
+      payloads = api.cros_paygen.create_paygen_build_report(res)
+      payloads_json = [MessageToJson(payload) for payload in payloads]
+      api.easy.set_properties_step(payloads=payloads_json)
+
   if fail:
     # Give a failure markdown with the failed paygen jobs.
     return result_pb2.RawResult(
@@ -188,6 +196,31 @@ def GenTests(api):
       'discovering payload configuration.get paygen json.gsutil cat',
       api.cros_paygen.EXAMPLE_PAYGEN_JSON)
 
+  def paygen_child_data(child_num):
+    paygen_child_data = build_pb2.Build(id=8922054662172514000 + child_num,
+                                        status='SUCCESS')
+    paygen_child_data.output.properties['payload_uri'] = 'gs://path/to/payload'
+    paygen_child_data.input.properties['request'] = MessageToJson(
+        GenerationRequest())
+    return paygen_child_data
+
+  payload_json_data = """{
+  "appid": "appid",
+  "metadata_signature": "signature",
+  "metadata_size": 1337,
+  "size": 1234,
+  "source_version": "1.2.3",
+  "target_version": "4.5.6",
+  "sha256_hex": "deadbeef",
+  "is_delta": true
+}"""
+
+  def repeated_step_data(step_name, stdout, n):
+    return [
+        api.step_data('{}{}'.format(step_name, ' (%d)' % n if n > 1 else ''),
+                      stdout=stdout) for n in range(1, n + 1)
+    ]
+
   yield api.test(
       'basic', get_props(), good_paygen_cfg,
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -200,7 +233,12 @@ def GenTests(api):
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
-      api.post_check(post_process.MustRun, 'results'))
+      api.post_check(post_process.MustRun, 'results'),
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data(x) for x in range(8)], 'running children.collect'),
+      *repeated_step_data(
+          'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
+          api.raw_io.output(payload_json_data), 8))
 
   yield api.test(
       'some-failures', get_props(), good_paygen_cfg,
