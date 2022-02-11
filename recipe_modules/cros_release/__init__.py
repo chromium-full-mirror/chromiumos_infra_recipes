@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
     'build_menu',
+    'build_reporting',
     'cros_artifacts',
     'cros_paygen',
     'cros_version',

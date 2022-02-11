@@ -5,10 +5,13 @@
 
 """An API for providing release related operations (e.g. paygen, signing)."""
 
+from google.protobuf import json_format
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.common import (Channel, CHANNEL_RUBIK, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_USBPD,
@@ -211,10 +214,18 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
 
-      if builds[0].status != common_pb2.SUCCESS:
+      paygen_orch_build = builds[0]
+      if paygen_orch_build.status != common_pb2.SUCCESS:
         raise StepFailure('paygen orchestrator failed\n'
                           'https://cr-buildbucket.appspot.com/build/{}'.format(
-                              builds[0].id))
+                              paygen_orch_build.id))
+
+      payload_information = paygen_orch_build.output.properties['payloads']
+      payload_information = [
+          json_format.Parse(payload, BuildReport.Payload())
+          for payload in payload_information
+      ]
+      self.m.build_reporting.publish(BuildReport(payloads=payload_information))
 
       return builds
 

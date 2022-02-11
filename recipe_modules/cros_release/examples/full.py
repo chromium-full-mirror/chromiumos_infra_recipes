@@ -8,13 +8,17 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'build_menu',
+    'build_reporting',
     'cros_release',
     'git',
     'test_util',
 ]
 
+from google.protobuf.json_format import MessageToJson
+
 from recipe_engine import post_process
 
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
 from PB.chromite.api.sysroot import Sysroot
@@ -70,10 +74,19 @@ def RunSteps(api):
       ],
   )
 
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
   api.cros_release.schedule_payload_generation()
 
 
 def GenTests(api):
+  successful_paygen_orch = build_pb2.Build(id=8922054662172514000,
+                                           status='SUCCESS')
+  successful_paygen_orch.output.properties['payloads'] = [
+      MessageToJson(
+          BuildReport.Payload(size=1337),
+      )
+  ]
+
   yield api.build_menu.test(
       'basic',
       api.properties(
@@ -81,6 +94,9 @@ def GenTests(api):
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
           }), api.git.diff_check(True),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request', [
@@ -97,6 +113,9 @@ def GenTests(api):
               '$chromeos/cros_release':
                   CrosReleaseProperties(channels=[common_pb2.CHANNEL_RUBIK]),
           }),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request', [

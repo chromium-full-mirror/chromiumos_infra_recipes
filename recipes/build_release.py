@@ -23,7 +23,7 @@ DEPS = [
     'debug_symbols',
 ]
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, MessageToJson
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -129,6 +129,14 @@ def DoRunSteps(api, config):
 def GenTests(api):
   manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
+  successful_paygen_orch = build_pb2.Build(id=8922054662172514000,
+                                           status='SUCCESS')
+  successful_paygen_orch.output.properties['payloads'] = [
+      MessageToJson(
+          BuildReport.Payload(size=1337),
+      )
+  ]
+
   # Normal release build.
   yield api.build_menu.test(
       'release-build',
@@ -149,6 +157,9 @@ def GenTests(api):
                   MessageToDict(CrosSigningProperties(timeout=5))
           }),
       api.cros_signing.setup_mocks(),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun,
