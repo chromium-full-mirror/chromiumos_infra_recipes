@@ -34,7 +34,7 @@ def RunSteps(api, properties):
         api.cros_dupit.configure(
             rsync_mirror_address=mirror.uri,
             rsync_mirror_rate_limit=mirror.rate,
-            gs_distfiles_uri='gs://chromeos-mirror/gentoo/distfiles/',
+            gs_distfiles_uri=properties.gs_uri,
             ignore_missing_args=properties.ignore_missing_args,
             filter_missing_links=properties.filter_missing_links,
         )
@@ -66,11 +66,31 @@ def GenTests(api):
       'ignore_missing_args': False,
       'filter_missing_links': False,
   }
+  arch_props = {
+      'mirrors': [
+          {
+              'uri': 'rsync://arch.mirror.constant.com/archlinux/',
+              'rate': '50m',
+          },
+          {
+              'uri': 'rsync://mirror.sfo12.us.leaseweb.net/archlinux/',
+              'rate': '50m',
+          },
+      ],
+      'gs_uri': 'gs://chromeos-mirror/archlinux/',
+      'ignore_missing_args': False,
+      'filter_missing_links': False,
+  }
 
   props = good_props.copy()
   yield api.test(
       'basic',
       api.properties(**props),
+      api.post_process(
+          post_process.MustRun,
+          ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
+           'gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/'),
+      ),
       api.post_process(
           post_process.MustRun,
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
@@ -80,6 +100,28 @@ def GenTests(api):
           post_process.DoesNotRun,
           ('mirror from rsync://mirror.rackspace.com/gentoo/distfiles.'
            'rsync distfiles from rsync://mirror.rackspace.com/gentoo/distfiles'
+          ),
+      ),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'basic_arch',
+      api.properties(**arch_props),
+      api.post_process(
+          post_process.MustRun,
+          ('mirror from rsync://arch.mirror.constant.com/archlinux/.'
+           'gsutil list distfiles in gs://chromeos-mirror/archlinux/'),
+      ),
+      api.post_process(
+          post_process.MustRun,
+          ('mirror from rsync://arch.mirror.constant.com/archlinux/.'
+           'rsync distfiles from rsync://arch.mirror.constant.com/archlinux/'),
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          ('mirror from rsync://mirror.sfo12.us.leaseweb.net/archlinux/.'
+           'rsync distfiles from rsync://mirror.sfo12.us.leaseweb.net/archlinux/'
           ),
       ),
       api.post_process(post_process.StatusSuccess),
