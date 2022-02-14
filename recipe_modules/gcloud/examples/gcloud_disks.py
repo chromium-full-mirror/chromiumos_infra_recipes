@@ -25,11 +25,6 @@ def RunSteps(api):
                            disk='test_disk1', zone='us-central1-b')
     api.gcloud.attach_disk(name='cache_test2', instance='test_bot1',
                            disk='test_disk2', zone='us-central1-b')
-
-    # This remove tests the feature where we can reattach a disk that some other
-    # builder has left behind (by asking fstab for the ref if we don't have it).
-    api.gcloud._attached_disks.pop('cache_test1')  # pylint: disable=protected-access
-
     api.gcloud.mount_disk(name='cache_test1', mount_path='cache1',
                           recipe_mount=True)
     api.gcloud.mount_disk(name='cache_test2', mount_path='cache2')

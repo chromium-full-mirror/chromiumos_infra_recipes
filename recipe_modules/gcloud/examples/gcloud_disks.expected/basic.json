@@ -107,10 +107,6 @@
     "name": "create mount path"
   },
   {
-    "cmd": [],
-    "name": "look up device name to device id map (5)"
-  },
-  {
     "cmd": [
       "sudo",
       "mount",
