@@ -1763,6 +1763,178 @@
   },
   {
     "cmd": [],
+    "name": "create branch and sync overlay",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private synced to deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create branch and sync overlay.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "-b",
+      "lkgb",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create branch and sync overlay.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "--set-upstream-to=cros/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create branch and sync overlay.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create branch and sync overlay.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rebase"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create branch and sync overlay.git rebase",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create branch and sync overlay.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "write android lkgb"
   },
   {
@@ -12236,100 +12408,11 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "[CLEANUP]/chromiumos_workspace/src/overlay",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "commit and generate CL.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/overlay|src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-b",
-      "lkgb",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "commit and generate CL.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch",
-      "--set-upstream-to=cros/main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "commit and generate CL.git branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "git",
       "add",
       "[CLEANUP]/chromiumos_workspace/src/overlay/modified-file"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -12359,7 +12442,7 @@
       "android-package: Mark version 7123456 as LKGB.\n\nGenerated by android_uprev_orchestrator.\n\nBUG=None\nTEST=https://cr-buildbucket.appspot.com/build/8945511751514863184\n\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -12393,7 +12476,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -12414,7 +12497,7 @@
   },
   {
     "cmd": [],
-    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -12422,7 +12505,7 @@
   },
   {
     "cmd": [],
-    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.check if project src/[CLEANUP]/chromiumos_workspace/src/overlay exists",
+    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.check if project src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -12431,7 +12514,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "info",
-      "src/[CLEANUP]/chromiumos_workspace/src/overlay"
+      "src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -12455,7 +12538,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.check if project src/[CLEANUP]/chromiumos_workspace/src/overlay exists.repo info",
+    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.check if project src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
@@ -12465,7 +12548,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "src/[CLEANUP]/chromiumos_workspace/src/overlay",
+      "src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -12491,10 +12574,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.repo forall",
+    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -12510,7 +12593,7 @@
       "android-package",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -12531,7 +12614,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.git_cl upload",
+    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -12546,7 +12629,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -12567,7 +12650,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.git_cl status",
+    "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -12577,7 +12660,7 @@
     "name": "commit and generate CL.abandon CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/overlay/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private/+/1@@@"
     ]
   },
   {

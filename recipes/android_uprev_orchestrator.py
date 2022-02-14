@@ -38,6 +38,9 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2'
 
 PROPERTIES = AndroidUprevProperties
 
+# The overlay that hosts Android packages.
+_OVERLAY_PATH = 'src/private-overlays/project-cheets-private'
+
 
 def RunSteps(api, properties):
   with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
@@ -59,6 +62,17 @@ def DoRunSteps(api, properties):
 
   # Save android_version in output for dashboard queries.
   api.easy.set_properties_step(android_version=android_version)
+
+  # Create a branch in the overlay project and sync to ToT.
+  overlay_path = api.cros_source.workspace_path.join(_OVERLAY_PATH)
+  with api.step.nest('create branch and sync overlay') as pres, \
+      api.context(cwd=overlay_path):
+    info = api.repo.project_info(project=overlay_path)
+    api.git.checkout('HEAD', branch='lkgb')
+    api.git.set_upstream(info.remote, info.branch_name)
+    api.git.fetch(info.remote)
+    api.git.rebase()
+    pres.step_text = '{} synced to {}'.format(info.path, api.git.head_commit())
 
   # Update LKGB here. If no files were modified i.e. LKGB is already the same
   # version, there's nothing to do.
@@ -89,11 +103,6 @@ def DoRunSteps(api, properties):
 
   # Submit the LKGB update.
   with api.step.nest('commit and generate CL'):
-    workspace_path = api.cros_source.workspace_path
-    with api.context(cwd=workspace_path):
-      # As of today |modified_files| should contain exactly one file.
-      info = api.repo.project_info(project=api.path.dirname(modified_files[0]))
-
     commit_lines = [
         '{}: Mark version {} as LKGB.'.format(android_package, android_version),
         '',
@@ -105,20 +114,9 @@ def DoRunSteps(api, properties):
     ]
     commit_message = '\n'.join(commit_lines) + '\n'
 
-    project_path = workspace_path.join(info.path)
-    with api.context(cwd=project_path):
-      # Commit the change onto a new branch tracking upstream.
-      api.git.checkout('HEAD', branch='lkgb')
-      api.git.set_upstream(info.remote, info.branch_name)
+    with api.context(cwd=overlay_path):
       api.git.add(list(modified_files))
       api.git.commit(commit_message)
-
-      if submit_uprev:
-        # Pull and rebase onto latest upstream. Discard any conflicting upstream
-        # changes by setting --strategy-option=theirs (see `git help rebase` for
-        # detail.) No one else should be touching these files after all.
-        api.git.fetch(info.remote)
-        api.git.rebase(strategy_option='theirs')
 
     # Create a CL, and submit if needed.
     change = api.gerrit.create_change(info.path, hashtags=[android_package])
