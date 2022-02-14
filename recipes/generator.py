@@ -344,7 +344,7 @@ def RunSteps(api, properties):
                     if cl.created < retry_ci.created]
                 if cls_to_abandon:
                   with api.step.nest("abandon CLs before passed CQ+1 CL"):
-                    _abandon_cls(api, cls_to_abandon, retry_cl, \
+                    _abandon_cls(api, cls_to_abandon, retry_ci, \
                         outdated_cls_policy, retry_only_run)
     if not retry_only_run:
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
@@ -403,20 +403,34 @@ def response_has_changes(api, response):
   return False
 
 
-def _abandon_cls(api, outdated_cls, mrm, outdated_cls_policy, retry_only_run,
-                 abandoned_cls=None):
+def _abandon_cls(api, outdated_cls, most_recent_merged_uprev,
+                 outdated_cls_policy, retry_only_run, abandoned_cls=None):
+  """Abandon uprev CLs according to the outdated_cls_policy.
+
+  Args:
+    api (RecipeApi): See RunSteps documentation.
+    outdated_cls (list[PatchSet]): Open uprev CLs that are behind the most
+        recent merge.
+    most_recent_merged_uprev (PatchSet): The most recent merged uprev CL.
+    outdated_cls_policy (OutdatedClsPolicy): Policy to follow when for CLs that
+        are still open but behind a merge.
+    retry_only_run (bool): Whether this run only applies retries to existing CLs
+        (i.e. does not create a new uprev CL).
+    abandoned_cls (list[PatchSet]): List of CLs which have been abandoned. This
+        value is mutated by the function call.
+  """
   for outdated_cl in outdated_cls:
     if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not retry_only_run:
       outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                   'PUpr has been set to remind you that it'
                                   ' likely should be abandoned.').format(
-                                      mrm.display_url)
+                                      most_recent_merged_uprev.display_url)
       api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
                                     outdated_comment_message)
     elif outdated_cls_policy == OUTDATED_ABANDON:
       outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                   'PUpr has been set to abandon.').format(
-                                      mrm.display_url)
+                                      most_recent_merged_uprev.display_url)
       api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
                                 message=outdated_comment_message)
       if abandoned_cls != None:
@@ -1144,7 +1158,8 @@ def GenTests(api):
           branch_policies=[
               _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
                       existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=FULL_RUN)
+                      no_existing_cls_policy=FULL_RUN,
+                      outdated_cls_policy=OUTDATED_ABANDON)
           ], retry_ref=retry_ref),
       api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
       api.git.diff_check(True),
