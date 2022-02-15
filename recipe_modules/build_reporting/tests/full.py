@@ -2,6 +2,8 @@
 # Copyright 2021 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+import json
+import os
 
 DEPS = [
     'recipe_engine/assertions',
@@ -19,6 +21,21 @@ from PB.chromite.api.packages import GetBuilderMetadataResponse
 from recipe_engine.recipe_api import StepFailure
 
 BuildStatus = BuildReport.BuildStatus
+
+
+def _read_test_file(filename):
+  """Read the content of a file in this directory.
+
+  Args:
+    filename (str): The basename of the file (located in this directory) to
+        read.
+
+  Returns:
+    (str): The contents of the file.
+  """
+  with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                         filename)) as f:
+    return f.read().strip()
 
 
 def RunSteps(api):
@@ -114,6 +131,10 @@ def RunSteps(api):
       "gs://chromeos-image-archive/garble.tgz",
       "3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60",
   )
+
+  # Signed build metadata verifying.
+  api.build_reporting.publish_signed_build_metadata(
+      [json.loads(_read_test_file('test_signed_build.json')), {}])
 
   # ...
 

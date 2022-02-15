@@ -37,6 +37,7 @@
   * [cros_resultdb](#recipe_modules-cros_resultdb)
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
+  * [cros_signing](#recipe_modules-cros_signing)
   * [cros_som](#recipe_modules-cros_som)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_storage](#recipe_modules-cros_storage) &mdash; API featuring shared helpers for locating and naming stored artifacts.
@@ -251,6 +252,8 @@
   * [cros_sdk:tests/is_chroot_usable](#recipes-cros_sdk_tests_is_chroot_usable)
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
   * [cros_sdk:tests/missing_endpoints](#recipes-cros_sdk_tests_missing_endpoints)
+  * [cros_signing:tests/full](#recipes-cros_signing_tests_full) &mdash; Success workflow tests for the cros_signing recipe module.
+  * [cros_signing:tests/sequence_error](#recipes-cros_signing_tests_sequence_error) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/checkout_branch](#recipes-cros_source_examples_checkout_branch)
   * [cros_source:examples/checkout_manifests](#recipes-cros_source_examples_checkout_manifests)
@@ -1144,7 +1147,7 @@ Args:
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
-[DEPS](/recipe_modules/build_reporting/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/build_reporting/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_signing](#recipe_modules-cros_signing), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -1230,6 +1233,13 @@ Args:
   branch (str): The branch name (e.g. release-R97-14324.B).
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
+
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#400)(self, signed_build_metadata_list):**
+
+Publish metadata about the signed build image(s).
+
+Args:
+  signed_build_metadata_list (list[dict]): List of signed build metadata.
 
 &mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#219)(self, status):**
 
@@ -3433,6 +3443,69 @@ Args:
 
 Returns:
   UprevPackagesResponse
+### *recipe_modules* / [cros\_signing](/recipe_modules/cros_signing)
+
+[DEPS](/recipe_modules/cros_signing/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+#### **class [CrosSigningApi](/recipe_modules/cros_signing/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to encapsulate communication with the signing fleet.
+
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/cros_signing/api.py#95)(self, instructions_metadata):**
+
+Get the metadata of the signed build.
+
+Note - this requires that wait_for_signing has been called and is complete.
+
+Args:
+  instructions_metadata (dict): The metadata dict returned from
+    wait_for_signing.
+
+Returns:
+  List of signed build metadata dicts (one per signed build image).
+
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#137)(instructions):**
+
+Given an instructions file, pull out the status of the signing operation.
+
+Args:
+  instructions (dict): An instructions metadata file.
+
+Returns:
+  The status of the signing, or None if not available.
+
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#125)(metadata):**
+
+Whether the provided metadata contains a successful signing operation.
+
+Args:
+  metadata (dict): Metadata from the instructions file.
+
+Returns:
+  True/False whether the signing succeeded.
+
+&mdash; **def [verify\_signing\_success](/recipe_modules/cros_signing/api.py#116)(self, instructions_metadata):**
+
+Verifies that the signing operation succeeded.
+
+&mdash; **def [wait\_for\_signing](/recipe_modules/cros_signing/api.py#29)(self, instructions_list):**
+
+Wait for signing to complete for a set of instructions files.
+
+This method polls each instructions file for metadata, and waits for that
+metadata to become present, then checks to see if a terminal passing or
+failed state has been achieved. This method returns when either a) signing
+is complete for all of the provided instructions files, or b) the configured
+timeout has elapsed.
+
+Args:
+  instructions_list (array): List of GS locations for instructions files.
+
+Returns
+  A dict of instruction file location -> instruction metadata for all
+  complete signing operations.
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#6): [support](#recipe_modules-support), [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -8233,17 +8306,17 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#22)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#98)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#101)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#75)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#78)(api, properties):**
 
-&mdash; **def [launch\_debug\_symbols](/recipes/build_release.py#40)(api, gs_image_dir, worker_count, retry_quota, staging=False, dryrun=False, \*\*kwargs):**
+&mdash; **def [launch\_debug\_symbols](/recipes/build_release.py#43)(api, gs_image_dir, worker_count, retry_quota, staging=False, dryrun=False, \*\*kwargs):**
 
 Asynchronously launch the upload debug symbols builder.
 
@@ -8284,11 +8357,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#24)(api):**
 ### *recipes* / [build\_reporting:tests/full](/recipe_modules/build_reporting/tests/full.py)
 
-[DEPS](/recipe_modules/build_reporting/tests/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/build_reporting/tests/full.py#8): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#41)(api):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -9253,6 +9326,25 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/missing_endpoints.py#17)(api):**
+### *recipes* / [cros\_signing:tests/full](/recipe_modules/cros_signing/tests/full.py)
+
+[DEPS](/recipe_modules/cros_signing/tests/full.py#12): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Success workflow tests for the cros_signing recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/full.py#39)(api):**
+### *recipes* / [cros\_signing:tests/sequence\_error](/recipe_modules/cros_signing/tests/sequence_error.py)
+
+[DEPS](/recipe_modules/cros_signing/tests/sequence_error.py#9): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Verify that wait_for_signing is required before retrieving signed build
+metadata.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/sequence_error.py#18)(api):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

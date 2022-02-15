@@ -23,6 +23,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   Callers of cros_build_api may specify their own test data as they see
   fit.
   """
+  INSTRUCTIONS = [
+      "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
+      "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions"
+  ]
 
   def path(self, subpath):
     """Return the given subpath as a fully qualified path.
@@ -240,16 +244,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         failed_packages=[],
     )
     responses['PushImage'] = jsonify(
-        instructions=[
-            {
-                "instructions_file_path":
-                    "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
-            },
-            {
-                "instructions_file_path":
-                    "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions",
-            },
-        ],
+        instructions=[{
+            "instructions_file_path": file_name
+        } for file_name in CrosBuildApiTestApi.INSTRUCTIONS],
     )
     responses['Test'] = jsonify(success=True)
     return responses

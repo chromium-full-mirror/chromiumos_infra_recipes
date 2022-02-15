@@ -4,11 +4,12 @@
 # found in the LICENSE file.
 
 """Various helper methods for creating/populating BuildReport instances."""
-
 from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.common import Channel, ImageType
 
 BuildConfig = BuildReport.BuildConfig
+SignedBuild = BuildReport.SignedBuildMetadata
 
 
 def set_build_target_metadata(config, builder_metadata):
@@ -81,3 +82,64 @@ def create_model(model_metadata):
   main_readonly_firmware_version.value = model_metadata.main_readonly_firmware_version
 
   return model
+
+
+def create_signed_build(signed_build_meta, status):
+  """Creates a SignedBuildMetadata object from the provided meta dict.
+
+  Args:
+    signed_build_meta (dict): The signed build metadata from the signers.
+    status (str): The status of the signing job.
+
+  Returns:
+    Signed Build object.
+  """
+  signed_build = SignedBuild()
+
+  signed_build.status = SignedBuild.SigningStatus.Value(
+      'SIGNING_STATUS_{}'.format(status.upper()))
+  signed_build.board = signed_build_meta['board']
+  signed_build.type = ImageType.Value('IMAGE_TYPE_{}'.format(
+      signed_build_meta['type'].upper()))
+  signed_build.channel = Channel.Value('CHANNEL_{}'.format(
+      signed_build_meta['channel'].upper()))
+  signed_build.keyset = signed_build_meta['keyset']
+  signed_build.keyset_is_mp = signed_build_meta['keyset_is_mp']
+
+  for filename, hashes in signed_build_meta['outputs'].items():
+    file_with_hashes = signed_build.files.add()
+    file_with_hashes.filename = filename
+    file_with_hashes.md5 = hashes['md5']
+    file_with_hashes.sha1 = hashes['sha1']
+    file_with_hashes.sha256 = hashes['sha256']
+    file_with_hashes.size = hashes['size']
+
+  platform_version = signed_build.versions.add()
+  platform_version.kind = SignedBuild.VersionKind.VERSION_KIND_PLATFORM
+  platform_version.value = signed_build_meta['version']['platform']
+
+  milestone_version = signed_build.versions.add()
+  milestone_version.kind = SignedBuild.VersionKind.VERSION_KIND_MILESTONE
+  milestone_version.value = signed_build_meta['version']['milestone']
+
+  key_firmware_key_version = signed_build.versions.add()
+  key_firmware_key_version.kind = SignedBuild.VersionKind.VERSION_KIND_KEY_FIRMWARE_KEY
+  key_firmware_key_version.value = str(
+      signed_build_meta['key_versions']['firmware_key_version'])
+
+  key_firmware_version = signed_build.versions.add()
+  key_firmware_version.kind = SignedBuild.VersionKind.VERSION_KIND_KEY_FIRMWARE
+  key_firmware_version.value = str(
+      signed_build_meta['key_versions']['firmware_version'])
+
+  key_kernel_key_version = signed_build.versions.add()
+  key_kernel_key_version.kind = SignedBuild.VersionKind.VERSION_KIND_KEY_KERNEL_KEY
+  key_kernel_key_version.value = str(
+      signed_build_meta['key_versions']['kernel_key_version'])
+
+  key_kernel_version = signed_build.versions.add()
+  key_kernel_version.kind = SignedBuild.VersionKind.VERSION_KIND_KEY_KERNEL
+  key_kernel_version.value = str(
+      signed_build_meta['key_versions']['kernel_version'])
+
+  return signed_build

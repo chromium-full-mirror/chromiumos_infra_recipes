@@ -1,0 +1,123 @@
+[
+  {
+    "cmd": [],
+    "name": "wait for signing to complete"
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://file2.json"
+    ],
+    "infra_step": true,
+    "name": "wait for signing to complete.gsutil reading instructions for gs://file2.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://file1.json"
+    ],
+    "infra_step": true,
+    "name": "wait for signing to complete.gsutil reading instructions for gs://file1.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "wait for signing to complete.sleep 300",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://file2.json"
+    ],
+    "infra_step": true,
+    "name": "wait for signing to complete.gsutil reading instructions for gs://file2.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://file1.json"
+    ],
+    "infra_step": true,
+    "name": "wait for signing to complete.gsutil reading instructions for gs://file1.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "wait for signing to complete.sleep 300 (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "verify results",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@[{u'status': {u'status': u'failed'}}, {u'status': {u'status': u'passed'}}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "verify results.parse metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@{@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  \"gs://file2\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    \"status\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@      \"status\": \"failed\"@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    }@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  }, @@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  \"gs://file1\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    \"status\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@      \"status\": \"passed\"@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    }@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  }@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@}@@@",
+      "@@@STEP_LOG_END@signed build metadata@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "One or more signing requests failed or timed out. Signing response: {\n  \"gs://file2\": {\n    \"status\": {\n      \"status\": \"failed\"\n    }\n  }, \n  \"gs://file1\": {\n    \"status\": {\n      \"status\": \"passed\"\n    }\n  }\n}"
+    },
+    "name": "$result"
+  }
+]

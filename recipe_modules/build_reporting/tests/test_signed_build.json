@@ -1,0 +1,85 @@
+{
+  "metadata-version": "1",
+  "bot-hostname": "chromeos-signing96.mtv.corp.google.com",
+  "status": {
+    "current-time": "Tue, 09 Mar 2021 08:47:52 +0000 (UTC)",
+    "status": "passed",
+    "summary": "",
+    "details": ""
+  },
+  "time": {
+    "start": "Tue, 09 Mar 2021 08:24:48 +0000 (UTC)",
+    "download": {
+      "start": "Tue, 09 Mar 2021 08:24:52 +0000 (UTC)",
+      "duration": "0:00:19.773530"
+    },
+    "unpack": {
+      "start": "Tue, 09 Mar 2021 08:25:14 +0000 (UTC)",
+      "duration": "0:01:00.562626"
+    },
+    "sign": {
+      "recovery_image.bin": {
+        "start": "Tue, 09 Mar 2021 08:27:38 +0000 (UTC)",
+        "duration": "0:13:52.020948"
+      }
+    },
+    "gather_stats": {
+      "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin": {
+        "start": "Tue, 09 Mar 2021 08:41:30 +0000 (UTC)",
+        "duration": "0:00:24.555827"
+      },
+      "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin.zip": {
+        "start": "Tue, 09 Mar 2021 08:43:32 +0000 (UTC)",
+        "duration": "0:00:11.000035"
+      }
+    },
+    "recovery_zip": {
+      "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin": {
+        "start": "Tue, 09 Mar 2021 08:41:54 +0000 (UTC)",
+        "duration": "0:01:38.113211"
+      }
+    },
+    "upload": {
+      "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin": {
+        "start": "Tue, 09 Mar 2021 08:43:50 +0000 (UTC)",
+        "duration": "0:03:36.711810"
+      },
+      "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin.zip": {
+        "start": "Tue, 09 Mar 2021 08:47:28 +0000 (UTC)",
+        "duration": "0:00:17.420871"
+      }
+    },
+    "finish": "Tue, 09 Mar 2021 08:47:26 +0000 (UTC)"
+  },
+  "input-archive": "ChromeOS-recovery-R90-13816.12.0-eve.tar.xz",
+  "board": "eve",
+  "type": "recovery",
+  "version": {
+    "full": "R90-13816.12.0",
+    "platform": "13816.12.0",
+    "milestone": "90"
+  },
+  "channel": "dev",
+  "keyset": "eve-mp-v2",
+  "keyset_is_mp": true,
+  "outputs": {
+    "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin": {
+      "md5": "637461a912f7d7b3a5cbe52da5bbd5d0",
+      "sha1": "8d1ceff0c6c4ee44870a6ff70920409d1623a0e8",
+      "sha256": "4e68f9ce604bc498831d8733d03ee20101520ac1e4316d822c2491c0e176024c",
+      "size": 2688756224
+    },
+    "chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin.zip": {
+      "md5": "bf70b54b9243ac37a0b1fbb13eb14faf",
+      "sha1": "bbd75884fb404d8655b23e2b09885806dec3cde0",
+      "sha256": "508f55221dc7102b981407d059d921e7bc7281f784e42a6aa806eae91e4bc55b",
+      "size": 1360494460
+    }
+  },
+  "key_versions": {
+    "firmware_key_version": 1,
+    "firmware_version": 1,
+    "kernel_key_version": 1,
+    "kernel_version": 1
+  }
+}

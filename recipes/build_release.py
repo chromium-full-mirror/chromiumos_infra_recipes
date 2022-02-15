@@ -17,6 +17,7 @@ DEPS = [
     'cros_infra_config',
     'cros_release',
     'cros_sdk',
+    'cros_signing',
     'cros_source',
     'cros_tags',
 ]
@@ -29,6 +30,8 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine.result import RawResult
+from PB.recipe_modules.chromeos.cros_signing.cros_signing import \
+  CrosSigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
@@ -133,7 +136,7 @@ def DoRunSteps(api, config, properties):
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
-  gs_image_dir, _ = api.cros_release.push_and_sign_images(
+  gs_image_dir, instructions = api.cros_release.push_and_sign_images(
       config, api.build_menu.sysroot)
 
   with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
@@ -152,6 +155,24 @@ def DoRunSteps(api, config, properties):
       presentation.links["builder page"] = builder_url
 
   api.cros_release.schedule_payload_generation()
+
+  # Signing does not work in staging, so we shouldn't wait for it in that case.
+  # Otherwise, wait for signing to complete.
+  if not api.cros_infra_config.is_staging:
+    with api.step.nest('get signed build metadata'):
+      # Wait for signing to complete. Note - "complete" does not mean "passed",
+      # it means "signing returned a terminal state or timed out".
+      metadata = api.cros_signing.wait_for_signing(instructions)
+      # Get the signed build metadata now that it is complete.
+      signed_build_metadata_list = api.cros_signing.get_signed_build_metadata(
+          metadata)
+      # Publish any signed build metadata we have on the pubsub.
+      api.build_reporting.publish_signed_build_metadata(
+          signed_build_metadata_list)
+
+      # Now that we've published informational artifacts, we need to fail the
+      # build if the outcome was anything other than "passed".
+      api.cros_signing.verify_signing_success(metadata)
 
 
 def GenTests(api):
@@ -172,8 +193,11 @@ def GenTests(api):
                   'worker_count': 200,
                   'retry_quota': 1000,
                   'dryrun': False
-              }
+              },
+              '$chromeos/cros_signing':
+                  MessageToDict(CrosSigningProperties(timeout=5))
           }),
+      api.cros_signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun,

@@ -396,3 +396,24 @@ class BuildReportingApi(recipe_api.RecipeApi):
     for model_metadata in builder_metadata.model_metadata:
       config.models.append(helpers.create_model(model_metadata))
     self.publish(build_report)
+
+  def publish_signed_build_metadata(self, signed_build_metadata_list):
+    """Publish metadata about the signed build image(s).
+
+    Args:
+      signed_build_metadata_list (list[dict]): List of signed build metadata.
+    """
+    build_report = BuildReport()
+    for signed_build_metadata in signed_build_metadata_list:
+      status = self.m.cros_signing.get_status_from_instructions(
+          signed_build_metadata)
+
+      # If the status of the message is unavailable for some reason, short circuit
+      # so we don't publish partial data.
+      if not self.m.cros_signing.signing_succeeded(signed_build_metadata):
+        continue
+
+      build_report.signed_builds.append(
+          helpers.create_signed_build(signed_build_metadata, status))
+
+    self.publish(build_report)
