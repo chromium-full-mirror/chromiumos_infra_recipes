@@ -3539,6 +3539,7 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184/target",
       "--yes",
       "--board=target",
       "--version=R39-6301.202.4",
@@ -3546,8 +3547,7 @@
       "[CLEANUP]/chromiumos_workspace",
       "-n",
       "--sign-types",
-      "firmware",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184/target"
+      "firmware"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

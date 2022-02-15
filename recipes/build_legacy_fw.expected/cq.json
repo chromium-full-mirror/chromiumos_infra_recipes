@@ -3158,6 +3158,7 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
+      "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184/target",
       "--yes",
       "--board=target",
       "--version=R91-13874.10.0",
@@ -3167,8 +3168,7 @@
       "--sign-types",
       "firmware",
       "accessory_rwsig",
-      "--dest-bucket=gs://chromeos-releases",
-      "gs://chromeos-image-archive/fw-atlas-cq/R91-13874.10.0-101-8945511751514863184/target"
+      "--dest-bucket=gs://chromeos-releases"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

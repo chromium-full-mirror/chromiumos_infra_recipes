@@ -429,8 +429,13 @@ class FirmwareBuilder(object):
       dry_run = self.m.cq.active or not self.properties.bump_version
       dry_run = dry_run or (staging and not has_dest_bucket)
 
+      image_dir = 'gs://{}/{}/{}'.format(
+          self._config.artifacts.artifacts_gs_bucket,
+          self.m.cros_artifacts.artifacts_gs_path(self._config.id.name,
+                                                  build_target,
+                                                  self._config.id.type), board)
       cmd = [
-          self._tot_chromite.join('bin', 'pushimage'), '--yes',
+          self._tot_chromite.join('bin', 'pushimage'), image_dir, '--yes',
           '--board={}'.format(board),
           '--version={}'.format(self._bcs_version.legacy_version),
           '--buildroot', self.m.src_state.workspace_path
@@ -445,11 +450,6 @@ class FirmwareBuilder(object):
             for x in sign_types)
       if has_dest_bucket:
         cmd.append('--dest-bucket={}'.format(dest))
-      cmd.append('gs://{}/{}/{}'.format(
-          self._config.artifacts.artifacts_gs_bucket,
-          self.m.cros_artifacts.artifacts_gs_path(self._config.id.name,
-                                                  build_target,
-                                                  self._config.id.type), board))
 
       self.m.step('call pushimage', cmd=cmd, infra_step=True)
 
