@@ -7,12 +7,14 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/runtime',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'build_menu',
     'cros_infra_config',
     'cros_history',
     'cros_relevance',
+    'cros_tags',
     'test_util',
 ]
 
@@ -23,13 +25,25 @@ from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):
-  with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot() as is_relevant:
-    if is_relevant:
-      return DoRunSteps(api, config)
-    else:
-      return RawResult(status=common.SUCCESS,
-                       summary_markdown='Build was not relevant.')
+  try:
+    with api.build_menu.configure_builder() as config, \
+        api.build_menu.setup_workspace_and_chroot() as is_relevant:
+      if is_relevant:
+        return DoRunSteps(api, config)
+      else:
+        return RawResult(status=common.SUCCESS,
+                         summary_markdown='Build was not relevant.')
+  finally:
+    # If the parent build is cancelled, by default the child build will have an
+    # INFRA_FAILURE status. Check if this build was cancelled because its
+    # parent was cancelled, and set the status.
+    parent = api.cros_tags.get_values('parent_buildbucket_id')
+    if parent and api.runtime.in_global_shutdown:
+      # pylint: disable=lost-exception
+      return RawResult(
+          status=common.CANCELED,
+          summary_markdown='Parent orchestrator ({}) cancelled'.format(
+              api.buildbucket.build_url(build_id=parent[0])))
 
 
 def DoRunSteps(api, config):
@@ -275,4 +289,19 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       build_target='atlas-slim',
       cq=True,
+  )
+
+  yield api.build_menu.test(
+      'parent-cancelled',
+      api.runtime.global_shutdown_on_step(
+          'configure builder.gitiles-fetch-ref'),
+      api.post_check(
+          post_process.ResultReason,
+          'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
+      ),
+      api.post_process(post_process.StatusException),
+      api.post_process(post_process.DropExpectation),
+      tags=api.cros_tags.tags(parent_buildbucket_id='123'),
+      cq=True,
+      build_target='atlas-slim',
   )

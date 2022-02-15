@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
+    'recipe_engine/runtime',
     'recipe_engine/step',
     'build_menu',
     'build_reporting',
@@ -17,6 +18,7 @@ DEPS = [
     'cros_release',
     'cros_sdk',
     'cros_source',
+    'cros_tags',
 ]
 
 from google.protobuf.json_format import MessageToDict
@@ -24,7 +26,9 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
@@ -69,14 +73,26 @@ def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
 
 
 def RunSteps(api, properties):
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+  try:
+    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
-  #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
-  with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
-    with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
-      with api.build_menu.configure_builder() as config, \
-          api.build_menu.setup_workspace_and_chroot():
-        return DoRunSteps(api, config, properties)
+    #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
+    with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
+      with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
+        with api.build_menu.configure_builder() as config, \
+            api.build_menu.setup_workspace_and_chroot():
+          return DoRunSteps(api, config, properties)
+  finally:
+    # If the parent build is cancelled, by default the child build will have an
+    # INFRA_FAILURE status. Check if this build was cancelled because its
+    # parent was cancelled, and set the status.
+    parent = api.cros_tags.get_values('parent_buildbucket_id')
+    if parent and api.runtime.in_global_shutdown:
+      # pylint: disable=lost-exception
+      return RawResult(
+          status=common.CANCELED,
+          summary_markdown='Parent orchestrator ({}) cancelled'.format(
+              api.buildbucket.build_url(build_id=parent[0])))
 
 
 def DoRunSteps(api, config, properties):
@@ -235,4 +251,19 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       build_target='kukui-main',
       bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'parent-cancelled',
+      api.runtime.global_shutdown_on_step(
+          'configure builder.gitiles-fetch-ref'),
+      api.post_check(
+          post_process.ResultReason,
+          'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
+      ),
+      api.post_process(post_process.StatusException),
+      api.post_process(post_process.DropExpectation),
+      tags=api.cros_tags.tags(parent_buildbucket_id='123'),
+      cq=True,
+      build_target='kukui-main',
   )
