@@ -24,7 +24,6 @@ from google.protobuf import json_format
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
-from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -486,46 +485,3 @@ def GenTests(api):
       with_history=True,
       extra_changes=gerrit_changes,
   )
-
-  yield api.orch_menu.test(
-      'cq-resultdb-experiment-project-elegible', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
-      api.post_check(
-          post_process.DoesNotRun,
-          'buildbucket.add_tags_to_current_build',
-      ),
-      api.properties(
-          **{
-              '$chromeos/skylab':
-                  SkylabProperties(resultdb_elegible_projects=['project-a'])
-          }), cq=True)
-
-  yield api.orch_menu.test(
-      'cq-resultdb-experiment-all-elegible', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
-      api.post_check(
-          post_process.DoesNotRun,
-          'buildbucket.add_tags_to_current_build',
-      ),
-      api.properties(**{
-          '$chromeos/skylab':
-              SkylabProperties(resultdb_elegible_projects=['all'])
-      }), cq=True)
-
-  yield api.orch_menu.test(
-      'cq-resultdb-experiment-inelegible', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
-      api.post_check(
-          post_process.MustRun,
-          'buildbucket.add_tags_to_current_build',
-      ), cq=True)
-
-  yield api.orch_menu.test(
-      'cq-resultdb-experiment-footer-value', data.ctp_normal,
-      api.git_footers.simulated_get_footers(
-          ['chromeos.cros_test_platform.add_resultdb_settings']),
-      api.post_check(post_process.StatusSuccess),
-      api.post_check(
-          post_process.DoesNotRun,
-          'buildbucket.add_tags_to_current_build',
-      ), cq=True)

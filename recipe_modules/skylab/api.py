@@ -70,12 +70,6 @@ class SkylabApi(recipe_api.RecipeApi):
         self.m.src_state.gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
-    # TODO(b/201608160): Enable uploading to resultdb on select repos.
-    # Remove check for repos and experiment upon experiment conclusion.
-    if self._resultdb_elegible_projects and all(
-        x.project in self._resultdb_elegible_projects
-        for x in self.m.src_state.gerrit_changes):
-      exps.update({'chromeos.cros_test_platform.add_resultdb_settings': True})
 
     bb_request = self.m.buildbucket.schedule_request(
         self._ctp_builder,

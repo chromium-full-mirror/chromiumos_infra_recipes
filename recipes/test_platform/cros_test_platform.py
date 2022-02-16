@@ -58,10 +58,6 @@ PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
 
-# TODO(b/201608160): Remove upon completion of rollout.
-CROS_GERRIT_RESULTS_EXP = 'chromeos.cros_test_platform.add_resultdb_settings'
-
-
 def output_ctp_release_timestamp_tag(api):
   """Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   """
@@ -446,9 +442,7 @@ def summarize(api, enumerations, responses):
       with api.step.nest('%s task results' % tag):
         _log_enumeration_errors(api, enumerations[tag])
         _log_task_results(api, response.task_results)
-        # TODO(b/201608160): Remove conditional upon experiment completion.
-        if api.cros_test_platform.add_to_resultdb:
-          invocations.extend(_get_rdb_invocations(response.task_results))
+        invocations.extend(_get_rdb_invocations(response.task_results))
         if response.state.verdict in _SUCCESSFUL_VERDICTS:
           request_classifications[_REQUEST_SUCCESS] += 1
         else:
@@ -461,11 +455,7 @@ def summarize(api, enumerations, responses):
           request_classifications[classification] += 1
           step.presentation.status = api.step.FAILURE
 
-    # TODO(b/201608160): In order for test results to appear on Gerrit they must
-    # be inherited by the cros_test_platform builder.
-    # Remove check for experiment when go/cros-gerrit-results rollout concludes.
-    if (invocations and api.resultdb.enabled and
-        CROS_GERRIT_RESULTS_EXP in api.cros_infra_config.experiments):
+    if invocations and api.resultdb.enabled:
       api.resultdb.include_invocations(api.resultdb.invocation_ids(invocations))
 
     if failures:
@@ -1108,51 +1098,6 @@ def GenTests(api):
               requests={'default': _test_request('default')},
               config=Config(pubsub=Config.PubSub(topic='foo-topic')))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
-
-  task_result_1 = ExecuteResponse.TaskResult(
-      task_url='foo://bar/baz/b100',
-      log_url='logs://bar/baz',
-      name='foo-passed',
-      state=TaskState(verdict="VERDICT_PASSED",
-                      life_cycle='LIFE_CYCLE_COMPLETED'),
-  )
-
-  task_result_2 = ExecuteResponse.TaskResult(
-      task_url='foo://bar/baz/b101',
-      log_url='logs://bar/baz1',
-      name='foo-skipped',
-      state=TaskState(verdict="VERDICT_NO_VERDICT",
-                      life_cycle='LIFE_CYCLE_COMPLETED'),
-  )
-  # TODO(b/201608160): Remove upon experiment completion.
-  yield api.test(
-      'end-to-end execution with resultdb experiment enabled',
-      _set_build(
-          bid=8874582904031090640,
-          experiments=['chromeos.cros_test_platform.add_resultdb_settings']),
-      api.properties(
-          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
-                                     config=_test_config('foo'))),
-      _generic_enumerate_response(api), _generic_passing_execute_response(api),
-      api.cros_test_platform.set_execute_luciexe_response(
-          'execute',
-          ExecuteResponses(
-              tagged_responses={
-                  'default':
-                      ExecuteResponse(
-                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
-                                          verdict='VERDICT_PASSED'),
-                          task_results=[
-                              task_result_1,
-                              task_result_2,
-                          ], consolidated_results=[
-                              ExecuteResponse.ConsolidatedResult(
-                                  attempts=[task_result_1]),
-                              ExecuteResponse.ConsolidatedResult(
-                                  attempts=[task_result_2])
-                          ])
-              }),
-      ))
 
   # An end-to-end run with ctp release version tagging.
   yield api.test(

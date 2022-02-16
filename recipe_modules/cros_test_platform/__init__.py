@@ -14,8 +14,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    # TODO(b/201608160): Remove upon experiment completion.
-    'cros_infra_config',
 ]
 
 PROPERTIES = CrosTestPlatformModuleProperties

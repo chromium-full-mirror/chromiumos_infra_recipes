@@ -26,13 +26,6 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     # TODO(crbug.com/1030538): Remove the default once the label is populated
     # from the config.
     self._version = str(properties.version.cipd_label) or 'latest'
-    # TODO(b/201608160): Remove upon experiment completion.
-    self.add_to_resultdb = False
-
-  def initialize(self):
-    # TODO(b/201608160): Remove upon experiment completion.
-    self.add_to_resultdb |= ('chromeos.cros_test_platform.add_resultdb_settings'
-                             in self.m.cros_infra_config.experiments)
 
   def _run(self, subcommand, request, request_type, response_type):
     """Generic subcommand runner for cros_test_platform.

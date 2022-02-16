@@ -537,17 +537,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     requests = []
     test_to_build_map = {} if test_to_build_map is None else test_to_build_map
 
-    # TODO(b/201608160): Enable uploading to resultdb on select repos.
-    # Remove check for repos and experiment upon experiment conclusion.
     exps = self.m.cros_infra_config.experiments_for_child_build
     footer_exps = self.m.git_footers.get_footer_values(
         self.m.src_state.gerrit_changes, CROS_EXPERIMENTS_FOOTER,
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
-    if self.m.skylab.resultdb_elegible_projects and all(
-        x.project in self.m.skylab.resultdb_elegible_projects
-        for x in self.m.src_state.gerrit_changes):
-      exps.update({'chromeos.cros_test_platform.add_resultdb_settings': True})
 
     for unit in test_plan.direct_tast_vm_test_units:
       for test in unit.tast_vm_test_cfg.tast_vm_test:

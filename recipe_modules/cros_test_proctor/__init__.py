@@ -20,7 +20,6 @@ DEPS = [
     'git',
     'gitiles',
     'gerrit',
-    # TODO(b/201608160): Remove dependency upon completion of experiment.
     'git_footers',
     'greenness',
     'failures',
