@@ -272,6 +272,7 @@
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full) (Python3 ✅)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
+  * [cros_test_plan_v2:examples/ctpv1_compatible](#recipes-cros_test_plan_v2_examples_ctpv1_compatible)
   * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes)
   * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes)
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full)
@@ -4056,18 +4057,18 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#49)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#50)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#218)(self, starlark_packages):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#219)(self, starlark_packages, ctpv1_compatible=False, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4076,14 +4077,19 @@ Args:
     evaluate to get HWTestPlans. Note that StarlarkPackages must be used
     instead of single files because the Starlark files can import each
     other.
-
+  * ctpv1_compatible (bool): If true, return a GenerateTestPlanResponse
+    proto instead of HWTestPlans, for backwards compatibility with CTPV1.
+    generate_test_plan_request should be set iff ctpv1_compatible.
+  * generate_test_plan_request (GenerateTestPlanRequest): A
+    GenerateTestPlanRequest for calling testplan with CTPV1 compatibility.
 
 Returns:
-  A list of generated HWTestPlans.
+  A list of generated HWTestPlans or GenerateTestPlanResponse if
+    ctpv1_compatible is true.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#26)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#27)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#104)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#105)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -9484,6 +9490,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#12)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/ctpv1\_compatible](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#21)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/disabled\_on\_changes](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
