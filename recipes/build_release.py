@@ -20,6 +20,7 @@ DEPS = [
     'cros_signing',
     'cros_source',
     'cros_tags',
+    'debug_symbols',
 ]
 
 from google.protobuf.json_format import MessageToDict
@@ -34,48 +35,11 @@ from PB.recipe_modules.chromeos.cros_signing.cros_signing import \
   CrosSigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
-from PB.recipes.chromeos.build_release import BuildReleaseProperties
 
 StepDetails = BuildReport.StepDetails
-PROPERTIES = BuildReleaseProperties
 
 
-def launch_debug_symbols(api, gs_image_dir, worker_count, retry_quota,
-                         staging=False, dryrun=False, **kwargs):
-  """Asynchronously launch the upload debug symbols builder.
-
-  Args:
-    gs_image_dir (str): Google Storage directory where the sybmols are stored.
-    worker_count (int): Maximum number of concurrent workers allowed to upload.
-    retry_quota (int):  Maximum amount of upload retries allowed. This number is
-                        for the entire builder run, not per symbol.
-    staging (bool):     Is the run in a staging environment? This affects
-                        which crash service we upload to.
-    dryrun (bool):      Should the builder dryrun the upload?
-    **kwargs:           Extra args for buildbucket.schedule_request().
-
-  Returns:
-    `Build` message describing the launched builder. See
-    https://chromium.googlesource.com/infra/luci/luci-go/+/HEAD/buildbucket/proto/build.proto
-    for more info.
-  """
-  gs_debug_image_location = '%s/debug_breakpad.tar.xz' % (gs_image_dir)
-
-  bb_request = api.buildbucket.schedule_request(
-      'staging-upload-debug-symbols' if staging else 'upload-debug-symbols',
-      bucket='staging' if staging else 'release', properties={
-          'cipd_ref': 'staging' if staging else 'prod',
-          'gs_path': gs_debug_image_location,
-          'worker_count': worker_count,
-          'retry_quota': retry_quota,
-          'staging': staging,
-          'dryrun': dryrun
-      }, **kwargs)
-
-  return api.buildbucket.schedule([bb_request])[0]
-
-
-def RunSteps(api, properties):
+def RunSteps(api):
   try:
     api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
@@ -84,7 +48,7 @@ def RunSteps(api, properties):
       with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
         with api.build_menu.configure_builder() as config, \
             api.build_menu.setup_workspace_and_chroot():
-          return DoRunSteps(api, config, properties)
+          return DoRunSteps(api, config)
   finally:
     # If the parent build is cancelled, by default the child build will have an
     # INFRA_FAILURE status. Check if this build was cancelled because its
@@ -98,9 +62,8 @@ def RunSteps(api, properties):
               api.buildbucket.build_url(build_id=parent[0])))
 
 
-def DoRunSteps(api, config, properties):
+def DoRunSteps(api, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
-  staging = api.cros_infra_config.is_staging
   # After the sysroot is setup we have the package versions determined.
   api.build_reporting.publish_versions(api.build_menu.target_versions)
 
@@ -108,7 +71,7 @@ def DoRunSteps(api, config, properties):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
-      with api.step.nest('determine build and model metadata') as presentation:
+      with api.step.nest('determine build and model metadata'):
         # First look up builder metadata from build-api.
         builder_metadata = api.builder_metadata.look_up_builder_metadata()
         # Then fire off a pub/sub call with that builder meta.
@@ -140,20 +103,8 @@ def DoRunSteps(api, config, properties):
       config, api.build_menu.sysroot)
 
   with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
-    with api.step.nest("schedule debug symbols upload") as presentation:
-      # Launch the upload debug symbols builder.
-      # This builder is currently async, but we should fold it inline as it
-      # only takes a few minutes and that would allow us to judge the result
-      # status.
-      debug_builder = launch_debug_symbols(
-          api, gs_image_dir, properties.debug_symbols.worker_count,
-          properties.debug_symbols.retry_quota, staging,
-          properties.debug_symbols.dryrun)
-
-      # Add link to builder in step
-      builder_url = api.buildbucket.build_url(build_id=debug_builder.id)
-      presentation.links["builder page"] = builder_url
-
+    with api.step.nest("upload debug symbols"):
+      api.debug_symbols.upload_debug_symbols(gs_image_dir)
   api.cros_release.schedule_payload_generation()
 
   # Signing does not work in staging, so we shouldn't wait for it in that case.
@@ -189,7 +140,7 @@ def GenTests(api):
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='releasespecs/91/13818.0.0.xml'))),
-              'debug_symbols': {
+              '$chromeos/debug_symbols': {
                   'worker_count': 200,
                   'retry_quota': 1000,
                   'dryrun': False
@@ -270,7 +221,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.buildbucket.simulated_collect_output(
-          [build_pb2.Build(id=8922054662172514001, status='FAILURE')],
+          [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
           'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.StatusFailure),
       build_target='kukui-main',

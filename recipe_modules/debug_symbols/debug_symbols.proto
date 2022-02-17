@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package recipes.chromeos.upload_debug_symbols;
+package recipe_modules.chromeos.debug_symbols;
 
-message UploadDebugSymbolsProperties {
+message DebugSymbolsProperties {
   // Package ref to target in CIPD.
   // Default: prod
   string cipd_ref = 1;

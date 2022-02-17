@@ -50,6 +50,7 @@
   * [cros_test_runner](#recipe_modules-cros_test_runner)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
+  * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
   * [disk_usage](#recipe_modules-disk_usage)
   * [dut_interface](#recipe_modules-dut_interface)
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
@@ -287,6 +288,7 @@
   * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
   * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
+  * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [dupit_arch](#recipes-dupit_arch) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
@@ -454,7 +456,6 @@
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
-  * [upload_debug_symbols](#recipes-upload_debug_symbols) &mdash; Recipe for uploading debug symbols to the crash service.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
@@ -4351,6 +4352,35 @@ This module determines if any CTS results files should uploaded to the CTS
 GS buckets and archives them if required.
 
 @param d_dir: The results directory to process.
+### *recipe_modules* / [debug\_symbols](/recipe_modules/debug_symbols)
+
+[DEPS](/recipe_modules/debug_symbols/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Module for working with debug symbols.
+
+#### **class [DebugSymbols](/recipe_modules/debug_symbols/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for working with debug symbols.
+
+&mdash; **def [ensure\_cipd\_package](/recipe_modules/debug_symbols/api.py#23)(self, cipd_package_location, cipd_ref, package_name):**
+
+Use the recipe_engine CIPD api to fetch and store the package locally.
+
+Args:
+  cipd_package_location (str): CIPD location where the package is stored.
+    E.g. chromiumos/infra/upload_debug_symbols/${platform}
+  cipd_ref (String): Instance of package to use. Typically, prod or staging.
+  package_name (String): Name of package minus extra location information.
+    E.g. upload_debug_symbols, manifest_doctor, branch_util.
+
+Returns:
+  Path: Path to the locally stored package.
+
+&mdash; **def [upload\_debug\_symbols](/recipe_modules/debug_symbols/api.py#46)(self, gs_path=None):**
+
+Upload debug symbols to the crash service.
 ### *recipe_modules* / [disk\_usage](/recipe_modules/disk_usage)
 
 [DEPS](/recipe_modules/disk_usage/__init__.py#6): [recipe\_engine/python][recipe_engine/recipe_modules/python]
@@ -8332,34 +8362,15 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#22)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#101)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#65)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#78)(api, properties):**
-
-&mdash; **def [launch\_debug\_symbols](/recipes/build_release.py#43)(api, gs_image_dir, worker_count, retry_quota, staging=False, dryrun=False, \*\*kwargs):**
-
-Asynchronously launch the upload debug symbols builder.
-
-Args:
-  gs_image_dir (str): Google Storage directory where the sybmols are stored.
-  worker_count (int): Maximum number of concurrent workers allowed to upload.
-  retry_quota (int):  Maximum amount of upload retries allowed. This number is
-                      for the entire builder run, not per symbol.
-  staging (bool):     Is the run in a staging environment? This affects
-                      which crash service we upload to.
-  dryrun (bool):      Should the builder dryrun the upload?
-  **kwargs:           Extra args for buildbucket.schedule_request().
-
-Returns:
-  `Build` message describing the launched builder. See
-  https://chromium.googlesource.com/infra/luci/luci-go/+/HEAD/buildbucket/proto/build.proto
-  for more info.
+&mdash; **def [RunSteps](/recipes/build_release.py#42)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9604,6 +9615,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cts_results_archive/examples/full.py#14)(api):**
+### *recipes* / [debug\_symbols:examples/full](/recipe_modules/debug_symbols/examples/full.py)
+
+[DEPS](/recipe_modules/debug_symbols/examples/full.py#7): [debug\_symbols](#recipe_modules-debug_symbols), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/debug_symbols/examples/full.py#14)(api):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#6): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -11121,31 +11139,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 Recipe for running tricium on CLs.
 
 &mdash; **def [RunSteps](/recipes/tricium.py#33)(api):**
-### *recipes* / [upload\_debug\_symbols](/recipes/upload_debug_symbols.py)
-
-[DEPS](/recipes/upload_debug_symbols.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2
-
-Recipe for uploading debug symbols to the crash service.
-
-&mdash; **def [RunSteps](/recipes/upload_debug_symbols.py#51)(api, properties):**
-
-Invoke the upload debug symbols builder.
-
-&mdash; **def [ensure\_cipd\_package](/recipes/upload_debug_symbols.py#27)(api, cipd_package_location, cipd_ref, package_name):**
-
-Use the recipe_engine CIPD api to fetch and store the package locally.
-
-Args:
-  cipd_package_location (str): CIPD location where the package is stored.
-    E.g. chromiumos/infra/upload_debug_symbols/${platform}
-  cipd_ref (String): Instance of package to use. Typically, prod or staging.
-  package_name (String): Name of package minus extra location information.
-    E.g. upload_debug_symbols, manifest_doctor, branch_util.
-
-Returns:
-  Path: Path to the locally stored package.
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#30): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
