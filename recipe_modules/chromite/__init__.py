@@ -1,24 +1,32 @@
-DEPS = [
-    'recipe_engine/buildbucket',
-    'recipe_engine/context',
-    'recipe_engine/file',
-    'recipe_engine/json',
-    'recipe_engine/legacy_annotation',
-    'recipe_engine/path',
-    'recipe_engine/properties',
-    'recipe_engine/python',
-    'recipe_engine/runtime',
-    'recipe_engine/step',
-    'depot_tools/bot_update',
-    'depot_tools/gclient',
-    'depot_tools/git',
-    'depot_tools/gitiles',
-    'depot_tools/tryserver',
-    'cros_infra_config',
-    'gcloud',
-    'goma',
-    'repo',
-]
+# -*- coding: utf-8 -*-
+# Copyright 2022 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = {
+    'buildbucket': 'recipe_engine/buildbucket',
+    'context': 'recipe_engine/context',
+    'file': 'recipe_engine/file',
+    'json': 'recipe_engine/json',
+    'legacy_annotation': 'recipe_engine/legacy_annotation',
+    'path': 'recipe_engine/path',
+    'properties': 'recipe_engine/properties',
+    'python': 'recipe_engine/python',
+    'runtime': 'recipe_engine/runtime',
+    'step': 'recipe_engine/step',
+    'bot_update': 'depot_tools/bot_update',
+    'gclient': 'depot_tools/gclient',
+    'git': 'depot_tools/git',
+    'gitiles': 'depot_tools/gitiles',
+    'tryserver': 'depot_tools/tryserver',
+
+    # Our modules.
+    'cros_infra_config': 'cros_infra_config',
+    'gcloud': 'gcloud',
+    'cros_gitiles': 'gitiles',
+    'goma': 'goma',
+    'repo': 'repo',
+}
 
 # TODO(phajdan.jr): provide coverage (http://crbug.com/693058).
 DISABLE_STRICT_COVERAGE = True

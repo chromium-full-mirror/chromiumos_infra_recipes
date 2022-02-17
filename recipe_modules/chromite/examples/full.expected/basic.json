@@ -455,6 +455,52 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "fetch depot_tools pin from manifest"
+  },
+  {
+    "cmd": [],
+    "name": "fetch depot_tools pin from manifest.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@data@<?xml version=\"1.0\" encoding=\"UTF-8\"?>@@@",
+      "@@@STEP_LOG_LINE@data@<manifest>@@@",
+      "@@@STEP_LOG_LINE@data@  <include name=\"_remotes.xml\" />@@@",
+      "@@@STEP_LOG_LINE@data@  <default revision=\"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@data@           remote=\"cros\"@@@",
+      "@@@STEP_LOG_LINE@data@           sync-j=\"8\" />@@@",
+      "@@@STEP_LOG_LINE@data@  <project path=\"src/chromium/depot_tools\"@@@",
+      "@@@STEP_LOG_LINE@data@           remote=\"chromium\"@@@",
+      "@@@STEP_LOG_LINE@data@           name=\"chromium/tools/depot_tools\"@@@",
+      "@@@STEP_LOG_LINE@data@           revision=\"c49a7334d30256abc1fc1e56d79615a220028998\"@@@",
+      "@@@STEP_LOG_LINE@data@           groups=\"minilayout,firmware,buildtools,labtools\" />@@@",
+      "@@@STEP_LOG_LINE@data@</manifest>@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "basic:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "fetch depot_tools pin from manifest.fetch gitiles file.curl https://https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

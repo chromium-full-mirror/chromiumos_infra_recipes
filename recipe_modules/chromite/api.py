@@ -2,21 +2,37 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
 import re
+import xml.etree.ElementTree as ET
 
 from recipe_engine import recipe_api
+
+TEST_MANIFEST = """<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <include name="_remotes.xml" />
+  <default revision="refs/heads/main"
+           remote="cros"
+           sync-j="8" />
+  <project path="src/chromium/depot_tools"
+           remote="chromium"
+           name="chromium/tools/depot_tools"
+           revision="c49a7334d30256abc1fc1e56d79615a220028998"
+           groups="minilayout,firmware,buildtools,labtools" />
+</manifest>
+"""
 
 
 class ChromiteApi(recipe_api.RecipeApi):
   chromite_url = 'https://chromium.googlesource.com/chromiumos/chromite.git'
   depot_tools_url = (
       'https://chromium.googlesource.com/chromium/tools/depot_tools.git')
-  # Keep this pin in sync with manifest pin in:
-  #   https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml
-  depot_tools_pin = 'fd5c198347e13bdb96f6685fdab451c1183e21ff'
+  _depot_tools_pin = None
 
   # Only used by the internal goma recipe.
-  manifest_url = 'https://chromium.googlesource.com/chromiumos/manifest.git'
+  manifest_host = 'https://chromium.googlesource.com'
+  manifest_project = 'chromiumos/manifest'
+  manifest_url = '{}/{}.git'.format(manifest_host, manifest_project)
   repo_url = 'https://chromium.googlesource.com/external/repo.git'
 
   # The number of Gitiles attempts to make before giving up.
@@ -24,6 +40,19 @@ class ChromiteApi(recipe_api.RecipeApi):
 
   _MANIFEST_CMD_RE = re.compile(r'Automatic:\s+Start\s+([^\s]+)\s+([^\s]+)')
   _BUILD_ID_RE = re.compile(r'CrOS-Build-Id: (.+)')
+
+  @property
+  def depot_tools_pin(self):
+    if self._depot_tools_pin:
+      return self._depot_tools_pin
+    with self.m.step.nest('fetch depot_tools pin from manifest'):
+      tot_manifest = self.m.cros_gitiles.get_file(
+          self.manifest_host, self.manifest_project, 'full.xml',
+          test_output_data=base64.b64encode(TEST_MANIFEST))
+      root = ET.fromstring(tot_manifest)
+      self._depot_tools_pin = root.findall(
+          './/project[@path="src/chromium/depot_tools"]')[0].attrib['revision']
+    return self._depot_tools_pin
 
   @property
   def chromite_path(self):

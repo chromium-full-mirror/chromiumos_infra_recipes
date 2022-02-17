@@ -1,5 +1,39 @@
 [
   {
+    "cmd": [],
+    "name": "fetch depot_tools pin from manifest"
+  },
+  {
+    "cmd": [],
+    "name": "fetch depot_tools pin from manifest.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@data@<?xml version=\"1.0\" encoding=\"UTF-8\"?>@@@",
+      "@@@STEP_LOG_LINE@data@<manifest>@@@",
+      "@@@STEP_LOG_LINE@data@  <include name=\"_remotes.xml\" />@@@",
+      "@@@STEP_LOG_LINE@data@  <default revision=\"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@data@           remote=\"cros\"@@@",
+      "@@@STEP_LOG_LINE@data@           sync-j=\"8\" />@@@",
+      "@@@STEP_LOG_LINE@data@  <project path=\"src/chromium/depot_tools\"@@@",
+      "@@@STEP_LOG_LINE@data@           remote=\"chromium\"@@@",
+      "@@@STEP_LOG_LINE@data@           name=\"chromium/tools/depot_tools\"@@@",
+      "@@@STEP_LOG_LINE@data@           revision=\"c49a7334d30256abc1fc1e56d79615a220028998\"@@@",
+      "@@@STEP_LOG_LINE@data@           groups=\"minilayout,firmware,buildtools,labtools\" />@@@",
+      "@@@STEP_LOG_LINE@data@</manifest>@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT"
+    ],
+    "name": "fetch depot_tools pin from manifest.fetch gitiles file.curl https://https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",
@@ -17,7 +51,7 @@
       "--revision",
       "chromite@main",
       "--revision",
-      "depot_tools@fd5c198347e13bdb96f6685fdab451c1183e21ff"
+      "depot_tools@c49a7334d30256abc1fc1e56d79615a220028998"
     ],
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
@@ -40,7 +74,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"did_run\": true, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"fixed_revisions\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"chromite\": \"main\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"depot_tools\": \"fd5c198347e13bdb96f6685fdab451c1183e21ff\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"depot_tools\": \"c49a7334d30256abc1fc1e56d79615a220028998\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"manifest\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"chromite\": {@@@",
@@ -49,7 +83,7 @@
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"depot_tools\": {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"repository\": \"https://fake.org/depot_tools.git\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision\": \"fd5c198347e13bdb96f6685fdab451c1183e21ff\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision\": \"c49a7334d30256abc1fc1e56d79615a220028998\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  \"patch_failure\": false, @@@",
@@ -67,7 +101,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"depot_tools\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"git_checkout\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"repo_url\": \"https://fake.org/depot_tools.git\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"revision\": \"fd5c198347e13bdb96f6685fdab451c1183e21ff\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"revision\": \"c49a7334d30256abc1fc1e56d79615a220028998\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",

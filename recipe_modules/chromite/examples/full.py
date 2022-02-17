@@ -7,6 +7,7 @@ from recipe_engine import post_process
 DEPS = [
     'chromite',
     'depot_tools/gitiles',
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/swarming',
@@ -32,6 +33,12 @@ def RunSteps(api):
   api.chromite.m.goma.client_version = api.properties.get(
       'cbb_goma_client_type')
   api.chromite.run()
+
+  api.assertions.assertEqual(api.chromite.depot_tools_pin,
+                             'c49a7334d30256abc1fc1e56d79615a220028998')
+  # A second time to hit the caching.
+  api.assertions.assertEqual(api.chromite.depot_tools_pin,
+                             'c49a7334d30256abc1fc1e56d79615a220028998')
 
 
 def GenTests(api):
