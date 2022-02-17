@@ -867,6 +867,6 @@ class RepoApi(recipe_api.RecipeApi):
       self.version()
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']
-        self._step(cmd, ok_ret='any')
+        self._step(cmd, ok_ret={0})
       self.version()
       self._binary_updated = True
