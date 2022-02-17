@@ -29,6 +29,7 @@ class TastExecApi(RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super(TastExecApi, self).__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
+    self._vm_system_services_timeout = properties.vm_system_services_timeout or 10 * 60
     self._should_retry = properties.should_retry
     self._public_builder = properties.public_builder
 
@@ -185,6 +186,10 @@ class TastExecApi(RecipeApi):
     """
     if run_args is None:
       run_args = []
+    else:
+      run_args = list(run_args)
+    run_args.append('-systemservicestimeout={}'.format(
+        self._vm_system_services_timeout))
 
     # Entering vm_context instantiates the VM we are to test against. The VM
     # is cleaned up automatically when exiting the context.

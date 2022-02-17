@@ -226,6 +226,7 @@
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "-systemservicestimeout=600",
       "localhost:9222",
       "expr"
     ],

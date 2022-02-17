@@ -328,6 +328,7 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
+      "-systemservicestimeout=600",
       "localhost:9222",
       "!informational"
     ],
@@ -1095,6 +1096,7 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
+      "-systemservicestimeout=600",
       "localhost:9222",
       "!informational"
     ],
@@ -1482,6 +1484,7 @@
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
       "-var=myVar=myVal",
+      "-systemservicestimeout=600",
       "localhost:9222",
       "example.Pass"
     ],
@@ -1923,6 +1926,7 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
+      "-systemservicestimeout=600",
       "172.16.0.15:22",
       "!informational"
     ],

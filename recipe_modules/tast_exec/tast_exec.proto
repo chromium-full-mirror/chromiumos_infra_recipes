@@ -15,4 +15,7 @@ message TastExecProperties {
   bool should_retry = 2;
   // Whether this is a public target.
   bool public_builder = 3;
+  // System services timeout for tast exec for VM tests (in seconds).
+  // Controls how long to wait for the VM to start when running tests.
+  int32 vm_system_services_timeout = 4;
 }
