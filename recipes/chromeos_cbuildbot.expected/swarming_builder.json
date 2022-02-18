@@ -26,9 +26,9 @@
   {
     "cmd": [
       "curl",
-      "https://https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT"
+      "https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT"
     ],
-    "name": "fetch depot_tools pin from manifest.fetch gitiles file.curl https://https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT",
+    "name": "fetch depot_tools pin from manifest.fetch gitiles file.curl https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

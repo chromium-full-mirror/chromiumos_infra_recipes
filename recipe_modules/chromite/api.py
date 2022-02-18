@@ -30,9 +30,9 @@ class ChromiteApi(recipe_api.RecipeApi):
   _depot_tools_pin = None
 
   # Only used by the internal goma recipe.
-  manifest_host = 'https://chromium.googlesource.com'
+  manifest_host = 'chromium.googlesource.com'
   manifest_project = 'chromiumos/manifest'
-  manifest_url = '{}/{}.git'.format(manifest_host, manifest_project)
+  manifest_url = 'https://{}/{}.git'.format(manifest_host, manifest_project)
   repo_url = 'https://chromium.googlesource.com/external/repo.git'
 
   # The number of Gitiles attempts to make before giving up.
