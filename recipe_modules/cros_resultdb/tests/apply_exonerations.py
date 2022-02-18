@@ -43,6 +43,10 @@ def GenTests(api):
                   test_id='test/1', expected=False,
                   status=test_result_pb2.FAIL, variant=json_format.Parse(
                       variant_json, common_pb2.Variant())),
+              test_result_pb2.TestResult(
+                  test_id='test/2', expected=False,
+                  status=test_result_pb2.SKIP, variant=json_format.Parse(
+                      variant_json, common_pb2.Variant())),
           ]),
   }
 
@@ -121,7 +125,7 @@ def GenTests(api):
                          step_name='exonerate ResultDB results.rdb query'),
       api.properties(
           behavior_overrides_map={
-              'test/2': Request.Params.TestExecutionBehavior.NON_CRITICAL
+              'test/3': Request.Params.TestExecutionBehavior.NON_CRITICAL
           }, variant_filter={'board': 'fake-board'}),
       api.post_process(
           post_process.DoesNotRun,

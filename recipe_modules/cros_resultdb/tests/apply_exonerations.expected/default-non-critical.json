@@ -12,7 +12,7 @@
       "1000",
       "-u",
       "-tr-fields",
-      "variant,testId",
+      "variant,testId,status,expected",
       "build:123"
     ],
     "infra_step": true,
@@ -32,6 +32,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"SKIP\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -57,7 +58,7 @@
       }
     },
     "name": "exonerate ResultDB results.exonerate non-critical failures",
-    "stdin": "{\"invocation\": \"invocations/build:123\", \"requestId\": \"00000000-0000-0000-0000-000000001337\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:123\", \"requestId\": \"00000000-0000-0000-0000-000000001337\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}, {\"testExoneration\": {\"explanationHtml\": \"unexpectedly skipped but is not critical\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -70,6 +71,17 @@
       "@@@STEP_LOG_LINE@json.input@      \"testExoneration\": {@@@",
       "@@@STEP_LOG_LINE@json.input@        \"explanationHtml\": \"failed but is not critical\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"test/1\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"board\": \"fake-board\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }, @@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testExoneration\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"explanationHtml\": \"unexpectedly skipped but is not critical\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"test/2\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
       "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"board\": \"fake-board\"@@@",

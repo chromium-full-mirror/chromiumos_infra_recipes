@@ -13650,7 +13650,7 @@
       "1000",
       "-u",
       "-tr-fields",
-      "variant,testId",
+      "variant,testId,status,expected",
       "build:8945511751514863184"
     ],
     "infra_step": true,
@@ -13738,7 +13738,7 @@
       "1000",
       "-u",
       "-tr-fields",
-      "variant,testId",
+      "variant,testId,status,expected",
       "build:8945511751514863184"
     ],
     "infra_step": true,
@@ -13826,7 +13826,7 @@
       "1000",
       "-u",
       "-tr-fields",
-      "variant,testId",
+      "variant,testId,status,expected",
       "build:8945511751514863184"
     ],
     "infra_step": true,

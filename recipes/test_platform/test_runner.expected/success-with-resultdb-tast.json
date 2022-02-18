@@ -1061,7 +1061,7 @@
       "1000",
       "-u",
       "-tr-fields",
-      "variant,testId",
+      "variant,testId,status,expected",
       "build:42"
     ],
     "infra_step": true,

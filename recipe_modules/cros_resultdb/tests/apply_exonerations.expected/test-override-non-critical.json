@@ -12,7 +12,7 @@
       "1000",
       "-u",
       "-tr-fields",
-      "variant,testId",
+      "variant,testId,status,expected",
       "build:123"
     ],
     "infra_step": true,
@@ -32,6 +32,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"FAIL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build:123\", \"testResult\": {\"status\": \"SKIP\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

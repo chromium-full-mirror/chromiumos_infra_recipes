@@ -312,9 +312,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
       return is_non_critical and contains_variant_filter
 
     # ResultDB test_id represents the name of the test case.
-    inv_bundle = self.m.resultdb.query(inv_ids=invocation_ids,
-                                       variants_with_unexpected_results=True,
-                                       tr_fields=['variant', 'testId'])
+    inv_bundle = self.m.resultdb.query(
+        inv_ids=invocation_ids, variants_with_unexpected_results=True,
+        tr_fields=['variant', 'testId', 'status', 'expected'])
 
     test_exonerations = []
     for x in inv_bundle.values():
@@ -323,10 +323,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
       test_exonerations.extend([
           test_result_pb2.TestExoneration(
               test_id=result.test_id, variant=result.variant,
-              explanation_html='failed but is not critical')
+              explanation_html='unexpectedly skipped but is not critical'
+              if result.status == test_result_pb2.SKIP else
+              'failed but is not critical')
           for result in unexpected_results
           # Unexpected passes are currently exonerated by default.
-          if result.status == test_result_pb2.FAIL and _is_exonerable(result)
+          if not result.expected and result.status != test_result_pb2.PASS and
+          _is_exonerable(result)
       ])
     self.m.resultdb.exonerate(test_exonerations,
                               step_name="exonerate non-critical failures")
