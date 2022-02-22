@@ -662,6 +662,24 @@ class RepoApi(recipe_api.RecipeApi):
     ]
     self._step(cmd, name=name)
 
+  def _git_sanitize_checkout(self, root_path, projects=None):
+    """Execute cleaning operations to minimize git tree size & check integrity.
+
+    Args:
+      root_path (Path): Path to the repo root.
+      projects (list[str]): Projects to clean or None to clean all projects.
+    """
+    with self.m.step.nest('ensure sanitized checkout'), self.m.context(
+        cwd=root_path, infra_steps=True):
+      cmd = ['forall'] + (projects or [])
+      gc_args = ['--ignore-missing', '-j', '32', '-c', 'git', 'gc']
+      try:
+        self._step(cmd + gc_args,
+                   stdout=self.m.raw_io.output(add_output_log=True),
+                   ok_ret='any')
+      except recipe_api.StepFailure:  # pragma: nocover
+        self.m.step.active_result.presentation.status = self.m.step.WARNING
+
   def _git_clean_checkout(self, root_path, projects=None):
     """Ensure the given repo does not contain untracked files or directories.
 
@@ -703,8 +721,8 @@ class RepoApi(recipe_api.RecipeApi):
       return self.m.git.gitiles_commit()
 
   def ensure_synced_checkout(self, root_path, manifest_url, init_opts=None,
-                             sync_opts=None, projects=None,
-                             final_cleanup=False):
+                             sync_opts=None, projects=None, final_cleanup=False,
+                             sanitize=False):
     """Ensure the given repo checkout exists and is synced.
 
     Args:
@@ -717,6 +735,7 @@ class RepoApi(recipe_api.RecipeApi):
         operate on the given projects.
       final_cleanup (bool): Used by cache builder to ensure that all locks
         and uncommitted files are cleaned up after the sync.
+      sanitize (bool): Should we run `git gc` on all repos.
     """
     repo_state_path = root_path.join('.recipes_state.json')
     manifest_branch = (init_opts.get('manifest_branch') or
@@ -775,6 +794,10 @@ class RepoApi(recipe_api.RecipeApi):
     # Write current state to proto
     self.m.file.write_proto('Write proto to {}'.format(repo_state_path),
                             repo_state_path, repo_state, 'JSONPB')
+
+    # If we're sanitizing the repo do this before the sync.
+    if sanitize:
+      self._git_sanitize_checkout(root_path, projects=projects)
 
     # Clean cache if needed
     self._sync_checkout(root_path, manifest_url, init_opts=init_opts,

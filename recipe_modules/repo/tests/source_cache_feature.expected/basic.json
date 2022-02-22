@@ -30,6 +30,37 @@
   },
   {
     "cmd": [],
+    "name": "ensure sanitized checkout"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "gc"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "ensure sanitized checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_TEXT@cache tracking snapshot branch@@@"

@@ -6884,7 +6884,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#705)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#723)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -6898,6 +6898,7 @@ Args:
     operate on the given projects.
   final_cleanup (bool): Used by cache builder to ensure that all locks
     and uncommitted files are cleaned up after the sync.
+  sanitize (bool): Should we run `git gc` on all repos.
 
 &mdash; **def [init](/recipe_modules/repo/api.py#144)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
 
@@ -6937,7 +6938,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#699)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#717)(self):**
 
 Return a Gitiles commit for the repo manifest.
 

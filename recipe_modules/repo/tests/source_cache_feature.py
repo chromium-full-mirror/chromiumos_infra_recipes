@@ -19,7 +19,8 @@ def RunSteps(api):
   init_opts = dict(manifest_branch='snapshot')
   api.assertions.assertTrue(api.repo.disable_source_cache_health)
   api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
-                                  'http://manifest_url', init_opts=init_opts)
+                                  'http://manifest_url', init_opts=init_opts,
+                                  sanitize=True)
 
 
 def GenTests(api):

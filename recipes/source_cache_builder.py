@@ -76,7 +76,8 @@ def RunSteps(api, properties):
               init_opts = dict(verbose=True, manifest_branch=manifest_branch)
               api.repo.ensure_synced_checkout(
                   mount_path, api.src_state.internal_manifest.url,
-                  init_opts=init_opts, sync_opts=sync_opts, final_cleanup=True)
+                  init_opts=init_opts, sync_opts=sync_opts, final_cleanup=True,
+                  sanitize=True)
               with api.step.nest('git clone manifest-versions'):
                 manifest_dir = 'manifest-versions-internal'
                 manifest_path = mount_path.join(manifest_dir)
