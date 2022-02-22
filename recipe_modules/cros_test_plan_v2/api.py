@@ -47,6 +47,10 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         (mc.host, mc.project): mc for mc in self._properties.migration_configs
     }
 
+  @property
+  def generate_ctpv1_format(self):
+    return self._properties.generate_ctpv1_format
+
   def enabled_on_changes(self, gerrit_changes):
     """Returns true if test planning v2 is enabled on gerrit_changes.
 
@@ -219,7 +223,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
   def generate_hw_test_plans(
       self,
       starlark_packages,
-      ctpv1_compatible=False,
       generate_test_plan_request=None,
   ):
     """Runs the testplan Docker image to get HWTestPlans.
@@ -229,20 +232,17 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         evaluate to get HWTestPlans. Note that StarlarkPackages must be used
         instead of single files because the Starlark files can import each
         other.
-      * ctpv1_compatible (bool): If true, return a GenerateTestPlanResponse
-        proto instead of HWTestPlans, for backwards compatibility with CTPV1.
-        generate_test_plan_request should be set iff ctpv1_compatible.
       * generate_test_plan_request (GenerateTestPlanRequest): A
         GenerateTestPlanRequest for calling testplan with CTPV1 compatibility.
 
     Returns:
       A list of generated HWTestPlans or GenerateTestPlanResponse if
-        ctpv1_compatible is true.
+        generate_ctpv1_format is true.
     """
     with self.m.step.nest('generate hw test plans'):
-      if ctpv1_compatible != (generate_test_plan_request is not None):
+      if self.generate_ctpv1_format != (generate_test_plan_request is not None):
         raise ValueError(
-            'ctpv1_compatible should be set iff generate_test_plan_request is not None'
+            'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
         )
 
       self._ensure_docker_image()
@@ -283,8 +283,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       out_path = (
           self.m.path.join(host_input_path, "generatetestplanresp.binaryproto")
-          if ctpv1_compatible else self.m.path.join(host_input_path,
-                                                    'hw_test_plans.jsonproto'))
+          if self.generate_ctpv1_format else self.m.path.join(
+              host_input_path, 'hw_test_plans.jsonproto'))
 
       # A map from input flag for testplan to the path to the input file on the
       # host.
@@ -301,7 +301,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       # tuple in arg_to_host_path, add args [<flag>, <container path>]
       args = ['generate', '-alsologtostderr', '-v', '2']
 
-      if ctpv1_compatible:
+      if self.generate_ctpv1_format:
         req_path = host_input_path.join('generatetestplanreq.binaryproto')
         self.m.file.write_raw('write generatetestplanreq binaryproto', req_path,
                               generate_test_plan_request.SerializeToString())
@@ -336,7 +336,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           dir_mapping=[(host_input_path, container_input_path)],
       )
 
-      if ctpv1_compatible:
+      if self.generate_ctpv1_format:
         output = self.m.file.read_raw(
             'read output ' + out_path,
             out_path,

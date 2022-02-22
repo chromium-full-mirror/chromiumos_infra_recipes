@@ -12,8 +12,6 @@ from PB.chromiumos.test.api.dut_attribute import DutAttributeList, DutAttribute
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.api.v1.plan import HWTestPlan
 from PB.chromiumos.test.plan.source_test_plan import SourceTestPlan
-from PB.testplans.generate_test_plan import GenerateTestPlanResponse, HwTestUnit
-from PB.testplans.target_test_requirements_config import HwTestCfg
 
 BuildMetadata = SystemImage.BuildMetadata
 BuildMetadataList = SystemImage.BuildMetadataList
@@ -82,18 +80,5 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
         ),
     ]
 
-  @staticmethod
-  def generate_test_plan_response():
-    return GenerateTestPlanResponse(
-        hw_test_units=[
-            HwTestUnit(
-                hw_test_cfg=HwTestCfg(
-                    hw_test=[
-                        HwTestCfg.HwTest(
-                            skylab_board="boardA",
-                        ),
-                    ],
-                ),
-            )
-        ],
-    )
+  def generate_test_plan_response(self):
+    return self.m.cros_test_plan.generate_test_plan_response

@@ -5,6 +5,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/file',
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'cros_test_plan_v2',
 ]
@@ -49,7 +50,6 @@ def RunSteps(api):
           api.cros_test_plan_v2.StarlarkPackage(root='root2',
                                                 main="example2.star"),
       ],
-      ctpv1_compatible=True,
       generate_test_plan_request=GenerateTestPlanRequest(
           buildbucket_protos=[ProtoBytes(serialized_proto='abc123')],
       ),
@@ -62,23 +62,25 @@ def RunSteps(api):
 
   with api.assertions.assertRaisesRegexp(
       ValueError,
-      'ctpv1_compatible should be set iff generate_test_plan_request is not None'
+      'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
   ):
-    api.cros_test_plan_v2.generate_hw_test_plans(
-        [
-            api.cros_test_plan_v2.StarlarkPackage(root='root1',
-                                                  main='example1.star'),
-            api.cros_test_plan_v2.StarlarkPackage(root='root2',
-                                                  main="example2.star"),
-        ],
-        ctpv1_compatible=True,
-    )
+    api.cros_test_plan_v2.generate_hw_test_plans([
+        api.cros_test_plan_v2.StarlarkPackage(root='root1',
+                                              main='example1.star'),
+        api.cros_test_plan_v2.StarlarkPackage(root='root2',
+                                              main="example2.star"),
+    ],
+                                                )
 
 
 def GenTests(api):
 
   yield api.test(
       'basic',
+      api.properties(
+          **{'$chromeos/cros_test_plan_v2': {
+              'generate_ctpv1_format': True
+          }}),
       api.step_data(
           'find relevant plans.list output files',
           api.file.listdir(['relevant_plan_1.textpb',
@@ -114,6 +116,23 @@ def GenTests(api):
               'https://chromium-review.googlesource.com/c/src/projectB/+/456/7',
               '-out',
               '[CLEANUP]/test_plan_tmp_1',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'generate hw test plans.docker run',
+          [
+              '-ctpv1',
+              '-flatconfiglist',
+              '/input/flattened.binaryproto',
+              '-generatetestplanreq',
+              '/input/generatetestplanreq.binaryproto',
+              '-dutattributes',
+              '/input/dut_attributes.jsonproto',
+              '-buildmetadata',
+              '/input/build_metadata.jsonproto',
+              '-out',
+              '/input/generatetestplanresp.binaryproto',
           ],
       ),
   )

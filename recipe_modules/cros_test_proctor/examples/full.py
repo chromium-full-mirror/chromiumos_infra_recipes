@@ -25,6 +25,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'cros_bisect',
     'cros_history',
@@ -45,10 +46,13 @@ PROPERTIES = {
     'run_async':
         Property(kind=bool, help='Should we run the proctor in async mode',
                  default=False),
+    'use_test_plan_v2':
+        Property(kind=bool, help='Should we use the v2 testplan tool',
+                 default=False)
 }
 
 
-def RunSteps(api, need_tests_builds_serialized, run_async):
+def RunSteps(api, need_tests_builds_serialized, run_async, use_test_plan_v2):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
@@ -61,11 +65,14 @@ def RunSteps(api, need_tests_builds_serialized, run_async):
   if need_tests_builds:
     gerrit_changes = api.src_state.gerrit_changes
 
-  _ = api.cros_test_proctor.run_proctor(need_tests_builds=need_tests_builds,
-                                        snapshot=snapshot,
-                                        gerrit_changes=gerrit_changes,
-                                        enable_history=True,
-                                        run_async=run_async)
+  _ = api.cros_test_proctor.run_proctor(
+      need_tests_builds=need_tests_builds,
+      snapshot=snapshot,
+      gerrit_changes=gerrit_changes,
+      enable_history=True,
+      run_async=run_async,
+      use_test_plan_v2=use_test_plan_v2,
+  )
 
   _ = api.cros_test_proctor.test_summary
 
@@ -273,3 +280,34 @@ def GenTests(api):
       api.post_check(
           post_process.DoesNotRun, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'))
+
+  yield api.test(
+      'with_test_plan_v2',
+      api.properties(
+          need_tests_builds_serialized=serialize_builds(builds),
+          use_test_plan_v2=True, **{
+              '$chromeos/cros_test_plan_v2': {
+                  'migration_configs': [{
+                      'host': 'chromium.googlesource.com',
+                      'project': 'chromiumos/platform',
+                      'file_allowlist_regexps': ['a/b/.*']
+                  },],
+                  'generate_ctpv1_format': True,
+              },
+          }),
+      api.step_data(
+          'run tests.schedule tests.find relevant plans.list output files',
+          api.file.listdir(['relevant_plan_1.star', 'relevant_plan_2.star']),
+      ),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks v2.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect autotest vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast GCE tests'))

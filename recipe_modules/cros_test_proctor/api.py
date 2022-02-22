@@ -12,12 +12,14 @@ from recipe_engine import recipe_api
 from . import structs
 
 from PB.chromite.api.test import VmTestRequest
+from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.gce_test import GceTestProperties
 from PB.recipes.chromeos.test_vm import TestVmProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
+from PB.testplans.generate_test_plan import GenerateTestPlanRequest, GenerateTestPlanResponse
 
 TEST_SUMMARY_KEY = 'test_summary'
 SNAPSHOT_HWTEST_SUITES = [
@@ -117,7 +119,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history, run_async=False, container_metadata=None,
-                  require_stable_devices=False):
+                  require_stable_devices=False, use_test_plan_v2=False):
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the Chrome OS infra test platform via recipes.
@@ -137,13 +139,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         images used for test execution.
       require_stable_devices (bool): whether to only run on devices with
         label-device-stable: True
+      use_test_plan_v2 (bool): whether to use the v2 testplan tool in cros test
+        platform v1 compatibility mode. The v2 testplan tool will return
+        GenerateTestPlanResponse protos, so it is interchangable with the v1
+        testplan tool.
     Returns
       list[failures.Failure]: failures encountered running tests
     """
     with self.m.step.nest('run tests') as pres:
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
-                                        snapshot)
+                                        snapshot, use_test_plan_v2)
 
         # We will not run tests that have already passed for this patch set.
         previously_passed_tests = set()
@@ -210,7 +216,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       failures = self.get_test_failures(test_results)
     return failures
 
-  def _get_test_plan(self, builds, gerrit_changes, snapshot):
+  def _get_test_plan(self, builds, gerrit_changes, snapshot, use_test_plan_v2):
     """Returns the test plan that should be executed for this invocation.
 
     Args:
@@ -218,6 +224,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       gerrit_changes (list[common_pb2.GerritChange]): the changes that resulted
           in the provided builds, or None.
       snapshot (GitilesCommit): Start ref of the child builds.
+      use_test_plan_v2 (bool): whether to use the v2 testplan tool in cros test
+        platform v1 compatibility mode. The v2 testplan tool will return
+        GenerateTestPlanResponse protos, so it is interchangable with the v1
+        testplan tool.
 
     Returns:
       GenerateTestPlanResponse: the test plan.
@@ -225,7 +235,24 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     test_plan = self.m.cros_bisect.get_test_plan(builds)
     if test_plan:
       return test_plan
-    return self.m.cros_test_plan.generate(builds, gerrit_changes, snapshot)
+
+    if use_test_plan_v2:
+      relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
+
+      starlark_files = []
+      for plan in relevant_plans:
+        starlark_files.extend(
+            self._fetch_starlark_files(plan.test_plan_starlark_files))
+
+      req = GenerateTestPlanRequest(buildbucket_protos=[
+          ProtoBytes(serialized_proto=build.SerializeToString())
+          for build in builds
+      ])
+      return self.m.cros_test_plan_v2.generate_hw_test_plans(
+          starlark_files, generate_test_plan_request=req
+      ) if starlark_files else GenerateTestPlanResponse()
+    else:
+      return self.m.cros_test_plan.generate(builds, gerrit_changes, snapshot)
 
   def _autotest_vm_test(self, build_target):
     """Returns the autotest builder name for the given build_target."""

@@ -54,4 +54,8 @@ message CrosTestPlanV2Properties {
   // test planning only if all Gerrit changes is the CQ are allowed by these
   // migration configs.
   repeated ProjectMigrationConfig migration_configs = 5;
+
+  // If true, the testplan tool will return a GenerateTestPlanResponse proto
+  // instead of HWTestPlans, for backwards compatibility with CTPV1.
+  bool generate_ctpv1_format = 6;
 }

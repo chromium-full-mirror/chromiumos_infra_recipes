@@ -20,6 +20,8 @@ DEPS = [
     'orch_menu',
 ]
 
+import copy
+
 from google.protobuf import json_format
 from recipe_engine import post_process
 
@@ -480,6 +482,30 @@ def GenTests(api):
           },
       ),
       input_properties=input_props,
+      builder='postsubmit-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      extra_changes=gerrit_changes,
+  )
+
+  input_props_with_generate_ctpv1_format = copy.deepcopy(input_props)
+  input_props_with_generate_ctpv1_format['$chromeos/cros_test_plan_v2'][
+      'generate_ctpv1_format'] = True
+  yield api.orch_menu.test(
+      'ctp2_enabled_generate_ctpv1_format',
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'check test planning v2 enabled',
+          gerrit_changes,
+          {
+              1234: {
+                  'patch_set': 5,
+                  'files': {
+                      'a/b/d/test.txt': {},
+                  }
+              },
+          },
+      ),
+      input_properties=input_props_with_generate_ctpv1_format,
       builder='postsubmit-orchestrator',
       with_manifest_refs=True,
       with_history=True,

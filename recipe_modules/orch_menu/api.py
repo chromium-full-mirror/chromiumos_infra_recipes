@@ -744,7 +744,20 @@ class OrchMenuApi(RecipeApi):
 
     if self.gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
         self.gerrit_changes):
-      self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)
+      if self.m.cros_test_plan_v2.generate_ctpv1_format:
+        test_failures = self.m.cros_test_proctor.run_proctor(
+            testable_builds or self._builds_status.testable_builds,
+            self.gitiles_commit,
+            self.gerrit_changes,
+            self._properties.enable_history,
+            require_stable_devices=self.config.orchestrator
+            .require_stable_devices,
+            run_async=self._properties.run_tests_async,
+            container_metadata=container_metadata,
+            use_test_plan_v2=True,
+        )
+      else:
+        self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)
     else:
       test_failures = self.m.cros_test_proctor.run_proctor(
           testable_builds or self._builds_status.testable_builds,

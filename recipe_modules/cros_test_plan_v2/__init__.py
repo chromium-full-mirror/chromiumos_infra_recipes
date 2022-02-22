@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'cros_infra_config',
+    'cros_test_plan',
     'gerrit',
     'gitiles',
 ]
