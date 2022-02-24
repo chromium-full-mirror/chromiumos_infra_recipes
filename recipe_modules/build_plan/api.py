@@ -11,6 +11,8 @@ from recipe_engine import recipe_api
 from collections import defaultdict
 from datetime import datetime
 
+EXTERNAL_REVIEW_HOST = 'chromium-review.googlesource.com'
+
 
 class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
@@ -68,6 +70,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
     forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
         gerrit_changes, builder_configs)
     necessary_builders = list(set(necessary_builders) | set(forced_relevant))
+    any_public_changes = any(
+        c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
 
     slim_eligible_run = any(x.endswith('slim-cq') for x in necessary_builders)
 
@@ -148,7 +152,18 @@ class BuildPlanApi(recipe_api.RecipeApi):
         force_rebuild = child_builder_name in forced_rebuilds or 'all' in forced_rebuilds
         force_relevant = child_builder_name in forced_relevant
 
-        # now we have a list of build names such as ['buddy-postsubmit', ...]
+        # Public builders can only apply changes to the chromium host.
+        # If all CLs are in chrome-internal then we know the build will not be
+        # relevant.
+        if gerrit_changes and not any_public_changes and (
+            child_builder_config.general.manifest ==
+            BuilderConfig.General.PUBLIC) and not force_relevant:
+          filter_log.append(
+              '{} is a public builder and there are no changes to the external host'
+              .format(child_spec.name))
+          continue
+
+        # Now we have a list of build names such as ['buddy-postsubmit', ...]
         # whereas snapshot_builds and completed_builds might be postfixed
         # with -snapshot. Use this to filter out.
         # TODO(crbug/991996): Refactor: use something other than string manip.

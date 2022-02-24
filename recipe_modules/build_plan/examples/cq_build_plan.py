@@ -32,10 +32,8 @@ def RunSteps(api, properties):
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
-      child_specs, True, [
-          common_pb2.GerritChange(host='chromium-review.googlesource.com',
-                                  change=1234)
-      ], common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
+      child_specs, True, api.cros_infra_config.gerrit_changes,
+      common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
   api.assertions.assertCountEqual(existing_builds, [])
   actual_completed_builds = [x.builder.builder for x in completed_builds]
   api.assertions.assertCountEqual(actual_completed_builds,
@@ -118,6 +116,37 @@ def GenTests(api):
           'get change build history.buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+  )
+
+  yield api.test(
+      'all-internal-changes',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(gerrit_changes=[
+          common_pb2.GerritChange(
+              host='chrome-internal-review.googlesource.com', project='p1',
+              change=1235),
+      ]),
+      api.properties(
+          expected_build_requests=[
+              'atlas-cq',
+              'cave-cq',
+          ],
+          expected_completed_builds=[],
+      ),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
+      api.cros_relevance.simulated_get_necessary_builders([
+          'arm-generic-cq',
+          'arm64-generic-cq',
+          'atlas-cq',
+          'cave-cq',
+      ]),
+      api.buildbucket.simulated_search_results(
+          [], 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          [], 'get build history.find matching builds.'
           'buildbucket.search'),
   )
 
