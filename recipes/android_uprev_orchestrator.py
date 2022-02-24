@@ -54,6 +54,15 @@ def DoRunSteps(api, properties):
   if not android_package:
     raise StepFailure('android_package not set')
 
+  # TODO(b/220949291): Attempt to workaround missing API endpoints. Remove when
+  # the underlying issue is gone.
+  with api.step.nest('ensure latest chromite') as pres, \
+      api.context(cwd=api.cros_source.workspace_path.join('chromite')):
+    api.git.head_commit()  # log the commit prior to sync
+    api.git.fetch('cros')
+    api.git.checkout('cros/main', force=True)
+    pres.step_text = 'chromite synced to {}'.format(api.git.head_commit())
+
   android_version = (
       properties.android_version or
       api.android.get_latest_build(android_package))
