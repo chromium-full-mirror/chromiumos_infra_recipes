@@ -115,6 +115,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     count_skip_wait_on_other_run = 0
     count_skip_noncritical_on_rerun = 0
     count_scheduled_slim_builds = 0
+    count_skip_public_builders = 0
 
     with self.m.step.nest('filter builds') as presentation:
       child_exps = self.m.cros_infra_config.experiments_for_child_build
@@ -158,6 +159,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if gerrit_changes and not any_public_changes and (
             child_builder_config.general.manifest ==
             BuilderConfig.General.PUBLIC) and not force_relevant:
+          count_skip_public_builders += 1
           filter_log.append(
               '{} is a public builder and there are no changes to the external host'
               .format(child_spec.name))
@@ -272,7 +274,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
               count_skip_noncritical_on_rerun),
           build_plan_new_build_requests=len(new_build_requests),
           count_scheduled_slim_builds=count_scheduled_slim_builds,
-          slim_eligible_run=slim_eligible_run)
+          slim_eligible_run=slim_eligible_run,
+          count_skip_public_builders=count_skip_public_builders)
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 
