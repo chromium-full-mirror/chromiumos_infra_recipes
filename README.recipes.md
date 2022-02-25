@@ -6904,7 +6904,7 @@ Args:
     and uncommitted files are cleaned up after the sync.
   sanitize (bool): Should we run `git gc` on all repos.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#144)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=False, clean=True):**
+&mdash; **def [init](/recipe_modules/repo/api.py#144)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=True, clean=True):**
 
 Executes 'repo init' with the given arguments.
 

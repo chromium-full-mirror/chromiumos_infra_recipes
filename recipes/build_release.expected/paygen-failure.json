@@ -1981,7 +1981,8 @@
       "release",
       "--repo-rev=stable",
       "--manifest-name",
-      "../tmp_manifest"
+      "../tmp_manifest",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {

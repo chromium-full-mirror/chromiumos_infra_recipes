@@ -1509,7 +1509,8 @@
       "all",
       "--manifest-branch",
       "release-R89-12345.B",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -2118,7 +2119,8 @@
       "all",
       "--manifest-branch",
       "release-R88-12345.B",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

@@ -98,7 +98,8 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -173,7 +174,8 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {

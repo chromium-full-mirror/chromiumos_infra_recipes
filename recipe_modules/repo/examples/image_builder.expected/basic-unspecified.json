@@ -86,7 +86,8 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -361,7 +362,8 @@
       "all",
       "--repo-rev=stable",
       "--manifest-name",
-      "../tmp_manifest"
+      "../tmp_manifest",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {

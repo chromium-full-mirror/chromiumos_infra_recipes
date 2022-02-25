@@ -1224,7 +1224,8 @@
       "all",
       "--manifest-branch",
       "firmware-board-9999.B",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -1732,7 +1733,8 @@
       "all",
       "--repo-rev=stable",
       "--manifest-name",
-      "../tmp_manifest"
+      "../tmp_manifest",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

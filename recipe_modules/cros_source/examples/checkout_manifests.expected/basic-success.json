@@ -646,7 +646,8 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

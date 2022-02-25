@@ -144,7 +144,7 @@ class RepoApi(recipe_api.RecipeApi):
   def init(self, manifest_url, _kwonly=(), manifest_branch='', reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
            local_manifests=None, manifest_name=None, projects=None,
-           verbose=False, clean=True):
+           verbose=True, clean=True):
     """Executes 'repo init' with the given arguments.
 
     Args:

@@ -65,7 +65,8 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/repo",
     "env_suffixes": {

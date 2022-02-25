@@ -945,7 +945,8 @@
       "all",
       "--manifest-branch",
       "release-R90-13816.B",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromiumos-external",
     "env_suffixes": {

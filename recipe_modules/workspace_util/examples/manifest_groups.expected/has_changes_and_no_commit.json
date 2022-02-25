@@ -478,7 +478,8 @@
       "snapshot",
       "--groups",
       "group1,group2",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/temp_cache_tmp_1",
     "env_suffixes": {

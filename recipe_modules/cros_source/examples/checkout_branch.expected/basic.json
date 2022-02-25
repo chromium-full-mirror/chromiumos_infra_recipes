@@ -1505,7 +1505,8 @@
       "all",
       "--manifest-branch",
       "release-R86-13421.B",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

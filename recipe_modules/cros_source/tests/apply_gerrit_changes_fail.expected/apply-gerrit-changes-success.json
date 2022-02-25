@@ -179,7 +179,8 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -868,7 +869,8 @@
       "main",
       "--repo-rev=stable",
       "--manifest-name",
-      "../../manifest-internal/default.xml"
+      "../../manifest-internal/default.xml",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
