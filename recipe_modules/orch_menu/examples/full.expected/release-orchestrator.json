@@ -3222,6 +3222,83 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "main:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~1..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "reset",
+      "--hard",
+      "cros/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.reset to remote branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "set up orchestrator.create releasespec",
     "~followup_annotations": [

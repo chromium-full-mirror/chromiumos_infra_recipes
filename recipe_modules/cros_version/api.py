@@ -168,6 +168,12 @@ class CrosVersionApi(RecipeApi):
           chromeos_version=str(new_version),
           full_version=new_version.legacy_version)
 
+      if dry_run:
+        pres.step_text = 'dry-run only'
+        # If we're dry running, we don't want to keep our version changes, so
+        # exit before we commit them.
+        return
+
       # Stage, commit, and push changes.
       with self.m.context(cwd=overlay_path):
         commit_lines = [
@@ -185,13 +191,6 @@ class CrosVersionApi(RecipeApi):
           # Have to manually set the upstream here or `git cl` will fail.
           # See crbug/1288910 for context.
           self.m.git.set_upstream('cros', push_branch)
-          if dry_run:
-            pres.step_text = 'dry-run only'
-            # version_bumper switched us to `tmp_checkin_branch`, but we're
-            # not pushing this SHA to the remote so we need to checkout
-            # the original branch in order to create a valid buildspec.
-            self.m.git.checkout(push_branch)
-            return
           change = self.m.gerrit.create_change(
               'chromiumos/overlays/chromiumos-overlay',
               ref=self.m.git.get_branch_ref(push_branch),
@@ -202,3 +201,11 @@ class CrosVersionApi(RecipeApi):
           }
           self.m.gerrit.set_change_labels_remote(change, labels)
           self.m.gerrit.submit_change(change, project_path=overlay_path)
+          # Reset to the remote branch.
+          # We need to do this so that the local checkout has the correct SHA
+          # for the version bump SHA (gerrit.create_change will push the local
+          # change to a different SHA on the remote even if we're on the correct
+          # branch).
+          self.m.git.fetch_refs('cros', push_branch)
+          self.m.step('reset to remote branch',
+                      ['git', 'reset', '--hard', 'cros/{}'.format(push_branch)])
