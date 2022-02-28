@@ -18,4 +18,8 @@ message CodeCoverageProperties {
   // The branch that the code coverage is being generated for.
   // This almost always will be refs/heads/main and can be left blank.
   string branch = 3;
+
+  // The coverage backend to upload(and store) results to.
+  // Accepted values are `autopush` or `prod`.
+  string coverage_env = 4;
 }

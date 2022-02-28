@@ -22,6 +22,8 @@ DEFAULT_CODE_BRANCH = 'refs/heads/main'
 PUBLIC_CODE_HOST = 'chromium'
 CODESEARCH_PROJECT = 'chromiumos/codesearch'
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
+# TODO(b/222328534): Use autopush as default value instead.
+DEFAULT_COVERAGE_ENV = 'prod'
 
 # TODO(b/189356506): Remove experimental path after auto deploy is implemented.
 INCREMENTAL_COVERAGE_CIPD_PACKAGE = 'experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage'
@@ -46,6 +48,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     # The project that contains the code this coverage data is being generated for.
     # The project should be visible on https://chromium.googlesource.com/.
     self._project = props.project or DEFAULT_CODE_PROJECT
+    # The env to upload results to.
+    self._coverage_env = props.coverage_env or DEFAULT_COVERAGE_ENV
     # The branch this coverage data is being generated for.
     self._branch = props.branch or DEFAULT_CODE_BRANCH
     # Path to incremental coverage client.
@@ -276,7 +280,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               '--',
               self._absolute_coverage_tool,
               '--absolute_coverage_service_env',
-              'prod',
+              self._coverage_env,
               '--timeout',
               '10m',
               '--host',
@@ -327,7 +331,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             cmd=[
                 self._incremental_coverage_tool,
                 '--env',
-                'prod',
+                self._coverage_env,
                 '--host',
                 change.host,
                 '--project',
@@ -375,6 +379,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage.
     """
     if self.m.cq.active or absolute_chromium_settings is None:
+      return
+
+    # Do not update coverage information for non-prod envs.
+    if self._coverage_env.lower() != 'prod':
       return
 
     with self.m.step.nest('upload absolute coverage to chromium coverage'):
