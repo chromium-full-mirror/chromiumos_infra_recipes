@@ -60,6 +60,7 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
+      api.build_menu.create_containers(config)
       # We have no steps following build_and_test_images, so we don't need to
       # check the return value.
       api.build_menu.build_and_test_images(config)
