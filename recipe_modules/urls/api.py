@@ -80,8 +80,19 @@ class UrlsApi(recipe_api.RecipeApi):
         not skylab_result.child_results):
       link_url = self.get_skylab_task_url(skylab_result.task)
       return {'suite page': link_url}
+
+    passed_at_least_once = {
+        tr.name
+        for tr in skylab_result.child_results
+        if tr.state.verdict not in failure_verdicts
+    }
+
     link_map = {}
     for task_result in skylab_result.child_results:
+      # Don't raise failure details for tasks that flaked.
+      if task_result.name in passed_at_least_once:
+        continue
+
       # Return per-test case results if possible.
       test_cases_empty = len(task_result.test_cases) == 0 or (
           len(task_result.test_cases) == 1 and

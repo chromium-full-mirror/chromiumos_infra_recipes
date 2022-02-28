@@ -85,6 +85,13 @@ def RunSteps(api):
   test_case2.name = 'tast.cpu.IsVeryFast'
   test_case2.verdict = TaskState.VERDICT_FAILED
   test_case2.human_readable_summary = 'failed because it was just too fast'
+  # Flaked child result should not be surfaced on UI.
+  child_result3 = response.task_results.add()
+  child_result3.name = 'third test'
+  child_result3.state.verdict = TaskState.VERDICT_FAILED
+  child_result4 = response.task_results.add()
+  child_result4.name = 'third test'
+  child_result4.state.verdict = TaskState.VERDICT_PASSED
 
   expected_map = {
       'tast: failed because reasons': 'newlink.com',
