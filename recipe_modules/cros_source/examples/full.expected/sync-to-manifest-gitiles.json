@@ -2089,7 +2089,8 @@
       "../tmp_manifest",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -2502,7 +2503,8 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3289,6 +3291,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "2",
+      "--verbose",
       "--no-manifest-update",
       "--force-remove-dirty",
       "--prune"

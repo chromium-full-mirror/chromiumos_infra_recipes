@@ -328,7 +328,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "sync"
+      "sync",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {

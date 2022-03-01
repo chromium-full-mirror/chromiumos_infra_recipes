@@ -1710,6 +1710,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "chromium/src"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

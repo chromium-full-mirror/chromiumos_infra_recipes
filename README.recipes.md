@@ -6997,7 +6997,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#218)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=False, no_manifest_update=False, force_remove_dirty=False, prune=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#218)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=True, no_manifest_update=False, force_remove_dirty=False, prune=None):**
 
 Executes 'repo sync' with the given arguments.
 

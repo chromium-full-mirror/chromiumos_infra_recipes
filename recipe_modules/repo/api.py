@@ -218,7 +218,7 @@ class RepoApi(recipe_api.RecipeApi):
   def sync(self, _kwonly=(), force_sync=False, detach=False,
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None, timeout=None,
-           retry_fetches=None, projects=None, verbose=False,
+           retry_fetches=None, projects=None, verbose=True,
            no_manifest_update=False, force_remove_dirty=False, prune=None):
     """Executes 'repo sync' with the given arguments.
 

@@ -134,7 +134,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "sync"
+      "sync",
+      "--verbose"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

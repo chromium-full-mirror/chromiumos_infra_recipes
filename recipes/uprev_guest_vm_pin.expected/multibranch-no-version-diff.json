@@ -1539,7 +1539,8 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -1706,7 +1707,8 @@
       "8",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

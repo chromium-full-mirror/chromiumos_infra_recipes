@@ -717,6 +717,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "--force-remove-dirty",
       "--prune"
     ],

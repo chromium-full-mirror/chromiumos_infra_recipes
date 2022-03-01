@@ -296,7 +296,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "sync",
       "--manifest-name",
-      "../../manifest"
+      "../../manifest",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -395,7 +396,8 @@
       "--current-branch",
       "--optimized-fetch",
       "--retry-fetches",
-      "8"
+      "8",
+      "--verbose"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {
