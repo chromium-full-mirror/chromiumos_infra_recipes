@@ -283,6 +283,11 @@ class GcloudApi(recipe_api.RecipeApi):
       if self._test_data.enabled:
         disk_device_map['cros'] = 'sdz'
         disk_device_map['crosr90'] = 'sdy'
+        disk_device_map['crosstabilize'] = 'sdx'
+        disk_device_map['test-disk'] = 'sdw'
+        disk_device_map['cache_test1'] = 'sdv'
+        disk_device_map['cache_test2'] = 'sdu'
+        disk_device_map['cr'] = 'sdt'
 
       # Emit the map as output.
       if not self._test_data.enabled:
@@ -314,6 +319,13 @@ class GcloudApi(recipe_api.RecipeApi):
             '--zone={}'.format(zone), '--quiet'
         ], infra_step=True)
         self._dev_ref = self.lookup_device_id(disk_name=name)
+        # The gcloud command will fail silently if it does not attach
+        # a disk. However, that disk will not appear in the device map.
+        # Since this method is within an exponential retry block, in
+        # such a case we fail and let it retry.
+        if not self._dev_ref:
+          raise recipe_api.StepFailure(
+              'gcloud sdk failed to attach disk {}'.format(name))
       self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)
       self._add_cleanup_attached_disk(disk, instance, zone)
 

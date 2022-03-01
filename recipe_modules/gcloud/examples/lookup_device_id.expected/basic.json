@@ -80,6 +80,58 @@
     "name": "look up device name to device id map (6)"
   },
   {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "test_bot1",
+      "--disk=test_disk1",
+      "--device-name=foo",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "attach disk (2)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (7)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (8)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "attach-disk",
+      "test_bot1",
+      "--disk=test_disk1",
+      "--device-name=foo",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "attach disk (3)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (9)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (10)"
+  },
+  {
     "name": "$result"
   }
 ]

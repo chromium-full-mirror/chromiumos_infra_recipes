@@ -41,52 +41,8 @@
     "name": "look up device name to device id map"
   },
   {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "attach-disk",
-      "test_bot1",
-      "--disk=test_disk1",
-      "--device-name=cache_test1",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "attach disk"
-  },
-  {
     "cmd": [],
     "name": "look up device name to device id map (2)"
-  },
-  {
-    "cmd": [],
-    "name": "look up device name to device id map (3)"
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "attach-disk",
-      "test_bot1",
-      "--disk=test_disk2",
-      "--device-name=cache_test2",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "attach disk (2)"
-  },
-  {
-    "cmd": [],
-    "name": "look up device name to device id map (4)"
   },
   {
     "cmd": [
@@ -112,7 +68,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/None",
+      "/dev/sdv",
       "[CLEANUP]/snapshot/cache1"
     ],
     "env": {
@@ -139,7 +95,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/None",
+      "/dev/sdu",
       "/snapshot_mounts/cache2"
     ],
     "env": {
@@ -152,7 +108,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/None"
+      "/dev/sdv"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -164,7 +120,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/None"
+      "/dev/sdu"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

@@ -957,6 +957,27 @@
     "cmd": [
       "gcloud",
       "compute",
+      "instances",
+      "detach-disk",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "source cache update.source cache (2).setup source cache disk.create disk from snapshot image.detach disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr]@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
       "disks",
       "delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
@@ -1003,34 +1024,6 @@
   },
   {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "attach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
-      "--device-name=cr",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "source cache update.source cache (2).attach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.source cache (2).look up device name to device id map (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "vpython",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -1056,7 +1049,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/None",
+      "/dev/sdt",
       "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
@@ -1225,7 +1218,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/None"
+      "/dev/sdt"
     ],
     "env": {
       "VIRTUAL_ENV": "1"

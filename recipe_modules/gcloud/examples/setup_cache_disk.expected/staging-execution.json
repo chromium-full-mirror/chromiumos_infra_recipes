@@ -1499,46 +1499,6 @@
   },
   {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "attach-disk",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
-      "--device-name=crosstabilize",
-      "--zone=us-central1-b",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "source cache (4).attach disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache (4).look up device name to device id map (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "mkdir",
       "-p",
       "/snapshot_mounts/chromiumos-stabilize-rust-13836-b"
@@ -1570,7 +1530,7 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/None",
+      "/dev/sdx",
       "/snapshot_mounts/chromiumos-stabilize-rust-13836-b"
     ],
     "env": {
@@ -1602,7 +1562,7 @@
       "UUID",
       "-o",
       "value",
-      "/dev/None"
+      "/dev/sdx"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -1647,7 +1607,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "source cache (4).update fstab for /dev/None",
+    "name": "source cache (4).update fstab for /dev/sdx",
     "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos-stabilize-rust-13836-b ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
