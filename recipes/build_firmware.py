@@ -9,17 +9,24 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 DEPS = [
+    'depot_tools/gitiles',
     'recipe_engine/buildbucket',
     'recipe_engine/file',
+    'recipe_engine/json',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'cros_source',
     'easy',
     'src_state',
     'test_util',
 ]
+
+import xml.etree.ElementTree as ET
 
 from google.protobuf.json_format import MessageToDict
 from recipe_engine import post_process
@@ -30,6 +37,20 @@ from PB.chromite.api.firmware import (BuildAllFirmwareRequest,
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
 PROPERTIES = BuildFirmwareProperties
+
+TEST_MANIFEST = """<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <include name="_remotes.xml" />
+  <default revision="refs/heads/main"
+           remote="cros"
+           sync-j="8" />
+  <project path="src/platform/ti50/common"
+           remote="cros-internal"
+           name="ti50/common/ti50"
+           revision="123"
+           groups="firmware" />
+</manifest>
+"""
 
 
 def RunSteps(api, properties):
@@ -55,9 +76,10 @@ def RunSteps(api, properties):
     if binary_sizes:
       api.easy.set_properties_step(binary_sizes=binary_sizes,
                                    step_name='output binary sizes')
-    snapshot_sha = api.src_state.gitiles_commit.id
-    api.easy.set_properties_step(got_revision=snapshot_sha,
-                                 step_name='output got_revision')
+    if properties.set_got_revision:
+      with api.step.nest('set got_revision'):
+        api.easy.set_properties_step(
+            got_revision=_get_ti50_commit(api), step_name='output got_revision')
 
     service.TestAllFirmware(
         TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
@@ -104,6 +126,19 @@ def _read_chromiumos_sdk_pin(api, properties):
           properties.chromiumos_sdk_pin_file)
       return api.file.read_text('read {}'.format(filepath), filepath).strip()
   return None
+
+
+def _get_ti50_commit(api):
+  '''
+  Get the ti50 commit that we're at in the current snapshot.
+
+  We need to use the commit for this repository for the binary-size plugin.
+  See b/200577083 for context.
+  '''
+  manifest_contents = api.cros_source.pinned_manifest
+  root = ET.fromstring(manifest_contents)
+  return root.findall(
+      './/project[@path="src/platform/ti50/common"]')[0].attrib['revision']
 
 
 def _invoke_signing_for_current_build(builder_name, uploaded_artifacts,
@@ -153,13 +188,27 @@ def GenTests(api):
     build = api.test_util.test_child_build(None, **kwargs).build
     return api.test(name, build, *args)
 
-  yield test('postsubmit',)
+  yield test(
+      'postsubmit',
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)))
 
-  yield test('cq', cq=True, builder='fw-ec-cq')
+  yield test(
+      'cq',
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
+      cq=True,
+      builder='fw-ec-cq',
+  )
 
   sdk_pin_path = 'src/platform/ti50/sdk-version'
   yield test(
-      'firmware-ti50-cq',
+      'firmware-ti50-cq', api.properties(set_got_revision=True),
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
       api.step_data(
           'read chromiumos-sdk pin.read [CLEANUP]/chromiumos_workspace/{}'
           .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
@@ -170,6 +219,9 @@ def GenTests(api):
 
   yield test(
       'upload_fail',
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
       api.cros_build_api.set_api_return(
           'try to upload artifacts.upload artifacts',
           'FirmwareService/BundleFirmwareArtifacts', retcode=1),
@@ -177,6 +229,9 @@ def GenTests(api):
 
   yield test(
       'working_upload_fail',
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1), api.post_check(post_process.StatusAnyFailure),
@@ -184,7 +239,11 @@ def GenTests(api):
       input_properties=(dict(firmware_location=1, working_artifacts=True)))
 
   yield test(
-      'signing_invocation', api.post_check(post_process.StatusSuccess),
+      'signing_invocation',
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
+      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'schedule signing build'),
       builder='fw-ec-postsubmit', input_properties=(dict(
           firmware_location=1,
@@ -193,7 +252,11 @@ def GenTests(api):
       )))
 
   yield test(
-      'staging_signing_invocation', api.post_check(post_process.StatusSuccess),
+      'staging_signing_invocation',
+      api.override_step_data(
+          'sync to gitiles commit.fetch staging-snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
+      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'schedule signing build'),
       builder='fw-ec-postsubmit', bucket='staging', input_properties=(dict(
           firmware_location=1,
@@ -202,6 +265,12 @@ def GenTests(api):
               is_staging=True),
       )))
 
-  yield test('output_binary_sizes', api.post_check(post_process.StatusSuccess),
-             api.post_check(post_process.MustRun, 'output binary sizes'),
-             api.post_check(post_process.MustRun, 'output got_revision'))
+  yield test(
+      'output_binary_sizes', api.properties(set_got_revision=True),
+      api.override_step_data(
+          'sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml',
+          api.gitiles.make_encoded_file(TEST_MANIFEST)),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'output binary sizes'),
+      api.post_check(post_process.MustRun,
+                     'set got_revision.output got_revision'))
