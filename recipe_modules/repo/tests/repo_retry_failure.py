@@ -45,3 +45,8 @@ def GenTests(api):
   yield api.test('repo_retry_failure_dirty', attempt_retry_repo(api, 1),
                  attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
                  api.repo.repo_current_state(RepoState.STATE_DIRTY))
+
+  yield api.test(
+      'repo self_update failure',
+      api.step_data('ensure synced checkout.repo binary update.repo selfupdate',
+                    retcode=1))

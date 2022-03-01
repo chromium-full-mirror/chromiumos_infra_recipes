@@ -890,6 +890,15 @@ class RepoApi(recipe_api.RecipeApi):
       self.version()
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']
-        self._step(cmd, ok_ret={0})
+        try:
+          self._step(cmd, ok_ret={0})
+        except recipe_api.StepFailure:
+          # TODO(b/221862521): Remove this when bug is resolved.
+          # `repo selfupdate` is known to be broken.
+          # It succeeds in updating repo, but fails to re-exec itself.
+          # Subsequent calls to `repo selfupdate` in a build will pass
+          # because `repo` will show the most up-to-date version, so the call
+          # will noop and thus avoid the broken codepath.
+          self._step(cmd, ok_ret={0})
       self.version()
       self._binary_updated = True
