@@ -24,6 +24,10 @@ class MatchDutException(Exception):
 
 
 class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
+  """
+  Holds metadata specific to one specific test.
+  Passable to DutInterface that requires info from this class to provision, run tests etc.
+  """
 
   def __init__(self, interface, test_id, test, image_storage_server=''):
     """Specific constructor for Phosphorus subclass of DUTTestMetadata
@@ -32,6 +36,7 @@ class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
     * interface (PhosphorusInterface):
     * test_id (str): The id for a specific test
     * test (skylab_test_runner.Request.Test): The actual test request.
+    * image_storage_server (str): Image storage server info.
     """
     super(PhosphorusTestMetadata,
           self).__init__(test_id=test_id, test=test,

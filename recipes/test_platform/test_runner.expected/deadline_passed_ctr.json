@@ -1,0 +1,282 @@
+[
+  {
+    "cmd": [],
+    "name": "inputs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@{@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"testSuites\": [@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"name\": \"suite1\", @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"testCaseIds\": {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@        \"testCaseIds\": [@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@            \"value\": \"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@          }, @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@            \"value\": \"tast.example.Fail\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@          }, @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@            \"value\": \"tast.example.Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@          }@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@        ]@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      }@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    }@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  ], @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"parentBuildId\": \"12345\", @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"deadline\": \"2045-02-02T23:58:20Z\", @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"primaryDut\": {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    \"dutModel\": {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"buildTarget\": \"kevin\", @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"modelName\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    }, @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    \"containerMetadataKey\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  }@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@}@@@",
+      "@@@STEP_LOG_END@cft_mvp_test_request@@@",
+      "@@@STEP_LOG_LINE@container_metadata@{@@@",
+      "@@@STEP_LOG_LINE@container_metadata@  \"containers\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@    \"test-target\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@      \"images\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@        \"cros-test\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"name\": \"cros-test\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"repository\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"project\": \"chromeos-bot\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"hostname\": \"gcr.io\"@@@",
+      "@@@STEP_LOG_LINE@container_metadata@          }, @@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"8835841547076258945\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"amd64-generic-release.R96-1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@container_metadata@          ]@@@",
+      "@@@STEP_LOG_LINE@container_metadata@        }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@      }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@    }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@  }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@}@@@",
+      "@@@STEP_LOG_END@container_metadata@@@",
+      "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation"
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.cft_mvp_test_request validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.primary_dut validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.container_metadata_key validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.test_suites validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"testId\": \"original_test\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"model\": \"fake_model\", @@@",
+      "@@@STEP_LOG_LINE@response@      \"hostname\": \"fake_host\", @@@",
+      "@@@STEP_LOG_LINE@response@      \"board\": \"fake_board\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/phosphorus",
+      "-ensure-file",
+      "chromiumos/infra/phosphorus/${platform} phosphorus_prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "env": {
+      "USE_DUT_TOPO": "False"
+    },
+    "infra_step": true,
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-phosphorus_prod-\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "load",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "env": {
+      "USE_DUT_TOPO": "False"
+    },
+    "infra_step": true,
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.load",
+    "stdin": "{\n  \"testId\": \"original_test\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "save",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
+    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"fake_host\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.DUTInterface: check request deadline",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test results.provision of dut",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "prejob failed"
+    },
+    "name": "$result"
+  }
+]

@@ -155,7 +155,7 @@ class DUTResult(object):  # pragma: no cover
 
   @abstractmethod
   def update_log_urls(self, metadata):
-    """Update te result to contain the up-to-date log urls in metadata.
+    """Update the result to contain the up-to-date log urls in metadata.
 
     Args:
     * metadata (dut_interface.DUTTestMetadata): Unique information for a
@@ -188,8 +188,8 @@ class DUTResult(object):  # pragma: no cover
     pass
 
   @abstractmethod
-  def get_autotest_results(self):
-    """Retrieves the autotest results in the form of (id, result).
+  def get_test_results(self):
+    """Retrieves the test results in the form of (id, result).
 
     Returns: Iterable[(str, Result.Autotest)]
     """

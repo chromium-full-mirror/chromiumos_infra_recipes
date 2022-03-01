@@ -1,0 +1,86 @@
+[
+  {
+    "cmd": [],
+    "name": "inputs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@{@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"parentBuildId\": \"12345\", @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"primaryDut\": {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    \"dutModel\": {@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"buildTarget\": \"kevin\", @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"modelName\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    }, @@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@    \"containerMetadataKey\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@  }@@@",
+      "@@@STEP_LOG_LINE@cft_mvp_test_request@}@@@",
+      "@@@STEP_LOG_END@cft_mvp_test_request@@@",
+      "@@@STEP_LOG_LINE@container_metadata@{@@@",
+      "@@@STEP_LOG_LINE@container_metadata@  \"containers\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@    \"test-target\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@      \"images\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@        \"cros-test\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"name\": \"cros-test\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"repository\": {@@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"project\": \"chromeos-bot\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"hostname\": \"gcr.io\"@@@",
+      "@@@STEP_LOG_LINE@container_metadata@          }, @@@",
+      "@@@STEP_LOG_LINE@container_metadata@          \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"8835841547076258945\", @@@",
+      "@@@STEP_LOG_LINE@container_metadata@            \"amd64-generic-release.R96-1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@container_metadata@          ]@@@",
+      "@@@STEP_LOG_LINE@container_metadata@        }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@      }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@    }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@  }@@@",
+      "@@@STEP_LOG_LINE@container_metadata@}@@@",
+      "@@@STEP_LOG_END@container_metadata@@@",
+      "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.cft_mvp_test_request validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.primary_dut validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.container_metadata_key validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.test_suites validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@summary@test_suites is missing@@@",
+      "@@@STEP_LOG_END@summary@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "test_suites is missing"
+    },
+    "name": "$result"
+  }
+]

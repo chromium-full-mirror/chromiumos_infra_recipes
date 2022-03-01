@@ -14,6 +14,11 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus \
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusEnvProperties
 from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
+    import CrosToolRunnerProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner\
+    import CrosToolRunnerEnvProperties
+from PB.chromiumos.build.api import container_metadata
 
 PROPERTIES = TestRunnerProperties
 
@@ -21,46 +26,102 @@ PROPERTIES = TestRunnerProperties
 def RunSteps(api, properties):
   api.dut_interface.create(api, properties)
 
-
 def GenTests(api):
 
-  def _misc_properties():
+  def mock_metadata(target="test-target"):
+    metadata = container_metadata.ContainerMetadata(
+        containers={
+            target:
+                container_metadata.ContainerImageMap(
+                    images={
+                        'cros-test':
+                            container_metadata.ContainerImageInfo(
+                                repository=container_metadata.GcrRepository(
+                                    hostname='gcr.io',
+                                    project='chromeos-bot',
+                                ),
+                                name='cros-test',
+                                digest='sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80',
+                                tags=[
+                                    '8835841547076258945',
+                                    'amd64-generic-release.R96-1.2.3',
+                                ],
+                            ),
+                    }),
+        })
+    return metadata
+
+  def _get_test_runner_properties(cft_mvp_is_enabled=False):
+    return TestRunnerProperties(
+        config={
+            'lab': {
+                'admin_service': 'foo-service',
+                'cros_inventory_service': 'inv-service',
+                'cros_ufs_service': 'ufs-service'
+            },
+            'harness': {
+                'autotest_dir': '/path/to/autotest',
+                'prejob_deadline_seconds': 60 * 60,
+            },
+            'output': {
+                'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
+            },
+            'result_flow_pubsub': {
+                'project': 'foo-proj',
+                'topic': 'foo-topic',
+            },
+        }, cft_mvp_is_enabled=cft_mvp_is_enabled)
+
+  def _misc_properties_for_ctr():
     return (api.properties(
-        TestRunnerProperties(
-            config={
-                'lab': {
-                    'admin_service': 'foo-service',
-                    'cros_inventory_service': 'inv-service',
-                    'cros_ufs_service': 'ufs-service'
-                },
-                'harness': {
-                    'autotest_dir': '/path/to/autotest',
-                    'prejob_deadline_seconds': 60 * 60,
-                },
-                'output': {
-                    'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
-                },
-                'result_flow_pubsub': {
-                    'project': 'foo-proj',
-                    'topic': 'foo-topic',
-                },
-            }), **{
-                '$chromeos/phosphorus':
-                    PhosphorusProperties(
-                        version=PhosphorusProperties.Version(
-                            cipd_label='phosphorus_prod'), config={
-                                'admin_service': 'foo-service',
-                                'cros_inventory_service': 'inv-service',
-                                'cros_ufs_service': 'ufs-service',
-                                'autotest_dir': '/path/to/autotest',
-                            })
-            }) +  #
+        _get_test_runner_properties(cft_mvp_is_enabled=True), **{
+            '$chromeos/phosphorus':
+                PhosphorusProperties(
+                    version=PhosphorusProperties.Version(
+                        cipd_label='phosphorus_prod'), config={
+                            'admin_service': 'foo-service',
+                            'cros_inventory_service': 'inv-service',
+                            'cros_ufs_service': 'ufs-service',
+                            'autotest_dir': '/path/to/autotest',
+                        }),
+            '$chromeos/cros_tool_runner':
+                CrosToolRunnerProperties(
+                    version=CrosToolRunnerProperties.Version(
+                        cipd_label='cros_tool_runner_prod'),
+                    container_metadata=mock_metadata())
+        }) + api.properties.environ(
+            PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                    SWARMING_TASK_ID='dummy-task-id',
+                                    SKYLAB_DUT_ID='dummy-dut-id')) +
+            api.properties.environ(
+                CrosToolRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                            SWARMING_TASK_ID='dummy-task-id',
+                                            SKYLAB_DUT_ID='dummy-dut-id')))
+
+  def _misc_properties_for_phosphorus():
+    return (api.properties(
+        _get_test_runner_properties(), **{
+            '$chromeos/phosphorus':
+                PhosphorusProperties(
+                    version=PhosphorusProperties.Version(
+                        cipd_label='phosphorus_prod'), config={
+                            'admin_service': 'foo-service',
+                            'cros_inventory_service': 'inv-service',
+                            'cros_ufs_service': 'ufs-service',
+                            'autotest_dir': '/path/to/autotest',
+                        })
+        }) +  #
             api.properties.environ(
                 PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                         SWARMING_TASK_ID='dummy-task-id',
                                         SKYLAB_DUT_ID='dummy-dut-id')))
 
   yield api.test(
-      'basic',
-      _misc_properties(),
+      'basic_phosphorus',
+      _misc_properties_for_phosphorus(),
+  )
+
+  yield api.test(
+      'basic_ctr',
+      _misc_properties_for_ctr(),
   )

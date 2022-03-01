@@ -42,9 +42,6 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     self._dut_id = env_vars.SKYLAB_DUT_ID
     self._run_id = env_vars.SWARMING_TASK_ID
     self._local_state_results_dir = ''
-    if not self._version:  # pragma: no cover
-      raise ValueError('No version label provided for '
-                       'phosphorus CIPD package.')
 
   def _run(self, subcommand, request, request_type, response_type=None,
            send_response=False):
@@ -155,6 +152,9 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     """Ensure the phosphorus CLI is installed."""
     if self._cmd:
       return
+    if not self._version:  # pragma: no cover
+      raise ValueError('No version label provided for '
+                       'phosphorus CIPD package.')
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure phosphorus'):

@@ -12,12 +12,20 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus\
   import PhosphorusEnvProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
+  import CrosToolRunnerProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner\
+  import CrosToolRunnerEnvProperties
 from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
 from PB.test_platform import phosphorus
 from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform import skylab_local_state
 from PB.test_platform.skylab_test_runner.result import Result
 from PB.test_platform.skylab_test_runner.request import Request
+from PB.chromiumos.test import api as ctr_api
+from PB.chromiumos.test.lab import api as lab_api
+from PB.chromiumos.storage_path import StoragePath
+from PB.chromiumos.build.api import container_metadata
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -47,6 +55,7 @@ DEPS = [
     'cros_resultdb',
     'cros_tags',
     'cros_test_runner',
+    'cros_tool_runner',
     'cts_results_archive',
     'dut_interface',
     'phosphorus',
@@ -56,6 +65,7 @@ DEPS = [
 PROPERTIES = TestRunnerProperties
 _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
+_DUT_STATE_READY = 'ready'
 _24_HOURS = 24 * 60 * 60
 
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
@@ -86,7 +96,8 @@ def s_link(step, name, link):
     step.links[name] = link
 
 
-def _set_step_status(api, step_name, summary, failure_condition=True):
+def _set_step_status(api, step_name, summary, failure_condition=True,
+                     fail_build=False):
   """Sets a status for an individual step.
 
   Args:
@@ -94,23 +105,43 @@ def _set_step_status(api, step_name, summary, failure_condition=True):
   * step_name (str): The name of the new step
   * summary (str): Information for the log.
   * failure_condition (bool): What constitutes a failure in this step.
+  * fail_build (bool): If true then will fail build if failure_condition is true.
   """
   with api.step.nest(step_name) as step:
+    log = None
     if failure_condition:
       step.presentation.status = api.step.FAILURE
-    s_log(step=step, name='summary', log=summary)
+      log = summary
+    s_log(step=step, name='summary', log=log)
+    if fail_build and failure_condition:
+      raise api.step.StepFailure(log or '')
+
+
+def _validate_proto_field(api, proto_object, field_name, fail_build):
+  """Validates if field_name exists inside proto_object.
+
+    Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * proto_object (proto): Proto object to validate.
+    * field_name (str): The name of the field to validate.
+    * fail_build (bool): If true then will fail build on validation failure.
+    """
+  _set_step_status(api=api, step_name='{} validation'.format(field_name),
+                   summary='{} field is missing'.format(field_name),
+                   failure_condition=not proto_object.HasField(field_name),
+                   fail_build=fail_build)
 
 
 def validate_request(api, test):
   """Validate the TestRunnerProperties.
 
-  Args:
-  * api (RecipeScriptApi): Ubiquitous recipe api.
-  * test (Request.Test): Test instance.
+    Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * test (Request.Test): Test instance.
 
-  Raises:
-    * StepFailure if there are invalid properties.
-  """
+    Raises:
+      * StepFailure if there are invalid properties.
+    """
   with api.step.nest('validate request'):
     if not test.autotest.name:
       raise StepFailure("Test name must be specified")
@@ -119,16 +150,16 @@ def validate_request(api, test):
 def archive_all_logs(api, interface, test_metadata, result):
   """Archive all test logs to Google Storage, updating result in the process.
 
-  Args:
-  * api (RecipeScriptApi): Ubiquitous recipe api.
-  * interface (DUTInterface): The interface to run commands on the DUT.
-  * test_metadata (DUTTestMetadata): All metadata needed for the interface
-  apposite a test.
-  * result (DUTResult): The results of the test.
+    Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * interface (DUTInterface): The interface to run commands on the DUT.
+    * test_metadata (DUTTestMetadata): All metadata needed for the interface
+    apposite a test.
+    * result (DUTResult): The results of the test.
 
-  Raises:
-    * InfraFailure if binary call fails.
-  """
+    Raises:
+      * InfraFailure if binary call fails.
+    """
   with api.context(infra_steps=True):
     with api.step.nest('archive all test logs to Google Storage'):
       interface.upload_to_google_storage(test_metadata)
@@ -136,13 +167,13 @@ def archive_all_logs(api, interface, test_metadata, result):
         result.update_log_urls(test_metadata)
 
 
-def summarize_results(api, result):
+def summarize_results_from_phosphorus_results(api, result):
   """Display test cases (and failures) as recipe substeps through the api.
 
-  Args:
-    * api (RecipeScriptApi): Ubiquitous recipe api.
-    * result (DUTResult): The result of all tests.
-  """
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * result (DUTResult): The result of all tests.
+    """
   with api.step.nest('test results') as step:
     if result.get_stainless_log_url():
       s_link(step=step, name='Autotest logs',
@@ -152,7 +183,7 @@ def summarize_results(api, result):
       _set_step_status(
           api=api, step_name=prejob.name, summary=prejob.human_readable_summary,
           failure_condition=prejob.verdict != Result.Prejob.Step.VERDICT_PASS)
-    for test_id, autotest_result in result.get_autotest_results():
+    for test_id, autotest_result in result.get_test_results():
       with api.step.nest(test_id):
         for test_case in autotest_result.test_cases:
           _set_step_status(
@@ -180,23 +211,23 @@ def summarize_results(api, result):
 def set_output_properties(api, result):
   """Set the output properties that are part of the test_runner API.
 
-  Args:
-  * api (RecipeScriptApi): Ubiquitous recipe api.
-  * result (DUTResult): Test results.
-  """
+    Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * result (DUTResult): Test results.
+    """
   with api.context(infra_steps=True):
     with api.step.nest('set output properties') as step:
       step.properties['compressed_result'] = result.serialize()
 
 
-def _collect_tests(request):
+def _collect_tests_for_phosphorus(request):
   """Collects tests from Request into one dictionary
 
-  Args:
-  * request (Request): skylab_test_runner request instance.
+    Args:
+    * request (Request): skylab_test_runner request instance.
 
-  Returns: dictionary of skylab_test_runner.Request.Test instances
-  """
+    Returns: dictionary of skylab_test_runner.Request.Test instances
+    """
   tests = {i: t for (i, t) in request.tests.items()}
   if request.HasField('test'):
     tests[_DUMMY_TEST_ID] = request.test
@@ -206,13 +237,13 @@ def _collect_tests(request):
 def _generate_resultdb_variant_def(api, request):
   """Generate the variant defintions for the test results.
 
-  Args:
-    api (RecipeScriptApi): Ubiquitous recipe api.
-    request (Request): The test Request that the results belong to.
+    Args:
+      api (RecipeScriptApi): Ubiquitous recipe api.
+      request (Request): The test Request that the results belong to.
 
-  Returns:
-    base_variant (dict): Variant attributes for the test results.
-  """
+    Returns:
+      base_variant (dict): Variant attributes for the test results.
+    """
   base_variant = {}
 
   board = api.cros_tags.get_values('label-board')
@@ -238,11 +269,11 @@ def _generate_resultdb_variant_def(api, request):
 def _upload_missing_tast_results(api, base_dir, base_variant):
   """Upload test results for missing Tast test cases to ResultDB.
 
-  Args:
-    base_dir (string): The path of the base test results on the drone server.
-    base_variant (dict): Variant key-value pairs to attach to the test
-          results.
-  """
+    Args:
+      base_dir (string): The path of the base test results on the drone server.
+      base_variant (dict): Variant key-value pairs to attach to the test
+            results.
+    """
   keyval_file = os.path.join(base_dir, 'autoserv_test', 'keyval')
   try:
     content = api.file.read_text('read keyval file', keyval_file,
@@ -260,14 +291,14 @@ def _upload_missing_tast_results(api, base_dir, base_variant):
 def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
-  Args:
-    api (RecipeScriptApi): Ubiquitous recipe api.
-    result (DUTResult): The results of the test.
-    properties (TestRunnerProperties): Recipe input properties.
-    interface (DUTInterface): The interface to run commands on the DUT.
-    test_metadata (DUTTestMetadata): All metadata needed for the interface
-        apposite a test.
-  """
+    Args:
+      api (RecipeScriptApi): Ubiquitous recipe api.
+      result (DUTResult): The results of the test.
+      properties (TestRunnerProperties): Recipe input properties.
+      interface (DUTInterface): The interface to run commands on the DUT.
+      test_metadata (DUTTestMetadata): All metadata needed for the interface
+          apposite a test.
+    """
   if not api.resultdb.enabled:
     return
 
@@ -313,9 +344,10 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       [api.cros_resultdb.current_invocation_id],
       properties.request.default_test_execution_behavior)
 
-def _execution_steps_for_test(api, properties, interface, test_metadata,
-                              max_duration_sec, dut_state,
-                              container_image_info):
+
+def _execution_steps_for_test_with_phosphorus(api, properties, interface,
+                                              test_metadata, max_duration_sec,
+                                              dut_state, container_image_info):
   """Execute all the required steps for a single test.
 
   Run the following steps required for a test:
@@ -381,21 +413,22 @@ def _execution_steps_for_test(api, properties, interface, test_metadata,
 
     interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
-    publish_to_result_flow(api, properties.config, properties.request,
+    publish_to_result_flow(api, properties.config,
+                           properties.request.parent_request_uid,
                            should_poll_for_completion=True)
   set_output_properties(api, result=result)
 
   return result
 
 
-def publish_to_result_flow(api, config, request,
+def publish_to_result_flow(api, config, parent_request_uid,
                            should_poll_for_completion=False):
   """Publish build info to result_flow PubSub.
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * config (Config): Input test Config.
-  * request (Request): Input test request.
+  * parent_request_uid (string): The UID of the individual CTP request which kicked off this test run.
   * should_poll_for_completion (bool): If True, the consumers should not ACK
                                        the message until the build is complete.
   """
@@ -414,10 +447,10 @@ def publish_to_result_flow(api, config, request,
           project_id=config.result_flow_pubsub.project,
           topic_id=config.result_flow_pubsub.topic, build_type='test_runner',
           should_poll_for_completion=should_poll_for_completion,
-          parent_uid=request.parent_request_uid)
+          parent_uid=parent_request_uid)
 
 
-def execution_steps(api, properties):
+def execution_steps_with_phosphorus(api, properties):
   """Runs all the non-UI-related steps.
 
   Runs all tests specified in properties, saving relevant data, and returning
@@ -433,7 +466,7 @@ def execution_steps(api, properties):
   * InfraFailure.
   """
   interface = api.dut_interface.create(api, properties)
-  tests = _collect_tests(properties.request)
+  tests = _collect_tests_for_phosphorus(properties.request)
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
@@ -447,7 +480,8 @@ def execution_steps(api, properties):
               build_id=properties.request.parent_build_id))
 
   with api.step.nest('execution steps') as step:
-    publish_to_result_flow(api, properties.config, properties.request)
+    publish_to_result_flow(api, properties.config,
+                           properties.request.parent_request_uid)
 
     for test_id, test in tests.items():
       with api.step.nest(test_id):
@@ -462,7 +496,7 @@ def execution_steps(api, properties):
             properties.config.harness.prejob_deadline_seconds or _24_HOURS)
 
         if interface.is_within_deadline():
-          result = _execution_steps_for_test(
+          result = _execution_steps_for_test_with_phosphorus(
               api=api,
               properties=properties,
               interface=interface,
@@ -486,6 +520,151 @@ def execution_steps(api, properties):
 
   return global_result
 
+  ###################### CTR related functions ###################################
+
+
+def execution_steps_with_ctr(api, properties):
+  """Runs all the non-UI-related steps using ctr.
+
+  Runs all tests specified in properties, saving relevant data, and returning
+  the overall results.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * properties (TestRunnerProperties): recipe input properties.
+
+  Returns: DUTResult: The result for all tests run in this run.
+
+  Raises:
+  * InfraFailure.
+  """
+  interface = api.dut_interface.create(api, properties)
+  global_result = interface.build_empty_result()
+
+  with api.step.nest('inputs') as step:
+    s_log(step, 'cft_mvp_test_request',
+          json_format.MessageToJson(properties.cft_mvp_test_request))
+    s_log(step, 'container_metadata',
+          json_format.MessageToJson(api.cros_tool_runner.container_metadata))
+    if properties.cft_mvp_test_request.parent_build_id:
+      s_link(
+          step=step, name='parent CTP', link=api.buildbucket.build_url(
+              build_id=properties.cft_mvp_test_request.parent_build_id))
+
+  with api.step.nest('inputs validation') as step:
+    _validate_inputs_for_ctr(api, properties)
+
+  with api.step.nest('execution steps') as step:
+    publish_to_result_flow(api, properties.config,
+                           properties.cft_mvp_test_request.parent_request_uid)
+    test_metadata = interface.build_test_metadata("original_test", "")
+
+    interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata)
+
+    dut_state = _DUT_STATE_NEEDS_REPAIR
+    max_duration_sec = (
+        properties.config.harness.prejob_deadline_seconds or _24_HOURS)
+
+    if interface.is_within_deadline():
+      result = _execution_steps_for_test_with_ctr(
+          api=api, properties=properties, interface=interface,
+          test_metadata=test_metadata, max_duration_sec=max_duration_sec,
+          dut_state=dut_state, container_image_info=None)
+      global_result.add_result("original_test", result)
+    else:
+      prejob_response = interface.build_aborted_prejob_response(test_metadata)
+      result = interface.parse_test_results(test_metadata)
+      result.add_prejob_response(prejob_response)
+      global_result.add_result("original_test", result)
+
+  return global_result
+
+
+def _execution_steps_for_test_with_ctr(api, properties, interface,
+                                       test_metadata, max_duration_sec,
+                                       dut_state, container_image_info):
+  """Execute all the required steps for a single test using ctr.
+
+  Run the following steps required for a test:
+      * Run provision (prepare machine)
+      * Run test
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * properties (TestRunnerProperties): recipe input properties.
+  * interface (DUTInterface): The interface to run commands on the DUT.
+  * test_metadata (DUTTestMetadata): All metadata needed for the interface
+  apposite a test.
+  * max_duration_sec (int): Maximum amount of time the job should run.
+  * dut_state (str): The current state of the DUT.
+  * container_image_info (ContainerImageInfo): If set, info on a Docker
+  container for use by the DUTInterface.
+
+  Returns: DUTResult: a constructed result for this test.
+
+  Raises:
+  * InfraFailure.
+  """
+  result = None
+  run_test_response = None
+
+  try:
+    prejob_response = interface.submit_pre_job(test_metadata, max_duration_sec)
+    if not prejob_response.any_provision_failed:
+      run_test_response = interface.run_test(test_metadata,
+                                             container_image_info)
+      dut_state = _DUT_STATE_READY
+
+    result = interface.parse_test_results(test_metadata)
+    result.add_prejob_response(prejob_response)
+    result.add_test_response(run_test_response)
+  finally:
+    interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+
+    publish_to_result_flow(api, properties.config,
+                           properties.cft_mvp_test_request.parent_request_uid,
+                           should_poll_for_completion=True)
+
+  return result
+
+
+def summarize_results_from_ctr_results(api, result):
+  """Display test cases (and failures) as recipe substeps through the api.
+
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * result (DUTResult): The result of all tests.
+    """
+  with api.step.nest('test results'):
+    for prejob in result.get_prejob_steps():
+      _set_step_status(api=api, step_name="provision of " + prejob.test_id,
+                       summary="", failure_condition=prejob.is_failure())
+    for test_result in result.get_test_results():
+      _set_step_status(api=api, step_name=test_result.test_id, summary="",
+                       failure_condition=test_result.is_failure())
+
+
+def _validate_inputs_for_ctr(api, properties):
+  """Validate inputs for CTR.
+
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * properties (TestRunnerProperties): recipe input properties.
+    """
+  _validate_proto_field(api, properties, 'cft_mvp_test_request', True)
+  _validate_proto_field(api, properties.cft_mvp_test_request, 'primary_dut',
+                        True)
+  _set_step_status(
+      api=api, step_name='container_metadata_key validation',
+      summary='container_metadata_key is missing',
+      failure_condition=not properties.cft_mvp_test_request.primary_dut
+      .container_metadata_key, fail_build=True)
+  _set_step_status(
+      api=api, step_name='test_suites validation',
+      summary='test_suites is missing',
+      failure_condition=not properties.cft_mvp_test_request.test_suites,
+      fail_build=True)
+
 
 def RunSteps(api, properties):
   if api.cros_test_runner.is_enabled():  # pragma: nocover
@@ -493,9 +672,12 @@ def RunSteps(api, properties):
     # than the normal test_runner workflow.
     api.cros_test_runner.execute_luciexe()
     return
-  result = execution_steps(api, properties)
-
-  summarize_results(api, result)
+  if properties.cft_mvp_is_enabled:
+    result = execution_steps_with_ctr(api, properties)
+    summarize_results_from_ctr_results(api, result)
+  else:
+    result = execution_steps_with_phosphorus(api, properties)
+    summarize_results_from_phosphorus_results(api, result)
 
   if result.has_any_failures():
     with api.step.nest('build status'):
@@ -507,8 +689,6 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  _gs_root = "gs://bucket/foo/bar"
-  _sync_subdir = "synchronous_subdir"
 
   def _set_build(bid, tags=None, experiments=None):
     # tags is a dict, convert that into [StringPair].
@@ -547,37 +727,72 @@ tast_missing_test.3=bar.YetAnotherTest
     """))
 
   # Required for initial module set up.
-  def _misc_properties():
+  def _misc_properties(cft_mvp_is_enabled=False):
+    if cft_mvp_is_enabled:
+      return _misc_properties_for_ctr()
+    else:
+      return _misc_properties_for_phosphorus()
+
+  def _misc_properties_for_ctr():
     return (api.properties(
-        TestRunnerProperties(
-            config={
-                'lab': {
-                    'admin_service': 'foo-service',
-                    'cros_inventory_service': 'inv-service',
-                    'cros_ufs_service': 'ufs-service'
-                },
-                'harness': {
-                    'autotest_dir': '/path/to/autotest',
-                    'prejob_deadline_seconds': 60 * 60,
-                },
-                'output': {
-                    'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
-                },
-                'result_flow_pubsub': {
-                    'project': 'foo-proj',
-                    'topic': 'foo-topic',
-                },
-            }), **{
-                '$chromeos/phosphorus':
-                    PhosphorusProperties(
-                        version=PhosphorusProperties.Version(
-                            cipd_label='phosphorus_prod'), config={
-                                'admin_service': 'foo-service',
-                                'cros_inventory_service': 'inv-service',
-                                'cros_ufs_service': 'ufs-service',
-                                'autotest_dir': '/path/to/autotest',
-                            })
-            }) +  #
+        _get_test_runner_properties(), **{
+            '$chromeos/phosphorus':
+                PhosphorusProperties(
+                    version=PhosphorusProperties.Version(
+                        cipd_label='phosphorus_prod'), config={
+                            'admin_service': 'foo-service',
+                            'cros_inventory_service': 'inv-service',
+                            'cros_ufs_service': 'ufs-service',
+                            'autotest_dir': '/path/to/autotest',
+                        }),
+            '$chromeos/cros_tool_runner':
+                CrosToolRunnerProperties(
+                    version=CrosToolRunnerProperties.Version(
+                        cipd_label='cros_tool_runner_prod'),
+                    container_metadata=mock_metadata())
+        }) + api.properties.environ(
+            PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                    SWARMING_TASK_ID='dummy-task-id',
+                                    SKYLAB_DUT_ID='dummy-dut-id')) +
+            api.properties.environ(
+                CrosToolRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                            SWARMING_TASK_ID='dummy-task-id',
+                                            SKYLAB_DUT_ID='dummy-dut-id')))
+
+  def _get_test_runner_properties():
+    return TestRunnerProperties(
+        config={
+            'lab': {
+                'admin_service': 'foo-service',
+                'cros_inventory_service': 'inv-service',
+                'cros_ufs_service': 'ufs-service'
+            },
+            'harness': {
+                'autotest_dir': '/path/to/autotest',
+                'prejob_deadline_seconds': 60 * 60,
+            },
+            'output': {
+                'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
+            },
+            'result_flow_pubsub': {
+                'project': 'foo-proj',
+                'topic': 'foo-topic',
+            },
+        })
+
+  def _misc_properties_for_phosphorus():
+    return (api.properties(
+        _get_test_runner_properties(), **{
+            '$chromeos/phosphorus':
+                PhosphorusProperties(
+                    version=PhosphorusProperties.Version(
+                        cipd_label='phosphorus_prod'), config={
+                            'admin_service': 'foo-service',
+                            'cros_inventory_service': 'inv-service',
+                            'cros_ufs_service': 'ufs-service',
+                            'autotest_dir': '/path/to/autotest',
+                        })
+        }) +  #
             api.properties.environ(
                 PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                         SWARMING_TASK_ID='dummy-task-id',
@@ -786,6 +1001,146 @@ tast_missing_test.3=bar.YetAnotherTest
                 phosphorus.upload_to_gs.UploadToGSResponse(
                     gs_url='gs://chromeos-test-logs/common-env/UUID/logs'))))
 
+  ######## CFT MVP Testing related functions ############
+
+  def mock_metadata(target="test-target"):
+    metadata = container_metadata.ContainerMetadata(
+        containers={
+            target:
+                container_metadata.ContainerImageMap(
+                    images={
+                        'cros-test':
+                            container_metadata.ContainerImageInfo(
+                                repository=container_metadata.GcrRepository(
+                                    hostname='gcr.io',
+                                    project='chromeos-bot',
+                                ),
+                                name='cros-test',
+                                digest='sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80',
+                                tags=[
+                                    '8835841547076258945',
+                                    'amd64-generic-release.R96-1.2.3',
+                                ],
+                            ),
+                    }),
+        })
+    return metadata
+
+    # An example request.
+  def _request_properties_for_ctr(cft_mvp_test_request=None):
+    if not cft_mvp_test_request:
+      cft_mvp_test_request = _canned_test_runner_request_for_ctr()
+    return (api.properties(
+        TestRunnerProperties(cft_mvp_is_enabled=True,
+                             cft_mvp_test_request=cft_mvp_test_request)))
+
+  def _canned_test_runner_request_for_ctr():
+    return {
+        "parent_build_id":
+            12345,
+        "primary_dut": {
+            "container_metadata_key": "kevin",
+            "dut_model": {
+                "build_target": "kevin",
+                "model_name": "kevin"
+            }
+        },
+        "test_suites": [{
+            "name": "suite1",
+            "test_case_ids": {
+                "test_case_ids": [{
+                    "value": "tauto.stub_Pass"
+                }, {
+                    "value": "tast.example.Fail"
+                }, {
+                    "value": "tast.example.Pass"
+                }]
+            }
+        }]
+    }
+
+  def _canned_test_runner_request_for_ctr_within_deadline(current_time_sec):
+    req = _canned_test_runner_request_for_ctr()
+    req['deadline'] = timestamp_pb2.Timestamp(seconds=current_time_sec + 55)
+    return req
+
+  def _canned_test_runner_request_for_ctr_passed_deadline(current_time_sec):
+    req = _canned_test_runner_request_for_ctr()
+    req['deadline'] = timestamp_pb2.Timestamp(seconds=current_time_sec - 100)
+    return req
+
+  def _canned_test_runner_request_for_ctr_with_missing_field(
+      missing_field_name):
+    req = _canned_test_runner_request_for_ctr()
+    req[missing_field_name] = None
+    return req
+
+  def _mock_load_step_for_ctr():
+    return (api.step_data(
+        'execution steps.CrosToolRunner: Phosphorus: load skylab local state.call '
+        '`phosphorus`.load', stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                skylab_local_state.load.LoadResponse(
+                    results_dir='dummy-results-dir', dut_topology=[
+                        skylab_local_state.load.Dut(hostname='fake_host',
+                                                    board='fake_board',
+                                                    model='fake_model'),
+                    ])))))
+
+  def _successful_prejob_step_for_ctr():
+    return _provision_step_with_state_for_ctr('success')
+
+  def _failed_prejob_step_for_ctr():
+    return _provision_step_with_state_for_ctr(
+        'failure', failure_reason=ctr_api.provision_service.InstallFailure
+        .Reason.REASON_PROVISIONING_FAILED)
+
+  def _provision_step_with_state_for_ctr(state, failure_reason=None):
+    return (api.step_data(
+        'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
+        stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                ctr_api.cros_tool_runner_cli.CrosToolRunnerProvisionResponse(
+                    responses=[
+                        _provision_resp_with_state_for_ctr(
+                            state=state, failure_reason=failure_reason)
+                    ])))))
+
+  def _provision_resp_with_state_for_ctr(state, failure_reason=None):
+    provision_resp = ctr_api.cros_provision_cli.CrosProvisionResponse(
+        id=lab_api.dut.Dut.Id(value="test_dut_host_name"))
+    data = {state: {}}
+    if state == 'failure' and failure_reason:
+      data['failure']['reason'] = failure_reason
+
+    return json_format.ParseDict(data, provision_resp)
+
+  def _successful_run_test_step_for_ctr():
+    return _run_test_step_with_state_for_ctr('pass')
+
+  def _failed_run_test_step_for_ctr():
+    return _run_test_step_with_state_for_ctr('fail')
+
+  def _run_test_step_with_state_for_ctr(state):
+    return (api.step_data(
+        'execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test',
+        stdout=api.raw_io.output(
+            json_format.MessageToJson(
+                ctr_api.cros_tool_runner_cli.CrosToolRunnerTestResponse(
+                    test_case_results=[
+                        _test_case_result_resp_with_state_for_ctr(state=state)
+                    ])))))
+
+  def _test_case_result_resp_with_state_for_ctr(state):
+    test_case_result = ctr_api.test_case_result.TestCaseResult(
+        test_case_id=ctr_api.test_case.TestCase.Id(value="dummy_id"),
+        result_dir_path=StoragePath(host_type=StoragePath.HostType.LOCAL,
+                                    path="dummy-results-dir/subdir"))
+    data = {state: {}}
+    return json_format.ParseDict(data, test_case_result)
+
+  ########## Test cases #########
+
   yield api.test(
       'test_name_missing',
       _misc_properties(),
@@ -804,7 +1159,6 @@ tast_missing_test.3=bar.YetAnotherTest
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   )
-
 
   yield api.test(
       'no-tast-keyval-file',
@@ -930,13 +1284,6 @@ tast_missing_test.3=bar.YetAnotherTest
           'execution steps.original_test.Phosphorus: run test.call '
           '`phosphorus`.run-test', retcode=1),
   )
-
-  # yield api.test(
-  #     'fetch_crashes_crash', _misc_properties(), _request_properties(),
-  #     _mock_load_step(), _successful_prejob_step(), _successful_run_test_step(),
-  #     api.step_data(
-  #         'execution steps.original_test.fetch crashes.call `phosphorus`.fetch-crashes',
-  #         retcode=1))
 
   yield api.test(
       'upload_to_tko_crash',
@@ -1304,3 +1651,67 @@ tast_missing_test.3=bar.YetAnotherTest
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
   )
+
+  ############ CTR Test Cases ##########
+
+  yield api.test('success_with_ctr', _set_build(bid=42), _misc_properties(True),
+                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+                 _successful_prejob_step_for_ctr(),
+                 _successful_run_test_step_for_ctr())
+
+  yield api.test(
+      'within_deadline_ctr', api.time.seed(2369692800), _misc_properties(True),
+      _request_properties_for_ctr(
+          cft_mvp_test_request=_canned_test_runner_request_for_ctr_within_deadline(
+              current_time_sec=2369692800)), _mock_load_step_for_ctr(),
+      _successful_prejob_step_for_ctr(), _successful_run_test_step_for_ctr())
+
+  yield api.test(
+      'deadline_passed_ctr', api.time.seed(2369692800), _misc_properties(True),
+      _request_properties_for_ctr(
+          cft_mvp_test_request=_canned_test_runner_request_for_ctr_passed_deadline(
+              current_time_sec=2369692800)), _mock_load_step_for_ctr())
+
+  yield api.test(
+      'primary_dut_missing',
+      _misc_properties(True),
+      _request_properties_for_ctr(
+          cft_mvp_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
+              missing_field_name='primary_dut')),
+      api.post_check(post_process.StatusFailure),
+  )
+
+  yield api.test(
+      'test_suites_missing',
+      _misc_properties(True),
+      _request_properties_for_ctr(
+          cft_mvp_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
+              missing_field_name='test_suites')),
+      api.post_check(post_process.StatusFailure),
+  )
+
+  yield api.test(
+      'provision_crash_ctr', _set_build(bid=42), _misc_properties(True),
+      _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+      api.step_data(
+          'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
+          retcode=1), api.post_check(post_process.StatusException))
+
+  yield api.test(
+      'run_test_crash_ctr', _misc_properties(True),
+      _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+      _successful_prejob_step_for_ctr(),
+      api.step_data(
+          'execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test',
+          retcode=1), api.post_check(post_process.StatusFailure))
+
+  yield api.test('provision_failed_ctr', _set_build(bid=42),
+                 _misc_properties(True), _request_properties_for_ctr(),
+                 _mock_load_step_for_ctr(), _failed_prejob_step_for_ctr(),
+                 api.post_check(post_process.StatusFailure))
+
+  yield api.test('test_failed_ctr', _set_build(bid=42), _misc_properties(True),
+                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+                 _successful_prejob_step_for_ctr(),
+                 _failed_run_test_step_for_ctr(),
+                 api.post_check(post_process.StatusFailure))

@@ -4,14 +4,13 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
-from . import phosphorus_interface
+from . import phosphorus_interface, crostoolrunner_interface
 
 
 class DUTInterface(recipe_api.RecipeApi):
 
   def create(self, api, properties):
     """Factory constructor for interfaces.
-    TODO: glean from properties whether we should return phosphorus or other
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe API
@@ -20,4 +19,7 @@ class DUTInterface(recipe_api.RecipeApi):
     Returns:
       DUTInterface
     """
-    return phosphorus_interface.PhosphorusInterface(api, properties)
+    if properties.cft_mvp_is_enabled:
+      return crostoolrunner_interface.CrosToolRunnerInterface(api, properties)
+    else:
+      return phosphorus_interface.PhosphorusInterface(api, properties)

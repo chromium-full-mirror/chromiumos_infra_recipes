@@ -118,7 +118,7 @@ class PhosphorusResult(dut_results.DUTResult):  # pragma: no cover
   def is_test_incomplete(self):
     return self.data.autotest_result.incomplete
 
-  def get_autotest_results(self):
+  def get_test_results(self):
     return self.data.autotest_results.items()
 
   def get_dut_state(self):
