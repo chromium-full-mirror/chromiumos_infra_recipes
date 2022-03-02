@@ -459,6 +459,7 @@
   * [test_platform/result_flow](#recipes-test_platform_result_flow)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
+  * [test_rules_cros](#recipes-test_rules_cros) &mdash; Recipe that runs bazel rules_cros unit tests.
   * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
   * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
@@ -11276,6 +11277,17 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 Tests a recipe CL by running ChromeOS builders.
 
 &mdash; **def [RunSteps](/recipes/test_recipes.py#403)(api, properties):**
+### *recipes* / [test\_rules\_cros](/recipes/test_rules_cros.py)
+
+[DEPS](/recipes/test_rules_cros.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Recipe that runs bazel rules_cros unit tests.
+
+This recipe lives on its own because it is agnostic of ChromeOS build targets.
+
+&mdash; **def [RunSteps](/recipes/test_rules_cros.py#21)(api):**
 ### *recipes* / [test\_sdk](/recipes/test_sdk.py)
 
 [DEPS](/recipes/test_sdk.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

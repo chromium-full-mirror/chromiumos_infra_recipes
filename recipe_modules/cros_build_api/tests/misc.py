@@ -158,6 +158,7 @@ def RunSteps(api):
           'ChromitePytest': empty_pb2.Empty,
           'ChromiteUnitTest': empty_pb2.Empty,
           'DebugInfoTest': empty_pb2.Empty,
+          'RulesCrosUnitTest': empty_pb2.Empty,
           'VmTest': empty_pb2.Empty,
           'MoblabVmTest': empty_pb2.Empty,
       },

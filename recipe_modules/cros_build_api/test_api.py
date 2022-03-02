@@ -406,6 +406,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     )
     responses['ChromitePytest'] = '{}'
     responses['ChromiteUnitTest'] = '{}'
+    responses['RulesCrosUnitTest'] = '{}'
     responses['DebugInfoTest'] = '{}'
     responses['VmTest'] = '{}'
     responses['MoblabVmTest'] = '{}'
