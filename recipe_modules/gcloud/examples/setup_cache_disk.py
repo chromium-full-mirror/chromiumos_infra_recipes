@@ -3,7 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -17,8 +16,20 @@ DEPS = [
     'gcloud',
 ]
 
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+from PB.recipe_modules.chromeos.gcloud.examples.setup_cache_disk import (
+    TestInputProperties)
 
-def RunSteps(api):
+PROPERTIES = TestInputProperties
+
+
+def RunSteps(api, properties):
+  if properties.is_mount:
+    with api.assertions.assertRaises(StepFailure):
+      api.gcloud.setup_cache_disk(cache_name='chromiumos', disk_size='600GB',
+                                  disallow_previously_mounted=True)
+
   # Multiple disks
   mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
                                            disk_size='600GB')
@@ -73,6 +84,7 @@ def GenTests(api):
       'is-mount',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.gcloud.is_mount(True),
+      api.properties(is_mount=True),
   )
 
   yield api.test(

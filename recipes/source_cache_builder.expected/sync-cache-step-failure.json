@@ -650,7 +650,7 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.sync disk cache before snapshot",
+    "name": "source cache update.sync disk cache before imaging",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -665,14 +665,14 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.sync disk cache before snapshot.sync disk",
+    "name": "source cache update.sync disk cache before imaging.sync disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.unmount disk for snapshot",
+    "name": "source cache update.unmount disk for imaging",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -686,7 +686,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.unmount disk for snapshot.unmount disk chromiumos",
+    "name": "source cache update.unmount disk for imaging.unmount disk chromiumos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for [CLEANUP]/snapshot/chromiumos]@@@"
@@ -694,7 +694,7 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.detach disk for snapshot",
+    "name": "source cache update.detach disk for imaging",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -714,7 +714,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.detach disk for snapshot.detach disk",
+    "name": "source cache update.detach disk for imaging.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

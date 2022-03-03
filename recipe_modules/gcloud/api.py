@@ -840,7 +840,8 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
 
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
-                       disk_size=None, recipe_mount=False):
+                       disk_size=None, recipe_mount=False,
+                       disallow_previously_mounted=False):
     """Create disk from snapshot, reuse if still attached.
 
     Check if disk is attached, otherwise grab the matching snapshot, create,
@@ -854,6 +855,8 @@ class GcloudApi(recipe_api.RecipeApi):
       disk_size(str): Size of the disk to create in GB, defaults to image size.
       recipe_mount(bool): Whether mount needs to be in the path to use within
         a recipe.
+      disallow_previously_mounted(bool): If set, this step will fail if the cache
+        is already mounted.
     """
     # Set properties we need for cache disk setup.
     if not self._zone or not self.infra_host:
@@ -880,6 +883,13 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.step.nest('source cache'):
       self._cache_mounted = self.check_for_disk_mount(
           mount_path=recipe_mount_path)
+      if self._cache_mounted and disallow_previously_mounted:
+        # In certain cases (namely, SourceCacheBuilder) we cannot tolerate re-using
+        # a cache that was mounted on the bot during an earlier build.
+        # b/222488162 for context.
+        raise recipe_api.StepFailure(
+            '`disallow_previously_mounted` is True and the cache was already mounted'
+        )
       # No cache case.
       if not self._cache_mounted:
         local_version_path = self.snapshot_version_path.join(self._version_file)

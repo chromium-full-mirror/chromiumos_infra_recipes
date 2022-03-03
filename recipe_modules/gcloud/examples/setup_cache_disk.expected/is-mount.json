@@ -36,7 +36,10 @@
   },
   {
     "cmd": [],
-    "name": "source cache"
+    "name": "source cache",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -45,46 +48,6 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache.determine whether to reset overlayfs directories",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/overlay_branch.txt",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "/snapshot_mounts/chromiumos"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "unmount disk cros",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /snapshot_mounts/chromiumos]@@@"
     ]
   },
   {
@@ -114,6 +77,32 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache (2).determine whether to reset overlayfs directories",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/infra_versions/overlay_branch.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "source cache (2).determine whether to reset overlayfs directories.read overlayfs branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
+      "@@@STEP_LOG_END@overlay_branch.txt@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "/snapshot_mounts/chromiumos"
@@ -122,7 +111,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "unmount disk cros-r90",
+    "name": "unmount disk cros",
     "~followup_annotations": [
       "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /snapshot_mounts/chromiumos]@@@"
     ]
@@ -155,6 +144,20 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "/snapshot_mounts/chromiumos"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "unmount disk cros-r90",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud unmount disk bookkeeping error for /snapshot_mounts/chromiumos]@@@"
+    ]
+  },
+  {
+    "cmd": [
       "gcloud",
       "config",
       "set",
@@ -175,13 +178,39 @@
     "name": "source cache (4).determine whether cache is mounted and can be reused",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",
+      "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "chromeos-bot"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "name": "set gcloud project (5)"
+  },
+  {
+    "cmd": [],
+    "name": "source cache (5)"
+  },
+  {
+    "cmd": [],
+    "name": "source cache (5).determine whether cache is mounted and can be reused",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos-stabilize-rust-13836-b@is a mounted disk@@@",
       "@@@STEP_LOG_END@&#x2f;snapshot_mounts&#x2f;chromiumos-stabilize-rust-13836-b@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache (4).determine whether to reset overlayfs directories",
+    "name": "source cache (5).determine whether to reset overlayfs directories",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -198,7 +227,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "source cache (4).determine whether to reset overlayfs directories.read overlayfs branch",
+    "name": "source cache (5).determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
@@ -212,7 +241,7 @@
       "[CACHE]/chromiumos/upperdir"
     ],
     "infra_step": true,
-    "name": "source cache (4).determine whether to reset overlayfs directories.cleanup overlayfs upperdir",
+    "name": "source cache (5).determine whether to reset overlayfs directories.cleanup overlayfs upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -224,7 +253,7 @@
       "[CACHE]/chromiumos/workdir"
     ],
     "infra_step": true,
-    "name": "source cache (4).determine whether to reset overlayfs directories.cleanup overlayfs workdir",
+    "name": "source cache (5).determine whether to reset overlayfs directories.cleanup overlayfs workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -256,15 +285,15 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
-    "name": "set gcloud project (5)"
+    "name": "set gcloud project (6)"
   },
   {
     "cmd": [],
-    "name": "source cache (5)"
+    "name": "source cache (6)"
   },
   {
     "cmd": [],
-    "name": "source cache (5).determine whether cache is mounted and can be reused",
+    "name": "source cache (6).determine whether cache is mounted and can be reused",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@&#x2f;snapshot_mounts&#x2f;chromiumos@is a mounted disk@@@",

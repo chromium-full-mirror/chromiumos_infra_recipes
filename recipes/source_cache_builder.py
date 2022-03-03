@@ -49,7 +49,8 @@ def RunSteps(api, properties):
       successful_sync = False
       api.gcloud.setup_cache_disk(cache_name=cache.cache_name,
                                   branch=cache.branch,
-                                  disk_type=cache.disk_type, recipe_mount=True)
+                                  disk_type=cache.disk_type, recipe_mount=True,
+                                  disallow_previously_mounted=True)
       snapshot_prefix = '{}-{}'.format(cache.cache_name, api.gcloud.branch)
       if is_staging:
         snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
@@ -100,11 +101,11 @@ def RunSteps(api, properties):
               properties.cache_bucket, api.gcloud.snapshot_version_file,
               cache.recovery_snapshot)
           step_failures.append(e)
-      with api.step.nest('sync disk cache before snapshot'):
+      with api.step.nest('sync disk cache before imaging'):
         api.gcloud.sync_disk_cache(name=api.gcloud.disk_short_name)
-      with api.step.nest('unmount disk for snapshot'):
+      with api.step.nest('unmount disk for imaging'):
         api.gcloud.unmount_disk(name=cache.cache_name, mount_path=mount_path)
-      with api.step.nest('detach disk for snapshot'):
+      with api.step.nest('detach disk for imaging'):
         api.gcloud.detach_disk(instance=infra_host, disk=disk,
                                zone=api.gcloud.host_zone)
       if successful_sync:

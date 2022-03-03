@@ -4813,14 +4813,14 @@ Args:
 Returns:
   Bool indicating whether there is a disk mounted on the path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#905)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#915)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#949)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#959)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
@@ -4962,7 +4962,7 @@ Args:
   prefixes(list|str): List of prefixes to filter.
   protected_images(list|str): List of images to preserve.
 
-&mdash; **def [get\_instance\_serial\_output](/recipe_modules/gcloud/api.py#993)(self, instance, project, zone):**
+&mdash; **def [get\_instance\_serial\_output](/recipe_modules/gcloud/api.py#1003)(self, instance, project, zone):**
 
 &emsp; **@property**<br>&mdash; **def [host\_zone](/recipe_modules/gcloud/api.py#88)(self):**
 
@@ -5042,7 +5042,7 @@ Set the default project for gcloud command.
 Args:
   project(str): Google Cloud project name.
 
-&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#842)(self, cache_name, branch='main', disk_type='pd-standard', disk_size=None, recipe_mount=False):**
+&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#842)(self, cache_name, branch='main', disk_type='pd-standard', disk_size=None, recipe_mount=False, disallow_previously_mounted=False):**
 
 Create disk from snapshot, reuse if still attached.
 
@@ -5057,6 +5057,8 @@ Args:
   disk_size(str): Size of the disk to create in GB, defaults to image size.
   recipe_mount(bool): Whether mount needs to be in the path to use within
     a recipe.
+  disallow_previously_mounted(bool): If set, this step will fail if the cache
+    is already mounted.
 
 &emsp; **@property**<br>&mdash; **def [snapshot\_builder\_mount\_path](/recipe_modules/gcloud/api.py#62)(self):**
 
@@ -9876,11 +9878,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/lookup_device_id.py#16)(api):**
 ### *recipes* / [gcloud:examples/setup\_cache\_disk](/recipe_modules/gcloud/examples/setup_cache_disk.py)
 
-[DEPS](/recipe_modules/gcloud/examples/setup_cache_disk.py#8): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/gcloud/examples/setup_cache_disk.py#7): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#27)(api, properties):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#38): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
