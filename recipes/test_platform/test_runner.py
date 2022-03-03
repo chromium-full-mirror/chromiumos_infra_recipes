@@ -234,6 +234,27 @@ def _collect_tests_for_phosphorus(request):
   return tests
 
 
+def _generate_resultdb_base_tags(api):
+  """Generate the base tags for the test results.
+
+  Args:
+    api (RecipeScriptApi): Ubiquitous recipe api.
+
+  Returns:
+    base_tags (dict): Tags for the test results.
+  """
+  base_tags = []
+
+  drone = None
+  for dimension in api.buildbucket.build.infra.swarming.bot_dimensions:
+    if dimension.key == 'drone':
+      drone = dimension.value
+      base_tags.append(('drone', drone))
+      break
+
+  return base_tags
+
+
 def _generate_resultdb_variant_def(api, request):
   """Generate the variant defintions for the test results.
 
@@ -249,6 +270,10 @@ def _generate_resultdb_variant_def(api, request):
   board = api.cros_tags.get_values('label-board')
   if board:
     base_variant['board'] = board[0]
+
+  model = api.cros_tags.get_values('label-model')
+  if model:
+    base_variant['model'] = model[0]
 
   build_target = request.prejob.software_attributes.build_target.name
   if build_target:
@@ -344,6 +369,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   config = {
       'result_format': result_format,
       'base_variant': _generate_resultdb_variant_def(api, properties.request),
+      'base_tags': _generate_resultdb_base_tags(api),
       'result_file': result_file,
       'artifact_directory': artifact_directory,
   }
@@ -707,12 +733,18 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def _set_build(bid, tags=None, experiments=None):
+  def _set_build(bid, tags=None, experiments=None, swarming_tags=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
-    return api.buildbucket.ci_build(build_id=bid, tags=bb_tags,
-                                    experiments=experiments, project='chromeos',
-                                    bucket='test_runner', builder='test_runner')
+    build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
+                                                 experiments=experiments,
+                                                 project='chromeos',
+                                                 bucket='test_runner',
+                                                 builder='test_runner')
+    if swarming_tags:
+      build_msg.infra.swarming.bot_dimensions.extend(
+          api.cros_tags.tags(**swarming_tags))
+    return api.buildbucket.build(build_msg)
 
   def _build_with_execution_timeout(timeout_s):
     # NB: The input Build does not have start_time set, because buildbucket has
@@ -1239,10 +1271,12 @@ tast_missing_test.3=bar.YetAnotherTest
 
   yield api.test(
       'no-tast-keyval-file',
-      _set_build(bid=42, tags={
-          'label-board': 'eve',
-          'build': 'eve-cq/R11-123.45'
-      }),
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45'
+          }, swarming_tags={'drone': 'fake-drone-1234'}),
       api.step_data('execution steps.original_test.read keyval file',
                     api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
@@ -1257,10 +1291,12 @@ tast_missing_test.3=bar.YetAnotherTest
 
   yield api.test(
       'success-with-resultdb-tast',
-      _set_build(bid=42, tags={
-          'label-board': 'eve',
-          'build': 'eve-cq/R11-123.45'
-      }),
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45'
+          }, swarming_tags={'drone': 'fake-drone-1234'}),
       _keyval_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
