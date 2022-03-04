@@ -1,14 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "upload chromium test results to rdb",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@resultdb is not enabled on this builder@@@",
-      "@@@STEP_WARNINGS@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload test results to rdb",
     "~followup_annotations": [
       "@@@STEP_TEXT@resultdb is not enabled on this builder@@@",

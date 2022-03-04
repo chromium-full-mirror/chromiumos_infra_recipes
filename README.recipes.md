@@ -249,7 +249,7 @@
   * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds)
   * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full)
   * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations)
-  * [cros_resultdb:tests/extract_resultdb_settings](#recipes-cros_resultdb_tests_extract_resultdb_settings)
+  * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
@@ -3127,7 +3127,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#248)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#231)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3150,12 +3150,21 @@ Args:
 
 Return the current invocation's id.
 
-&mdash; **def [extract\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#51)(self, test_args):**
+&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#51)(self, test_args):**
 
-Extract resultdb settings from test_args.
+Extract resultdb settings from test_args for chromium test results.
+
+Extracts resultdb settings from test_args. Also converts base_tags from a
+list of strings ['key:value'] into a list of string tuples [(key, value)] as
+is expected by resultdb.wrap().
 
 Args:
-  test_args (str): A string of extra autotest arguments.
+  test_args (string): Extra autotest arguments, e.g. "key1=val1 key2=val2".
+      Chromium tests use test_arg to pass runtime parameters to our autotest
+      wrapper. We reuse it to pipe resultDB arguments, because it is easy to
+      access in the test runner recipe. test_args must contain
+      resultdb_settings which is base64 compressed json string, wrapping all
+      resultdb parameters.
 
 Returns:
   A dictionary wrapping all ResultDB upload parameters.
@@ -3163,7 +3172,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#128)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#113)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -3182,7 +3191,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#104)(self, base_dir, result_format):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#89)(self, base_dir, result_format):**
 
 Get the path to the test results file on the drone.
 
@@ -3197,7 +3206,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#337)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#320)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB.
 
@@ -3206,7 +3215,7 @@ Args:
   base_variant (dict): Variant key-value pairs to attach to the test
       results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#152)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#137)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 
@@ -3214,24 +3223,6 @@ Args:
   config (dict) A dict wrapping all resultdb parameters.
   stainless_url (string): Link to the Stainless logs for the test run.
   step_name (str): The name of the step or None for default.
-
-&mdash; **def [upload\_chromium\_tests](/recipe_modules/cros_resultdb/api.py#75)(self, test_args, base_dir):**
-
-Wrapper for uploading chromium tests to resultDB.
-
-Chromium tests pass in resultDB parameters via autotest test_args. We must
-extract them before uploading.
-
-Args:
-  test_args (string): Extra autotest arguments, e.g. "key1=val1 key2=val2".
-      Chromium tests use test_arg to pass runtime parameters to our autotest
-      wrapper. We reuse it to pipe resultDB arguments, because it is easy to
-      access in the test runner recipe. test_args must contain
-      resultdb_settings which is base64 compressed json string, wrapping all
-      resultdb parameters.
-  base_dir (string): The path of the base test results on the drone server.
-      For example, Chromium gtest result can be found at
-      base_dir/autoserv_test/chromium/results.
 ### *recipe_modules* / [cros\_schedule](/recipe_modules/cros_schedule)
 
 [DEPS](/recipe_modules/cros_schedule/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -9436,11 +9427,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#24)(api, expected_builders):**
 ### *recipes* / [cros\_resultdb:examples/full](/recipe_modules/cros_resultdb/examples/full.py)
 
-[DEPS](/recipe_modules/cros_resultdb/examples/full.py#9): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_resultdb/examples/full.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#21)(api):**
 ### *recipes* / [cros\_resultdb:tests/apply\_exonerations](/recipe_modules/cros_resultdb/tests/apply_exonerations.py)
 
 [DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#16): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
@@ -9448,13 +9439,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#27)(api, properties):**
-### *recipes* / [cros\_resultdb:tests/extract\_resultdb\_settings](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py)
+### *recipes* / [cros\_resultdb:tests/extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py)
 
-[DEPS](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_resultdb_settings.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py#16)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -11157,7 +11148,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#676)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#686)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#150)(api, interface, test_metadata, result):**
 
@@ -11173,7 +11164,7 @@ apposite a test.
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#526)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#536)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -11189,7 +11180,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#453)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#463)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -11205,7 +11196,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#424)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#434)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -11242,7 +11233,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#635)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#645)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

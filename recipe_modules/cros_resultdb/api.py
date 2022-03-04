@@ -48,11 +48,20 @@ class ResultDBCommand(recipe_api.RecipeApi):
         [self.m.resultdb.current_invocation])
     return str(inv_id[0])
 
-  def extract_resultdb_settings(self, test_args):
-    """Extract resultdb settings from test_args.
+  def extract_chromium_resultdb_settings(self, test_args):
+    """Extract resultdb settings from test_args for chromium test results.
+
+    Extracts resultdb settings from test_args. Also converts base_tags from a
+    list of strings ['key:value'] into a list of string tuples [(key, value)] as
+    is expected by resultdb.wrap().
 
     Args:
-      test_args (str): A string of extra autotest arguments.
+      test_args (string): Extra autotest arguments, e.g. "key1=val1 key2=val2".
+          Chromium tests use test_arg to pass runtime parameters to our autotest
+          wrapper. We reuse it to pipe resultDB arguments, because it is easy to
+          access in the test runner recipe. test_args must contain
+          resultdb_settings which is base64 compressed json string, wrapping all
+          resultdb parameters.
 
     Returns:
       A dictionary wrapping all ResultDB upload parameters.
@@ -70,36 +79,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
     if not rdb_settings:
       raise ValueError('test_args should contain resultdb_settings to '
                        'upload result to resultdb. Got %s')
-    return self.m.json.loads(rdb_settings)
 
-  def upload_chromium_tests(self, test_args, base_dir):
-    """Wrapper for uploading chromium tests to resultDB.
-
-    Chromium tests pass in resultDB parameters via autotest test_args. We must
-    extract them before uploading.
-
-    Args:
-      test_args (string): Extra autotest arguments, e.g. "key1=val1 key2=val2".
-          Chromium tests use test_arg to pass runtime parameters to our autotest
-          wrapper. We reuse it to pipe resultDB arguments, because it is easy to
-          access in the test runner recipe. test_args must contain
-          resultdb_settings which is base64 compressed json string, wrapping all
-          resultdb parameters.
-      base_dir (string): The path of the base test results on the drone server.
-          For example, Chromium gtest result can be found at
-          base_dir/autoserv_test/chromium/results.
-    """
-    with self.m.step.nest('upload chromium test results to rdb'):
-      config = self.extract_resultdb_settings(test_args)
-      result_format = config.get('result_format')
-      artifact_directory = config.get('artifact_directory')
-      if result_format in {'tast', 'gtest'}:
-        config['result_file'] = self.get_drone_result_file(
-            base_dir, result_format)
-        config['artifact_directory'] = self.get_drone_artifact_directory(
-            base_dir, result_format,
-            artifact_directory) or config.get('artifact_directory')
-      return self._upload(config)
+    rdb_config = self.m.json.loads(rdb_settings)
+    rdb_config['base_tags'] = [
+        tuple(x.split(':', 1)) for x in rdb_config.get('base_tags', [])
+    ]
+    return rdb_config
 
   def get_drone_result_file(self, base_dir, result_format):
     """Get the path to the test results file on the drone.
@@ -199,12 +184,10 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # result file from the test runs.
     rdb_cmd = result_adapter + ['--'] + ['echo']
 
-    base_tags = [tuple(x.split(':', 1)) for x in config.get('base_tags', [])]
-
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
         rdb_cmd,
-        base_tags=base_tags,
+        base_tags=config.get('base_tags', []),
         base_variant=config.get('base_variant', {}),
         coerce_negative_duration=config.get('coerce_negative_duration', True),
         test_id_prefix=config.get('test_id_prefix', ''),

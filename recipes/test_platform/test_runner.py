@@ -311,8 +311,18 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
   if (test_metadata.test.autotest.test_args and
       'resultdb_settings' in test_metadata.test.autotest.test_args):
-    return api.cros_resultdb.upload_chromium_tests(
-        test_metadata.test.autotest.test_args, base_dir)
+    config = api.cros_resultdb.extract_chromium_resultdb_settings(
+        test_metadata.test.autotest.test_args)
+    result_format = config.get('result_format')
+    artifact_directory = config.get('artifact_directory')
+    if result_format in {'tast', 'gtest'}:
+      config['result_file'] = api.cros_resultdb.get_drone_result_file(
+          base_dir, result_format)
+      config[
+          'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
+              base_dir, result_format, artifact_directory)
+    return api.cros_resultdb.upload(
+        config, step_name='upload chromium test results to rdb')
 
   tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
   if os.path.exists(tast_results_dir) or api.properties.get(

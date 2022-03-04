@@ -1,11 +1,11 @@
 [
   {
     "cmd": [],
-    "name": "upload chromium test results to rdb"
+    "name": "upload test results to rdb"
   },
   {
     "cmd": [],
-    "name": "upload chromium test results to rdb.ensure result_adapter",
+    "name": "upload test results to rdb.ensure result_adapter",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -36,7 +36,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload chromium test results to rdb.ensure result_adapter.ensure_installed",
+    "name": "upload test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -51,51 +51,6 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
-  },
-  {
-    "cmd": [
-      "rdb",
-      "stream",
-      "-var",
-      "board:board",
-      "-var",
-      "build:board-cq/R11-123.45",
-      "-var",
-      "test_suite:fake-suite",
-      "-tag",
-      "test_suite:fake-suite",
-      "-coerce-negative-duration",
-      "-exonerate-unexpected-pass",
-      "--",
-      "[START_DIR]/cipd/result_adapter/result_adapter",
-      "gtest",
-      "-result-file",
-      "dummy-results-dir/autoserv_test/chromium/results/output.json",
-      "-artifact-directory",
-      "/path/to/results",
-      "--",
-      "echo"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload chromium test results to rdb.run rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload test results to rdb"
   },
   {
     "cmd": [
@@ -156,9 +111,9 @@
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "gtest",
       "-result-file",
-      "/path/to/results",
+      "/base/dir/autoserv_test/chromium/results/output.json",
       "-artifact-directory",
-      "/path/to/results",
+      "/base/dir/autoserv_test/",
       "--",
       "echo"
     ],

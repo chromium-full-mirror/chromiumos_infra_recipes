@@ -1,14 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "upload chromium test results to rdb",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@result_format must be one of gtest, json, single, tast, skylab-test-runner got not-supported@@@",
-      "@@@STEP_WARNINGS@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload test results to rdb",
     "~followup_annotations": [
       "@@@STEP_TEXT@result_format must be one of gtest, json, single, tast, skylab-test-runner got not-supported@@@",

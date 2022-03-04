@@ -56,6 +56,8 @@
     "cmd": [
       "rdb",
       "stream",
+      "-tag",
+      "test_suite:fake-suite",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",
