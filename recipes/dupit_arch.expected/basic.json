@@ -52,6 +52,7 @@
       "--recursive",
       "--links",
       "--safe-links",
+      "--timeout=21600",
       "rsync://arch.mirror.constant.com/archlinux/**"
     ],
     "infra_step": true,

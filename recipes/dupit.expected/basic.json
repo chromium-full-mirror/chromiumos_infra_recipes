@@ -56,6 +56,7 @@
       "--recursive",
       "--links",
       "--safe-links",
+      "--timeout=21600",
       "rsync://mirrors.rit.edu/gentoo/distfiles/**"
     ],
     "infra_step": true,

@@ -39,6 +39,7 @@
       "--recursive",
       "--links",
       "--safe-links",
+      "--timeout=21600",
       "rsync://mirrors.do.not.exists/distfiles/**"
     ],
     "infra_step": true,

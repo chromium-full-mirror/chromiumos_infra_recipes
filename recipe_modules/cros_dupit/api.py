@@ -110,6 +110,8 @@ class DupItApi(recipe_api.RecipeApi):
         '--links',
         # Ignore symlinks that points to files outside of the root directory.
         '--safe-links',
+        # Add a timeout of 6 hours.
+        '--timeout=%d' % (6 * 60 * 60),
         self.m.path.join(self.rsync_mirror_address, '**'),
     ]
     rsync_list_stdout = self.m.raw_io.output(leak_to=gentoo_distfile_list_path)
