@@ -9,7 +9,7 @@ DEPS = [
     'cros_paygen',
 ]
 
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 
@@ -21,19 +21,19 @@ def RunSteps(api):
   standard_payload = build_pb2.Build(status='SUCCESS')
   # The absence of any DLC or MINIOS markers implies a standard payload for
   # the tested module's purposes.
-  standard_payload.input.properties['request'] = MessageToJson(
+  standard_payload.input.properties['request'] = MessageToDict(
       GenerationRequest())
   standard_payload.output.properties[
       'payload_uri'] = 'gs://path/to/standard/payload'
 
   minios_payload = build_pb2.Build(status='SUCCESS')
-  minios_payload.input.properties['request'] = MessageToJson(
+  minios_payload.input.properties['request'] = MessageToDict(
       GenerationRequest(minios=True))
   minios_payload.output.properties[
       'payload_uri'] = 'gs://path/to/minios/payload'
 
   dlc_payload = build_pb2.Build(status='SUCCESS')
-  dlc_payload.input.properties['request'] = MessageToJson(
+  dlc_payload.input.properties['request'] = MessageToDict(
       GenerationRequest(tgt_dlc_image=DLCImage(dlc_id='dlc')))
   dlc_payload.output.properties['payload_uri'] = 'gs://path/to/dlc/payload'
 

@@ -602,9 +602,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         continue
 
       # Determine payload type from the paygen request.
-      payload_request = json.loads(res.input.properties['request'])
+      payload_request = res.input.properties['request']
       payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
-      if payload_request.get('minios', False):
+      if 'minios' in payload_request and payload_request['minios']:
         payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
       elif 'tgtDlcImage' in payload_request:
         payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
@@ -628,7 +628,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           ), payload_type=payload_type, appid=payload_info['appid'],
           metadata_signature=payload_info['metadata_signature'],
           metadata_size=payload_info['metadata_size'],
-          source_version=payload_info['source_version'],
+          source_version=payload_info.get('source_version', None),
           target_version=payload_info['target_version'],
           size=payload_info['size'])
       payloads.append(payload)
