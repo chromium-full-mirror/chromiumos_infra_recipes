@@ -256,6 +256,7 @@
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
   * [cros_sdk:tests/missing_endpoints](#recipes-cros_sdk_tests_missing_endpoints)
   * [cros_signing:tests/full](#recipes-cros_signing_tests_full) &mdash; Success workflow tests for the cros_signing recipe module.
+  * [cros_signing:tests/invalid_file_format](#recipes-cros_signing_tests_invalid_file_format) &mdash; Verify that instructions files are in the appropriate format.
   * [cros_signing:tests/sequence_error](#recipes-cros_signing_tests_sequence_error) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/checkout_branch](#recipes-cros_source_examples_checkout_branch)
@@ -3469,11 +3470,11 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [CrosSigningApi](/recipe_modules/cros_signing/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSigningApi](/recipe_modules/cros_signing/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to encapsulate communication with the signing fleet.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/cros_signing/api.py#95)(self, instructions_metadata):**
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/cros_signing/api.py#108)(self, instructions_metadata):**
 
 Get the metadata of the signed build.
 
@@ -3486,7 +3487,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#137)(instructions):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#150)(instructions):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -3496,7 +3497,7 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#125)(metadata):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#138)(metadata):**
 
 Whether the provided metadata contains a successful signing operation.
 
@@ -3506,11 +3507,11 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/cros_signing/api.py#116)(self, instructions_metadata):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/cros_signing/api.py#129)(self, instructions_metadata):**
 
 Verifies that the signing operation succeeded.
 
-&mdash; **def [wait\_for\_signing](/recipe_modules/cros_signing/api.py#29)(self, instructions_list):**
+&mdash; **def [wait\_for\_signing](/recipe_modules/cros_signing/api.py#32)(self, instructions_list):**
 
 Wait for signing to complete for a set of instructions files.
 
@@ -9427,7 +9428,16 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Success workflow tests for the cros_signing recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/full.py#39)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/full.py#52)(api):**
+### *recipes* / [cros\_signing:tests/invalid\_file\_format](/recipe_modules/cros_signing/tests/invalid_file_format.py)
+
+[DEPS](/recipe_modules/cros_signing/tests/invalid_file_format.py#8): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Verify that instructions files are in the appropriate format.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/invalid_file_format.py#17)(api):**
 ### *recipes* / [cros\_signing:tests/sequence\_error](/recipe_modules/cros_signing/tests/sequence_error.py)
 
 [DEPS](/recipe_modules/cros_signing/tests/sequence_error.py#9): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [],
+    "name": "wait for signing to complete",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

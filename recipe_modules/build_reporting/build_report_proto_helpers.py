@@ -96,6 +96,7 @@ def create_signed_build(signed_build_meta, status):
   """
   signed_build = SignedBuild()
 
+  signed_build.release_directory = signed_build_meta['release_directory']
   signed_build.status = SignedBuild.SigningStatus.Value(
       'SIGNING_STATUS_{}'.format(status.upper()))
   signed_build.board = signed_build_meta['board']

@@ -35,9 +35,25 @@ _FAILED = {
     },
 }
 
+_PASSED_COMPLETE = {
+    'release_directory': 'directory1/directory2/releases',
+    'status': {
+        'status': 'passed'
+    },
+}
+_FAILED_COMPLETE = {
+    'release_directory': 'directory1/directory2/releases',
+    'status': {
+        'status': 'failed'
+    },
+}
+
 
 def RunSteps(api):
-  metadata = api.cros_signing.wait_for_signing(['gs://file1', 'gs://file2'])
+  metadata = api.cros_signing.wait_for_signing([
+      'gs://bucket/directory1/directory2/releases/file1.instructions',
+      'gs://bucket/directory1/directory2/releases/file2.instructions'
+  ])
   with api.step.nest("verify results") as child_step:
     child_step.step_summary_text = api.cros_signing.get_signed_build_metadata(
         metadata)
@@ -68,13 +84,24 @@ def GenTests(api):
       'full run',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
-      api.cros_signing.mock_meta('gs://file1.json', _RUNNING),
-      api.cros_signing.mock_meta('gs://file1.json', _PASSED, run=2),
-      api.cros_signing.mock_meta('gs://file2.json', None, retcode=1),
-      api.cros_signing.mock_meta('gs://file2.json', _RUNNING, run=2),
-      api.cros_signing.mock_meta('gs://file2.json', _PASSED, run=3),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _RUNNING),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _PASSED, run=2),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          None, retcode=1),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _RUNNING, run=2),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _PASSED, run=3),
       step_passed('verify results.parse metadata'),
-      api.post_check(StepMetaEquals, 'verify results', [_PASSED, _PASSED]),
+      api.post_check(StepMetaEquals, 'verify results',
+                     [_PASSED_COMPLETE, _PASSED_COMPLETE]),
   )
 
   # Timeout test.
@@ -82,9 +109,12 @@ def GenTests(api):
       'times out',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
-      api.cros_signing.mock_meta('gs://file1.json',
-                                 _RUNNING),  # Never succeeds.
-      api.cros_signing.mock_meta('gs://file2.json', None),  # Never starts.
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _RUNNING),  # Never succeeds.
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          None),  # Never starts.
       step_passed('verify results.parse metadata'),
       api.post_check(
           StepMetaEquals,
@@ -98,12 +128,20 @@ def GenTests(api):
       'signing failed',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
-      api.cros_signing.mock_meta('gs://file1.json', _RUNNING),
-      api.cros_signing.mock_meta('gs://file1.json', _PASSED, run=2),
-      api.cros_signing.mock_meta('gs://file2.json', _RUNNING),
-      api.cros_signing.mock_meta('gs://file2.json', _FAILED, run=2),
-      step_passed('verify results.parse metadata'),
-      api.post_check(StepMetaEquals, 'verify results', [_PASSED, _FAILED]),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _RUNNING),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _PASSED, run=2),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _RUNNING),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _FAILED, run=2), step_passed('verify results.parse metadata'),
+      api.post_check(StepMetaEquals, 'verify results',
+                     [_PASSED_COMPLETE, _FAILED_COMPLETE]),
       step_failed('verify results'))
 
   # Malformed json
@@ -112,11 +150,16 @@ def GenTests(api):
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
       # Bad json (missing closing brace).
-      api.cros_signing.mock_meta_str('gs://file1.json', '{"value": "blah'),
-      api.cros_signing.mock_meta('gs://file2.json', _PASSED),
+      api.cros_signing.mock_meta_str(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          '{"value": "blah'),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _PASSED),
       step_passed('verify results.parse metadata'),
       # Verify that the good metadata makes it way in.
-      api.post_check(StepMetaEquals, 'verify results', [_PASSED, None]),
+      api.post_check(StepMetaEquals, 'verify results',
+                     [_PASSED_COMPLETE, None]),
       step_failed('verify results'))
 
   api.cros_signing.setup_mocks()

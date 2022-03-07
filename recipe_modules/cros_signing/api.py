@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import json
+import re
 
 from recipe_engine import recipe_api
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
@@ -16,6 +17,8 @@ _FAILED = 'failed'
 _TERMINAL_STATES = [_PASSED, _FAILED]
 
 _STATUS = 'status'
+
+INSTRUCTIONS_PATTERN = re.compile(r'^gs://[^/]+/(.*)/[^/]+\.instructions$')
 
 
 class CrosSigningApi(recipe_api.RecipeApi):
@@ -49,6 +52,10 @@ class CrosSigningApi(recipe_api.RecipeApi):
     with self.m.step.nest('wait for signing to complete'):
       # Place each instructions location in the dict.
       for instructions in instructions_list:
+        # Fail fast if the instuctions file doesn't match the expected pattern.
+        if not INSTRUCTIONS_PATTERN.match(instructions):
+          raise recipe_api.StepFailure(
+              'invalid locations file format: {}'.format(instructions))
         instructions_metadata[instructions] = None
 
       # Start poller.
@@ -85,6 +92,12 @@ class CrosSigningApi(recipe_api.RecipeApi):
           # Check the status
           if self.get_status_from_instructions(
               instructions_info) in _TERMINAL_STATES:
+            # Strip out the directory from the instructions file.
+            matcher = INSTRUCTIONS_PATTERN.match(instructions)
+            # Be defensive, make None failures obvious.
+            if matcher:
+              instructions_info['release_directory'] = matcher.group(1)
+
             instructions_metadata[instructions] = instructions_info
 
         # Sleep.

@@ -12,10 +12,10 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://file2.json"
+      "gs://bucket/directory1/directory2/releases/file1.instructions.json"
     ],
     "infra_step": true,
-    "name": "wait for signing to complete.gsutil reading instructions for gs://file2.json",
+    "name": "wait for signing to complete.gsutil reading instructions for gs://bucket/directory1/directory2/releases/file1.instructions.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -29,10 +29,10 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://file1.json"
+      "gs://bucket/directory1/directory2/releases/file2.instructions.json"
     ],
     "infra_step": true,
-    "name": "wait for signing to complete.gsutil reading instructions for gs://file1.json",
+    "name": "wait for signing to complete.gsutil reading instructions for gs://bucket/directory1/directory2/releases/file2.instructions.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -53,10 +53,10 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://file2.json"
+      "gs://bucket/directory1/directory2/releases/file1.instructions.json"
     ],
     "infra_step": true,
-    "name": "wait for signing to complete.gsutil reading instructions for gs://file2.json (2)",
+    "name": "wait for signing to complete.gsutil reading instructions for gs://bucket/directory1/directory2/releases/file1.instructions.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -70,10 +70,10 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://file1.json"
+      "gs://bucket/directory1/directory2/releases/file2.instructions.json"
     ],
     "infra_step": true,
-    "name": "wait for signing to complete.gsutil reading instructions for gs://file1.json (2)",
+    "name": "wait for signing to complete.gsutil reading instructions for gs://bucket/directory1/directory2/releases/file2.instructions.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -89,7 +89,7 @@
     "cmd": [],
     "name": "verify results",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@[{u'status': {u'status': u'failed'}}, {u'status': {u'status': u'passed'}}]@@@",
+      "@@@STEP_SUMMARY_TEXT@[{u'status': {u'status': u'passed'}, 'release_directory': 'directory1/directory2/releases'}, {u'status': {u'status': u'failed'}, 'release_directory': 'directory1/directory2/releases'}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -99,15 +99,17 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@signed build metadata@{@@@",
-      "@@@STEP_LOG_LINE@signed build metadata@  \"gs://file2\": {@@@",
-      "@@@STEP_LOG_LINE@signed build metadata@    \"status\": {@@@",
-      "@@@STEP_LOG_LINE@signed build metadata@      \"status\": \"failed\"@@@",
-      "@@@STEP_LOG_LINE@signed build metadata@    }@@@",
-      "@@@STEP_LOG_LINE@signed build metadata@  }, @@@",
-      "@@@STEP_LOG_LINE@signed build metadata@  \"gs://file1\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  \"gs://bucket/directory1/directory2/releases/file1.instructions\": {@@@",
       "@@@STEP_LOG_LINE@signed build metadata@    \"status\": {@@@",
       "@@@STEP_LOG_LINE@signed build metadata@      \"status\": \"passed\"@@@",
-      "@@@STEP_LOG_LINE@signed build metadata@    }@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    }, @@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    \"release_directory\": \"directory1/directory2/releases\"@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  }, @@@",
+      "@@@STEP_LOG_LINE@signed build metadata@  \"gs://bucket/directory1/directory2/releases/file2.instructions\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    \"status\": {@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@      \"status\": \"failed\"@@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    }, @@@",
+      "@@@STEP_LOG_LINE@signed build metadata@    \"release_directory\": \"directory1/directory2/releases\"@@@",
       "@@@STEP_LOG_LINE@signed build metadata@  }@@@",
       "@@@STEP_LOG_LINE@signed build metadata@}@@@",
       "@@@STEP_LOG_END@signed build metadata@@@"
@@ -116,7 +118,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "One or more signing requests failed or timed out. Signing response: {\n  \"gs://file2\": {\n    \"status\": {\n      \"status\": \"failed\"\n    }\n  }, \n  \"gs://file1\": {\n    \"status\": {\n      \"status\": \"passed\"\n    }\n  }\n}"
+      "humanReason": "One or more signing requests failed or timed out. Signing response: {\n  \"gs://bucket/directory1/directory2/releases/file1.instructions\": {\n    \"status\": {\n      \"status\": \"passed\"\n    }, \n    \"release_directory\": \"directory1/directory2/releases\"\n  }, \n  \"gs://bucket/directory1/directory2/releases/file2.instructions\": {\n    \"status\": {\n      \"status\": \"failed\"\n    }, \n    \"release_directory\": \"directory1/directory2/releases\"\n  }\n}"
     },
     "name": "$result"
   }
