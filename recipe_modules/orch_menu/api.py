@@ -249,9 +249,13 @@ class OrchMenuApi(RecipeApi):
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             bump_version = self._properties.bump_version and not is_staging
             self.m.cros_version.bump_version(dry_run=not bump_version)
+            kwargs = {}
+            if self._properties.manifest_versions_branch:
+              kwargs['branch'] = self._properties.manifest_versions_branch
             self.m.cros_release.create_releasespec(
+                dry_run=is_staging,
                 gs_location=self._properties.buildspec_gs_path or
-                DEFAULT_BUILDSPEC_GS_PATH)
+                DEFAULT_BUILDSPEC_GS_PATH, **kwargs)
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):

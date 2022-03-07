@@ -52,4 +52,8 @@ message OrchMenuProperties {
   // Whether to bump the version for a release builder. Will be ignored if
   // the builder is a staging builder.
   bool bump_version = 8;
+
+  // Branch of manifest-versions to upload to. Only used for release builders.
+  // Defaults to 'release'.
+  string manifest_versions_branch = 9;
 }

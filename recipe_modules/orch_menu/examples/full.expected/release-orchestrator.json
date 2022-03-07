@@ -3352,7 +3352,7 @@
       "git",
       "clone",
       "--branch",
-      "release",
+      "master",
       "--single-branch",
       "--depth",
       "1",
