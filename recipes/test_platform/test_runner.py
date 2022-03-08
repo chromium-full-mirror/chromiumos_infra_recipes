@@ -819,6 +819,13 @@ tast_missing_test.3=bar.YetAnotherTest
     return (api.properties(
         TestRunnerProperties(request=_canned_milti_duts_request())))
 
+  # An example request with multiple duts(with android devices)
+  # requested in prejob field.
+  def _request_properties_multiduts_with_androids():
+    return (api.properties(
+        TestRunnerProperties(
+            request=_canned_milti_duts_with_android_request())))
+
   # An example request represents chromium tests which upload result
   # to rdb.
   def _request_properties_rdb(test_arg):
@@ -932,6 +939,43 @@ tast_missing_test.3=bar.YetAnotherTest
         'test': {
             'autotest': {
                 'name': 'dummy_name',
+                'test_args': 'foo=bar',
+                'keyvals': {
+                    'key1': 'value1',
+                },
+                'is_client_test': True,
+                'display_name': 'fancy_name'
+            }
+        },
+        'parent_build_id': 12345,
+        'parent_request_uid': 'TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq',
+    }
+
+  def _canned_milti_duts_with_android_request():
+    return {
+        'prejob': {
+            'provisionable_labels': {
+                'label1': 'value1'
+            },
+            'software_attributes': {
+                'build_target': {
+                    'name': 'fake_board',
+                },
+            },
+            'software_dependencies': [{
+                'chromeos_build': 'fake_build',
+            },],
+            'secondary_devices': [{
+                'software_attributes': {
+                    'build_target': {
+                        'name': 'fake_android_board',
+                    }
+                }
+            },]
+        },
+        'test': {
+            'autotest': {
+                'name': 'sample_name',
                 'test_args': 'foo=bar',
                 'keyvals': {
                     'key1': 'value1',
@@ -1215,6 +1259,31 @@ tast_missing_test.3=bar.YetAnotherTest
                           skylab_local_state.load.Dut(hostname='fake_hostname2',
                                                       board='fake_board2',
                                                       model='fake_model2')
+                      ])))),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success_multi_duts_with_android_devices',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties_multiduts_with_androids(),
+      api.step_data(
+          'execution steps.original_test.Phosphorus: load skylab local state.'
+          'call `phosphorus`.load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                      results_dir='dummy-results-dir', dut_topology=[
+                          skylab_local_state.load.Dut(hostname='fake_hostname',
+                                                      board='fake_board',
+                                                      model='fake_model'),
+                          skylab_local_state.load.Dut(
+                              hostname='fake_hostname2',
+                              board='fake_android_board',
+                              model='fake_android_model')
                       ])))),
       _successful_prejob_step(),
       _successful_run_test_step(),

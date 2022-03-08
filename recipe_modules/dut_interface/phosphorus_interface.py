@@ -146,6 +146,12 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     # Construct addtional provision targets for multi-DUTs use case.
     addtional_targets = []
     for target in metadata.peer_duts:
+      if len(target.software_dependencies) == 0:
+        # This is a temporary solution for b/222579365 to skip prejob
+        # for Android devices. As for secondary DUTs of ChromeOS devices
+        # they will always have software_dependencies specified, and for
+        # Android devices they won't have software_dependencies.
+        continue
       t = phosphorus.prejob.PrejobRequest.ProvisionTarget(
           dut_hostname=target.hostname,
           software_dependencies=target.software_dependencies)
