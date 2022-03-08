@@ -9916,6 +9916,37 @@
   },
   {
     "cmd": [],
+    "name": "generate payloads.look up builder metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@{@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@  \"modelMetadata\": [@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadwriteFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"firmwareKeyId\": \"EVE\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"modelName\": \"eve\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadonlyFirmwareVersion\": \"Google_Eve.9584.107.0\"@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@  ], @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@  \"buildTargetMetadata\": [@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"kernelVersion\": \"5.4.163-r2827\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerTarget\": \"bertha\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerBranch\": \"git_rvc-arc\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"mainFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerVersion\": \"7978506\", @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"arcUseSet\": true, @@@",
+      "@@@STEP_LOG_LINE@builder_metadata@      \"buildTarget\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@  ]@@@",
+      "@@@STEP_LOG_LINE@builder_metadata@}@@@",
+      "@@@STEP_LOG_END@builder_metadata@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate payloads.running paygen orchestrator",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -9946,7 +9977,7 @@
       }
     },
     "name": "generate payloads.running paygen orchestrator.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_testing_models\": [], \"builder_name\": \"kukui-main\", \"channels\": [], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_testing_models\": [\"eve\"], \"builder_name\": \"kukui-main\", \"channels\": [], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9983,7 +10014,9 @@
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [], @@@",
+      "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@          ], @@@",
       "@@@STEP_LOG_LINE@request@          \"builder_name\": \"kukui-main\", @@@",
       "@@@STEP_LOG_LINE@request@          \"channels\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"delta_payload_test_override\": \"RESPECT_CONFIG\", @@@",

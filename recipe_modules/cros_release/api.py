@@ -196,7 +196,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'target_chromeos_version': version.platform_version,
           'delta_types': [],
           'channels': [Channel.Name(x) for x in self._channels],
-          'au_testing_models': [],
+          'au_testing_models': self.get_paygen_testing_models(),
           'src_bucket': self._release_bucket,
           'dest_bucket': self._release_bucket,
           'dryrun': self._paygen_dryrun,
@@ -228,6 +228,16 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       self.m.build_reporting.publish(BuildReport(payloads=payload_information))
 
       return builds
+
+  def get_paygen_testing_models(self):
+    """Determine which models need to run paygen tests.
+
+    TODO(b/223252953): Only test on models that are available in the lab.
+
+    Returns:
+      List[str]: The names of each model that should run paygen tests.
+    """
+    return self.m.builder_metadata.get_models(test_data=self._test_data.enabled)
 
   def push_and_sign_images(self, config, sysroot):
     """Call the Push Image Build API endpoint for the build.

@@ -25,9 +25,16 @@ def RunSteps(api):
     second_result = api.builder_metadata.look_up_builder_metadata(
         test_data=True)
   api.assertions.assertEqual(first_metadata, second_result)
+
   api.build_menu.packages_installed = False
   with api.assertions.assertRaises(api.step.StepFailure):
     api.builder_metadata.look_up_builder_metadata()
+  api.build_menu.packages_installed = True
+
+  # Test model metadata comes from the test response for
+  # cros_build_api.PackageService.GetBuilderMetadata().
+  models = api.builder_metadata.get_models()
+  api.assertions.assertEqual(models, ['eve'])
 
 
 def GenTests(api):

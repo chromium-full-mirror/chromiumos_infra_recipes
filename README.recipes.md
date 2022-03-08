@@ -1348,7 +1348,17 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module to get builder metadata.
 
-&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#20)(self, test_data=None):**
+&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#55)(self, test_data=False):**
+
+Finds all model names associated with the active build_target.
+
+Args:
+  test_data (bool): Whether the method is running with test data.
+
+Returns:
+  List[str]: The names of all models used by this build target.
+
+&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#20)(self, test_data=False):**
 
 Looks up builder metadata for the provided build_target.
 
@@ -1356,7 +1366,11 @@ Builder metadata does not change within the lifecycle of a build, so
 builder metadata is looked up once and cached.
 
 Important - a prerequisite for this method being able to return builder
-metadata is that `install_packages` has already been called.
+metadata is that `install_packages` has already been called, unless it is
+using test data from the BAPI.
+
+Args:
+  test_data (bool): Whether the method is running with test data.
 
 Returns:
   builder_metadata proto describing build and model for the current target.
@@ -2801,7 +2815,7 @@ Returns:
   (List[str]): the location of the attestations on disk.
 ### *recipe_modules* / [cros\_release](/recipe_modules/cros_release)
 
-[DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2833,11 +2847,20 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
+&mdash; **def [get\_paygen\_testing\_models](/recipe_modules/cros_release/api.py#232)(self):**
+
+Determine which models need to run paygen tests.
+
+TODO(b/223252953): Only test on models that are available in the lab.
+
+Returns:
+  List[str]: The names of each model that should run paygen tests.
+
 &emsp; **@property**<br>&mdash; **def [manifest\_versions\_url](/recipe_modules/cros_release/api.py#27)(self):**
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#232)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#242)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
