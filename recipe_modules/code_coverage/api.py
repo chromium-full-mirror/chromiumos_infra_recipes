@@ -52,6 +52,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._coverage_env = props.coverage_env or DEFAULT_COVERAGE_ENV
     # The branch this coverage data is being generated for.
     self._branch = props.branch or DEFAULT_CODE_BRANCH
+    # Whether we need to skip chromium coverage upload.
+    self._skip_chromium_upload = props.skip_chromium_upload or False
     # Path to incremental coverage client.
     self._incremental_coverage_tool = None
     # Path to absolute coverage client.
@@ -379,6 +381,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage.
     """
     if self.m.cq.active or absolute_chromium_settings is None:
+      return
+
+    # Do not update coverage information of asked to skip.
+    if self._skip_chromium_upload:
       return
 
     # Do not update coverage information for non-prod envs.

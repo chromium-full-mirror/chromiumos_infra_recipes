@@ -119,6 +119,21 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'non-cq-should-should-skip-chromium-coverage-upload-check',
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data (code coverage llvm json).upload absolute coverage to chromium coverage'
+      ),
+      cq=False,
+      input_properties={
+          '$chromeos/cros_relevance':
+              dict(force_postsubmit_relevance=True),
+          '$chromeos/code_coverage':
+              dict(project='chromiumos/platform2', skip_chromium_upload=True)
+      },
+  )
+
+  yield api.build_menu.test(
       'non-cq-should-not-write-cleaned-coverage-file-for-chromium-coverage',
       api.post_check(
           post_process.DoesNotRun,

@@ -22,4 +22,7 @@ message CodeCoverageProperties {
   // The coverage backend to upload(and store) results to.
   // Accepted values are `autopush` or `prod`.
   string coverage_env = 4;
+
+  // Whether we need to skip uploading to chromium coverage.
+  bool skip_chromium_upload = 5;
 }
