@@ -158,7 +158,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/manifest-versions_tmp_1/releasespecs/99"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -174,7 +174,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec.ensure [CLEANUP]/manifest-versions_tmp_1/releasespecs/99 exists",
+    "name": "create releasespec.ensure [CLEANUP]/manifest-versions_tmp_1/buildspecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -188,7 +188,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_1/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -204,7 +204,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec.write releasespecs/99/1234.56.0.xml",
+    "name": "create releasespec.write buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -229,7 +229,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_1/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -256,7 +256,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_1/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -364,7 +364,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/manifest-versions_tmp_2/releasespecs/99"
+      "[CLEANUP]/manifest-versions_tmp_2/buildspecs/99"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -380,7 +380,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (2).ensure [CLEANUP]/manifest-versions_tmp_2/releasespecs/99 exists",
+    "name": "create releasespec (2).ensure [CLEANUP]/manifest-versions_tmp_2/buildspecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -394,7 +394,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_2/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_2/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -410,7 +410,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (2).write releasespecs/99/1234.56.0.xml",
+    "name": "create releasespec (2).write buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -435,7 +435,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_2/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_2/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -462,7 +462,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_2/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_2/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -485,7 +485,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec (2).upload releasespecs/99/1234.56.0.xml to gs://bucket/foo/",
+    "name": "create releasespec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -499,7 +499,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/manifest-versions_tmp_2/releasespecs/99/1234.56.0.xml",
+      "[CLEANUP]/manifest-versions_tmp_2/buildspecs/99/1234.56.0.xml",
       "gs://bucket/foo/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
@@ -516,7 +516,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (2).upload releasespecs/99/1234.56.0.xml to gs://bucket/foo/.gsutil upload",
+    "name": "create releasespec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@"
@@ -609,7 +609,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/manifest-versions_tmp_3/releasespecs/99"
+      "[CLEANUP]/manifest-versions_tmp_3/buildspecs/99"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -625,7 +625,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (3).ensure [CLEANUP]/manifest-versions_tmp_3/releasespecs/99 exists",
+    "name": "create releasespec (3).ensure [CLEANUP]/manifest-versions_tmp_3/buildspecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -639,7 +639,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_3/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_3/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -655,7 +655,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (3).write releasespecs/99/1234.56.0.xml",
+    "name": "create releasespec (3).write buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -680,7 +680,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_3/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_3/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -707,7 +707,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_3/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_3/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -730,7 +730,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec (3).upload releasespecs/99/1234.56.0.xml to gs://bucket/foo/",
+    "name": "create releasespec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -744,7 +744,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/manifest-versions_tmp_3/releasespecs/99/1234.56.0.xml",
+      "[CLEANUP]/manifest-versions_tmp_3/buildspecs/99/1234.56.0.xml",
       "gs://bucket/foo/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
@@ -761,7 +761,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (3).upload releasespecs/99/1234.56.0.xml to gs://bucket/foo/.gsutil upload",
+    "name": "create releasespec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@"
@@ -854,7 +854,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/manifest-versions_tmp_4/releasespecs/99"
+      "[CLEANUP]/manifest-versions_tmp_4/buildspecs/99"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -870,7 +870,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (4).ensure [CLEANUP]/manifest-versions_tmp_4/releasespecs/99 exists",
+    "name": "create releasespec (4).ensure [CLEANUP]/manifest-versions_tmp_4/buildspecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -884,7 +884,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_4/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_4/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -900,7 +900,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (4).write releasespecs/99/1234.56.0.xml",
+    "name": "create releasespec (4).write buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -925,7 +925,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_4/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_4/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -952,7 +952,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_4/releasespecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_4/buildspecs/99/1234.56.0.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -975,7 +975,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec (4).upload releasespecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml",
+    "name": "create releasespec (4).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -989,7 +989,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/manifest-versions_tmp_4/releasespecs/99/1234.56.0.xml",
+      "[CLEANUP]/manifest-versions_tmp_4/buildspecs/99/1234.56.0.xml",
       "gs://bucket/foo"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
@@ -1006,7 +1006,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (4).upload releasespecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml.gsutil upload",
+    "name": "create releasespec (4).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo@@@"

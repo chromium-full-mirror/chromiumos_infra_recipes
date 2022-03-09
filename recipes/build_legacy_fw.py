@@ -192,7 +192,7 @@ class FirmwareBuilder(object):
     # not migrated to main yet, so we pass create_releasespec
     # branch=None to use the default branch, whatever it is.
     self.m.cros_release.create_releasespec(
-        'buildspecs', branch='rubik-staging' if self._is_staging else None,
+        branch='rubik-staging' if self._is_staging else None,
         step_name='create buildspec', dry_run=dry_run)
     # Only these builds are valid for suite_scheduling to find.
     self._suite_scheduling = (

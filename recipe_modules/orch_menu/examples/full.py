@@ -145,7 +145,7 @@ def GenTests(api):
                      'set up orchestrator.bump version', ''),
       api.post_check(
           post_process.MustRun,
-          'set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/'
+          'set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/'
       ),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
@@ -169,7 +169,7 @@ def GenTests(api):
                      'set up orchestrator.bump version', 'dry-run only'),
       api.post_check(
           post_process.MustRun,
-          'set up orchestrator.create releasespec.upload releasespecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/'
+          'set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/'
       ),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),

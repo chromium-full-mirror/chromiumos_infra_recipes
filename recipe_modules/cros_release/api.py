@@ -74,7 +74,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """Return the releasespec as created by this module, or None."""
     return self._releasespec
 
-  def create_releasespec(self, specs_dir='releasespecs', branch='release',
+  def create_releasespec(self, specs_dir='buildspecs', branch='release',
                          step_name='create releasespec', dry_run=False,
                          gs_location=None):
     """Create a pinned manifest and upload to manifest-versions/releasespecs.

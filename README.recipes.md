@@ -2831,7 +2831,7 @@ Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
 
 Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#77)(self, specs_dir='releasespecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#77)(self, specs_dir='buildspecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
