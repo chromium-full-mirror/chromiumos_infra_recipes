@@ -508,6 +508,62 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "upload-to-gs",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
+    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.CrosToolRunner: Phosphorus: save local DUT state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

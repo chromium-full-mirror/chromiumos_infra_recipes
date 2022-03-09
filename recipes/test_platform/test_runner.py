@@ -619,6 +619,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     result.add_prejob_response(prejob_response)
     result.add_test_response(run_test_response)
   finally:
+    archive_all_logs(api, interface=interface, test_metadata=test_metadata,
+                     result=result)
     interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
     publish_to_result_flow(api, properties.config,

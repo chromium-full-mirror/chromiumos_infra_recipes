@@ -372,7 +372,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"artifactDir\": \"output_dir\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactDir\": \"[CLEANUP]/output_dir_tmp_1\", @@@",
       "@@@STEP_LOG_LINE@request@  \"testSuites\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"suite1\", @@@",
@@ -449,9 +449,53 @@
       "/dev/stdout"
     ],
     "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test",
-    "stdin": "{\n  \"artifactDir\": \"output_dir\", \n  \"testSuites\": [\n    {\n      \"name\": \"suite1\", \n      \"testCaseIds\": {\n        \"testCaseIds\": [\n          {\n            \"value\": \"tauto.stub_Pass\"\n          }, \n          {\n            \"value\": \"tast.example.Fail\"\n          }, \n          {\n            \"value\": \"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ], \n  \"primaryDut\": {\n    \"dut\": {\n      \"cacheServer\": {\n        \"address\": {\n          \"port\": 8082, \n          \"address\": \"100.115.220.100\"\n        }\n      }, \n      \"chromeos\": {\n        \"ssh\": {\n          \"address\": \"fake_host\"\n        }, \n        \"dutModel\": {\n          \"buildTarget\": \"kevin\", \n          \"modelName\": \"kevin\"\n        }\n      }, \n      \"id\": {\n        \"value\": \"fake_host\"\n      }\n    }, \n    \"containerMetadataKey\": \"kevin\"\n  }\n}",
+    "stdin": "{\n  \"artifactDir\": \"[CLEANUP]/output_dir_tmp_1\", \n  \"testSuites\": [\n    {\n      \"name\": \"suite1\", \n      \"testCaseIds\": {\n        \"testCaseIds\": [\n          {\n            \"value\": \"tauto.stub_Pass\"\n          }, \n          {\n            \"value\": \"tast.example.Fail\"\n          }, \n          {\n            \"value\": \"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ], \n  \"primaryDut\": {\n    \"dut\": {\n      \"cacheServer\": {\n        \"address\": {\n          \"port\": 8082, \n          \"address\": \"100.115.220.100\"\n        }\n      }, \n      \"chromeos\": {\n        \"ssh\": {\n          \"address\": \"fake_host\"\n        }, \n        \"dutModel\": {\n          \"buildTarget\": \"kevin\", \n          \"modelName\": \"kevin\"\n        }\n      }, \n      \"id\": {\n        \"value\": \"fake_host\"\n      }\n    }, \n    \"containerMetadataKey\": \"kevin\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "upload-to-gs",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
+    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

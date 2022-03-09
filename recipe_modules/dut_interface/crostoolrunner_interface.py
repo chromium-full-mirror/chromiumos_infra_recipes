@@ -13,6 +13,7 @@ from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.test.lab.api.dut import Dut
 from PB.chromiumos.test.lab.api.dut import CacheServer
 from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
+from PB.test_platform import phosphorus
 
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
                                    ['test_dut_responses'])
@@ -27,7 +28,8 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
   Passable to DutInterface that requires info from this class to provision, run tests etc.
   """
 
-  def __init__(self, interface, test_id, test, image_storage_server=''):
+  def __init__(self, interface, test_id, test, artifact_dir='',
+               image_storage_server=''):
     """Specific constructor for CrosToolRunner subclass of DUTTestMetadata
 
     Args:
@@ -50,10 +52,12 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     self.peer_duts = []
     self.default_cache_server_address = "100.115.220.100"
     self.default_cache_server_port = 8082
-    self.output_dir = "output_dir"
+    self.artifact_dir = artifact_dir
 
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
+
+  ARTIFACT_DIR_PREFIX = 'output_dir'
 
   def __init__(self, api, properties):
     """DUTInterface implementation with cros-tool-runner.
@@ -128,7 +132,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           .primary_dut.container_metadata_key)
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_mvp_request.test_suites,
-          primary_dut=primary_dut_device, artifact_dir=metadata.output_dir)
+          primary_dut=primary_dut_device, artifact_dir=metadata.artifact_dir)
       return self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
 
@@ -209,7 +213,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Args:
       metadata (DUTTestMetadata): Input information relevant to one test.
     """
-    raise NotImplementedError
+    with self._api.step.nest('CrosToolRunner: Phosphorus: upload to GS'):
+      self._api.phosphorus.upload_to_gs(
+          phosphorus.upload_to_gs.UploadToGSRequest(
+              config=None, local_directory=metadata.artifact_dir,
+              gs_directory=metadata.gs_url))
 
   def parse_test_results(self, metadata):
     """For one specific test or group of tests with same configs, get the test results in the form of DUTResult.
@@ -248,7 +256,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       DUTTestMetadata: Compact metadata representing a set of test(s) for this
       interface.
     """
-    return CrosToolRunnerTestMetadata(self, test_id, test, None)
+    artifact_dir = str(self._api.path.mkdtemp(self.ARTIFACT_DIR_PREFIX))
+    return CrosToolRunnerTestMetadata(interface=self, test_id=test_id,
+                                      test=test, artifact_dir=artifact_dir,
+                                      image_storage_server=None)
 
   def get_results_directory(self, metadata):
     """Retrieves the directory whereupon results are deposited.
@@ -259,7 +270,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns:
       str
     """
-    return metadata.output_dir
+    return metadata.artifact_dir
 
   def is_within_deadline(self):
     """Determines if a test is within deadline.
