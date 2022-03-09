@@ -3510,7 +3510,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#150)(instructions):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#149)(instructions):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -3520,7 +3520,7 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#138)(metadata):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#137)(metadata):**
 
 Whether the provided metadata contains a successful signing operation.
 

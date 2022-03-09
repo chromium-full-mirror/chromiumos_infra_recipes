@@ -132,8 +132,7 @@ class CrosSigningApi(recipe_api.RecipeApi):
       if not self.signing_succeeded(metadata):
         raise recipe_api.StepFailure(
             'One or more signing requests failed or timed out. '
-            'Signing response: {}'.format(
-                json.dumps(instructions_metadata, indent=2)))
+            'See full metadata in step "parse metadata".')
 
   @staticmethod
   def signing_succeeded(metadata):

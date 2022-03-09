@@ -149,7 +149,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "One or more signing requests failed or timed out. Signing response: {\n  \"gs://bucket/directory1/directory2/releases/file1.instructions\": null, \n  \"gs://bucket/directory1/directory2/releases/file2.instructions\": null\n}"
+      "humanReason": "One or more signing requests failed or timed out. See full metadata in step \"parse metadata\"."
     },
     "name": "$result"
   }
