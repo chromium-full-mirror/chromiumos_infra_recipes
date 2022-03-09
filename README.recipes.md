@@ -2847,7 +2847,7 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [get\_paygen\_testing\_models](/recipe_modules/cros_release/api.py#232)(self):**
+&mdash; **def [get\_paygen\_testing\_models](/recipe_modules/cros_release/api.py#234)(self):**
 
 Determine which models need to run paygen tests.
 
@@ -2860,7 +2860,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#242)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#244)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 

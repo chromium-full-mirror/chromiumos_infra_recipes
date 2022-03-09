@@ -220,12 +220,14 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                           'https://cr-buildbucket.appspot.com/build/{}'.format(
                               paygen_orch_build.id))
 
-      payload_information = paygen_orch_build.output.properties['payloads']
-      payload_information = [
-          json_format.Parse(payload, BuildReport.Payload())
-          for payload in payload_information
-      ]
-      self.m.build_reporting.publish(BuildReport(payloads=payload_information))
+      if 'payloads' in paygen_orch_build.output.properties:
+        payload_information = paygen_orch_build.output.properties['payloads']
+        payload_information = [
+            json_format.Parse(payload, BuildReport.Payload())
+            for payload in payload_information
+        ]
+        self.m.build_reporting.publish(
+            BuildReport(payloads=payload_information))
 
       return builds
 
