@@ -398,7 +398,7 @@
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"chromeos\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"ssh\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"address\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"address\": \"fake_host.cros\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"dutModel\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"buildTarget\": \"kevin\", @@@",
@@ -508,7 +508,7 @@
       }
     },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
-    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"cacheServer\": {\n          \"address\": {\n            \"port\": 8082, \n            \"address\": \"100.115.220.100\"\n          }\n        }, \n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host\"\n          }, \n          \"dutModel\": {\n            \"buildTarget\": \"kevin\", \n            \"modelName\": \"kevin\"\n          }\n        }, \n        \"id\": {\n          \"value\": \"fake_host\"\n        }\n      }, \n      \"provisionState\": {}, \n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"cacheServer\": {\n          \"address\": {\n            \"port\": 8082, \n            \"address\": \"100.115.220.100\"\n          }\n        }, \n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host.cros\"\n          }, \n          \"dutModel\": {\n            \"buildTarget\": \"kevin\", \n            \"modelName\": \"kevin\"\n          }\n        }, \n        \"id\": {\n          \"value\": \"fake_host\"\n        }\n      }, \n      \"provisionState\": {}, \n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

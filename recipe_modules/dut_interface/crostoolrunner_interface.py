@@ -58,6 +58,7 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
   ARTIFACT_DIR_PREFIX = 'output_dir'
+  DUT_HOSTNAME_SUFFIX = '.cros'
 
   def __init__(self, api, properties):
     """DUTInterface implementation with cros-tool-runner.
@@ -83,7 +84,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       * api.test.StepFailure If prejob fails.
     """
     dut_details = Dut.ChromeOS(
-        ssh=IpEndpoint(address=metadata.primary_dut.hostname, port=0),
+        # CTR expects hostname.cros format for ssh endpoint
+        ssh=IpEndpoint(
+            address='{}{}'.format(metadata.primary_dut.hostname,
+                                  self.DUT_HOSTNAME_SUFFIX), port=0),
         dut_model=self.cft_mvp_request.primary_dut.dut_model)
     cache_server_info = CacheServer(
         address=IpEndpoint(address=metadata.default_cache_server_address,
@@ -119,7 +123,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     with self._api.step.nest('CrosToolRunner: run test'):
       dut_details = Dut.ChromeOS(
-          ssh=IpEndpoint(address=metadata.primary_dut.hostname, port=0),
+          # CTR expects hostname.cros format for ssh endpoint
+          ssh=IpEndpoint(
+              address='{}{}'.format(metadata.primary_dut.hostname,
+                                    self.DUT_HOSTNAME_SUFFIX), port=0),
           dut_model=self.cft_mvp_request.primary_dut.dut_model)
       cache_server_info = CacheServer(
           address=IpEndpoint(address=metadata.default_cache_server_address,
