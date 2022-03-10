@@ -58,35 +58,57 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._test_summary = test_summary
     self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: self._test_summary})
 
-  def _fetch_starlark_files(self, test_plan_starlark_files):
+  def _fetch_starlark_files(self, source_test_plans):
     """Fetches a list of TestPlanStarlarkFiles to a local temp directory.
 
+    Note that a given repo will only be cloned once. For example, if multiple
+    TestPlanStarlarkFiles specify files in
+    https://chromium.googlesource.com/platform/testrepoB, this repo will be
+    cloned once, and then both returned StarlarkPackages will refer to the
+    local path the repo was cloned to.
+
     Args:
-      test_plan_starlark_files (list[TestPlanStarlarkFile]):
-        TestPlanStarlarkFiles to fetch.
+      source_test_plans (list[SourceTestPlan]): A list of SourceTestPlans
+        containing TestPlanStarlarkFiles to fetch.
 
     Returns:
-      A list of StarlarkPackages for the fetched files.
+      A list of StarlarkPackages for the fetched plans.
     """
-    output_dir = self.m.path.mkdtemp()
     starlark_packages = []
 
-    for starlark_file in test_plan_starlark_files:
-      target_path = self.m.path.join(output_dir, starlark_file.project)
-      self.m.git.clone(
-          'https://{}/{}'.format(starlark_file.host, starlark_file.project),
-          target_path=target_path,
-          single_branch=True,
-          depth=1,
-          verbose=True,
-          progress=True,
-      )
-      starlark_packages.append(
-          self.m.cros_test_plan_v2.StarlarkPackage(
-              root=target_path,
-              main=starlark_file.path,
-          ),
-      )
+    # Map from (host, project) combo to the local dir the repo was cloned to.
+    # This is used to prevent cloning the same repo twice.
+    host_project_to_output_dir = {}
+
+    for plan in source_test_plans:
+      for starlark_file in plan.test_plan_starlark_files:
+        key = (starlark_file.host, starlark_file.project)
+
+        # If the (host, project) combo has already been cloned, reuse the local
+        # path it was cloned to. Otherwise, clone the repo and insert the local
+        # path into the map.
+        if key in host_project_to_output_dir:
+          target_path = host_project_to_output_dir[key]
+        else:
+          output_dir = self.m.path.mkdtemp()
+          target_path = self.m.path.join(output_dir, starlark_file.project)
+          self.m.git.clone(
+              'https://{}/{}'.format(starlark_file.host, starlark_file.project),
+              target_path=target_path,
+              single_branch=True,
+              depth=1,
+              verbose=True,
+              progress=True,
+          )
+
+          host_project_to_output_dir[key] = target_path
+
+        starlark_packages.append(
+            self.m.cros_test_plan_v2.StarlarkPackage(
+                root=target_path,
+                main=starlark_file.path,
+            ),
+        )
 
     return starlark_packages
 
@@ -100,10 +122,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       with self.m.step.nest('schedule tests'):
         relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
 
-        starlark_files = []
-        for plan in relevant_plans:
-          starlark_files.extend(
-              self._fetch_starlark_files(plan.test_plan_starlark_files))
+        starlark_files = self._fetch_starlark_files(relevant_plans)
 
         if starlark_files:
           hw_test_plans = self.m.cros_test_plan_v2.generate_hw_test_plans(
@@ -239,10 +258,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     if use_test_plan_v2:
       relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
 
-      starlark_files = []
-      for plan in relevant_plans:
-        starlark_files.extend(
-            self._fetch_starlark_files(plan.test_plan_starlark_files))
+      starlark_files = self._fetch_starlark_files(relevant_plans)
 
       req = GenerateTestPlanRequest(buildbucket_protos=[
           ProtoBytes(serialized_proto=build.SerializeToString())

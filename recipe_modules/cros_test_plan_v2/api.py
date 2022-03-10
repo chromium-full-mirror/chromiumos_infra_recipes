@@ -346,13 +346,22 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       # Copy each Starlark package to the host input dir, and a '-plan' flag
       # pointing to the main file.
+      #
+      # Starlark packages may share the same root, because they are in the same
+      # repo. Keep track of which roots have been visited, and don't copy them
+      # twice.
+      visited_roots = set()
       for package in starlark_packages:
         basename = self.m.path.basename(package.root)
-        dest = self.m.path.join(host_input_path, basename)
-        # Some repos contain symlinks to parent directories, leave symlinks as
-        # symlinks instead of following them, to avoid infinite recursion.
-        self.m.file.copytree('copy ' + basename, package.root, dest,
-                             symlinks=True)
+
+        if package.root not in visited_roots:
+          dest = self.m.path.join(host_input_path, basename)
+          # Some repos contain symlinks to parent directories, leave symlinks as
+          # symlinks instead of following them, to avoid infinite recursion.
+          self.m.file.copytree('copy ' + basename, package.root, dest,
+                               symlinks=True)
+          visited_roots.add(package.root)
+
         args.extend([
             '-plan', '{}/{}/{}'.format(container_input_path, basename,
                                        package.main)

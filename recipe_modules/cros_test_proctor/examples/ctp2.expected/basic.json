@@ -174,48 +174,12 @@
       "--depth",
       "1",
       "https://chromium.googlesource.com/platform/testrepoB",
-      "[CLEANUP]/tmp_tmp_1/platform/testrepoB",
-      "-v",
-      "--progress"
-    ],
-    "infra_step": true,
-    "name": "run tests.schedule tests.git clone (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "--single-branch",
-      "--depth",
-      "1",
-      "https://chromium.googlesource.com/platform/testrepoA",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoA",
-      "-v",
-      "--progress"
-    ],
-    "infra_step": true,
-    "name": "run tests.schedule tests.git clone (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "--single-branch",
-      "--depth",
-      "1",
-      "https://chromium.googlesource.com/platform/testrepoB",
       "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
       "-v",
       "--progress"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.git clone (4)",
+    "name": "run tests.schedule tests.git clone (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -534,47 +498,11 @@
       "/path/to/tmp/json",
       "copytree",
       "--symlinks",
-      "[CLEANUP]/tmp_tmp_1/platform/testrepoB",
-      "[CLEANUP]/tmp_tmp_3/testrepoB"
-    ],
-    "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copytree",
-      "--symlinks",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoA",
-      "[CLEANUP]/tmp_tmp_3/testrepoA"
-    ],
-    "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copytree",
-      "--symlinks",
       "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
       "[CLEANUP]/tmp_tmp_3/testrepoB"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB (2)",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

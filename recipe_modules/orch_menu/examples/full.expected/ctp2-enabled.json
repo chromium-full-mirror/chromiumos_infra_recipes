@@ -2933,7 +2933,7 @@
       "    builds_status = api.orch_menu.plan_and_run_tests()",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 764, in plan_and_run_tests",
       "    self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_test_proctor/api.py\", line 118, in run_proctor_v2",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_test_proctor/api.py\", line 137, in run_proctor_v2",
       "    raise ValueError('CTP2 not implemented')",
       "ValueError('CTP2 not implemented')"
     ]
