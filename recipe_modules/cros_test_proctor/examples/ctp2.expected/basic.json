@@ -224,7 +224,18 @@
     "cmd": [],
     "name": "run tests.schedule tests.generate hw test plans",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"kernel:4.4\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"kernel:5.2\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_LINE@hw test plans@@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"wifiA\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_END@hw test plans@@@"
     ]
   },
   {

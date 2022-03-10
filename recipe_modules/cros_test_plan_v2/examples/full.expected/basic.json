@@ -114,7 +114,20 @@
   },
   {
     "cmd": [],
-    "name": "generate hw test plans"
+    "name": "generate hw test plans",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"kernel:4.4\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"kernel:5.2\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_LINE@hw test plans@@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"wifiA\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_END@hw test plans@@@"
+    ]
   },
   {
     "cmd": [],

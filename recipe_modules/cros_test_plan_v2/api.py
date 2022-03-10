@@ -239,7 +239,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       A list of generated HWTestPlans or GenerateTestPlanResponse if
         generate_ctpv1_format is true.
     """
-    with self.m.step.nest('generate hw test plans'):
+    with self.m.step.nest('generate hw test plans') as pres:
       if self.generate_ctpv1_format != (generate_test_plan_request is not None):
         raise ValueError(
             'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
@@ -344,6 +344,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             .SerializeToString(),
         )
         resp = GenerateTestPlanResponse.FromString(output)
+        pres.logs['v1-compatible response'] = [str(resp)]
         return resp
 
       # Read the output HWTestPlans, which are readable on the host because
@@ -357,5 +358,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         plan = plan_pb2.HWTestPlan()
         json_format.Parse(line, plan)
         hw_test_plans.append(plan)
+
+      pres.logs['hw test plans'] = '\n'.join(str(p) for p in hw_test_plans)
 
       return hw_test_plans
