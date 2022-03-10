@@ -253,7 +253,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       * starlark_packages (list[StarlarkPackage]): Paths to Starlark files to
         evaluate to get HWTestPlans. Note that StarlarkPackages must be used
         instead of single files because the Starlark files can import each
-        other.
+        other. If there are duplicate StarlarkPackages (same root and main file)
+        each unique package will only be added once.
       * generate_test_plan_request (GenerateTestPlanRequest): A
         GenerateTestPlanRequest for calling testplan with CTPV1 compatibility.
 
@@ -305,7 +306,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         board_priority_list_path = self._download_config_pb(
             'chrome-internal.googlesource.com',
             'chromeos/config-internal',
-            'board_config/generated/board_priority.binaryproto',
+            'board_config/generated/board_priority.cfg',
             host_input_path,
             test_output_message=self.test_api.board_priority_list(),
         )
@@ -347,11 +348,14 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       # Copy each Starlark package to the host input dir, and a '-plan' flag
       # pointing to the main file.
       #
+      # Note that starlark_packages may contain duplicates, in this case each
+      # unique package is only added to the args once.
+      #
       # Starlark packages may share the same root, because they are in the same
       # repo. Keep track of which roots have been visited, and don't copy them
       # twice.
       visited_roots = set()
-      for package in starlark_packages:
+      for package in set(starlark_packages):
         basename = self.m.path.basename(package.root)
 
         if package.root not in visited_roots:

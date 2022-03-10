@@ -124,7 +124,7 @@ def GenTests(api):
           [
               '-ctpv1',
               "-boardprioritylist",
-              "/input/board_priority.binaryproto",
+              "/input/board_priority.cfg",
               "-buildmetadata",
               "/input/build_metadata.jsonproto",
               "-configbundlelist",

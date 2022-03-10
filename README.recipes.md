@@ -4178,7 +4178,8 @@ Args:
   * starlark_packages (list[StarlarkPackage]): Paths to Starlark files to
     evaluate to get HWTestPlans. Note that StarlarkPackages must be used
     instead of single files because the Starlark files can import each
-    other.
+    other. If there are duplicate StarlarkPackages (same root and main file)
+    each unique package will only be added once.
   * generate_test_plan_request (GenerateTestPlanRequest): A
     GenerateTestPlanRequest for calling testplan with CTPV1 compatibility.
 

@@ -5099,9 +5099,9 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.binaryproto?format=TEXT"
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT"
     ],
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.binaryproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -5115,10 +5115,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"boardPriorities\": [\n    {\n      \"priority\": -100, \n      \"skylabBoard\": \"testboardA\"\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_3/board_priority.binaryproto"
+      "[CLEANUP]/tmp_tmp_3/board_priority.cfg"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.write input files.write board_priority.binaryproto",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write board_priority.cfg",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -5195,7 +5195,7 @@
       "2",
       "-ctpv1",
       "-boardprioritylist",
-      "/input/board_priority.binaryproto",
+      "/input/board_priority.cfg",
       "-buildmetadata",
       "/input/build_metadata.jsonproto",
       "-configbundlelist",
@@ -5206,10 +5206,6 @@
       "/input/generatetestplanreq.binaryproto",
       "-out",
       "/input/generatetestplanresp.binaryproto",
-      "-plan",
-      "/input/testrepoA/a/b/kernel1.star",
-      "-plan",
-      "/input/testrepoB/kernel2.star",
       "-plan",
       "/input/testrepoA/a/b/kernel1.star",
       "-plan",
