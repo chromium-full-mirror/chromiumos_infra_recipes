@@ -60,6 +60,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
         'chromeos.build_menu.force_empty_toolchain_targets' in
         self.m.cros_infra_config.experiments)
 
+    self._force_relevant_build |= (
+        self.m.buildbucket.build.input.properties['force_relevant_build']
+        if 'force_relevant_build' in self.m.buildbucket.build.input.properties
+        else False)
+
   @property
   def artifact_build(self):
     return self._artifact_build

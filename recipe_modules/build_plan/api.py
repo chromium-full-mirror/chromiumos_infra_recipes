@@ -222,10 +222,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         properties = self.m.cq.props_for_child_build
         properties.update(self.m.cros_infra_config.props_for_child_build)
         if force_relevant:
-          properties.update(
-              {'$chromeos/build_menu': {
-                  'force_relevant_build': True
-              }})
+          properties.update({'force_relevant_build': True})
 
         if child_builder_name.endswith('-slim-cq'):
           count_scheduled_slim_builds += 1

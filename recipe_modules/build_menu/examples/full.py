@@ -41,13 +41,13 @@ def RunSteps(api, properties):
 def DoRunSteps(api, properties):
   cherry_pick_changes = not properties.dont_cherry_pick_changes
   with api.build_menu.setup_workspace_and_chroot(
-      cherry_pick_changes=cherry_pick_changes) as relevant:
+      cherry_pick_changes=cherry_pick_changes):
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
-    experiment_relevance = api.build_menu.is_cq_build_relevant()
-    if properties.forced_relevant:
-      api.assertions.assertTrue(relevant)
-      api.assertions.assertTrue(experiment_relevance)
+    api.build_menu.is_cq_build_relevant()
+    # pylint: disable=protected-access
+    api.assertions.assertEqual(properties.forced_relevant,
+                               api.build_menu._force_relevant_build)
 
     if properties.no_sysroot:
       api.assertions.assertIsNone(api.build_menu.sysroot)
@@ -201,6 +201,11 @@ def GenTests(api):
         })
 
   yield api.build_menu.test(
+      'force-relevant-global-property',
+      api.properties(FullProperties(forced_relevant=True)), cq=True,
+      input_properties={'force_relevant_build': True})
+
+  yield api.build_menu.test(
       'no-sysroot', api.properties(FullProperties(no_sysroot=True)),
       input_properties=({
           '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
@@ -265,6 +270,7 @@ def GenTests(api):
       post_process.ResultReasonRE,
       'Unknown fields found in version format string',
     ),
+      api.post_process(post_process.DropExpectation),
     cq=True,
   )
 
@@ -284,6 +290,7 @@ def GenTests(api):
       post_process.ResultReasonRE,
       'Invalid tag format',
     ),
+      api.post_process(post_process.DropExpectation),
     cq=True,
   )
 
@@ -302,6 +309,7 @@ def GenTests(api):
       post_process.ResultReasonRE,
       'Tag is too long',
     ),
+      api.post_process(post_process.DropExpectation),
     cq=True,
   )
 
