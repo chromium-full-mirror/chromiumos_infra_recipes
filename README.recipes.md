@@ -2598,7 +2598,7 @@ API for working with Paygen and its config.
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#589)(self, paygen_build_results):**
+&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#723)(self, paygen_build_results):**
 
 Prepare payload information for the release pubsub.
 
@@ -2609,7 +2609,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#792)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#831)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2735,15 +2735,15 @@ Args:
     find tests and schedule.
   configured_payloads (list[dict]): Configs for the payloads we are
     generating and testing.
-  delta_payload_test_override (PayloadTestsOverride): Whether to override
+  delta_payload_test_override (PayloadTestsOverride): Option to override
     the configured delta payload testing policy.
-  full_payload_test_override (PayloadTestsOverride): Whether to override the
+  full_payload_test_override (PayloadTestsOverride): Option to override the
     configured full payload testing policy.
 
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#882)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#921)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 

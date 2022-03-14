@@ -31,7 +31,7 @@ def RunSteps(api):
 
   # Test scheduling full test payloads.
   # Respect config
-  actual_full_schedule_reqs = api.cros_paygen._schedule_full_test_payloads(
+  actual_full_schedule_reqs = api.cros_paygen._create_full_test_paygen_schedule_requests(
       full, configured_payloads)
   expected_full_tests = [
       api.cros_paygen._create_bb_schedule_request(
@@ -42,7 +42,7 @@ def RunSteps(api):
       [y.properties for y in expected_full_tests],
       [y.properties for y in actual_full_schedule_reqs])
   # Force tests
-  actual_full_schedule_reqs = api.cros_paygen._schedule_full_test_payloads(
+  actual_full_schedule_reqs = api.cros_paygen._create_full_test_paygen_schedule_requests(
       full, configured_payloads, PaygenOrchestratorProperties.FORCE_TESTS)
   expected_full_tests = [
       api.cros_paygen._create_bb_schedule_request(
@@ -55,7 +55,7 @@ def RunSteps(api):
       [y.properties for y in expected_full_tests],
       [y.properties for y in actual_full_schedule_reqs])
   # Force no tests
-  actual_full_schedule_reqs = api.cros_paygen._schedule_full_test_payloads(
+  actual_full_schedule_reqs = api.cros_paygen._create_full_test_paygen_schedule_requests(
       full, configured_payloads, PaygenOrchestratorProperties.FORCE_NO_TESTS)
   expected_full_tests = [
       api.cros_paygen._create_bb_schedule_request(
@@ -67,7 +67,7 @@ def RunSteps(api):
 
   # Test scheduling delta test payloads.
   # Respect config
-  actual_delta_schedule_reqs = api.cros_paygen._schedule_delta_test_payloads(
+  actual_delta_schedule_reqs = api.cros_paygen._create_delta_test_paygen_schedule_requests(
       delta, configured_payloads)
   expected_delta_tests = [
       api.cros_paygen._create_bb_schedule_request(
@@ -80,7 +80,7 @@ def RunSteps(api):
       [y.properties for y in expected_delta_tests],
       [y.properties for y in actual_delta_schedule_reqs])
   # Force tests
-  actual_delta_schedule_reqs = api.cros_paygen._schedule_delta_test_payloads(
+  actual_delta_schedule_reqs = api.cros_paygen._create_delta_test_paygen_schedule_requests(
       delta, configured_payloads, PaygenOrchestratorProperties.FORCE_TESTS)
   expected_delta_tests = [
       api.cros_paygen._create_bb_schedule_request(
@@ -94,7 +94,7 @@ def RunSteps(api):
       [y.properties for y in expected_delta_tests],
       [y.properties for y in actual_delta_schedule_reqs])
   # Force no tests
-  actual_delta_schedule_reqs = api.cros_paygen._schedule_delta_test_payloads(
+  actual_delta_schedule_reqs = api.cros_paygen._create_delta_test_paygen_schedule_requests(
       delta, configured_payloads, PaygenOrchestratorProperties.FORCE_NO_TESTS)
   expected_delta_tests = [
       api.cros_paygen._create_bb_schedule_request(
