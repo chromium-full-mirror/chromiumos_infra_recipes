@@ -28,8 +28,8 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
   Passable to DutInterface that requires info from this class to provision, run tests etc.
   """
 
-  def __init__(self, interface, test_id, test, artifact_dir='',
-               image_storage_server=''):
+  def __init__(self, interface, test_id, test, autotest_keyvals=None,
+               artifact_dir='', image_storage_server=''):
     """Specific constructor for CrosToolRunner subclass of DUTTestMetadata
 
     Args:
@@ -43,6 +43,8 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
                          gs_url=interface.logs_gs_url(),
                          image_storage_server=image_storage_server)
 
+    self.artifact_dir = artifact_dir
+    self.autotest_keyvals = autotest_keyvals
     # TODO(b/220801059): Once DutToplogy is rolled out and inventory service is implemented,
     # fetch dut topology from inventory service instead of phosphorus.
     self.load_response = interface.load_skylab_local_state(
@@ -52,13 +54,16 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     self.peer_duts = []
     self.default_cache_server_address = "100.115.220.100"
     self.default_cache_server_port = 8082
-    self.artifact_dir = artifact_dir
 
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
   ARTIFACT_DIR_PREFIX = 'output_dir'
-  DUT_HOSTNAME_SUFFIX = '.cros'
+  DUT_HOSTNAME_SUFFIX = 'cros'
+  KEYVAL_FILENAME = 'keyval'
+  TEST_HARNESS_TAUTO = 'tauto'
+  TEST_HARNESS_TAST = 'tast'
+  AUTOTEST_PACKAGE_PATH = '/usr/local/autotest'
 
   def __init__(self, api, properties):
     """DUTInterface implementation with cros-tool-runner.
@@ -86,8 +91,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     dut_details = Dut.ChromeOS(
         # CTR expects hostname.cros format for ssh endpoint
         ssh=IpEndpoint(
-            address='{}{}'.format(metadata.primary_dut.hostname,
-                                  self.DUT_HOSTNAME_SUFFIX), port=0),
+            address='{}.{}'.format(metadata.primary_dut.hostname,
+                                   self.DUT_HOSTNAME_SUFFIX), port=0),
         dut_model=self.cft_mvp_request.primary_dut.dut_model)
     cache_server_info = CacheServer(
         address=IpEndpoint(address=metadata.default_cache_server_address,
@@ -125,8 +130,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       dut_details = Dut.ChromeOS(
           # CTR expects hostname.cros format for ssh endpoint
           ssh=IpEndpoint(
-              address='{}{}'.format(metadata.primary_dut.hostname,
-                                    self.DUT_HOSTNAME_SUFFIX), port=0),
+              address='{}.{}'.format(metadata.primary_dut.hostname,
+                                     self.DUT_HOSTNAME_SUFFIX), port=0),
           dut_model=self.cft_mvp_request.primary_dut.dut_model)
       cache_server_info = CacheServer(
           address=IpEndpoint(address=metadata.default_cache_server_address,
@@ -212,7 +217,91 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
     * InfraFailure.
     """
-    raise NotImplementedError
+    all_valid_result_dir = True
+    with self._api.step.nest('CrosToolRunner: Phosphorus: upload to TKO'):
+      # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
+      # Retrieve ctr_test_response(TestCaseResult type) and check which test cases are of harness type 'tauto'.
+      # For 'tauto' harness type, try to upload test results to TKO.
+      for test_dut_response in run_test_response.test_dut_responses:
+        ctr_test_response = test_dut_response.data
+        test_harness_type = ctr_test_response.test_harness.WhichOneof(
+            'test_harness_type')
+        results_dir = ctr_test_response.result_dir_path.path
+        test_case_id = ctr_test_response.test_case_id.value
+        with self._api.step.nest(test_case_id) as step:
+          if test_harness_type == self.TEST_HARNESS_TAUTO:
+            if self._write_to_keyvals(results_dir,
+                                      self._with_gs_logs_keyval(metadata)):
+              with self._api.context(infra_steps=True):
+                self._api.phosphorus.upload_to_tko(
+                    phosphorus.upload_to_tko.UploadToTkoRequest(
+                        config=self._build_tko_metadata(results_dir)))
+            else:
+              all_valid_result_dir = False
+              step.presentation.status = self._api.step.FAILURE
+          else:
+            step.presentation.logs[
+                'TKO upload skipped'] = "TKO upload skipped for test '{}' which is of test harness type '{}'. Only '{}' harness type is allowed for TKO upload.".format(
+                    test_case_id, test_harness_type, self.TEST_HARNESS_TAUTO)
+    # Try to upload all valid results to TKO before failing
+    if not all_valid_result_dir:
+      raise self._api.step.StepFailure('Invalid result directory found')
+
+  def _write_to_keyvals(self, results_dir, autotest_keyvals):
+    """Write autotest keyvals to keyval file.
+
+    This is required before upload-to-tko step.
+    TKO parse will read these keyvals to upload the test results properly.
+
+    Args:
+    * results_dir (str): path to results dir of the specific test.
+    * autotest_keyvals (dict): autotest keyvals that needs to be added to keyval file.
+
+    Returns:
+      bool: true if write to keyval was successful; false otherwise
+    """
+    with self._api.step.nest('Result directory validation') as step:
+      self._api.path.mock_add_paths(results_dir)
+      if not self._api.path.exists(results_dir):
+        # Fail this step
+        step.presentation.status = self._api.step.FAILURE
+        step.presentation.logs['details'] = '{} path is invalid'.format(
+            results_dir)
+        return False
+    keyval_file_path = self._api.path.join(results_dir, self.KEYVAL_FILENAME)
+    keyvals_list = []
+    for k, v in autotest_keyvals.items():
+      keyvals_list.append('{}={}'.format(k, v))
+    keyval_file_content = self._api.file.read_text(
+        'Keyval file contents before writing', keyval_file_path,
+        'dummyKey=dummyVal')
+    self._api.file.write_text(
+        'Writing to keyval file', keyval_file_path,
+        '{}{}'.format(keyval_file_content, '\n'.join(keyvals_list)), False)
+    self._api.file.read_text('Final keyval file contents', keyval_file_path,
+                             'dummyKey=dummyVal')
+    return True
+
+  def _build_tko_metadata(self, test_results_dir):
+    """Construct a phosphorus.Config specific to upload_to_tko step.
+
+    Unlike other steps, upload_to_tko needs to be pointed to the test-specific
+    subdirectory of the overall results directory.
+
+    Args:
+    * metadata (PhosphorusTestMetadata): Information for one specific test.
+    * run_test_response (PhosphorusTestDUTResponse): Response to a test run.
+
+    Returns: phosphorus.Config.
+
+    Raises:
+    * InfraFailure.
+    """
+    tko_metadata = phosphorus.common.Config()
+    tko_metadata.task.results_dir = test_results_dir
+    tko_metadata.task.test_results_dir = test_results_dir
+    tko_metadata.bot.autotest_dir = self.AUTOTEST_PACKAGE_PATH
+    return tko_metadata
 
   def upload_to_google_storage(self, metadata):
     """Uploads test information to Google Storage for current test.
@@ -251,13 +340,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return '%s/%s/%s' % (gs_root, now.date().isoformat(),
                          self._api.uuid.random())
 
-  def build_test_metadata(self, test_id, test):
+  def build_test_metadata(self, test_id, test, autotest_keyvals):
     """Get the test metadata for the designated single set of test(s) for this interface.
 
     Args:
     * test_id (str): The id for the current test.
     * test (skylab_test_runner.Request.Test): The actual test request for the
     current test.
+    * autotest_keyvals (dict): Autotest keyvals map.
 
     Returns:
       DUTTestMetadata: Compact metadata representing a set of test(s) for this
@@ -265,7 +355,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     artifact_dir = str(self._api.path.mkdtemp(self.ARTIFACT_DIR_PREFIX))
     return CrosToolRunnerTestMetadata(interface=self, test_id=test_id,
-                                      test=test, artifact_dir=artifact_dir,
+                                      test=test,
+                                      autotest_keyvals=autotest_keyvals,
+                                      artifact_dir=artifact_dir,
                                       image_storage_server=None)
 
   def get_results_directory(self, metadata):
@@ -330,6 +422,28 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       str
     """
     return api.phosphorus.read_dut_hostname()
+
+  @staticmethod
+  def _with_gs_logs_keyval(metadata):
+    """Gets the keyval from autotest and populates it with the latest URLs.
+
+    This keyval is required for stainless' test results view to link to the
+    test logs.
+    - Autoserv drops keyvals in a file in the logs directory
+    - tko/parse parses that file and injects keyvals in the TKO database
+    - Stainless table builder extracts this particular keyval and uses the value
+      to link to the archived logs.
+
+    Args:
+    * metadata (CrosToolRunnerTestMetadata): Input information relevant test(s) in CTR.
+
+    Returns:
+      dict: The updated keyvals.
+    """
+    keyvals = metadata.autotest_keyvals
+    keyvals['synchronous_log_data_url'] = metadata.gs_url
+    keyvals['synchronous_log_data_stainless_url'] = metadata.stainless_logs_url
+    return keyvals
 
   def _process_prejob_response(self, prejob_resp):
     """Process prejob responses received from cros_tool_runner.

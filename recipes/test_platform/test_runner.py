@@ -557,7 +557,8 @@ def execution_steps_with_ctr(api, properties):
   with api.step.nest('execution steps') as step:
     publish_to_result_flow(api, properties.config,
                            properties.cft_mvp_test_request.parent_request_uid)
-    test_metadata = interface.build_test_metadata("original_test", "")
+    test_metadata = interface.build_test_metadata(
+        "original_test", "", properties.cft_mvp_test_request.autotest_keyvals)
 
     interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata)
 
@@ -614,6 +615,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       run_test_response = interface.run_test(test_metadata,
                                              container_image_info)
       dut_state = _DUT_STATE_READY
+      interface.upload_to_tko(test_metadata, run_test_response)
 
     result = interface.parse_test_results(test_metadata)
     result.add_prejob_response(prejob_response)
@@ -637,7 +639,10 @@ def summarize_results_from_ctr_results(api, result):
       * api (RecipeScriptApi): Ubiquitous recipe api.
       * result (DUTResult): The result of all tests.
     """
-  with api.step.nest('test results'):
+  with api.step.nest('test results') as step:
+    if result.get_stainless_log_url():
+      s_link(step=step, name='Autotest logs',
+             link=result.get_stainless_log_url())
     for prejob in result.get_prejob_steps():
       _set_step_status(api=api, step_name="provision of " + prejob.test_id,
                        summary="", failure_condition=prejob.is_failure())

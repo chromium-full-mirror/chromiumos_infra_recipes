@@ -427,7 +427,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
       iss = 'gs://' + iss
     return iss
 
-  def build_test_metadata(self, test_id, test):
+  def build_test_metadata(self, test_id, test, autotest_keyvals=None):
     metadata = PhosphorusTestMetadata(self, test_id, test,
                                       self._get_image_storage_server())
     try:

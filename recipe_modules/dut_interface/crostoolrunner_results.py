@@ -225,5 +225,7 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     """
     if result:
       self.data = result.data
+      self.gs_url = result.gs_url
+      self.stainless_url = result.stainless_url
       self.prejob_response = result.prejob_response
       self.test_responses.extend(result.test_responses)

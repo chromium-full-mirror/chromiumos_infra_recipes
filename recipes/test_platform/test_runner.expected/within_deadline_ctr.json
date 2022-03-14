@@ -456,6 +456,22 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: upload to TKO",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: upload to TKO.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
+      "@@@STEP_LOG_END@TKO upload skipped@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.archive all test logs to Google Storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -550,7 +566,10 @@
   },
   {
     "cmd": [],
-    "name": "test results"
+    "name": "test results",
+    "~followup_annotations": [
+      "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
+    ]
   },
   {
     "cmd": [],

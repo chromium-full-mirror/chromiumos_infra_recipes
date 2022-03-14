@@ -55,6 +55,10 @@ message TestRunnerProperties {
     // The buildbucket ID of the CTP build that sent this test_runner request.
     int64 parent_build_id = 6;
 
+    // AutotestKeyvals are (key, value) pairs that will be added to all
+    // autotest tasks run.
+    map<string, string> autotest_keyvals = 7;
+
     message Device {
       // DUT model to be provisioned.
       chromiumos.test.lab.api.DutModel dut_model = 1;

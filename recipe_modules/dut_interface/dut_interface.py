@@ -209,13 +209,14 @@ class DUTInterface(object):  # pragma: no cover
     pass
 
   @abstractmethod
-  def build_test_metadata(self, test_id, test):
+  def build_test_metadata(self, test_id, test, autotest_keyvals):
     """Get the test metadata for the designated single test for this interface.
 
     Args:
     * test_id (str): The id for the current test.
     * test (skylab_test_runner.Request.Test): The actual test request for the
     current test.
+    * autotest_keyvals (dict): Autotest keyvals map.
 
     Returns:
       DUTTestMetadata: Compact metadata representing the single test for this
