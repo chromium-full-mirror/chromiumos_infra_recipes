@@ -1348,7 +1348,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module to get builder metadata.
 
-&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#55)(self, test_data=False):**
+&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#51)(self, test_data=False):**
 
 Finds all model names associated with the active build_target.
 
@@ -1364,10 +1364,6 @@ Looks up builder metadata for the provided build_target.
 
 Builder metadata does not change within the lifecycle of a build, so
 builder metadata is looked up once and cached.
-
-Important - a prerequisite for this method being able to return builder
-metadata is that `install_packages` has already been called, unless it is
-using test data from the BAPI.
 
 Args:
   test_data (bool): Whether the method is running with test data.

@@ -23,10 +23,6 @@ class BuilderMetadataApi(recipe_api.RecipeApi):
     Builder metadata does not change within the lifecycle of a build, so
     builder metadata is looked up once and cached.
 
-    Important - a prerequisite for this method being able to return builder
-    metadata is that `install_packages` has already been called, unless it is
-    using test data from the BAPI.
-
     Args:
       test_data (bool): Whether the method is running with test data.
 
