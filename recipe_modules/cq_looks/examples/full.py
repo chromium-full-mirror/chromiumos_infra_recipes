@@ -14,7 +14,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'build_plan',
+    'cq_looks',
 ]
 
 PROPERTIES = CqBuildPlanProperties
@@ -22,7 +22,7 @@ PROPERTIES = CqBuildPlanProperties
 
 def RunSteps(api, properties):
   snapshot_ids = set(properties.snapshot_ids)
-  unfinished, failed = api.build_plan.get_unfinished_or_failed_snapshot_ids(
+  unfinished, failed = api.cq_looks.get_unfinished_or_failed_snapshot_ids(
       snapshot_ids)
   api.assertions.assertCountEqual(properties.expected_failed_snapshots, failed)
   api.assertions.assertEqual(
@@ -42,6 +42,39 @@ def GenTests(api):
     kwargs.setdefault('bucket', 'cq')
     kwargs.setdefault('builder', 'cq-orchestrator')
     return api.buildbucket.try_build(project='chromeos', **kwargs)
+
+  success_builds = [
+      build_pb2.Build(
+          id=234, critical=common_pb2.YES, status=common_pb2.SUCCESS,
+          builder={'builder': 'fake-snapshot'},
+          tags=api.m.buildbucket.tags(snapshot='success-snapshot-0')),
+      build_pb2.Build(
+          id=234, critical=common_pb2.YES, status=common_pb2.ENDED_MASK,
+          builder={'builder': 'fake-brask-snapshot'},
+          tags=api.m.buildbucket.tags(snapshot='success-snapshot-1')),
+      build_pb2.Build(
+          id=234, critical=common_pb2.YES, status=common_pb2.SUCCESS,
+          builder={'builder': 'fake-atlas-snapshot'},
+          tags=api.m.buildbucket.tags(snapshot='success-snapshot-2')),
+      build_pb2.Build(
+          id=234, critical=common_pb2.YES, status=common_pb2.SUCCESS,
+          builder={'builder': 'fake-coral-kernelnext-snapshot'},
+          tags=api.m.buildbucket.tags(snapshot='success-snapshot-3')),
+  ]
+  yield api.test(
+      'cq-looks-success',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['chromeos.cros_infra_config.cq_looks']),
+      api.properties(
+          snapshot_ids=[build.tags[0].value for build in success_builds],
+          expected_failed_snapshots=[],
+          expected_unfinished_snapshots=[],
+      ),
+      api.buildbucket.simulated_search_results(
+          builds=success_builds,
+          step_name='unfinished or failed snapshots.buildbucket.search'),
+  )
 
   mixed_builds = [
       build_pb2.Build(id=123, critical=common_pb2.YES,
@@ -108,38 +141,5 @@ def GenTests(api):
       ),
       api.buildbucket.simulated_search_results(
           builds=mixed_builds,
-          step_name='unfinished or failed snapshots.buildbucket.search'),
-  )
-
-  success_builds = [
-      build_pb2.Build(
-          id=234, critical=common_pb2.YES, status=common_pb2.SUCCESS,
-          builder={'builder': 'fake-snapshot'},
-          tags=api.m.buildbucket.tags(snapshot='success-snapshot-0')),
-      build_pb2.Build(
-          id=234, critical=common_pb2.YES, status=common_pb2.ENDED_MASK,
-          builder={'builder': 'fake-brask-snapshot'},
-          tags=api.m.buildbucket.tags(snapshot='success-snapshot-1')),
-      build_pb2.Build(
-          id=234, critical=common_pb2.YES, status=common_pb2.SUCCESS,
-          builder={'builder': 'fake-atlas-snapshot'},
-          tags=api.m.buildbucket.tags(snapshot='success-snapshot-2')),
-      build_pb2.Build(
-          id=234, critical=common_pb2.YES, status=common_pb2.SUCCESS,
-          builder={'builder': 'fake-coral-kernelnext-snapshot'},
-          tags=api.m.buildbucket.tags(snapshot='success-snapshot-3')),
-  ]
-  yield api.test(
-      'cq-looks-success',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.properties(
-          snapshot_ids=[build.tags[0].value for build in success_builds],
-          expected_failed_snapshots=[],
-          expected_unfinished_snapshots=[],
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=success_builds,
           step_name='unfinished or failed snapshots.buildbucket.search'),
   )
