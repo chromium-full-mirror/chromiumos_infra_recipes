@@ -932,8 +932,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     """
     tagged_requests = {}
     for ptc in paygen_test_configs:
-      tagged_requests = ptc.to_ctp_tagged_requests(models,
-                                                   self._test_request_opts)
+      tagged_requests.update(
+          ptc.to_ctp_tagged_requests(models, self._test_request_opts))
     if not tagged_requests:
       return
 
