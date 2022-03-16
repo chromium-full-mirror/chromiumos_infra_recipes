@@ -25,6 +25,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     self._dut_id = env_vars.SKYLAB_DUT_ID
     self._run_id = env_vars.SWARMING_TASK_ID
     self._docker_key_file_location = '/creds/service_accounts/skylab-drone.json'
+    self._images_file_path = None
 
   def _run(self, subcommand, request, request_type, response_type=None,
            send_response=False):
@@ -44,9 +45,11 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
         raise ValueError('request is not of type %s' % request_type)
       presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_cros_tool_runner()
-      fileName = "images.json"
-      with open(fileName, 'w') as f:
-        f.write(json_format.MessageToJson(self.container_metadata))
+      if not self._images_file_path:
+        self._images_file_path = self.m.path.mkstemp(prefix='container_images')
+        self.m.file.write_text(
+            'writing container metadata to file', self._images_file_path,
+            json_format.MessageToJson(self.container_metadata))
       cmd = [
           "sudo",
           "--non-interactive",
@@ -55,7 +58,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           '-docker_key_file',
           self._docker_key_file_location,
           '-images',
-          fileName,
+          self._images_file_path,
           '-input',
           '/dev/stdin',
       ]

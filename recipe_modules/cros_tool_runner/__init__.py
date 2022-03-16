@@ -10,6 +10,7 @@ from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import \
 DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
