@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [],
+    "name": "setup"
+  },
+  {
+    "cmd": [],
+    "name": "run",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "No tgt image in gen req: {'fullUpdate': True}"
+    },
+    "name": "$result"
+  }
+]

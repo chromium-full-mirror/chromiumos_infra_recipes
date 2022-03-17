@@ -18,6 +18,7 @@ DEPS = [
     'cros_storage',
     'cros_test_plan',
     'cros_version',
+    'naming',
     'skylab',
     'util',
 ]

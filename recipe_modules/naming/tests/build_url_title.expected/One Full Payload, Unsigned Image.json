@@ -1,0 +1,17 @@
+[
+  {
+    "cmd": [],
+    "name": "setup"
+  },
+  {
+    "cmd": [],
+    "name": "run"
+  },
+  {
+    "cmd": [],
+    "name": "assert"
+  },
+  {
+    "name": "$result"
+  }
+]

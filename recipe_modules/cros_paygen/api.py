@@ -571,7 +571,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     sorted_gen_reqs = self._categorize_generation_requests(gen_reqs)
 
     paygen_requests = [
-        self._create_paygen_request(gen_req)
+        self._create_paygen_request_dict(gen_req)
         for gen_req in sorted_gen_reqs.non_test_payload_requests
     ]
     paygen_requests.extend(
@@ -583,13 +583,38 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             sorted_gen_reqs.delta_test_payload_requests, configured_payloads,
             delta_payload_test_override=delta_payload_test_override))
 
-    schedule_requests = self._categorize_and_schedule_paygen_requests(
-        paygen_requests)
+    paygen_request_batches = self._batch_paygen_requests(paygen_requests)
+    schedule_requests = []
+    for paygen_requests in paygen_request_batches:
+      schedule_requests.append(
+          self._create_bb_schedule_request(paygen_requests))
 
     # Run the buildbucket requests and return the build results.
-    return self.m.buildbucket.run(schedule_requests,
-                                  timeout=self.paygen_children_timeout_sec,
-                                  step_name='running children')
+    with self.m.step.nest('running children'):
+      builds = self.m.buildbucket.schedule(schedule_requests,
+                                           step_name='schedule')
+      self._present_paygen_request_urls(paygen_request_batches, builds)
+      build_dict = self.m.buildbucket.collect_builds(
+          [b.id for b in builds], timeout=self.paygen_children_timeout_sec,
+          step_name='collect', url_title_fn=lambda b: None)
+    return [build_dict[b.id] for b in builds]
+
+  def _present_paygen_request_urls(self, paygen_request_batches, builds):
+    """Show descriptive URLs about each batch of PaygenRequests.
+
+    Args:
+      paygen_request_batches (List[List[PaygenRequest]]): Each element of this
+        arg contains a list of PaygenRequests that should be run by a single
+        Paygen builder.
+      builds: The Paygen builds running the above batches of PaygenRequests,
+        listed in the same order as the batches.
+    """
+    with self.m.step.nest('present') as presentation:
+      for (paygen_requests, build) in zip(paygen_request_batches, builds):
+        url_title = self.m.naming.get_paygen_build_title(
+            build.id, paygen_requests)
+        url_dest = self.m.buildbucket.build_url(build_id=build.id)
+        presentation.links[url_title] = url_dest
 
   def _create_full_test_paygen_requests(
       self, full_gen_reqs, configured_payloads,
@@ -603,6 +628,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           generating and testing.
       full_payload_test_override: Option to override the configured payload
           testing policy for full payloads.
+
+    Returns:
+      A list of dicts, each representing a PaygenRequest for Paygen builders.
     """
     return self._create_test_paygen_requests(
         full_gen_reqs, configured_payloads,
@@ -622,6 +650,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           generating and testing.
       delta_payload_test_override: Option to override the configured payload
           testing policy for delta payloads.
+
+    Returns:
+      A list of dicts, each representing a PaygenRequest for Paygen builders.
     """
     return self._create_test_paygen_requests(
         delta_gen_reqs, configured_payloads,
@@ -641,17 +672,20 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       test_configs_getter (func(list, list, bool) -> ScheduleBuilderRequest):
           Function to determine AutoupdateTestConfigs for a single GenReq.
       test_override: Option to override the configured payload testing policy.
+
+    Returns:
+      A list of dicts, each representing a PaygenRequest for Paygen builders.
     """
     if test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
-      return [self._create_paygen_request(gen_req) for gen_req in gen_reqs]
+      return [self._create_paygen_request_dict(gen_req) for gen_req in gen_reqs]
     force_tests = test_override == PaygenOrchestratorProperties.FORCE_TESTS
-    schedule_requests = []
+    paygen_requests = []
     for gen_req in gen_reqs:
       test_configs = test_configs_getter(gen_req, configured_payloads,
                                          force_tests)
-      schedule_requests.append(
-          self._create_paygen_request(gen_req, test_configs))
-    return schedule_requests
+      paygen_requests.append(
+          self._create_paygen_request_dict(gen_req, test_configs))
+    return paygen_requests
 
   def _get_au_test_configs_for_full_payload(self, gen_req, configured_payloads,
                                             force_tests=False):
@@ -808,8 +842,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         delta_test_payload_requests=delta_test_gen_reqs,
         non_test_payload_requests=non_test_gen_reqs)
 
-  def _create_paygen_request(self, generation_request, test_requests=None):
-    """Create a PaygenRequest for a Paygen builder.
+  def _create_paygen_request_dict(self, generation_request, test_requests=None):
+    """Create a dict of a PaygenRequest for a Paygen builder.
 
     Args:
       generation_request (GenerationRequest): Request to generate the desired
@@ -830,49 +864,43 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         ]
     }
 
-  def _categorize_and_schedule_paygen_requests(self, paygen_requests):
-    """Categorizes and schedules a list of paygen requests.
+  def _batch_paygen_requests(self, paygen_requests):
+    """Separate PaygenRequests into groups to run together.
 
-    Takes in a collection of paygen requests and groups together the DLC
-    requests before creating ScheduleBuildRequests for the whole batch.
-
-    Optionally batches the DLC requests if `max_dlc_batch_size` is configured
-    as a property.
+    Currently, the only grouping performed is to batch DLC requests together.
 
     Args:
-      paygen_requests ([PaygenRequest]: list of paygen requests to schedule.
+      paygen_requests (List[PaygenRequest]): PaygenRequests to run.
 
     Returns:
-      [ScheduleBuildRequest] to be run.
+      List[List[PaygenRequest]]: Each element returned contains a group of
+          PaygenRequests that should be run by the same Paygen builder.
     """
-
     def _is_dlc(request):
       return 'tgtDlcImage' in request['generation_request']
 
-    schedule_requests = []
+    paygen_request_batches = []
     dlcs = []
     for paygen_request in paygen_requests:
       if _is_dlc(paygen_request):
         dlcs.append(paygen_request)
 
-        # If we have a max dlc batch size, then check to see if we're at that
-        # batch limit, and if so schedule a request for the dlc batch up to this
-        # point and create a new batch.
-        if self._max_dlc_batch_size:
-          if len(dlcs) == self._max_dlc_batch_size:
-            schedule_requests.append(self._create_bb_schedule_request(dlcs))
-            dlcs = []
+        # If we have a max DLC batch size, then check to see if we're at that
+        # batch limit. If so, cut a batch for the DLCs up to this point.
+        if self._max_dlc_batch_size and len(dlcs) == self._max_dlc_batch_size:
+          paygen_request_batches.append(dlcs)
+          dlcs = []
       else:
-        schedule_requests.append(
-            self._create_bb_schedule_request([paygen_request]))
+        paygen_request_batches.append([paygen_request])
 
-    # Send through all the batched dlc requests. If there is no max batch size,
-    # this will be all of them. If there is a max batch size, this will be the
-    # remaining dlcs that weren't part of the last complete batch.
+    # Send through all the remaining DLC requests. If there is no max batch
+    # size, then this will be all DLC requests. If there is a max batch size,
+    # then this will be the remaining DLCs that weren't part of the last
+    # complete batch.
     if dlcs:
-      schedule_requests.append(self._create_bb_schedule_request(dlcs))
+      paygen_request_batches.append(dlcs)
 
-    return schedule_requests
+    return paygen_request_batches
 
   def _create_bb_schedule_request(self, paygen_requests):
     """Create a ScheduleBuildRequest for list of paygen requests.

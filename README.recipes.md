@@ -381,6 +381,7 @@
   * [metadata_json:examples/finalize_build_crashing_out](#recipes-metadata_json_examples_finalize_build_crashing_out)
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title)
+  * [naming:tests/build_url_title](#recipes-naming_tests_build_url_title)
   * [non_manifest_project_presubmit](#recipes-non_manifest_project_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata)
@@ -2605,7 +2606,7 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#50)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
 
-[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2615,7 +2616,7 @@ API for working with Paygen and its config.
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#729)(self, paygen_build_results):**
+&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#763)(self, paygen_build_results):**
 
 Prepare payload information for the release pubsub.
 
@@ -2626,7 +2627,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#926)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#954)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2760,7 +2761,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1010)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1038)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -6437,6 +6438,17 @@ Args:
 Returns:
   str: The commit title.
 
+&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#185)(req):**
+
+Get a presentation name for a single GenerationRequest.
+
+Args:
+  req (dict): Dict representing a GenerationRequest proto, containing a
+    single payload to be created.
+
+Returns:
+  A string providing helpful info about that payload.
+
 &mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#47)(self, hw_test):**
 
 Get a string to describe the HW test.
@@ -6456,6 +6468,18 @@ Args:
 
 Returns:
   str: The package title.
+
+&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#139)(build_id, paygen_request_dicts):**
+
+Get a presentation name for a build running a batch of PaygenRequests.
+
+Args:
+  build_id (int): The ID of the Paygen build being run.
+  paygen_request_dicts (List[dict]): Dicts representing a batch of
+    PaygenRequests being run by a single Paygen builder.
+
+Returns:
+  A string providing helpful info about the paygens being run.
 
 &mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#69)(self, skylab_result):**
 
@@ -10418,6 +10442,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#13)(api):**
+### *recipes* / [naming:tests/build\_url\_title](/recipe_modules/naming/tests/build_url_title.py)
+
+[DEPS](/recipe_modules/naming/tests/build_url_title.py#5): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/naming/tests/build_url_title.py#44)(api, serialized_paygen_requests, expected_url_title):**
 ### *recipes* / [non\_manifest\_project\_presubmit](/recipes/non_manifest_project_presubmit.py)
 
 [DEPS](/recipes/non_manifest_project_presubmit.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

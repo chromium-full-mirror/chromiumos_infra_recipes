@@ -5,13 +5,13 @@
 
 """API featuring shared helpers for naming things."""
 
+from google.protobuf import json_format
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.test_vm import TestVmProperties
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
-
-from google.protobuf import json_format
 
 
 class NamingApi(recipe_api.RecipeApi):
@@ -135,3 +135,98 @@ class NamingApi(recipe_api.RecipeApi):
     if package.version:
       title = '{}-{}'.format(title, package.version)
     return title
+
+  @staticmethod
+  def get_paygen_build_title(build_id, paygen_request_dicts):
+    """Get a presentation name for a build running a batch of PaygenRequests.
+
+    Args:
+      build_id (int): The ID of the Paygen build being run.
+      paygen_request_dicts (List[dict]): Dicts representing a batch of
+        PaygenRequests being run by a single Paygen builder.
+
+    Returns:
+      A string providing helpful info about the paygens being run.
+    """
+    gen_req_titles = [
+        NamingApi.get_generation_request_title(
+            paygen_request.get('generation_request', {}))
+        for paygen_request in paygen_request_dicts
+    ]
+    if len(paygen_request_dicts) == 1:
+      return '%s | %s' % (build_id, gen_req_titles[0])
+    elif len(paygen_request_dicts) == 0:
+      return '%s | No paygen requests' % build_id
+
+    image_types = [title.split(' | ')[0] for title in gen_req_titles]
+    image_types_without_suffices = [
+        img_type.split('(')[0].strip() for img_type in image_types
+    ]
+    if all([
+        img_type == image_types_without_suffices[0]
+        for img_type in image_types_without_suffices
+    ]):
+      image_type_part = '%d %ss' % (len(paygen_request_dicts),
+                                    image_types_without_suffices[0])
+    else:
+      image_type_part = '%d payloads, various image types' % len(
+          paygen_request_dicts)
+
+    versions = [title.split(' | ')[1] for title in gen_req_titles]
+    full_or_deltas = [version.split()[0] for version in versions]
+    if all([version == versions[0] for version in versions]):
+      version_part = versions[0]
+    elif all([fod == full_or_deltas[0] for fod in full_or_deltas]):
+      version_part = '%s (various versions)' % full_or_deltas[0]
+    else:
+      version_part = 'Some full, some delta'
+    return '%s | %s | %s' % (build_id, image_type_part, version_part)
+
+  @staticmethod
+  def get_generation_request_title(req):
+    """Get a presentation name for a single GenerationRequest.
+
+    Args:
+      req (dict): Dict representing a GenerationRequest proto, containing a
+        single payload to be created.
+
+    Returns:
+      A string providing helpful info about that payload.
+    """
+
+    def _get_img_version(image_field_name):
+      """Get an image version from the request dict."""
+      return req.get(image_field_name, {}).get('build', {}).get('version', '')
+
+    def _get_img_type(image_field_name):
+      """Get an image type from the request dict."""
+      return req.get(image_field_name, {}).get('imageType', {})
+
+    tgt_version = ''
+    if req.get('tgtDlcImage', {}):
+      image_type_part = 'DLC (%s)' % req['tgtDlcImage'].get('dlcId', '')
+      tgt_version = _get_img_version('tgtDlcImage')
+    elif req.get('tgtSignedImage', {}):
+      image_type_part = 'Signed %s' % _get_img_type('tgtSignedImage')
+      tgt_version = _get_img_version('tgtSignedImage')
+    elif req.get('tgtUnsignedImage', {}):
+      image_type_part = 'Unsigned %s' % _get_img_type('tgtUnsignedImage')
+      tgt_version = _get_img_version('tgtUnsignedImage')
+    else:
+      raise StepFailure('No tgt image in gen req: %s' % str(req))
+    if req.get('minios', False):
+      image_type_part += ' (minios)'
+    if req.get('fullUpdate', False):
+      version_part = 'Full (%s)' % tgt_version
+    elif req.get('srcDlcImage', {}):
+      src_version = _get_img_version('srcDlcImage')
+      version_part = 'Delta (%s-%s)' % (src_version, tgt_version)
+    elif req.get('srcSignedImage', {}):
+      src_version = _get_img_version('srcSignedImage')
+      version_part = 'Delta (%s-%s)' % (src_version, tgt_version)
+    elif req.get('srcUnsignedImage', {}):
+      src_version = _get_img_version('srcUnsignedImage')
+      version_part = 'Delta (%s-%s)' % (src_version, tgt_version)
+    else:
+      version_part = 'No src image found (?-%s)' % tgt_version
+    return '%s | %s' % (image_type_part, version_part)

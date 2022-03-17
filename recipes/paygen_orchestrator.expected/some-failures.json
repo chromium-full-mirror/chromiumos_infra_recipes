@@ -1300,6 +1300,21 @@
   },
   {
     "cmd": [],
+    "name": "running children.present",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@8922054662172514000 | Signed IMAGE_TYPE_RECOVERY | Delta (13505.11.0-13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@8922054662172514001 | Signed IMAGE_TYPE_RECOVERY | Delta (13505.11.0-13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@8922054662172514002 | Signed IMAGE_TYPE_RECOVERY | Full (13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
+      "@@@STEP_LINK@8922054662172514003 | Unsigned IMAGE_TYPE_TEST | Full (13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
+      "@@@STEP_LINK@8922054662172514004 | Unsigned IMAGE_TYPE_TEST | Delta (13505.15.0-13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
+      "@@@STEP_LINK@8922054662172514005 | Unsigned IMAGE_TYPE_TEST | Delta (13505.11.0-13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
+      "@@@STEP_LINK@8922054662172514006 | Unsigned IMAGE_TYPE_TEST | Delta (13505.11.0-13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@",
+      "@@@STEP_LINK@8922054662172514007 | DLC (termina-dlc) | Full (13505.15.0)@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "running children.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
