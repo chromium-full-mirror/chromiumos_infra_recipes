@@ -105,6 +105,7 @@ def DoRunSteps(api, config):
   with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
     with api.step.nest("upload debug symbols"):
       api.debug_symbols.upload_debug_symbols(gs_image_dir)
+
   api.cros_release.schedule_payload_generation()
 
   # Signing does not work in staging, so we shouldn't wait for it in that case.

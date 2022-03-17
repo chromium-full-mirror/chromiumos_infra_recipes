@@ -19,6 +19,7 @@ DEPS = [
     'cros_test_plan',
     'cros_version',
     'skylab',
+    'util',
 ]
 
 PROPERTIES = CrosPaygenProperties

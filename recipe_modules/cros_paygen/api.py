@@ -14,6 +14,7 @@ from google.protobuf import duration_pb2
 from google.protobuf.json_format import MessageToDict
 from collections import namedtuple
 from copy import deepcopy
+from datetime import timedelta
 import json
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -30,6 +31,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bb_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.test_platform.request import Request
+from RECIPE_MODULES.chromeos.util import util
 
 DEFAULT_DELTA_TYPES = [
     common_pb2.STEPPING_STONE, common_pb2.OMAHA, common_pb2.NO_DELTA,
@@ -828,6 +830,34 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             parent_buildbucket_id=str(self.m.buildbucket.build.id)),
     )
 
+  @util.exponential_retry(retries=5, delay=timedelta(minutes=2))
+  def _discover_source_test_full_payload(self, root_uri):
+    """Find a source full unsigned image to act as starting image for tests.
+
+    This is wrapped in an exponential retry because it's possible that the full
+    payload has not finished generating and we might need to wait for it to
+    begin testing using it.
+
+    Args:
+      root_uri: The URI to search GS recursively for the full unsigned payload.
+
+    Returns:
+      A cros_source.FullPayload instance.
+
+    Raises:
+      StepFailure: If the image can't be found.
+    """
+    src_payloads = self.m.cros_storage.discover_gs_artifacts(
+        root_uri, parse_types=[self.m.cros_storage.FullPayload.parse_uri])
+    src_payload = None
+    for payload in src_payloads:
+      if not payload.key:
+        src_payload = payload
+        break
+    if not src_payload:
+      raise StepFailure('no source full test payload found')
+    return src_payload
+
   def create_paygen_test_config(self, tgt_payload, delta_type, src_version=None,
                                 src_channel=None, applicable_models=None):
     """Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
@@ -875,17 +905,11 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       raise StepFailure(
           'AU tests only supported for FullPayloads or DeltaPayloads')
 
-    # Get source full test payload
-    src_payloads = self.m.cros_storage.discover_gs_artifacts(
-        src_image._artifact_root.uri,
-        parse_types=[self.m.cros_storage.FullPayload.parse_uri])
-    src_payload = None
-    for payload in src_payloads:
-      if not payload.key:
-        src_payload = payload
-        break
-    if not src_payload:
-      raise StepFailure('no source payload found')
+    # Get source full test payload, if this is an N2N test, then we might not
+    # have generated it, thus wrap the discovery loop in an exponential retry.
+    src_payload = self._discover_source_test_full_payload(
+        src_image._artifact_root.uri)
+
     tgt_archive_uri = tgt_image.archive_uri
     src_artifact_uri = src_image._artifact_root.uri
 
