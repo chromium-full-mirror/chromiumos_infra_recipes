@@ -118,7 +118,7 @@
     },
     {
       "src_path": "diagnostics",
-      "prefix": "tmp/portage/chromeos-base/diagnostics-[^/]*/work/diagnostics-[^/]*/diagnostics"
+      "prefix": "tmp/portage/chromeos-base/diagnostics-[^/]*/work/diagnostics-[^/]*/platform2/diagnostics"
     },
     {
       "src_path": "dlcservice",
