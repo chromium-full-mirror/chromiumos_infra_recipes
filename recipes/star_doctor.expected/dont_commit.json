@@ -2404,6 +2404,23 @@
     ]
   },
   {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/rubik_config.ini",
+      "[CLEANUP]/tmp_tmp_2/generated_configs"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.copy INI configs.rubik_config.ini",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "commit changes",
     "~followup_annotations": [

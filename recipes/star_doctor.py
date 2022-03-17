@@ -268,6 +268,8 @@ def _copy_ini_configs(api, repo_dirs):
                   dest_dir)
     api.file.copy('suite_scheduler.ini',
                   api.path.join(orig_dir, 'suite_scheduler.ini'), dest_dir)
+    api.file.copy('rubik_config.ini',
+                  api.path.join(orig_dir, 'rubik_config.ini'), dest_dir)
 
 
 def _commit_all_changes(api, properties, repo_dirs, irrelevant_files=None):
