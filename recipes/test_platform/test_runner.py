@@ -26,6 +26,7 @@ from PB.chromiumos.test import api as ctr_api
 from PB.chromiumos.test.lab import api as lab_api
 from PB.chromiumos.storage_path import StoragePath
 from PB.chromiumos.build.api import container_metadata
+from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -1135,6 +1136,22 @@ tast_missing_test.3=bar.YetAnotherTest
                         skylab_local_state.load.Dut(hostname='fake_host',
                                                     board='fake_board',
                                                     model='fake_model'),
+                    ], lab_dut_topology=[
+                        lab_api.dut.DutTopology(
+                            id=lab_api.dut.DutTopology.Id(value="fake_host"),
+                            duts=[
+                                lab_api.dut.Dut(
+                                    id=lab_api.dut.Dut.Id(value="fake_host"),
+                                    cache_server=lab_api.dut.CacheServer(
+                                        address=IpEndpoint(
+                                            address="0.0.0.0", port=123)),
+                                    chromeos=lab_api.dut.Dut.ChromeOS(
+                                        dut_model=lab_api.dut.DutModel(
+                                            build_target="fake_board",
+                                            model_name="fake_model"),
+                                        ssh=IpEndpoint(address="fake_host",
+                                                       port=0)))
+                            ])
                     ])))))
 
   def _successful_prejob_step_for_ctr():

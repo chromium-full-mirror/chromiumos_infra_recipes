@@ -10,9 +10,6 @@ from .crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDU
 from . import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
-from PB.chromiumos.test.lab.api.dut import Dut
-from PB.chromiumos.test.lab.api.dut import CacheServer
-from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 from PB.test_platform import phosphorus
 
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
@@ -27,6 +24,7 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
   Holds metadata specific to one test or a group of tests.
   Passable to DutInterface that requires info from this class to provision, run tests etc.
   """
+  DUT_HOSTNAME_SUFFIX = 'cros'
 
   def __init__(self, interface, test_id, test, autotest_keyvals=None,
                artifact_dir='', image_storage_server=''):
@@ -45,21 +43,21 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
 
     self.artifact_dir = artifact_dir
     self.autotest_keyvals = autotest_keyvals
-    # TODO(b/220801059): Once DutToplogy is rolled out and inventory service is implemented,
-    # fetch dut topology from inventory service instead of phosphorus.
     self.load_response = interface.load_skylab_local_state(
         test=test, test_id=test_id)
-    self.primary_dut = self.load_response.dut_topology[0]
+    # Each topology can have multiple duts info for multi-dut testing scenario.
+    # But there should be always one lab_dut_topology as we load one dut info at a time.
+    # TODO(b/220801220): When multi-dut testing is enabled for CFT, make sure first dut is always primary dut.
+    self.primary_dut = self.load_response.lab_dut_topology[0].duts[0]
+    # CTR expects hostname.cros format for ssh endpoint address
+    self.primary_dut.chromeos.ssh.address = '{}.{}'.format(
+        self.primary_dut.chromeos.ssh.address, self.DUT_HOSTNAME_SUFFIX)
     # TODO(b/220801220): Match peer_duts appropriately when multi-dut testing feature is enabled for CFT.
     self.peer_duts = []
-    self.default_cache_server_address = "100.115.220.100"
-    self.default_cache_server_port = 8082
-
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
   ARTIFACT_DIR_PREFIX = 'output_dir'
-  DUT_HOSTNAME_SUFFIX = 'cros'
   KEYVAL_FILENAME = 'keyval'
   TEST_HARNESS_TAUTO = 'tauto'
   TEST_HARNESS_TAST = 'tast'
@@ -88,23 +86,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
       * api.test.StepFailure If prejob fails.
     """
-    dut_details = Dut.ChromeOS(
-        # CTR expects hostname.cros format for ssh endpoint
-        ssh=IpEndpoint(
-            address='{}.{}'.format(metadata.primary_dut.hostname,
-                                   self.DUT_HOSTNAME_SUFFIX), port=0),
-        dut_model=self.cft_mvp_request.primary_dut.dut_model)
-    cache_server_info = CacheServer(
-        address=IpEndpoint(address=metadata.default_cache_server_address,
-                           port=metadata.default_cache_server_port))
-    primary_dut = Dut(
-        id=Dut.Id(value=metadata.primary_dut.hostname), chromeos=dut_details,
-        cache_server=cache_server_info)
     with self._api.step.nest('CrosToolRunner: run provision'):
       with self._api.context(infra_steps=True):
         provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
             ctr.CrosToolRunnerProvisionRequest.Device(
-                dut=primary_dut, provision_state=self.cft_mvp_request
+                dut=metadata.primary_dut, provision_state=self.cft_mvp_request
                 .primary_dut.provision_state, container_metadata_key=self
                 .cft_mvp_request.primary_dut.container_metadata_key)
         ])
@@ -127,20 +113,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       * api.test.StepFailure If test fails.
     """
     with self._api.step.nest('CrosToolRunner: run test'):
-      dut_details = Dut.ChromeOS(
-          # CTR expects hostname.cros format for ssh endpoint
-          ssh=IpEndpoint(
-              address='{}.{}'.format(metadata.primary_dut.hostname,
-                                     self.DUT_HOSTNAME_SUFFIX), port=0),
-          dut_model=self.cft_mvp_request.primary_dut.dut_model)
-      cache_server_info = CacheServer(
-          address=IpEndpoint(address=metadata.default_cache_server_address,
-                             port=metadata.default_cache_server_port))
-      primary_dut = Dut(
-          id=Dut.Id(value=metadata.primary_dut.hostname), chromeos=dut_details,
-          cache_server=cache_server_info)
       primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
-          dut=primary_dut, container_metadata_key=self.cft_mvp_request
+          dut=metadata.primary_dut, container_metadata_key=self.cft_mvp_request
           .primary_dut.container_metadata_key)
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_mvp_request.test_suites,
@@ -161,8 +135,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     with self._api.step.nest(
         'CrosToolRunner: Phosphorus: load skylab local state'):
-      # New Dut Topology will be enabled once it is rolled out.
-      with self._api.context(env={'USE_DUT_TOPO': False}):
+      with self._api.context(env={'USE_DUT_TOPO': True}):
         return self._api.phosphorus.load_skylab_local_state(test_id=test_id)
 
   def save_skylab_local_state(self, dut_state, metadata):
@@ -176,7 +149,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'CrosToolRunner: Phosphorus: mark local DUT state: {}'.format(
             dut_state)):
       self._api.phosphorus.save_skylab_local_state(
-          dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
+          dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
           peer_duts=[dut.hostname for dut in metadata.peer_duts])
 
   def save_and_seal_skylab_local_state(self, dut_state, metadata):
@@ -189,7 +162,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest(
         'CrosToolRunner: Phosphorus: save local DUT state'):
       self._api.phosphorus.save_and_seal_skylab_local_state(
-          dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
+          dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
           peer_duts=[dut.hostname for dut in metadata.peer_duts])
 
   def fetch_crashes(self, metadata, max_duration_seconds):

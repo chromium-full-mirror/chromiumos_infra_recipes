@@ -130,6 +130,35 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"labDutTopology\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"duts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"cacheServer\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"address\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"port\": 123, @@@",
+      "@@@STEP_LOG_LINE@response@              \"address\": \"0.0.0.0\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
+      "@@@STEP_LOG_LINE@response@          \"chromeos\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"ssh\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"address\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@            }, @@@",
+      "@@@STEP_LOG_LINE@response@            \"dutModel\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"buildTarget\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@response@              \"modelName\": \"fake_model\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
+      "@@@STEP_LOG_LINE@response@          \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"value\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ], @@@",
+      "@@@STEP_LOG_LINE@response@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"value\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ], @@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\", @@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
@@ -163,7 +192,7 @@
       "/path/to/tmp/json"
     ],
     "env": {
-      "USE_DUT_TOPO": "False"
+      "USE_DUT_TOPO": "True"
     },
     "infra_step": true,
     "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
@@ -192,7 +221,7 @@
       "/dev/stdout"
     ],
     "env": {
-      "USE_DUT_TOPO": "False"
+      "USE_DUT_TOPO": "True"
     },
     "infra_step": true,
     "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.load",

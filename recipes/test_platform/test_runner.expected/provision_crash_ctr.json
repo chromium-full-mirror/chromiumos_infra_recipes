@@ -222,6 +222,35 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"labDutTopology\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"duts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"cacheServer\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"address\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"port\": 123, @@@",
+      "@@@STEP_LOG_LINE@response@              \"address\": \"0.0.0.0\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
+      "@@@STEP_LOG_LINE@response@          \"chromeos\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"ssh\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"address\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@            }, @@@",
+      "@@@STEP_LOG_LINE@response@            \"dutModel\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"buildTarget\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@response@              \"modelName\": \"fake_model\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          }, @@@",
+      "@@@STEP_LOG_LINE@response@          \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"value\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ], @@@",
+      "@@@STEP_LOG_LINE@response@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"value\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ], @@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\", @@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
@@ -255,7 +284,7 @@
       "/path/to/tmp/json"
     ],
     "env": {
-      "USE_DUT_TOPO": "False"
+      "USE_DUT_TOPO": "True"
     },
     "infra_step": true,
     "luci_context": {
@@ -296,7 +325,7 @@
       "/dev/stdout"
     ],
     "env": {
-      "USE_DUT_TOPO": "False"
+      "USE_DUT_TOPO": "True"
     },
     "infra_step": true,
     "luci_context": {
@@ -396,8 +425,8 @@
       "@@@STEP_LOG_LINE@request@      \"dut\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"cacheServer\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"address\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"port\": 8082, @@@",
-      "@@@STEP_LOG_LINE@request@            \"address\": \"100.115.220.100\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"port\": 123, @@@",
+      "@@@STEP_LOG_LINE@request@            \"address\": \"0.0.0.0\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"chromeos\": {@@@",
@@ -405,8 +434,8 @@
       "@@@STEP_LOG_LINE@request@            \"address\": \"fake_host.cros\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"dutModel\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"buildTarget\": \"kevin\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"modelName\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"buildTarget\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"modelName\": \"fake_model\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"id\": {@@@",
@@ -550,7 +579,7 @@
       }
     },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
-    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"cacheServer\": {\n          \"address\": {\n            \"port\": 8082, \n            \"address\": \"100.115.220.100\"\n          }\n        }, \n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host.cros\"\n          }, \n          \"dutModel\": {\n            \"buildTarget\": \"kevin\", \n            \"modelName\": \"kevin\"\n          }\n        }, \n        \"id\": {\n          \"value\": \"fake_host\"\n        }\n      }, \n      \"provisionState\": {}, \n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"cacheServer\": {\n          \"address\": {\n            \"port\": 123, \n            \"address\": \"0.0.0.0\"\n          }\n        }, \n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host.cros\"\n          }, \n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\", \n            \"modelName\": \"fake_model\"\n          }\n        }, \n        \"id\": {\n          \"value\": \"fake_host\"\n        }\n      }, \n      \"provisionState\": {}, \n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_EXCEPTION@@@"
