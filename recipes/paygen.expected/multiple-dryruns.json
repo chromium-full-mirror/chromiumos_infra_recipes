@@ -1365,12 +1365,16 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"generationRequest\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"verify\": true, @@@",
       "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"dryrun\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"fullUpdate\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"verify\": true, @@@",
       "@@@STEP_LOG_LINE@request@    \"bucket\": \"b\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"srcUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"tgtDlcImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcId\": \"termina-dlc\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcImage\": \"dlc.img\", @@@",
       "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
@@ -1379,22 +1383,17 @@
       "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\", @@@",
       "@@@STEP_LOG_LINE@request@        \"channel\": \"stable\"@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"imageType\": \"IMAGE_TYPE_TEST\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"milestone\": \"86\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"tgtUnsignedImage\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable\"@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"imageType\": \"IMAGE_TYPE_TEST\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcPackage\": \"package\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
+      "@@@STEP_LOG_LINE@request@        \"woomax\"@@@",
+      "@@@STEP_LOG_LINE@request@      ], @@@",
+      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -1405,12 +1404,16 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"verify\": true, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dryrun\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"fullUpdate\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"verify\": true, @@@",
       "@@@STEP_LOG_LINE@request@  \"bucket\": \"b\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"srcUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@  \"tgtDlcImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcId\": \"termina-dlc\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcImage\": \"dlc.img\", @@@",
       "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
@@ -1419,24 +1422,11 @@
       "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\", @@@",
       "@@@STEP_LOG_LINE@request@      \"channel\": \"stable\"@@@",
       "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"imageType\": 3, @@@",
-      "@@@STEP_LOG_LINE@request@    \"milestone\": \"86\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"tgtUnsignedImage\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"imageType\": 3, @@@",
-      "@@@STEP_LOG_LINE@request@    \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcPackage\": \"package\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\", \"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"\", \"local_path\": \"\", \"success\": true}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1448,7 +1438,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"verify\": true, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"bucket\": \"b\", \n  \"srcUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"version\": \"13425.90.0\", \n      \"bucket\": \"b\", \n      \"channel\": \"stable\"\n    }, \n    \"imageType\": 3, \n    \"milestone\": \"86\"\n  }, \n  \"tgtUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"version\": \"13425.90.0\", \n      \"bucket\": \"b\", \n      \"channel\": \"stable\"\n    }, \n    \"imageType\": 3, \n    \"milestone\": \"86\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"dryrun\": true, \n  \"fullUpdate\": true, \n  \"verify\": true, \n  \"bucket\": \"b\", \n  \"tgtDlcImage\": {\n    \"dlcId\": \"termina-dlc\", \n    \"dlcImage\": \"dlc.img\", \n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"version\": \"13425.90.0\", \n      \"bucket\": \"b\", \n      \"channel\": \"stable\"\n    }, \n    \"dlcPackage\": \"package\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -1514,7 +1504,7 @@
     "name": "doing paygen.doing a single paygen operation.set payload_uri",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@payload_uri@\"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"@@@"
+      "@@@SET_BUILD_PROPERTY@payload_uri@\"\"@@@"
     ]
   },
   {
@@ -1522,7 +1512,164 @@
     "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@no test configured, skip testing@@@"
+      "@@@STEP_TEXT@dry run, skip testing@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"generationRequest\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"dryrun\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"fullUpdate\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"verify\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"tgtDlcImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcId\": \"termina-dlc\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcImage\": \"dlc.img\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcPackage\": \"package\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
+      "@@@STEP_LOG_LINE@request@        \"woomax\"@@@",
+      "@@@STEP_LOG_LINE@request@      ], @@@",
+      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation (2).making single payload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"dryrun\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"fullUpdate\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"verify\": true, @@@",
+      "@@@STEP_LOG_LINE@request@  \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"tgtDlcImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcId\": \"termina-dlc\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcImage\": \"dlc.img\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcPackage\": \"package\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\", \"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"success\": true}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"dryrun\": true, \n  \"fullUpdate\": true, \n  \"verify\": true, \n  \"bucket\": \"b\", \n  \"tgtDlcImage\": {\n    \"dlcId\": \"termina-dlc\", \n    \"dlcImage\": \"dlc.img\", \n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }, \n      \"version\": \"13425.90.0\", \n      \"bucket\": \"b\", \n      \"channel\": \"stable\"\n    }, \n    \"dlcPackage\": \"package\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "doing paygen.doing a single paygen operation (2).making single payload.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PayloadService/GeneratePayload"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "doing paygen.doing a single paygen operation (2).making single payload.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "doing paygen.doing a single paygen operation (2).making single payload.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation (2).making single payload.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation (2).set payload_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@payload_uri@\"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation (2).setting up paygen test config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@dry run, skip testing@@@"
     ]
   },
   {
@@ -1560,7 +1707,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
@@ -1572,9 +1719,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -1597,7 +1744,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1651,7 +1798,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.unmounting chroot.call chromite.api.SdkService/Unmount.write input file",
@@ -1663,9 +1810,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -1688,7 +1835,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {

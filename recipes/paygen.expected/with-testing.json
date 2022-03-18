@@ -1360,9 +1360,68 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.making single payload",
+    "name": "doing paygen.doing a single paygen operation",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"generationRequest\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"verify\": true, @@@",
+      "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"srcUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"imageType\": \"IMAGE_TYPE_TEST\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    \"tgtUnsignedImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable\"@@@",
+      "@@@STEP_LOG_LINE@request@      }, @@@",
+      "@@@STEP_LOG_LINE@request@      \"imageType\": \"IMAGE_TYPE_TEST\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"milestone\": \"86\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"srcChannel\": \"canary-channel\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"srcVersion\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
+      "@@@STEP_LOG_LINE@request@        \"woomax\"@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }, @@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"srcChannel\": \"canary-channel\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"srcVersion\": \"123\", @@@",
+      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
+      "@@@STEP_LOG_LINE@request@        \"other\"@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.making single payload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"verify\": true, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
@@ -1411,9 +1470,9 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "doing paygen.making single payload.write input file",
+    "name": "doing paygen.doing a single paygen operation.making single payload.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1432,9 +1491,9 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "doing paygen.making single payload.call build API script",
+    "name": "doing paygen.doing a single paygen operation.making single payload.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1454,251 +1513,258 @@
       ]
     },
     "infra_step": true,
-    "name": "doing paygen.making single payload.read output file",
+    "name": "doing paygen.doing a single paygen operation.making single payload.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.making single payload.call response",
+    "name": "doing paygen.doing a single paygen operation.making single payload.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.set payload_uri",
+    "name": "doing paygen.doing a single paygen operation.set payload_uri",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@payload_uri@\"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"@@@"
     ]
   },
   {
     "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://test-bucket/canary-channel/zork/123/**"
+    ],
+    "infra_step": true,
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts.gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
+      "@@@STEP_LOG_LINE@data@        {@@@",
+      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"atlas-kernelnext\",@@@",
+      "@@@STEP_LOG_LINE@data@                \"builderName\": \"atlas-kernelnext-release-main\"@@@",
+      "@@@STEP_LOG_LINE@data@            },@@@",
+      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@data@                    {@@@",
+      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
+      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"atlas-kernelnext-release-main.hw.bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
+      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
+      "@@@STEP_LOG_LINE@data@                                {@@@",
+      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
+      "@@@STEP_LOG_LINE@data@                                }@@@",
+      "@@@STEP_LOG_LINE@data@                            ]@@@",
+      "@@@STEP_LOG_LINE@data@                        },@@@",
+      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"atlas\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
+      "@@@STEP_LOG_LINE@data@                    }@@@",
+      "@@@STEP_LOG_LINE@data@                ]@@@",
+      "@@@STEP_LOG_LINE@data@            }@@@",
+      "@@@STEP_LOG_LINE@data@        },@@@",
+      "@@@STEP_LOG_LINE@data@        {@@@",
+      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"zork\",@@@",
+      "@@@STEP_LOG_LINE@data@                \"builderName\": \"zork-release-main\"@@@",
+      "@@@STEP_LOG_LINE@data@            },@@@",
+      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@data@                    {@@@",
+      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
+      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"zork-release-main.hw.bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
+      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
+      "@@@STEP_LOG_LINE@data@                                {@@@",
+      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
+      "@@@STEP_LOG_LINE@data@                                }@@@",
+      "@@@STEP_LOG_LINE@data@                            ]@@@",
+      "@@@STEP_LOG_LINE@data@                        },@@@",
+      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"zork\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
+      "@@@STEP_LOG_LINE@data@                    }@@@",
+      "@@@STEP_LOG_LINE@data@                ]@@@",
+      "@@@STEP_LOG_LINE@data@            }@@@",
+      "@@@STEP_LOG_LINE@data@        }@@@",
+      "@@@STEP_LOG_LINE@data@    ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
+    ],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://test-bucket/canary-channel/zork/123/**"
+    ],
+    "infra_step": true,
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts (2).gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
+      "@@@STEP_LOG_LINE@data@        {@@@",
+      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"atlas-kernelnext\",@@@",
+      "@@@STEP_LOG_LINE@data@                \"builderName\": \"atlas-kernelnext-release-main\"@@@",
+      "@@@STEP_LOG_LINE@data@            },@@@",
+      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@data@                    {@@@",
+      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
+      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"atlas-kernelnext-release-main.hw.bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
+      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
+      "@@@STEP_LOG_LINE@data@                                {@@@",
+      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
+      "@@@STEP_LOG_LINE@data@                                }@@@",
+      "@@@STEP_LOG_LINE@data@                            ]@@@",
+      "@@@STEP_LOG_LINE@data@                        },@@@",
+      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"atlas\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
+      "@@@STEP_LOG_LINE@data@                    }@@@",
+      "@@@STEP_LOG_LINE@data@                ]@@@",
+      "@@@STEP_LOG_LINE@data@            }@@@",
+      "@@@STEP_LOG_LINE@data@        },@@@",
+      "@@@STEP_LOG_LINE@data@        {@@@",
+      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"zork\",@@@",
+      "@@@STEP_LOG_LINE@data@                \"builderName\": \"zork-release-main\"@@@",
+      "@@@STEP_LOG_LINE@data@            },@@@",
+      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
+      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
+      "@@@STEP_LOG_LINE@data@                    {@@@",
+      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
+      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"zork-release-main.hw.bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
+      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
+      "@@@STEP_LOG_LINE@data@                                {@@@",
+      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
+      "@@@STEP_LOG_LINE@data@                                }@@@",
+      "@@@STEP_LOG_LINE@data@                            ]@@@",
+      "@@@STEP_LOG_LINE@data@                        },@@@",
+      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"zork\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
+      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
+      "@@@STEP_LOG_LINE@data@                    }@@@",
+      "@@@STEP_LOG_LINE@data@                ]@@@",
+      "@@@STEP_LOG_LINE@data@            }@@@",
+      "@@@STEP_LOG_LINE@data@        }@@@",
+      "@@@STEP_LOG_LINE@data@    ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
+    ],
+    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "testing paygen"
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen.discover gs artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@artifacts found@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "gs://test-bucket/canary-channel/zork/123/**"
-    ],
-    "infra_step": true,
-    "name": "testing paygen.discover gs artifacts.gsutil list",
-    "timeout": 1800,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen.fetch target test requirements file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen.fetch target test requirements file.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"atlas-kernelnext\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"atlas-kernelnext-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"atlas-kernelnext-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"atlas\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        },@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"zork\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"zork-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"zork-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"zork\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        }@@@",
-      "@@@STEP_LOG_LINE@data@    ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
-    ],
-    "name": "testing paygen.fetch target test requirements file.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen.discover gs artifacts (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@artifacts found@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "gs://test-bucket/canary-channel/zork/123/**"
-    ],
-    "infra_step": true,
-    "name": "testing paygen.discover gs artifacts (2).gsutil list",
-    "timeout": 1800,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen.fetch target test requirements file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen.fetch target test requirements file (2).fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"atlas-kernelnext\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"atlas-kernelnext-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"atlas-kernelnext-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"atlas\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        },@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"zork\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"zork-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"zork-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"zork\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        }@@@",
-      "@@@STEP_LOG_LINE@data@    ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
-    ],
-    "name": "testing paygen.fetch target test requirements file (2).fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
   },
   {
     "cmd": [

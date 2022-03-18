@@ -30,9 +30,15 @@ message AutoupdateTestConfig {
 }
 
 message PaygenProperties {
-  // The paygen definition as destined for the build api.
-  chromite.api.GenerationRequest request = 1;
 
-  // Which autoupdate tests to run with the generated payload.
-  repeated AutoupdateTestConfig autoupdate_test_configs = 2;
+  message PaygenRequest {
+    // The paygen definition as destined for the build api.
+    chromite.api.GenerationRequest generation_request = 1;
+
+    // Which autoupdate tests to run with the generated payload.
+    repeated AutoupdateTestConfig autoupdate_test_configs = 2;
+  }
+
+  // The list of paygen requests to kick off.
+  repeated PaygenRequest requests = 1;
 }

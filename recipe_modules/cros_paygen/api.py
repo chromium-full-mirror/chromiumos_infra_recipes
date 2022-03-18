@@ -324,6 +324,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     self._internal_config = None
     self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
     self._test_request_opts = properties.test_request_opts
+    self._max_dlc_batch_size = properties.max_dlc_batch_size or None
 
   @property
   def paygen_children_timeout_sec(self):
@@ -569,25 +570,28 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     """
     sorted_gen_reqs = self._categorize_generation_requests(gen_reqs)
 
-    schedule_requests = [
-        self._create_bb_schedule_request(gen_req)
+    paygen_requests = [
+        self._create_paygen_request(gen_req)
         for gen_req in sorted_gen_reqs.non_test_payload_requests
     ]
-    schedule_requests.extend(
-        self._create_full_test_paygen_schedule_requests(
+    paygen_requests.extend(
+        self._create_full_test_paygen_requests(
             sorted_gen_reqs.full_test_payload_requests, configured_payloads,
             full_payload_test_override=full_payload_test_override))
-    schedule_requests.extend(
-        self._create_delta_test_paygen_schedule_requests(
+    paygen_requests.extend(
+        self._create_delta_test_paygen_requests(
             sorted_gen_reqs.delta_test_payload_requests, configured_payloads,
             delta_payload_test_override=delta_payload_test_override))
+
+    schedule_requests = self._categorize_and_schedule_paygen_requests(
+        paygen_requests)
 
     # Run the buildbucket requests and return the build results.
     return self.m.buildbucket.run(schedule_requests,
                                   timeout=self.paygen_children_timeout_sec,
                                   step_name='running children')
 
-  def _create_full_test_paygen_schedule_requests(
+  def _create_full_test_paygen_requests(
       self, full_gen_reqs, configured_payloads,
       full_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
     """Create BB Paygen schedule requests for the given full paygen requests.
@@ -600,12 +604,12 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       full_payload_test_override: Option to override the configured payload
           testing policy for full payloads.
     """
-    return self._create_test_paygen_schedule_requests(
+    return self._create_test_paygen_requests(
         full_gen_reqs, configured_payloads,
         self._get_au_test_configs_for_full_payload,
         test_override=full_payload_test_override)
 
-  def _create_delta_test_paygen_schedule_requests(
+  def _create_delta_test_paygen_requests(
       self, delta_gen_reqs, configured_payloads,
       delta_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
     """
@@ -619,12 +623,12 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       delta_payload_test_override: Option to override the configured payload
           testing policy for delta payloads.
     """
-    return self._create_test_paygen_schedule_requests(
+    return self._create_test_paygen_requests(
         delta_gen_reqs, configured_payloads,
         self._get_au_test_configs_for_delta_payload,
         test_override=delta_payload_test_override)
 
-  def _create_test_paygen_schedule_requests(
+  def _create_test_paygen_requests(
       self, gen_reqs, configured_payloads, test_configs_getter,
       test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
     """Create BB Paygen schedule requests for the given GenerationRequests.
@@ -639,14 +643,14 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       test_override: Option to override the configured payload testing policy.
     """
     if test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
-      return [self._create_bb_schedule_request(gen_req) for gen_req in gen_reqs]
+      return [self._create_paygen_request(gen_req) for gen_req in gen_reqs]
     force_tests = test_override == PaygenOrchestratorProperties.FORCE_TESTS
     schedule_requests = []
     for gen_req in gen_reqs:
       test_configs = test_configs_getter(gen_req, configured_payloads,
                                          force_tests)
       schedule_requests.append(
-          self._create_bb_schedule_request(gen_req, test_configs))
+          self._create_paygen_request(gen_req, test_configs))
     return schedule_requests
 
   def _get_au_test_configs_for_full_payload(self, gen_req, configured_payloads,
@@ -800,8 +804,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         delta_test_payload_requests=delta_test_gen_reqs,
         non_test_payload_requests=non_test_gen_reqs)
 
-  def _create_bb_schedule_request(self, generation_request, test_requests=None):
-    """Create a ScheduleBuildRequest for a Paygen builder.
+  def _create_paygen_request(self, generation_request, test_requests=None):
+    """Create a PaygenRequest for a Paygen builder.
 
     Args:
       generation_request (GenerationRequest): Request to generate the desired
@@ -810,22 +814,79 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         the generated payload.
 
     Returns:
-      A ScheduleBuildRequest for a Paygen builder.
+      A dict of the PaygenRequest for a Paygen builder of the provided
+      generation request.
     """
     test_requests = test_requests or []
+    return {
+        'generation_request':
+            MessageToDict(generation_request),
+        'autoupdate_test_configs': [
+            MessageToDict(x) for x in test_requests or {}
+        ]
+    }
+
+  def _categorize_and_schedule_paygen_requests(self, paygen_requests):
+    """Categorizes and schedules a list of paygen requests.
+
+    Takes in a collection of paygen requests and groups together the DLC
+    requests before creating ScheduleBuildRequests for the whole batch.
+
+    Optionally batches the DLC requests if `max_dlc_batch_size` is configured
+    as a property.
+
+    Args:
+      paygen_requests ([PaygenRequest]: list of paygen requests to schedule.
+
+    Returns:
+      [ScheduleBuildRequest] to be run.
+    """
+
+    def _is_dlc(request):
+      return 'tgtDlcImage' in request['generation_request']
+
+    schedule_requests = []
+    dlcs = []
+    for paygen_request in paygen_requests:
+      if _is_dlc(paygen_request):
+        dlcs.append(paygen_request)
+
+        # If we have a max dlc batch size, then check to see if we're at that
+        # batch limit, and if so schedule a request for the dlc batch up to this
+        # point and create a new batch.
+        if self._max_dlc_batch_size:
+          if len(dlcs) == self._max_dlc_batch_size:
+            schedule_requests.append(self._create_bb_schedule_request(dlcs))
+            dlcs = []
+      else:
+        schedule_requests.append(
+            self._create_bb_schedule_request([paygen_request]))
+
+    # Send through all the batched dlc requests. If there is no max batch size,
+    # this will be all of them. If there is a max batch size, this will be the
+    # remaining dlcs that weren't part of the last complete batch.
+    if dlcs:
+      schedule_requests.append(self._create_bb_schedule_request(dlcs))
+
+    return schedule_requests
+
+  def _create_bb_schedule_request(self, paygen_requests):
+    """Create a ScheduleBuildRequest for list of paygen requests.
+
+    Args:
+      paygen_requests ([PaygenRequest]): Requests to generate the desired
+        payload.
+
+    Returns:
+      A ScheduleBuildRequest for a Paygen builder.
+    """
     is_staging = self.m.cros_infra_config.is_staging
     bucket = 'staging' if is_staging else 'release'
     builder = 'staging-paygen' if is_staging else 'paygen'
     return self.m.buildbucket.schedule_request(
         bucket=bucket,
         builder=builder,
-        properties={
-            'request':
-                MessageToDict(generation_request),
-            'autoupdate_test_configs': [
-                MessageToDict(x) for x in test_requests or {}
-            ]
-        },
+        properties={'requests': paygen_requests},
         tags=self.m.buildbucket.tags(
             parent_buildbucket_id=str(self.m.buildbucket.build.id)),
     )
