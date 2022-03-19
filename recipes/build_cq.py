@@ -7,10 +7,14 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/random',
+    'recipe_engine/raw_io',
     'recipe_engine/runtime',
+    'recipe_engine/step',
     'build_menu',
     'cros_infra_config',
     'cros_tags',
+    'easy',
     'test_util',
 ]
 
@@ -21,6 +25,23 @@ from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):
+
+  # TODO(b/217745233): Gather data on build's per core scaling efficiencies.
+  # Gather data on per build CPU efficiency by dropping cores on staging
+  # instances. We will reboot between tasks so these changes are effectual
+  # for a single run only.
+  if api.cros_infra_config.is_staging:
+    with api.step.nest('dropping cores'):
+      # Pick a random number of cores to drop to target [8, 32].
+      drop_n_cores = api.random.randint(0, 24)
+      # Drop the cores.
+      for c in range(0, drop_n_cores):
+        api.step('drop {} cpu cores'.format(drop_n_cores), [
+            'sudo', 'tee', '/sys/devices/system/cpu/cpu{}/online'.format(c + 1)
+        ], stdin=api.raw_io.input_text(str(0)))
+      # Set output property with value of remaining cores.
+    api.easy.set_properties_step(enabled_cpu_cores=32 - drop_n_cores)
+
   try:
     with api.build_menu.configure_builder() as config, \
         api.build_menu.setup_workspace_and_chroot() as is_relevant:

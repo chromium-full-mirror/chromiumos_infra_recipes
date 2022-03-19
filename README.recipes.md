@@ -8259,15 +8259,15 @@ Recipe for building a Borealis rootfs image.
 &mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#40)(api, properties):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime]
+[DEPS](/recipes/build_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#45)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#66)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#23)(api):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#27)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
