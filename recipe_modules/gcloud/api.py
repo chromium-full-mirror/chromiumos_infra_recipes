@@ -27,6 +27,11 @@ _RE_DISK_SIZE = re.compile('New disk size \'(?P<first>[0-9]+)\' GiB must be '
                            'larger than existing size \'(?P<second>[0-9]+)\' '
                            'GiB.')
 
+# Sometimes asking to create a disk results in the disk existing, even when
+# we've recently asked cloud about the status of the resource and received a
+# 404. See: b/141640651.
+_RE_DISK_EXISTS = re.compile('The resource .+ already exists')
+
 
 class GcloudApi(recipe_api.RecipeApi):
   """A module to interact with Google Cloud."""
@@ -372,6 +377,9 @@ class GcloudApi(recipe_api.RecipeApi):
       zone(str): GCE zone to create disk (e.g. us-central1-b).
       image(str): Image version use to create the disk.
       disk_type(str): Type of GCE disk to create.
+
+    Returns:
+      The stdout of the gcloud command.
     """
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
@@ -381,7 +389,8 @@ class GcloudApi(recipe_api.RecipeApi):
     if disk_type:
       cmd.extend(['--type={}'.format(disk_type)])
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('create disk from image', cmd, infra_step=True)
+      return self.m.easy.stdout_step('create disk from image', cmd,
+                                     infra_step=True)
 
   def delete_disk(self, disk, zone):
     """Delete a GCE disk.
@@ -795,15 +804,20 @@ class GcloudApi(recipe_api.RecipeApi):
                              zone=self._zone)
           self.delete_disk(disk=self._disk, zone=self._zone)
           disk_exists = False
+
         if not disk_exists:
           # Create the disk but in the event of a stockout of SSD, catch the
-          # exception and create a standard spinning disk.
+          # exception and create a standard spinning disk. Also catch if the
+          # disk is perhaps already in existance (false 404 from earlier check).
           try:
             self.create_disk_from_image(disk=self._disk, zone=self._zone,
                                         image=snapshot, disk_type=disk_type)
-          except self.m.step.StepFailure:
-            self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                        image=snapshot, disk_type='pd-standard')
+          except self.m.step.StepFailure as e:
+            if not e.result.stdout or not _RE_DISK_EXISTS.search(
+                e.result.stdout):
+              self.create_disk_from_image(disk=self._disk, zone=self._zone,
+                                          image=snapshot,
+                                          disk_type='pd-standard')
         return snapshot
 
   def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
