@@ -1501,18 +1501,17 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.set payload_uri",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@payload_uri@\"\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@dry run, skip testing@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set payload_uris",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@payload_uris@[\"\"]@@@"
     ]
   },
   {

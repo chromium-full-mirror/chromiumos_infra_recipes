@@ -199,9 +199,12 @@ def GenTests(api):
   def paygen_child_data(child_num):
     paygen_child_data = build_pb2.Build(id=8922054662172514000 + child_num,
                                         status='SUCCESS')
-    paygen_child_data.output.properties['payload_uri'] = 'gs://path/to/payload'
-    paygen_child_data.input.properties['request'] = MessageToJson(
-        GenerationRequest())
+    paygen_child_data.output.properties['payload_uris'] = [
+        'gs://path/to/payload'
+    ]
+    paygen_child_data.input.properties['requests'] = [
+        MessageToJson(GenerationRequest())
+    ]
     return paygen_child_data
 
   payload_json_data = """{

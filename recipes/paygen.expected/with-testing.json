@@ -1529,14 +1529,6 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.set payload_uri",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@payload_uri@\"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1760,6 +1752,13 @@
     "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set payload_uris",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@payload_uris@[\"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"]@@@"
     ]
   },
   {

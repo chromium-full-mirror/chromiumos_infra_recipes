@@ -97,6 +97,8 @@ def RunSteps(api, properties):
 
     # Set up holder of paygen test configs.
     paygen_test_configs = []
+    # Set up holder of paygen uris.
+    paygen_uris = []
 
     with api.step.nest('doing paygen'):
 
@@ -108,11 +110,13 @@ def RunSteps(api, properties):
           # Execute build api endpoint for paygen.
           response = api.cros_build_api.PayloadService.GeneratePayload(
               request.generation_request, name='making single payload')
-          api.easy.set_properties_step(payload_uri=response.remote_uri)
+          paygen_uris.append(response.remote_uri)
 
           test_configs = _set_up_test_configs(api, request, response)
           if test_configs:
             paygen_test_configs.extend(test_configs)
+
+    api.easy.set_properties_step(payload_uris=paygen_uris)
 
     if paygen_test_configs:
       # Test all paygens.

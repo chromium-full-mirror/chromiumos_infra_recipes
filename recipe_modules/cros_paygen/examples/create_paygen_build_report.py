@@ -21,27 +21,26 @@ def RunSteps(api):
   standard_payload = build_pb2.Build(status='SUCCESS')
   # The absence of any DLC or MINIOS markers implies a standard payload for
   # the tested module's purposes.
-  standard_payload.input.properties['request'] = MessageToDict(
-      GenerationRequest())
-  standard_payload.output.properties[
-      'payload_uri'] = 'gs://path/to/standard/payload'
+  standard_payload.input.properties['requests'] = [
+      MessageToDict(GenerationRequest())
+  ]
+  standard_payload.output.properties['payload_uris'] = [
+      'gs://path/to/standard/payload'
+  ]
 
-  minios_payload = build_pb2.Build(status='SUCCESS')
-  minios_payload.input.properties['request'] = MessageToDict(
-      GenerationRequest(minios=True))
-  minios_payload.output.properties[
-      'payload_uri'] = 'gs://path/to/minios/payload'
-
-  dlc_payload = build_pb2.Build(status='SUCCESS')
-  dlc_payload.input.properties['request'] = MessageToDict(
-      GenerationRequest(tgt_dlc_image=DLCImage(dlc_id='dlc')))
-  dlc_payload.output.properties['payload_uri'] = 'gs://path/to/dlc/payload'
+  minios_and_dlc_payload = build_pb2.Build(status='SUCCESS')
+  minios_and_dlc_payload.input.properties['requests'] = [
+      MessageToDict(GenerationRequest(minios=True)),
+      MessageToDict(GenerationRequest(tgt_dlc_image=DLCImage(dlc_id='dlc')))
+  ]
+  minios_and_dlc_payload.output.properties['payload_uris'] = [
+      'gs://path/to/minios/payload', 'gs://path/to/dlc/payload'
+  ]
 
   paygen_builds = [
       standard_payload,
       build_pb2.Build(status="FAILURE"),
-      minios_payload,
-      dlc_payload,
+      minios_and_dlc_payload,
   ]
   build_report = api.cros_paygen.create_paygen_build_report(paygen_builds)
 

@@ -741,37 +741,41 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       if res.status != bb_pb2.SUCCESS:
         continue
 
-      # Determine payload type from the paygen request.
-      payload_request = res.input.properties['request']
-      payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
-      if 'minios' in payload_request and payload_request['minios']:
-        payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
-      elif 'tgtDlcImage' in payload_request:
-        payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
+      paygen_requests = res.input.properties['requests']
+      # Note - this assumed that payload_requests and payload_uris have the same
+      # number of elements, and are in the same order. This is currently true,
+      # but should that behavior change this logic would need to be hardened.
+      for payload_request, payload_uri in zip(
+          paygen_requests, res.output.properties['payload_uris']):
+        # Determine payload type from the paygen request.
+        payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
+        if 'minios' in payload_request and payload_request['minios']:
+          payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
+        elif 'tgtDlcImage' in payload_request:
+          payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
 
-      payload_uri = res.output.properties['payload_uri']
-      payload_json_path = '{}.json'.format(payload_uri)
-      payload_info = self.m.gsutil.cat(
-          payload_json_path, name='cat {}'.format(payload_json_path),
-          stdout=self.m.raw_io.output(add_output_log=True)).stdout
-      payload_info = json.loads(payload_info)
+        payload_json_path = '{}.json'.format(payload_uri)
+        payload_info = self.m.gsutil.cat(
+            payload_json_path, name='cat {}'.format(payload_json_path),
+            stdout=self.m.raw_io.output(add_output_log=True)).stdout
+        payload_info = json.loads(payload_info)
 
-      is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_FULL
-      if payload_info.get('is_delta', False):
-        is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_DELTA
+        is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_FULL
+        if payload_info.get('is_delta', False):
+          is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_DELTA
 
-      payload = BuildReport.Payload(
-          payload=BuildReport.BuildArtifact(
-              type=is_delta,
-              uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
-              sha256=payload_info['sha256_hex'],
-          ), payload_type=payload_type, appid=payload_info['appid'],
-          metadata_signature=payload_info['metadata_signature'],
-          metadata_size=payload_info['metadata_size'],
-          source_version=payload_info.get('source_version', None),
-          target_version=payload_info['target_version'],
-          size=payload_info['size'])
-      payloads.append(payload)
+        payload = BuildReport.Payload(
+            payload=BuildReport.BuildArtifact(
+                type=is_delta,
+                uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
+                sha256=payload_info['sha256_hex'],
+            ), payload_type=payload_type, appid=payload_info['appid'],
+            metadata_signature=payload_info['metadata_signature'],
+            metadata_size=payload_info['metadata_size'],
+            source_version=payload_info.get('source_version', None),
+            target_version=payload_info['target_version'],
+            size=payload_info['size'])
+        payloads.append(payload)
     return payloads
 
   def _categorize_generation_requests(self, gen_reqs):

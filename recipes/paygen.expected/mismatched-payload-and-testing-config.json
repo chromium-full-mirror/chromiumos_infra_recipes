@@ -1523,14 +1523,6 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.set payload_uri",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@payload_uri@\"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
