@@ -9,7 +9,6 @@ This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles."""
 
 DEPS = [
-    'recipe_engine/swarming',
     'build_menu',
     'test_util',
 ]

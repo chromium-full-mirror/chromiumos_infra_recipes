@@ -8,7 +8,6 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'recipe_engine/swarming',
     'build_menu',
     'cros_history',
 ]

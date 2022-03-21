@@ -17,7 +17,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'recipe_engine/time',
     'depot_tools/depot_tools',
     'build_menu',

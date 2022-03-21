@@ -7,7 +7,6 @@
 
 DEPS = [
     'recipe_engine/step',
-    'easy',
 ]
 
 

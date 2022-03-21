@@ -16,7 +16,6 @@ DEPS = [
     'builder_metadata',
     'cros_infra_config',
     'cros_release',
-    'cros_sdk',
     'cros_signing',
     'cros_source',
     'cros_tags',

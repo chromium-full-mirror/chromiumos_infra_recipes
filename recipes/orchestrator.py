@@ -11,7 +11,6 @@ All builders run against the same source tree.
 PYTHON_VERSION_COMPATIBILITY = 'PY2'
 
 DEPS = [
-    'recipe_engine/swarming',
     'cros_release',
     'cros_tags',
     'orch_menu',

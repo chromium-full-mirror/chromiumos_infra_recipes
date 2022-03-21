@@ -18,7 +18,6 @@ DEPS = [
     'depot_tools/gitiles',
     'bot_cost',
     'chromite',
-    'cros_infra_config',
     'easy',
     'gcloud',
 ]

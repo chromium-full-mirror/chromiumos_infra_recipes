@@ -11,7 +11,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'depot_tools/depot_tools',
     'bot_cost',
     'cros_infra_config',

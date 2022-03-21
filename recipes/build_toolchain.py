@@ -11,7 +11,6 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_sdk',
-    'cros_source',
 ]
 
 from recipe_engine import post_process

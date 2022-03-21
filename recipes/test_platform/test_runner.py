@@ -51,7 +51,6 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'recipe_engine/uuid',
-    'cros_infra_config',
     'cros_resultdb',
     'cros_tags',
     'cros_test_runner',

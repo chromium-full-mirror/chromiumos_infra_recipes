@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'depot_tools/depot_tools',
     'build_menu',
     'cros_artifacts',

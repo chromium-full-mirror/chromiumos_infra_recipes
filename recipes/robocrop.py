@@ -11,14 +11,11 @@ from google.protobuf import json_format as jsonpb
 from PB.recipes.chromeos.robocrop import RoboCropProperties
 
 DEPS = [
-    'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'recipe_engine/python',
     'recipe_engine/step',
     'bot_scaling',
     'cros_infra_config',
     'easy',
-    'swarming_cli',
 ]
 
 PROPERTIES = RoboCropProperties

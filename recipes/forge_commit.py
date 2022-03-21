@@ -18,7 +18,6 @@ DEPS = [
     'depot_tools/depot_tools',
     'git',
     'git_cl',
-    'src_state',
 ]
 
 from recipe_engine import post_process

@@ -19,7 +19,6 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'recipe_engine/tricium',
     'build_menu',
     'chromite',
@@ -28,8 +27,6 @@ DEPS = [
     'gerrit',
     'repo',
     'src_state',
-    'test_util',
-    'workspace_util',
 ]
 
 PROPERTIES = BuildLintersProperties

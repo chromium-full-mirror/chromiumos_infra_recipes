@@ -26,13 +26,10 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_build_api',
     'cros_paygen',
     'cros_release',
-    'cros_source',
     'cros_storage',
     'easy',
-    'workspace_util',
 ]
 
 PROPERTIES = PaygenOrchestratorProperties

@@ -31,7 +31,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
     'cros_sdk',

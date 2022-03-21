@@ -21,7 +21,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'android',
-    'build_menu',
     'cros_source',
     'easy',
     'gerrit',

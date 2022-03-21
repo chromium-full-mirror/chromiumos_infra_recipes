@@ -25,7 +25,6 @@ DEPS = [
     'cros_source',
     'gerrit',
     'gs_step_logging',
-    'iterutils',
     'repo',
     'src_state',
     'workspace_util',

@@ -6,7 +6,6 @@
 """Recipe for syncing Archlinux to our local cache for Borealis VM image."""
 
 DEPS = [
-    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_dupit',
 ]

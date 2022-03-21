@@ -12,7 +12,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2'
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'cros_build_api',
     'cros_paygen',
     'cros_sdk',

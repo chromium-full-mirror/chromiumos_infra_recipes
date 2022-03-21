@@ -23,7 +23,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
-    'cros_infra_config',
     'cros_source',
     'git',
     'gs_step_logging',

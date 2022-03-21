@@ -47,7 +47,6 @@ DEPS = [
     'build_menu',
     'cros_artifacts',
     'cros_build_api',
-    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'gerrit',

@@ -44,7 +44,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
-    'cros_infra_config',
     'cros_tags',
     'cros_test_platform',
     'result_flow',

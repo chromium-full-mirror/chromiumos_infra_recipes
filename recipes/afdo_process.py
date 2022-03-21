@@ -6,7 +6,6 @@
 """Recipe for building an AFDO benchmark profile."""
 
 DEPS = [
-    'recipe_engine/swarming',
     'build_menu',
     'cros_sdk',
     'sysroot_util',

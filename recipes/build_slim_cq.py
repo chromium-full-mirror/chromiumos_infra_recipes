@@ -9,7 +9,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/runtime',
     'recipe_engine/step',
-    'recipe_engine/swarming',
     'build_menu',
     'cros_infra_config',
     'cros_history',
