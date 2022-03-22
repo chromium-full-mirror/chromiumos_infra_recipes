@@ -4506,11 +4506,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for easy steps.
 
-#### **class [EasyApi](/recipe_modules/easy/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [EasyApi](/recipe_modules/easy/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for easy steps.
 
-&mdash; **def [set\_properties\_step](/recipe_modules/easy/api.py#16)(self, step_name=None, \*\*kwargs):**
+&mdash; **def [set\_properties\_step](/recipe_modules/easy/api.py#15)(self, step_name=None, \*\*kwargs):**
 
 An empty step to set properties in output.properties.
 
@@ -4523,7 +4523,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#90)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#89)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -4537,7 +4537,7 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#119)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#118)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
@@ -4551,7 +4551,7 @@ Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 Returns:
   message_type: JSON-pb deserialized proto message.
 
-&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#66)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#65)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data.
 
@@ -4565,7 +4565,7 @@ Args:
 Returns:
   str: Raw stdout data.
 
-&mdash; **def [step](/recipe_modules/easy/api.py#38)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
+&mdash; **def [step](/recipe_modules/easy/api.py#37)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
 
 Convenience features on top of the normal 'step' call.
 
@@ -6677,11 +6677,11 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#236)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#233)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
@@ -6692,7 +6692,7 @@ Args:
   max_duration_sec (int): Maximum duration of the provision operation, in
     seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#258)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#255)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -6702,21 +6702,21 @@ or needs_repair).
 Args:
   dut_state (str): The new DUT state. E.g. "needs_repair" or "ready".
 
-&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#106)(self, request):**
+&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#103)(self, request):**
 
 Fetch crashes via the `fetch-crashes` subcommand.
 
 Args:
   request: a FetchCrashesRequest.
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#171)(self, test_id):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#168)(self, test_id):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [parse](/recipe_modules/phosphorus/api.py#132)(self, results_dir):**
+&mdash; **def [parse](/recipe_modules/phosphorus/api.py#129)(self, results_dir):**
 
 Extract test results from an results directory.
 
@@ -6725,32 +6725,32 @@ Args:
 
 Returns: Result.
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#88)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#85)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#289)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#286)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#226)(self):**
+&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#223)(self):**
 
 Remove the autotest results directory.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#97)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#94)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#199)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#196)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -6763,7 +6763,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#186)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#183)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file.
 
@@ -6775,14 +6775,14 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#115)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#112)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#124)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#121)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 

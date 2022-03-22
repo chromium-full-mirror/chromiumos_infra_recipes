@@ -12,8 +12,6 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -83,8 +81,6 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -117,8 +113,6 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -151,8 +145,6 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -224,8 +216,6 @@
       "@@@STEP_LOG_LINE@request@  \"runId\": \"placeholder-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@results_dir: \"placeholder-results-dir\"@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"placeholder-results-dir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",

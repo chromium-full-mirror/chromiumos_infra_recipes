@@ -221,13 +221,6 @@
       "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@results_dir: \"dummy-results-dir\"@@@",
-      "@@@STEP_LOG_LINE@raw response@dut_topology {@@@",
-      "@@@STEP_LOG_LINE@raw response@  hostname: \"fake_host\"@@@",
-      "@@@STEP_LOG_LINE@raw response@  board: \"fake_board\"@@@",
-      "@@@STEP_LOG_LINE@raw response@  model: \"fake_model\"@@@",
-      "@@@STEP_LOG_LINE@raw response@}@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\", @@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
@@ -587,8 +580,6 @@
       "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@raw response@@@@",
-      "@@@STEP_LOG_END@raw response@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]

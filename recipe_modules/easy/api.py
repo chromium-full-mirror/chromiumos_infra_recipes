@@ -7,7 +7,6 @@
 
 from recipe_engine import recipe_api
 from google.protobuf import json_format
-import pprint
 
 
 class EasyApi(recipe_api.RecipeApi):
@@ -139,11 +138,6 @@ class EasyApi(recipe_api.RecipeApi):
     output = message_type()
     step_data = self.stdout_step(name, cmd, test_stdout=test_output_str,
                                  **kwargs)
-    #TODO(b/225967293): Will be reverted after investigation.
-    if not self._test_data.enabled:  # pragma: no cover
-      with self.m.step.nest('raw step_data') as presentation:
-        presentation.logs['raw step_data'] = [pprint.pformat(step_data)
-                                             ]  # pragma: no cover
     return json_format.Parse(step_data, output, ignore_unknown_fields=True)
 
 
