@@ -540,7 +540,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         install_packages.run_spec)
     return self.packages_installed
 
-  def build_and_test_images(self, config=None, include_version=False):
+  def build_and_test_images(self, config=None, include_version=False,
+                            builder_path_template=None):
     """Build the image and run ebuild tests.
 
     This behavior is adjusted by the run_spec values in config.
@@ -549,6 +550,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config (BuilderConfig): The Builder Config for the build, or None.
       include_version (bool): Whether or not to pass the workspace verson
         to sysroot_util.build.
+      builder_path_template (str): Template to use for the builder_path. If not
+        set, uses the cros_artifacts.artifacts_gs_path default.
     Returns:
       (bool): Whether to continue with the build.
     """
@@ -556,8 +559,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     build_images = config.build.build_images
     unit_tests = config.unit_tests
 
+    kwargs = {}
+    if builder_path_template:
+      kwargs['template'] = builder_path_template
+
     builder_path = self.m.cros_artifacts.artifacts_gs_path(
-        config.id.name, self.build_target, config.id.type)
+        config.id.name, self.build_target, config.id.type, **kwargs)
 
     extra_kwargs = {}
     if include_version:

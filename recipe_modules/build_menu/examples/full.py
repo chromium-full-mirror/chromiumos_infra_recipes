@@ -55,7 +55,9 @@ def DoRunSteps(api, properties):
       api.build_menu.bootstrap_sysroot()
       api.build_menu.install_packages()
       api.build_menu.build_and_test_images()
-      api.build_menu.build_and_test_images(include_version=True)
+      api.build_menu.build_and_test_images(
+          include_version=True,
+          builder_path_template='{target}-release/{version}')
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       api.build_menu.upload_artifacts()
