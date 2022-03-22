@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from google.protobuf import json_format
+import pprint
 
 from recipe_engine import recipe_api
 
@@ -79,6 +80,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
+      #TODO(b/225967293): Will be reverted after investigation.
+      presentation.logs['raw response'] = [pprint.pformat(response)]
       presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
