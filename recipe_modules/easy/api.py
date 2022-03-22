@@ -116,7 +116,7 @@ class EasyApi(recipe_api.RecipeApi):
     return step_data.stdout
 
   def stdout_jsonpb_step(self, name, cmd, message_type, test_output=None,
-                         **kwargs):
+                         parse_before_str='', **kwargs):
     """Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
     * name (str): The name of the step.
@@ -124,6 +124,7 @@ class EasyApi(recipe_api.RecipeApi):
     * message_type: A type (and also constructor) of proto message, indicating
       the type of proto to be returned.
     * test_output (message_type): Data to return in tests.
+    * parse_before_str (str): Parse value only upto this str. Used to bypass random binaries appended with protos.
     * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
@@ -138,6 +139,10 @@ class EasyApi(recipe_api.RecipeApi):
     output = message_type()
     step_data = self.stdout_step(name, cmd, test_stdout=test_output_str,
                                  **kwargs)
+    #TODO(b/225967293): Interim fix before figuring out root cause.
+    # Remove after root case is identified.
+    if parse_before_str:
+      step_data = step_data.split(parse_before_str)[0]  # pragma: no cover
     return json_format.Parse(step_data, output, ignore_unknown_fields=True)
 
 

@@ -78,6 +78,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       response = self.m.easy.stdout_jsonpb_step(subcommand, cmd, response_type,
                                                 stdin=stdin,
                                                 test_output=response_type(),
+                                                parse_before_str='\x00',
                                                 ok_ret=(0,))
       presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response

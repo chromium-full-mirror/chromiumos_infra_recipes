@@ -4539,7 +4539,7 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#118)(self, name, cmd, message_type, test_output=None, \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#118)(self, name, cmd, message_type, test_output=None, parse_before_str='', \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
@@ -4548,6 +4548,7 @@ Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 * message_type: A type (and also constructor) of proto message, indicating
   the type of proto to be returned.
 * test_output (message_type): Data to return in tests.
+* parse_before_str (str): Parse value only upto this str. Used to bypass random binaries appended with protos.
 * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
@@ -6683,7 +6684,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#233)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#234)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
@@ -6694,7 +6695,7 @@ Args:
   max_duration_sec (int): Maximum duration of the provision operation, in
     seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#255)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#256)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -6704,21 +6705,21 @@ or needs_repair).
 Args:
   dut_state (str): The new DUT state. E.g. "needs_repair" or "ready".
 
-&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#103)(self, request):**
+&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#104)(self, request):**
 
 Fetch crashes via the `fetch-crashes` subcommand.
 
 Args:
   request: a FetchCrashesRequest.
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#168)(self, test_id):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#169)(self, test_id):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [parse](/recipe_modules/phosphorus/api.py#129)(self, results_dir):**
+&mdash; **def [parse](/recipe_modules/phosphorus/api.py#130)(self, results_dir):**
 
 Extract test results from an results directory.
 
@@ -6727,32 +6728,32 @@ Args:
 
 Returns: Result.
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#85)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#86)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#286)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#287)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#223)(self):**
+&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#224)(self):**
 
 Remove the autotest results directory.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#94)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#95)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#196)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#197)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -6765,7 +6766,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#183)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#184)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file.
 
@@ -6777,14 +6778,14 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#112)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#113)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#121)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#122)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
