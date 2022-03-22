@@ -7578,7 +7578,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#417)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#436)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7597,7 +7597,7 @@ Returns:
       (host, port) for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#341)(self, qcow_image_path, private_key_path):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#360)(self, qcow_image_path, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -7611,7 +7611,7 @@ Returns:
       (host, port) for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#36)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#37)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -7623,7 +7623,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#59)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#60)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -7640,7 +7640,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#207)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#210)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
 
 Run tast tests without retries or results processing.
 
@@ -7659,7 +7659,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#167)(self, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#168)(self, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -7678,7 +7678,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#100)(self, suite_name, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#101)(self, suite_name, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 

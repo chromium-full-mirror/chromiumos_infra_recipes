@@ -32,6 +32,7 @@ class TastExecApi(RecipeApi):
     self._vm_system_services_timeout = properties.vm_system_services_timeout or 10 * 60
     self._should_retry = properties.should_retry
     self._public_builder = properties.public_builder
+    self._tast_cli_supported_flags = []
 
   def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
                     test_artifacts_dir):
@@ -188,8 +189,10 @@ class TastExecApi(RecipeApi):
       run_args = []
     else:
       run_args = list(run_args)
-    run_args.append('-systemservicestimeout={}'.format(
-        self._vm_system_services_timeout))
+    if self._flag_exists(
+        test_artifacts_dir.join('tast'), 'systemservicestimeout'):
+      run_args.append('-systemservicestimeout={}'.format(
+          self._vm_system_services_timeout))  # pragma: no cover
 
     # Entering vm_context instantiates the VM we are to test against. The VM
     # is cleaned up automatically when exiting the context.
@@ -301,6 +304,22 @@ class TastExecApi(RecipeApi):
 
     tests = [t.strip() for t in list_stdout.splitlines()]
     return tests
+
+  def _flag_exists(self, tast_dir, flag_name):
+    if not self._tast_cli_supported_flags:
+      tast_help_stdout = self.m.easy.stdout_step('tast help run', [
+          str(tast_dir.join('tast')), \
+          'help', \
+          'run'])
+      self._tast_cli_supported_flags = [
+          t.strip().split(' ')[0]
+          for t in tast_help_stdout.splitlines()
+          if t.strip().startswith('-')
+      ]
+    # append '-' in the beginning if do not exist
+    if not flag_name.startswith('-'):
+      flag_name = '-{}'.format(flag_name)
+    return flag_name in self._tast_cli_supported_flags
 
   def _run_tests(self, dut_name, expressions, tast_dir, private_key_path,
                  build_artifacts_url, test_results_dir, extra_args):

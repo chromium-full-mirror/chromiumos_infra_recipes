@@ -102,6 +102,17 @@
   },
   {
     "cmd": [
+      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
+      "help",
+      "run"
+    ],
+    "name": "run tast tests.first tast iteration.tast help run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "gcloud",
       "compute",
       "instances",
@@ -252,7 +263,6 @@
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/test-artifacts_tmp_1/autotest/utils/frozen_chromite/ssh_keys/testing_rsa",
-      "-systemservicestimeout=600",
       "172.16.0.15:22",
       "expr"
     ],

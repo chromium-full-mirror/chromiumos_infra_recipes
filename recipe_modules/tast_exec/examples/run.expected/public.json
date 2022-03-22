@@ -183,6 +183,29 @@
   },
   {
     "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "help",
+      "run"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.tast help run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -328,7 +351,6 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
-      "-systemservicestimeout=600",
       "localhost:9222",
       "!informational"
     ],
@@ -960,6 +982,26 @@
   },
   {
     "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "help",
+      "run"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tast help run"
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -1096,7 +1138,6 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
-      "-systemservicestimeout=600",
       "localhost:9222",
       "!informational"
     ],
@@ -1347,6 +1388,26 @@
   },
   {
     "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "help",
+      "run"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tast help run (2)"
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -1484,7 +1545,6 @@
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
       "-var=myVar=myVal",
-      "-systemservicestimeout=600",
       "localhost:9222",
       "example.Pass"
     ],
@@ -1739,6 +1799,29 @@
   },
   {
     "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "help",
+      "run"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).tast help run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "gcloud",
       "compute",
       "instances",
@@ -1926,7 +2009,6 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
       "-maybemissingvars=.+\\..+",
-      "-systemservicestimeout=600",
       "172.16.0.15:22",
       "!informational"
     ],
