@@ -498,7 +498,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return skylab_tasks
 
   def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
-                                  test_to_build_map=None, is_retry=False):
+                                  test_to_build_map=None, is_retry=False,
+                                  run_async=False):
     """Schedule Autotest VM Tests from the test_plan.
 
     Args:
@@ -510,6 +511,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
+      run_async (bool): Should the tests be ran async and not cancel
+          on the termination of the parent (this caller).
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -537,7 +540,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               test_harness=VmTestRequest.AUTOTEST,
                               build_payload=unit.common.build_payload,
                               expressions=['suite:' + test.test_suite]))),
-                  tags=self.m.cros_tags.make_schedule_tags(snapshot)))
+                  tags=self.m.cros_tags.make_schedule_tags(snapshot),
+                  swarming_parent_run_id=None
+                  if run_async else self.m.swarming.task_id))
 
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule autotest vm tests',
@@ -545,7 +550,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return vm_tests
 
   def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,
-                              test_to_build_map=None, is_retry=False):
+                              test_to_build_map=None, is_retry=False,
+                              run_async=False):
     """Schedule tast VM Tests from the test_plan.
 
     Args:
@@ -557,6 +563,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
+      run_async (bool): Should the tests be ran async and not cancel
+          on the termination of the parent (this caller).
 
     Returns:
       list[Build] objects of the VM tests scheduled.
@@ -591,14 +599,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               name=test_name, build_target=build_target,
                               build_payload=unit.common.build_payload,
                               expressions=expressions))),
-                  tags=self.m.cros_tags.make_schedule_tags(snapshot)))
+                  tags=self.m.cros_tags.make_schedule_tags(snapshot),
+                  swarming_parent_run_id=None
+                  if run_async else self.m.swarming.task_id))
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_build_title)
     return vm_tests
 
   def _schedule_tast_gce_tests(self, test_plan, passed_tests, snapshot,
-                               test_to_build_map=None, is_retry=False):
+                               test_to_build_map=None, is_retry=False,
+                               run_async=False):
     """Schedule tast GCE Tests from the test_plan.
 
     Args:
@@ -610,6 +621,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_to_build_map (dict{string->string}): Map of test names to
           build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
+      run_async (bool): Should the tests be ran async and not cancel
+          on the termination of the parent (this caller).
 
     Returns:
       list[Build] objects of the GCE tests scheduled.
@@ -647,7 +660,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               build_payload=unit.common.build_payload,
                               expressions=expressions,
                               gce_metadata=properties_gce_metadata))),
-                  tags=self.m.cros_tags.make_schedule_tags(snapshot)))
+                  tags=self.m.cros_tags.make_schedule_tags(snapshot),
+                  swarming_parent_run_id=None
+                  if run_async else self.m.swarming.task_id))
     gce_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast GCE tests',
         url_title_fn=self.m.naming.get_build_title)
