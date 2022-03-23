@@ -22,7 +22,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -47,7 +47,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -75,7 +75,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -98,7 +98,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -116,7 +116,7 @@
       "compute",
       "images",
       "create",
-      "board-8945511751514863184",
+      "board-2491483",
       "--source-uri=https://storage.googleapis.com/artifacts-bucket/artifacts-path/chromiumos_test_image_gce.tar.gz",
       "--licenses=https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
     ],
@@ -130,7 +130,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -153,7 +153,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -184,7 +184,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -201,8 +201,8 @@
       "compute",
       "instances",
       "create",
-      "board-8945511751514863184",
-      "--image=board-8945511751514863184",
+      "board-2491483",
+      "--image=board-2491483",
       "--project=project",
       "--machine-type=machine-type",
       "--no-scopes",
@@ -222,7 +222,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -320,7 +320,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -352,7 +352,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -392,7 +392,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -436,7 +436,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -478,7 +478,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -507,7 +507,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -544,7 +544,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -585,7 +585,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -617,7 +617,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -653,7 +653,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -702,7 +702,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -748,7 +748,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -764,7 +764,7 @@
     "name": "run tast tests.first tast iteration.process tast output.GS upload first_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/first_results@@@"
     ]
   },
   {
@@ -781,7 +781,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results"
+      "gs://chromeos-vmtest-archive/builder/0/first_results"
     ],
     "infra_step": true,
     "luci_context": {
@@ -790,7 +790,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -862,7 +862,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -896,7 +896,7 @@
     "name": "run tast tests.record logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/system_logs@@@"
     ]
   },
   {
@@ -914,7 +914,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -940,7 +940,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -956,7 +956,7 @@
     "name": "run tast tests.record logs.GS upload system_logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/system_logs@@@"
     ]
   },
   {
@@ -973,7 +973,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/var-log-dump_tmp_1",
-      "gs://chromeos-vmtest-archive/builder/8945511751514863184/system_logs"
+      "gs://chromeos-vmtest-archive/builder/0/system_logs"
     ],
     "infra_step": true,
     "luci_context": {
@@ -982,7 +982,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1007,7 +1007,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Lost SSH connection to VM@@@",
-      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results/tests/arc.Boot@@@",
+      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/first_results/tests/arc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1017,7 +1017,7 @@
       "compute",
       "images",
       "delete",
-      "board-8945511751514863184",
+      "board-2491483",
       "--quiet"
     ],
     "env": {
@@ -1030,7 +1030,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/build:0",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1041,7 +1041,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 vm test failed\n\n- arc.Boot: [Lost SSH connection to VM](https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results/tests/arc.Boot)"
+      "humanReason": "1 vm test failed\n\n- arc.Boot: [Lost SSH connection to VM](https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/first_results/tests/arc.Boot)"
     },
     "name": "$result"
   }

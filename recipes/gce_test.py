@@ -8,6 +8,7 @@
 from PB.recipes.chromeos.gce_test import GceTestProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/random',
@@ -37,10 +38,12 @@ def RunSteps(api, properties):
   api.gcloud.set_gce_project(project=properties.gce_metadata.project)
   api.gcloud.auth_list()
 
-  # TODO use buildbucket id (in LED runs id=0)
-  api.random.seed(int(api.time.time()))
-  rand_id = api.random.randint(1000000, 9999999)
-  image = '{}-{}'.format(properties.build_target.name, rand_id)
+  suffix = api.buildbucket.build.id
+  if suffix == 0:
+    # LED runs have buildbucket id=0. Use a random number.
+    api.random.seed(int(api.time.time()))
+    suffix = api.random.randint(1000000, 9999999)
+  image = '{}-{}'.format(properties.build_target.name, suffix)
   source_uri = 'https://storage.googleapis.com/{}/{}/{}'.format(
       properties.build_payload.artifacts_gs_bucket,
       properties.build_payload.artifacts_gs_path, _TEST_IMAGE_GCE_TAR)
@@ -77,20 +80,22 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.properties(
-          build_target=dict(name='board'),
-          build_payload=dict(
-              artifacts_gs_bucket='artifacts-bucket',
-              artifacts_gs_path='artifacts-path',
-          ),
-          expressions=['expr'],
-          gce_metadata=dict(
-              project='project',
-              zone='zone',
-              machine_type='machine-type',
-              network='network',
-              subnet='subnet',
-          ),
-      ))
+  props = api.properties(
+      build_target=dict(name='board'),
+      build_payload=dict(
+          artifacts_gs_bucket='artifacts-bucket',
+          artifacts_gs_path='artifacts-path',
+      ),
+      expressions=['expr'],
+      gce_metadata=dict(
+          project='project',
+          zone='zone',
+          machine_type='machine-type',
+          network='network',
+          subnet='subnet',
+      ),
+  )
+
+  yield api.test('basic', props, api.buildbucket.generic_build())
+
+  yield api.test('led-build', props, api.buildbucket.generic_build(build_id=0))
