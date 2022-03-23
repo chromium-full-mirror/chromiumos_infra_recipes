@@ -237,6 +237,7 @@
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
   * [cros_provenance:examples/full](#recipes-cros_provenance_examples_full)
   * [cros_release:examples/full](#recipes-cros_release_examples_full)
+  * [cros_release:tests/get_au_testing_models](#recipes-cros_release_tests_get_au_testing_models)
   * [cros_release:tests/util](#recipes-cros_release_tests_util)
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
   * [cros_release_util:examples/full](#recipes-cros_release_util_examples_full)
@@ -2841,7 +2842,7 @@ Returns:
   (List[str]): the location of the attestations on disk.
 ### *recipe_modules* / [cros\_release](/recipe_modules/cros_release)
 
-[DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2873,11 +2874,11 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [get\_paygen\_testing\_models](/recipe_modules/cros_release/api.py#234)(self):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#234)(self):**
 
-Determine which models need to run paygen tests.
+Determine which models are configured to run autoupdate tests.
 
-TODO(b/223252953): Only test on models that are available in the lab.
+TODO(b/223252953): Filter down to models that are available in the lab.
 
 Returns:
   List[str]: The names of each model that should run paygen tests.
@@ -2886,7 +2887,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#244)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#255)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -4059,7 +4060,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#108)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#121)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -4073,7 +4074,7 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#74)(self, builders=None):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#74)(self, builders=None, paygen=False):**
 
 Generate target test requirements config in config-internal using
   ./board_config/generate_test_config.
@@ -4083,6 +4084,9 @@ Args:
     e.g. coral-release-main or staging-kevin-release-main. If not specified,
     either the invoking builder or its children (if the invoking builder name
     contains 'orchestrator') will be used.
+  paygen (bool): If true, generate paygen testing requirements instead of
+    standard per-build-target test requirements.
+
 Returns:
   JSON structure of target test requirements or None.
 
@@ -4098,7 +4102,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#202)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#215)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -9351,6 +9355,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#30)(api):**
+### *recipes* / [cros\_release:tests/get\_au\_testing\_models](/recipe_modules/cros_release/tests/get_au_testing_models.py)
+
+[DEPS](/recipe_modules/cros_release/tests/get_au_testing_models.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/get_au_testing_models.py#28)(api, expected_models):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -196,7 +196,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'target_chromeos_version': version.platform_version,
           'delta_types': [],
           'channels': [Channel.Name(x) for x in self._channels],
-          'au_testing_models': self.get_paygen_testing_models(),
+          'au_testing_models': self.get_au_testing_models(),
           'src_bucket': self._release_bucket,
           'dest_bucket': self._release_bucket,
           'dryrun': self._paygen_dryrun,
@@ -231,15 +231,26 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
       return builds
 
-  def get_paygen_testing_models(self):
-    """Determine which models need to run paygen tests.
+  def get_au_testing_models(self):
+    """Determine which models are configured to run autoupdate tests.
 
-    TODO(b/223252953): Only test on models that are available in the lab.
+    TODO(b/223252953): Filter down to models that are available in the lab.
 
     Returns:
       List[str]: The names of each model that should run paygen tests.
     """
-    return self.m.builder_metadata.get_models(test_data=self._test_data.enabled)
+    with self.m.step.nest('determine au testing models'):
+      config = self.m.cros_test_plan.generate_target_test_requirements_config(
+          paygen=True)
+      if config is None:
+        raise StepFailure('No response from generate_test_config')
+      builder = self.m.buildbucket.build.builder.builder
+      if builder not in config:
+        raise StepFailure('Builder %s not found in paygen test config: %s' %
+                          (builder, config))
+      model_config = config[builder]
+      return sorted(
+          [model for (model, suites) in model_config.items() if 'au' in suites])
 
   def push_and_sign_images(self, config, sysroot):
     """Call the Push Image Build API endpoint for the build.

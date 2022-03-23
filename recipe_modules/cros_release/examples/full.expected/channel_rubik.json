@@ -1194,130 +1194,33 @@
   },
   {
     "cmd": [],
-    "name": "generate payloads.look up builder metadata",
+    "name": "generate payloads.determine au testing models",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@No builder metadata cached. Querying Build API PackageService/GetBuilderMetadata.@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@{@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  \"modelMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadwriteFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"firmwareKeyId\": \"EVE\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"modelName\": \"eve\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadonlyFirmwareVersion\": \"Google_Eve.9584.107.0\"@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  ], @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  \"buildTargetMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"kernelVersion\": \"5.4.163-r2827\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerTarget\": \"bertha\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerBranch\": \"git_rvc-arc\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerVersion\": \"7978506\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"arcUseSet\": true, @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"buildTarget\": \"eve\"@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  ]@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@}@@@",
-      "@@@STEP_LOG_END@builder_metadata@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata",
+    "name": "generate payloads.determine au testing models.generate target test requirements",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"build_target_metadata\": [{\"kernel_version\": \"5.4.163-r2827\", \"ec_firmware_version\": \"eve_v1.1.6659-ba2088ed3\", \"android_container_branch\": \"git_rvc-arc\", \"main_firmware_version\": \"Google_Eve.9584.230.0\", \"android_container_target\": \"bertha\", \"build_target\": \"eve\", \"android_container_version\": \"7978506\", \"arc_use_set\": true}], \"model_metadata\": [{\"firmware_key_id\": \"EVE\", \"main_readwrite_firmware_version\": \"Google_Eve.9584.230.0\", \"model_name\": \"eve\", \"ec_firmware_version\": \"eve_v1.1.6659-ba2088ed3\", \"main_readonly_firmware_version\": \"Google_Eve.9584.107.0\"}]}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "chromeos/config-internal",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.PackageService/GetBuilderMetadata"
-    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
       "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+        "RECIPE_REPO[depot_tools]"
       ]
     },
     "infra_step": true,
@@ -1333,92 +1236,20 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call response",
+    "name": "generate payloads.determine au testing models.generate target test requirements.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:26Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getBuilderMetadataResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"modelMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"mainReadwriteFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"firmwareKeyId\": \"EVE\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"modelName\": \"eve\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"mainReadonlyFirmwareVersion\": \"Google_Eve.9584.107.0\"@@@",
-      "@@@STEP_LOG_LINE@published event@      }@@@",
-      "@@@STEP_LOG_LINE@published event@    ], @@@",
-      "@@@STEP_LOG_LINE@published event@    \"buildTargetMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"kernelVersion\": \"5.4.163-r2827\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"androidContainerTarget\": \"bertha\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"androidContainerBranch\": \"git_rvc-arc\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"mainFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"androidContainerVersion\": \"7978506\", @@@",
-      "@@@STEP_LOG_LINE@published event@        \"arcUseSet\": true, @@@",
-      "@@@STEP_LOG_LINE@published event@        \"buildTarget\": \"eve\"@@@",
-      "@@@STEP_LOG_LINE@published event@      }@@@",
-      "@@@STEP_LOG_LINE@published event@    ]@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"generate payloads|look up builder metadata|call chromite.api.PackageService/GetBuilderMetadata|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getBuilderMetadataRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:27.500Z\"@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
-      "@@@STEP_LOG_END@published event@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ0Z2VuZXJhdGUgcGF5bG9hZHN8bG9v\\nayB1cCBidWlsZGVyIG1ldGFkYXRhfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dl\\ndEJ1aWxkZXJNZXRhZGF0YXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSqAy8KHAoaW0NBQ0hFXS9jcm9z\\nX2Nocm9vdC9jaHJvb3QSDwoNYW1kNjQtZ2VuZXJpY7IDuQEKZAoDZXZlEgtnaXRfcnZjLWFyYxoG\\nYmVydGhhIgc3OTc4NTA2KAEyF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzQg01LjQuMTYzLXIyODI3\\nShVHb29nbGVfRXZlLjk1ODQuMjMwLjASUQoDZXZlEhdldmVfdjEuMS42NjU5LWJhMjA4OGVkMxoD\\nRVZFIhVHb29nbGVfRXZlLjk1ODQuMTA3LjAqFUdvb2dsZV9FdmUuOTU4NC4yMzAuMA==\\n',@@@",
-      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
-      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
-      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_LINE@raw_io.output@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
   {
     "cmd": [
-      "python",
-      "-u",
-      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
-      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
-      "/path/to/tmp/json"
+      "./board_config/generate_test_config",
+      "amd64-generic-postsubmit",
+      "--paygen"
     ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/config-internal",
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"
@@ -1431,95 +1262,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.read deploy_cipd.json",
+    "name": "generate payloads.determine au testing models.generate target test requirements.generate_test_config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cros-recipes-support",
-      "-ensure-file",
-      "pkg inst",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ0Z2VuZXJhdGUgcGF5bG9hZHN8bG9v\\nayB1cCBidWlsZGVyIG1ldGFkYXRhfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dl\\ndEJ1aWxkZXJNZXRhZGF0YXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSqAy8KHAoaW0NBQ0hFXS9jcm9z\\nX2Nocm9vdC9jaHJvb3QSDwoNYW1kNjQtZ2VuZXJpY7IDuQEKZAoDZXZlEgtnaXRfcnZjLWFyYxoG\\nYmVydGhhIgc3OTc4NTA2KAEyF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzQg01LjQuMTYzLXIyODI3\\nShVHb29nbGVfRXZlLjk1ODQuMjMwLjASUQoDZXZlEhdldmVfdjEuMS42NjU5LWJhMjA4OGVkMxoD\\nRVZFIhVHb29nbGVfRXZlLjk1ODQuMTA3LjAqFUdvb2dsZV9FdmUuOTU4NC4yMzAuMA==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1550,7 +1295,7 @@
       }
     },
     "name": "generate payloads.running paygen orchestrator.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_testing_models\": [\"eve\"], \"builder_name\": \"amd64-generic\", \"channels\": [\"CHANNEL_RUBIK\"], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_testing_models\": [], \"builder_name\": \"amd64-generic\", \"channels\": [\"CHANNEL_RUBIK\"], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1587,9 +1332,7 @@
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [@@@",
-      "@@@STEP_LOG_LINE@request@            \"eve\"@@@",
-      "@@@STEP_LOG_LINE@request@          ], @@@",
+      "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [], @@@",
       "@@@STEP_LOG_LINE@request@          \"builder_name\": \"amd64-generic\", @@@",
       "@@@STEP_LOG_LINE@request@          \"channels\": [@@@",
       "@@@STEP_LOG_LINE@request@            \"CHANNEL_RUBIK\"@@@",
@@ -1741,6 +1484,81 @@
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
       "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate payloads.build status pubsub update.publish message.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "generate payloads.build status pubsub update.publish message.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

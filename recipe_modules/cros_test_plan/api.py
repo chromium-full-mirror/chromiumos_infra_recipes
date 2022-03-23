@@ -71,7 +71,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         return json.loads(data)
       return None
 
-  def generate_target_test_requirements_config(self, builders=None):
+  def generate_target_test_requirements_config(self, builders=None,
+                                               paygen=False):
     """Generate target test requirements config in config-internal using
       ./board_config/generate_test_config.
 
@@ -80,6 +81,9 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         e.g. coral-release-main or staging-kevin-release-main. If not specified,
         either the invoking builder or its children (if the invoking builder name
         contains 'orchestrator') will be used.
+      paygen (bool): If true, generate paygen testing requirements instead of
+        standard per-build-target test requirements.
+
     Returns:
       JSON structure of target test requirements or None.
     """
@@ -102,7 +106,16 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         with self.m.context(
             cwd=self.m.src_state.workspace_path.join(project_info.path)):
           cmd = ['./board_config/generate_test_config', ','.join(builders)]
-          data = self.m.easy.stdout_step('generate_test_config', cmd)
+          if paygen:
+            cmd.append('--paygen')
+
+          def test_stdout():
+            if paygen:
+              return json.dumps({builder: {} for builder in builders})
+            return ''
+
+          data = self.m.easy.stdout_step('generate_test_config', cmd,
+                                         test_stdout=test_stdout)
           return json.loads(data) if data else None
 
   def generate(self, builds, gerrit_changes, manifest_commit, name=None):
