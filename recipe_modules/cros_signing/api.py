@@ -93,10 +93,10 @@ class CrosSigningApi(recipe_api.RecipeApi):
           if self.get_status_from_instructions(
               instructions_info) in _TERMINAL_STATES:
             # Strip out the directory from the instructions file.
-            matcher = INSTRUCTIONS_PATTERN.match(instructions)
+            match = INSTRUCTIONS_PATTERN.match(instructions)
             # Be defensive, make None failures obvious.
-            if matcher:
-              instructions_info['release_directory'] = matcher.group(1)
+            if match:
+              instructions_info['release_directory'] = match.group(1)
 
             instructions_metadata[instructions] = instructions_info
 

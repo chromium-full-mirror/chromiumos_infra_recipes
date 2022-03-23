@@ -39,7 +39,7 @@ def RunSteps(api):
   expected_full_tests = [
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0],
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
               [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_N2N]))
   ]
   api.assertions.assertCountEqual(
@@ -54,7 +54,7 @@ def RunSteps(api):
   expected_full_tests = [
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0], [
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [
                   api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_N2N,
                   api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_OMAHA
               ]))
@@ -72,7 +72,7 @@ def RunSteps(api):
   expected_full_tests = [
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0]))
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0]))
   ]
   api.assertions.assertCountEqual(
       [y.properties for y in expected_full_tests],
@@ -88,11 +88,11 @@ def RunSteps(api):
   expected_delta_tests = [
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
               [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_N2N])),
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0]))
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0]))
   ]
   api.assertions.assertCountEqual(
       [y.properties for y in expected_delta_tests],
@@ -106,11 +106,11 @@ def RunSteps(api):
   expected_delta_tests = [
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0],
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
               [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_OMAHA])),
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
               [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_N2N])),
   ]
   api.assertions.assertCountEqual(
@@ -126,10 +126,10 @@ def RunSteps(api):
   expected_delta_tests = [
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0])),
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0])),
       api.cros_paygen._create_bb_schedule_request(
           api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_DELTA_N2N[0]))
+              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]))
   ]
   api.assertions.assertCountEqual(
       [y.properties for y in expected_delta_tests],

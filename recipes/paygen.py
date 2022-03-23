@@ -29,6 +29,7 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 
 import PB.chromiumos.common as common_pb2
+from PB.chromite.api.payload import GenerationResponse
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
 
@@ -99,7 +100,7 @@ def RunSteps(api, properties):
     # Set up holder of paygen uris.
     paygen_uris = []
 
-    with api.step.nest('doing paygen'):
+    with api.step.nest('doing paygen') as presentation:
 
       # Iterate through every request.
       for request in properties.requests:
@@ -110,6 +111,15 @@ def RunSteps(api, properties):
           response = api.cros_build_api.PayloadService.GeneratePayload(
               request.generation_request, name='making single payload')
           paygen_uris.append(response.remote_uri)
+
+          if response.failure_reason:
+            # See go/rubik-must-paygen-minios for more info about minios skips.
+            if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
+              presentation.step_text = 'not compatible with miniOS, skipping'
+              continue
+            else:
+              raise StepFailure('paygen failed with error {}'.format(
+                  response.failure_reason))
 
           test_configs = _set_up_test_configs(api, request, response)
           if test_configs:
@@ -129,13 +139,13 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def generate_payload_response(api, is_success=True, local_path='',
-                                remote_uri=''):
+                                remote_uri='', failure_reason=None, retcode=0):
     data = json.dumps(
-        dict(success=is_success, local_path=local_path, remote_uri=remote_uri))
+        dict(success=is_success, local_path=local_path, remote_uri=remote_uri,
+             failure_reason=failure_reason))
     return api.cros_build_api.set_api_return(
         parent_step_name='doing paygen.doing a single paygen operation',
-        step_name='making single payload', data=data,
-        retcode=0 if is_success else 1)
+        step_name='making single payload', data=data, retcode=retcode)
 
   full_payload_uri = (
       'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
@@ -188,11 +198,38 @@ def GenTests(api):
   )
 
   yield api.test(
+      'failed-paygen',
+      api.properties(
+          PaygenProperties(requests=[
+              dict(generation_request=api.cros_paygen
+                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
+          ])),
+      generate_payload_response(api, is_success=False, retcode=2,
+                                failure_reason=2),
+      api.post_check(post_process.StepFailure, 'doing paygen'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+  )
+
+  yield api.test(
+      'failed-minios',
+      api.properties(
+          PaygenProperties(requests=[
+              dict(generation_request=api.cros_paygen
+                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
+          ])),
+      generate_payload_response(
+          api, is_success=False, retcode=2,
+          failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+  )
+
+  yield api.test(
       'no-testing',
       api.properties(
           PaygenProperties(requests=[
               dict(generation_request=api.cros_paygen
-                   .EXAMPLE_GEN_REQUEST_DELTA_N2N[0])
+                   .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0])
           ])),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
@@ -206,7 +243,7 @@ def GenTests(api):
           PaygenProperties(requests=[
               dict(
                   generation_request=api.cros_paygen
-                  .EXAMPLE_GEN_REQUEST_DELTA_N2N[0], autoupdate_test_configs=[
+                  .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(src_version='123',
                                            src_channel='canary-channel',
                                            delta_type=common_pb2.OMAHA,
@@ -236,7 +273,7 @@ def GenTests(api):
           PaygenProperties(requests=[
               dict(
                   generation_request=api.cros_paygen
-                  .EXAMPLE_GEN_REQUEST_DELTA_N2N[0], autoupdate_test_configs=[
+                  .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
                   ])

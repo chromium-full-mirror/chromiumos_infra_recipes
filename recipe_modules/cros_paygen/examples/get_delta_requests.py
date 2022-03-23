@@ -51,7 +51,7 @@ def GenTests(api):
       'basic-signed',
       api.cros_paygen.props(api.properties,
                             GetRequestTestInputProperties.SIGNED,
-                            api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_SIGNED,
+                            api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED,
                             **api.cros_paygen.BASIC_TEST_PROPS),
       api.post_check(post_process.StatusSuccess))
 
@@ -59,7 +59,7 @@ def GenTests(api):
       'basic-unsigned',
       api.cros_paygen.props(api.properties,
                             GetRequestTestInputProperties.UNSIGNED,
-                            api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED,
+                            api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED,
                             **api.cros_paygen.BASIC_TEST_PROPS),
       api.post_check(post_process.StatusSuccess))
 
@@ -78,5 +78,5 @@ def GenTests(api):
       'multiple-signed',
       api.cros_paygen.props(
           api.properties, GetRequestTestInputProperties.SIGNED,
-          api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_SIGNED * 2,
+          api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED * 2,
           **multi_src_props), api.post_check(post_process.StatusSuccess))

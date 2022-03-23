@@ -235,10 +235,11 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
       api.buildbucket.simulated_collect_output(
-          [paygen_child_data(x) for x in range(8)], 'running children.collect'),
+          [paygen_child_data(x) for x in range(15)],
+          'running children.collect'),
       *repeated_step_data(
           'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
-          api.raw_io.output(payload_json_data), 8))
+          api.raw_io.output(payload_json_data), 15))
 
   yield api.test(
       'some-failures', get_props(), good_paygen_cfg,
@@ -252,7 +253,7 @@ def GenTests(api):
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(id=8922054662172514000 + x, status='FAILURE')
-          for x in range(8)
+          for x in range(16)
       ], 'running children.collect'),
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.MustRun, 'pairing artifacts'),

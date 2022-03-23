@@ -1426,7 +1426,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"\", \"local_path\": \"\", \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"\", \"local_path\": \"\", \"success\": true, \"failure_reason\": null}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

@@ -164,7 +164,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   )
 
   @property
-  def EXAMPLE_GEN_REQUEST_DELTA_SIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_DELTA_SIGNED(self):
     return [
         GenerationRequest_pb2(
             src_signed_image=self.SIGNED_SRC,
@@ -173,11 +173,15 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-        )
+        ),
+        GenerationRequest_pb2(src_signed_image=self.SIGNED_SRC,
+                              tgt_signed_image=self.SIGNED_TGT, bucket='b',
+                              verify=True, dryrun=False,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED(self):
     return [
         GenerationRequest_pb2(
             src_unsigned_image=self.UNSIGNED_SRC,
@@ -186,7 +190,11 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-        )
+        ),
+        GenerationRequest_pb2(src_unsigned_image=self.UNSIGNED_SRC,
+                              tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                              verify=True, dryrun=False,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
@@ -203,7 +211,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
     ]
 
   @property
-  def EXAMPLE_GEN_REQUEST_FULL_SIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_FULL_SIGNED(self):
     return [
         GenerationRequest_pb2(
             full_update=True,
@@ -212,11 +220,15 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
-        )
+        ),
+        GenerationRequest_pb2(full_update=True,
+                              tgt_signed_image=self.SIGNED_TGT, bucket='b',
+                              verify=True, dryrun=True,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUEST_FULL_UNSIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED(self):
     return [
         GenerationRequest_pb2(
             full_update=True,
@@ -225,7 +237,11 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
-        )
+        ),
+        GenerationRequest_pb2(full_update=True,
+                              tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                              verify=True, dryrun=True,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
@@ -242,7 +258,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
     ]
 
   @property
-  def EXAMPLE_GEN_REQUEST_DELTA_N2N(self):
+  def EXAMPLE_GEN_REQUESTS_DELTA_N2N(self):
     return [
         GenerationRequest_pb2(
             src_unsigned_image=self.UNSIGNED_TGT,
@@ -251,19 +267,23 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-        )
+        ),
+        GenerationRequest_pb2(src_unsigned_image=self.UNSIGNED_TGT,
+                              tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                              verify=True, dryrun=False,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
   def EXAMPLE_GEN_REQUESTS(self):
     return [
         self.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-        self.EXAMPLE_GEN_REQUEST_DELTA_SIGNED[0],
-        self.EXAMPLE_GEN_REQUEST_DELTA_UNSIGNED[0],
+        self.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED[0],
+        self.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
         self.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-        self.EXAMPLE_GEN_REQUEST_FULL_SIGNED[0],
-        self.EXAMPLE_GEN_REQUEST_FULL_UNSIGNED[0],
-        self.EXAMPLE_GEN_REQUEST_DELTA_N2N[0],
+        self.EXAMPLE_GEN_REQUESTS_FULL_SIGNED[0],
+        self.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+        self.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
     ]
 
   EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(

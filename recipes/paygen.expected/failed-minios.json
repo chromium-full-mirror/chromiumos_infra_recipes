@@ -1356,7 +1356,11 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen"
+    "name": "doing paygen",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@not compatible with miniOS, skipping@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -1385,17 +1389,10 @@
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"dlcPackage\": \"package\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
-      "@@@STEP_LOG_LINE@request@        \"woomax\"@@@",
-      "@@@STEP_LOG_LINE@request@      ], @@@",
-      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1426,8 +1423,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"\", \"local_path\": \"\", \"success\": true, \"failure_reason\": null}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_LINE@response@{\"remote_uri\": \"\", \"local_path\": \"\", \"success\": false, \"failure_reason\": 1}@@@",
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1496,15 +1494,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@dry run, skip testing@@@"
+      "@@@STEP_LOG_END@build api stdout@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
