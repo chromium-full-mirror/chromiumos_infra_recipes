@@ -22,10 +22,13 @@ def RunSteps(api):
   # The absence of any DLC or MINIOS markers implies a standard payload for
   # the tested module's purposes.
   standard_payload.input.properties['requests'] = [
+      MessageToDict(GenerationRequest()),
       MessageToDict(GenerationRequest())
   ]
   standard_payload.output.properties['payload_uris'] = [
-      'gs://path/to/standard/payload'
+      'gs://path/to/standard/payload',
+      # Empty payload for minios skip.
+      ''
   ]
 
   minios_and_dlc_payload = build_pb2.Build(status='SUCCESS')

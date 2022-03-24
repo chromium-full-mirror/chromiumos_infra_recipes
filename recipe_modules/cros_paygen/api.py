@@ -801,6 +801,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       # but should that behavior change this logic would need to be hardened.
       for payload_request, payload_uri in zip(
           paygen_requests, res.output.properties['payload_uris']):
+        # If paygen was skipped (minios) this will be empty, so skip it.
+        if not payload_uri:
+          continue
         # Determine payload type from the paygen request.
         payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
         if 'minios' in payload_request and payload_request['minios']:
