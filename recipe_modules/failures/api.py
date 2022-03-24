@@ -108,38 +108,6 @@ class FailuresApi(RecipeApi):
       results_pres.step_text = step_text
       return critical_failures
 
-  def _get_baseline_validated_failures(self, kind, runs, baseline_runs,
-                                       get_status, is_critical, get_title,
-                                       get_link_map, get_id):
-    """Wraps _get_failures() to enable baseline filtering.
-
-    Args:
-      kind(str): A text description of runs.
-      runs(list[SkylabResult|Build]): List of results.
-      baseline_runs(list[SkylabResult|Build]): List of results
-        from baseline runs.
-      get_status(func): A func(run->STATUS) returns the status of the run.
-      is_critical(func): A func(run->bool) returns the criticality of the run.
-      get_title(func): A func(run->str) returns the name of the run.
-      get_link_map(func): A func(run->map) returns the link map of the run.
-      get_id(func): A func (run->str) returns the id of the run.
-    """
-    failed_baseline_run_names = set([
-        get_title(run)
-        for run in baseline_runs
-        if get_status(run) != common_pb2.SUCCESS
-    ])
-    filtered_runs = [
-        run for run in runs if get_title(run) not in failed_baseline_run_names
-    ]
-    failures = self._get_failures(kind, filtered_runs, get_status, is_critical,
-                                  get_title, get_link_map, get_id)
-    if baseline_runs:
-      self._get_failures('baseline ' + kind, baseline_runs,
-                         get_status, lambda x: True, get_title, get_link_map,
-                         get_id)
-    return failures
-
   @contextlib.contextmanager
   def ignore_exceptions(self):
     """Catches exceptions and logs them instead.
@@ -297,41 +265,37 @@ class FailuresApi(RecipeApi):
       ret = self.update_non_critical_build_failures(ret, child_configs)
     return ret
 
-  def get_hw_test_failures(self, hw_tests, baseline_hw_tests=None):
+  def get_hw_test_failures(self, hw_tests):
     """Logs hardware test status to UI, and raises on failed tests.
 
     Args:
       hw_tests (list[SkylabResult]): List of Skylab suite results.
-      baseline_hw_tests (list[SkylabResult]): List of Skylab suite
-        results from the baseline tests.
 
     Returns:
       list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
     """
     get_id = self.m.naming.get_skylab_result_title
-    return self._get_baseline_validated_failures(
-        'hw test', hw_tests, baseline_hw_tests or [], self.get_hwtest_status,
-        self.is_hw_test_critical, self.m.naming.get_skylab_result_title,
-        self.m.urls.get_skylab_result_link_map, get_id)
+    return self._get_failures('hw test', hw_tests, self.get_hwtest_status,
+                              self.is_hw_test_critical,
+                              self.m.naming.get_skylab_result_title,
+                              self.m.urls.get_skylab_result_link_map, get_id)
 
-  def get_vm_test_failures(self, vm_tests, baseline_vm_tests=None):
+  def get_vm_test_failures(self, vm_tests):
     """Logs VM test status to UI, and raises on failed tests.
 
     Args:
       vm_tests (list[Build]): List of VM test buildbucket results.
-      baseline_vm_tests (list[Build]): List of VM test buildbucket results
-        from the baseline tests.
 
     Returns:
       list[Failure]: All failures discovered in the given runs filtered
       by baseline failures.
     """
     get_id = self.m.naming.get_vm_test_title
-    return self._get_baseline_validated_failures(
-        'vm test', vm_tests, baseline_vm_tests or [], self.get_build_status,
-        self.m.buildbucket.is_critical, self.m.naming.get_vm_test_title,
-        self.m.urls.get_vm_test_link_map, get_id)
+    return self._get_failures('vm test', vm_tests, self.get_build_status,
+                              self.m.buildbucket.is_critical,
+                              self.m.naming.get_vm_test_title,
+                              self.m.urls.get_vm_test_link_map, get_id)
 
   def get_build_status(self, build):
     """Retrieve the status of the build.

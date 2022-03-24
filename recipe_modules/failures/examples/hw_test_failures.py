@@ -47,17 +47,9 @@ def RunSteps(api):
                                'target.hw.bvt-cq')
       ])
 
-  # Return nothing when critical failure also fails baseline.
-  api.assertions.assertFalse(
-      api.failures.get_hw_test_failures(
-          [skylab_critical_failure],
-          baseline_hw_tests=[skylab_critical_failure]))
-
-  # Return fatal failure when critical failure does not fail baseline.
+  # Return fatal failure when critical failure.
   api.assertions.assertEqual(
-      api.failures.get_hw_test_failures([skylab_critical_failure],
-                                        baseline_hw_tests=[skylab_success]),
-      [
+      api.failures.get_hw_test_failures([skylab_critical_failure]), [
           api.failures.Failure('hw test', 'target.hw.bvt-cq',
                                skylab_critical_link_map, True,
                                'target.hw.bvt-cq')
