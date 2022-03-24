@@ -9,7 +9,8 @@ See: https://chromium.googlesource.com/external/repo/
 """
 
 from google.protobuf.json_format import MessageToDict
-from collections import namedtuple
+from collections import defaultdict, namedtuple
+import json
 import re
 import types
 
@@ -56,6 +57,12 @@ class RepoApi(recipe_api.RecipeApi):
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._remove_manifests_git = properties.remove_manifests_git
     self._binary_updated = False
+
+    # Running stats variables for repo.
+    # A list of dicts, key parameters from a repo sync operation log.
+    self._all_syncs = []
+    # A dictionary of repo 'name' to number of retries encountered.
+    self._repo_retries = defaultdict(lambda: 0)
 
   def initialize(self):
     self._disable_source_cache_health |= (
@@ -219,7 +226,8 @@ class RepoApi(recipe_api.RecipeApi):
            current_branch=False, jobs=None, manifest_name=None, no_tags=False,
            optimized_fetch=False, cache_dir=None, timeout=None,
            retry_fetches=None, projects=None, verbose=True,
-           no_manifest_update=False, force_remove_dirty=False, prune=None):
+           no_manifest_update=False, force_remove_dirty=False, prune=None,
+           repo_event_log=True):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -239,6 +247,7 @@ class RepoApi(recipe_api.RecipeApi):
       force_remove_dirty (bool): Whether to force remove projects with
         uncommitted modifications if projects no longer exist in the manifest.
       prune (bool): Delete refs that no longer exist on the remote.
+      repo_event_log (bool): Write the repo event log, do analysis steps.
     """
     assert _kwonly == (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -266,6 +275,9 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--no-manifest-update']
     if force_remove_dirty:
       cmd += ['--force-remove-dirty']
+    if repo_event_log:
+      event_log_tmp = self.m.path.mkstemp('event_log_')
+      cmd = ['--event-log={}'.format(event_log_tmp)] + cmd
     if prune is not None:
       if prune:
         cmd += ['--prune']
@@ -273,7 +285,87 @@ class RepoApi(recipe_api.RecipeApi):
         cmd += ['--no-prune']  #pragma: nocover
     if projects:
       cmd += projects
-    self._step(cmd, name=None, timeout=timeout)
+
+    # Run repo sync. Capture failure and try to export stats, then reraise.
+    step_exception = None
+    try:
+      self._step(cmd, name=None, timeout=timeout)
+    except StepFailure as e:
+      step_exception = e
+    finally:
+      if repo_event_log:
+        with self.m.step.nest('repo stats') as pres:
+          try:
+            if event_log_tmp:
+              event_log_text = self.m.file.read_text(
+                  'event-log', event_log_tmp,
+                  test_data=self.test_api.repo_event_log_text())
+              pres.logs['repo-event-log'] = event_log_text
+              self._export_sync_stats(event_log_text)
+          except StepFailure as e:
+            # Don't fail the builder on issues reporting stats.
+            pres.status = self.m.step.INFRA_FAILURE
+            pres.step_text = 'failure reading repo request logs {}'.format(
+                e.message)
+      if step_exception:
+        # We're certain that this is an Exception.
+        raise step_exception  #pylint: disable=raising-bad-type
+
+  def _export_sync_stats(self, repo_event_log_text):
+    """Process the repo event log into builder properties.
+
+    Updates and outputs statisics information gathered from the repo event log.
+    The stats include the slowest repos, as well as the number of retries the
+    builder made during its execution. It updates class level locals if repo is
+    called muliple times.
+
+    We should catch exceptions here and not interrupt builders if we fail.
+
+    Args:
+      repo_event_log_text (str): A repo event log string, jsonl format.
+    """
+    try:
+      syncs = []
+      repo_dicts = []
+      update_retries = False
+      for line in repo_event_log_text.splitlines():
+        repo_dicts.append(json.loads(line))
+
+      for repo_dict in repo_dicts:
+        if repo_dict['task_name'] == 'sync-network':
+          this_sync = {}
+
+          this_sync['name'] = repo_dict['name']
+          for s in ['project', 'project_url', 'revision', 'status']:
+            if s in repo_dict:
+              this_sync[s] = repo_dict[s]
+
+          # Find time span.
+          this_sync['time_delta_sec'] = float(repo_dict['finish_time']) - float(
+              repo_dict['start_time'])
+
+          # Incorporate new retries.
+          tries = int(repo_dict['try'])
+          this_sync['try'] = tries
+          if this_sync['status'] == 'pass' and tries > 1:
+            update_retries = True
+            self._repo_retries['project'] += (tries - 1)
+
+          syncs.append(this_sync)
+
+      if update_retries:
+        self.m.easy.set_properties_step(repo_retries=self._repo_retries)
+
+      # Integrate this repo's run into the slowest repos list.
+      self._all_syncs = sorted(syncs + self._all_syncs,
+                               key=lambda x: x['time_delta_sec'], reverse=True)
+      slowest_repos = {}
+      for i, repo_dict in enumerate(self._all_syncs[:5]):
+        slowest_repos[str(i)] = repo_dict
+      self.m.easy.set_properties_step(slowest_repos=slowest_repos)
+
+    except (KeyError, TypeError, ValueError) as e:
+      raise StepFailure(e)
 
   def create_tmp_manifest(self, manifest_data):
     """Write manifest_data to a temporary manifest file inside the repo root.

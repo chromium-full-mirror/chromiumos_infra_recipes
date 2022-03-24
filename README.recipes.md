@@ -417,6 +417,7 @@
   * [repo:tests/project_infos_bad_regex](#recipes-repo_tests_project_infos_bad_regex)
   * [repo:tests/repo_retry_failure](#recipes-repo_tests_repo_retry_failure)
   * [repo:tests/repo_retry_success](#recipes-repo_tests_repo_retry_success)
+  * [repo:tests/repo_stats_bad_json](#recipes-repo_tests_repo_stats_bad_json)
   * [repo:tests/source_cache_feature](#recipes-repo_tests_source_cache_feature)
   * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass)
   * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
@@ -7024,11 +7025,11 @@ API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#325)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#417)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -7036,13 +7037,13 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#278)(self, manifest_data):**
+&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#370)(self, manifest_data):**
 
 Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#535)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#627)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -7060,7 +7061,7 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#642)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#734)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -7068,7 +7069,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#493)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#585)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -7088,9 +7089,9 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#71)(self):**
+&emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#78)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#435)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#527)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -7108,7 +7109,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#723)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#815)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -7124,7 +7125,7 @@ Args:
     and uncommitted files are cleaned up after the sync.
   sanitize (bool): Should we run `git gc` on all repos.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#144)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=True, clean=True):**
+&mdash; **def [init](/recipe_modules/repo/api.py#151)(self, manifest_url, _kwonly=(), manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=True, clean=True):**
 
 Executes 'repo init' with the given arguments.
 
@@ -7143,9 +7144,9 @@ Args:
     concern. Ignored as of go/cros-source-cache-health.
   verbose (bool): Whether to produce verbose output.
 
-&mdash; **def [initialize](/recipe_modules/repo/api.py#60)(self):**
+&mdash; **def [initialize](/recipe_modules/repo/api.py#67)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#462)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#554)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -7162,11 +7163,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#717)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#809)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_exists](/recipe_modules/repo/api.py#411)(self, project):**
+&mdash; **def [project\_exists](/recipe_modules/repo/api.py#503)(self, project):**
 
 Use 'repo info' to determine if the project exists in the checkout.
 
@@ -7176,7 +7177,7 @@ Args:
 Returns:
   (bool): whether or not the project exists.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#396)(self, project=None):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#488)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -7187,7 +7188,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#339)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#431)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -7207,9 +7208,9 @@ Args:
 Returns:
   list[ProjectInfo]: Requested project infos.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#74)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#311)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#403)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -7217,7 +7218,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#218)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=True, no_manifest_update=False, force_remove_dirty=False, prune=None):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#225)(self, _kwonly=(), force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=True, no_manifest_update=False, force_remove_dirty=False, prune=None, repo_event_log=True):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -7238,8 +7239,9 @@ Args:
   force_remove_dirty (bool): Whether to force remove projects with
     uncommitted modifications if projects no longer exist in the manifest.
   prune (bool): Delete refs that no longer exist on the remote.
+  repo_event_log (bool): Write the repo event log, do analysis steps.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#292)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#384)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
@@ -7248,7 +7250,7 @@ Args:
   manifest_data (str): Manifest XML data to use for the sync.
   kwargs: Keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [version](/recipe_modules/repo/api.py#140)(self):**
+&mdash; **def [version](/recipe_modules/repo/api.py#147)(self):**
 
 Prints the current version information of repo.
 ### *recipe_modules* / [result\_flow](/recipe_modules/result_flow)
@@ -10848,6 +10850,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_success.py#13)(api):**
 
 &mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_success.py#19)(api, attempt):**
+### *recipes* / [repo:tests/repo\_stats\_bad\_json](/recipe_modules/repo/tests/repo_stats_bad_json.py)
+
+[DEPS](/recipe_modules/repo/tests/repo_stats_bad_json.py#6): [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_stats_bad_json.py#17)(api):**
 ### *recipes* / [repo:tests/source\_cache\_feature](/recipe_modules/repo/tests/source_cache_feature.py)
 
 [DEPS](/recipe_modules/repo/tests/source_cache_feature.py#6): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -3,11 +3,29 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import os
+
 from recipe_engine import recipe_test_api
 
 
 class RepoTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the repo module."""
+
+  @staticmethod
+  def _read_test_file(filename):
+    """Read the content of a file in this directory.
+
+    Args:
+      filename (str): The basename of the file (located in this directory) to
+          read.
+
+    Returns:
+      (str): The contents of the file.
+    """
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                     filename)) as f:
+      return f.read().strip()
 
   @property
   def test_projects(self):
@@ -94,3 +112,7 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
   @staticmethod
   def fail_repo_sync(value):
     return value
+
+  @classmethod
+  def repo_event_log_text(cls):
+    return cls._read_test_file('repo_event_log.jsonl')
