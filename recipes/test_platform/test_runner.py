@@ -650,6 +650,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     if not prejob_response.any_provision_failed:
       run_test_response = interface.run_test(test_metadata,
                                              container_image_info)
+      test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
 

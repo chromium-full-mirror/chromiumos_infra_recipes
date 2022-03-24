@@ -11159,7 +11159,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#712)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#713)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#150)(api, interface, test_metadata, result):**
 
@@ -11244,7 +11244,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#671)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#672)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

@@ -54,6 +54,9 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
         self.primary_dut.chromeos.ssh.address, self.DUT_HOSTNAME_SUFFIX)
     # TODO(b/220801220): Match peer_duts appropriately when multi-dut testing feature is enabled for CFT.
     self.peer_duts = []
+    # Unix time of when test execution finished. Used to be passed via keyvals for autotests.
+    self.job_finished = 0
+
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
@@ -204,7 +207,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         with self._api.step.nest(test_case_id) as step:
           if test_harness_type == self.TEST_HARNESS_TAUTO:
             if self._write_to_keyvals(results_dir,
-                                      self._with_gs_logs_keyval(metadata)):
+                                      self._get_updated_keyvals(metadata)):
               with self._api.context(infra_steps=True):
                 self._api.phosphorus.upload_to_tko(
                     phosphorus.upload_to_tko.UploadToTkoRequest(
@@ -397,7 +400,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return api.phosphorus.read_dut_hostname()
 
   @staticmethod
-  def _with_gs_logs_keyval(metadata):
+  def _get_updated_keyvals(metadata):
     """Gets the keyval from autotest and populates it with the latest URLs.
 
     This keyval is required for stainless' test results view to link to the
@@ -416,6 +419,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     keyvals = metadata.autotest_keyvals
     keyvals['synchronous_log_data_url'] = metadata.gs_url
     keyvals['synchronous_log_data_stainless_url'] = metadata.stainless_logs_url
+    if metadata.job_finished:
+      keyvals['job_finished'] = str(metadata.job_finished)
     return keyvals
 
   def _process_prejob_response(self, prejob_resp):
