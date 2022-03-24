@@ -2961,6 +2961,14 @@
   },
   {
     "cmd": [],
+    "name": "set got_revision.buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"buildset\": [\"commit/gitiles/chrome-internal.googlesource.com/ti50/common/ti50/+/123\"]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "test firmware",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
