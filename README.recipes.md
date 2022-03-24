@@ -194,6 +194,7 @@
   * [cros_build_api:tests/failed_pkg_log_retrieval](#recipes-cros_build_api_tests_failed_pkg_log_retrieval)
   * [cros_build_api:tests/failed_pkg_names](#recipes-cros_build_api_tests_failed_pkg_names)
   * [cros_build_api:tests/misc](#recipes-cros_build_api_tests_misc)
+  * [cros_build_api:tests/publish_events_throws](#recipes-cros_build_api_tests_publish_events_throws)
   * [cros_build_api:tests/remove_endpoints](#recipes-cros_build_api_tests_remove_endpoints)
   * [cros_build_api:tests/version](#recipes-cros_build_api_tests_version)
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full)
@@ -2122,7 +2123,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#506)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#510)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2153,7 +2154,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#503)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#507)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#223)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -9050,6 +9051,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#38)(api):**
+### *recipes* / [cros\_build\_api:tests/publish\_events\_throws](/recipe_modules/cros_build_api/tests/publish_events_throws.py)
+
+[DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/publish_events_throws.py#14)(api):**
 ### *recipes* / [cros\_build\_api:tests/remove\_endpoints](/recipe_modules/cros_build_api/tests/remove_endpoints.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/remove_endpoints.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

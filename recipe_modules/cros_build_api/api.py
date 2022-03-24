@@ -494,9 +494,13 @@ class CrosBuildApiApi(RecipeApi):
           # Publish Build API responses on Cloud Pub/Sub if they are registered.
           if self.m.analysis_service.can_publish_event(input_proto,
                                                        output_proto):
-            self.m.analysis_service.publish_event(input_proto, output_proto,
-                                                  request_time, response_time,
-                                                  call_step, file_contents)
+            try:
+              self.m.analysis_service.publish_event(input_proto, output_proto,
+                                                    request_time, response_time,
+                                                    call_step, file_contents)
+            except StepFailure:
+              presentation.step_text = 'failed to publish pubsub message to analysis service'
+              presentation.status = self.m.step.INFRA_FAILURE
 
       return output_proto
 
