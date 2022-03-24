@@ -197,6 +197,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'delta_types': [],
           'channels': [Channel.Name(x) for x in self._channels],
           'au_testing_models': self.get_au_testing_models(),
+          'au_fsi_testing_models': self.get_au_testing_models(fsi=True),
           'src_bucket': self._release_bucket,
           'dest_bucket': self._release_bucket,
           'dryrun': self._paygen_dryrun,
@@ -231,15 +232,20 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
       return builds
 
-  def get_au_testing_models(self):
+  def get_au_testing_models(self, fsi=False):
     """Determine which models are configured to run autoupdate tests.
 
     TODO(b/223252953): Filter down to models that are available in the lab.
 
+    Args:
+      fsi (bool): If True, then return all models which should run autoupdate
+        tests for FSI images, which require broader testing than non-FSI.
+
     Returns:
       List[str]: The names of each model that should run paygen tests.
     """
-    with self.m.step.nest('determine au testing models'):
+    with self.m.step.nest('determine %s testing models' %
+                          ('fsi' if fsi else 'au')):
       config = self.m.cros_test_plan.generate_target_test_requirements_config(
           paygen=True)
       if config is None:
@@ -249,6 +255,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         raise StepFailure('Builder %s not found in paygen test config: %s' %
                           (builder, config))
       model_config = config[builder]
+      if fsi:
+        return sorted(list(model_config.keys()))
       return sorted(
           [model for (model, suites) in model_config.items() if 'au' in suites])
 

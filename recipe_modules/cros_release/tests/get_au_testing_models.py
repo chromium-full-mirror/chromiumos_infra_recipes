@@ -16,6 +16,12 @@ from recipe_engine.recipe_api import Property
 from recipe_engine import post_process
 
 PROPERTIES = {
+    'fsi':
+        Property(
+            kind=bool,
+            help='Whether to get FSI-payload testing models.',
+            default=False,
+        ),
     'expected_models':
         Property(
             kind=list,
@@ -25,9 +31,9 @@ PROPERTIES = {
 BUILDER = 'octopus-release-main'
 
 
-def RunSteps(api, expected_models):
+def RunSteps(api, fsi, expected_models):
   api.buildbucket.build.builder.builder = BUILDER
-  actual_models = api.cros_release.get_au_testing_models()
+  actual_models = api.cros_release.get_au_testing_models(fsi)
   api.assertions.assertCountEqual(actual_models, expected_models)
 
 
@@ -36,13 +42,26 @@ def GenTests(api):
       'determine au testing models', 'generate target test requirements',
       'generate_test_config'
   ])
+  _fsi_generate_test_config_step = '.'.join([
+      'determine fsi testing models', 'generate target test requirements',
+      'generate_test_config'
+  ])
 
   yield api.test(
       'basic',
       api.step_data(
           _generate_test_config_step, stdout=api.raw_io.output(
-              '{"%s": {"model1": ["au", "other_suite"], "model2": ["other_suite"]}}'
-              % BUILDER)), api.properties(expected_models=['model1']),
+              '{"%s": {"model1": ["au"], "model2": []}}' % BUILDER)),
+      api.properties(expected_models=['model1']),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'fsi',
+      api.step_data(
+          _fsi_generate_test_config_step, stdout=api.raw_io.output(
+              '{"%s": {"model1": ["au"], "model2": []}}' % BUILDER)),
+      api.properties(fsi=True),
+      api.properties(expected_models=['model1', 'model2']),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(

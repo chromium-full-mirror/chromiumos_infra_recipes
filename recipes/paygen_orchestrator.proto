@@ -27,6 +27,12 @@ message PaygenOrchestratorProperties {
   // that the board name is the builder name (i.e. this isn't a unibuild).
   repeated string au_testing_models = 5;
 
+  // The models which should run AU testing for FSI payloads.
+  // Generally, this should be all models exported by GoldenEye.
+  // If empty, we will assume that the board name is the builder name
+  // (i.e., this isn't a unibuld).
+  repeated string au_fsi_testing_models = 11;
+
   // The bucket to look for source artifacts in (e.g, chromeos-releases).
   string src_bucket = 6;
 

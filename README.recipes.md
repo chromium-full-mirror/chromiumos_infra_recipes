@@ -2875,11 +2875,15 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#234)(self):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#235)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
 TODO(b/223252953): Filter down to models that are available in the lab.
+
+Args:
+  fsi (bool): If True, then return all models which should run autoupdate
+    tests for FSI images, which require broader testing than non-FSI.
 
 Returns:
   List[str]: The names of each model that should run paygen tests.
@@ -2888,7 +2892,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#255)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#263)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -9368,7 +9372,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/get_au_testing_models.py#28)(api, expected_models):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/get_au_testing_models.py#34)(api, fsi, expected_models):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
