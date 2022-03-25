@@ -780,6 +780,25 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                 applicable_models=cfg.get('applicable_models')))
     return test_configs
 
+  def _get_channel_from_paygen_request(self, gen_req):
+    """Get the target channel from a paygen request input properties.
+
+    When creating a build report we look at the input arguments of the finished
+    paygen builders. In the generation_request we pull the target channel and
+    return this for reporting. Deals with the one_of by returning the first
+    found.
+
+    Args:
+      gen_req (GenerationRequest struct): A GenerationRequest struct, as
+        extracted from a broader build_pb2.Build request.
+    Returns:
+      A chromiumos.Channel.
+    """
+    for x in ['tgtSignedImage', 'tgtUnsignedImage', 'tgtDlcImage']:
+      if x in gen_req:
+        return self.m.cros_release_util.channel_long_string_to_enum(
+            gen_req[x]['build']['channel'])
+
   def create_paygen_build_report(self, paygen_build_results):
     """Prepare payload information for the release pubsub.
 
@@ -801,14 +820,19 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       # but should that behavior change this logic would need to be hardened.
       for payload_request, payload_uri in zip(
           paygen_requests, res.output.properties['payload_uris']):
+
         # If paygen was skipped (minios) this will be empty, so skip it.
         if not payload_uri:
           continue
+
+        # Assign generation request for shorthand access.
+        gen_req = payload_request['generation_request']
+
         # Determine payload type from the paygen request.
         payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
-        if 'minios' in payload_request and payload_request['minios']:
+        if 'minios' in gen_req and gen_req['minios']:
           payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
-        elif 'tgtDlcImage' in payload_request:
+        elif 'tgtDlcImage' in gen_req:
           payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
 
         payload_json_path = '{}.json'.format(payload_uri)
@@ -827,6 +851,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
                 uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
                 sha256=payload_info['sha256_hex'],
             ), payload_type=payload_type, appid=payload_info['appid'],
+            channel=self._get_channel_from_paygen_request(gen_req),
             metadata_signature=payload_info['metadata_signature'],
             metadata_size=payload_info['metadata_size'],
             source_version=payload_info.get('source_version', None),

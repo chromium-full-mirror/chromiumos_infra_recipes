@@ -41,13 +41,6 @@ def RunSteps(api):
   api.cros_release.create_releasespec(gs_location='bucket/foo/bar.xml')
   api.assertions.assertIsNotNone(api.cros_release.releasespec)
 
-  api.assertions.assertEqual(
-      api.cros_release.channel_strip_prefix(common_pb2.Channel.CHANNEL_BETA),
-                                            'beta')
-  api.assertions.assertEqual(
-      api.cros_release.channel_dash_suffix(common_pb2.Channel.CHANNEL_BETA),
-                                           'beta-channel')
-
   # Manufacture the minimal builder config.
   config = BuilderConfig(
       id=BuilderConfig.Id(name='amd64-generic-release',
@@ -55,10 +48,10 @@ def RunSteps(api):
       artifacts=BuilderConfig.Artifacts(
           artifacts_info=common_pb2.ArtifactsByService(
               legacy=common_pb2.ArtifactsByService.Legacy(output_artifacts=[
-                  common_pb2.ArtifactsByService.Legacy
-                  .ArtifactInfo(gs_locations=[
-                      'chromeos-image-archive/{target}-release-rubik/{version}'
-                  ])
+                  common_pb2.ArtifactsByService.Legacy.ArtifactInfo(
+                      gs_locations=[
+                          'chromeos-image-archive/{target}-release/{version}'
+                      ])
               ]),
           )))
   sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='amd64-generic'))
@@ -69,8 +62,8 @@ def RunSteps(api):
   api.assertions.assertEqual(
       instructions,
       [
-          "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
-          "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions",
+          "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
+          "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions",
       ],
   )
 
@@ -99,28 +92,8 @@ def GenTests(api):
           'generate payloads.running paygen orchestrator.collect'),
       api.post_check(
           post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request', [
-              'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
-          ]),
-      api.test_util.test_child_build('amd64-generic').build)
-
-  yield api.build_menu.test(
-      'channel_rubik',
-      api.properties(
-          **{
-              '$chromeos/cros_version':
-                  CrosVersionProperties(remove_snapshot_from_version=True),
-              '$chromeos/cros_release':
-                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_RUBIK]),
-          }),
-      api.buildbucket.simulated_collect_output(
-          [successful_paygen_orch],
-          'generate payloads.running paygen orchestrator.collect'),
-      api.post_check(
-          post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request', [
-              'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
-          ]),
+          'push images.call chromite.api.ImageService/PushImage', 'request',
+          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
       api.test_util.test_child_build('amd64-generic').build)
 
   yield api.build_menu.test(
@@ -130,13 +103,12 @@ def GenTests(api):
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
               '$chromeos/cros_release':
-                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_RUBIK]),
+                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA]),
           }),
       api.post_check(
           post_process.LogContains,
-          'push images.call chromite.api.ImageService/PushImage', 'request', [
-              'gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0'
-          ]),
+          'push images.call chromite.api.ImageService/PushImage', 'request',
+          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
       api.buildbucket.simulated_collect_output(
           [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
           'generate payloads.running paygen orchestrator.collect'),

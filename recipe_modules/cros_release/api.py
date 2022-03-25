@@ -12,7 +12,7 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.chromiumos.common import (Channel, CHANNEL_RUBIK, IMAGE_TYPE_RECOVERY,
+from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_USBPD,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
@@ -48,16 +48,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure."""
     if not set(sign_types).issubset(self._supported_sign_types):
       raise StepFailure('attempting to sign type not in supported sign types')
-
-  @staticmethod
-  def channel_strip_prefix(channel):
-    """Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta)."""
-    return Channel.Name(channel).replace('CHANNEL_', '').lower()
-
-  @staticmethod
-  def channel_dash_suffix(channel):
-    """Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel)."""
-    return CrosReleaseApi.channel_strip_prefix(channel).lower() + '-channel'
 
   def __init__(self, properties, **kwargs):
     super(CrosReleaseApi, self).__init__(**kwargs)
@@ -304,15 +294,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       # Validate sign types given.
       self.validate_sign_types(self._sign_types)
 
-      # If CHANNEL_RUBIK is set, explicitly pass that parameter to PushImage.
-      # See b/202716782 for context.
-      kwargs = {}
-      if CHANNEL_RUBIK in self._channels:
-        kwargs['channels'] = self._channels
-
       # Emit release bucket for each channel.
       for channel in self._channels:
-        channel_name = self.channel_dash_suffix(channel)
+        channel_name = self.m.cros_release_util.channel_to_long_string(channel)
         presentation.links['gs release dir: %s' % Channel.Name(channel)] = (
             'https://console.cloud.google.com/storage/browser/%s/%s/%s/%s' %
             (self._release_bucket, channel_name, sysroot.build_target.name,
@@ -321,7 +305,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       response = self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
           sign_types=self._sign_types,
-          dest_bucket='gs://' + self._release_bucket, **kwargs)
+          dest_bucket='gs://' + self._release_bucket)
       instructions_uris = [
           i.instructions_file_path for i in response.instructions
       ]

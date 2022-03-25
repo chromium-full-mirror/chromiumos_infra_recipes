@@ -2644,7 +2644,7 @@
     "cmd": [],
     "name": "push images",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0@@@"
+      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release/R99-1234.56.0@@@"
     ]
   },
   {
@@ -2691,7 +2691,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\", @@@",
       "@@@STEP_LOG_LINE@request@  \"destBucket\": \"gs://\", @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
@@ -2703,7 +2703,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"instructions\": [{\"instructions_file_path\": \"gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions\"}, {\"instructions_file_path\": \"gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"instructions\": [{\"instructions_file_path\": \"gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions\"}, {\"instructions_file_path\": \"gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2715,7 +2715,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release-rubik/R99-1234.56.0\", \n  \"destBucket\": \"gs://\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  }\n}",
+      "{\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\", \n  \"destBucket\": \"gs://\", \n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

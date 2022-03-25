@@ -5,14 +5,14 @@
 
 """Recipe for orchestrating ChromeOS payloads (AU deltas etc)."""
 
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict, MessageToJson
 import itertools
 import json
 from os import path
 
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-from PB.chromite.api.payload import GenerationRequest
-from PB.chromiumos.common import Channel, DeltaType
+from PB.chromite.api.payload import Build, GenerationRequest, SignedImage
+from PB.chromiumos.common import DeltaType
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -27,7 +27,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_paygen',
-    'cros_release',
+    'cros_release_util',
     'cros_storage',
     'easy',
 ]
@@ -44,32 +44,16 @@ def RunSteps(api, properties):
   with api.step.nest('discovering payload configuration') as pres:
     configured_payloads = []
 
-    # Override RUBIK channel with canary as there are no payload definitions for
-    # it. This should be removed once we transition to the main channels.
-    # TODO(b:195415535): Remove this.
-    override_chan = properties.channels
-    if override_chan == [Channel.CHANNEL_RUBIK]:
-      override_chan = [Channel.CHANNEL_CANARY]
-
-    for delta_type, channel in itertools.product(delta_types, override_chan):
+    for delta_type, channel in itertools.product(delta_types,
+                                                 properties.channels):
 
       delta_t_str, channel_str = (
           DeltaType.Name(delta_type),
-          api.cros_release.channel_strip_prefix(channel))
+          api.cros_release_util.channel_strip_prefix(channel))
 
       cfgs = api.cros_paygen.get_builder_configs(properties.builder_name,
                                                  delta_type=delta_t_str,
                                                  channel=channel_str)
-      # RUBIK is currently using canary channels payload definitions which will
-      # have the channel field set to 'canary'. We need to set the config's
-      # channel to 'rubik' in order for the artifact discover logic to match
-      # artifacts from the rubik-channel to the config.
-      # TODO(b:195415535): Remove this.
-      if properties.channels == [Channel.CHANNEL_RUBIK]:
-        for cfg in cfgs:
-          cfg['channel'] = api.cros_release.channel_strip_prefix(
-              Channel.CHANNEL_RUBIK)
-
       configured_payloads.extend(cfgs)
 
     pres.logs['%s configured sources' % len(configured_payloads)] = (
@@ -86,8 +70,8 @@ def RunSteps(api, properties):
 
     # e.g. beta-channel, beta
     long_chan_name, short_chan_name = (
-        api.cros_release.channel_dash_suffix(channel),
-        api.cros_release.channel_strip_prefix(channel))
+        api.cros_release_util.channel_to_long_string(channel),
+        api.cros_release_util.channel_strip_prefix(channel))
 
     with api.step.nest('examining %s' % long_chan_name):
 
@@ -199,9 +183,17 @@ def GenTests(api):
     paygen_child_data.output.properties['payload_uris'] = [
         'gs://path/to/payload'
     ]
+
     paygen_child_data.input.properties['requests'] = [
-        MessageToJson(GenerationRequest())
+        {
+            'generation_request':
+                MessageToDict(
+                    GenerationRequest(
+                        tgt_signed_image=SignedImage(
+                            build=Build(channel='canary-channel'))))
+        },
     ]
+
     return paygen_child_data
 
   payload_json_data = """{
@@ -276,11 +268,3 @@ def GenTests(api):
           'ChromeOS-factory-R87-13505.15.0-coral.tar.xz'),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))
-
-  # TODO(b:195415535): Remove this with channel RUBIK.
-  rubik_override_paygen_cfg = api.cros_paygen.test_paygen(
-      'discovering payload configuration.get paygen json.gsutil cat',
-      api.cros_paygen.RUBIK_OVERRIDE_PAYGEN_JSON)
-
-  yield api.test('rubik-override', get_props(channels=['CHANNEL_RUBIK']),
-                 rubik_override_paygen_cfg)

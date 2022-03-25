@@ -7,8 +7,30 @@
 
 from recipe_engine import recipe_api
 
+from PB.chromiumos.common import Channel
+
 
 class CrosReleaseUtilApi(recipe_api.RecipeApi):
+
+  @staticmethod
+  def channel_strip_prefix(channel):
+    """Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta)."""
+    return Channel.Name(channel).replace('CHANNEL_', '').lower()
+
+  @staticmethod
+  def channel_to_long_string(channel):
+    """Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel)."""
+    return CrosReleaseUtilApi.channel_strip_prefix(channel) + '-channel'
+
+  @staticmethod
+  def channel_long_string_to_enum(str_channel):
+    """Convert long channel name strings (e.g. 'beta-channel') to enum values."""
+    return Channel.Value('CHANNEL_' + str_channel.split('-')[0].upper())
+
+  @staticmethod
+  def channel_short_string_to_enum(str_channel):
+    """Convert short channel name strings (e.g. 'beta') to enum values."""
+    return Channel.Value('CHANNEL_' + str_channel.upper())
 
   def release_builder_name(self, build_target, branch=None, staging=False):
     """Determine the Rubik child builder name for the given build_target.

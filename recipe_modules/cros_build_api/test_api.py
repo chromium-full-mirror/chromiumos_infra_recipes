@@ -24,8 +24,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   fit.
   """
   INSTRUCTIONS = [
-      "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
-      "gs://chromeos-releases/rubik-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions"
+      "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
+      "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions"
   ]
 
   def path(self, subpath):

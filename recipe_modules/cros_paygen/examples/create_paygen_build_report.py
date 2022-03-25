@@ -10,31 +10,56 @@ DEPS = [
 ]
 
 from google.protobuf.json_format import MessageToDict
-
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-
-from PB.chromite.api.payload import DLCImage, GenerationRequest
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+
+from PB.chromite.api.payload import Build, DLCImage, GenerationRequest, SignedImage, UnsignedImage
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+import PB.chromiumos.common as common_pb2
 
 
 def RunSteps(api):
+  api.assertions.maxDiff = None
   standard_payload = build_pb2.Build(status='SUCCESS')
+
   # The absence of any DLC or MINIOS markers implies a standard payload for
   # the tested module's purposes.
   standard_payload.input.properties['requests'] = [
-      MessageToDict(GenerationRequest()),
-      MessageToDict(GenerationRequest())
+      {
+          'generation_request':
+              MessageToDict(
+                  GenerationRequest(
+                      tgt_signed_image=SignedImage(
+                          build=Build(channel='canary-channel'))))
+      },
+      {
+          'generation_request':
+              MessageToDict(
+                  GenerationRequest(
+                      tgt_unsigned_image=UnsignedImage(
+                          build=Build(channel='dev-channel'))))
+      },
   ]
+
   standard_payload.output.properties['payload_uris'] = [
-      'gs://path/to/standard/payload',
-      # Empty payload for minios skip.
-      ''
+      'gs://path/to/standard/payload', ''
   ]
 
   minios_and_dlc_payload = build_pb2.Build(status='SUCCESS')
   minios_and_dlc_payload.input.properties['requests'] = [
-      MessageToDict(GenerationRequest(minios=True)),
-      MessageToDict(GenerationRequest(tgt_dlc_image=DLCImage(dlc_id='dlc')))
+      {
+          'generation_request':
+              MessageToDict(
+                  GenerationRequest(
+                      tgt_signed_image=SignedImage(
+                          build=Build(channel='stable-channel')), minios=True)),
+      },
+      {
+          'generation_request':
+              MessageToDict(
+                  GenerationRequest(
+                      tgt_dlc_image=DLCImage(
+                          build=Build(channel='beta-channel'), dlc_id='dlc'))),
+      },
   ]
   minios_and_dlc_payload.output.properties['payload_uris'] = [
       'gs://path/to/minios/payload', 'gs://path/to/dlc/payload'
@@ -56,6 +81,7 @@ def RunSteps(api):
               sha256='deadbeef',
           ),
           payload_type=BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD,
+          channel=common_pb2.Channel.CHANNEL_CANARY,
           appid='appid',
           metadata_signature='signature',
           metadata_size=1337,
@@ -71,6 +97,7 @@ def RunSteps(api):
               sha256='deadbeef',
           ),
           payload_type=BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS,
+          channel=common_pb2.Channel.CHANNEL_STABLE,
           appid='appid',
           metadata_signature='signature',
           metadata_size=1337,
@@ -85,6 +112,7 @@ def RunSteps(api):
               sha256='deadbeef',
           ),
           payload_type=BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC,
+          channel=common_pb2.Channel.CHANNEL_BETA,
           appid='appid',
           metadata_signature='signature',
           metadata_size=1337,

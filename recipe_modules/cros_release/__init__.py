@@ -15,6 +15,7 @@ DEPS = [
     'builder_metadata',
     'cros_artifacts',
     'cros_paygen',
+    'cros_release_util',
     'cros_test_plan',
     'cros_version',
     'gerrit',
