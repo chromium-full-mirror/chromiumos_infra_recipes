@@ -29,6 +29,12 @@ def RunSteps(api):
   test_req = ctr.CrosToolRunnerTestRequest()
   api.cros_tool_runner.test(test_req)
 
+  with api.assertions.assertRaises(ValueError):
+    api.cros_tool_runner.upload_to_tko(None, "dummy/results/dir")
+  with api.assertions.assertRaises(ValueError):
+    api.cros_tool_runner.upload_to_tko("dummy/autotest/dir", None)
+  api.cros_tool_runner.upload_to_tko("dummy/autotest/dir", "dummy/results/dir")
+
   api.cros_tool_runner.read_dut_hostname()
 
 

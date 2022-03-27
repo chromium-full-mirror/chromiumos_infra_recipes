@@ -4386,7 +4386,7 @@ Run provision via `provision` subcommand.
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#139)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#186)(self):**
 
 "Return the DUT hostname.
 
@@ -4396,6 +4396,17 @@ Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
+
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#108)(self, autotest_dir, results_dir):**
+
+Upload test results to TKO via tko-parse.
+This command does not call into CTR. It directly invokes tko-parse in autotest.
+To have parity with phosphorus package, it makes sense to have the implementation live here
+so that any recipe consuming this module can take the benefit of this.
+
+Args:
+  autotest_dir (str): path to autotest package.
+  results_dir (str): path to test results to upload.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

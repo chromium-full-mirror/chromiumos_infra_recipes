@@ -189,6 +189,47 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload-to-tko",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload-to-tko (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload-to-tko (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tko-parse stdout@@@@",
+      "@@@STEP_LOG_END@tko-parse stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "dummy/autotest/dir/tko/parse",
+      "--write-pidfile",
+      "dummy/results/dir",
+      "--effective_job_name",
+      "swarming-placeholder-task-i0",
+      "-l",
+      "3",
+      "--record-duration",
+      "-r",
+      "-o",
+      "--suite-report"
+    ],
+    "name": "upload-to-tko (3).tko-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

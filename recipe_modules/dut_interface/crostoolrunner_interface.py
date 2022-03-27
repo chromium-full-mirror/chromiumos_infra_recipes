@@ -194,7 +194,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     * InfraFailure.
     """
     all_valid_result_dir = True
-    with self._api.step.nest('CrosToolRunner: Phosphorus: upload to TKO'):
+    with self._api.step.nest('CrosToolRunner: upload to TKO'):
       # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
       # Retrieve ctr_test_response(TestCaseResult type) and check which test cases are of harness type 'tauto'.
       # For 'tauto' harness type, try to upload test results to TKO.
@@ -209,9 +209,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             if self._write_to_keyvals(results_dir,
                                       self._get_updated_keyvals(metadata)):
               with self._api.context(infra_steps=True):
-                self._api.phosphorus.upload_to_tko(
-                    phosphorus.upload_to_tko.UploadToTkoRequest(
-                        config=self._build_tko_metadata(results_dir)))
+                self._api.cros_tool_runner.upload_to_tko(
+                    autotest_dir=self.AUTOTEST_PACKAGE_PATH,
+                    results_dir=results_dir)
             else:
               all_valid_result_dir = False
               step.presentation.status = self._api.step.FAILURE

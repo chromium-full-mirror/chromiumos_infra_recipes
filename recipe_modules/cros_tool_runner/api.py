@@ -105,6 +105,53 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     return self._run('test', request, ctr.CrosToolRunnerTestRequest,
                      ctr.CrosToolRunnerTestResponse, send_response=True)
 
+  def upload_to_tko(self, autotest_dir, results_dir):
+    """Upload test results to TKO via tko-parse.
+    This command does not call into CTR. It directly invokes tko-parse in autotest.
+    To have parity with phosphorus package, it makes sense to have the implementation live here
+    so that any recipe consuming this module can take the benefit of this.
+
+    Args:
+      autotest_dir (str): path to autotest package.
+      results_dir (str): path to test results to upload.
+    """
+    with self.m.step.nest('upload-to-tko') as presentation:
+      if not autotest_dir:
+        raise ValueError('autotest_dir argument is required')
+      if not results_dir:
+        raise ValueError('results_dir argument is required')
+      # A swarming task may have multiple attempts ("runs").
+      # The swarming task ID always ends in "0", e.g. "123456789abcdef0".
+      # The corresponding runs will have IDs ending in "1", "2", etc., e.g. "123456789abcdef1".
+      # All attempts should be recorded under same job ending with 0.
+      # This also maintains parity with non-CTR(phosphorus) runs.
+      job_name = 'swarming-{}0'.format(self._run_id[:len(self._run_id) - 1])
+      tko_parse_path = self.m.path.join(autotest_dir, 'tko', 'parse')
+      cmd = self._tko_parse_cmd(tko_parse_path, results_dir, job_name)
+      step_stdout = self.m.easy.stdout_step('tko-parse', cmd)
+      presentation.logs['tko-parse stdout'] = step_stdout
+
+  def _tko_parse_cmd(self, tko_parse_path, results_dir, job_name):
+    """Construct tko-parse command with all necessary args.
+
+    Args:
+      tko_parse_path (str): path to tko-parse cli.
+      results_dir (str): path to test results to upload.
+      job_name (str): job name to be passed to tko-parse.
+    """
+    args = [tko_parse_path]
+    args.append("--write-pidfile")
+    args.append(results_dir)
+    args.append("--effective_job_name")
+    args.append(job_name)
+    args.append("-l")
+    args.append("3")
+    args.append("--record-duration")
+    args.append("-r")
+    args.append("-o")
+    args.append("--suite-report")
+    return args
+
   def _ensure_cros_tool_runner(self):
     """Ensure the CrosToolRunner CLI is installed."""
     if self._cmd:
