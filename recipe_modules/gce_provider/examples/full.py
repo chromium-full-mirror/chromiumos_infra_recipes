@@ -8,6 +8,8 @@ DEPS = [
     'gce_provider',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
 
 

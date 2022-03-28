@@ -9,6 +9,8 @@ DEPS = [
     'recipe_engine/time', 'recipe_engine/uuid', 'dut_interface', 'phosphorus'
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \

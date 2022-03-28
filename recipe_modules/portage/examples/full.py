@@ -10,6 +10,8 @@ DEPS = [
     'portage',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.portage.commit_package_uprevs()

@@ -13,3 +13,5 @@ DEPS = [
     'support',
     'util',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

@@ -8,6 +8,8 @@ DEPS = [
     'recipe_engine/step', 'gce_provider'
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.gce_provider.tests.get_current_config \

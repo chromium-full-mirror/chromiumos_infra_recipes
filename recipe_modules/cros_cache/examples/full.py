@@ -9,6 +9,8 @@ DEPS = [
     'cros_cache',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')

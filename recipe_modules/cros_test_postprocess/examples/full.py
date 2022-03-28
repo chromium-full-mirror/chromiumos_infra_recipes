@@ -8,6 +8,8 @@ DEPS = [
     'recipe_engine/path',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.cros_test_postprocess.downloaded_test_result(

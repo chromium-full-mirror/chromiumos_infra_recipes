@@ -13,6 +13,8 @@ DEPS = [
     'buildbucket_stats',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   build_count = api.buildbucket_stats.get_build_count('bucket_name',

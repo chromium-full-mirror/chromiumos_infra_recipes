@@ -10,6 +10,8 @@ DEPS = [
     'cros_test_platform',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
   CrosTestPlatformModuleProperties
 from PB.test_platform.steps.enumeration import \

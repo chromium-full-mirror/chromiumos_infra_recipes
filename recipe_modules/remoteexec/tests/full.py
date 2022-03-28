@@ -10,6 +10,8 @@ DEPS = [
     'remoteexec',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.recipe_modules.chromeos.remoteexec.tests.test import TestInputProperties
 

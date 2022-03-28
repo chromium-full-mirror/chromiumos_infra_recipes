@@ -5,6 +5,8 @@
 
 DEPS = ['cloud_pubsub']
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.cloud_pubsub.publish_message(project_id='chromeos-bot',

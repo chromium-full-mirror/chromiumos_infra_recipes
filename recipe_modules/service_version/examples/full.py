@@ -9,6 +9,8 @@ DEPS = [
     'service_version',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.service_version.service_version import \
   ServiceVersionProperties
 from PB.test_platform import service_version

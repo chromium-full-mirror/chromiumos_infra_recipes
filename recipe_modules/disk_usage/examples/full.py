@@ -8,6 +8,8 @@ DEPS = [
     'disk_usage',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.disk_usage.tracking_context():

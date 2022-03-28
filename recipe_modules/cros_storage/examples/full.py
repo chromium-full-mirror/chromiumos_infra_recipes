@@ -8,6 +8,8 @@ DEPS = [
     'cros_storage',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos.common import ImageType
 
 

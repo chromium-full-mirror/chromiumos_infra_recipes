@@ -10,6 +10,8 @@ DEPS = [
     'cros_test_runner',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_test_runner.cros_test_runner import \
   CrosTestRunnerModuleProperties
 

@@ -9,6 +9,8 @@ DEPS = [
     'recipe_engine/raw_io',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 

@@ -12,6 +12,8 @@ DEPS = [
     'easy',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.overlayfs.overlayfs import OverlayfsProperties
 
 PROPERTIES = OverlayfsProperties

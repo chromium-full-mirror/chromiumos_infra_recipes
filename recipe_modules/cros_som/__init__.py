@@ -8,6 +8,8 @@ DEPS = [
     'recipe_engine/url', 'support'
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_som.cros_som import CrosSomProperties
 
 PROPERTIES = CrosSomProperties

@@ -9,6 +9,8 @@ DEPS = [
     'cros_som',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   annotation = api.cros_som.get_annotation('step with linked bugs')

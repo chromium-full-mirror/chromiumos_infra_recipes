@@ -9,6 +9,8 @@ DEPS = [
     'buildbucket_stats',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   demand = api.buildbucket_stats.get_bot_demand({

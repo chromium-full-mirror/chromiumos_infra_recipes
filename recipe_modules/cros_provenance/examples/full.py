@@ -5,6 +5,8 @@
 
 DEPS = ["recipe_engine/properties", "recipe_engine/step", "cros_provenance"]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_provenance.cros_provenance import (
     ProvenanceProperties,)
 

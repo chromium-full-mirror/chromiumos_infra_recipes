@@ -11,3 +11,5 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/step',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

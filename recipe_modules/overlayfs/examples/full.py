@@ -10,6 +10,8 @@ DEPS = [
     'recipe_engine/step',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   lowerdir_path = api.path['cache'].join('lowerdir')

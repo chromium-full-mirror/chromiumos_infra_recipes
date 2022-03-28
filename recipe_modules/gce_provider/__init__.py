@@ -7,3 +7,5 @@ DEPS = [
     'recipe_engine/futures',
     'easy',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

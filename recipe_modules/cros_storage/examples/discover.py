@@ -9,6 +9,9 @@ DEPS = [
     'cros_storage',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+
 def RunSteps(api):
   expected_results = api.properties.get('expected_results')
   images = api.cros_storage.discover_gs_artifacts(

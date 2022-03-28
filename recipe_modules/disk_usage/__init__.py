@@ -6,3 +6,5 @@
 DEPS = [
     'recipe_engine/python',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

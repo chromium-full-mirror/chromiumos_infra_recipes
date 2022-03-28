@@ -5,6 +5,8 @@
 
 DEPS = ['ipc']
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.ipc.send('topic', '/path/to/message/file', None)

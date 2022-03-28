@@ -12,6 +12,8 @@ DEPS = [
     'buildbucket_stats',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   status_map = api.buildbucket_stats.get_bucket_status('bucket_name')
