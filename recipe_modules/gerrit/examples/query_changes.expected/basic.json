@@ -3,8 +3,9 @@
     "cmd": [],
     "name": "query https://chromium-review.googlesource.com",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 1 matching CLs@@@",
-      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
+      "@@@STEP_TEXT@found 2 matching CLs@@@",
+      "@@@STEP_LINK@found CL 91827@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@",
+      "@@@STEP_LINK@found CL 91828@https://chromium-review.googlesource.com/c/chromium/src/+/91828@@@"
     ]
   },
   {
@@ -45,6 +46,17 @@
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Overridden title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 91828, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef02\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2021-02-25 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"MERGED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Overridden title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2021-02-26 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"

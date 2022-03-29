@@ -14,6 +14,10 @@ gerrit_changes_json = [
         '_number': 91827,
         'project': 'chromium/src',
     },
+    {
+        '_number': 91828,
+        'project': 'chromium/src',
+    },
 ]
 
 values_dict = {
@@ -30,13 +34,24 @@ values_dict = {
                     }
                 }
             }),
+    91828:
+        dict(
+            status='MERGED',
+            created='2021-02-25 13:11:20.000000000',
+            submitted='2021-02-26 13:11:20.000000000',
+            change_id='Ideadbeef02',
+            project='chromium/src',
+            has_review_started=True,
+            branch='main',
+            subject='Overridden title',
+        )
 }
 
 
 def RunSteps(api):
   changes = api.gerrit.query_changes('https://chromium-review.googlesource.com',
                                      [('topic', 'pupr')])
-  api.assertions.assertEqual(len(changes), 1)
+  api.assertions.assertEqual(len(changes), 2)
 
 
 def GenTests(api):

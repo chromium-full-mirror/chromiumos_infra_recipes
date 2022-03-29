@@ -10158,7 +10158,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#36)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#51)(api):**
 ### *recipes* / [gerrit:examples/set\_change\_description](/recipe_modules/gerrit/examples/set_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/set_change_description.py#8): [gerrit](#recipe_modules-gerrit)

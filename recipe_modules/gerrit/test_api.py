@@ -91,6 +91,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     resp['subject'] = values.get('subject', 'Change title')
     if 'revisions' in values:
       resp['revisions'] = values.get('revisions')
+    if 'submitted' in values:
+      resp['submitted'] = values.get('submitted')
     return resp
 
   def set_gerrit_fetch_changes_response(self, step_name, changes,
