@@ -19,7 +19,6 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'cros_source',
-    'cros_tags',
     'easy',
     'src_state',
     'test_util',
@@ -77,12 +76,8 @@ def RunSteps(api, properties):
                                    step_name='output binary sizes')
     if properties.set_got_revision:
       with api.step.nest('set got_revision'):
-        ti50_commit = _get_ti50_commit(api)
-        api.easy.set_properties_step(got_revision=ti50_commit,
-                                     step_name='output got_revision')
-        api.cros_tags.add_tags_to_current_build(
-            buildset='commit/gitiles/chrome-internal.googlesource.com/ti50/common/ti50/+/{}'
-            .format(ti50_commit))
+        api.easy.set_properties_step(
+            got_revision=_get_ti50_commit(api), step_name='output got_revision')
 
     service.TestAllFirmware(
         TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
