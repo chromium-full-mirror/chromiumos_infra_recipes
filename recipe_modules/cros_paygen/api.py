@@ -712,7 +712,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     """Create AutoupdateTestConfigs for a test-image's full paygen request.
 
     Args:
-      gen_req (GenerationRequest): The full test payload GenerationRequest
+      gen_req (GenerationRequest): The delta test payload GenerationRequest
         for which to find tests and schedule.
       configured_payloads (list[dict]): Configs for the payloads we are
         generating and testing.
@@ -729,13 +729,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             src_channel=gen_req.tgt_unsigned_image.build.channel,
             delta_type=common_pb2.N2N)
     ]
-    # Match configs to the given GenerationRequest.
-    cfgs = [
-        cfg for cfg in configured_payloads
-        if cfg['channel'] == gen_req.tgt_unsigned_image.build.channel
-    ]
     # Get tests from matched configured payloads.
-    for cfg in cfgs:
+    matching_cfgs = self._match_gen_req_to_configured_payloads(
+        gen_req, configured_payloads)
+    for cfg in matching_cfgs:
       if cfg['full_payload_tests'] or force_tests:
         test_configs.append(
             AutoupdateTestConfig(
@@ -764,21 +761,44 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     # Get N2N test.
     if gen_req.tgt_unsigned_image == gen_req.src_unsigned_image:
       test_configs.append(AutoupdateTestConfig(delta_type=common_pb2.N2N))
-    # Match configs to the given GenerationRequest.
-    cfgs = [
-        cfg for cfg in configured_payloads
-        if (cfg['channel'] == gen_req.tgt_unsigned_image.build.channel and
-            cfg['chrome_os_version'] == gen_req.src_unsigned_image.build.version
-           )
-    ]
     # Get tests from matched configured payloads.
-    for cfg in cfgs:
+    matching_cfgs = self._match_gen_req_to_configured_payloads(
+        gen_req, configured_payloads)
+    for cfg in matching_cfgs:
       if cfg['delta_payload_tests'] or force_tests:
         test_configs.append(
             AutoupdateTestConfig(
                 delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
                 applicable_models=cfg.get('applicable_models')))
     return test_configs
+
+  def _match_gen_req_to_configured_payloads(self, gen_req, configured_payloads):
+    """Determine which paygen config correlates with the GenerationRequest.
+
+    Match on channel and (for delta payloads) source image version.
+
+    Args:
+      gen_req (GenerationRequest): The test payload GenerationRequest for which
+        to find tests and schedule.
+      configured_payloads (list[dict]): Configs for the payloads we are
+        generating and testing.
+
+    Returns:
+      list[dict]: Configs matching the GenerationRequest.
+    """
+    tgt_img = getattr(gen_req, gen_req.WhichOneof('tgt_image_oneof'))
+    src_img = getattr(gen_req, gen_req.WhichOneof('src_image_oneof'))
+    cfgs = [
+        cfg for cfg in configured_payloads
+        if self.m.cros_release_util.match_channels(cfg['channel'],
+                                                   tgt_img.build.channel)
+    ]
+    if not gen_req.full_update:
+      cfgs = [
+          cfg for cfg in cfgs
+          if cfg['chrome_os_version'] == src_img.build.version
+      ]
+    return cfgs
 
   def _get_channel_from_paygen_request(self, gen_req):
     """Get the target channel from a paygen request input properties.

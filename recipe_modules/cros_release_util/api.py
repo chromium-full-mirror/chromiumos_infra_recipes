@@ -13,6 +13,31 @@ from PB.chromiumos.common import Channel
 class CrosReleaseUtilApi(recipe_api.RecipeApi):
 
   @staticmethod
+  def match_channels(channel1, channel2):
+    """Determine if two channels are equal, even if represented differently.
+
+    Args:
+      channel1 (str|Channel): A representation of a channel, either as a Channel
+        enum (e.g. Channel.CHANNEL_BETA), a short string (e.g. "beta"), or a
+        long string (e.g. "beta-channel").
+      channel2 (str|Channel): As above.
+
+    Returns:
+      bool: Whether the two args describe the same channel.
+    """
+    channel_enums = []
+    for channel in (channel1, channel2):
+      if channel in Channel.values():
+        channel_enums.append(channel)
+      elif channel.endswith('-channel'):
+        channel_enums.append(
+            CrosReleaseUtilApi.channel_long_string_to_enum(channel))
+      else:
+        channel_enums.append(
+            CrosReleaseUtilApi.channel_short_string_to_enum(channel))
+    return channel_enums[0] == channel_enums[1]
+
+  @staticmethod
   def channel_strip_prefix(channel):
     """Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta)."""
     return Channel.Name(channel).replace('CHANNEL_', '').lower()

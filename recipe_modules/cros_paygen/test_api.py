@@ -114,25 +114,26 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   SIGNED_SRC = SignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
-          bucket='b', channel='stable'),
+          bucket='b', channel='stable-channel'),
       image_type=common_pb2.IMAGE_TYPE_RECOVERY,
   )
 
   SIGNED_SRC_IRRELEVANT = SignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
-          bucket='b', channel='beta'), image_type=common_pb2.IMAGE_TYPE_TEST)
+          bucket='b', channel='beta-channel'),
+      image_type=common_pb2.IMAGE_TYPE_TEST)
 
   SIGNED_TGT = SignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
-          bucket='b', channel='stable'),
+          bucket='b', channel='stable-channel'),
       image_type=common_pb2.IMAGE_TYPE_RECOVERY)
 
   UNSIGNED_SRC = UnsignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
-          bucket='b', channel='stable'),
+          bucket='b', channel='stable-channel'),
       milestone='86',
       image_type=common_pb2.IMAGE_TYPE_TEST,
   )
@@ -140,7 +141,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   UNSIGNED_TGT = UnsignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
-          bucket='b', channel='stable'),
+          bucket='b', channel='stable-channel'),
       milestone='86',
       image_type=common_pb2.IMAGE_TYPE_TEST,
   )
@@ -148,7 +149,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   DLC_SRC = DLCImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
-          bucket='b', channel='stable'),
+          bucket='b', channel='stable-channel'),
       dlc_id='termina-dlc',
       dlc_package='package',
       dlc_image='dlc.img',
@@ -157,7 +158,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   DLC_TGT = DLCImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
-          bucket='b', channel='stable'),
+          bucket='b', channel='stable-channel'),
       dlc_id='termina-dlc',
       dlc_package='package',
       dlc_image='dlc.img',

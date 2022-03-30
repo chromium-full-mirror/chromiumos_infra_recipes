@@ -11,6 +11,8 @@ DEPS = [
 
 import json
 
+from recipe_engine import post_process
+
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 
 
@@ -174,4 +176,4 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield api.test('basic')
+  yield api.test('basic', api.post_check(post_process.StatusSuccess))

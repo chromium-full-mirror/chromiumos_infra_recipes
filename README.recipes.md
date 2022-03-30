@@ -242,6 +242,7 @@
   * [cros_release:tests/util](#recipes-cros_release_tests_util)
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
   * [cros_release_util:examples/full](#recipes-cros_release_util_examples_full)
+  * [cros_release_util:examples/match_channels](#recipes-cros_release_util_examples_match_channels)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/forced_relevance](#recipes-cros_relevance_examples_forced_relevance)
   * [cros_relevance:examples/package_dependencies](#recipes-cros_relevance_examples_package_dependencies)
@@ -2619,7 +2620,7 @@ API for working with Paygen and its config.
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#802)(self, paygen_build_results):**
+&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#822)(self, paygen_build_results):**
 
 Prepare payload information for the release pubsub.
 
@@ -2630,7 +2631,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#1002)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#1022)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2764,7 +2765,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1086)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1106)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -2954,23 +2955,36 @@ An API for providing release related utility functions.
 
 #### **class [CrosReleaseUtilApi](/recipe_modules/cros_release_util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_long\_string\_to\_enum](/recipe_modules/cros_release_util/api.py#25)(str_channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_long\_string\_to\_enum](/recipe_modules/cros_release_util/api.py#50)(str_channel):**
 
 Convert long channel name strings (e.g. 'beta-channel') to enum values.
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_short\_string\_to\_enum](/recipe_modules/cros_release_util/api.py#30)(str_channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_short\_string\_to\_enum](/recipe_modules/cros_release_util/api.py#55)(str_channel):**
 
 Convert short channel name strings (e.g. 'beta') to enum values.
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release_util/api.py#15)(channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_strip\_prefix](/recipe_modules/cros_release_util/api.py#40)(channel):**
 
 Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
 
-&emsp; **@staticmethod**<br>&mdash; **def [channel\_to\_long\_string](/recipe_modules/cros_release_util/api.py#20)(channel):**
+&emsp; **@staticmethod**<br>&mdash; **def [channel\_to\_long\_string](/recipe_modules/cros_release_util/api.py#45)(channel):**
 
 Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
 
-&mdash; **def [release\_builder\_name](/recipe_modules/cros_release_util/api.py#35)(self, build_target, branch=None, staging=False):**
+&emsp; **@staticmethod**<br>&mdash; **def [match\_channels](/recipe_modules/cros_release_util/api.py#15)(channel1, channel2):**
+
+Determine if two channels are equal, even if represented differently.
+
+Args:
+  channel1 (str|Channel): A representation of a channel, either as a Channel
+    enum (e.g. Channel.CHANNEL_BETA), a short string (e.g. "beta"), or a
+    long string (e.g. "beta-channel").
+  channel2 (str|Channel): As above.
+
+Returns:
+  bool: Whether the two args describe the same channel.
+
+&mdash; **def [release\_builder\_name](/recipe_modules/cros_release_util/api.py#60)(self, build_target, branch=None, staging=False):**
 
 Determine the Rubik child builder name for the given build_target.
 
@@ -9335,7 +9349,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/run_paygen_builders.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/run_paygen_builders.py#19)(api):**
 ### *recipes* / [cros\_paygen:examples/schedule\_au\_tests](/recipe_modules/cros_paygen/examples/schedule_au_tests.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/schedule_au_tests.py#12): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9417,6 +9431,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_release_util/examples/full.py#14)(api):**
+### *recipes* / [cros\_release\_util:examples/match\_channels](/recipe_modules/cros_release_util/examples/match_channels.py)
+
+[DEPS](/recipe_modules/cros_release_util/examples/match_channels.py#12): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release_util/examples/match_channels.py#18)(api):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
