@@ -9,6 +9,8 @@ DEPS = [
     'recipe_engine/step',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.step.nest('noop for now step') as presentation:

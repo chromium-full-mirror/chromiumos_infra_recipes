@@ -8,6 +8,8 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   try:

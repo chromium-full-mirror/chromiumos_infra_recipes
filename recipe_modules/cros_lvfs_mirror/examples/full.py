@@ -7,6 +7,8 @@ DEPS = [
     'cros_lvfs_mirror',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.cros_lvfs_mirror.configure(mirror_address='address', gs_uri='uri')

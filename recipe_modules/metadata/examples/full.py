@@ -9,6 +9,9 @@ DEPS = [
     'metadata',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+
 def RunSteps(api):
   api.assertions.assertEqual(
       api.metadata.gspath(

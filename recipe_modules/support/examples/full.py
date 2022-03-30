@@ -9,6 +9,8 @@ DEPS = [
     'support',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   output = api.support.call('my-tool', {'input': 'data'})

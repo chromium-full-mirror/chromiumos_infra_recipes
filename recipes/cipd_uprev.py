@@ -14,6 +14,8 @@ DEPS = [
     'recipe_engine/time',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = cipd_uprev.Properties
 
 _CI_RELEASE_VERSION_TAG = 'ci_release_version'
