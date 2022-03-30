@@ -107,8 +107,6 @@ def DoRunSteps(api, config):
     with api.step.nest("upload debug symbols"):
       api.debug_symbols.upload_debug_symbols(gs_image_dir)
 
-  api.cros_release.schedule_payload_generation()
-
   # Signing does not work in staging, so we shouldn't wait for it in that case.
   # Otherwise, wait for signing to complete.
   if not api.cros_infra_config.is_staging:
@@ -126,6 +124,8 @@ def DoRunSteps(api, config):
       # Now that we've published informational artifacts, we need to fail the
       # build if the outcome was anything other than "passed".
       api.cros_signing.verify_signing_success(metadata)
+
+  api.cros_release.schedule_payload_generation()
 
 
 def GenTests(api):
@@ -228,6 +228,7 @@ def GenTests(api):
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='releasespecs/91/13818.0.0.xml'))),
           }),
+      api.cros_signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
