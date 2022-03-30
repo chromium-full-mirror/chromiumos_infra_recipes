@@ -1639,7 +1639,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<manifest>\n  <include name=\"_remotes.xml\" />\n  <default revision=\"refs/heads/main\"\n           remote=\"cros\"\n           sync-j=\"8\" />\n  <project path=\"src/platform/ti50/common\"\n           remote=\"cros-internal\"\n           name=\"ti50/common/ti50\"\n           revision=\"123\"\n           groups=\"firmware\" />\n</manifest>\n",
+      "<manifest></manifest>",
       "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2942,6 +2942,13 @@
     "name": "output binary sizes",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@binary_sizes@{\"total-image-size\": 432012}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "output got_revision",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@got_revision@\"staging-snapshot-HEAD-SHA\"@@@"
     ]
   },
   {
