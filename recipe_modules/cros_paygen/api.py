@@ -971,7 +971,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             parent_buildbucket_id=str(self.m.buildbucket.build.id)),
     )
 
-  @util.exponential_retry(retries=5, delay=timedelta(minutes=2))
+  @util.exponential_retry(retries=6, delay=timedelta(minutes=2))
   def _discover_source_test_full_payload(self, root_uri):
     """Find a source full unsigned image to act as starting image for tests.
 
