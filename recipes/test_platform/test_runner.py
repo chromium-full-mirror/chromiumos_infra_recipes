@@ -255,12 +255,13 @@ def _generate_resultdb_base_tags(api):
   return base_tags
 
 
-def _generate_resultdb_variant_def(api, request):
+def _generate_resultdb_variant_def(api, build_target, parent_request_uid):
   """Generate the variant defintions for the test results.
 
     Args:
       api (RecipeScriptApi): Ubiquitous recipe api.
-      request (Request): The test Request that the results belong to.
+      build_target (str): Build target.
+      parent_request_uid (str): parent request uid.
 
     Returns:
       base_variant (dict): Variant attributes for the test results.
@@ -275,7 +276,6 @@ def _generate_resultdb_variant_def(api, request):
   if model:
     base_variant['model'] = model[0]
 
-  build_target = request.prejob.software_attributes.build_target.name
   if build_target:
     base_variant['build_target'] = build_target
 
@@ -284,8 +284,7 @@ def _generate_resultdb_variant_def(api, request):
   # tagged_request key is the test config's display_name in
   # the GenerateTestPlanResponse. See http://shortn/_oPSae8w6Xc for more info.
   test_config_display_name = (
-      request.parent_request_uid.split('/')[-1]
-      if request.parent_request_uid else '')
+      parent_request_uid.split('/')[-1] if parent_request_uid else '')
   base_variant['test_config'] = test_config_display_name
 
   return base_variant
@@ -367,11 +366,19 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     artifact_directory = None
 
   config = {
-      'result_format': result_format,
-      'base_variant': _generate_resultdb_variant_def(api, properties.request),
-      'base_tags': _generate_resultdb_base_tags(api),
-      'result_file': result_file,
-      'artifact_directory': artifact_directory,
+      'result_format':
+          result_format,
+      'base_variant':
+          _generate_resultdb_variant_def(
+              api,
+              properties.request.prejob.software_attributes.build_target.name,
+              properties.request.parent_request_uid),
+      'base_tags':
+          _generate_resultdb_base_tags(api),
+      'result_file':
+          result_file,
+      'artifact_directory':
+          artifact_directory,
   }
 
   api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
@@ -653,6 +660,12 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
+      test_metadata.rdb_base_tags = _generate_resultdb_base_tags(api)
+      test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
+          api,
+          properties.cft_mvp_test_request.primary_dut.dut_model.build_target,
+          properties.cft_mvp_test_request.parent_request_uid)
+      interface.upload_to_rdb(test_metadata, run_test_response)
 
     result = interface.parse_test_results(test_metadata)
     result.add_prejob_response(prejob_response)
@@ -660,6 +673,9 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
   finally:
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
+    api.cts_results_archive.archive(
+        interface.get_results_directory(test_metadata))
+
     interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
     publish_to_result_flow(api, properties.config,

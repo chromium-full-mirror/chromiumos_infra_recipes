@@ -269,6 +269,18 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.task.results_dir = test_results_dir
     return tko_metadata
 
+  def upload_to_rdb(self, metadata, run_test_response):
+    """Uploads test results to resultDB.
+
+    Args:
+    * metadata (DUTTestMetadata): Input information relevant to one test job.
+    * run_test_response (DUTTestResponse): The response to the test run.
+
+      Raises:
+      * InfraFailure.
+      """
+    raise NotImplementedError
+
   def parse_test_results(self, metadata):
     with self._api.step.nest('Phosphorus: get test results'):
       with self._api.context(infra_steps=True):

@@ -349,7 +349,16 @@
     "cmd": [],
     "name": "invoke tast.process tast output.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/tast-results_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"parallels_uprev\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tast-results_tmp_1/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {

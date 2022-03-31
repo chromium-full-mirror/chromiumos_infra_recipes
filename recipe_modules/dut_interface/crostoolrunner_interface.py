@@ -11,6 +11,7 @@ from . import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.test_platform import phosphorus
+from PB.test_platform.skylab_test_runner.result import Result as Skylab_Result
 
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
                                    ['test_dut_responses'])
@@ -56,6 +57,9 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     self.peer_duts = []
     # Unix time of when test execution finished. Used to be passed via keyvals for autotests.
     self.job_finished = 0
+    # Info used in rdb upload.
+    self.rdb_base_tags = None
+    self.rdb_base_variant = None
 
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
@@ -65,6 +69,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   TEST_HARNESS_TAUTO = 'tauto'
   TEST_HARNESS_TAST = 'tast'
   AUTOTEST_PACKAGE_PATH = '/usr/local/autotest'
+  TAST_MISSING_TEST_KEY = 'tast_missing_test'
+  RESULTS_DIR_NAME = 'results'
+  ARTIFACT_DIR_NAME = 'artifact'
+  TEST_RUNNER_RESULT_JSON = 'test_runner_result.json'
+  STREAMED_RESULTS_JSON = 'streamed_results.jsonl'
 
   def __init__(self, api, properties):
     """DUTInterface implementation with cros-tool-runner.
@@ -278,6 +287,176 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.task.test_results_dir = test_results_dir
     tko_metadata.bot.autotest_dir = self.AUTOTEST_PACKAGE_PATH
     return tko_metadata
+
+  def upload_to_rdb(self, metadata, run_test_response):
+    """Uploads test results to resultDB.
+
+    Args:
+    * metadata (DUTTestMetadata): Input information relevant to one test job.
+    * run_test_response (DUTTestResponse): The response to the test run.
+    """
+    tast_results_dirs = []
+    skylab_test_results = []
+    missing_test_names = []
+    tast_test_exists = False
+    with self._api.step.nest('CrosToolRunner: upload to rdb'):
+      # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
+      # Retrieve ctr_test_response(TestCaseResult type).
+      for test_dut_response in run_test_response.test_dut_responses:
+        ctr_test_response = test_dut_response.data
+        test_harness_type = ctr_test_response.test_harness.WhichOneof(
+            'test_harness_type')
+        results_dir = ctr_test_response.result_dir_path.path
+        test_case_id = ctr_test_response.test_case_id.value
+        with self._api.step.nest(test_case_id):
+          if test_harness_type == self.TEST_HARNESS_TAST:
+            if not tast_test_exists:
+              # Append directory path of two level up.
+              # Example: results_dir=<base_path>/cros-test/artifact/tast/tests/<test_id>
+              # Here 'tast' folder will have the results(streamed_results.jsonl).
+              # So we need to append that and only once to cover all tast cases.
+              tast_results_dirs.append(
+                  str(
+                      self._api.path.dirname(
+                          self._api.path.dirname(results_dir))))
+              tast_test_exists = True
+          elif test_harness_type == self.TEST_HARNESS_TAUTO:
+            # check if it is tast via tauto.
+            tast_folder_path = self._api.path.join(results_dir,
+                                                   self.TEST_HARNESS_TAST)
+            self._api.path.mock_add_paths(tast_folder_path)
+            # if 'tast' folder exists in results_dir, it is tast via tauto.
+            if self._api.path.exists(tast_folder_path):
+              # for tast_via_tauto case, test results(streamed_results.jsonl) lives inside 'results'.
+              tast_results_dirs.append(
+                  str(
+                      self._api.path.join(tast_folder_path,
+                                          self.RESULTS_DIR_NAME)))
+              # if any tast cases missing, retrieve them from keyval for later processing.
+              missing_test_names.extend(
+                  self._get_missing_tast_tests_from_keyval(results_dir))
+            else:
+              # for tauto, convert result to skylab_test_result.
+              skylab_test_results.append(
+                  self._convert_ctr_test_result_to_skylab_test_result(
+                      ctr_test_response))
+
+      # Process tauto tests
+      if skylab_test_results:
+        skylab_test_runner_result = Skylab_Result(
+            autotest_result=Skylab_Result.Autotest(
+                test_cases=skylab_test_results))
+        autotest_rdb_config = self._autotest_results_rdb_config(
+            skylab_test_runner_result,
+            (self._api.path.mkdtemp()).join(self.TEST_RUNNER_RESULT_JSON),
+            metadata)
+        self._api.cros_resultdb.upload(autotest_rdb_config,
+                                       str(metadata.stainless_logs_url))
+      # Process tast/tast_via_tauto tests
+      for tast_result_dir in tast_results_dirs:
+        tast_rdb_config = self._tast_results_rdb_config(tast_result_dir,
+                                                        metadata)
+        self._api.cros_resultdb.upload(tast_rdb_config,
+                                       str(metadata.stainless_logs_url))
+      # Process missing tast tests if any
+      if missing_test_names:
+        self._api.cros_resultdb.report_missing_test_cases(
+            missing_test_names, metadata.rdb_base_variant)
+      # Apply exonerations
+      self._api.cros_resultdb.apply_exonerations(
+          [self._api.cros_resultdb.current_invocation_id])
+
+  def _convert_ctr_test_result_to_skylab_test_result(self, ctr_test_result):
+    """Convert provided ctr test result to skylab test result.
+    Later this is passed down to result_adapter for tauto test results processing.
+
+    Args:
+      ctr_test_result (TestCaseResult): CTR test response for a single test.
+
+    Returns: Skylab_Result.Autotest.TestCase.
+    """
+    skylab_test_verdict = Skylab_Result.Autotest.TestCase.VERDICT_NO_VERDICT
+    ctr_test_verdict = ctr_test_result.WhichOneof('verdict')
+    if ctr_test_verdict == 'pass':
+      skylab_test_verdict = Skylab_Result.Autotest.TestCase.VERDICT_PASS
+    elif ctr_test_verdict == 'fail':
+      skylab_test_verdict = Skylab_Result.Autotest.TestCase.VERDICT_FAIL
+
+    return Skylab_Result.Autotest.TestCase(
+        name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict)
+
+  def _tast_results_rdb_config(self, tast_results_dir, metadata):
+    """Build rdb config for tast test results.
+
+    Args:
+      tast_results_dir (str): path to test results dir.
+      metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
+
+    Returns: Tast config dict.
+    """
+    artifact_dir = tast_results_dir.split('/{}/'.format(
+        self.ARTIFACT_DIR_NAME))[0]
+    artifact_dir = self._api.path.join(artifact_dir, self.ARTIFACT_DIR_NAME)
+    config = {
+        'result_format':
+            'tast',
+        'base_variant':
+            metadata.rdb_base_variant,
+        'base_tags':
+            metadata.rdb_base_tags,
+        'result_file':
+            self._api.path.join(tast_results_dir, self.STREAMED_RESULTS_JSON),
+        'artifact_directory':
+            artifact_dir,
+    }
+    return config
+
+  def _autotest_results_rdb_config(self, test_runner_result,
+                                   test_runner_result_file_path, metadata):
+    """Build rdb config for tauto test results.
+
+    Args:
+      test_runner_result (Skylab_Result): skylab test runner results.
+      test_runner_result_file_path (str): path to test runner results file.
+      metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
+
+    Returns: Tauto config dict.
+    """
+    self._api.file.write_proto('write skylab_test_runner result',
+                               test_runner_result_file_path, test_runner_result,
+                               'JSONPB')
+    config = {
+        'result_format': 'skylab-test-runner',
+        'base_variant': metadata.rdb_base_variant,
+        'base_tags': metadata.rdb_base_tags,
+        'result_file': test_runner_result_file_path,
+        'artifact_directory': None,
+    }
+    return config
+
+  def _get_missing_tast_tests_from_keyval(self, base_dir):
+    """Get missing tast test names from keyval.
+
+    Args:
+      base_dir (string): The path to test results.
+
+    Returns: List of missing tast test names.
+    """
+
+    keyval_file_path = self._api.path.join(base_dir, self.KEYVAL_FILENAME)
+    try:
+      content = self._api.file.read_text(
+          'read keyval file', keyval_file_path,
+          test_data='dummyKey=dummyVal').splitlines()
+    except self._api.file.Error:
+      content = []
+    missing_tests = []
+    for line in content:
+      if line.startswith(self.TAST_MISSING_TEST_KEY):
+        test = line.split('=')[-1]
+        missing_tests.append(test)
+
+    return missing_tests
 
   def upload_to_google_storage(self, metadata):
     """Uploads test information to Google Storage for current test.

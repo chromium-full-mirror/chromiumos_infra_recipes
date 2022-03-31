@@ -1,7 +1,26 @@
 [
   {
     "cmd": [],
-    "name": "upload test results to rdb"
+    "name": "upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"/base/dir/autoserv_test/\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"test_suite\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-suite\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"board\": \"board\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"build\": \"board-cq/R11-123.45\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"test_suite\": \"fake-suite\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
   },
   {
     "cmd": [],

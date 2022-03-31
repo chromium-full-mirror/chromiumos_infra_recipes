@@ -155,6 +155,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       stainless_url (string): Link to the Stainless logs for the test run.
     """
     pres = self.m.step.active_result.presentation
+    pres.logs['config'] = self.m.json.dumps(config, indent=4)
     if not self.m.resultdb.enabled:
       pres.step_text = 'resultdb is not enabled on this builder'
       pres.status = self.m.step.WARNING

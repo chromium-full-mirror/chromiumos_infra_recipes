@@ -743,7 +743,22 @@
     "cmd": [],
     "name": "execution steps.original_test.upload chromium test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/autoserv_test\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"test_suite\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"lacros_all_tast_tests\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"test_suite\": \"lacros_all_tast_tests\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {

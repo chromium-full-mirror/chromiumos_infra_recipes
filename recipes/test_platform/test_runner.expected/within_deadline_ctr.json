@@ -539,6 +539,27 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.exonerate ResultDB results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.archive all test logs to Google Storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -579,6 +600,71 @@
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Archive CTS results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json_input@{'cts_results_gsurl': u'', 'dir': '[CLEANUP]/output_dir_tmp_1', 'cts_apfe_gsurl': u''}@@@",
+      "@@@STEP_LOG_END@json_input@@@",
+      "@@@STEP_LOG_LINE@instructions@[OrderedDict([('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction'), ('source', 'local/directory/to/upload')])]@@@",
+      "@@@STEP_LOG_END@instructions@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
+      "--json-input",
+      "{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"[CLEANUP]/output_dir_tmp_1\"}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "execution steps.Archive CTS results.prepare uploads",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"instructions\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"destination\": \"gs://fake-bucket/fake-folder\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"fake-instruction\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"source\": \"local/directory/to/upload\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Archive CTS results.Upload prepared results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-m",
+      "cp",
+      "-eR",
+      "local/directory/to/upload",
+      "gs://fake-bucket/fake-folder"
+    ],
+    "infra_step": true,
+    "name": "execution steps.Archive CTS results.Upload prepared results.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

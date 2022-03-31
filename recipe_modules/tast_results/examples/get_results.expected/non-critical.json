@@ -40,7 +40,17 @@
     "cmd": [],
     "name": "process tast output.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"build_target\": \"amd64-generic\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"fancy-suite\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {
@@ -395,7 +405,17 @@
     "cmd": [],
     "name": "process tast output (2).upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"build_target\": \"amd64-generic\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"fancy-suite\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {

@@ -662,7 +662,16 @@
     "cmd": [],
     "name": "first tast iteration.process tast output.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {
@@ -2298,7 +2307,16 @@
     "cmd": [],
     "name": "first tast iteration (2).process tast output.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_2\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_2/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {

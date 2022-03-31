@@ -784,7 +784,25 @@
     "cmd": [],
     "name": "execution steps.original_test.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"drone\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-drone-1234\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"board\": \"fake-board\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"build_target\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"model\": \"fake-model\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
     ]
   },
   {

@@ -140,6 +140,19 @@ class DUTInterface(object):  # pragma: no cover
     pass
 
   @abstractmethod
+  def upload_to_rdb(self, metadata, run_test_response):
+    """Uploads test results to resultDB.
+
+    Args:
+    * metadata (DUTTestMetadata): Input information relevant to one test job.
+    * run_test_response (DUTTestResponse): The response to the test run.
+
+    Raises:
+    * InfraFailure.
+    """
+    pass
+
+  @abstractmethod
   def parse_test_results(self, metadata):
     """For one specific test, get the test results in the form of DUTResult.
 
