@@ -5,6 +5,7 @@
 
 """Recipe for the ChromeOS Skylab Test Runner."""
 import base64
+import datetime
 import os
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -51,6 +52,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
+    'recipe_engine/swarming',
     'recipe_engine/time',
     'recipe_engine/uuid',
     'cros_resultdb',
@@ -238,20 +240,67 @@ def _collect_tests_for_phosphorus(request):
 def _generate_resultdb_base_tags(api):
   """Generate the base tags for the test results.
 
+  This function adds the following tags:
+    * image:
+        e.g. R102-14632.0.0-62834-8818718496810023809.
+    * build:
+        e.g. R102-14632.0.0-62834-8818718496810023809.
+    * declared_name:
+        e.g. hatch-cq/R102-14632.0.0-62834-8818718496810023809/wificell-cq/tast.wificell-cq.
+    * drone:
+        e.g. skylab-drone-deployment-prod-6dc79d4f9-czjlj.
+    * drone_server:
+        e.g. chromeos4-row4-rack1-drone8.
+    * host_name:
+        e.g. chromeos15-row4-rack5-host1.
+    * queued_time:
+        e.g. 2018-05-25 23:50:17.
+    * suite_task_id:
+        The parent's swarming task ID.
+    * task_id:
+        The swarming task ID.
+
   Args:
     api (RecipeScriptApi): Ubiquitous recipe api.
 
   Returns:
-    base_tags (dict): Tags for the test results.
+    base_tags (list[tuples]): Tags for the test results.
   """
   base_tags = []
 
-  drone = None
-  for dimension in api.buildbucket.build.infra.swarming.bot_dimensions:
-    if dimension.key == 'drone':
-      drone = dimension.value
-      base_tags.append(('drone', drone))
-      break
+  build_tag = api.cros_tags.get_values('build')
+  if build_tag:
+    base_tags.append(('image', build_tag[0]))
+    base_tags.append(('build', build_tag[0].split('/')[-1]))
+
+  declared_name = api.cros_tags.get_values('display_name')
+  if declared_name:
+    base_tags.append(('declared_name', declared_name[0]))
+
+  drone = api.cros_tags.get_values(
+      'drone', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if drone:
+    base_tags.append(('drone', drone[0]))
+
+  drone_server = api.cros_tags.get_values(
+      'drone_server', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if drone_server:
+    base_tags.append(('drone_server', drone_server[0]))
+
+  hostname = api.cros_tags.get_values(
+      'dut_name', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if hostname:
+    base_tags.append(('hostname', hostname[0]))
+
+  queued_time = datetime.datetime.utcfromtimestamp(
+      api.buildbucket.build.create_time.seconds)
+  base_tags.append(('queued_time', str(queued_time)))
+
+  suite_task_id = api.buildbucket.build.infra.swarming.parent_run_id
+  if suite_task_id:
+    base_tags.append(('suite_task_id', suite_task_id))
+
+  base_tags.append(('task_id', api.swarming.task_id))
 
   return base_tags
 
@@ -826,6 +875,7 @@ def GenTests(api):
     if swarming_tags:
       build_msg.infra.swarming.bot_dimensions.extend(
           api.cros_tags.tags(**swarming_tags))
+    build_msg.infra.swarming.parent_run_id = 'parent-task-id'
     return api.buildbucket.build(build_msg)
 
   def _build_with_execution_timeout(timeout_s):
@@ -1356,8 +1406,13 @@ tast_missing_test.3=bar.YetAnotherTest
           bid=42, tags={
               'label-board': 'fake-board',
               'label-model': 'fake-model',
-              'build': 'fake-board-cq/R11-123.45'
-          }, swarming_tags={'drone': 'fake-drone-1234'}),
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+          }),
       api.step_data('execution steps.original_test.read keyval file',
                     api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
@@ -1377,7 +1432,12 @@ tast_missing_test.3=bar.YetAnotherTest
               'label-board': 'fake-board',
               'label-model': 'fake-model',
               'build': 'fake-board-cq/R11-123.45'
-          }, swarming_tags={'drone': 'fake-drone-1234'}),
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
+          }),
       _keyval_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
