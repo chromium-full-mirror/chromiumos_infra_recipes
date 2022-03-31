@@ -74,12 +74,12 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"22\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"22\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",@@@",
       "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -156,7 +156,7 @@
       }
     },
     "name": "execution steps.publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"\n}",
+    "stdin": "{\n  \"buildId\": \"22\",\n  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -881,13 +881,13 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"22\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"22\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -916,7 +916,7 @@
       }
     },
     "name": "execution steps.original_test.publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"22\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true, \n  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\"\n}",
+    "stdin": "{\n  \"buildId\": \"22\",\n  \"parentUid\": \"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",\n  \"shouldPollForCompletion\": true,\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

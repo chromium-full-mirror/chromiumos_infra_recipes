@@ -10,6 +10,8 @@ DEPS = [
     'result_flow',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.recipe_modules.chromeos.result_flow.result_flow import \
   ResultFlowModuleProperties

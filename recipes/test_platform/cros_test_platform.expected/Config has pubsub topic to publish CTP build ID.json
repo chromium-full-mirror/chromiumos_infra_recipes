@@ -83,9 +83,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
       "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -167,7 +167,7 @@
       }
     },
     "name": "publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"42\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
+    "stdin": "{\n  \"buildId\": \"42\",\n  \"ctp\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -596,11 +596,11 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
       "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -631,7 +631,7 @@
       }
     },
     "name": "publish build ID (2).call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"42\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true\n}",
+    "stdin": "{\n  \"buildId\": \"42\",\n  \"ctp\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  },\n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

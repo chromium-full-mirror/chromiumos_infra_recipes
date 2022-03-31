@@ -39,7 +39,11 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `result_flow`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      presentation.logs['request'] = [json_format.MessageToJson(request)]
+      # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
+      # fix the discripency between py2 and py3 MessageToJson.
+      presentation.logs['request'] = [
+          json_format.MessageToJson(request, sort_keys=True).replace(', ', ',')
+      ]
       self._ensure_result_flow()
       cmd = [
           self._cmd,
@@ -47,7 +51,10 @@ class ResultFlowCommand(recipe_api.RecipeApi):
           '-input_json',
           '/dev/stdin',
       ]
-      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
+      # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
+      # fix the discripency between py2 and py3 MessageToJson.
+      stdin = self.m.raw_io.input_text(
+          json_format.MessageToJson(request, sort_keys=True).replace(', ', ','))
       cmd += [
           '-output_json',
           '/dev/stdout',

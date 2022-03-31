@@ -138,9 +138,9 @@
     "name": "call `result_flow` (5)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"123456789\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"123456789\",@@@",
       "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -170,7 +170,7 @@
       }
     },
     "name": "call `result_flow` (5).publish",
-    "stdin": "{\n  \"buildId\": \"123456789\", \n  \"ctp\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }\n}",
+    "stdin": "{\n  \"buildId\": \"123456789\",\n  \"ctp\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -180,13 +180,13 @@
     "name": "call `result_flow` (6)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"123456789\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"123456789\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"foo-parent-uid\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
       "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"foo-parent-uid\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -214,7 +214,7 @@
       }
     },
     "name": "call `result_flow` (6).publish",
-    "stdin": "{\n  \"buildId\": \"123456789\", \n  \"testRunner\": {\n    \"project\": \"foo-proj\", \n    \"topic\": \"foo-topic\"\n  }, \n  \"shouldPollForCompletion\": true, \n  \"parentUid\": \"foo-parent-uid\"\n}",
+    "stdin": "{\n  \"buildId\": \"123456789\",\n  \"parentUid\": \"foo-parent-uid\",\n  \"shouldPollForCompletion\": true,\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
