@@ -49,6 +49,10 @@
       "prefix": "tmp/portage/chromeos-base/bluetooth-[^/]*/work/bluetooth-[^/]*/bluetooth"
     },
     {
+      "src_path": "bootid-logger",
+      "prefix": "tmp/portage/chromeos-base/bootid-logger-[^/]*/work/bootid-logger-[^/]*/bootid-logger"
+    },
+    {
       "src_path": "bootstat",
       "prefix": "tmp/portage/chromeos-base/bootstat-[^/]*/work/bootstat-[^/]*/platform2/bootstat"
     },
@@ -137,6 +141,10 @@
       "prefix": "tmp/portage/chromeos-base/easy-unlock-[^/]*/work/easy-unlock-[^/]*/easy-unlock"
     },
     {
+      "src_path": "featured",
+      "prefix": "tmp/portage/chromeos-base/featured-[^/]*/work/featured-[^/]*/featured"
+    },
+    {
       "src_path": "feedback",
       "prefix": "tmp/portage/chromeos-base/feedback-[^/]*/work/feedback-[^/]*/platform2/feedback"
     },
@@ -221,6 +229,10 @@
       "prefix": "tmp/portage/chromeos-base/libhwsec-[^/]*/work/libhwsec-[^/]*/libhwsec"
     },
     {
+      "src_path": "libhwsec-foundation",
+      "prefix": "tmp/portage/chromeos-base/libhwsec-foundation-[^/]*/work/libhwsec-foundation-[^/]*/libhwsec-foundation"
+    },
+    {
       "src_path": "libipp",
       "prefix": "tmp/portage/chromeos-base/libipp-[^/]*/work/libipp-[^/]*/libipp"
     },
@@ -259,6 +271,10 @@
     {
       "src_path": "midis",
       "prefix": "tmp/portage/chromeos-base/midis-[^/]*/work/midis-[^/]*/platform2/midis"
+    },
+    {
+      "src_path": "minios",
+      "prefix": "tmp/portage/chromeos-base/minios-[^/]*/work/minios-[^/]*/minios"
     },
     {
       "src_path": "mist",
@@ -351,6 +367,10 @@
     {
       "src_path": "shill/cli",
       "prefix": "tmp/portage/chromeos-base/shill-cli-[^/]*/work/shill-cli-[^/]*/shill/cli"
+    },
+    {
+      "src_path": "shill/net",
+      "prefix": "tmp/portage/chromeos-base/shill-net-[^/]*/work/shill-net-[^/]*/shill/net"
     },
     {
       "src_path": "shill",
