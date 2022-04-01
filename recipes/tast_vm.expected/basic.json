@@ -264,6 +264,31 @@
       "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
       "root@localhost",
       "--",
+      "true"
+    ],
+    "name": "run tast tests.first tast iteration.connect via ssh (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "root@localhost",
+      "--",
       "rsync",
       "--links",
       "--recursive",

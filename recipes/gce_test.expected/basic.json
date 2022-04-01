@@ -422,6 +422,43 @@
       "[CLEANUP]/test-artifacts_tmp_1/autotest/utils/frozen_chromite/ssh_keys/testing_rsa",
       "root@172.16.0.15",
       "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tast tests.first tast iteration.connect via ssh (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/test-artifacts_tmp_1/autotest/utils/frozen_chromite/ssh_keys/testing_rsa",
+      "root@172.16.0.15",
+      "--",
       "rsync",
       "--links",
       "--recursive",

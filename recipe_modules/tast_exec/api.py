@@ -203,6 +203,12 @@ class TastExecApi(RecipeApi):
                               private_key_path=private_key_path,
                               run_args=run_args)
 
+      # b/219966100: Occasionally the `tast run` step will leave the VM in an
+      # unresponsive state. Make sure we can establish an SSH connection before
+      # attempting to archive artifacts.
+      self.m.step('connect via ssh',
+                  self._get_ssh_cmd(host, port, private_key_path, ['true']))
+
       # Add logs and other artifacts from DUT into the test results directory.
       self._archive_vm_artifacts(host, port, private_key_path, test_results_dir)
     return tests
