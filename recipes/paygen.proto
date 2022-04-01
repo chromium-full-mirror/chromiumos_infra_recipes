@@ -24,8 +24,8 @@ message AutoupdateTestConfig {
   // The delta types to generate for.
   chromiumos.DeltaType delta_type = 3;
 
-  // A list of models that this config should run against. None indicates it can
-  // run on any build_target.
+  // A list of models that this config should run against. Each listed model
+  // should run the test. None indicates it can run on any build target.
   repeated string applicable_models = 4;
 }
 
