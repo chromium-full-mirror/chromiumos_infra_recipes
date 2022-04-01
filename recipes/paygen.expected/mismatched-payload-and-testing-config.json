@@ -1905,7 +1905,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "source version and channel must be specified for FullPayload AU tests"
+      "humanReason": "src version and channel must be specified for FullPayload AU tests"
     },
     "name": "$result"
   }

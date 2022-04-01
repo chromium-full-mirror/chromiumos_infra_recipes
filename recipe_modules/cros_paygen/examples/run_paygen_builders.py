@@ -9,11 +9,9 @@ DEPS = [
     'cros_paygen',
 ]
 
-import json
-
 from recipe_engine import post_process
 
-from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
+from PB.recipes.chromeos.paygen import PaygenProperties
 
 
 def RunSteps(api):
@@ -22,120 +20,7 @@ def RunSteps(api):
                              api.cros_paygen.paygen_orchestrator_timeout_sec)
 
   gen_requests = api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS
-  configured_payloads = [
-      json.loads(api.cros_paygen.test_api.EXAMPLE_SINGLE_PAYGEN_CONFIG)
-  ]
 
-  # Test sorting GenerationRequests.
-  full, delta, non = api.cros_paygen._categorize_generation_requests(
-      gen_requests)
-  api.assertions.assertEqual([1, 2, 4], [len(full), len(delta), len(non)])
-
-  # Test scheduling full test payloads.
-  # Respect config
-  actual_full_schedule_reqs = [
-      api.cros_paygen._create_bb_schedule_request(x)
-      for x in api.cros_paygen._create_full_test_paygen_requests(
-          full, configured_payloads)
-  ]
-  expected_full_tests = [
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-              [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_N2N]))
-  ]
-  api.assertions.assertCountEqual(
-      [y.properties for y in expected_full_tests],
-      [y.properties for y in actual_full_schedule_reqs])
-  # Force tests
-  actual_full_schedule_reqs = [
-      api.cros_paygen._create_bb_schedule_request(x)
-      for x in api.cros_paygen._create_full_test_paygen_requests(
-          full, configured_payloads, PaygenOrchestratorProperties.FORCE_TESTS)
-  ]
-  expected_full_tests = [
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [
-                  api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_N2N,
-                  api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_FULL_OMAHA
-              ]))
-  ]
-  api.assertions.assertCountEqual(
-      [y.properties for y in expected_full_tests],
-      [y.properties for y in actual_full_schedule_reqs])
-  # Force no tests
-  actual_full_schedule_reqs = [
-      api.cros_paygen._create_bb_schedule_request(x)
-      for x in api.cros_paygen._create_full_test_paygen_requests(
-          full, configured_payloads,
-          PaygenOrchestratorProperties.FORCE_NO_TESTS)
-  ]
-  expected_full_tests = [
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0]))
-  ]
-  api.assertions.assertCountEqual(
-      [y.properties for y in expected_full_tests],
-      [y.properties for y in actual_full_schedule_reqs])
-
-  # Test scheduling delta test payloads.
-  # Respect config
-  actual_delta_schedule_reqs = [
-      api.cros_paygen._create_bb_schedule_request(x)
-      for x in api.cros_paygen._create_delta_test_paygen_requests(
-          delta, configured_payloads)
-  ]
-  expected_delta_tests = [
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-              [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_N2N])),
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0]))
-  ]
-  api.assertions.assertCountEqual(
-      [y.properties for y in expected_delta_tests],
-      [y.properties for y in actual_delta_schedule_reqs])
-  # Force tests
-  actual_delta_schedule_reqs = [
-      api.cros_paygen._create_bb_schedule_request(x)
-      for x in api.cros_paygen._create_delta_test_paygen_requests(
-          delta, configured_payloads, PaygenOrchestratorProperties.FORCE_TESTS)
-  ]
-  expected_delta_tests = [
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
-              [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_OMAHA])),
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-              [api.cros_paygen.test_api.EXAMPLE_TEST_REQUEST_DELTA_N2N])),
-  ]
-  api.assertions.assertCountEqual(
-      [y.properties for y in expected_delta_tests],
-      [y.properties for y in actual_delta_schedule_reqs])
-  # Force no tests
-  actual_delta_schedule_reqs = [
-      api.cros_paygen._create_bb_schedule_request(x)
-      for x in api.cros_paygen._create_delta_test_paygen_requests(
-          delta, configured_payloads,
-          PaygenOrchestratorProperties.FORCE_NO_TESTS)
-  ]
-  expected_delta_tests = [
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0])),
-      api.cros_paygen._create_bb_schedule_request(
-          api.cros_paygen._create_paygen_request_dict(
-              api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]))
-  ]
-  api.assertions.assertCountEqual(
-      [y.properties for y in expected_delta_tests],
-      [y.properties for y in actual_delta_schedule_reqs])
   # No max DLC batch size.
   paygen_requests = [
       api.cros_paygen._create_paygen_request_dict(
@@ -143,12 +28,12 @@ def RunSteps(api):
       api.cros_paygen._create_paygen_request_dict(
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_DLC[0]),
   ]
-  actual_batches = api.cros_paygen._batch_paygen_requests(paygen_requests)
+  actual_batches = api.cros_paygen._batch_paygen_request_dicts(paygen_requests)
   expected_batches = [[paygen_requests[0], paygen_requests[1]]]
   api.assertions.assertCountEqual(expected_batches, actual_batches)
   # Max DLC batch size of 1.
   api.cros_paygen._max_dlc_batch_size = 1
-  actual_batches = api.cros_paygen._batch_paygen_requests(paygen_requests)
+  actual_batches = api.cros_paygen._batch_paygen_request_dicts(paygen_requests)
   expected_batches = [[paygen_requests[0]], [paygen_requests[1]]]
   api.assertions.assertCountEqual(
       [y for y in expected_batches],
@@ -166,12 +51,16 @@ def RunSteps(api):
       api.cros_paygen._create_paygen_request_dict(
           api.cros_paygen.test_api.EXAMPLE_GEN_REQUEST_FULL_DLC[0]),
   ]
-  actual_batches = api.cros_paygen._batch_paygen_requests(paygen_requests)
+  actual_batches = api.cros_paygen._batch_paygen_request_dicts(paygen_requests)
   api.assertions.assertEqual(len(actual_batches[0]), 2)
   api.assertions.assertEqual(len(actual_batches[1]), 2)
   api.assertions.assertEqual(len(actual_batches[2]), 1)
 
-  api.cros_paygen.run_paygen_builders(gen_requests, configured_payloads)
+  paygen_requests = [
+      PaygenProperties.PaygenRequest(generation_request=gen_request)
+      for gen_request in gen_requests
+  ]
+  api.cros_paygen.run_paygen_builders(paygen_requests)
 
 
 def GenTests(api):

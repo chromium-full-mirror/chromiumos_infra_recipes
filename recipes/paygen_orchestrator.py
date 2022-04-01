@@ -11,6 +11,7 @@ import json
 from os import path
 
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
+from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.chromite.api.payload import Build, GenerationRequest, SignedImage
 from PB.chromiumos.common import DeltaType
 
@@ -101,8 +102,8 @@ def RunSteps(api, properties):
     pres.logs['target_artifacts'] = [MessageToJson(x) for x in target_artifacts]
     pres.logs['source_artifacts'] = [MessageToJson(x) for x in source_artifacts]
 
-  # Aka: "Child Build Requests".
-  cbr = []
+  # Aka: "GenerationRequests".
+  gen_reqs = []
 
   # Find the src and tgt artifacts applicable for each configured payload
   # and construct the child requests. Report missing artifacts.
@@ -110,38 +111,49 @@ def RunSteps(api, properties):
   with api.step.nest('pairing artifacts') as pres:
 
     # Do N2N testing payloads.
-    cbr.extend(
+    gen_reqs.extend(
         api.cros_paygen.get_n2n_requests(target_artifacts,
                                          properties.dest_bucket, True,
                                          properties.dryrun))
 
     # Do configured delta payloads.
     for payload_cfg in configured_payloads:
-      reqs = api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
-                                                target_artifacts,
-                                                properties.dest_bucket, True,
-                                                properties.dryrun)
-      cbr.extend(reqs)
-    pres.logs['%s deltas' % len(cbr)] = [MessageToJson(x) for x in cbr]
+      delta_gen_reqs = api.cros_paygen.get_delta_requests(
+          payload_cfg, source_artifacts, target_artifacts,
+          properties.dest_bucket, True, properties.dryrun)
+      gen_reqs.extend(delta_gen_reqs)
+    pres.logs['%s deltas' %
+              len(delta_gen_reqs)] = [MessageToJson(x) for x in delta_gen_reqs]
 
     # Do full payloads.
-    reqs = api.cros_paygen.get_full_requests(target_artifacts,
-                                             properties.dest_bucket, True,
-                                             properties.dryrun)
-    pres.logs['%s full' % len(reqs)] = [MessageToJson(x) for x in reqs]
-    cbr.extend(reqs)
+    full_gen_reqs = api.cros_paygen.get_full_requests(target_artifacts,
+                                                      properties.dest_bucket,
+                                                      True, properties.dryrun)
+    pres.logs['%s full' %
+              len(full_gen_reqs)] = [MessageToJson(x) for x in full_gen_reqs]
+    gen_reqs.extend(full_gen_reqs)
 
-    if not cbr:
+    if not gen_reqs:
       pres.step_text = 'No payload pairs (src->tgt) found.'
       return
     else:
-      pres.step_text = '%s payloads found.' % len(cbr)
+      pres.step_text = '%s payloads found.' % len(gen_reqs)
 
-  # Schedule child builders.
-  res = api.cros_paygen.run_paygen_builders(
-      cbr, configured_payloads, properties.delta_payload_test_override,
-      properties.full_payload_test_override)
+  # Determine hardware tests to run for each payload.
+  paygen_reqs = []
+  for gen_req in gen_reqs:
+    au_test_configs = api.cros_paygen.create_au_test_configs(
+        gen_req, configured_payloads,
+        delta_test_override=properties.delta_payload_test_override,
+        full_test_override=properties.full_payload_test_override)
+    paygen_reqs.append(
+        PaygenProperties.PaygenRequest(generation_request=gen_req,
+                                       autoupdate_test_configs=au_test_configs))
 
+  # Schedule child builders, and wait for them to finish.
+  res = api.cros_paygen.run_paygen_builders(paygen_reqs)
+
+  # Present results.
   with api.step.nest('results') as pres:
     suc = [x for x in res if x.status == common_pb2.SUCCESS]
     fail = [x for x in res if x.status != common_pb2.SUCCESS]

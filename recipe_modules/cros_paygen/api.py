@@ -58,10 +58,12 @@ class PaygenTestConfig(object):
   go/cros-au-testplan#heading=h.9pokikke2eh
 
   autoupdate_EndToEndTest control file:
-  http://cs/chromeos_public/src/third_party/autotest/files/server/site_tests/autoupdate_EndToEndTest/control
+  http://cs/chromeos_public/src/third_party/autotest/files/server/site_tests/
+    autoupdate_EndToEndTest/control
 
   autoupdate_EndToEndTest file:
-  https://source.corp.google.com/chromeos_public/src/third_party/autotest/files/server/site_tests/autoupdate_EndToEndTest/autoupdate_EndToEndTest.py
+  https://source.corp.google.com/chromeos_public/src/third_party/autotest/files/
+    server/site_tests/autoupdate_EndToEndTest/autoupdate_EndToEndTest.py
 
   Example cros_test_platform build which enumerates the tests:
   https://ci.chromium.org/b/8865978197367928464
@@ -272,7 +274,8 @@ class PaygenTestConfig(object):
     params.retry.allow = bool(params.retry.max > 0)
 
     # Non-CTS traffic uses MANAGED_POOL_QUOTA (go/managed-pools-deprecation).
-    params.scheduling.managed_pool = Request.Params.Scheduling.MANAGED_POOL_QUOTA
+    params.scheduling.managed_pool = \
+        Request.Params.Scheduling.MANAGED_POOL_QUOTA
     params.scheduling.qs_account = QS_ACCOUNT
 
     if model:
@@ -562,58 +565,73 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             GenerationRequest(full_update=True, tgt_dlc_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
                               chroot=self.m.cros_sdk.chroot))
-
-    # TODO(crbug.com/1122854): The chromite code checks the number of mp and
-    # premp signing requests here. We are generally more relaxed at enforcing
-    # this at the moment. We maybe revist this philosophy generally as we
-    # approach launching this.
     return reqs
 
-  def run_paygen_builders(
-      self, gen_reqs, configured_payloads,
-      delta_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG,
-      full_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
+  def create_au_test_configs(
+      self, gen_req, configured_payloads,
+      delta_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG,
+      full_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
+    """Determine which hardware tests need to be run for the given payload.
+
+    Args:
+      gen_req (GenerationRequest): Proto defining the payload-to-be for which to
+        find tests.
+      configured_payloads (list[dict]): Configs for the payloads we are
+        generating and testing.
+      delta_test_override (PayloadTestsOverride): Option to override
+        the configured delta payload testing policy.
+      full_test_override (PayloadTestsOverride): Option to override the
+        configured full payload testing policy.
+
+    Returns:
+      list[AutoupdateTestConfig]: Test configs that should be
+        run for the requested payload.
+    """
+    if (gen_req.WhichOneof('src_image_oneof') == 'src_unsigned_image' and
+        gen_req.src_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
+      if delta_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
+        return []
+      force_tests = delta_test_override == \
+          PaygenOrchestratorProperties.FORCE_TESTS
+      return self._get_au_test_configs_for_delta_payload(
+          gen_req, configured_payloads, force_tests=force_tests)
+    elif (gen_req.WhichOneof('tgt_image_oneof') == 'tgt_unsigned_image' and
+          gen_req.tgt_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
+      if full_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
+        return []
+      force_tests = full_test_override == \
+          PaygenOrchestratorProperties.FORCE_TESTS
+      return self._get_au_test_configs_for_full_payload(gen_req,
+                                                        configured_payloads,
+                                                        force_tests=force_tests)
+    else:
+      return []
+
+  def run_paygen_builders(self, paygen_reqs):
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
-      gen_reqs (list[GenerationRequest]): The GenerationRequests for which to
-        find tests and schedule.
-      configured_payloads (list[dict]): Configs for the payloads we are
-        generating and testing.
-      delta_payload_test_override (PayloadTestsOverride): Option to override
-        the configured delta payload testing policy.
-      full_payload_test_override (PayloadTestsOverride): Option to override the
-        configured full payload testing policy.
+      paygen_reqs (list[PaygenRequest]): Protos containing the payloads to
+        generate and the corresponding tests to launch.
 
     Returns:
       A list of completed builds.
     """
-    sorted_gen_reqs = self._categorize_generation_requests(gen_reqs)
-
-    paygen_requests = [
-        self._create_paygen_request_dict(gen_req)
-        for gen_req in sorted_gen_reqs.non_test_payload_requests
+    paygen_request_dicts = [
+        self._create_paygen_request_dict(paygen_req.generation_request,
+                                         paygen_req.autoupdate_test_configs)
+        for paygen_req in paygen_reqs
     ]
-    paygen_requests.extend(
-        self._create_full_test_paygen_requests(
-            sorted_gen_reqs.full_test_payload_requests, configured_payloads,
-            full_payload_test_override=full_payload_test_override))
-    paygen_requests.extend(
-        self._create_delta_test_paygen_requests(
-            sorted_gen_reqs.delta_test_payload_requests, configured_payloads,
-            delta_payload_test_override=delta_payload_test_override))
-
-    paygen_request_batches = self._batch_paygen_requests(paygen_requests)
-    schedule_requests = []
-    for paygen_requests in paygen_request_batches:
-      schedule_requests.append(
-          self._create_bb_schedule_request(paygen_requests))
+    batches = self._batch_paygen_request_dicts(paygen_request_dicts)
+    schedule_requests = [
+        self._create_bb_schedule_request(batch) for batch in batches
+    ]
 
     # Run the buildbucket requests and return the build results.
     with self.m.step.nest('running children'):
       builds = self.m.buildbucket.schedule(schedule_requests,
                                            step_name='schedule')
-      self._present_paygen_request_urls(paygen_request_batches, builds)
+      self._present_paygen_request_urls(batches, builds)
       build_dict = self.m.buildbucket.collect_builds(
           [b.id for b in builds], timeout=self.paygen_children_timeout_sec,
           step_name='collect', url_title_fn=lambda b: None)
@@ -635,77 +653,6 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             build.id, paygen_requests)
         url_dest = self.m.buildbucket.build_url(build_id=build.id)
         presentation.links[url_title] = url_dest
-
-  def _create_full_test_paygen_requests(
-      self, full_gen_reqs, configured_payloads,
-      full_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
-    """Create BB Paygen schedule requests for the given full paygen requests.
-
-    Args:
-      full_gen_reqs (List[GenerationRequest]): Generation requests for full
-          payloads, which should all be for test images.
-      configured_payloads (List[dict]): Configs for all the payloads we are
-          generating and testing.
-      full_payload_test_override: Option to override the configured payload
-          testing policy for full payloads.
-
-    Returns:
-      A list of dicts, each representing a PaygenRequest for Paygen builders.
-    """
-    return self._create_test_paygen_requests(
-        full_gen_reqs, configured_payloads,
-        self._get_au_test_configs_for_full_payload,
-        test_override=full_payload_test_override)
-
-  def _create_delta_test_paygen_requests(
-      self, delta_gen_reqs, configured_payloads,
-      delta_payload_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
-    """
-    Create BB Paygen schedule requests for the given delta paygen requests.
-
-    Args:
-      delta_gen_reqs (List[GenerationRequest]): Generation requests for delta
-          payloads, which should all be for test images.
-      configured_payloads (List[dict]): Configs for all the payloads we are
-          generating and testing.
-      delta_payload_test_override: Option to override the configured payload
-          testing policy for delta payloads.
-
-    Returns:
-      A list of dicts, each representing a PaygenRequest for Paygen builders.
-    """
-    return self._create_test_paygen_requests(
-        delta_gen_reqs, configured_payloads,
-        self._get_au_test_configs_for_delta_payload,
-        test_override=delta_payload_test_override)
-
-  def _create_test_paygen_requests(
-      self, gen_reqs, configured_payloads, test_configs_getter,
-      test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
-    """Create BB Paygen schedule requests for the given GenerationRequests.
-
-    Args:
-      gen_reqs (List[GenerationRequest]): Generation requests for payloads for
-          test images.
-      configured_payloads (List[dict]): Configs for the payloads we are
-          generating and testing.
-      test_configs_getter (func(list, list, bool) -> ScheduleBuilderRequest):
-          Function to determine AutoupdateTestConfigs for a single GenReq.
-      test_override: Option to override the configured payload testing policy.
-
-    Returns:
-      A list of dicts, each representing a PaygenRequest for Paygen builders.
-    """
-    if test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
-      return [self._create_paygen_request_dict(gen_req) for gen_req in gen_reqs]
-    force_tests = test_override == PaygenOrchestratorProperties.FORCE_TESTS
-    paygen_requests = []
-    for gen_req in gen_reqs:
-      test_configs = test_configs_getter(gen_req, configured_payloads,
-                                         force_tests)
-      paygen_requests.append(
-          self._create_paygen_request_dict(gen_req, test_configs))
-    return paygen_requests
 
   def _get_au_test_configs_for_full_payload(self, gen_req, configured_payloads,
                                             force_tests=False):
@@ -823,8 +770,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     """Prepare payload information for the release pubsub.
 
     Args:
-      paygen_build_results (list[build_pb2.Build]): The results of the child paygen builders
-        as returned by api.buildbucket.run.
+      paygen_build_results (list[build_pb2.Build]): The results of the child
+        paygen builders, as returned by api.buildbucket.run.
 
     Returns:
       A list[BuildReport.Payload] containing payload information for the pubsub.
@@ -880,37 +827,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         payloads.append(payload)
     return payloads
 
-  def _categorize_generation_requests(self, gen_reqs):
-    """Categorize the test payloads generation requests.
-
-    Categorizes into three buckets: full test payloads, delta test payloads, and
-    non-test payloads (all others).
-
-    Args:
-      gen_reqs (list[GenerationRequest]): The GenerationRequests to sort.
-
-    Returns:
-      Namedtuple CategorizedGenerationRequests.
-    """
-    full_test_gen_reqs = []
-    delta_test_gen_reqs = []
-    non_test_gen_reqs = []
-
-    for req in gen_reqs:
-      if (req.WhichOneof('src_image_oneof') == 'src_unsigned_image' and
-          req.src_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
-        delta_test_gen_reqs.append(req)
-      elif (req.WhichOneof('tgt_image_oneof') == 'tgt_unsigned_image' and
-            req.tgt_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
-        full_test_gen_reqs.append(req)
-      else:
-        non_test_gen_reqs.append(req)
-    return CategorizedGenerationRequests(
-        full_test_payload_requests=full_test_gen_reqs,
-        delta_test_payload_requests=delta_test_gen_reqs,
-        non_test_payload_requests=non_test_gen_reqs)
-
-  def _create_paygen_request_dict(self, generation_request, test_requests=None):
+  @staticmethod
+  def _create_paygen_request_dict(generation_request, test_requests=None):
     """Create a dict of a PaygenRequest for a Paygen builder.
 
     Args:
@@ -932,43 +850,45 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         ]
     }
 
-  def _batch_paygen_requests(self, paygen_requests):
-    """Separate PaygenRequests into groups to run together.
+  def _batch_paygen_request_dicts(self, prds):
+    """Separate dicts of PaygenRequests into groups to run together.
 
     Currently, the only grouping performed is to batch DLC requests together.
 
     Args:
-      paygen_requests (List[PaygenRequest]): PaygenRequests to run.
+      prds (List[dict]): Dicts representing PaygenRequests to run.
 
     Returns:
-      List[List[PaygenRequest]]: Each element returned contains a group of
-          PaygenRequests that should be run by the same Paygen builder.
+      List[List[dict]]: Each element returned contains a group of
+          dicts representing PaygenRequests that should be run by the same
+          Paygen builder.
     """
-    def _is_dlc(request):
-      return 'tgtDlcImage' in request['generation_request']
 
-    paygen_request_batches = []
+    def _is_dlc(paygen_request_dict):
+      return 'tgtDlcImage' in paygen_request_dict['generation_request']
+
+    batches = []
     dlcs = []
-    for paygen_request in paygen_requests:
-      if _is_dlc(paygen_request):
-        dlcs.append(paygen_request)
+    for prd in prds:
+      if _is_dlc(prd):
+        dlcs.append(prd)
 
         # If we have a max DLC batch size, then check to see if we're at that
         # batch limit. If so, cut a batch for the DLCs up to this point.
         if self._max_dlc_batch_size and len(dlcs) == self._max_dlc_batch_size:
-          paygen_request_batches.append(dlcs)
+          batches.append(dlcs)
           dlcs = []
       else:
-        paygen_request_batches.append([paygen_request])
+        batches.append([prd])
 
     # Send through all the remaining DLC requests. If there is no max batch
     # size, then this will be all DLC requests. If there is a max batch size,
     # then this will be the remaining DLCs that weren't part of the last
     # complete batch.
     if dlcs:
-      paygen_request_batches.append(dlcs)
+      batches.append(dlcs)
 
-    return paygen_request_batches
+    return batches
 
   def _create_bb_schedule_request(self, paygen_requests):
     """Create a ScheduleBuildRequest for list of paygen requests.
@@ -1051,7 +971,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     elif isinstance(tgt_payload, self.m.cros_storage.FullPayload):
       if not (src_version and src_channel):
         raise StepFailure(
-            'source version and channel must be specified for FullPayload AU tests'
+            'src version and channel must be specified for FullPayload AU tests'
         )
       is_delta_update = False
       src_artifact_root = self.m.cros_storage.ArtifactRoot(
