@@ -7332,15 +7332,15 @@ Validate the caller's service version if they sent one.
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&emsp; **@property**<br>&mdash; **def [resultdb\_elegible\_projects](/recipe_modules/skylab/api.py#38)(self):**
+&emsp; **@property**<br>&mdash; **def [resultdb\_elegible\_projects](/recipe_modules/skylab/api.py#39)(self):**
 
 Returns the names of the repos elegible for go/cros-gerrit-results.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#47)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#48)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -7357,7 +7357,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#92)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#93)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -7375,11 +7375,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#43)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#44)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#263)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#271)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

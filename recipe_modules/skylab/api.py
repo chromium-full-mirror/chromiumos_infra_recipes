@@ -10,6 +10,7 @@ from recipe_engine import recipe_api
 from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
@@ -199,9 +200,16 @@ class SkylabApi(recipe_api.RecipeApi):
 
               # The 'cros-test' container contains the autoserv binary we'll use
               container_image_map = container_metadata.containers[build_target]
+              # TODO(b/227666105): Remove once CFT workflow is enabled and stable.
               request.params.execution_param.container_image_info.CopyFrom(
                   container_image_map.images['cros-test'],
               )
+
+              # Pass down relevant container metadata to be used in CFT workflow.
+              req_container_metadata = ContainerMetadata(
+                  containers={build_target: container_image_map})
+              request.params.execution_param.container_metadata.CopyFrom(
+                  req_container_metadata)
 
             configure_step.logs['request'] = [
                 json_format.MessageToJson(request)
