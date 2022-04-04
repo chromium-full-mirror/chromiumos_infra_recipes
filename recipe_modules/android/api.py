@@ -11,7 +11,6 @@ from PB.chromite.api.android import MarkStableRequest
 from PB.chromite.api.android import MarkStableStatusType
 from PB.chromite.api.android import WriteLKGBRequest
 from PB.chromite.api.packages import GetAndroidMetadataRequest
-from PB.chromite.api.packages import GetTargetVersionsRequest
 
 from collections import namedtuple
 
@@ -28,58 +27,6 @@ EBUILD_PATH = 'chromeos-base/{package_name}/{package_name}-9999.ebuild'
 
 class AndroidApi(recipe_api.RecipeApi):
 
-  def _get_android_metadata_fallback(self, chroot, sysroot):
-    """Retrieve Android metadata using PackageService/GetTargetVersions.
-
-    Called when PackageService/GetAndroidMetadata is not available (before R92).
-    TODO(b/187888777): Remove this.
-
-    Args:
-      chroot (chromiumos.Chroot): Information on the chroot for the build.
-      sysroot (Sysroot): The Sysroot being used.
-
-    Returns:
-      (android_package: str, android_version: str)
-      Both can be empty in case Android isn't installed.
-    """
-    request = GetTargetVersionsRequest(chroot=chroot,
-                                       build_target=sysroot.build_target,
-                                       packages=[])
-    target_versions = self.m.cros_build_api.PackageService.GetTargetVersions(
-        request)
-
-    if not target_versions.android_version:
-      # Android is not installed.
-      return '', ''
-
-    android_branch = target_versions.android_branch_version
-    android_target = target_versions.android_target_version
-
-    if not android_branch:
-      raise StepFailure('No android_branch provided')
-
-    if not android_target:
-      raise StepFailure('No android_target provided')
-
-    # Map (branch, target) to package name
-    if android_branch.startswith('git_pi-arc') and android_target == 'cheets':
-      android_package = 'android-container-pi'
-    elif android_branch.startswith(
-        'git_rvc-arc') and android_target == 'bertha':
-      android_package = 'android-vm-rvc'
-    elif android_branch.startswith(
-        'git_sc-arc-dev') and android_target == 'bertha':
-      android_package = 'android-vm-sc'
-    elif android_branch.startswith(
-        'git_master-arc-dev') and android_target == 'bertha':
-      android_package = 'android-vm-master'
-    else:
-      raise StepFailure('cannot decide the package name for '
-                        'android_branch=%s android_target=%s' %
-                        (android_branch, android_target))
-
-    return android_package, target_versions.android_version
-
   def _get_android_metadata(self, chroot, sysroot):
     """Retrieve Android metadata from the given sysroot.
 
@@ -91,10 +38,6 @@ class AndroidApi(recipe_api.RecipeApi):
       (android_package: str, android_version: str)
       Both can be empty in case Android isn't installed.
     """
-    if not self.m.cros_build_api.has_endpoint(
-        self.m.cros_build_api.PackageService, 'GetAndroidMetadata'):
-      return self._get_android_metadata_fallback(chroot, sysroot)
-
     metadata = self.m.cros_build_api.PackageService.GetAndroidMetadata(
         GetAndroidMetadataRequest(build_target=sysroot.build_target,
                                   chroot=chroot))

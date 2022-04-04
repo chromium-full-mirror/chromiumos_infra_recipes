@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from PB.recipe_modules.chromeos.android.examples.test import TestProperties
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.common import BuildTarget
@@ -53,34 +51,5 @@ def GenTests(api):
       api.cros_build_api.set_api_return('check if an android uprev is required',
                                         'PackageService/GetAndroidMetadata',
                                         '{}'))
-  yield api.test(
-      'missing-api',
-      api.cros_build_api.remove_endpoints(['PackageService/GetAndroidMetadata'
-                                          ]))
   yield api.test('changes-no-uprev', api.properties(changes=True),
                  api.android.set_mark_stable_early_exit())
-
-  # TODO(b/187888777): Remove when _get_android_metadata_fallback is removed.
-  fallback_testcases = [
-      ('android-pi', 'git_pi-arc', 'cheets', '7123456'),
-      ('android-rvc', 'git_rvc-arc', 'bertha', '7123456'),
-      ('android-sc', 'git_sc-arc-dev', 'bertha', '7123456'),
-      ('android-mst', 'git_master-arc-dev', 'bertha', '7123456'),
-      ('bad-android', 'git_pi-arc', 'bertha', '7123456'),
-      ('missing-branch', '', 'bertha', '7123456'),
-      ('missing-target', 'git_rvc-arc', '', '7123456'),
-      ('no-android', '', '', ''),
-  ]
-  for name, branch, target, version in fallback_testcases:
-    target_versions = {
-        'android_branch_version': branch,
-        'android_target_version': target,
-        'android_version': version,
-    }
-    yield api.test(
-        'fallback-' + name, api.properties(changes=True),
-        api.cros_build_api.remove_endpoints(
-            ['PackageService/GetAndroidMetadata']),
-        api.cros_build_api.set_api_return(
-            'check if an android uprev is required',
-            'PackageService/GetTargetVersions', json.dumps(target_versions)))

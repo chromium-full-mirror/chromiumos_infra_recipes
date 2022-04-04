@@ -538,9 +538,9 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [AndroidApi](/recipe_modules/android/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#171)(self, android_package):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#114)(self, android_package):**
 
 Retrieves the latest Android version for the given Android package.
 
@@ -550,7 +550,7 @@ Args:
 Returns:
   str: The latest Android version (build ID).
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#137)(self, chroot, sysroot, android_package, android_version):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#80)(self, chroot, sysroot, android_package, android_version):**
 
 Uprev the given Android package to the given version.
 
@@ -563,7 +563,7 @@ Args:
 Returns:
   bool: If the android package has been uprevved.
 
-&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#103)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#46)(self, chroot, sysroot, patch_sets):**
 
 Uprev Android if changes are found in the unstable ebuild.
 
@@ -572,7 +572,7 @@ Args:
   sysroot (Sysroot): The Sysroot being used.
   patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
 
-&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#188)(self, android_package, android_version):**
+&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#131)(self, android_package, android_version):**
 
 Sets LKGB of given Android package to given version.
 
@@ -8171,11 +8171,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#39)(api):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
-[DEPS](/recipe_modules/android/examples/full.py#13): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/android/examples/full.py#11): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#21)(api, properties):**
 ### *recipes* / [android:examples/misc](/recipe_modules/android/examples/misc.py)
 
 [DEPS](/recipe_modules/android/examples/misc.py#5): [android](#recipe_modules-android), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
