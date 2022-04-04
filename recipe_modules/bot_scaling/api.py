@@ -19,6 +19,7 @@ from recipe_engine import recipe_api
 
 import decimal
 import itertools
+import math
 
 DEFAULT_HOURS_BETWEEN_BUILDS = 0.167
 TASK_STATES = ['RUNNING', 'PENDING']
@@ -37,6 +38,57 @@ class BotScalingApi(recipe_api.RecipeApi):
   def __init__(self, *args, **kwargs):
     super(BotScalingApi, self).__init__(*args, **kwargs)
     self._hours_between_builds = None
+
+  def drop_cpu_cores(self, min_cpus_left=4, max_drop_ratio=0.75,
+                     test_rand=None):
+    """Gather data on build's per core scaling efficiencies.
+
+    Gather data on per build CPU efficiency by dropping cores on the
+    instances. Sets a property 'enabled_cpu_cores', with the final count.
+
+    Warning!: We've embedded an assumption that we will reboot between tasks
+    so these changes are effectual for a single run only.
+
+    Args:
+      min_cpus_left (int): Do not drop below this number of cores.
+      max_drop_ratio (float): The maximum ratio of cpus to drop relative to
+        the overall count.
+      test_rand (flaot): Set the max_drop_ratio to this instead of the uniform
+        random distribution (for testing).
+
+    Returns: The number of cpus dropped.
+    """
+    min_cpus_left = max(1, min_cpus_left)
+
+    with self.m.step.nest('dropping cores') as pres:
+      # Establish the CPU count.
+      n_proc = int(
+          self.m.easy.stdout_step('count online CPUs', ['nproc'],
+                                  test_stdout=' 8\n').strip())
+
+      # Validation check that state is fresh.
+      online_intervals = self.m.easy.stdout_step(
+          'ensure all cpus online',
+          ['sudo', 'cat', '/sys/devices/system/cpu/offline'])
+      if online_intervals.strip():
+        pres.step_text = 'CPUs are already offline! You must reboot to use this feature!'
+        pres.status = self.m.step.WARNING
+        self.m.easy.set_properties_step(enabled_cpu_cores=n_proc)
+        return
+
+      # Pick a random number of cores to drop to target.
+      rand = test_rand if isinstance(
+          test_rand, float) else self.m.random.uniform(0.0, max_drop_ratio)
+      drop_n_cores = min(int(math.floor(rand * n_proc)), n_proc - min_cpus_left)
+
+      # Drop the cores.
+      for c in range(0, drop_n_cores):
+        self.m.step('drop {} cpu cores'.format(drop_n_cores), [
+            'sudo', 'tee', '/sys/devices/system/cpu/cpu{}/online'.format(c + 1)
+        ], stdin=self.m.raw_io.input_text(str(0)))
+      # Set output property with value of remaining cores.
+    self.m.easy.set_properties_step(enabled_cpu_cores=n_proc - drop_n_cores)
+    return drop_n_cores
 
   def get_robocrop_action(self, bot_policy_config, configs, swarming_stats):
     """Function to compute all the actions of this RoboCrop.

@@ -1,0 +1,84 @@
+[
+  {
+    "cmd": [],
+    "name": "dropping cores"
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "name": "dropping cores.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "cat",
+      "/sys/devices/system/cpu/offline"
+    ],
+    "name": "dropping cores.ensure all cpus online",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu1/online"
+    ],
+    "name": "dropping cores.drop 4 cpu cores",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu2/online"
+    ],
+    "name": "dropping cores.drop 4 cpu cores (2)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu3/online"
+    ],
+    "name": "dropping cores.drop 4 cpu cores (3)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu4/online"
+    ],
+    "name": "dropping cores.drop 4 cpu cores (4)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set enabled_cpu_cores",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@enabled_cpu_cores@4@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

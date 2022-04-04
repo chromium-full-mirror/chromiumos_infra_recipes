@@ -1,0 +1,18 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.bot_scaling.examples;
+
+// See drop_cpu_cores function definition for documentation.
+message BotDropProperties {
+
+  int32 min_cpus_left = 1;
+
+  float max_drop_ratio = 2;
+
+  float test_rand = 3;
+}
+

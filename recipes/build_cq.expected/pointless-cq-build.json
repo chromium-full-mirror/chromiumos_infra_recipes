@@ -39,6 +39,50 @@
   },
   {
     "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "cat",
+      "/sys/devices/system/cpu/offline"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.ensure all cpus online",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "sudo",
       "tee",
       "/sys/devices/system/cpu/cpu1/online"
@@ -55,7 +99,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "dropping cores.drop 24 cpu cores",
+    "name": "dropping cores.drop 4 cpu cores",
     "stdin": "0",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -79,7 +123,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "dropping cores.drop 24 cpu cores (2)",
+    "name": "dropping cores.drop 4 cpu cores (2)",
     "stdin": "0",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -103,7 +147,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "dropping cores.drop 24 cpu cores (3)",
+    "name": "dropping cores.drop 4 cpu cores (3)",
     "stdin": "0",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -127,487 +171,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "dropping cores.drop 24 cpu cores (4)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu5/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (5)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu6/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (6)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu7/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (7)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu8/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (8)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu9/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (9)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu10/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (10)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu11/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (11)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu12/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (12)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu13/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (13)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu14/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (14)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu15/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (15)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu16/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (16)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu17/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (17)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu18/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (18)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu19/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (19)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu20/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (20)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu21/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (21)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu22/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (22)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu23/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (23)",
-    "stdin": "0",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "/sys/devices/system/cpu/cpu24/online"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "dropping cores.drop 24 cpu cores (24)",
+    "name": "dropping cores.drop 4 cpu cores (4)",
     "stdin": "0",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -617,7 +181,7 @@
     "cmd": [],
     "name": "set enabled_cpu_cores",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@enabled_cpu_cores@8@@@"
+      "@@@SET_BUILD_PROPERTY@enabled_cpu_cores@4@@@"
     ]
   },
   {

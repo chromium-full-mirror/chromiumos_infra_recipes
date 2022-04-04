@@ -1,0 +1,120 @@
+[
+  {
+    "cmd": [],
+    "name": "dropping cores"
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "name": "dropping cores.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "cat",
+      "/sys/devices/system/cpu/offline"
+    ],
+    "name": "dropping cores.ensure all cpus online",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu1/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu2/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores (2)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu3/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores (3)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu4/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores (4)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu5/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores (5)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu6/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores (6)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu7/online"
+    ],
+    "name": "dropping cores.drop 7 cpu cores (7)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set enabled_cpu_cores",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@enabled_cpu_cores@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
