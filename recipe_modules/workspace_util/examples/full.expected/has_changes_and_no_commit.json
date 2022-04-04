@@ -2390,7 +2390,6 @@
     "name": "detect toolchain change.path relevancy check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
@@ -2469,7 +2468,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0011snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010\n\u000esome/other/dirP\u0001",
+      ":5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,

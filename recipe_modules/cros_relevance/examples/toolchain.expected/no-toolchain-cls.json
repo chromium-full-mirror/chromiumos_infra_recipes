@@ -89,7 +89,6 @@
     "cmd": [],
     "name": "path relevancy check",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"my hash\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030{\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
@@ -158,7 +157,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0007my hash:\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0010\n\u000esome/other/dirP\u0001",
+      ":\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,

@@ -93,7 +93,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       request = GenerateBuildPlanRequest(
           gitiles_commit=common_proto_bytes(
               serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
-                  gitiles_commit)), manifest_commit=gitiles_commit.id)
+                  gitiles_commit)))
       request.builder_configs.extend(builder_configs)
       for gc in gerrit_changes:
         new_gc = request.gerrit_changes.add()
@@ -304,7 +304,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           gitiles_commit=testplans_proto_bytes(
               serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
                   gitiles_commit)),
-          manifest_commit=gitiles_commit.id,
           ignore_known_non_portage_directories=ignore_known_non_portage,
       )
 

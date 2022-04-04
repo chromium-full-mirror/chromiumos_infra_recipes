@@ -3076,7 +3076,6 @@
     "name": "init sdk.detect toolchain change.path relevancy check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
@@ -3156,7 +3155,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0019staging-snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0010\n\u000esome/other/dirP\u0001",
+      ":5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0010\n\u000esome/other/dirP\u0001",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4192,7 +4191,6 @@
     "name": "validate SDK reuse.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
@@ -4214,7 +4212,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0019staging-snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshot",
+      ":5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshot",
       "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4303,7 +4301,6 @@
     "name": "pointless build check.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@manifest_commit: \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
@@ -4328,7 +4325,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "2\u0019staging-snapshot-HEAD-SHA:5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0011\n\u000fsome/source/dir",
+      ":5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0011\n\u000fsome/source/dir",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

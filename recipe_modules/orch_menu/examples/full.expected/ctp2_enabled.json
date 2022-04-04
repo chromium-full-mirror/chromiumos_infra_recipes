@@ -1809,7 +1809,6 @@
       "@@@STEP_LOG_LINE@planner_input@gerrit_changes {@@@",
       "@@@STEP_LOG_LINE@planner_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\023chromiumos/platform\\030\\322\\t \\005\"@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
-      "@@@STEP_LOG_LINE@planner_input@manifest_commit: \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@planner_input@builder_configs {@@@",
       "@@@STEP_LOG_LINE@planner_input@  id {@@@",
       "@@@STEP_LOG_LINE@planner_input@    name: \"amd64-generic-postsubmit\"@@@",
@@ -1972,7 +1971,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\n7\n5\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/platform\u0018\ufffd\t \u0005\u0012\u0011snapshot-HEAD-SHA\u001a\ufffd\u0001\n\u001c\n\u0018amd64-generic-postsubmit\u0018\u0002\u0012\u0006\n\u0002\b\u00018\u0001\"6\b\u0001\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archiveB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012 \n\u0011\n\u000fchrome_internalz\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a+\n\u001a\n\u0016arm-generic-postsubmit\u0018\u0002\u0012\u0004\n\u00008\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001\u001a+\n\u0014\n\u0010grunt-postsubmit\u0018\u0002\u0012\u0004\n\u00008\u00022\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0001@\u0001\"h\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "\n7\n5\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/platform\u0018\ufffd\t \u0005\u001a\ufffd\u0001\n\u001c\n\u0018amd64-generic-postsubmit\u0018\u0002\u0012\u0006\n\u0002\b\u00018\u0001\"6\b\u0001\u001a\u0011chromeos-prebuilt\"\u0016chromeos-image-archiveB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012 \n\u0011\n\u000fchrome_internalz\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a+\n\u001a\n\u0016arm-generic-postsubmit\u0018\u0002\u0012\u0004\n\u00008\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001\u001a+\n\u0014\n\u0010grunt-postsubmit\u0018\u0002\u0012\u0004\n\u00008\u00022\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0001@\u0001\"h\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
