@@ -29,8 +29,7 @@ def is_valid_llvm_coverage_json_file(data):
     return False
 
 
-def clean_file_name(file_name, constants, project_name, build_target_name,
-                    file_name_prepend):
+def clean_file_name(file_name, constants, project_name, build_target_name):
   """Cleans a file name based on the provided mappings.
 
   TODO(b/187795079) The provided constants file gives a mapping of regex
@@ -42,13 +41,10 @@ def clean_file_name(file_name, constants, project_name, build_target_name,
     file_name (str): The file name from the coverage llvm json file.
     constants (str): Content containing prefix/src_path pairs per project.
     project_name (str): The project to load constants data from.
-    build_target_name(str): The name of the build target (i.e. sarien).
-    file_name_prepend(str): What to prepend file names with after
-      performing the replacements.
-
+    build_target_name(str): The name of the build target (i.e. brya).
 
   Returns:
-    A string formatted as: {file_name_prepend}{constants[src_path]}/{file_name}
+    A string formatted as: {constants[src_path]}/{file_name}
     if a mapping is found otherwise None.
   """
   coverage_path = os.path.normpath(file_name)
@@ -57,14 +53,13 @@ def clean_file_name(file_name, constants, project_name, build_target_name,
     pre = '(/build/{})?/?{}'.format(build_target_name, mapping['prefix'])
     if re.match(pre, coverage_path):
       coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
-      return file_name_prepend + coverage_path
+      return mapping['repo'] + coverage_path
 
   return None
 
 
 def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, constants,
-                                           project_name, build_target_name,
-                                           file_name_prepend):
+                                           project_name, build_target_name):
   """Cleans an llvm coverage json file's file names.
 
   Takes a valid llvm coverage json file, and runs all the file names through
@@ -77,9 +72,6 @@ def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, constants,
     constants (str): Content containing prefix/src_path pairs per project.
     project_name (str): The project to load constants data from.
     build_target_name(str): The name of the build target (i.e. sarien).
-    file_name_prepend(str): What to prepend file names with after
-      performing the replacements.
-
 
   Returns:
     A json object in the coverage llvm json format with file names that
@@ -93,7 +85,7 @@ def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, constants,
     for file_data in datum['files']:
       filename = file_data['filename']
       cleaned_file_name = clean_file_name(filename, constants, project_name,
-                                          build_target_name, file_name_prepend)
+                                          build_target_name)
       if cleaned_file_name is not None:
         file_data['filename'] = cleaned_file_name
         coverage_data.append(file_data)

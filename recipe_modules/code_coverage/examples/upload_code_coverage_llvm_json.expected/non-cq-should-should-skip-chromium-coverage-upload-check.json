@@ -5567,9 +5567,7 @@
       "--project-name",
       "chromiumos/platform2",
       "--build-target",
-      "sarien",
-      "--file-name-prepend",
-      "/src/platform2/"
+      "sarien"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {

@@ -4057,9 +4057,7 @@
       "--project-name",
       "chromiumos/platform2",
       "--build-target",
-      "amd64-generic",
-      "--file-name-prepend",
-      ""
+      "amd64-generic"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {

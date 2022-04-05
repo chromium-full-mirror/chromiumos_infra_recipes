@@ -14,8 +14,7 @@ import code_coverage_util
 
 
 def clean_file_paths(path_to_coverage_file, path_to_constants_file,
-                     path_to_output_file, project_name, build_target_name,
-                     file_name_prepend):
+                     path_to_output_file, project_name, build_target_name):
   """Cleans the file paths in a given coverage file and writes out the results.
 
     Args:
@@ -24,7 +23,6 @@ def clean_file_paths(path_to_coverage_file, path_to_constants_file,
       path_to_output_file: where to write the cleaned file.
       project_name: the name of the project reference in the constants file.
       build_target_name: name of the build target.
-      file_name_prepend: what to prepend file names with.
   """
   with open(path_to_coverage_file,
             'r') as coverage_file, open(path_to_constants_file,
@@ -40,7 +38,7 @@ def clean_file_paths(path_to_coverage_file, path_to_constants_file,
     data = json.loads(coverage_file_data)
     constants = json.load(constants_file)
     results = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, constants, project_name, build_target_name, file_name_prepend)
+        data, constants, project_name, build_target_name)
 
     with open(path_to_output_file, 'w') as out_file:
       json.dump(results, out_file)
@@ -69,9 +67,6 @@ def _parse_args(args):
   parser.add_argument('--build-target', required=True, type=str,
                       help='the target code coverage was built for')
 
-  parser.add_argument('--file-name-prepend', required=False, type=str,
-                      help='what to prepend clean file names with')
-
   return parser.parse_args(args=args)
 
 
@@ -88,8 +83,7 @@ def main():
     raise RuntimeError('Output file %s already exists' % params.output_file)
 
   clean_file_paths(params.coverage_file, params.constants_file,
-                   params.output_file, params.project_name, params.build_target,
-                   params.file_name_prepend)
+                   params.output_file, params.project_name, params.build_target)
 
 
 if __name__ == '__main__':

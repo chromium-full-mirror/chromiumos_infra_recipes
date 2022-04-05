@@ -10,10 +10,8 @@ from recipe_engine.recipe_api import StepFailure
 class CoverageFileSettings(object):
   """Contains parameters used to drive different coverage upload workflows."""
 
-  def __init__(self, should_clean, clean_file_name_prepend,
-               filter_llvm_json_coverage_to_cl_files):
+  def __init__(self, should_clean, filter_llvm_json_coverage_to_cl_files):
     self.should_clean = should_clean
-    self.clean_file_name_prepend = clean_file_name_prepend
     self.filter_llvm_json_coverage_to_cl_files = filter_llvm_json_coverage_to_cl_files
 
 
@@ -84,7 +82,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         step_name (str): name for the step.
     """
     self.process_coverage_data(build_target_name, tarfile, 'LCOV', step_name,
-                               CoverageFileSettings(False, None, False))
+                               CoverageFileSettings(False, False))
 
   def upload_code_coverage_llvm_json(
       self, build_target_name, tarfile,
@@ -96,11 +94,16 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
     """
-    self.process_coverage_data(
-        build_target_name, tarfile, 'LLVM', step_name,
-        CoverageFileSettings(True, '', True),
-        CoverageFileSettings(True, '/src/platform2/', False),
-        CoverageFileSettings(False, None, False))
+    # Settings for capturing incremental coverage.
+    incremental_settings = CoverageFileSettings(True, True)
+    # Settings for capturing absolute coverage.
+    absolute_settings = CoverageFileSettings(True, False)
+    # Settings for capturing absolute coverage on Chromium dashboard.
+    absolute_chromium_settings = CoverageFileSettings(False, False)
+
+    self.process_coverage_data(build_target_name, tarfile, 'LLVM', step_name,
+                               incremental_settings, absolute_settings,
+                               absolute_chromium_settings)
 
   def process_coverage_data(self, build_target_name, tarfile, coverage_type,
                             step_name='upload code coverage data',
@@ -184,8 +187,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             project_name,
             '--build-target',
             build_target_name,
-            '--file-name-prepend',
-            coverage_file_setting.clean_file_name_prepend,
         ], venv=True)
 
     # Read the file and include it in the log for debugging purposes.
