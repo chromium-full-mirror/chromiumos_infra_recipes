@@ -10,6 +10,8 @@ DEPS = [
     'phosphorus',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.test_platform import skylab_local_state
 from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
 from PB.test_platform.phosphorus.prejob import PrejobRequest

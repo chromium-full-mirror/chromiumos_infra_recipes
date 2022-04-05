@@ -78,11 +78,11 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -157,7 +157,7 @@
       }
     },
     "name": "provision DUT.call `phosphorus`.build-parallels-image-save",
-    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"placeholder-dut-name\",\n  \"dutState\": \"needs_repair\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -168,12 +168,12 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T14:53:21Z\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T14:53:21Z\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -199,7 +199,7 @@
       }
     },
     "name": "provision DUT.call `phosphorus` (2).build-parallels-image-provision",
-    "stdin": "{\n  \"deadline\": \"2012-05-14T14:53:21Z\", \n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"deadline\": \"2012-05-14T14:53:21Z\",\n  \"dutName\": \"placeholder-dut-name\",\n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -684,11 +684,11 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"ready\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"ready\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -714,7 +714,7 @@
       }
     },
     "name": "mark DUT ready.call `phosphorus`.build-parallels-image-save",
-    "stdin": "{\n  \"dutState\": \"ready\", \n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder-dut-name\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"placeholder-dut-name\",\n  \"dutState\": \"ready\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

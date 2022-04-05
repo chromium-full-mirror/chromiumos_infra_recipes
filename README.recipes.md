@@ -75,7 +75,7 @@
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [orch_menu](#recipe_modules-orch_menu) &mdash; API providing a menu for orchestrator steps.
   * [overlayfs](#recipe_modules-overlayfs) (Python3 ✅) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
-  * [phosphorus](#recipe_modules-phosphorus)
+  * [phosphorus](#recipe_modules-phosphorus) (Python3 ✅)
   * [portage](#recipe_modules-portage) (Python3 ✅) &mdash; APIs for CrOS Portage.
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) (Python3 ✅) &mdash; API for calling 'recipes.
@@ -397,8 +397,8 @@
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full) (Python3 ✅)
   * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
   * [paygen_orchestrator](#recipes-paygen_orchestrator) &mdash; Recipe for orchestrating ChromeOS payloads (AU deltas etc).
-  * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image)
-  * [phosphorus:examples/full](#recipes-phosphorus_examples_full)
+  * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image) (Python3 ✅)
+  * [phosphorus:examples/full](#recipes-phosphorus_examples_full) (Python3 ✅)
   * [portage:examples/full](#recipes-portage_examples_full) (Python3 ✅)
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
@@ -6784,13 +6784,13 @@ Args:
 
 [DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#234)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#245)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
@@ -6801,7 +6801,7 @@ Args:
   max_duration_sec (int): Maximum duration of the provision operation, in
     seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#256)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#267)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -6811,21 +6811,21 @@ or needs_repair).
 Args:
   dut_state (str): The new DUT state. E.g. "needs_repair" or "ready".
 
-&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#104)(self, request):**
+&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#113)(self, request):**
 
 Fetch crashes via the `fetch-crashes` subcommand.
 
 Args:
   request: a FetchCrashesRequest.
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#169)(self, test_id):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#180)(self, test_id):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [parse](/recipe_modules/phosphorus/api.py#130)(self, results_dir):**
+&mdash; **def [parse](/recipe_modules/phosphorus/api.py#139)(self, results_dir):**
 
 Extract test results from an results directory.
 
@@ -6834,32 +6834,32 @@ Args:
 
 Returns: Result.
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#86)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#95)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#287)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#298)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#224)(self):**
+&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#235)(self):**
 
 Remove the autotest results directory.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#95)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#104)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#197)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#208)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -6872,7 +6872,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#184)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#195)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file.
 
@@ -6884,14 +6884,14 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#113)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#122)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#122)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#131)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
@@ -10690,16 +10690,16 @@ Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
 [DEPS](/recipe_modules/phosphorus/examples/build_parallels_image.py#8): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/build_parallels_image.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/build_parallels_image.py#16)(api):**
 ### *recipes* / [phosphorus:examples/full](/recipe_modules/phosphorus/examples/full.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/full.py#6): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/full.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/phosphorus/examples/full.py#25)(api):**
 ### *recipes* / [portage:examples/full](/recipe_modules/portage/examples/full.py)
 
 [DEPS](/recipe_modules/portage/examples/full.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

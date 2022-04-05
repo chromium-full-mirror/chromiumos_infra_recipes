@@ -59,7 +59,11 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `phosphorus`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      presentation.logs['request'] = [json_format.MessageToJson(request)]
+      # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
+      # fix the discripency between py2 and py3 MessageToJson.
+      presentation.logs['request'] = [
+          json_format.MessageToJson(request, sort_keys=True).replace(', ', ',')
+      ]
       self._ensure_phosphorus()
       cmd = [
           self._cmd,
@@ -67,7 +71,10 @@ class PhosphorusCommand(recipe_api.RecipeApi):
           '-input_json',
           '/dev/stdin',
       ]
-      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
+      # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
+      # fix the discripency between py2 and py3 MessageToJson.
+      stdin = self.m.raw_io.input_text(
+          json_format.MessageToJson(request, sort_keys=True).replace(', ', ','))
       if not send_response:
         self.m.easy.step(subcommand, cmd, stdin=stdin)
         return
@@ -78,9 +85,11 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       response = self.m.easy.stdout_jsonpb_step(subcommand, cmd, response_type,
                                                 stdin=stdin,
                                                 test_output=response_type(),
-                                                parse_before_str='\x00',
+                                                parse_before_str=b'\x00',
                                                 ok_ret=(0,))
-      presentation.logs['response'] = [json_format.MessageToJson(response)]
+      presentation.logs['response'] = [
+          json_format.MessageToJson(response, sort_keys=True)
+      ]
       return response
 
   def prejob(self, request):
@@ -146,7 +155,9 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       ]
       result = self.m.easy.stdout_jsonpb_step('parse', cmd, Result,
                                               test_output=Result())
-      presentation.logs['response'] = [json_format.MessageToJson(result)]
+      presentation.logs['response'] = [
+          json_format.MessageToJson(result, sort_keys=True)
+      ]
       return result
 
   def _ensure_phosphorus(self):
@@ -247,8 +258,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
           config=self._build_parallels_image_config(),
           dut_name=self._dut_hostname, image_gs_path=image_gs_path)
 
-      request.deadline.seconds = (
-          self.m.time.ms_since_epoch() / 1000 + max_duration_sec)
+      request.deadline.seconds = int(self.m.time.ms_since_epoch() / 1000 +
+                                     max_duration_sec)
 
       self._run('build-parallels-image-provision', request,
                 ParallelsProvisionRequest)

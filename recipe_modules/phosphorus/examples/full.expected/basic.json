@@ -204,16 +204,16 @@
     "name": "call `phosphorus` (12)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"testId\": \"test-id\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"runId\": \"placeholder-task-id\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"runId\": \"placeholder-task-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"testId\": \"test-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -233,7 +233,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (12).load",
-    "stdin": "{\n  \"testId\": \"test-id\", \n  \"dutId\": \"placeholder-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"placeholder\", \n  \"runId\": \"placeholder-task-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"placeholder-dut-id\",\n  \"dutName\": \"placeholder\",\n  \"runId\": \"placeholder-task-id\",\n  \"testId\": \"test-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -243,19 +243,19 @@
     "name": "call `phosphorus` (13)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"baz-state\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-dut1\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"baz-state\",@@@",
       "@@@STEP_LOG_LINE@request@  \"peerDuts\": [@@@",
       "@@@STEP_LOG_LINE@request@    \"dummy-dut2\"@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-dut1\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\"@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -269,7 +269,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (13).save",
-    "stdin": "{\n  \"dutState\": \"baz-state\", \n  \"peerDuts\": [\n    \"dummy-dut2\"\n  ], \n  \"resultsDir\": \"placeholder-results-dir\", \n  \"dutName\": \"dummy-dut1\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"placeholder-dut-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"placeholder-dut-id\",\n  \"dutName\": \"dummy-dut1\",\n  \"dutState\": \"baz-state\",\n  \"peerDuts\": [\n    \"dummy-dut2\"\n  ],\n  \"resultsDir\": \"placeholder-results-dir\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -279,20 +279,20 @@
     "name": "call `phosphorus` (14)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"qux-state\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-dut1\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"qux-state\",@@@",
       "@@@STEP_LOG_LINE@request@  \"peerDuts\": [@@@",
       "@@@STEP_LOG_LINE@request@    \"dummy-dut2\"@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-dut1\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\"@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"placeholder-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -306,7 +306,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (14).save",
-    "stdin": "{\n  \"dutState\": \"qux-state\", \n  \"peerDuts\": [\n    \"dummy-dut2\"\n  ], \n  \"resultsDir\": \"placeholder-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"dummy-dut1\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"placeholder-dut-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"placeholder-dut-id\",\n  \"dutName\": \"dummy-dut1\",\n  \"dutState\": \"qux-state\",\n  \"peerDuts\": [\n    \"dummy-dut2\"\n  ],\n  \"resultsDir\": \"placeholder-results-dir\",\n  \"sealResultsDir\": true\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -317,11 +317,11 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"runId\": \"placeholder-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
@@ -336,7 +336,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (15).remove",
-    "stdin": "{\n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"runId\": \"placeholder-task-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"runId\": \"placeholder-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

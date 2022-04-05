@@ -189,26 +189,26 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\", @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\",@@@",
       "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\", @@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"model\": \"fake_model\", @@@",
+      "@@@STEP_LOG_LINE@response@      \"board\": \"fake_board\", @@@",
       "@@@STEP_LOG_LINE@response@      \"hostname\": \"fake_host\", @@@",
-      "@@@STEP_LOG_LINE@response@      \"board\": \"fake_board\"@@@",
+      "@@@STEP_LOG_LINE@response@      \"model\": \"fake_model\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@  ], @@@",
+      "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -291,7 +291,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",
-    "stdin": "{\n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutName\": \"dummy\", \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"dummy-dut-id\",\n  \"dutName\": \"dummy\",\n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -309,16 +309,16 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -344,7 +344,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
-    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"dutId\": \"dummy-dut-id\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"resultsDir\": \"dummy-results-dir\", \n  \"dutName\": \"fake_host\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"dummy-dut-id\",\n  \"dutName\": \"fake_host\",\n  \"dutState\": \"needs_repair\",\n  \"resultsDir\": \"dummy-results-dir\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -369,28 +369,28 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:23Z\",@@@",
       "@@@STEP_LOG_LINE@request@  \"desiredProvisionableLabels\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"label1\": \"value1\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"fake_host\",@@@",
       "@@@STEP_LOG_LINE@request@  \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"chromeosBuild\": \"fake_build\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ], @@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:23Z\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -422,7 +422,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  }, \n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"fake_build\"\n    }\n  ], \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }, \n  \"deadline\": \"2012-05-14T12:53:23Z\", \n  \"dutHostname\": \"fake_host\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"fetchCrashesStep\": {},\n    \"logDataUploadStep\": {},\n    \"prejobStep\": {},\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }\n  },\n  \"deadline\": \"2012-05-14T12:53:23Z\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"dutHostname\": \"fake_host\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"fake_build\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -487,20 +487,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"dummy-results-dir\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
       "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {}, @@@",
-      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {}@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"dummy-results-dir\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -532,7 +532,7 @@
       }
     },
     "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", \n  \"localDirectory\": \"dummy-results-dir\", \n  \"config\": {\n    \"prejobStep\": {}, \n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\", \n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }, \n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    }, \n    \"fetchCrashesStep\": {}, \n    \"logDataUploadStep\": {}\n  }\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"fetchCrashesStep\": {},\n    \"logDataUploadStep\": {},\n    \"prejobStep\": {},\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    }\n  },\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"dummy-results-dir\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -855,17 +855,17 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\", @@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\", @@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -891,7 +891,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: save local DUT state.call `phosphorus`.save",
-    "stdin": "{\n  \"dutState\": \"needs_repair\", \n  \"resultsDir\": \"dummy-results-dir\", \n  \"sealResultsDir\": true, \n  \"dutName\": \"fake_host\", \n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"dutId\": \"dummy-dut-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"dummy-dut-id\",\n  \"dutName\": \"fake_host\",\n  \"dutState\": \"needs_repair\",\n  \"resultsDir\": \"dummy-results-dir\",\n  \"sealResultsDir\": true\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -972,11 +972,11 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\", @@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\", @@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
@@ -1003,7 +1003,7 @@
       }
     },
     "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`.remove",
-    "stdin": "{\n  \"config\": {\n    \"crosInventoryService\": \"inv-service\", \n    \"adminService\": \"foo-service\", \n    \"autotestDir\": \"/path/to/autotest\", \n    \"crosUfsService\": \"ufs-service\"\n  }, \n  \"runId\": \"dummy-task-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"runId\": \"dummy-task-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
