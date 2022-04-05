@@ -81,15 +81,27 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         patch_set = self.m.gerrit.fetch_patch_set_from_change(
             gc, include_files=True)
 
+        in_branch_allowlist = False
+        for regexp in migration_config.branch_allowlist_regexps:
+          if re.match('^{}$'.format(regexp), patch_set.branch):
+            in_branch_allowlist = True
+            break
+
+        if not in_branch_allowlist:
+          presentation.step_text = (
+              'branch "{}" not in allow list, not enabling test planning v2'
+              .format(patch_set.branch))
+          return False
+
         for path in patch_set.file_infos:
-          in_allowlist = False
+          in_file_allowlist = False
           for regexp in migration_config.file_allowlist_regexps:
             if re.match('^{}$'.format(regexp), path):
-              in_allowlist = True
+              in_file_allowlist = True
               break
 
           # All files in the change must be in the allowlist.
-          if not in_allowlist:
+          if not in_file_allowlist:
             presentation.step_text = (
                 'path "{}" not in allow list, not enabling test planning v2'
                 .format(path))

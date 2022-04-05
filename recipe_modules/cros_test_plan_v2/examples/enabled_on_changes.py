@@ -52,11 +52,13 @@ def GenTests(api):
                           project="src/projectA",
                           file_allowlist_regexps=['a/b/.*'],
                           file_blocklist_regexps=['a/b/d/otherfile.json'],
+                          branch_allowlist_regexps=['.*'],
                       ),
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
                           host="chromium-review.googlesource.com",
                           project="src/projectB",
                           file_allowlist_regexps=['test.json'],
+                          branch_allowlist_regexps=['.*'],
                       )
                   ])
           }),

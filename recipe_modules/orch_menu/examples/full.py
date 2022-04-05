@@ -451,7 +451,8 @@ def GenTests(api):
           'migration_configs': [{
               'host': 'chromium.googlesource.com',
               'project': 'chromiumos/platform',
-              'file_allowlist_regexps': ['a/b/.*']
+              'file_allowlist_regexps': ['a/b/.*'],
+              'branch_allowlist_regexps': ['.*'],
           },]
       }
   })
@@ -501,7 +502,8 @@ def GenTests(api):
                   'patch_set': 5,
                   'files': {
                       'a/b/d/test.txt': {},
-                  }
+                  },
+                  'branch': 'main',
               },
           },
       ),

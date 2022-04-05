@@ -35,6 +35,16 @@ message CrosTestPlanV2Properties {
     // Gerrit project being migrated, e.g. "chromium/src". Required.
     string project = 2;
 
+    // Allowlist of branch regexps that will be migrated. Required.
+    //
+    // At least one entry is required (to migrate all branches, specify ".*").
+    //
+    // Expressions must be compatible with the re module in the Python standard
+    // library. When checking a match, '^' and '$' are added at the front and
+    // back of the pattern, respectively, i.e. the pattern must match the entire
+    // path string.
+    repeated string branch_allowlist_regexps = 5;
+
     // Allowlist and blocklist of file regexps that can be migrated. The
     // allowlist is required (to migrate all changes in a project, specify
     // ".*"). The blocklist is not required (default is no files are

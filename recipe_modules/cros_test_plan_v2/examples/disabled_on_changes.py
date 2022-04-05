@@ -47,11 +47,13 @@ def GenTests(api):
                           host="chromium-review.googlesource.com",
                           project="src/projectA",
                           file_allowlist_regexps=['a/b/.*'],
+                          branch_allowlist_regexps=['.*'],
                       ),
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
                           host="chromium-review.googlesource.com",
                           project="src/projectB",
                           file_allowlist_regexps=['test.json'],
+                          branch_allowlist_regexps=['.*'],
                       )
                   ])
           }),
@@ -84,12 +86,14 @@ def GenTests(api):
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
                           host="chromium-review.googlesource.com",
                           project="src/projectA",
+                          branch_allowlist_regexps=['.*'],
                           file_allowlist_regexps=['a/b/.*'],
                           file_blocklist_regexps=['a/b/d/otherfile.*'],
                       ),
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
                           host="chromium-review.googlesource.com",
                           project="src/projectB",
+                          branch_allowlist_regexps=['.*'],
                           file_allowlist_regexps=['test.json'],
                       )
                   ])
@@ -106,6 +110,42 @@ def GenTests(api):
       api.post_process(
           post_process.StepTextEquals, 'check test planning v2 enabled',
           ('path "a/b/d/otherfile.txt" in block list, not enabling test planning v2'
+          )),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'branch_not_in_allowlist',
+      api.properties(
+          **{
+              '$chromeos/cros_test_plan_v2':
+                  CrosTestPlanV2Properties(migration_configs=[
+                      CrosTestPlanV2Properties.ProjectMigrationConfig(
+                          host="chromium-review.googlesource.com",
+                          project="src/projectA",
+                          branch_allowlist_regexps=['.*factory.*'],
+                          file_allowlist_regexps=['a/b/.*'],
+                      ),
+                      CrosTestPlanV2Properties.ProjectMigrationConfig(
+                          host="chromium-review.googlesource.com",
+                          project="src/projectB",
+                          file_allowlist_regexps=['.*'],
+                      ),
+                  ])
+          }),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'check test planning v2 enabled', gerrit_changes, {
+              123: {
+                  'files': {
+                      'a/b/d/test.txt': {},
+                      'a/b/d/otherfile.txt': {}
+                  },
+                  'branch': 'release-R123',
+              },
+          }, iteration=1),
+      api.post_process(
+          post_process.StepTextEquals, 'check test planning v2 enabled',
+          ('branch "release-R123" not in allow list, not enabling test planning v2'
           )),
       api.post_process(post_process.DropExpectation),
   )
