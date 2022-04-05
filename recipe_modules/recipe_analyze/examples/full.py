@@ -5,6 +5,8 @@
 
 DEPS = ['recipe_engine/assertions', 'recipe_engine/json', 'recipe_analyze']
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.assertTrue(

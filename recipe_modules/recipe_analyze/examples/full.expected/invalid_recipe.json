@@ -22,7 +22,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "recipes analyze failed with invalid recipes: [u'recipeA', u'recipeB']"
+      "humanReason": "recipes analyze failed with invalid recipes: ['recipeA', 'recipeB']"
     },
     "name": "$result"
   }

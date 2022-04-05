@@ -78,7 +78,7 @@
   * [phosphorus](#recipe_modules-phosphorus)
   * [portage](#recipe_modules-portage) (Python3 ✅) &mdash; APIs for CrOS Portage.
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
-  * [recipe_analyze](#recipe_modules-recipe_analyze) &mdash; API for calling 'recipes.
+  * [recipe_analyze](#recipe_modules-recipe_analyze) (Python3 ✅) &mdash; API for calling 'recipes.
   * [remoteexec](#recipe_modules-remoteexec) (Python3 ✅) &mdash; API for working with re-client for remote execution.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [result_flow](#recipe_modules-result_flow) (Python3 ✅)
@@ -405,7 +405,7 @@
   * [project_buildspec](#recipes-project_buildspec) &mdash; Recipe for invoking the per project buildspec tool.
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen)
-  * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
+  * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full) (Python3 ✅)
   * [repo:examples/annealing](#recipes-repo_examples_annealing)
@@ -6974,7 +6974,7 @@ Returns:
 
 [DEPS](/recipe_modules/recipe_analyze/__init__.py#5): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for calling 'recipes.py analyze'
 
@@ -10754,9 +10754,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#9)(api):**
+&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#11)(api):**
 ### *recipes* / [regen\_build\_cache](/recipes/regen_build_cache.py)
 
 [DEPS](/recipes/regen_build_cache.py#13): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [util](#recipe_modules-util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

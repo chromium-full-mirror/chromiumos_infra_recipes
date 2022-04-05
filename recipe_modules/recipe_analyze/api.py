@@ -51,9 +51,13 @@ class RecipeAnalyzeApi(RecipeApi):
     )
 
     if output_pb.invalid_recipes:
+      # TODO(b/217973414): Remove invalid_recipes_str which is only needed
+      # to ensure py2 and py3 emit the same expectations for unicode strings
+      # within other data structures.
+      invalid_recipes_str = '\', \''.join(output_pb.invalid_recipes)
       raise StepFailure(
-          'recipes analyze failed with invalid recipes: {}'.format(
-              output_pb.invalid_recipes))
+          'recipes analyze failed with invalid recipes: [\'{}\']'.format(
+              invalid_recipes_str))
 
     if output_pb.error:
       raise StepFailure('recipes analyze failed with error: {}'.format(

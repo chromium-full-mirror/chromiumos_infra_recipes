@@ -3,3 +3,5 @@
 # found in the LICENSE file.
 
 DEPS = ['recipe_engine/json', 'recipe_engine/raw_io', 'recipe_engine/step']
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
