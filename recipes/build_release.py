@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/runtime',
     'recipe_engine/step',
+    'bot_scaling',
     'build_menu',
     'build_reporting',
     'builder_metadata',
@@ -39,6 +40,10 @@ StepDetails = BuildReport.StepDetails
 
 
 def RunSteps(api):
+
+  if api.cros_infra_config.is_staging:
+    api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
+
   try:
     api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
@@ -170,6 +175,12 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'release-build-staging',
+      build_target='staging-eve',
       bucket='release',
   )
 
