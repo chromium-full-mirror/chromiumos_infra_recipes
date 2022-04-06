@@ -1,0 +1,21 @@
+[
+  {
+    "cmd": [],
+    "name": "exonerate hw tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test3 on target,\tblah blah rule@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "exonerate hw tests (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

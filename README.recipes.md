@@ -56,6 +56,7 @@
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
+  * [exonerate](#recipe_modules-exonerate)
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider) (Python3 ✅)
   * [gcloud](#recipe_modules-gcloud)
@@ -309,6 +310,7 @@
   * [easy:examples/full](#recipes-easy_examples_full) (Python3 ✅)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
+  * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -4668,6 +4670,24 @@ Args:
 
 Returns:
   See 'step.__call__'.
+### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
+
+[DEPS](/recipe_modules/exonerate/__init__.py#5): [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#124)(self, hw_test_results):**
+
+Filter the list of HW Test failures based on configs.
+
+Args:
+  hw_test_results([Skylab_Result]): list of failures from the proctor.
+
+Returns:
+  [Skylab_Result] with exonerated tests modified and [str] names of
+  tests that should be treated as success.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
 [DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -9953,6 +9973,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#16)(api):**
+### *recipes* / [exonerate:examples/exonerate\_hwtests](/recipe_modules/exonerate/examples/exonerate_hwtests.py)
+
+[DEPS](/recipe_modules/exonerate/examples/exonerate_hwtests.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_hwtests.py#18)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
