@@ -125,6 +125,11 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
+      'full, minios skipped',
+      create_properties(api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[1],
+                        []), api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
       'full, force tests',
       create_properties(
           api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [

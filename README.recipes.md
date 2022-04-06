@@ -2662,7 +2662,7 @@ Returns:
   list[AutoupdateTestConfig]: Test configs that should be
     run for the requested payload.
 
-&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#769)(self, paygen_build_results):**
+&mdash; **def [create\_paygen\_build\_report](/recipe_modules/cros_paygen/api.py#773)(self, paygen_build_results):**
 
 Prepare payload information for the release pubsub.
 
@@ -2673,7 +2673,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#942)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#946)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2790,7 +2790,7 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/cros_paygen/api.py#610)(self, paygen_reqs):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/cros_paygen/api.py#614)(self, paygen_reqs):**
 
 Launch paygen builders to generate payloads and run configured tests.
 
@@ -2801,7 +2801,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1026)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1030)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 

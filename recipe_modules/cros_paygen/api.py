@@ -587,6 +587,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       list[AutoupdateTestConfig]: Test configs that should be
         run for the requested payload.
     """
+    # Skip testing entirely for minios.
+    if gen_req.minios:
+      return []
+
     if (gen_req.WhichOneof('src_image_oneof') == 'src_unsigned_image' and
         gen_req.src_unsigned_image.image_type == common_pb2.IMAGE_TYPE_TEST):
       if delta_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
