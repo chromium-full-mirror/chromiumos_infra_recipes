@@ -57,6 +57,16 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     Config controlling what changes are enabled is in the ProjectMigrationConfig
     of this module's properties.
     """
+    enabled = self._internal_enabled_on_changes(gerrit_changes)
+    self.m.easy.set_properties_step(test_planning_v2_enabled=enabled)
+    return enabled
+
+  def _internal_enabled_on_changes(self, gerrit_changes):
+    """Does the core computation of whether test planning v2 is enabled.
+
+    The public enabled_on_changes method calls this method and does follow-up
+    actions, such as setting output properties.
+    """
     with self.m.step.nest('check test planning v2 enabled') as presentation:
       if not gerrit_changes:
         raise ValueError('gerrit_changes must be non-empty')

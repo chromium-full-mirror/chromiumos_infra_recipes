@@ -4177,6 +4177,13 @@
   },
   {
     "cmd": [],
+    "name": "set test_planning_v2_enabled",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@test_planning_v2_enabled@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
       "@@@STEP_TEXT@all tests passed.@@@"
