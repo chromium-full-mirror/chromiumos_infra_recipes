@@ -903,7 +903,7 @@
     "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 2 new builds (filtered 4)@@@",
+      "@@@STEP_TEXT@need 2 new builds (filtered 6)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@CQ looks experiment not enabled@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",

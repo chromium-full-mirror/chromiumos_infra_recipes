@@ -261,7 +261,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       # count for display, as they're mentioned in steps above.
       count_total_filtered_builds = (
           count_skip_for_source_rules + count_skip_since_already_passed +
-          count_skip_wait_on_other_run + count_skip_noncritical_on_rerun)
+          count_skip_wait_on_other_run + count_skip_noncritical_on_rerun +
+          count_skip_public_builders)
       presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
           count_total_filtered_builds))
