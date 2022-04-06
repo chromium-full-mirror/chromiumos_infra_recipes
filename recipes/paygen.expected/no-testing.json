@@ -1416,11 +1416,14 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen"
+    "name": "doing paygen",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@number of concurrent requests: 1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation",
+    "name": "doing paygen.running paygen operations in parallel",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -1461,7 +1464,7 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.making single payload",
+    "name": "doing paygen.running paygen operations in parallel.making single payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -1512,7 +1515,7 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "doing paygen.doing a single paygen operation.making single payload.write input file",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1533,7 +1536,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "doing paygen.doing a single paygen operation.making single payload.call build API script",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1555,14 +1558,14 @@
       ]
     },
     "infra_step": true,
-    "name": "doing paygen.doing a single paygen operation.making single payload.read output file",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.making single payload.call response",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -1571,9 +1574,9 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
+    "name": "doing paygen.setting up paygen test config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no test configured, skip testing@@@"
     ]
   },

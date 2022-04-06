@@ -1416,11 +1416,14 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen"
+    "name": "doing paygen",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@number of concurrent requests: 1@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation",
+    "name": "doing paygen.running paygen operations in parallel",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -1479,7 +1482,7 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.making single payload",
+    "name": "doing paygen.running paygen operations in parallel.making single payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -1530,7 +1533,7 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
-    "name": "doing paygen.doing a single paygen operation.making single payload.write input file",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1551,7 +1554,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "doing paygen.doing a single paygen operation.making single payload.call build API script",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1573,14 +1576,14 @@
       ]
     },
     "infra_step": true,
-    "name": "doing paygen.doing a single paygen operation.making single payload.read output file",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.making single payload.call response",
+    "name": "doing paygen.running paygen operations in parallel.making single payload.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -1589,52 +1592,52 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config",
+    "name": "doing paygen.setting up paygen test config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.setting up paygen test config.discover gs artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
+      "@@@STEP_LOG_END@artifacts found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://test-bucket/canary-channel/zork/123/**"
+    ],
+    "infra_step": true,
+    "name": "doing paygen.setting up paygen test config.discover gs artifacts.gsutil list",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.setting up paygen test config.fetch target test requirements file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts",
+    "name": "doing paygen.setting up paygen test config.fetch target test requirements file.fetch gitiles file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@artifacts found@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "gs://test-bucket/canary-channel/zork/123/**"
-    ],
-    "infra_step": true,
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts.gsutil list",
-    "timeout": 1800,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
       "@@@STEP_LOG_LINE@data@        {@@@",
@@ -1699,16 +1702,16 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
     ],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
+    "name": "doing paygen.setting up paygen test config.fetch target test requirements file.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts (2)",
+    "name": "doing paygen.setting up paygen test config.discover gs artifacts (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
       "@@@STEP_LOG_END@artifacts found@@@"
     ]
@@ -1725,26 +1728,26 @@
       "gs://test-bucket/canary-channel/zork/123/**"
     ],
     "infra_step": true,
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts (2).gsutil list",
+    "name": "doing paygen.setting up paygen test config.discover gs artifacts (2).gsutil list",
     "timeout": 1800,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
       "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2)",
+    "name": "doing paygen.setting up paygen test config.fetch target test requirements file (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file",
+    "name": "doing paygen.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
       "@@@STEP_LOG_LINE@data@        {@@@",
@@ -1809,9 +1812,9 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
     ],
-    "name": "doing paygen.doing a single paygen operation.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
+    "name": "doing paygen.setting up paygen test config.fetch target test requirements file (2).fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

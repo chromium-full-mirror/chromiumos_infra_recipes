@@ -10,6 +10,7 @@ import json
 PYTHON_VERSION_COMPATIBILITY = 'PY2'
 
 DEPS = [
+    'recipe_engine/futures',
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_build_api',
@@ -22,6 +23,8 @@ DEPS = [
     'src_state',
     'workspace_util',
 ]
+
+from collections import namedtuple
 
 from google.protobuf.json_format import MessageToJson
 
@@ -100,30 +103,56 @@ def RunSteps(api, properties):
     # Set up holder of paygen uris.
     paygen_uris = []
 
+    CallPair = namedtuple('CallPair', ['req', 'resp'])
+
+    def _execute_paygen(req, semaphore):
+      """Return PayloadService.GeneratePayload with the request."""
+      with semaphore:
+        resp = api.cros_build_api.PayloadService.GeneratePayload(
+            req.generation_request, name='making single payload')
+
+        return CallPair(req, resp)
+
     with api.step.nest('doing paygen') as presentation:
 
+      # Get max number of concurrent requests - None is unlimited.
+      max_concurrent_requests = properties.max_concurrent_requests or len(
+          properties.requests)
+      semaphore_for_requests = api.futures.make_bounded_semaphore(
+          max_concurrent_requests)
+      presentation.step_text = 'number of concurrent requests: {}'.format(
+          max_concurrent_requests)
+
       # Iterate through every request.
-      for request in properties.requests:
-        with api.step.nest('doing a single paygen operation') as pres:
+      futures = []
+      with api.step.nest('running paygen operations in parallel') as pres:
+        for request in properties.requests:
           pres.logs['request'] = MessageToJson(request)
-
           # Execute build api endpoint for paygen.
-          response = api.cros_build_api.PayloadService.GeneratePayload(
-              request.generation_request, name='making single payload')
-          paygen_uris.append(response.remote_uri)
+          futures.append(
+              api.m.futures.spawn(_execute_paygen, request,
+                                  semaphore_for_requests))
 
-          if response.failure_reason:
-            # See go/rubik-must-paygen-minios for more info about minios skips.
-            if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
-              presentation.step_text = 'not compatible with miniOS, skipping'
-              continue
-            else:
-              raise StepFailure('paygen failed with error {}'.format(
-                  response.failure_reason))
+      for f in api.m.futures.iwait(futures):
+        f_result = f.result()
 
-          test_configs = _set_up_test_configs(api, request, response)
-          if test_configs:
-            paygen_test_configs.extend(test_configs)
+        response = f_result.resp
+        request = f_result.req
+
+        paygen_uris.append(response.remote_uri)
+
+        if response.failure_reason:
+          # See go/rubik-must-paygen-minios for more info about minios skips.
+          if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
+            presentation.step_text = 'not compatible with miniOS, skipping'
+            continue
+          else:
+            raise StepFailure('paygen failed with error {}'.format(
+                response.failure_reason))
+
+        test_configs = _set_up_test_configs(api, request, response)
+        if test_configs:
+          paygen_test_configs.extend(test_configs)
 
     api.easy.set_properties_step(payload_uris=paygen_uris)
 
@@ -144,7 +173,7 @@ def GenTests(api):
         dict(success=is_success, local_path=local_path, remote_uri=remote_uri,
              failure_reason=failure_reason))
     return api.cros_build_api.set_api_return(
-        parent_step_name='doing paygen.doing a single paygen operation',
+        parent_step_name='doing paygen.running paygen operations in parallel',
         step_name='making single payload', data=data, retcode=retcode)
 
   full_payload_uri = (
@@ -188,10 +217,49 @@ def GenTests(api):
           ])),
       generate_payload_response(api),
       api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.MustRun,
-                     'doing paygen.doing a single paygen operation'),
-      api.post_check(post_process.MustRun,
-                     'doing paygen.doing a single paygen operation (2)'),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.making single payload'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.making single payload (2)'
+      ),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.DoesNotRun,
+                     'testing paygen.buildbucket.schedule'),
+  )
+
+  yield api.test(
+      'multiple-runs-no-concurrency',
+      api.properties(
+          PaygenProperties(
+              requests=[
+                  dict(
+                      generation_request=api.cros_paygen
+                      .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                      autoupdate_test_configs=[
+                          AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                               applicable_models=['woomax'])
+                      ]),
+                  dict(
+                      generation_request=api.cros_paygen
+                      .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                      autoupdate_test_configs=[
+                          AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                               applicable_models=['woomax'])
+                      ])
+              ], max_concurrent_requests=1)),
+      generate_payload_response(api),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.making single payload'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.making single payload (2)'
+      ),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
@@ -255,11 +323,11 @@ def GenTests(api):
                   ])
           ])),
       api.cros_storage.test_listing(
-          'doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts.gsutil list',
+          'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
           full_payload_uri,
       ),
       api.cros_storage.test_listing(
-          'doing paygen.doing a single paygen operation.setting up paygen test config.discover gs artifacts (2).gsutil list',
+          'doing paygen.setting up paygen test config.discover gs artifacts (2).gsutil list',
           full_payload_uri,
       ),
       api.post_check(post_process.MustRun, 'doing paygen'),

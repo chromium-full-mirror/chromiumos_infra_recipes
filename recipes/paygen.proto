@@ -41,4 +41,7 @@ message PaygenProperties {
 
   // The list of paygen requests to kick off.
   repeated PaygenRequest requests = 1;
+
+  // The maximum number of paygen requests to run in parallel.
+  int32 max_concurrent_requests = 2;
 }
