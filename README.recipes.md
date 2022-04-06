@@ -66,7 +66,7 @@
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) (Python3 ✅) &mdash; APIs for dealing with Gitiles.
-  * [goma](#recipe_modules-goma) &mdash; API for working with goma.
+  * [goma](#recipe_modules-goma) (Python3 ✅) &mdash; API for working with goma.
   * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) (Python3 ✅) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
@@ -363,11 +363,11 @@
   * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction)
   * [gitiles:examples/full](#recipes-gitiles_examples_full) (Python3 ✅)
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
-  * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
-  * [goma:examples/full](#recipes-goma_examples_full)
-  * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
-  * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
-  * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
+  * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload) (Python3 ✅)
+  * [goma:examples/full](#recipes-goma_examples_full) (Python3 ✅)
+  * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma) (Python3 ✅)
+  * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts) (Python3 ✅)
+  * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs) (Python3 ✅)
   * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
   * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
   * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
@@ -6218,7 +6218,7 @@ Returns:
 
 [DEPS](/recipe_modules/goma/__init__.py#5): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with goma.
 
@@ -10391,37 +10391,37 @@ Recipe that schedules jobs based on its triggers.
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/disable_upload.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/disable_upload.py#22)(api):**
 ### *recipes* / [goma:examples/full](/recipe_modules/goma/examples/full.py)
 
 [DEPS](/recipe_modules/goma/examples/full.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/full.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/full.py#24)(api, properties):**
 ### *recipes* / [goma:examples/legacy\_goma](/recipe_modules/goma/examples/legacy_goma.py)
 
 [DEPS](/recipe_modules/goma/examples/legacy_goma.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/legacy_goma.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/legacy_goma.py#14)(api):**
 ### *recipes* / [goma:examples/with\_goma\_artifacts](/recipe_modules/goma/examples/with_goma_artifacts.py)
 
 [DEPS](/recipe_modules/goma/examples/with_goma_artifacts.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts.py#25)(api, properties):**
 ### *recipes* / [goma:examples/with\_goma\_artifacts\_no\_logs](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py)
 
 [DEPS](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#25)(api, properties):**
 ### *recipes* / [greenness:examples/update\_build\_info](/recipe_modules/greenness/examples/update_build_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_build_info.py#6): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

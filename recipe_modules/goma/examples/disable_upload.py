@@ -10,6 +10,8 @@ DEPS = [
     'goma',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos import common
 
 from PB.chromite.api.sysroot import InstallPackagesResponse

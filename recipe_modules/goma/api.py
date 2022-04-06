@@ -179,7 +179,9 @@ class GomaApi(recipe_api.RecipeApi):
           compile_event.counterz_stats.ParseFromString(counterz_bin)
         if stats_filename or counterz_filename:
           presentation.logs['compile_event'] = [str(compile_event)]
-          json_message = json_format.MessageToJson(
+          # TODO(b/217973414): Replace with MessageToJson once we don't need to
+          # fix the separator spacing between py2 and py3 MessageToJson.
+          json_message = json_format.MessageToDict(
               compile_event, preserving_proto_field_name=True)
           # Call bq-insert support tool.
           support_input = {
@@ -187,13 +189,16 @@ class GomaApi(recipe_api.RecipeApi):
               'dataset_id': self._bigquery_dataset_id,
               'table_name': self._bigquery_table_name,
               'write_data': True,
-              'compile_event': json.loads(json_message),
+              'compile_event': json_message,
               'verbose': self._bigquery_verbose
           }
           test_output_data = {}
           if self._bigquery_verbose:
-            presentation.logs['support_input'] = [str(support_input)]
-            presentation.logs['compile_event_json'] = json_message
+            presentation.logs['support_input'] = [
+                json.dumps(support_input, separators=(',', ':'), sort_keys=True)
+            ]
+            presentation.logs['compile_event_json'] = json.dumps(
+                json_message, separators=(',', ': '), sort_keys=True)
           # TODO(crbug.com/1041899): Replace this disable-in-staging with a
           # BigQuery upload that staging has permission so that staging tests
           # the same flow and so that we have a non-prod BigQuery table to do
@@ -234,17 +239,18 @@ class GomaApi(recipe_api.RecipeApi):
         builder_id = self.m.buildbucket.build.builder
         metadata = {
             'x-goog-meta-builderinfo':
-                json.dumps({
-                    'is_cros': True,
-                    'bot_id': self.m.properties.get('bot_id', ''),
-                    'build_id': self.m.buildbucket.build.id,
-                    'builder_id': {
-                        'project': builder_id.project,
-                        'bucket': builder_id.bucket,
-                        'builder': builder_id.builder,
-                    },
-                    'build_target_name': build_target_name,
-                })
+                json.dumps(
+                    {
+                        'is_cros': True,
+                        'bot_id': self.m.properties.get('bot_id', ''),
+                        'build_id': self.m.buildbucket.build.id,
+                        'builder_id': {
+                            'project': builder_id.project,
+                            'bucket': builder_id.bucket,
+                            'builder': builder_id.builder,
+                        },
+                        'build_target_name': build_target_name,
+                    }, sort_keys=True)
         }
         for log_file in install_pkg_response.goma_artifacts.log_files:
           gs_path = self.m.path.join(gs_path_base,

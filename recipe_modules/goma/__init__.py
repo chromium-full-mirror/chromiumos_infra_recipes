@@ -15,6 +15,8 @@ DEPS = [
     'support',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 
 PROPERTIES = GomaProperties

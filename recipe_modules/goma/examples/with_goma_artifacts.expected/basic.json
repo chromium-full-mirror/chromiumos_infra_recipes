@@ -178,7 +178,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
       "gs://chrome-goma-log/2012/05/14/build_target/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz"
@@ -200,7 +200,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
       "gs://chrome-goma-log/2012/05/14/build_target/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz"
@@ -222,7 +222,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
       "gs://chrome-goma-log/2012/05/14/build_target/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz"
@@ -244,7 +244,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz",
       "gs://chrome-goma-log/2012/05/14/build_target/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
@@ -332,7 +332,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
       "gs://staging-chrome-goma-log/2012/05/14/build_target/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz"
@@ -354,7 +354,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
       "gs://staging-chrome-goma-log/2012/05/14/build_target/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz"
@@ -376,7 +376,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
       "gs://staging-chrome-goma-log/2012/05/14/build_target/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz"
@@ -398,7 +398,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"build_id\": 0, \"is_cros\": true, \"build_target_name\": \"build_target\", \"builder_id\": {\"project\": \"\", \"builder\": \"\", \"bucket\": \"\"}, \"bot_id\": \"\"}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"build_target\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
       "cp",
       "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz",
       "gs://staging-chrome-goma-log/2012/05/14/build_target/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"

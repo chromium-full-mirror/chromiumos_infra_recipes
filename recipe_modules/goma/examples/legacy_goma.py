@@ -8,6 +8,8 @@ DEPS = [
     'goma',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.goma.initialize(also_bq_upload=True)
