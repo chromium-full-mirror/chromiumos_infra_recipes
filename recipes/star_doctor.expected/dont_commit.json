@@ -2363,6 +2363,27 @@
     ]
   },
   {
+    "cmd": [
+      "./board_config/generate",
+      "-b"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]",
+        "[CLEANUP]/tmp_tmp_4"
+      ]
+    },
+    "name": "generate binary config.regenerate test configs",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "generate binary config.copy INI configs",
     "~followup_annotations": [

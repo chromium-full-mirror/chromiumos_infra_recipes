@@ -49,12 +49,13 @@ EXTERNAL_HOST = 'https://' + EXTERNAL_HOST_DOMAIN
 INTERNAL_REVIEW_HOST = 'https://chrome-internal-review.googlesource.com'
 EXTERNAL_REVIEW_HOST = 'https://chromium-review.googlesource.com'
 INFRA_CONFIG_PROJECT = 'chromeos/infra/config'
+CONFIG_INTERNAL_PROJECT = 'chromeos/config-internal'
 SUITE_SCHEDULER_PROJECT = 'chromiumos/infra/suite_scheduler'
 STARDOCTOR_TOPIC = 'StarDoctor'
 CONFIG_UPDATE_HASHTAG = 'config-update'
 INFRA_CONFIG_URL = '{}/{}'.format(INTERNAL_HOST, INFRA_CONFIG_PROJECT)
+CONFIG_INTERNAL_URL = '{}/{}'.format(INTERNAL_HOST, CONFIG_INTERNAL_PROJECT)
 SUITE_SCHEDULER_URL = '{}/{}'.format(EXTERNAL_HOST, SUITE_SCHEDULER_PROJECT)
-CONFIG_INTERNAL_URL = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 TIMELINE_FILENAME = 'release/timeline_configuration.json'
 
 PROPERTIES = StarDoctorProperties
@@ -226,7 +227,7 @@ def _update_release_time(api, repo_dirs):
 
 
 def _regenerate_configs(api, repo_dirs):
-  """Runs the regenerate_configs.sh script in infra/config."""
+  """Runs the generate scripts in infra/config and src/config-internal."""
   # We need lucicfg from depot_tools.
   with api.depot_tools.on_path():
     # We need protoc from cipd.
@@ -235,6 +236,9 @@ def _regenerate_configs(api, repo_dirs):
       with api.context(cwd=repo_dirs.infra_config):
         api.step('regenerate configs',
                  ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=3 * 60)
+      with api.context(cwd=repo_dirs.config_internal):
+        api.step('regenerate test configs', ['./board_config/generate', '-b'],
+                 timeout=3 * 60)
 
 
 def _ensure_cipd_packages(api):
@@ -295,10 +299,14 @@ def _commit_all_changes(api, properties, repo_dirs, irrelevant_files=None):
         api.gerrit.Label.COMMIT_QUEUE: 2,
         api.gerrit.Label.VERIFIED: 1,
     }
+    config_internal_labels = ss_labels
     _commit_repo_changes(api, repo_dirs.infra_config, INFRA_CONFIG_PROJECT,
                          infra_config_labels, irrelevant_files=irrelevant_files)
     _commit_repo_changes(api, repo_dirs.suite_scheduler,
                          SUITE_SCHEDULER_PROJECT, ss_labels,
+                         irrelevant_files=irrelevant_files)
+    _commit_repo_changes(api, repo_dirs.config_internal,
+                         CONFIG_INTERNAL_PROJECT, config_internal_labels,
                          irrelevant_files=irrelevant_files)
 
 
