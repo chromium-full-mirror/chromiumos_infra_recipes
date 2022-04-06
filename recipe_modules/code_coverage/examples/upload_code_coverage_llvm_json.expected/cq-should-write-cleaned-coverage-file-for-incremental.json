@@ -6219,8 +6219,6 @@
       "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
       "--output-file",
       "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
-      "--project-name",
-      "chromiumos/platform2",
       "--build-target",
       "sarien"
     ],

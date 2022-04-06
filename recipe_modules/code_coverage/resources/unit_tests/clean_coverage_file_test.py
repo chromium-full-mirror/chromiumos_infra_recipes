@@ -51,8 +51,7 @@ class CleanFilePathsTest(unittest.TestCase):
 
     clean_coverage_file.clean_file_paths(self.path_to_coverage_file,
                                          self.path_to_cons_file,
-                                         self.path_to_out_file, 'test',
-                                         'sarien', '')
+                                         self.path_to_out_file, 'sarien')
 
     self.assertEqual('abc', self._read_file(self.path_to_out_file))
 
@@ -71,8 +70,7 @@ class CleanFilePathsTest(unittest.TestCase):
 
     clean_coverage_file.clean_file_paths(self.path_to_coverage_file,
                                          self.path_to_cons_file,
-                                         self.path_to_out_file, 'project',
-                                         'sarien', '')
+                                         self.path_to_out_file, 'sarien')
 
     self.assertDictEqual({'test': 'cleaned'},
                          self._read_file_json(self.path_to_out_file))

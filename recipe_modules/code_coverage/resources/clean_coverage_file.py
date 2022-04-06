@@ -14,14 +14,13 @@ import code_coverage_util
 
 
 def clean_file_paths(path_to_coverage_file, path_to_constants_file,
-                     path_to_output_file, project_name, build_target_name):
+                     path_to_output_file, build_target_name):
   """Cleans the file paths in a given coverage file and writes out the results.
 
     Args:
       path_to_coverage_file: the coverage file to process.
       path_to_constants_file: the constants file containing the mappings.
       path_to_output_file: where to write the cleaned file.
-      project_name: the name of the project reference in the constants file.
       build_target_name: name of the build target.
   """
   with open(path_to_coverage_file,
@@ -38,7 +37,7 @@ def clean_file_paths(path_to_coverage_file, path_to_constants_file,
     data = json.loads(coverage_file_data)
     constants = json.load(constants_file)
     results = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, constants, project_name, build_target_name)
+        data, constants, build_target_name)
 
     with open(path_to_output_file, 'w') as out_file:
       json.dump(results, out_file)
@@ -61,9 +60,6 @@ def _parse_args(args):
       '--output-file', required=True, type=str,
       help='absolute path to where the cleaned file should be placed.')
 
-  parser.add_argument('--project-name', required=True, type=str,
-                      help='the name of the project')
-
   parser.add_argument('--build-target', required=True, type=str,
                       help='the target code coverage was built for')
 
@@ -83,7 +79,7 @@ def main():
     raise RuntimeError('Output file %s already exists' % params.output_file)
 
   clean_file_paths(params.coverage_file, params.constants_file,
-                   params.output_file, params.project_name, params.build_target)
+                   params.output_file, params.build_target)
 
 
 if __name__ == '__main__':

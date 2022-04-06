@@ -136,10 +136,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             self._upload_incremental_coverage_to_gerrit(coverage_file,
                                                         coverage_type,
                                                         build_target_name,
-                                                        self._project,
                                                         incremental_settings)
             self._upload_absolute_coverage_to_code_search(
-                coverage_file, coverage_type, build_target_name, self._project,
+                coverage_file, coverage_type, build_target_name,
                 absolute_cs_settings)
             self._upload_absolute_coverage_to_chromium_coverage(
                 coverage_file, build_target_name, self._project,
@@ -166,8 +165,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               ABSOLUTE_COVERAGE_CIPD_FILE)
 
   def _write_cleaned_coverage_file(self, path_to_coverage_file,
-                                   build_target_name, coverage_file_setting,
-                                   project_name):
+                                   build_target_name, coverage_file_setting):
     # Nothing to do if there are no settings.
     if coverage_file_setting.should_clean is False:
       return path_to_coverage_file
@@ -183,8 +181,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             self.resource('constants.json'),
             '--output-file',
             cleaned_path_file,
-            '--project-name',
-            project_name,
             '--build-target',
             build_target_name,
         ], venv=True)
@@ -253,7 +249,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
   def _upload_absolute_coverage_to_code_search(self, fpath, coverage_type,
                                                build_target_name,
-                                               project_name_to_use,
                                                absolute_cs_settings):
     """Uploads the coverage data to code search.
 
@@ -261,7 +256,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         fpath (str): path to the coverage file.
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         build_target_name (str): name of the build target.
-        project_name_to_use (str): name of the project.
         absolute_cs_settings (CoverageFileSettings): settings for uploading coverage.
     """
     if self.m.cq.active or absolute_cs_settings is None:
@@ -269,7 +263,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('upload absolute coverage to Code Search'):
       absolute_coverage_file = self._write_cleaned_coverage_file(
-          fpath, build_target_name, absolute_cs_settings, project_name_to_use)
+          fpath, build_target_name, absolute_cs_settings)
 
       codesearch_commit_id = self.m.gitiles.fetch_revision(
           PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
@@ -308,7 +302,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
   def _upload_incremental_coverage_to_gerrit(self, fpath, coverage_type,
                                              build_target_name,
-                                             project_name_to_use,
                                              incremental_settings):
     """Uploads the coverage data to gerrit.
 
@@ -316,7 +309,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         fpath (str): path to the coverage file.
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         build_target_name (str): name of the build target.
-        project_name_to_use (str): name of the project.
         incremental_settings (CoverageFileSettings): settings for uploading coverage.
     """
     if not self.m.cq.active or incremental_settings is None:
@@ -324,7 +316,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('upload incremental coverage to gerrit'):
       incremental_coverage_file = self._write_cleaned_coverage_file(
-          fpath, build_target_name, incremental_settings, project_name_to_use)
+          fpath, build_target_name, incremental_settings)
 
       for change in self.m.cros_infra_config.gerrit_changes:
         self.m.step(
@@ -398,8 +390,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                                                 self._branch)
 
       path_to_coverage_file = self._write_cleaned_coverage_file(
-          fpath, build_target_name, absolute_chromium_settings,
-          project_name_to_use)
+          fpath, build_target_name, absolute_chromium_settings)
 
       self.m.python(
           'converting metadata for test coverage',
