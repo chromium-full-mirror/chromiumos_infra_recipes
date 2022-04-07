@@ -8784,7 +8784,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipes/cipd_uprev.py#84)(api, properties):**
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#85)(api, properties):**
 
 &mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#40)(api, instruction):**
 
@@ -8798,7 +8798,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#58)(api, instruction, package_tags=None):**
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#59)(api, instruction, package_tags=None):**
 
 Change CIPD ref of a package according to the instructions.
 

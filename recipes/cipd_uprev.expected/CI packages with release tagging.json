@@ -12,7 +12,7 @@
   },
   {
     "cmd": [],
-    "name": "package chromiumos/infra/version_bumper/linux-amd64.get instance ID of package \"chromiumos/infra/version_bumper/linux-amd64\" with ref \"foo-version_bumper-ref\"",
+    "name": "package chromiumos/infra/version_bumper/linux-amd64.get instance ID of package \"chromiumos/infra/version_bumper/linux-amd64\" currently tagged with ref \"foo-version_bumper-ref\"",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -27,7 +27,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "package chromiumos/infra/version_bumper/linux-amd64.get instance ID of package \"chromiumos/infra/version_bumper/linux-amd64\" with ref \"foo-version_bumper-ref\".cipd describe chromiumos/infra/version_bumper/linux-amd64",
+    "name": "package chromiumos/infra/version_bumper/linux-amd64.get instance ID of package \"chromiumos/infra/version_bumper/linux-amd64\" currently tagged with ref \"foo-version_bumper-ref\".cipd describe chromiumos/infra/version_bumper/linux-amd64",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -70,7 +70,7 @@
   },
   {
     "cmd": [],
-    "name": "package chromiumos/infra/version_bumper/linux-amd64.uprev the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\"",
+    "name": "package chromiumos/infra/version_bumper/linux-amd64.apply the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\"",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -87,7 +87,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "package chromiumos/infra/version_bumper/linux-amd64.uprev the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\".cipd set-tag chromiumos/infra/version_bumper/linux-amd64",
+    "name": "package chromiumos/infra/version_bumper/linux-amd64.apply the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\".cipd set-tag chromiumos/infra/version_bumper/linux-amd64",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -116,7 +116,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "package chromiumos/infra/version_bumper/linux-amd64.uprev the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\".cipd set-ref chromiumos/infra/version_bumper/linux-amd64",
+    "name": "package chromiumos/infra/version_bumper/linux-amd64.apply the \"foo-version_bumper-ref\" ref of the \"chromiumos/infra/version_bumper/linux-amd64\" package to \"foo-version_bumper-version\".cipd set-ref chromiumos/infra/version_bumper/linux-amd64",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

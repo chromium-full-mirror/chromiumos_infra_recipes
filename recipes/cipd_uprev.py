@@ -48,8 +48,9 @@ def get_current_instance(api, instruction):
   Raises:
     A StepFailure if the CIPD tool call fails.
   """
-  with api.step.nest('get instance ID of package "%s" with ref "%s"' %
-                     (instruction.package_name, instruction.ref)):
+  with api.step.nest(
+      'get instance ID of package "%s" currently tagged with ref "%s"' %
+      (instruction.package_name, instruction.ref)):
     instance_id = api.cipd.describe(package_name=instruction.package_name,
                                     version=instruction.ref).pin.instance_id
     return cipd_uprev.PackageInstance(package_name=instruction.package_name,
@@ -69,7 +70,7 @@ def uprev_package(api, instruction, package_tags=None):
   """
   package_tags = package_tags or {}
   with api.step.nest(
-      'uprev the "%s" ref of the "%s" package to "%s"' %
+      'apply the "%s" ref of the "%s" package to "%s"' %
       (instruction.ref, instruction.package_name, instruction.version)):
     for tag_key, tag_value in package_tags.items():
       api.cipd.set_tag(instruction.package_name, instruction.version,
