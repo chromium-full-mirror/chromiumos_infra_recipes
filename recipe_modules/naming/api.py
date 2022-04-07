@@ -196,21 +196,30 @@ class NamingApi(recipe_api.RecipeApi):
 
     def _get_img_version(image_field_name):
       """Get an image version from the request dict."""
-      return req.get(image_field_name, {}).get('build', {}).get('version', '')
+      return req.get(image_field_name,
+                     {}).get('build', {}).get('version', 'unknown-version')
+
+    def _get_img_channel(image_field_name):
+      """Get an image channel from the request dict."""
+      return req.get(image_field_name,
+                     {}).get('build', {}).get('channel', 'unknown-channel')
 
     def _get_img_type(image_field_name):
       """Get an image type from the request dict."""
-      return req.get(image_field_name, {}).get('imageType', {})
+      return req.get(image_field_name, {}).get('imageType', 'unknown-type')
 
     tgt_version = ''
     if req.get('tgtDlcImage', {}):
-      image_type_part = 'DLC (%s)' % req['tgtDlcImage'].get('dlcId', '')
+      image_type_part = 'DLC (%s) %s' % (req['tgtDlcImage'].get(
+          'dlcId', ''), _get_img_channel('tgtDlcImage'))
       tgt_version = _get_img_version('tgtDlcImage')
     elif req.get('tgtSignedImage', {}):
-      image_type_part = 'Signed %s' % _get_img_type('tgtSignedImage')
+      image_type_part = 'Signed %s %s' % (_get_img_type('tgtSignedImage'),
+                                          _get_img_channel('tgtSignedImage'))
       tgt_version = _get_img_version('tgtSignedImage')
     elif req.get('tgtUnsignedImage', {}):
-      image_type_part = 'Unsigned %s' % _get_img_type('tgtUnsignedImage')
+      image_type_part = 'Unsigned %s %s' % (_get_img_type(
+          'tgtUnsignedImage'), _get_img_channel('tgtUnsignedImage'))
       tgt_version = _get_img_version('tgtUnsignedImage')
     else:
       raise StepFailure('No tgt image in gen req: %s' % str(req))

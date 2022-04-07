@@ -361,7 +361,7 @@ class CrosBuildApiApi(RecipeApi):
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False, timeout=None,
-               response_lambda=None, pkg_logs_lambda=None):
+               response_lambda=None, pkg_logs_lambda=None, step_text=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -386,6 +386,7 @@ class CrosBuildApiApi(RecipeApi):
       pkg_logs_lambda (fn(failed_package_data, fn, chroot_path)->(str, str)): a
           function which takes information about a failed package and its log
           and produces the {cp} name of the package and the log's contents.
+      step_text (str): text to put on the step for the call.
 
     Returns:
       google.protobuf: The parsed response proto.
@@ -401,6 +402,9 @@ class CrosBuildApiApi(RecipeApi):
     pkg_logs_lambda = pkg_logs_lambda or (lambda *args: [])
 
     with self.m.step.nest(name or 'call %s' % endpoint) as presentation:
+      if step_text:
+        presentation.step_text = step_text
+
       messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
       input_path = messages_path.join('input_proto.json')
       output_path = messages_path.join('output_proto.json')

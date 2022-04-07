@@ -79,6 +79,7 @@ def GenTests(api):
                       tgt_signed_image=SignedImage(
                           build=Build(
                               version='100.0.0',
+                              channel='canary-channel',
                           ),
                           image_type=ImageType.IMAGE_TYPE_RECOVERY,
                       ),
@@ -87,7 +88,7 @@ def GenTests(api):
           ],
       ),
       api.properties(
-          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY | Full (100.0.0)'
+          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel | Full (100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -98,6 +99,7 @@ def GenTests(api):
                   tgt_signed_image=SignedImage(
                       build=Build(
                           version='100.0.0',
+                          channel='dev-channel',
                       ),
                       image_type=ImageType.IMAGE_TYPE_RECOVERY,
                   ),
@@ -111,7 +113,7 @@ def GenTests(api):
           ).SerializeToString()
       ]),
       api.properties(
-          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY | Delta (99.0.0-100.0.0)'
+          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY dev-channel | Delta (99.0.0-100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -123,6 +125,7 @@ def GenTests(api):
                       tgt_unsigned_image=UnsignedImage(
                           build=Build(
                               version='100.0.0',
+                              channel='canary-channel',
                           ),
                           image_type=ImageType.IMAGE_TYPE_TEST,
                       ),
@@ -131,7 +134,7 @@ def GenTests(api):
           ],
       ),
       api.properties(
-          expected_url_title='123456 | Unsigned IMAGE_TYPE_TEST | Full (100.0.0)'
+          expected_url_title='123456 | Unsigned IMAGE_TYPE_TEST canary-channel | Full (100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -142,6 +145,7 @@ def GenTests(api):
                   tgt_unsigned_image=UnsignedImage(
                       build=Build(
                           version='100.0.0',
+                          channel='canary-channel',
                       ),
                       image_type=ImageType.IMAGE_TYPE_TEST,
                   ),
@@ -155,7 +159,7 @@ def GenTests(api):
           ).SerializeToString()
       ]),
       api.properties(
-          expected_url_title='123456 | Unsigned IMAGE_TYPE_TEST | Delta (99.0.0-100.0.0)'
+          expected_url_title='123456 | Unsigned IMAGE_TYPE_TEST canary-channel | Delta (99.0.0-100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -167,14 +171,15 @@ def GenTests(api):
                       tgt_dlc_image=DLCImage(
                           build=Build(
                               version='100.0.0',
+                              channel='canary-channel',
                           ), dlc_id='handwriting-zh'),
                       full_update=True,
                   )).SerializeToString(),
           ],
       ),
       api.properties(
-          expected_url_title='123456 | DLC (handwriting-zh) | Full (100.0.0)'),
-      api.post_check(post_process.StatusSuccess))
+          expected_url_title='123456 | DLC (handwriting-zh) canary-channel | Full (100.0.0)'
+      ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'One Delta Payload, DLC Image',
@@ -184,6 +189,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='100.0.0',
+                          channel='canary-channel',
                       ), dlc_id='handwriting-zh'),
                   src_dlc_image=DLCImage(
                       build=Build(
@@ -193,7 +199,7 @@ def GenTests(api):
           ).SerializeToString()
       ]),
       api.properties(
-          expected_url_title='123456 | DLC (handwriting-zh) | Delta (99.0.0-100.0.0)'
+          expected_url_title='123456 | DLC (handwriting-zh) canary-channel | Delta (99.0.0-100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -204,6 +210,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='100.0.0',
+                          channel='canary-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-zh'),
                   full_update=True,
@@ -214,6 +221,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='100.0.0',
+                          channel='dev-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-au'),
                   full_update=True,
@@ -230,6 +238,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='100.0.0',
+                          channel='canary-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-zh'),
                   full_update=True,
@@ -240,6 +249,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='101.0.0',
+                          channel='dev-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-au'),
                   full_update=True,
@@ -258,6 +268,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='100.0.0',
+                          channel='canary-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-zh'),
                   full_update=True,
@@ -268,6 +279,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='101.0.0',
+                          channel='dev-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-au'),
                   src_dlc_image=DLCImage(
@@ -289,6 +301,7 @@ def GenTests(api):
                   tgt_dlc_image=DLCImage(
                       build=Build(
                           version='100.0.0',
+                          channel='canary-channel',
                       ), image_type=ImageType.IMAGE_TYPE_DLC,
                       dlc_id='handwriting-zh'),
                   full_update=True,
@@ -299,6 +312,7 @@ def GenTests(api):
                   tgt_signed_image=SignedImage(
                       build=Build(
                           version='101.0.0',
+                          channel='dev-channel',
                       ), image_type=ImageType.IMAGE_TYPE_BASE),
                   full_update=True),
           ).SerializeToString(),
@@ -316,6 +330,7 @@ def GenTests(api):
                       tgt_signed_image=SignedImage(
                           build=Build(
                               version='100.0.0',
+                              channel='canary-channel',
                           ),
                           image_type=ImageType.IMAGE_TYPE_RECOVERY,
                       ),
@@ -325,7 +340,7 @@ def GenTests(api):
           ],
       ),
       api.properties(
-          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY (minios) | Full (100.0.0)'
+          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel (minios) | Full (100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -347,11 +362,12 @@ def GenTests(api):
                       tgt_signed_image=SignedImage(
                           build=Build(
                               version='100.0.0',
+                              channel='canary-channel',
                           ),
                           image_type=ImageType.IMAGE_TYPE_RECOVERY,
                       ))).SerializeToString(),
           ],
       ),
       api.properties(
-          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY | No src image found (?-100.0.0)'
+          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel | No src image found (?-100.0.0)'
       ), api.post_check(post_process.StatusSuccess))

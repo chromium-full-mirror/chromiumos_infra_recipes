@@ -15,7 +15,8 @@ from PB.chromiumos.common import BuildTarget
 
 def RunSteps(api):
   input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
-  output_proto = api.cros_build_api.ArtifactsService.BundleFirmware(input_proto)
+  output_proto = api.cros_build_api.ArtifactsService.BundleFirmware(
+      input_proto, step_text='text')
 
   # Got here and did not raise.
   api.assertions.assertTrue(

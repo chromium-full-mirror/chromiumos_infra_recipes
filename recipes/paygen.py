@@ -20,13 +20,14 @@ DEPS = [
     'cros_storage',
     'easy',
     'gitiles',
+    'naming',
     'src_state',
     'workspace_util',
 ]
 
 from collections import namedtuple
 
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict, MessageToJson
 
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
@@ -109,7 +110,9 @@ def RunSteps(api, properties):
       """Return PayloadService.GeneratePayload with the request."""
       with semaphore:
         resp = api.cros_build_api.PayloadService.GeneratePayload(
-            req.generation_request, name='making single payload')
+            req.generation_request, name='making single payload',
+            step_text=api.naming.get_generation_request_title(
+                MessageToDict(request).get('generationRequest', {})))
 
         return CallPair(req, resp)
 

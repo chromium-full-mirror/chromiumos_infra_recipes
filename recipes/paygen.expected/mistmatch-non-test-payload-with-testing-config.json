@@ -1478,6 +1478,7 @@
     "name": "doing paygen.running paygen operations in parallel.making single payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@DLC (termina-dlc) stable-channel | Delta (13421.89.0-13425.90.0)@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"tgtDlcImage\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"dlcId\": \"termina-dlc\", @@@",
