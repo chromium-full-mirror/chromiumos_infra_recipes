@@ -9,6 +9,7 @@ from future.standard_library import install_aliases
 install_aliases()
 
 import base64
+import binascii
 # pylint: disable=no-name-in-module
 from urllib.parse import urlunparse
 
@@ -107,9 +108,10 @@ class GitilesApi(recipe_api.RecipeApi):
       data = self.m.easy.stdout_step('curl %s' % url,
                                      ['curl'] + cred_cache_cmd + [url],
                                      ok_ret={0}, test_stdout=test_output_data)
+      # TODO(b/217973414): No need to catch TypeError after we deprecate py2.
       try:
         decoded_data = base64.b64decode(data)
-      except TypeError:
+      except (TypeError, binascii.Error):
         raise StepFailure('non base64 data returned from gitiles')
       pres.logs['data'] = decoded_data
       return decoded_data

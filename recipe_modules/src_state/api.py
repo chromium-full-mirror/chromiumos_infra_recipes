@@ -164,7 +164,7 @@ class SrcStateApi(recipe_api.RecipeApi):
       with self.m.step.nest('update src_state.gitiles_commit'):
         step = self.m.step('set gitiles_commit', cmd=None)
         # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
-        # fix the discripency between py2 and py3 MessageToJson.
+        # fix the discrepancy between py2 and py3 MessageToJson.
         step.presentation.properties['commit'] = MessageToJson(
             gitiles_commit or GitilesCommit(),
             sort_keys=True).replace(', ', ',')
@@ -204,7 +204,7 @@ class SrcStateApi(recipe_api.RecipeApi):
       with self.m.step.nest('update src_state.gerrit_changes'):
         step = self.m.step('set gerrit_changes', cmd=None)
         # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
-        # fix the discripency between py2 and py3 MessageToJson.
+        # fix the discrepancy between py2 and py3 MessageToJson.
         step.presentation.properties['changes'] = json.dumps(
             '' if gerrit_changes is None else [
                 MessageToJson(x, sort_keys=True).replace(', ', ',')

@@ -3,12 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
-
 DEPS = [
     'recipe_engine/assertions',
     'gitiles',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 from recipe_engine.recipe_api import StepFailure
 
@@ -31,7 +31,7 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.gitiles.get_file('testgerrit', 'my/project',
                            'chromite/api/somefile.txt',
-                           ref='refs/heads/coolref'), '{"abc":123}')
+                           ref='refs/heads/coolref'), b'{"abc":123}')
 
   api.assertions.assertRaises(StepFailure, api.gitiles.get_file,
                               host='testgerrit', project='my/project',
@@ -40,4 +40,4 @@ def RunSteps(api):
                               test_output_data='not base64 yo')
 
 def GenTests(api):
-  yield api.test('basic', api.gitiles.get_file('{"abc":123}'))
+  yield api.test('basic', api.gitiles.get_file(b'{"abc":123}'))

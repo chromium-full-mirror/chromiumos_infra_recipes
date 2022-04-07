@@ -40,7 +40,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
       # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
-      # fix the discripency between py2 and py3 MessageToJson.
+      # fix the discrepancy between py2 and py3 MessageToJson.
       presentation.logs['request'] = [
           json_format.MessageToJson(request, sort_keys=True).replace(', ', ',')
       ]
@@ -52,7 +52,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
           '/dev/stdin',
       ]
       # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
-      # fix the discripency between py2 and py3 MessageToJson.
+      # fix the discrepancy between py2 and py3 MessageToJson.
       stdin = self.m.raw_io.input_text(
           json_format.MessageToJson(request, sort_keys=True).replace(', ', ','))
       cmd += [
