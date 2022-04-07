@@ -4422,32 +4422,43 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Module for issuing CrosToolRunner commands
 
-&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#89)(self, request):**
+&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#30)(self, container_metadata):**
+
+Create a temp file with provided container metadata.
+
+Args:
+  container_metadata: (ContainerMetadata) container metadata.
+
+&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#163)(self):**
+
+Ensure the CrosToolRunner CLI is installed.
+
+&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#97)(self, request):**
 
 Find tests via `test-finder` subcommand.
 
 Args:
   request: a CrosToolRunnerTestFinderRequest.
 
-&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#80)(self, request):**
+&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#88)(self, request):**
 
 Run provision via `provision` subcommand.
 
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#186)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#200)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#99)(self, request):**
+&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#107)(self, request):**
 
 Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#108)(self, autotest_dir, results_dir):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#116)(self, autotest_dir, results_dir):**
 
 Upload test results to TKO via tko-parse.
 This command does not call into CTR. It directly invokes tko-parse in autotest.
@@ -9863,7 +9874,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tool_runner/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tool_runner/examples/full.py#41)(api):**
+
+&mdash; **def [mock\_metadata](/recipe_modules/cros_tool_runner/examples/full.py#17)(target='test-target'):**
 ### *recipes* / [cros\_version:examples/bump\_version](/recipe_modules/cros_version/examples/bump_version.py)
 
 [DEPS](/recipe_modules/cros_version/examples/bump_version.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -9939,7 +9952,7 @@ Recipe for syncing Archlinux to our local cache for Borealis VM image.
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/dut_interface/tests/full.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/dut_interface/tests/full.py#27)(api, properties):**
 ### *recipes* / [dut\_tracker](/recipes/dut_tracker.py)
 
 [DEPS](/recipes/dut_tracker.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11293,7 +11306,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#729)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#732)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#150)(api, interface, test_metadata, result):**
 
@@ -11378,7 +11391,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#688)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#690)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

@@ -20,7 +20,6 @@ from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
     import CrosToolRunnerProperties
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner\
     import CrosToolRunnerEnvProperties
-from PB.chromiumos.build.api import container_metadata
 
 PROPERTIES = TestRunnerProperties
 
@@ -30,30 +29,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def mock_metadata(target="test-target"):
-    metadata = container_metadata.ContainerMetadata(
-        containers={
-            target:
-                container_metadata.ContainerImageMap(
-                    images={
-                        'cros-test':
-                            container_metadata.ContainerImageInfo(
-                                repository=container_metadata.GcrRepository(
-                                    hostname='gcr.io',
-                                    project='chromeos-bot',
-                                ),
-                                name='cros-test',
-                                digest='sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80',
-                                tags=[
-                                    '8835841547076258945',
-                                    'amd64-generic-release.R96-1.2.3',
-                                ],
-                            ),
-                    }),
-        })
-    return metadata
-
-  def _get_test_runner_properties(cft_mvp_is_enabled=False):
+  def _get_test_runner_properties(cft_is_enabled=False):
     return TestRunnerProperties(
         config={
             'lab': {
@@ -72,11 +48,11 @@ def GenTests(api):
                 'project': 'foo-proj',
                 'topic': 'foo-topic',
             },
-        }, cft_mvp_is_enabled=cft_mvp_is_enabled)
+        }, cft_is_enabled=cft_is_enabled)
 
   def _misc_properties_for_ctr():
     return (api.properties(
-        _get_test_runner_properties(cft_mvp_is_enabled=True), **{
+        _get_test_runner_properties(cft_is_enabled=True), **{
             '$chromeos/phosphorus':
                 PhosphorusProperties(
                     version=PhosphorusProperties.Version(
@@ -89,8 +65,7 @@ def GenTests(api):
             '$chromeos/cros_tool_runner':
                 CrosToolRunnerProperties(
                     version=CrosToolRunnerProperties.Version(
-                        cipd_label='cros_tool_runner_prod'),
-                    container_metadata=mock_metadata())
+                        cipd_label='cros_tool_runner_prod'))
         }) + api.properties.environ(
             PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                     SWARMING_TASK_ID='dummy-task-id',

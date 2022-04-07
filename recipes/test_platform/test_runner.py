@@ -585,23 +585,26 @@ def execution_steps_with_ctr(api, properties):
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
-    s_log(step, 'cft_mvp_test_request',
-          json_format.MessageToJson(properties.cft_mvp_test_request))
-    s_log(step, 'container_metadata',
-          json_format.MessageToJson(api.cros_tool_runner.container_metadata))
-    if properties.cft_mvp_test_request.parent_build_id:
+    s_log(step, 'cft_test_request',
+          json_format.MessageToJson(properties.cft_test_request))
+    if properties.cft_test_request.parent_build_id:
       s_link(
           step=step, name='parent CTP', link=api.buildbucket.build_url(
-              build_id=properties.cft_mvp_test_request.parent_build_id))
+              build_id=properties.cft_test_request.parent_build_id))
 
   with api.step.nest('inputs validation') as step:
     _validate_inputs_for_ctr(api, properties)
 
   with api.step.nest('execution steps') as step:
+    # create the container images file
+    # that will be used later by CTR commands.
+    with api.step.nest('CrosToolRunner: create images file') as step:
+      api.cros_tool_runner.create_file_with_container_metadata(
+          properties.cft_test_request.container_metadata)
     publish_to_result_flow(api, properties.config,
-                           properties.cft_mvp_test_request.parent_request_uid)
+                           properties.cft_test_request.parent_request_uid)
     test_metadata = interface.build_test_metadata(
-        "original_test", "", properties.cft_mvp_test_request.autotest_keyvals)
+        "original_test", "", properties.cft_test_request.autotest_keyvals)
 
     interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata)
 
@@ -662,9 +665,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       interface.upload_to_tko(test_metadata, run_test_response)
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(api)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
-          api,
-          properties.cft_mvp_test_request.primary_dut.dut_model.build_target,
-          properties.cft_mvp_test_request.parent_request_uid)
+          api, properties.cft_test_request.primary_dut.dut_model.build_target,
+          properties.cft_test_request.parent_request_uid)
       interface.upload_to_rdb(test_metadata, run_test_response)
 
     result = interface.parse_test_results(test_metadata)
@@ -679,7 +681,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
     publish_to_result_flow(api, properties.config,
-                           properties.cft_mvp_test_request.parent_request_uid,
+                           properties.cft_test_request.parent_request_uid,
                            should_poll_for_completion=True)
 
   return result
@@ -711,18 +713,19 @@ def _validate_inputs_for_ctr(api, properties):
       * api (RecipeScriptApi): Ubiquitous recipe api.
       * properties (TestRunnerProperties): recipe input properties.
     """
-  _validate_proto_field(api, properties, 'cft_mvp_test_request', True)
-  _validate_proto_field(api, properties.cft_mvp_test_request, 'primary_dut',
+  _validate_proto_field(api, properties, 'cft_test_request', True)
+  _validate_proto_field(api, properties.cft_test_request, 'primary_dut', True)
+  _validate_proto_field(api, properties.cft_test_request, 'container_metadata',
                         True)
   _set_step_status(
       api=api, step_name='container_metadata_key validation',
       summary='container_metadata_key is missing',
-      failure_condition=not properties.cft_mvp_test_request.primary_dut
+      failure_condition=not properties.cft_test_request.primary_dut
       .container_metadata_key, fail_build=True)
   _set_step_status(
       api=api, step_name='test_suites validation',
       summary='test_suites is missing',
-      failure_condition=not properties.cft_mvp_test_request.test_suites,
+      failure_condition=not properties.cft_test_request.test_suites,
       fail_build=True)
 
 
@@ -732,7 +735,7 @@ def RunSteps(api, properties):
     # than the normal test_runner workflow.
     api.cros_test_runner.execute_luciexe()
     return
-  if properties.cft_mvp_is_enabled:
+  if properties.cft_is_enabled:
     result = execution_steps_with_ctr(api, properties)
     summarize_results_from_ctr_results(api, result)
   else:
@@ -793,8 +796,8 @@ tast_missing_test.3=bar.YetAnotherTest
     """))
 
   # Required for initial module set up.
-  def _misc_properties(cft_mvp_is_enabled=False):
-    if cft_mvp_is_enabled:
+  def _misc_properties(cft_is_enabled=False):
+    if cft_is_enabled:
       return _misc_properties_for_ctr()
     else:
       return _misc_properties_for_phosphorus()
@@ -814,8 +817,7 @@ tast_missing_test.3=bar.YetAnotherTest
             '$chromeos/cros_tool_runner':
                 CrosToolRunnerProperties(
                     version=CrosToolRunnerProperties.Version(
-                        cipd_label='cros_tool_runner_prod'),
-                    container_metadata=mock_metadata())
+                        cipd_label='cros_tool_runner_prod'))
         }) + api.properties.environ(
             PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                     SWARMING_TASK_ID='dummy-task-id',
@@ -1137,17 +1139,16 @@ tast_missing_test.3=bar.YetAnotherTest
     return metadata
 
     # An example request.
-  def _request_properties_for_ctr(cft_mvp_test_request=None):
-    if not cft_mvp_test_request:
-      cft_mvp_test_request = _canned_test_runner_request_for_ctr()
+  def _request_properties_for_ctr(cft_test_request=None):
+    if not cft_test_request:
+      cft_test_request = _canned_test_runner_request_for_ctr()
     return (api.properties(
-        TestRunnerProperties(cft_mvp_is_enabled=True,
-                             cft_mvp_test_request=cft_mvp_test_request)))
+        TestRunnerProperties(cft_is_enabled=True,
+                             cft_test_request=cft_test_request)))
 
   def _canned_test_runner_request_for_ctr():
     return {
-        "parent_build_id":
-            12345,
+        "parent_build_id": 12345,
         "primary_dut": {
             "container_metadata_key": "kevin",
             "dut_model": {
@@ -1166,7 +1167,8 @@ tast_missing_test.3=bar.YetAnotherTest
                     "value": "tast.example.Pass"
                 }]
             }
-        }]
+        }],
+        "container_metadata": mock_metadata()
     }
 
   def _canned_test_runner_request_for_ctr_within_deadline(current_time_sec):
@@ -1817,21 +1819,21 @@ tast_missing_test.3=bar.YetAnotherTest
   yield api.test(
       'within_deadline_ctr', api.time.seed(2369692800), _misc_properties(True),
       _request_properties_for_ctr(
-          cft_mvp_test_request=_canned_test_runner_request_for_ctr_within_deadline(
+          cft_test_request=_canned_test_runner_request_for_ctr_within_deadline(
               current_time_sec=2369692800)), _mock_load_step_for_ctr(),
       _successful_prejob_step_for_ctr(), _successful_run_test_step_for_ctr())
 
   yield api.test(
       'deadline_passed_ctr', api.time.seed(2369692800), _misc_properties(True),
       _request_properties_for_ctr(
-          cft_mvp_test_request=_canned_test_runner_request_for_ctr_passed_deadline(
+          cft_test_request=_canned_test_runner_request_for_ctr_passed_deadline(
               current_time_sec=2369692800)), _mock_load_step_for_ctr())
 
   yield api.test(
       'primary_dut_missing',
       _misc_properties(True),
       _request_properties_for_ctr(
-          cft_mvp_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
+          cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
               missing_field_name='primary_dut')),
       api.post_check(post_process.StatusFailure),
   )
@@ -1840,7 +1842,7 @@ tast_missing_test.3=bar.YetAnotherTest
       'test_suites_missing',
       _misc_properties(True),
       _request_properties_for_ctr(
-          cft_mvp_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
+          cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
               missing_field_name='test_suites')),
       api.post_check(post_process.StatusFailure),
   )

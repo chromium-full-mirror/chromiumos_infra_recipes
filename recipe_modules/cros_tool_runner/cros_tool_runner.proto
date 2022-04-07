@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_tool_runner;
 
-import "chromiumos/build/api/container_metadata.proto";
-
 message CrosToolRunnerProperties {
     // Version describes which cros-tool-runner binary version to use.
     message Version {
@@ -16,7 +14,6 @@ message CrosToolRunnerProperties {
     }
 
     Version version = 1;
-    chromiumos.build.api.ContainerMetadata container_metadata = 2;
 }
 
 message CrosToolRunnerEnvProperties {

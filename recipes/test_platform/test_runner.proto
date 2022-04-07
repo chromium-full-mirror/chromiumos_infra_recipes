@@ -8,10 +8,8 @@ package recipes.chromeos.test_platform.test_runner;
 
 import "test_platform/skylab_test_runner/config.proto";
 import "test_platform/skylab_test_runner/request.proto";
+import "test_platform/skylab_test_runner/cft_request.proto";
 import "test_platform/skylab_test_runner/result.proto";
-import "chromiumos/test/api/provision_state.proto";
-import "chromiumos/test/api/test_suite.proto";
-import "chromiumos/test/lab/api/dut.proto";
 import "google/protobuf/timestamp.proto";
 
 
@@ -28,45 +26,11 @@ message TestRunnerProperties {
   // recipe; is set by the builder properties, not the caller.
   .test_platform.skylab_test_runner.Config config = 3;
 
-  bool cft_mvp_is_enabled = 4;
+  // if cft is enabled for current test_runner execution.
+  // if true, will use cft_test_request instead of request.
+  bool cft_is_enabled = 4;
 
-  CFTMVPTestRequest cft_mvp_test_request = 5;
-
-  // TODO(b/220806441): Once MVP is stable, move this proto definition to infra/proto.
-  message CFTMVPTestRequest {
-    // Primary Dut info
-    Device primary_dut = 1;
-    
-    // Companion Duts info
-    repeated Device companion_duts = 2;
-    
-    // Test suites to run by tag or explicit list of tests.
-    repeated chromiumos.test.api.TestSuite test_suites = 3;
-
-    // Provision/Test execution will need to be invoked before this.
-    // Currently CTR do not take any deadline. But in future, if it does, this should be passed in.
-    google.protobuf.Timestamp deadline = 4;
-
-    // The UID of the individual CTP request which kicked off this test run.
-    // Note that distinct requests inside a multi-request CTP build will have
-    // different UIDs.
-    string parent_request_uid = 5;
-
-    // The buildbucket ID of the CTP build that sent this test_runner request.
-    int64 parent_build_id = 6;
-
-    // AutotestKeyvals are (key, value) pairs that will be added to all
-    // autotest tasks run.
-    map<string, string> autotest_keyvals = 7;
-
-    message Device {
-      // DUT model to be provisioned.
-      chromiumos.test.lab.api.DutModel dut_model = 1;
-      // Provision state for this device.
-      chromiumos.test.api.ProvisionState provision_state = 2;
-      // ContainerMetadataKey is the key to search in the ContainerMetadata map
-      // defined in container_metadata.proto
-      string container_metadata_key = 3;
-    }
-  }
+  // cft_test_request describes the input related to cft workflow execution 
+  // into the test_runner recipe; is set by the caller. 
+  .test_platform.skylab_test_runner.CFTTestRequest cft_test_request = 5;
 }

@@ -83,7 +83,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     * properties (TestRunnerProperties): Input properties to the recipe.
     """
     super(CrosToolRunnerInterface, self).__init__(api, properties)
-    self.cft_mvp_request = self._properties.cft_mvp_test_request
+    self.cft_test_request = self._properties.cft_test_request
 
   def submit_pre_job(self, metadata, max_duration_seconds=0):
     """Submits a Prejob execution on the DUT.
@@ -102,9 +102,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       with self._api.context(infra_steps=True):
         provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
             ctr.CrosToolRunnerProvisionRequest.Device(
-                dut=metadata.primary_dut, provision_state=self.cft_mvp_request
+                dut=metadata.primary_dut, provision_state=self.cft_test_request
                 .primary_dut.provision_state, container_metadata_key=self
-                .cft_mvp_request.primary_dut.container_metadata_key)
+                .cft_test_request.primary_dut.container_metadata_key)
         ])
         return self._process_prejob_response(
             self._api.cros_tool_runner.provision(provision_request))
@@ -126,10 +126,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     with self._api.step.nest('CrosToolRunner: run test'):
       primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
-          dut=metadata.primary_dut, container_metadata_key=self.cft_mvp_request
+          dut=metadata.primary_dut, container_metadata_key=self.cft_test_request
           .primary_dut.container_metadata_key)
       run_test_request = ctr.CrosToolRunnerTestRequest(
-          test_suites=self.cft_mvp_request.test_suites,
+          test_suites=self.cft_test_request.test_suites,
           primary_dut=primary_dut_device, artifact_dir=metadata.artifact_dir)
       return self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
@@ -364,7 +364,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             missing_test_names, metadata.rdb_base_variant)
       # Apply exonerations
       self._api.cros_resultdb.apply_exonerations(
-          [self._api.cros_resultdb.current_invocation_id])
+          [self._api.cros_resultdb.current_invocation_id],
+          self.cft_test_request.default_test_execution_behavior)
 
   def _convert_ctr_test_result_to_skylab_test_result(self, ctr_test_result):
     """Convert provided ctr test result to skylab test result.
@@ -536,8 +537,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       bool: False for exceeded, True for not.
     """
     with self._api.step.nest('DUTInterface: check request deadline') as step:
-      if self._properties.cft_mvp_test_request.HasField('deadline'):
-        deadline = self._properties.cft_mvp_test_request.deadline
+      if self._properties.cft_test_request.HasField('deadline'):
+        deadline = self._properties.cft_test_request.deadline
         current_time = self._api.time.time()
         if deadline.seconds < current_time:
           step.presentation.status = self._api.step.FAILURE

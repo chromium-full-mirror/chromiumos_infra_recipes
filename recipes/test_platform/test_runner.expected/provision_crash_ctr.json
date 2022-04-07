@@ -3,56 +3,55 @@
     "cmd": [],
     "name": "inputs",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@{@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"testSuites\": [@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@    {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"name\": \"suite1\", @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"testCaseIds\": {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@        \"testCaseIds\": [@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@          {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@            \"value\": \"tauto.stub_Pass\"@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@          }, @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@          {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@            \"value\": \"tast.example.Fail\"@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@          }, @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@          {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@            \"value\": \"tast.example.Pass\"@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@          }@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@        ]@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@      }@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@    }@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@  ], @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"parentBuildId\": \"12345\", @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@  \"primaryDut\": {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@    \"dutModel\": {@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"buildTarget\": \"kevin\", @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@      \"modelName\": \"kevin\"@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@    }, @@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@    \"containerMetadataKey\": \"kevin\"@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@  }@@@",
-      "@@@STEP_LOG_LINE@cft_mvp_test_request@}@@@",
-      "@@@STEP_LOG_END@cft_mvp_test_request@@@",
-      "@@@STEP_LOG_LINE@container_metadata@{@@@",
-      "@@@STEP_LOG_LINE@container_metadata@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@container_metadata@    \"test-target\": {@@@",
-      "@@@STEP_LOG_LINE@container_metadata@      \"images\": {@@@",
-      "@@@STEP_LOG_LINE@container_metadata@        \"cros-test\": {@@@",
-      "@@@STEP_LOG_LINE@container_metadata@          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", @@@",
-      "@@@STEP_LOG_LINE@container_metadata@          \"name\": \"cros-test\", @@@",
-      "@@@STEP_LOG_LINE@container_metadata@          \"repository\": {@@@",
-      "@@@STEP_LOG_LINE@container_metadata@            \"project\": \"chromeos-bot\", @@@",
-      "@@@STEP_LOG_LINE@container_metadata@            \"hostname\": \"gcr.io\"@@@",
-      "@@@STEP_LOG_LINE@container_metadata@          }, @@@",
-      "@@@STEP_LOG_LINE@container_metadata@          \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@container_metadata@            \"8835841547076258945\", @@@",
-      "@@@STEP_LOG_LINE@container_metadata@            \"amd64-generic-release.R96-1.2.3\"@@@",
-      "@@@STEP_LOG_LINE@container_metadata@          ]@@@",
-      "@@@STEP_LOG_LINE@container_metadata@        }@@@",
-      "@@@STEP_LOG_LINE@container_metadata@      }@@@",
-      "@@@STEP_LOG_LINE@container_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@container_metadata@  }@@@",
-      "@@@STEP_LOG_LINE@container_metadata@}@@@",
-      "@@@STEP_LOG_END@container_metadata@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"testSuites\": [@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"name\": \"suite1\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"testCaseIds\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        \"testCaseIds\": [@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\": \"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }, @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\": \"tast.example.Fail\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }, @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\": \"tast.example.Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        ]@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  ], @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"parentBuildId\": \"12345\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"containerMetadata\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"containers\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"test-target\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        \"images\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          \"cros-test\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"name\": \"cros-test\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"repository\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"project\": \"chromeos-bot\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"hostname\": \"gcr.io\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            }, @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"8835841547076258945\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"amd64-generic-release.R96-1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            ]@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  }, @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"primaryDut\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"dutModel\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"buildTarget\": \"kevin\", @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"modelName\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    }, @@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"containerMetadataKey\": \"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@}@@@",
+      "@@@STEP_LOG_END@cft_test_request@@@",
       "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
     ]
   },
@@ -62,7 +61,7 @@
   },
   {
     "cmd": [],
-    "name": "inputs validation.cft_mvp_test_request validation",
+    "name": "inputs validation.cft_test_request validation",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -70,6 +69,13 @@
   {
     "cmd": [],
     "name": "inputs validation.primary_dut validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.container_metadata validation",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -93,6 +99,63 @@
     "name": "execution steps",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: create images file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"containers\": {\n    \"test-target\": {\n      \"images\": {\n        \"cros-test\": {\n          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", \n          \"name\": \"cros-test\", \n          \"repository\": {\n            \"project\": \"chromeos-bot\", \n            \"hostname\": \"gcr.io\"\n          }, \n          \"tags\": [\n            \"8835841547076258945\", \n            \"amd64-generic-release.R96-1.2.3\"\n          ]\n        }\n      }\n    }\n  }\n}",
+      "[CLEANUP]/container_images_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: create images file.writing container metadata to file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@{@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@  \"containers\": {@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@    \"test-target\": {@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@      \"images\": {@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@        \"cros-test\": {@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", @@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"name\": \"cros-test\", @@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"repository\": {@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"project\": \"chromeos-bot\", @@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"hostname\": \"gcr.io\"@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@          }, @@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"8835841547076258945\", @@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"amd64-generic-release.R96-1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@          ]@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@        }@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@      }@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@    }@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@  }@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@}@@@",
+      "@@@STEP_LOG_END@container_images_tmp_1@@@"
     ]
   },
   {
@@ -498,56 +561,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"containers\": {\n    \"test-target\": {\n      \"images\": {\n        \"cros-test\": {\n          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", \n          \"name\": \"cros-test\", \n          \"repository\": {\n            \"project\": \"chromeos-bot\", \n            \"hostname\": \"gcr.io\"\n          }, \n          \"tags\": [\n            \"8835841547076258945\", \n            \"amd64-generic-release.R96-1.2.3\"\n          ]\n        }\n      }\n    }\n  }\n}",
-      "[CLEANUP]/container_images_tmp_1"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.writing container metadata to file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@{@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@    \"test-target\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@      \"images\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@        \"cros-test\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"digest\": \"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\", @@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"name\": \"cros-test\", @@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"repository\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"project\": \"chromeos-bot\", @@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"hostname\": \"gcr.io\"@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          }, @@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"8835841547076258945\", @@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@            \"amd64-generic-release.R96-1.2.3\"@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          ]@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@        }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@      }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@    }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@  }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@}@@@",
-      "@@@STEP_LOG_END@container_images_tmp_1@@@"
     ]
   },
   {

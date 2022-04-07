@@ -16,7 +16,6 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     super(CrosToolRunnerCommand, self).__init__(**kwargs)
     self._cmd = None
     self._version = str(properties.version.cipd_label)
-    self.container_metadata = properties.container_metadata
     # dut_hostname represents schedulable unit from inventory(e.g. UFS),
     # which can be hostname of a DUT itself(single DUT use case), or
     # name of a scheduling unit(multi-DUTs use case).
@@ -26,6 +25,20 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     self._run_id = env_vars.SWARMING_TASK_ID
     self._docker_key_file_location = '/creds/service_accounts/skylab-drone.json'
     self._images_file_path = None
+    self.container_metadata = None
+
+  def create_file_with_container_metadata(self, container_metadata):
+    """Create a temp file with provided container metadata.
+
+        Args:
+          container_metadata: (ContainerMetadata) container metadata.
+        """
+    if not self._images_file_path:
+      self.container_metadata = container_metadata
+      self._images_file_path = self.m.path.mkstemp(prefix='container_images')
+      self.m.file.write_text('writing container metadata to file',
+                             self._images_file_path,
+                             json_format.MessageToJson(self.container_metadata))
 
   def _run(self, subcommand, request, request_type, response_type=None,
            send_response=False):
@@ -44,12 +57,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
       presentation.logs['request'] = [json_format.MessageToJson(request)]
-      self._ensure_cros_tool_runner()
-      if not self._images_file_path:
-        self._images_file_path = self.m.path.mkstemp(prefix='container_images')
-        self.m.file.write_text(
-            'writing container metadata to file', self._images_file_path,
-            json_format.MessageToJson(self.container_metadata))
+      self.ensure_cros_tool_runner()
       cmd = [
           "sudo",
           "--non-interactive",
@@ -152,7 +160,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     args.append("--suite-report")
     return args
 
-  def _ensure_cros_tool_runner(self):
+  def ensure_cros_tool_runner(self):
     """Ensure the CrosToolRunner CLI is installed."""
     if self._cmd:
       return
@@ -160,6 +168,12 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     if not self._version:  # pragma: no cover
       raise ValueError('No version label provided for '
                        'cros_tool_runner CIPD package.')
+    if not self._images_file_path:
+      if self.container_metadata:
+        self.create_file_with_container_metadata(self.container_metadata)
+      else:
+        raise ValueError('No container metadata provided for '
+                         'cros_tool_runner CIPD package.')
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure cros-tool-runner'):

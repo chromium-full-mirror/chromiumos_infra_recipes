@@ -19,7 +19,7 @@ class DUTInterface(recipe_api.RecipeApi):
     Returns:
       DUTInterface
     """
-    if properties.cft_mvp_is_enabled:
+    if properties.cft_is_enabled:
       return crostoolrunner_interface.CrosToolRunnerInterface(api, properties)
     else:
       return phosphorus_interface.PhosphorusInterface(api, properties)
