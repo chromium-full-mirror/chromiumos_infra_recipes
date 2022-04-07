@@ -206,6 +206,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         pres.properties['no_tests_needed'] = True
 
     with self.m.step.nest('check test results'):
+      exonerated_hw_results, exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
+          test_results.skylab)
+      passed_test_names += exonerated_hw_tests
+      test_results = test_results._replace(skylab=exonerated_hw_results)
       self.m.cros_history.set_passed_tests(passed_test_names)
       critical_test_count = self.critical_test_count(test_plan)
       self.m.cros_bisect.set_test_failures(test_results.skylab,

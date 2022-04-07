@@ -13,8 +13,9 @@ from PB.test_platform.steps.execution import ExecuteResponse
 
 class ExonerateApi(recipe_api.RecipeApi):
 
-  def __init__(self, **kwargs):
+  def __init__(self, properties, **kwargs):
     super(ExonerateApi, self).__init__(**kwargs)
+    self._enable_exoneration = properties.enable_exoneration or False
     self._exoneration_configs = {}
     self._configs_loaded = False
     # Global log store to reduce the number of steps created.
@@ -131,6 +132,8 @@ class ExonerateApi(recipe_api.RecipeApi):
       [Skylab_Result] with exonerated tests modified and [str] names of
       tests that should be treated as success.
     """
+    if not self._enable_exoneration:
+      return hw_test_results, []
     exonerated_test_names = []
     new_test_results = []
     with self.m.step.nest('exonerate hw tests') as pres:

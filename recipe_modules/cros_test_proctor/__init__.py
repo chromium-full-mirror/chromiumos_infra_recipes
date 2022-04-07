@@ -18,6 +18,7 @@ DEPS = [
     'cros_test_plan',
     'cros_test_plan_v2',
     'easy',
+    'exonerate',
     'git',
     'gitiles',
     'gerrit',

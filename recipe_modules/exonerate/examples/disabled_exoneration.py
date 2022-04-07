@@ -11,6 +11,8 @@ DEPS = [
     'skylab',
 ]
 
+from recipe_engine import post_process
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -31,11 +33,6 @@ def RunSteps(api):
           name='test3', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='blah blah line 42:something went wrong'),
   ]
-  failing_unexonerable_test_case = [
-      ExecuteResponse.TaskResult.TestCaseResult(
-          name='test3', verdict=TaskState.VERDICT_FAILED,
-          human_readable_summary='meh'),
-  ]
   child_results = [
       ExecuteResponse.TaskResult(name='suite1', state=pass_state,
                                  test_cases=passing_test_cases),
@@ -53,26 +50,7 @@ def RunSteps(api):
                                         status=common_pb2.SUCCESS,
                                         child_results=child_results[:1]),
   ]
-  # Testing the case of exoneration
-  hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
-      hw_test_failures)
-  api.assertions.assertFalse(
-      common_pb2.FAILURE in [f.status for f in hw_test_failures])
-  api.assertions.assertEqual(exonerated_test_names, ['target.hw.bvt-cq'])
-
-  child_results = [
-      ExecuteResponse.TaskResult(name='suite1', state=pass_state,
-                                 test_cases=passing_test_cases),
-      ExecuteResponse.TaskResult(
-          name='suite2', state=fail_state,
-          test_cases=(passing_test_cases + failing_unexonerable_test_case))
-  ]
-  hw_test_failures = [
-      api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
-                                        status=common_pb2.FAILURE,
-                                        child_results=child_results),
-  ]
-  # Testing the case where test doesn't get exonerated
+  # Testing the case of disabled exoneration.
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertTrue(
@@ -83,7 +61,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}))
+      api.properties(**{
+          '$chromeos/exonerate': ExonerateProperties(enable_exoneration=False)
+      }), api.post_check(post_process.DoesNotRun, 'exonerate hw tests'))
