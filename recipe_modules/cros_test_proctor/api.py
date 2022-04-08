@@ -386,14 +386,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         require_stable_devices=require_stable_devices,
     )
     autotest_vm_tests = self._schedule_autotest_vm_tests(
-        test_plan, passed_tests, snapshot, test_to_build_map, is_retry)
+        test_plan, passed_tests, snapshot, test_to_build_map, is_retry,
+        run_async=run_async)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
                                                  snapshot, test_to_build_map,
-                                                 is_retry)
+                                                 is_retry, run_async=run_async)
 
     tast_gce_tests = self._schedule_tast_gce_tests(test_plan, passed_tests,
                                                    snapshot, test_to_build_map,
-                                                   is_retry)
+                                                   is_retry,
+                                                   run_async=run_async)
 
     return self.MetaTestTuple(skylab=skylab_tasks or [],
                               autotest_vm=autotest_vm_tests or [],

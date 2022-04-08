@@ -4298,7 +4298,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#675)(self, test_plan):**
+&mdash; **def [critical\_test\_count](/recipe_modules/cros_test_proctor/api.py#677)(self, test_plan):**
 
 Returns the number of critical tests in the build plan.
 
@@ -4310,7 +4310,7 @@ Args:
 Returns:
   test_count (int): Number of critical tests ran.
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#434)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#436)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
