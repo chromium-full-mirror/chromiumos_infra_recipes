@@ -1137,7 +1137,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#375)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#379)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1153,7 +1153,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#414)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#418)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1164,7 +1164,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#336)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#340)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 

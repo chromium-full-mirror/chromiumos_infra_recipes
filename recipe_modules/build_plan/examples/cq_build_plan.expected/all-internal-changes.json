@@ -813,7 +813,8 @@
     "name": "get build history.get completed builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@skip log@@@"
+      "@@@STEP_LOG_END@skip log@@@",
+      "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@0@@@"
     ]
   },
   {

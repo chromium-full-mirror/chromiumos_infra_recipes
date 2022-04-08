@@ -296,6 +296,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest("get completed builds") as presentation:
       completed_builds = []
       passed_builds = self.m.cros_history.get_passed_builds()
+      count_broken_before_rebuilds = 0
 
       skip_log = []
       for build in passed_builds:
@@ -317,6 +318,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
             build.builder.builder)
         # If the build ran before a known bug was fixed, don't reuse it.
         if build.start_time.seconds < builder_config.general.broken_before.seconds:
+          count_broken_before_rebuilds += 1
           skip_log.append(
               '{} is skipped because it was broken till {}UTC'.format(
                   build.builder.builder,
@@ -331,6 +333,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         completed_builds.append(build)
 
       presentation.logs['skip log'] = skip_log
+      presentation.properties[
+          'count_broken_before_rebuilds'] = count_broken_before_rebuilds
       return completed_builds
 
   def prioritize_builds(self, builds):
