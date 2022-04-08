@@ -173,7 +173,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         ])
       if self._properties.source_tree_test_config_path:
         cmd.extend([
-            '--source_tree_config',
+            '--source_tree_test_config',
             self._properties.source_tree_test_config_path
         ])
       if self._properties.target_test_requirements_path:

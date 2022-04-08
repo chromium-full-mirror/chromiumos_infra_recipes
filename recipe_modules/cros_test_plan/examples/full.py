@@ -97,7 +97,7 @@ def GenTests(api):
           'generate test plan.call test_planner', [
               "--gitiles_repo", "chromeos/infra/config", "--gitiles_branch",
               "release-R93-14092.B", "--board_priority_config",
-              "something/bpcp.binary_proto", "--source_tree_config",
+              "something/bpcp.binary_proto", "--source_tree_test_config",
               "something/sttp.binary_proto", "--target_test_requirements",
               "something/ttrp.binary_proto"
           ]))

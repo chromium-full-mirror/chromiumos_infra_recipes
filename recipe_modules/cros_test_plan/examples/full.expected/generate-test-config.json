@@ -5003,7 +5003,7 @@
       "release-R93-14092.B",
       "--board_priority_config",
       "something/bpcp.binary_proto",
-      "--source_tree_config",
+      "--source_tree_test_config",
       "something/sttp.binary_proto",
       "--target_test_requirements",
       "something/ttrp.binary_proto",
