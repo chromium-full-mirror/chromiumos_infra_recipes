@@ -82,13 +82,7 @@
     "name": "publish build ID.call `result_flow`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
@@ -167,7 +161,7 @@
       }
     },
     "name": "publish build ID.call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"42\",\n  \"ctp\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
+    "stdin": "{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -595,14 +589,7 @@
     "name": "publish build ID (2).call `result_flow`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"},\"shouldPollForCompletion\":true}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -631,7 +618,7 @@
       }
     },
     "name": "publish build ID (2).call `result_flow`.publish",
-    "stdin": "{\n  \"buildId\": \"42\",\n  \"ctp\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  },\n  \"shouldPollForCompletion\": true\n}",
+    "stdin": "{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"},\"shouldPollForCompletion\":true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

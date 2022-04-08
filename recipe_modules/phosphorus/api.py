@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -59,10 +61,12 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `phosphorus`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
-      # fix the discrepancy between py2 and py3 MessageToJson.
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['request'] = [
-          json_format.MessageToJson(request, sort_keys=True).replace(', ', ',')
+          json.dumps(
+              json_format.MessageToDict(request), separators=(',', ':'),
+              sort_keys=True)
       ]
       self._ensure_phosphorus()
       cmd = [
@@ -71,10 +75,12 @@ class PhosphorusCommand(recipe_api.RecipeApi):
           '-input_json',
           '/dev/stdin',
       ]
-      # TODO(b/217973414): Remove replace(', ', ',') which is only needed to
-      # fix the discrepancy between py2 and py3 MessageToJson.
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
       stdin = self.m.raw_io.input_text(
-          json_format.MessageToJson(request, sort_keys=True).replace(', ', ','))
+          json.dumps(
+              json_format.MessageToDict(request), separators=(',', ':'),
+              sort_keys=True))
       if not send_response:
         self.m.easy.step(subcommand, cmd, stdin=stdin)
         return

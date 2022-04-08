@@ -19,18 +19,7 @@
     "name": "lease DUT for 2 hr 3 min.update DUT state to needs_repair.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"testId\": \"dut-leaser\"@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\",\"testId\":\"dut-leaser\"}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
@@ -91,7 +80,7 @@
     ],
     "infra_step": true,
     "name": "lease DUT for 2 hr 3 min.update DUT state to needs_repair.call `phosphorus`.load",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"dummy-dut-id\",\n  \"dutName\": \"dummy\",\n  \"runId\": \"dummy-task-id\",\n  \"testId\": \"dut-leaser\"\n}",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\",\"testId\":\"dut-leaser\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -101,19 +90,7 @@
     "name": "lease DUT for 2 hr 3 min.update DUT state to needs_repair.call `phosphorus` (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy-hostname\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy-hostname\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -126,7 +103,7 @@
     ],
     "infra_step": true,
     "name": "lease DUT for 2 hr 3 min.update DUT state to needs_repair.call `phosphorus` (2).save",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutId\": \"dummy-dut-id\",\n  \"dutName\": \"dummy-hostname\",\n  \"dutState\": \"needs_repair\",\n  \"resultsDir\": \"dummy-results-dir\",\n  \"sealResultsDir\": true\n}",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy-hostname\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

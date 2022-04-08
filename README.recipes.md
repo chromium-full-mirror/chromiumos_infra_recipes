@@ -6819,11 +6819,11 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PhosphorusCommand](/recipe_modules/phosphorus/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#245)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#251)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
@@ -6834,7 +6834,7 @@ Args:
   max_duration_sec (int): Maximum duration of the provision operation, in
     seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#267)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#273)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -6844,21 +6844,21 @@ or needs_repair).
 Args:
   dut_state (str): The new DUT state. E.g. "needs_repair" or "ready".
 
-&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#113)(self, request):**
+&mdash; **def [fetch\_crashes](/recipe_modules/phosphorus/api.py#119)(self, request):**
 
 Fetch crashes via the `fetch-crashes` subcommand.
 
 Args:
   request: a FetchCrashesRequest.
 
-&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#180)(self, test_id):**
+&mdash; **def [load\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#186)(self, test_id):**
 
 Load the local DUT state file.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [parse](/recipe_modules/phosphorus/api.py#139)(self, results_dir):**
+&mdash; **def [parse](/recipe_modules/phosphorus/api.py#145)(self, results_dir):**
 
 Extract test results from an results directory.
 
@@ -6867,32 +6867,32 @@ Args:
 
 Returns: Result.
 
-&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#95)(self, request):**
+&mdash; **def [prejob](/recipe_modules/phosphorus/api.py#101)(self, request):**
 
 Run a prejob or a provision via `prejob` subcommand.
 
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#298)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#304)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#235)(self):**
+&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#241)(self):**
 
 Remove the autotest results directory.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#104)(self, request):**
+&mdash; **def [run\_test](/recipe_modules/phosphorus/api.py#110)(self, request):**
 
 Run a test via `run-test` subcommand.
 
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#208)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#214)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -6905,7 +6905,7 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#195)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#201)(self, dut_state, dut_name, peer_duts):**
 
 Update the local DUT state file.
 
@@ -6917,14 +6917,14 @@ Args:
 Raises:
   * InfraFailure
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#122)(self, request):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/phosphorus/api.py#128)(self, request):**
 
 Upload selected test results to GS via `upload-to-gs` subcommand.
 
 Args:
   request: an UploadToGSRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#131)(self, request):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/phosphorus/api.py#137)(self, request):**
 
 Upload test results to TKO via `upload-to-tko` subcommand.
 
@@ -7292,11 +7292,11 @@ Prints the current version information of repo.
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ResultFlowCommand](/recipe_modules/result_flow/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultFlowCommand](/recipe_modules/result_flow/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing result flow commands
 
-&mdash; **def [pipe\_ctp\_data](/recipe_modules/result_flow/api.py#98)(self, request):**
+&mdash; **def [pipe\_ctp\_data](/recipe_modules/result_flow/api.py#104)(self, request):**
 
 Pipe CTP data to TestPlanRun table in BQ.
 
@@ -7305,7 +7305,7 @@ Args:
 Returns:
   JSON proto of test_platform.result_flow.CTPResponse
 
-&mdash; **def [pipe\_test\_runner\_data](/recipe_modules/result_flow/api.py#108)(self, request):**
+&mdash; **def [pipe\_test\_runner\_data](/recipe_modules/result_flow/api.py#114)(self, request):**
 
 Pipe test runner data to TestRun/TestCase tables in BQ.
 
@@ -7314,7 +7314,7 @@ Args:
 Returns:
   JSON proto of test_platform.result_flow.TestRunnerResponse
 
-&mdash; **def [publish](/recipe_modules/result_flow/api.py#69)(self, project_id, topic_id, build_type, should_poll_for_completion=False, parent_uid=''):**
+&mdash; **def [publish](/recipe_modules/result_flow/api.py#75)(self, project_id, topic_id, build_type, should_poll_for_completion=False, parent_uid=''):**
 
 Run the result_flow to publish build's own build ID to Pubsub.
 
