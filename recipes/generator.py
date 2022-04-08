@@ -75,8 +75,10 @@ def RunSteps(api, properties):
   policies = list(properties.branch_policies)
 
   with api.step.nest('validate properties') as presentation:
-    if not properties.HasField('package_info'):
-      raise StepFailure('must set package_info')
+    if ((not properties.HasField('package_info') and not properties.packages) or
+        (properties.HasField('package_info') and properties.packages)):
+      raise StepFailure(
+          'must set exactly one of {package_info, non-empty packages}')
 
     # Retrieve version information from Gitiles API.
     if properties.HasField('gitiles_info'):
@@ -120,8 +122,11 @@ def RunSteps(api, properties):
       presentation.step_text = 'found {} good triggers'.format(len(triggers))
       presentation.logs['list of triggers'] = map(MessageToJson, triggers)
 
-  package = properties.package_info
-  cpv = api.naming.get_package_title(package)
+  if properties.HasField('package_info'):
+    packages = [properties.package_info]
+  else:
+    packages = properties.packages
+  cpv = [api.naming.get_package_title(package) for package in packages]
 
   # If we see gitiles_info populated in the recipe properties, we will be
   # performing a fetch from the Gitiles API for the package's target uprev
@@ -177,6 +182,7 @@ def RunSteps(api, properties):
         pres.step_text = 'using default branch'
     api.easy.set_properties_step(policy=MessageToDict(policy))
 
+    base_topic_name = properties.topic or cpv[0]
     if api.cq.active or api.src_state.gerrit_changes:
       # Use case: Developer is working on the versioned uprev code for a
       # package, such as Chrome, and wants to test the changes prior to landing
@@ -200,7 +206,8 @@ def RunSteps(api, properties):
           policy.no_existing_cls_policy = ABANDON
           policy.outdated_cls_policy = OUTDATED_DO_NOTHING
           policy.retry_cl_policy = NO_RETRY
-          policy.topic = '{}-{}'.format('testing', policy.topic or cpv)
+          policy.topic = '{}-{}'.format('testing', policy.topic or
+                                        base_topic_name)
           api.easy.set_properties_step(policy=MessageToDict(policy))
 
     if properties.init_sdk:
@@ -209,7 +216,7 @@ def RunSteps(api, properties):
 
     Ebuilds = namedtuple('Ebuilds', 'path version commit_info')
 
-    topic = policy.topic or cpv
+    topic = policy.topic or base_topic_name
     no_existing_cls_policy = policy.no_existing_cls_policy
     outdated_cls_policy = policy.outdated_cls_policy
     retry_cl_policy = policy.retry_cl_policy or NO_RETRY
@@ -217,9 +224,10 @@ def RunSteps(api, properties):
     if not retry_only_run:
       # If earlier we fetched for a target version through Gitiles, pass along
       # the retrieved value.
-      ebuilds_by_pinfo = _do_uprev(api, properties, workspace_path, triggers,
-                                   package, cpv, topic, Ebuilds,
-                                   version_no_rev=gitiles_response)
+      ebuilds_by_pinfo = _do_uprev(
+          api, properties, workspace_path, triggers, packages, cpv, topic,
+          Ebuilds, version_no_rev=gitiles_response,
+          allow_partial_uprev=properties.allow_partial_uprev)
       if ebuilds_by_pinfo is None:
         return
 
@@ -435,8 +443,8 @@ def _abandon_cls(api, outdated_cls, most_recent_merged_uprev,
         abandoned_cls.append(outdated_cl)
 
 
-def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
-              Ebuilds, version_no_rev=None):
+def _do_uprev(api, properties, workspace_path, triggers, packages, cpvs, topic,
+              Ebuilds, version_no_rev=None, allow_partial_uprev=False):
   """Try the uprev for the given package. If successful, commit the uprev.
 
   Args:
@@ -444,59 +452,76 @@ def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
     workspace_path (string): Workspace checkout path where the build is
       processed.
     triggers (scheduler.Trigger): Triggers which invoked the recipe.
-    package (chromiumos.PackageInfo): Information describing the package.
-    cpv (string): Package title.
+    packages (List[chromiumos.PackageInfo]): Information describing the package.
+    cpv (List[string]): Package title. Must be in a matching order to packages.
     topic (string): Topic describing package. Defaults to package title.
       can be same as cpv.
     Ebuilds (namedtuple): Contains path and version.
     version_no_rev (string): Target version for uperv. If populated this will
       override trigger.gitiles.revision in the UprevVersionedPackageRequest sent
       to the uprev handler.
+    allow_partial_uprev: Whether to continue operation when either of the packages
+      has no modified files.
 
   Returns:
     (dict): ebuilds_by_pinfo. If None, pupr should return immediately.
   """
-  with api.step.nest('try uprev {}'.format(cpv)) as presentation:
-    request = UprevVersionedPackageRequest(
-        chroot=api.cros_sdk.chroot,
-        package_info=package,
-        versions=[
-            UprevVersionedPackageRequest.GitRef(
-                repository=urlparse.urlparse(trigger.gitiles.repo).path,
-                ref=trigger.gitiles.ref, revision=(version_no_rev or
-                                                   trigger.gitiles.revision))
-            for trigger in triggers
-        ],
-        build_targets=properties.build_targets,
-    )
-    presentation.logs['request'] = str(request)
-    response = api.cros_build_api.PackageService.UprevVersionedPackage(
-        request, name='uprev versioned package')
+  assert len(packages) == len(cpvs)
+  modified_package_names = []
+  all_valid_responses = []
+  for package, cpv in zip(packages, cpvs):
+    with api.step.nest('try uprev {}'.format(cpv)) as presentation:
+      request = UprevVersionedPackageRequest(
+          chroot=api.cros_sdk.chroot,
+          package_info=package,
+          versions=[
+              UprevVersionedPackageRequest.GitRef(
+                  repository=urlparse.urlparse(trigger.gitiles.repo).path,
+                  ref=trigger.gitiles.ref, revision=(version_no_rev or
+                                                     trigger.gitiles.revision))
+              for trigger in triggers
+          ],
+          build_targets=properties.build_targets,
+      )
+      presentation.logs['request'] = str(request)
+      response = api.cros_build_api.PackageService.UprevVersionedPackage(
+          request, name='uprev versioned package')
 
-    if not response.responses:
-      presentation.step_text = 'no new versions for {}'.format(cpv)
-      return None
+      if not response.responses:
+        presentation.step_text = 'no new versions for {}'.format(cpv)
+        return None
 
-    valid_responses = []
-    with api.step.nest('verify updates'):
-      # only act on files that are actually modified
-      for uprev_resp in response.responses:
-        if response_has_changes(api, uprev_resp):
-          valid_responses.append(uprev_resp)
+      valid_responses = []
+      with api.step.nest('verify updates'):
+        # only act on files that are actually modified
+        for uprev_resp in response.responses:
+          if response_has_changes(api, uprev_resp):
+            valid_responses.append(uprev_resp)
 
-    if not valid_responses:
-      presentation.step_text = (
-          'skipping uprev for {}. no modified files'.format(cpv))
-      return None
+      if not valid_responses:
+        presentation.step_text = (
+            'skipping uprev for {}. no modified files'.format(cpv))
+        if not allow_partial_uprev:
+          return None
+        presentation.logs['partial_uprev'] = [
+            'no modified file for {}. continue because allow_partial_uprev=True'
+            .format(cpv)
+        ]
+        continue
+      all_valid_responses.extend(valid_responses)
+      modified_package_names.append(package.package_name)
 
-    presentation.logs['uprev versions'] = [
-        response.version for response in valid_responses
-    ]
+      presentation.logs['uprev versions'] = [
+          response.version for response in valid_responses
+      ]
+
+  if not all_valid_responses:
+    return None
 
   with api.step.nest('commit uprev'):
     # Flatten the list of modified files, and get the project info for them.
     modified_ebuilds = []
-    for uprev_resp in valid_responses:
+    for uprev_resp in all_valid_responses:
       modified_ebuilds.extend(
           Ebuilds(path=ebuild.path, version=uprev_resp.version,
                   commit_info=uprev_resp.additional_commit_info)
@@ -526,7 +551,8 @@ def _do_uprev(api, properties, workspace_path, triggers, package, cpv, topic,
             set(additional_commit_info))) + '\n'
       commit_lines = [
           '{package_name}: Automatic uprev to {versions}.'.format(
-              package_name=package.package_name, versions=versions),
+              package_name=', '.join(modified_package_names),
+              versions=versions),
           '',
           '{additional_msg}Generated by PUpr, see {build_url} for job details.'
           .format(additional_msg=additional_commit_msg,
@@ -655,9 +681,10 @@ def GenTests(api):
 
   def _props(**kwargs):
     """Create GeneratorProperties, with defaults."""
-    kwargs.setdefault(
-        'package_info',
-        PackageInfo(category='chromeos-base', package_name='chromite'))
+    if not kwargs.get('packages'):
+      kwargs.setdefault(
+          'package_info',
+          PackageInfo(category='chromeos-base', package_name='chromite'))
     kwargs.setdefault('build_targets', [BuildTarget(name='build_target')])
     kwargs.setdefault('branch_policies', [_policy()])
     kwargs.setdefault('gitiles_info', None)
@@ -986,6 +1013,91 @@ def GenTests(api):
               'refs/remotes/cros-internal/release-R79-9999.B',
               '',
           ]))),
+      api.post_check(post_process.StatusAnyFailure),
+  )
+
+  yield _with_infos(
+      'multiple-packages',
+      api.properties(triggers=[trigger_prop]),
+      _props(
+          packages=[
+              package_chrome,
+              PackageInfo(category='chromeos-base',
+                          package_name='chromeos-lacros'),
+          ],
+          package_info=None,
+          topic='chromeos-base/new-topic-name',
+      ),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun,
+                     'try uprev chromeos-base/chromeos-chrome'),
+      api.post_check(post_process.MustRun,
+                     'try uprev chromeos-base/chromeos-lacros'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.StepCommandContains,
+          'generate CLs.create gerrit change for src/overlay.git_cl upload',
+          ['--topic', 'chromeos-base/new-topic-name']),
+  )
+
+  yield api.test(
+      'allow-partial-uprev',
+      api.repo.project_infos_step_data('commit uprev', data=[
+          dict(project='overlay'),
+      ], iteration=1),
+      api.repo.project_infos_step_data('commit uprev', data=[
+          dict(project='overlay'),
+      ], iteration=2),
+      _props(
+          packages=[
+              package_chrome,
+              PackageInfo(category='chromeos-base',
+                          package_name='chromeos-lacros'),
+          ], package_info=None, topic='chromeos-base/new-topic-name',
+          allow_partial_uprev=True),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.MustRun,
+                     'try uprev chromeos-base/chromeos-chrome'),
+      api.post_check(post_process.MustRun,
+                     'try uprev chromeos-base/chromeos-lacros'),
+      api.git.step_data(
+          'try uprev chromeos-base/chromeos-chrome.verify updates.diff check.git diff',
+          retcode=False),
+      api.git.step_data(
+          'try uprev chromeos-base/chromeos-lacros.verify updates.diff check.git diff',
+          retcode=True),
+      api.post_check(
+          post_process.StepCommandContains,
+          'generate CLs.create gerrit change for src/overlay.git_cl upload',
+          ['--topic', 'chromeos-base/new-topic-name']),
+      api.post_check(post_process.MustRun, 'commit uprev'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'allow-partial-uprev-no-update',
+      _props(
+          packages=[
+              package_chrome,
+              PackageInfo(category='chromeos-base',
+                          package_name='chromeos-lacros'),
+          ], package_info=None, topic='chromeos-base/new-topic-name',
+          allow_partial_uprev=True),
+      api.git.diff_check(False),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.MustRun,
+                     'try uprev chromeos-base/chromeos-chrome'),
+      api.post_check(post_process.MustRun,
+                     'try uprev chromeos-base/chromeos-lacros'),
+      api.post_check(post_process.DoesNotRun, 'commit uprev'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'duplicated-package-info-and-packages',
+      _props(package_info=package_chrome, packages=[package_chrome],
+             branch_policies=[_policy(ignore=True)]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.post_check(post_process.StatusAnyFailure),
   )
 
