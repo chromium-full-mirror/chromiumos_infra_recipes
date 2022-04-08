@@ -90,10 +90,11 @@ def RunSteps(api, properties):
 
       # infra_steps set in context take precedence over infra_step passed
       # to a step, so we make a new context here.
-      with api.context(infra_steps=False), api.depot_tools.on_path(), \
+      with api.context(infra_steps=False), \
           api.gs_step_logging.log_step_to_gs(properties.logging_gs_prefix):
         cmd = [
-            'presubmit_support.py',
+            'vpython',
+            api.depot_tools.presubmit_support_py_path,
             '--json_output',
             api.json.output(),
             '--commit',
