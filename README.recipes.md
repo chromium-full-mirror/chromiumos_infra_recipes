@@ -470,6 +470,7 @@
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_rules_cros](#recipes-test_rules_cros) &mdash; Recipe that runs bazel rules_cros unit tests.
   * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
+  * [test_uefi_shim](#recipes-test_uefi_shim) &mdash; Recipe to test the UEFI shim for the reven board.
   * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
   * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
@@ -11469,6 +11470,15 @@ Recipe that runs SDK package unit tests.
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 &mdash; **def [RunSteps](/recipes/test_sdk.py#32)(api):**
+### *recipes* / [test\_uefi\_shim](/recipes/test_uefi_shim.py)
+
+[DEPS](/recipes/test_uefi_shim.py#12): [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Recipe to test the UEFI shim for the reven board.
+
+&mdash; **def [RunSteps](/recipes/test_uefi_shim.py#42)(api):**
 ### *recipes* / [test\_util:examples/full](/recipe_modules/test_util/examples/full.py)
 
 [DEPS](/recipe_modules/test_util/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
