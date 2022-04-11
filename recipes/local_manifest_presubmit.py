@@ -90,7 +90,10 @@ def RunSteps(api, properties):
 
       # infra_steps set in context take precedence over infra_step passed
       # to a step, so we make a new context here.
-      with api.context(infra_steps=False), \
+      # The full path to presubmit_support is specified, but depot tools must
+      # still be on the path, since the presubmit scripts themseleves may rely
+      # on depot tools.
+      with api.context(infra_steps=False), api.depot_tools.on_path(), \
           api.gs_step_logging.log_step_to_gs(properties.logging_gs_prefix):
         cmd = [
             'vpython',

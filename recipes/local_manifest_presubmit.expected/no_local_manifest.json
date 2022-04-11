@@ -1346,6 +1346,14 @@
       "--all_files"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "luci_context": {
       "realm": {
         "name": "chromeos:testprogram-testproject"
@@ -1388,6 +1396,14 @@
       "[CLEANUP]/tmp_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1421,6 +1437,14 @@
       "gs://testprogram-testproject/cq_logs/8945511751514863184/presubmit_support/stdout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
