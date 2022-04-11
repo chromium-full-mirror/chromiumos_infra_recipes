@@ -801,6 +801,56 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.create skylab result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@skylab_result@{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"autotestResult\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ], @@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"incomplete\": true@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {}, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"autotestResults\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"original_test\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      ], @@@",
+      "@@@STEP_LOG_LINE@skylab_result@      \"incomplete\": true@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"prejob\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"step\": [@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_FAIL\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"provision\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"needs_repair\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@}@@@",
+      "@@@STEP_LOG_END@skylab_result@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.set output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjEucS5uIvSSwtydcrLilNig9ILC4WYBZgFOLn4uXiLCjKL8sszszPE2CSYlDi4+LJS01NKY4v\\nSi1IzCwy0uDizS/KTM/MS8yJL0ktLhHCZRgAgUMcmQ==\\n\"@@@"
+    ]
+  },
+  {
     "failure": {
       "humanReason": "Infra Failure: Step('execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision') (retcode: 1)"
     },

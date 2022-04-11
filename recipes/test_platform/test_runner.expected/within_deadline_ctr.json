@@ -695,6 +695,57 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.create skylab result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@skylab_result@{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"autotestResult\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_PASS\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"autotestResults\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"original_test\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_PASS\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"prejob\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"step\": [@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_PASS\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"provision\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@}@@@",
+      "@@@STEP_LOG_END@skylab_result@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.set output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkLEKwjAURekg4oPSUnFxdHBLE1tF8CvEHyixhjSQ5JW8tOI/+lFacOzoGS53OhcubGANWZRD\\nxJLicG+ukihPigxSWPUBR0MGfZ5s3wncNF04b7uATiGxqCgyi5p4i86hZ8qPvBLHExMVEzUXP9hM\\nTBzq+lyMXYz9pKUojbeKqGwx9KVG1FZ9u+P3gE9S/93dLWERlHy8qj2kGIw2XtpmMhfzh3wAkoBU\\n/g==\\n\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "test results",
     "~followup_annotations": [
       "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"

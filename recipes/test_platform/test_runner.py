@@ -21,6 +21,7 @@ from PB.test_platform import phosphorus
 from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform import skylab_local_state
 from PB.test_platform.skylab_test_runner.result import Result
+from PB.test_platform.common.task import TaskLogData
 from PB.test_platform.skylab_test_runner.request import Request
 from PB.chromiumos.test import api as ctr_api
 from PB.chromiumos.test.lab import api as lab_api
@@ -683,8 +684,69 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     publish_to_result_flow(api, properties.config,
                            properties.cft_test_request.parent_request_uid,
                            should_poll_for_completion=True)
+    # Get an empty result for setting output property
+    # result.data is not used anywhere else so
+    # it's okay to create an empty one for only this purpose
+    new_result = interface.parse_test_results(test_metadata)
+    new_result.data = create_skylab_result(api, result, properties, dut_state)
+    set_output_properties(api, result=new_result)
 
   return result
+
+
+def create_skylab_result(api, ctr_result, properties, dut_state):
+  """Create skylab_result from ctr_result.
+
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * ctr_result (DUTResult): The result of all tests.
+      * properties (TestRunnerProperties): recipe input properties.
+      * dut_state (str): State of the dut that should be set.
+
+    Returns: Skylab_result: Skylab_result for current test.
+    """
+  with api.step.nest('create skylab result') as step:
+    # Even though test_runner(for CFT workflow) itself supports multiple suites/test-cases together,
+    # CTPV1 does not. So there should be always one test-case in one suite.
+    test_suite = properties.cft_test_request.test_suites[0]
+    test_name = test_suite.test_case_ids.test_case_ids[0].value
+
+    # Default values
+    prejob_verdict = Result.Prejob.Step.VERDICT_FAIL
+    is_incomplete = True
+    test_verdict = Result.Autotest.TestCase.VERDICT_NO_VERDICT
+    log_data = TaskLogData()
+
+    if ctr_result:
+      # Parse prejob result
+      if ctr_result.prejob_response and not ctr_result.prejob_response.any_provision_failed:
+        prejob_verdict = Result.Prejob.Step.VERDICT_PASS
+      # Parse test results
+      is_incomplete = False
+      if ctr_result.test_responses and ctr_result.test_responses[0].is_failure(
+      ):
+        test_verdict = Result.Autotest.TestCase.VERDICT_FAIL
+      else:
+        test_verdict = Result.Autotest.TestCase.VERDICT_PASS
+      # Parse log data
+      if ctr_result.gs_url:
+        log_data.gs_url = ctr_result.gs_url
+      if ctr_result.stainless_url:
+        log_data.stainless_url = ctr_result.stainless_url
+
+    autotest_result = Result.Autotest(
+        test_cases=[
+            Result.Autotest.TestCase(name=test_name, verdict=test_verdict)
+        ], incomplete=is_incomplete)
+
+    skylab_result = Result(
+        prejob=Result.Prejob(
+            step=[Result.Prejob.Step(name='provision', verdict=prejob_verdict)
+                 ]), autotest_result=autotest_result,
+        autotest_results={"original_test": autotest_result},
+        state_update=Result.StateUpdate(dut_state=dut_state), log_data=log_data)
+    s_log(step, 'skylab_result', json_format.MessageToJson(skylab_result))
+    return skylab_result
 
 
 def summarize_results_from_ctr_results(api, result):

@@ -196,7 +196,8 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
 
     Returns: str
     """
-    raise NotImplementedError
+    return self.data.SerializeToString().encode('zlib_codec').encode(
+        'base64_codec')
 
   def add_prejob_response(self, response):
     """Adds a prejob response to this result (overwrites existing).
