@@ -11,6 +11,7 @@ from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
@@ -148,6 +149,12 @@ class SkylabApi(recipe_api.RecipeApi):
       tags = self._get_ctp_tags(uht.hw_test, image_path)
       request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
       req.params.decorations.tags.extend(request_tags)
+
+      autotest_keyvals = self._get_autotest_keyvals(uht)
+      if autotest_keyvals:
+        for k, v in autotest_keyvals.items():
+          req.params.decorations.autotest_keyvals[k] = v
+
       if self._enable_retries:
         self._enable_test_retries(req)
 
@@ -255,6 +262,28 @@ class SkylabApi(recipe_api.RecipeApi):
     }
     if test.skylab_model:
       result['label-model'] = test.skylab_model
+    return result
+
+  def _get_autotest_keyvals(self, uht):
+    builder_name = uht.unit.common.builder_name
+
+    config = self.m.cros_infra_config.config
+    if not (config and config.id.type == BuilderConfig.Id.RELEASE):
+      return None
+
+    # Drop everything after '-release'.
+    build_config = builder_name
+    if '-release' in build_config:
+      build_config = builder_name[:builder_name.index('-release') + 8]
+
+    result = {
+        'branch': self.m.cros_source.manifest_branch,
+        'build_config': build_config,
+        'cidb_build_id': str(self.m.buildbucket.build.id),
+        # TODO(b/228878300): GE needs `master_build_config` to see the test.
+        # Remove when possible (COIL).
+        'master_build_config': 'master-release',
+    }
     return result
 
   def _enable_test_retries(self, req):

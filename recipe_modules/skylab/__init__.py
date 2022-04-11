@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/swarming',
     'cros_infra_config',
+    'cros_source',
     'cros_tags',
     'easy',
     'git_footers',

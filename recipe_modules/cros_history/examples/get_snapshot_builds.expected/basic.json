@@ -21,7 +21,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}"
     ],
     "infra_step": true,
     "name": "get snapshot builds.buildbucket.search",
