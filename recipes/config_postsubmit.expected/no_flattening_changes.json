@@ -1690,46 +1690,6 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [
       "vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
       "-m",
@@ -1741,9 +1701,9 @@
       "[CLEANUP]/chromiumos_workspace/src/project/galaxy/milkyway/generated/flattened.jsonproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.merge flattened configs to config-internal",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.generate flattened configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1762,24 +1722,9 @@
       "[CLEANUP]/tmp_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.joining program and project configs",
+    "name": "Do flatten_configs and create CL.aggregating flattened configs.joining program and project configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.diffing to find changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_SUMMARY_TEXT@No changes to commit@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do flatten_configs and create CL.aggregating flattened configs.update ref.git transaction.diffing to find changes.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

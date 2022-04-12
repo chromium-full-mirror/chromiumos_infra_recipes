@@ -206,7 +206,8 @@ def _flatten_configs(api, properties, project_infos):
   output_path = config_internal.join('hw_design', flat_config)
   binary_output_path = config_internal.join('hw_design', binary_flat_config)
 
-  def _merge_flattened():
+  with api.context(config_internal),\
+       api.step.nest("aggregating flattened configs") as presentation:
     project_configs_path = api.path.mkstemp()
 
     # Merge all the flattened projet configs together into a single payload
@@ -219,7 +220,7 @@ def _flatten_configs(api, properties, project_infos):
     ] + flat_files
     # yapf: enable
 
-    api.step('merge flattened configs to config-internal', ['vpython'] + cmd)
+    api.step('generate flattened configs', ['vpython'] + cmd)
 
     # join with program definitions
     # yapf: disable
@@ -232,35 +233,6 @@ def _flatten_configs(api, properties, project_infos):
       '-p', program_configs_path
     ])
     # yapf: enable
-
-    with api.step.nest("diffing to find changes") as presentation:
-      if not api.git.diff_check(output_path):
-        presentation.step_summary_text = "No changes to commit"
-        return False  # abort transaction
-
-    # commit files
-    api.git.add([output_path, binary_output_path])
-
-    automation_id = 'config_postsubmit/merge_flattened'
-    message = \
-      '''Automerging and importing flattened configs.
-
-Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
-    api.git.commit(message)
-    return True
-
-  # git transaction wrapper around _merge_flattened
-  with api.context(config_internal),\
-       api.step.nest("aggregating flattened configs") as presentation:
-
-    config_project_info = api.repo.project_info("chromeos/config-internal")
-
-    api.git_txn.update_ref(
-        config_project_info.remote,
-        _merge_flattened,
-        ref=config_project_info.branch,
-    )
 
     return []
 
@@ -430,6 +402,9 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 #
 # Each action should take a RecipesApi and list of ProjectInfos as args and
 # optionally return a list of CommitInfos.
+#
+# Note: Order here matters, currently:
+#         Flatten_configs must be ran before _aggregate_configs.
 _ACTIONS = {
     PROPERTIES.REPLICATE_PUBLIC_CONFIG: _replicate_public_config,
     PROPERTIES.FLATTEN_CONFIGS: _flatten_configs,
@@ -748,26 +723,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'flattening_error',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
-      flatten_step_data(1),
-      api.step_data(
-          'Do flatten_configs and create CL'
-          '.aggregating flattened configs'
-          '.update ref.git transaction.'
-          'merge flattened configs to config-internal', retcode=1),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'
-          '.aggregating flattened configs'
-          '.update ref.git transaction.git push',
-      ),
-  )
-
-  yield api.test(
       'no_input_files',
       default_properties(),
       config_repos_step_data(api),
@@ -801,13 +756,6 @@ def GenTests(api):
           'Do aggregate_configs and create CL'
           '.upload configs to ufs'
           '.upload generated configs to UFS datastore',
-      ),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do aggregate_configs and create CL'
-          '.aggregating configs'
-          '.update ref.git transaction.merge flattened configs'
-          ' to config-internal',
       ),
   )
 
