@@ -1567,7 +1567,7 @@ Return: (config) A 'gclient' recipe module configuration.
 
 &mdash; **def [get\_config\_defaults](/recipe_modules/chromite/api.py#69)(self):**
 
-&mdash; **def [run](/recipe_modules/chromite/api.py#228)(self, goma_dir=None):**
+&mdash; **def [run](/recipe_modules/chromite/api.py#229)(self, goma_dir=None):**
 
 Runs the configured 'cbuildbot' build.
 
@@ -1598,7 +1598,7 @@ Run the setup_board script inside the chroot.
 
 Used by the internal goma recipe.
 
-&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#201)(self):**
+&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#202)(self):**
 
 Prepare a directory with the system python binary available.
 

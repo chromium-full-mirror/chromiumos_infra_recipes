@@ -194,7 +194,8 @@ class ChromiteApi(recipe_api.RecipeApi):
     """
     self.m.bot_update.ensure_checkout(gclient_config=self.gclient_config(),
                                       update_presentation=False,
-                                      ignore_input_commit=True)
+                                      ignore_input_commit=True,
+                                      set_output_commit=False)
 
     return self.chromite_path
 
