@@ -5028,9 +5028,11 @@
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"hwDesign\": {@@@",
-      "@@@STEP_LOG_LINE@data@        \"name\": \"design1\"@@@",
-      "@@@STEP_LOG_LINE@data@      }@@@",
+      "@@@STEP_LOG_LINE@data@      \"designList\": [@@@",
+      "@@@STEP_LOG_LINE@data@        {@@@",
+      "@@@STEP_LOG_LINE@data@          \"name\": \"design1\"@@@",
+      "@@@STEP_LOG_LINE@data@        }@@@",
+      "@@@STEP_LOG_LINE@data@      ]@@@",
       "@@@STEP_LOG_LINE@data@    }@@@",
       "@@@STEP_LOG_LINE@data@  ]@@@",
       "@@@STEP_LOG_LINE@data@}@@@",
@@ -5042,9 +5044,9 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT"
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT"
     ],
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/flattened.binaryproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -5057,11 +5059,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"values\": [\n    {\n      \"hwDesign\": {\n        \"name\": \"design1\"\n      }\n    }\n  ]\n}",
-      "[CLEANUP]/tmp_tmp_3/flattened.binaryproto"
+      "{\n  \"values\": [\n    {\n      \"designList\": [\n        {\n          \"name\": \"design1\"\n        }\n      ]\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_3/configs.jsonproto"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.write input files.write flattened.binaryproto",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write configs.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -5219,8 +5221,8 @@
       "-v",
       "2",
       "-ctpv1",
-      "-flatconfiglist",
-      "/input/flattened.binaryproto",
+      "-configbundlelist",
+      "/input/configs.jsonproto",
       "-generatetestplanreq",
       "/input/generatetestplanreq.binaryproto",
       "-dutattributes",

@@ -276,9 +276,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       container_input_path = '/input'
 
       with self.m.step.nest('write input files'):
-        # TODO(b/182898188): Read BuildMetadataList and FlatConfigList specific to
-        # the build when available. For now, just read the global one from
-        # config-internal.
+        # TODO(b/182898188): Read BuildMetadataList specific to the build when
+        # available. For now, just read the global one from config-internal.
         build_metadata_list_path = self._download_config_pb(
             'chrome-internal.googlesource.com',
             'chromeos/config-internal',
@@ -287,12 +286,12 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             test_output_message=self.test_api.build_metadata_list(),
         )
 
-        flat_config_list_path = self._download_config_pb(
+        config_bundle_list_path = self._download_config_pb(
             'chrome-internal.googlesource.com',
             'chromeos/config-internal',
-            'hw_design/generated/flattened.binaryproto',
+            'hw_design/generated/configs.jsonproto',
             host_input_path,
-            test_output_message=self.test_api.flat_config_list(),
+            test_output_message=self.test_api.config_bundle_list(),
         )
 
         dut_attribute_list_path = self._download_config_pb(
@@ -315,7 +314,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       arg_to_host_path = {
           '-dutattributes': dut_attribute_list_path,
           '-buildmetadata': build_metadata_list_path,
-          '-flatconfiglist': flat_config_list_path,
+          '-configbundlelist': config_bundle_list_path,
           '-out': out_path,
       }
 

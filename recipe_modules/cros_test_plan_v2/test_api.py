@@ -7,7 +7,7 @@ from recipe_engine import recipe_test_api
 from PB.chromiumos.build.api.system_image import SystemImage
 from PB.chromiumos.build.api.portage import Portage
 from PB.chromiumos.config.api.design import Design
-from PB.chromiumos.config.payload.flat_config import FlatConfigList, FlatConfig
+from PB.chromiumos.config.payload.config_bundle import ConfigBundleList, ConfigBundle
 from PB.chromiumos.test.api.dut_attribute import DutAttributeList, DutAttribute
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.api.v1.plan import HWTestPlan
@@ -56,8 +56,9 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
     ])
 
   @staticmethod
-  def flat_config_list():
-    return FlatConfigList(values=[FlatConfig(hw_design=Design(name='design1'))])
+  def config_bundle_list():
+    return ConfigBundleList(
+        values=[ConfigBundle(design_list=[Design(name='design1')])])
 
   @staticmethod
   def dut_attribute_list():

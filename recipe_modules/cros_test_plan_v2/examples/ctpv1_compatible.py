@@ -123,8 +123,8 @@ def GenTests(api):
           'generate hw test plans.docker run',
           [
               '-ctpv1',
-              '-flatconfiglist',
-              '/input/flattened.binaryproto',
+              '-configbundlelist',
+              '/input/configs.jsonproto',
               '-generatetestplanreq',
               '/input/generatetestplanreq.binaryproto',
               '-dutattributes',
