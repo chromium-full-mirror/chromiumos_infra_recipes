@@ -206,7 +206,7 @@ def rebase_line_and_block_data(line_data, block_data, line_mapping):
 
 
 def to_compressed_file_record(file_coverage_data, constants_file, build_target,
-                              project_name, diff_mapping=None):
+                              diff_mapping=None):
   """Converts the given Clang file coverage data to coverage metadata format.
 
   Coverage metadata format:
@@ -253,7 +253,7 @@ def to_compressed_file_record(file_coverage_data, constants_file, build_target,
     constants = json.load(f)
 
   coverage_path = code_coverage_util.clean_file_name(
-      file_coverage_data['filename'], constants, project_name, build_target, '')
+      file_coverage_data['filename'], constants, build_target)
 
   # Skip files that we don't know how to map to the chromiumos repo.
   if coverage_path is None:
@@ -360,7 +360,7 @@ def _convert_clang_summary_to_metadata(clang_summary):
 
 
 def load_files_coverage_data(coverage_files, constants_file, build_target,
-                             project_name, diff_mapping):
+                             diff_mapping):
   """Loads coverage data from json files
 
   Args:
@@ -382,8 +382,7 @@ def load_files_coverage_data(coverage_files, constants_file, build_target,
     for datum in data['data']:
       for file_data in datum['files']:
         record = to_compressed_file_record(file_data, constants_file,
-                                           build_target, project_name,
-                                           diff_mapping)
+                                           build_target, diff_mapping)
         if record is not None:
           path = record['path']
           if path in path_to_coverage_file:
@@ -420,7 +419,7 @@ def load_files_coverage_data(coverage_files, constants_file, build_target,
 
 
 def convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
-                     constants_file, build_target, project_name, diff_mapping):
+                     constants_file, build_target, diff_mapping):
   """Convert coverage metadata from LLVM format.
 
   Args:
@@ -437,8 +436,7 @@ def convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
   logging.info('Processing coverage data ...')
   start_time = time.time()
   files_coverage_data = load_files_coverage_data(coverage_files, constants_file,
-                                                 build_target, project_name,
-                                                 diff_mapping)
+                                                 build_target, diff_mapping)
 
   per_directory_coverage_data = {}
   if diff_mapping is None:
@@ -493,9 +491,6 @@ def _parse_args(args):
       help='relative path from the chromiumos directory to the project directory'
   )
   parser.add_argument(
-      '--project-name', required=True, type=str,
-      help='name of the project. This is used for picking the package mapping')
-  parser.add_argument(
       '--constants-file', required=True, type=str,
       help='absolute path to the file containing constants for package mapping, must exist'
   )
@@ -548,8 +543,7 @@ def main():
   compressed_data = convert_metadata([params.path_to_coverage_file],
                                      params.checkout_dir, params.project_dir,
                                      params.output_dir, params.constants_file,
-                                     params.build_target, params.project_name,
-                                     diff_mapping)
+                                     params.build_target, diff_mapping)
 
   with open(os.path.join(params.output_dir, 'all.json.gz'), 'wb') as f:
     f.write(zlib.compress(json.dumps(compressed_data)))

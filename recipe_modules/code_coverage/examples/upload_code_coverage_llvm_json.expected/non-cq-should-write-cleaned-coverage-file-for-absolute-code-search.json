@@ -5925,9 +5925,7 @@
       "--path-to-coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
       "--build-target",
-      "sarien",
-      "--project-name",
-      "chromiumos/platform2"
+      "sarien"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {

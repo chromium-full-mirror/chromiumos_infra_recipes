@@ -408,8 +408,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               path_to_coverage_file,
               '--build-target',
               build_target_name,
-              '--project-name',
-              project_name_to_use,
           ], venv=True)
 
       gs_path = self._compose_gs_path_for_chromium_coverage('metadata')
