@@ -11717,9 +11717,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/3b97fa826eee4bd1978c4c049038b1e4f201e8f2/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/3b97fa826eee4bd1978c4c049038b1e4f201e8f2/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/3b97fa826eee4bd1978c4c049038b1e4f201e8f2/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/cloudkms]: https://chromium.googlesource.com/infra/infra.git/+/e8c6061cd3f944d49112b3df0e667aad0fdb9a5c/recipes/README.recipes.md#recipe_modules-cloudkms
-[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/e8c6061cd3f944d49112b3df0e667aad0fdb9a5c/recipes/README.recipes.md#recipe_modules-docker
-[infra/recipe_modules/provenance]: https://chromium.googlesource.com/infra/infra.git/+/e8c6061cd3f944d49112b3df0e667aad0fdb9a5c/recipes/README.recipes.md#recipe_modules-provenance
+[infra/recipe_modules/cloudkms]: https://chromium.googlesource.com/infra/infra.git/+/9b22bfc101bb490c23a957cd5ee61bfb54d12516/recipes/README.recipes.md#recipe_modules-cloudkms
+[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/9b22bfc101bb490c23a957cd5ee61bfb54d12516/recipes/README.recipes.md#recipe_modules-docker
+[infra/recipe_modules/provenance]: https://chromium.googlesource.com/infra/infra.git/+/9b22bfc101bb490c23a957cd5ee61bfb54d12516/recipes/README.recipes.md#recipe_modules-provenance
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0f5f374af06ce6c30708b36fd2545668dff22ad7/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0f5f374af06ce6c30708b36fd2545668dff22ad7/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/0f5f374af06ce6c30708b36fd2545668dff22ad7/README.recipes.md#recipe_modules-buildbucket
