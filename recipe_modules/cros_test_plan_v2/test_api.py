@@ -12,6 +12,7 @@ from PB.chromiumos.test.api.dut_attribute import DutAttributeList, DutAttribute
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.api.v1.plan import HWTestPlan
 from PB.chromiumos.test.plan.source_test_plan import SourceTestPlan
+from PB.testplans.board_priorities import BoardPriorityList, BoardPriority
 
 BuildMetadata = SystemImage.BuildMetadata
 BuildMetadataList = SystemImage.BuildMetadataList
@@ -64,6 +65,15 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
   def dut_attribute_list():
     return DutAttributeList(
         dut_attributes=[DutAttribute(id=DutAttribute.Id(value='attribute1'))])
+
+  @staticmethod
+  def board_priority_list():
+    return BoardPriorityList(board_priorities=[
+        BoardPriority(
+            skylab_board='testboardA',
+            priority=-100,
+        )
+    ])
 
   @staticmethod
   def hw_test_plans():

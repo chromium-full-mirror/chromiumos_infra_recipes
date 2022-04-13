@@ -354,6 +354,51 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate hw test plans.write input files.fetch gitiles file (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"boardPriorities\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"priority\": -100, @@@",
+      "@@@STEP_LOG_LINE@data@      \"skylabBoard\": \"testboardA\"@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/board_priority.binaryproto?format=TEXT"
+    ],
+    "name": "generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/board_priority.binaryproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"boardPriorities\": [\n    {\n      \"priority\": -100, \n      \"skylabBoard\": \"testboardA\"\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/board_priority.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "generate hw test plans.write input files.write board_priority.binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",
@@ -406,12 +451,14 @@
       "-alsologtostderr",
       "-v",
       "2",
+      "-boardprioritylist",
+      "/input/board_priority.binaryproto",
+      "-buildmetadata",
+      "/input/build_metadata.jsonproto",
       "-configbundlelist",
       "/input/configs.jsonproto",
       "-dutattributes",
       "/input/dut_attributes.jsonproto",
-      "-buildmetadata",
-      "/input/build_metadata.jsonproto",
       "-out",
       "/input/hw_test_plans.jsonproto",
       "-plan",
