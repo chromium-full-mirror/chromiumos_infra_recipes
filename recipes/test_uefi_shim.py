@@ -18,7 +18,7 @@ DEPS = [
     'git',
 ]
 
-REPO_URL = 'https://chromium-review.googlesource.com/c/chromiumos/shim-review/'
+REPO_URL = 'https://chromium.googlesource.com/chromiumos/shim-review'
 
 # List of shim binary file names built by this repo. These files
 # should be committed to the repo rather than just being built by the
