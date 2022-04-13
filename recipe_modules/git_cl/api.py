@@ -6,6 +6,7 @@
 """API for working with git cl."""
 
 import re
+import six
 
 from recipe_engine import recipe_api
 
@@ -128,8 +129,9 @@ class GitClApi(recipe_api.RecipeApi):
     """
     issue_re = re.compile(ISSUE_LINE_RE)
     issue_map = {}
-    for line in self('issue', ['-r']).stdout.strip().split('\n'):
-      m = issue_re.match(line)
+    for line in self('issue',
+                     ['-r']).stdout.strip().split(six.ensure_binary('\n')):
+      m = issue_re.match(six.ensure_str(line))
       if m:
         issue_map[m.group('ref')] = m.group('issue')
     return issue_map

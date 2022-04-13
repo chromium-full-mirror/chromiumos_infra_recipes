@@ -62,7 +62,7 @@
   * [gcloud](#recipe_modules-gcloud)
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
-  * [git_cl](#recipe_modules-git_cl) &mdash; API for working with git cl.
+  * [git_cl](#recipe_modules-git_cl) (Python3 ✅) &mdash; API for working with git cl.
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) (Python3 ✅) &mdash; APIs for dealing with Gitiles.
@@ -356,10 +356,10 @@
   * [git:examples/full](#recipes-git_examples_full)
   * [git:examples/remote](#recipes-git_examples_remote)
   * [git:tests/set_upstream](#recipes-git_tests_set_upstream)
-  * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding)
-  * [git_cl:examples/issues](#recipes-git_cl_examples_issues)
-  * [git_cl:examples/status](#recipes-git_cl_examples_status)
-  * [git_cl:examples/upload](#recipes-git_cl_examples_upload)
+  * [git_cl:examples/forwarding](#recipes-git_cl_examples_forwarding) (Python3 ✅)
+  * [git_cl:examples/issues](#recipes-git_cl_examples_issues) (Python3 ✅)
+  * [git_cl:examples/status](#recipes-git_cl_examples_status) (Python3 ✅)
+  * [git_cl:examples/upload](#recipes-git_cl_examples_upload) (Python3 ✅)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
   * [git_txn:tests/gerrit_transaction](#recipes-git_txn_tests_gerrit_transaction)
   * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction)
@@ -5924,17 +5924,17 @@ Returns:
   (str): The contents of the file, None if the file does not exist in |rev|.
 ### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
 
-[DEPS](/recipe_modules/git_cl/__init__.py#1): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/git_cl/__init__.py#5): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with git cl.
 
-#### **class [GitClApi](/recipe_modules/git_cl/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitClApi](/recipe_modules/git_cl/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with git cl.
 
-&mdash; **def [issues](/recipe_modules/git_cl/api.py#122)(self):**
+&mdash; **def [issues](/recipe_modules/git_cl/api.py#123)(self):**
 
 Run `git cl issue`.
 
@@ -5942,7 +5942,7 @@ Returns:
   dict: Map between ref and issue number, e.g.
     {'refs/heads/main': '3402394'}.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#95)(self, field=None, fast=False, issue=None, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#96)(self, field=None, fast=False, issue=None, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
@@ -5955,7 +5955,7 @@ Args:
 Returns:
   str: The command output.
 
-&mdash; **def [upload](/recipe_modules/git_cl/api.py#41)(self, topic=None, reviewers=None, ccs=None, hashtags=None, send_mail=False, target_branch=None, dry_run=False, \*\*kwargs):**
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#42)(self, topic=None, reviewers=None, ccs=None, hashtags=None, send_mail=False, target_branch=None, dry_run=False, \*\*kwargs):**
 
 Run `git cl upload`.
 
@@ -10341,30 +10341,30 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/git_cl/examples/forwarding.py#6): [git\_cl](#recipe_modules-git_cl)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/forwarding.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/forwarding.py#13)(api):**
 ### *recipes* / [git\_cl:examples/issues](/recipe_modules/git_cl/examples/issues.py)
 
 [DEPS](/recipe_modules/git_cl/examples/issues.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/issues.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/issues.py#16)(api):**
 ### *recipes* / [git\_cl:examples/status](/recipe_modules/git_cl/examples/status.py)
 
-[DEPS](/recipe_modules/git_cl/examples/status.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/git_cl/examples/status.py#8): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/status.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/status.py#16)(api):**
 ### *recipes* / [git\_cl:examples/upload](/recipe_modules/git_cl/examples/upload.py)
 
-[DEPS](/recipe_modules/git_cl/examples/upload.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/git_cl/examples/upload.py#8): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#16)(api):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
 [DEPS](/recipe_modules/git_footers/examples/full.py#13): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -10,6 +10,8 @@ DEPS = [
     'git_cl',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   issue_map = api.git_cl.issues()

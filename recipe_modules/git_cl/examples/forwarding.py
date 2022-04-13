@@ -7,6 +7,8 @@ DEPS = [
     'git_cl',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.git_cl.get_description(patch_url='foo')

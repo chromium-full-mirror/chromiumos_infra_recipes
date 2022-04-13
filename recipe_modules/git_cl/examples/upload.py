@@ -3,10 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import six
+
 DEPS = [
     'recipe_engine/assertions',
     'git_cl',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
@@ -14,7 +18,7 @@ def RunSteps(api):
                              ccs=['dean@google.com'],
                              hashtags=['foo-refactoring', 'bar-feature'],
                              send_mail=True, target_branch='HEAD', dry_run=True)
-  api.assertions.assertEqual(output, 'pytorch forever')
+  api.assertions.assertEqual(output, six.ensure_binary('pytorch forever'))
 
 
 def GenTests(api):
