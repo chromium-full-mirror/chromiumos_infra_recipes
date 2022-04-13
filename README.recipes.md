@@ -235,7 +235,9 @@
   * [cros_paygen:examples/run_paygen_builders](#recipes-cros_paygen_examples_run_paygen_builders)
   * [cros_paygen:examples/schedule_au_tests](#recipes-cros_paygen_examples_schedule_au_tests)
   * [cros_paygen:examples/test_config](#recipes-cros_paygen_examples_test_config)
+  * [cros_paygen:tests/batch_paygen_request_dicts_batching](#recipes-cros_paygen_tests_batch_paygen_request_dicts_batching)
   * [cros_paygen:tests/create_au_test_configs](#recipes-cros_paygen_tests_create_au_test_configs)
+  * [cros_paygen:tests/verify_paygen_timeout](#recipes-cros_paygen_tests_verify_paygen_timeout)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
@@ -2676,7 +2678,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#946)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#998)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2804,7 +2806,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1030)(self, paygen_test_configs, models=None):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1082)(self, paygen_test_configs, models=None):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -9440,6 +9442,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/test_config.py#26)(api, properties):**
+### *recipes* / [cros\_paygen:tests/batch\_paygen\_request\_dicts\_batching](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py)
+
+[DEPS](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py#37)(api, max_batch_size, paygen_requests, expected_batches):**
 ### *recipes* / [cros\_paygen:tests/create\_au\_test\_configs](/recipe_modules/cros_paygen/tests/create_au_test_configs.py)
 
 [DEPS](/recipe_modules/cros_paygen/tests/create_au_test_configs.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9447,6 +9456,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/create_au_test_configs.py#54)(api, gen_req_ser, expected_test_configs_ser, delta_test_override, full_test_override):**
+### *recipes* / [cros\_paygen:tests/verify\_paygen\_timeout](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py)
+
+[DEPS](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py#15)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

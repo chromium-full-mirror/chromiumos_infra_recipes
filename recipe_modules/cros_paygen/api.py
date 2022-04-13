@@ -857,7 +857,12 @@ class CrosPaygenApi(recipe_api.RecipeApi):
   def _batch_paygen_request_dicts(self, prds):
     """Separate dicts of PaygenRequests into groups to run together.
 
-    Currently, the only grouping performed is to batch DLC requests together.
+    This method separates all the requests into the following batches:
+      - DLC requests are all batched together, respecting self._max_dlc_batch_size
+        to cap batch sizes.
+      - N2N requests are batched alongside the corresponding full payload request,
+        because their tests rely on the full images.
+      - All other requests are sent through in a batch of 1.
 
     Args:
       prds (List[dict]): Dicts representing PaygenRequests to run.
@@ -868,13 +873,56 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           Paygen builder.
     """
 
-    def _is_dlc(paygen_request_dict):
-      return 'tgtDlcImage' in paygen_request_dict['generation_request']
+    def _gen_req(paygen_request_dict):
+      return paygen_request_dict.get('generation_request', {})
 
+    def _tgt_unsigned(paygen_request_dict):
+      return _gen_req(paygen_request_dict).get('tgtUnsignedImage', {})
+
+    def _is_dlc(paygen_request_dict):
+      return 'tgtDlcImage' in _gen_req(paygen_request_dict)
+
+    def _is_minios(paygen_request_dict):
+      return _gen_req(paygen_request_dict).get('minios', False)
+
+    def _is_full_unsigned(paygen_request_dict):
+      return 'tgtUnsignedImage' in _gen_req(paygen_request_dict) and _gen_req(
+          paygen_request_dict).get('fullUpdate', False)
+
+    def _is_n2n(paygen_request_dict):
+      gen_req = _gen_req(paygen_request_dict)
+      return 'srcUnsignedImage' in gen_req and 'tgtUnsignedImage' in gen_req and gen_req[
+          'srcUnsignedImage'] == gen_req['tgtUnsignedImage']
+
+    # First pass - iterate through all requests and pull out all full unsigned.
+    full_image_batches = []
+    filtered_prds = []
+    for prd in prds:
+      if _is_full_unsigned(prd):
+        full_image_batches.append([prd])
+      else:
+        filtered_prds.append(prd)
+
+    # Second pass - create all the batches
     batches = []
     dlcs = []
-    for prd in prds:
-      if _is_dlc(prd):
+    for prd in filtered_prds:
+      if _is_n2n(prd):
+        batched = False
+        for full_image_batch in full_image_batches:
+          full_image = full_image_batch[0]
+          if _tgt_unsigned(full_image) == _tgt_unsigned(prd) and _is_minios(
+              full_image) == _is_minios(prd):
+            full_image_batch.append(prd)
+            batched = True
+            break
+        if not batched:
+          raise StepFailure(
+              'N2N request for unsigned image version {} has no corresponding full image request'
+              .format(
+                  _tgt_unsigned(prd).get('build',
+                                         {}).get('version', 'unknown-version')))
+      elif _is_dlc(prd):
         dlcs.append(prd)
 
         # If we have a max DLC batch size, then check to see if we're at that
@@ -884,6 +932,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           dlcs = []
       else:
         batches.append([prd])
+
+    # Send through all the paired unsigned full + n2ns batches.
+    for prd_list in full_image_batches:
+      batches.append(prd_list)
 
     # Send through all the remaining DLC requests. If there is no max batch
     # size, then this will be all DLC requests. If there is a max batch size,

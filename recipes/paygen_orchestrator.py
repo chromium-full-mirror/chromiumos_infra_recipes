@@ -243,7 +243,7 @@ def GenTests(api):
           'running children.collect'),
       *repeated_step_data(
           'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
-          api.raw_io.output(payload_json_data), 15))
+          api.raw_io.output(payload_json_data), 13))
 
   yield api.test(
       'some-failures', get_props(), good_paygen_cfg,
