@@ -26,17 +26,18 @@ REPO_URL = 'https://chromium.googlesource.com/chromiumos/shim-review'
 SHIM_FILE_NAMES = ['shimia32.efi', 'shimx64.efi']
 
 
-def _calc_sha256_digest(api, name):
+def _calc_sha256_digest(api, repo_dir, name):
   """Calculate the SHA256 digest for the contents of the file at `name`."""
   # The shim binaries are fairly small (currently less than one MB) so
   # no need to chunk the read.
-  content = api.file.read_raw('read file ' + name, name, test_data=name)
+  path = repo_dir.join(name)
+  content = api.file.read_raw('read file ' + name, path, test_data=name)
   return hashlib.sha256(content).hexdigest()
 
 
-def _get_shim_sha256_digests(api):
+def _get_shim_sha256_digests(api, repo_dir):
   """Calculate the SHA256 digests for the shim files as a list of strings."""
-  return [_calc_sha256_digest(api, name) for name in SHIM_FILE_NAMES]
+  return [_calc_sha256_digest(api, repo_dir, name) for name in SHIM_FILE_NAMES]
 
 
 def RunSteps(api):
@@ -45,7 +46,7 @@ def RunSteps(api):
 
   # Get the hashes of the current files in the repo.
   with api.step.nest('get current file hashes'), api.context(cwd=repo_dir):
-    original_hashes = _get_shim_sha256_digests(api)
+    original_hashes = _get_shim_sha256_digests(api, repo_dir)
 
   # Do a fresh build shim inside a container (which is required by the
   # shim-review process), then copy the files outside the container.
@@ -55,7 +56,7 @@ def RunSteps(api):
 
   # Calculate the new file hashes, verify the match the original hashes.
   with api.step.nest('validate hashes'), api.context(cwd=repo_dir):
-    new_hashes = _get_shim_sha256_digests(api)
+    new_hashes = _get_shim_sha256_digests(api, repo_dir)
 
     # Check that the build is reproducible.
     if original_hashes != new_hashes:

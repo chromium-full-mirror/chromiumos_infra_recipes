@@ -11494,7 +11494,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe to test the UEFI shim for the reven board.
 
-&mdash; **def [RunSteps](/recipes/test_uefi_shim.py#42)(api):**
+&mdash; **def [RunSteps](/recipes/test_uefi_shim.py#43)(api):**
 ### *recipes* / [test\_util:examples/full](/recipe_modules/test_util/examples/full.py)
 
 [DEPS](/recipe_modules/test_util/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
