@@ -52,6 +52,20 @@ PROPERTIES = ConfigPostsubmitProperties
 #  files (list[paths]): Files to add to commit, if empty will add project_path.
 CommitInfo = namedtuple('CommitInfo', ['project_path', 'message', 'files'])
 
+# Represents the config for a data ingestion/aggregation task.
+#
+# Fields:
+#   name (str): name of the task for display purposes
+#   input_path (str): input path in each project
+#   output_path (str): output path in config-internal
+#   message_type (str): message type to read in from projects
+#   aggregate_type (str): aggregate message type to write to config-internal
+#
+IngestConfig = namedtuple(
+    'IngestConfig',
+    ['name', 'input_path', 'output_path', 'message_type', 'aggregate_type'],
+)
+
 
 def _replicate_public_config(api, _properties, project_infos):
   """Replicates any public configs in project repos into a public repo.
@@ -251,19 +265,25 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     return []
 
 
-def _aggregate_configs(api, properties, repo_project_infos):
-  """Aggregate ConfigBundle messages and copy them to multiple locations.
+def _aggregate_configs(api, properties, project_infos):
+  """Aggregate config messages and copy them to multiple locations.
 
   1. config-internal - This provides a single centralized location from which
   services can read all device configurations.
   2. UFS datastore - This enables the usage of configs as schedulable labels.
   """
-  allowed_projects = [
-      project.repo_name for project in properties.allowed_projects
+  configs = [
+      IngestConfig(
+          'joined',
+          'generated/joined.jsonproto',
+          'hw_design/generated/configs.jsonproto',
+          'chromiumos.config.payload.ConfigBundle',
+          'chromiumos.config.payload.ConfigBundleList',
+      ),
   ]
 
-  allowed_programs = [
-      program.repo_name for program in properties.allowed_programs
+  allowed_projects = [
+      project.repo_name for project in properties.allowed_projects
   ]
 
   # get project info for internal config repo
@@ -274,47 +294,34 @@ def _aggregate_configs(api, properties, repo_project_infos):
   config_internal = cwd.join('src/config-internal')
 
   def _merge_configs():
-    # find all the input config files
-    files = []
-    for repo_project_info in repo_project_infos:
-      # repo_project_info is a ProjectInfo object (defined in repo/api.py),
-      # which describes a Gerrit project. allowed_projects and allowed_programs
-      # contain the names of Gerrit repos associated with Chrome OS projects or
-      # programs which contain ConfigBundles that should be merged, for example
-      # 'chromeos/program/galaxy' or 'chromeos/project/galaxy/milkyway'. For
-      # each ProjectInfo, check if its name is in the lists of allowed project
-      # or program repos, and aggregate the ConfigBundle.
-      #
-      # Project ConfigBundles are under 'generated/joined.jsonproto', program
-      # ConfigBundles are under 'generated/config.jsonproto'.
-      if repo_project_info.name in allowed_projects:
-        path = cwd.join(repo_project_info.path, 'generated/joined.jsonproto')
-      elif repo_project_info.name in allowed_programs:
-        path = cwd.join(repo_project_info.path, 'generated/config.jsonproto')
-      else:
-        continue  #pragma: nocover
+    outputs = []
+    for config in configs:
+      # find all the input config files
+      files = []
+      for project_info in project_infos:
+        if not project_info.name in allowed_projects:
+          continue
 
-      if api.path.exists(path):
-        files.append(path)
+        path = cwd.join(project_info.path, config.input_path)
 
-    # merge and import
-    output_path = 'hw_design/generated/configs.jsonproto'
-    api.step(
-        'merge ConfigBundles to config-internal',
-        [
-            'vpython', merge_script, '-m',
-            'chromiumos.config.payload.ConfigBundle', '-a',
-            'chromiumos.config.payload.ConfigBundleList', '-o', output_path
-        ] + files,
-    )
+        if api.path.exists(path):
+          files.append(path)
+
+      # merge and import
+      api.step('merge {} configs to config-internal'.format(config.name), [
+          'vpython', merge_script, "-m", config.message_type, "-a",
+          config.aggregate_type, "-o", config.output_path
+      ] + files)
+
+      outputs.append(config.output_path)
 
     with api.step.nest("diffing to find changes") as presentation:
-      if not api.git.diff_check(output_path):
+      if not any(api.git.diff_check(output) for output in outputs):
         presentation.step_summary_text = "No changes to commit"
         return False  # abort transaction
 
     # commit files
-    api.git.add([output_path])
+    api.git.add(outputs)
     automation_id = 'config_postsubmit/aggregate'
     message = \
       '''Automerging and importing config changes.
@@ -564,23 +571,16 @@ def GenTests(api):
     return api.step_data(
         'find config repos.reading DLM config',
         api.file.read_json({
-            "programs": [
-                {
-                    "repo": {
-                        "name": "chromeos/program/galaxy",
-                    },
-                    "deviceProjects": [{
-                        "repo": {
-                            "name": "chromeos/project/galaxy/milkyway"
-                        }
-                    },]
+            "programs": [{
+                "repo": {
+                    "name": "chromeos/program/galaxy",
                 },
-                {
+                "deviceProjects": [{
                     "repo": {
-                        "name": "chromeos/program/otherprogram",
-                    },
-                },
-            ]
+                        "name": "chromeos/project/galaxy/milkyway"
+                    }
+                },]
+            }]
         }),
     )
 
@@ -594,8 +594,6 @@ def GenTests(api):
                     ('chromeos/project/galaxy/milkyway',
                      'src/project/galaxy/milkyway'),
                     ('chromeos/program/galaxy', 'src/program/galaxy'),
-                    ('chromeos/program/otherprogram',
-                     'src/program/otherprogram'),
                 ]),
         ))
 
@@ -795,7 +793,7 @@ def GenTests(api):
           post_process.MustRun,
           'Do aggregate_configs and create CL'
           '.aggregating configs'
-          '.update ref.git transaction.merge ConfigBundles'
+          '.update ref.git transaction.merge joined configs'
           ' to config-internal',
       ),
       api.post_process(
@@ -848,7 +846,7 @@ def GenTests(api):
           'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.merge '
-          'ConfigBundles to config-internal', retcode=1),
+          'joined configs to config-internal', retcode=1),
   )
 
   yield api.test(

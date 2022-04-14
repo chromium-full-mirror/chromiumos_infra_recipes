@@ -1538,11 +1538,6 @@
       "@@@STEP_LOG_LINE@all_programs_config.json@      \"repo\": {@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@        \"name\": \"chromeos/program/galaxy\"@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@      }@@@",
-      "@@@STEP_LOG_LINE@all_programs_config.json@    },@@@",
-      "@@@STEP_LOG_LINE@all_programs_config.json@    {@@@",
-      "@@@STEP_LOG_LINE@all_programs_config.json@      \"repo\": {@@@",
-      "@@@STEP_LOG_LINE@all_programs_config.json@        \"name\": \"chromeos/program/otherprogram\"@@@",
-      "@@@STEP_LOG_LINE@all_programs_config.json@      }@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@    }@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@  ]@@@",
       "@@@STEP_LOG_LINE@all_programs_config.json@}@@@",
@@ -1574,7 +1569,6 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/project/galaxy/milkyway|src/project/galaxy/milkyway|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/galaxy|src/program/galaxy|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/program/otherprogram|src/program/otherprogram|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
@@ -2185,11 +2179,10 @@
       "-a",
       "chromiumos.config.payload.ConfigBundleList",
       "-o",
-      "hw_design/generated/configs.jsonproto",
-      "[CLEANUP]/chromiumos_workspace/src/program/galaxy/generated/config.jsonproto"
+      "hw_design/generated/configs.jsonproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge ConfigBundles to config-internal",
+    "name": "Do aggregate_configs and create CL.aggregating configs.update ref.git transaction.merge joined configs to config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2378,48 +2371,6 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "Do replicate_public_config and create CL.chromeos/program/galaxy.copy public config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Do replicate_public_config and create CL.chromeos/program/otherprogram",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/chromiumos_workspace/src/project_public/program/otherprogram/sw_build_config"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.chromeos/program/otherprogram.remove dest dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copytree",
-      "[CLEANUP]/chromiumos_workspace/src/program/otherprogram/public_sw_build_config",
-      "[CLEANUP]/chromiumos_workspace/src/project_public/program/otherprogram/sw_build_config"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "name": "Do replicate_public_config and create CL.chromeos/program/otherprogram.copy public config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
