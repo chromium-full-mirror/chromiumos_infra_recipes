@@ -35,6 +35,14 @@ These tools are delivered to CI hosts via
 This process is automated by the `support/deploy_cipd.sh` script. See
 [support/README.txt](./support/README.txt) for more details.
 
+## Testing Locally
+
+Recipes can be run locally:
+
+```sh
+./recipes.py run <recipe>
+```
+
 ## Testing With `led`
 
 Expectation tests only mock the external services a recipe depends on. This means the expectation
