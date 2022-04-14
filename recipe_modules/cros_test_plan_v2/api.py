@@ -304,8 +304,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
         board_priority_list_path = self._download_config_pb(
             'chrome-internal.googlesource.com',
-            'chromeos/infra/config',
-            'testingconfig/generated/board_priority.binaryproto',
+            'chromeos/config-internal',
+            'board_config/generated/board_priority.binaryproto',
             host_input_path,
             test_output_message=self.test_api.board_priority_list(),
         )

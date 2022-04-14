@@ -374,9 +374,9 @@
       "curl",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/board_priority.binaryproto?format=TEXT"
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.binaryproto?format=TEXT"
     ],
-    "name": "generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/board_priority.binaryproto?format=TEXT",
+    "name": "generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.binaryproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
