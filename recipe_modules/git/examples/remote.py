@@ -10,6 +10,8 @@ DEPS = [
     'git',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine.recipe_api import StepFailure
 
 
@@ -26,6 +28,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data('single remote.git remote',
-                    stdout=api.raw_io.output_text('origin\n')),
+                    stdout=api.raw_io.output('origin\n')),
       api.step_data('multiple remotes.git remote',
-                    stdout=api.raw_io.output_text('origin\ncros\n')))
+                    stdout=api.raw_io.output('origin\ncros\n')))

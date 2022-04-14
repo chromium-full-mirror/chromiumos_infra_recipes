@@ -10,7 +10,7 @@ install_aliases()
 
 import contextlib
 from datetime import timedelta
-import types
+import six
 from collections import namedtuple
 # pylint: disable=no-name-in-module
 from urllib.parse import urlparse
@@ -43,7 +43,7 @@ class GitApi(recipe_api.RecipeApi):
       name = 'git'
       # Add first non-flag argument to name.
       for arg in args:
-        if isinstance(arg, types.StringTypes) and arg[:1] != '-':
+        if isinstance(arg, six.string_types) and arg[:1] != '-':
           name += ' ' + arg
           break
     if test_stdout is not None:
@@ -141,7 +141,7 @@ class GitApi(recipe_api.RecipeApi):
     output = step_data.stdout.strip()
     if not output:
       return []
-    return output.split('\n')
+    return six.ensure_str(output).split('\n')
 
   def get_working_dir_diff_files(self):
     """Finds all changed files (including untracked)."""
@@ -154,7 +154,10 @@ class GitApi(recipe_api.RecipeApi):
                            test_stdout=test_stdout)
 
     # Need to strip the diff mode characters, e.g. "?? "
-    return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
+    return [
+        six.ensure_str(line[2:]).strip()
+        for line in step_data.stdout.strip().splitlines()
+    ]
 
   def _fetch(self, remote, refspecs, timeout_sec):
     """Runs 'git fetch'.
@@ -238,7 +241,7 @@ class GitApi(recipe_api.RecipeApi):
     step_data = self._step(['rev-parse', 'FETCH_HEAD'],
                            stdout=self.m.raw_io.output(), timeout=timeout_sec,
                            test_stdout='%s\n' % self.test_api.test_commit_id)
-    return step_data.stdout.strip()
+    return six.ensure_str(step_data.stdout).strip()
 
   @exponential_retry(retries=20, delay=timedelta(minutes=1))
   def remote_update(self, step_name, timeout_sec=None):
@@ -439,7 +442,7 @@ class GitApi(recipe_api.RecipeApi):
         test_stdout=test_stdout,
     )
 
-    for line in step_data.stdout.split('\n'):
+    for line in six.ensure_str(step_data.stdout).split('\n'):
       if line.startswith('ref:'):
         _, ref, _ = line.split()
         return ref
@@ -461,7 +464,7 @@ class GitApi(recipe_api.RecipeApi):
     try:
       yield
     finally:
-      self.checkout(head)
+      self.checkout(six.ensure_str(head))
 
   def ls_remote(self, refs, repo_url=None):
     """Return ls-remote output for a repository.
@@ -505,7 +508,7 @@ class GitApi(recipe_api.RecipeApi):
     step_data = self._step(
         cmd, stdout=self.m.raw_io.output(),
         test_stdout='%s\x1Fmessage\x00' % self.test_api.test_commit_id)
-    stdout = step_data.stdout.strip().rstrip('\x00')
+    stdout = six.ensure_str(step_data.stdout).strip().rstrip('\x00')
     self.m.step.active_result.presentation.logs['stdout'] = [step_data.stdout]
 
     commits = []
@@ -513,7 +516,7 @@ class GitApi(recipe_api.RecipeApi):
       # We need to check for an empty stdout, because ''.split('\x00')
       # returns [''].
       for record in stdout.split('\x00'):
-        ref, message = record.split('\x1F')
+        ref, message = six.ensure_str(record).split('\x1F')
         commits.append(self.Commit(ref.strip('\n'), message))
     return commits
 
@@ -560,7 +563,7 @@ class GitApi(recipe_api.RecipeApi):
     step_data = self._step(['merge-base'] + list(args), **kwargs)
     if step_data.retcode != 0:
       return None
-    return step_data.stdout.strip() or None
+    return six.ensure_str(step_data.stdout).strip() or None
 
   def show_file(self, rev, path, test_contents=None):
     """Returns the contents of the given file path at the given revision.
@@ -705,7 +708,7 @@ class GitApi(recipe_api.RecipeApi):
     step_data = self._step(['log', '--pretty=%P', '-n 1', commit_id],
                            stdout=self.m.raw_io.output(),
                            test_stdout=test_contents)
-    return step_data.stdout.split(' ')
+    return six.ensure_str(step_data.stdout).split(' ')
 
   def is_merge_commit(self, commit_id):
     """Determines if the commit_id is a merge commit.
@@ -728,8 +731,9 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       (GitilesCommit): The GitilesCommit corresponding to HEAD.
     """
-    remote = self._step(['remote'], stdout=self.m.raw_io.output(),
-                        test_stdout=test_remote).stdout.splitlines()[0]
+    remote = six.ensure_str(
+        self._step(['remote'], stdout=self.m.raw_io.output(),
+                   test_stdout=test_remote).stdout.splitlines()[0])
     test_url = (
         test_url or
         'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
@@ -737,9 +741,9 @@ class GitApi(recipe_api.RecipeApi):
         self._step(['remote', 'get-url', remote], stdout=self.m.raw_io.output(),
                    test_stdout=test_url).stdout.strip())
     commit_sha = self.head_commit()
-    ref = 'refs/heads/{}'.format(self.current_branch())
+    ref = 'refs/heads/{}'.format(six.ensure_str(self.current_branch()))
     return GitilesCommit(host=url_parts.netloc, id=commit_sha, ref=ref,
-                         project=url_parts.path.strip('/'))
+                         project=six.ensure_str(url_parts.path).strip('/'))
 
   def remote_url(self, remote='origin'):
     """Get the URL for a defined remote.
@@ -755,7 +759,7 @@ class GitApi(recipe_api.RecipeApi):
         stdout=self.m.raw_io.output(),
         test_stdout="https://chromium.googlesource.com",
     )
-    return result.stdout.strip()
+    return six.ensure_str(result.stdout).strip()
 
   def set_upstream(self, remote, branch):
     """ Set the upretrem for the given branch.
@@ -781,9 +785,10 @@ class GitApi(recipe_api.RecipeApi):
 
     Returns: (str): commit author email.
     """
-    return self._step(['log', '--format=%aE', '-n', '-1', commit_id],
-                      stdout=self.m.raw_io.output(), test_stdout='%s\n' %
-                      self.test_api.test_author_email).stdout.strip()
+    return six.ensure_str(
+        self._step(['log', '--format=%aE', '-n', '-1', commit_id],
+                   stdout=self.m.raw_io.output(), test_stdout='%s\n' %
+                   self.test_api.test_author_email).stdout).strip()
 
   def remote(self):
     """Return the name of the remote.
@@ -792,7 +797,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     result = self._step(['remote'], stdout=self.m.raw_io.output())
 
-    remotes = result.stdout.strip().split('\n')
+    remotes = six.ensure_str(result.stdout.strip()).split('\n')
     if len(remotes) > 1:
       raise recipe_api.StepFailure(
           'more than one remote ({}), not sure which to return'.format(
@@ -822,5 +827,8 @@ class GitApi(recipe_api.RecipeApi):
     Returns: (bool) Whether or not the branch exists.
     """
     result = self._step(['branch'], stdout=self.m.raw_io.output())
-    branches = [b.lstrip('* ') for b in result.stdout.strip().split('\n')]
+    branches = [
+        b.lstrip('* ')
+        for b in six.ensure_str(result.stdout).strip().split('\n')
+    ]
     return branch in branches
