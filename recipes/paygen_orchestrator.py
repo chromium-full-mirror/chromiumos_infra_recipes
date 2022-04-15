@@ -194,10 +194,9 @@ def GenTests(api):
                 target_chromeos_version='13505.15.0', channels=None):
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
-    props = api.properties(delta_types=delta_types, builder_name=builder_name,
-                           target_chromeos_version=target_chromeos_version,
-                           channels=channels)
-    return props
+    return api.properties(delta_types=delta_types, builder_name=builder_name,
+                          target_chromeos_version=target_chromeos_version,
+                          channels=channels)
 
   good_paygen_cfg = api.cros_paygen.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',

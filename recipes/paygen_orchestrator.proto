@@ -23,25 +23,15 @@ message PaygenOrchestratorProperties {
   // The payload channels to generate for, empty requires DeltaType == NO_DELTA.
   repeated chromiumos.Channel channels = 4;
 
-  // The models in which we've enabled AU testing. If empty we will assume
-  // that the board name is the builder name (i.e. this isn't a unibuild).
-  repeated string au_testing_models = 5;
-
-  // The models which should run AU testing for FSI payloads.
-  // Generally, this should be all models exported by GoldenEye.
-  // If empty, we will assume that the board name is the builder name
-  // (i.e., this isn't a unibuld).
-  repeated string au_fsi_testing_models = 11;
-
   // The bucket to look for source artifacts in (e.g, chromeos-releases).
-  string src_bucket = 6;
+  string src_bucket = 5;
 
   // The bucket to place resulting artifacts in (e.g.
   // chromes-throw-away-bucket).
-  string dest_bucket = 7;
+  string dest_bucket = 6;
 
   // Should we not upload any generated artifacts or make other mutations.
-  bool dryrun = 8;
+  bool dryrun = 7;
 
   // Enumeration on whether or not to override the configured defaults.
   enum PayloadTestsOverride {
@@ -51,8 +41,8 @@ message PaygenOrchestratorProperties {
   }
 
   // Should we override the configured delta testing policy?
-  PayloadTestsOverride delta_payload_test_override = 9;
+  PayloadTestsOverride delta_payload_test_override = 8;
 
   // Should we override the configured full testing policy?
-  PayloadTestsOverride full_payload_test_override = 10;
+  PayloadTestsOverride full_payload_test_override = 9;
 }

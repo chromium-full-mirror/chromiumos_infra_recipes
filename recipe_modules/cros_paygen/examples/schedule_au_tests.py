@@ -42,6 +42,13 @@ def RunSteps(api):
       src_artifact_uri=src_artifact_uri_13414, src_version=src_version_13414,
       is_delta_update=True, delta_type=delta_type_omaha,
       applicable_models=applicable_models)
+  paygen_test_config_13414_no_models = api.cros_paygen.PaygenTestConfig(
+      test_build_target=test_build_target, build_target_name=build_target_name,
+      tgt_channel=tgt_channel, tgt_payload_uri=tgt_payload_uri,
+      tgt_archive_uri=tgt_archive_uri, tgt_version=tgt_version,
+      src_payload_uri=src_payload_uri_13414,
+      src_artifact_uri=src_artifact_uri_13414, src_version=src_version_13414,
+      is_delta_update=True, delta_type=delta_type_omaha, applicable_models=[])
 
   src_version_13413 = '13413.0.0'
   src_payload_uri_13413 = (
@@ -60,16 +67,13 @@ def RunSteps(api):
 
   # Ordinary scheduling for one or multiple paygen test configs.
   # There doesn't seem to be a way to inspect the scheduled build's input props.
-  api.cros_paygen.schedule_au_tests([paygen_test_config_13414],
-                                    ['ampton', 'bloog', 'blooglet'])
+  api.cros_paygen.schedule_au_tests([paygen_test_config_13414])
   api.cros_paygen.schedule_au_tests(
-      [paygen_test_config_13413, paygen_test_config_13414],
-      ['ampton', 'bloog', 'blooglet'])
+      [paygen_test_config_13414, paygen_test_config_13413])
 
-  # No testable models.
-  api.assertions.assertIsNone(
-      api.cros_paygen.schedule_au_tests([paygen_test_config_13414],
-                                        ['not-a-model']))
+  api.assertions.assertIsNone(api.cros_paygen.schedule_au_tests([]))
+  api.assertions.assertIsNotNone(
+      api.cros_paygen.schedule_au_tests([paygen_test_config_13414_no_models]))
   api.assertions.assertIsNotNone(
       api.cros_paygen.schedule_au_tests([paygen_test_config_13414]))
   paygen_test_config_13414._applicable_models = None

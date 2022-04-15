@@ -164,6 +164,14 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
       dlc_image='dlc.img',
   )
 
+  UNSIGNED_RECOVERY_TGT = UnsignedImage_pb2(
+      build=Build_pb2(
+          build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
+          bucket='b', channel='stable-channel'),
+      milestone='86',
+      image_type=common_pb2.IMAGE_TYPE_RECOVERY,
+  )
+
   @property
   def EXAMPLE_GEN_REQUESTS_DELTA_SIGNED(self):
     return [
@@ -246,6 +254,23 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
     ]
 
   @property
+  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_RECOVERY(self):
+    return [
+        GenerationRequest_pb2(
+            full_update=True,
+            tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
+            bucket='b',
+            verify=True,
+            dryrun=True,
+            chroot=self.m.cros_sdk.chroot(),
+        ),
+        GenerationRequest_pb2(full_update=True,
+                              tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
+                              bucket='b', verify=True, dryrun=True,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
+    ]
+
+  @property
   def EXAMPLE_GEN_REQUEST_FULL_DLC(self):
     return [
         GenerationRequest_pb2(
@@ -287,84 +312,51 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
         self.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
     ]
 
-  EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(
-      delta_type='OMAHA',
-      applicable_models=[
-          "astronaut",
-          "nasher360",
-          "blue",
-          "bruce",
-          "lava",
-          "whitetip",
-          "santa",
-          "blacktip360",
-          "blacktiplte",
-          "babymega",
-          "robo",
-          "nasher",
-          "blacktip",
-          "robo360",
-          "rabbid",
-          "babytiger",
-          "epaulette",
-      ],
-  )
+  # Sample list of models that might be exported by GoldenEye.
+  # Includes models that aren't configured for AU testing (ex. bruce).
+  # Excludes some models that may be in a cfg's applicable_models (ex. mako).
+  ALL_EXPORTED_MODELS = [
+      "astronaut", "nasher360", "blue", "bruce", "lava", "whitetip", "santa",
+      "blacktip360", "blacktiplte", "babymega", "robo", "nasher", "blacktip",
+      "robo360", "rabbid", "babytiger", "epaulette"
+  ]
+
+  # Sample list of models that might be configured in GoldenEye for AU testing.
+  # Compared to ALL_EXPORTED_MODELS, excludes the following:
+  # babymega, blacktip360, blacktiplte, bruce, lava, nasher, robo360, whitetip.
+  AU_TESTING_MODELS = [
+      "astronaut", "nasher360", "blue", "santa", "robo", "blacktip", "rabbid",
+      "babytiger", "epaulette"
+  ]
 
   EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(
       delta_type='OMAHA',
-      applicable_models=[
-          "astronaut",
-          "nasher360",
-          "blue",
-          "bruce",
-          "lava",
-          "whitetip",
-          "santa",
-          "blacktip360",
-          "blacktiplte",
-          "babymega",
-          "robo",
-          "nasher",
-          "blacktip",
-          "robo360",
-          "rabbid",
-          "babytiger",
-          "epaulette",
-      ],
+      applicable_models=AU_TESTING_MODELS,
+  )
+
+  EXAMPLE_TEST_REQUEST_DELTA_FSI = AutoupdateTestConfig(
+      delta_type='FSI',
+      applicable_models=ALL_EXPORTED_MODELS,
   )
 
   EXAMPLE_TEST_REQUEST_FULL_N2N = AutoupdateTestConfig(
       src_version=UNSIGNED_TGT.build.version,
       src_channel=UNSIGNED_TGT.build.channel,
       delta_type='N2N',
+      applicable_models=AU_TESTING_MODELS,
   )
 
   EXAMPLE_TEST_REQUEST_FULL_OMAHA = AutoupdateTestConfig(
       src_version='13421.89.0',
       src_channel='stable-channel',
       delta_type='OMAHA',
-      applicable_models=[
-          "astronaut",
-          "nasher360",
-          "blue",
-          "bruce",
-          "lava",
-          "whitetip",
-          "santa",
-          "blacktip360",
-          "blacktiplte",
-          "babymega",
-          "robo",
-          "nasher",
-          "blacktip",
-          "robo360",
-          "rabbid",
-          "babytiger",
-          "epaulette",
-      ],
+      applicable_models=AU_TESTING_MODELS,
   )
 
-  EXAMPLE_TEST_REQUEST_DELTA_N2N = AutoupdateTestConfig(delta_type='N2N')
+  EXAMPLE_TEST_REQUEST_DELTA_N2N = AutoupdateTestConfig(
+      delta_type='N2N',
+      applicable_models=AU_TESTING_MODELS,
+  )
 
   BASIC_TEST_PROPS = {
       'payload_cfg': EXAMPLE_SINGLE_PAYGEN_CONFIG,

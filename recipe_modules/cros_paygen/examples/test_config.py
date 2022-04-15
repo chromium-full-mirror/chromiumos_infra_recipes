@@ -54,10 +54,10 @@ def RunSteps(api, properties):
   delta_dlc_payload = api.cros_storage.DeltaDLCPayload(
       test_dlc_image, test_dlc_image, 'gvtgcmjugztghjioi4bbf32rlvybuioo')
 
-  # Valid Payload types.
-  delta_test_config = api.cros_paygen.create_paygen_test_config(
-      tgt_payload=unsigned_delta_payload, delta_type=DeltaType.Value('OMAHA'),
-      applicable_models=['woomax'])
+  # Create delta and full test configs
+  api.cros_paygen.create_paygen_test_config(tgt_payload=unsigned_delta_payload,
+                                            delta_type=DeltaType.Value('OMAHA'),
+                                            applicable_models=['woomax'])
   full_test_config = api.cros_paygen.create_paygen_test_config(
       tgt_payload=unsigned_full_payload, delta_type=DeltaType.Value('OMAHA'),
       src_version='13336.0.1', src_channel='canary-channel')
@@ -82,18 +82,6 @@ def RunSteps(api, properties):
   with api.assertions.assertRaises(api.step.StepFailure):
     api.cros_paygen.create_paygen_test_config(
         tgt_payload=delta_dlc_payload, delta_type=DeltaType.Value('OMAHA'))
-
-  # Test get_testable_models.
-  # Models is None, self._applicable_models is non-empty.
-  api.assertions.assertCountEqual(delta_test_config._get_testable_models(),
-                                  ['woomax'])
-  # Models and self._applicable_models is non-empty.
-  api.assertions.assertCountEqual(
-      delta_test_config._get_testable_models(['woomax', 'other']), ['woomax'])
-  # Models is non-empty, self._applicable_models is None.
-  api.assertions.assertCountEqual(
-      full_test_config._get_testable_models(['woomax', 'other']),
-      ['woomax', 'other'])
 
   api.assertions.assertEqual(
       full_test_config._get_test_runner_tags()['label-pool'],

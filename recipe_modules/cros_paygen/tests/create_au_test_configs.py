@@ -48,15 +48,28 @@ PROPERTIES = {
             help='Enum value to override the payload\'s full testing config.',
             default=0,
         ),
+    'fsi':
+        Property(
+            kind=bool,
+            help='Whether the configured_payload should be for an FSI payload.',
+            default=False,
+        ),
 }
 
 
 def RunSteps(api, gen_req_ser, expected_test_configs_ser, delta_test_override,
-             full_test_override):
+             full_test_override, fsi):
+  api.assertions.maxDiff = None
   with api.step.nest('setup'):
     configured_payloads = [
         json.loads(api.cros_paygen.test_api.EXAMPLE_SINGLE_PAYGEN_CONFIG)
     ]
+    if fsi:
+      configured_payloads[0]['delta_type'] = 'FSI'
+    api.cros_paygen._au_testing_models = \
+        api.cros_paygen.test_api.AU_TESTING_MODELS
+    api.cros_paygen._au_fsi_testing_models = \
+        api.cros_paygen.test_api.ALL_EXPORTED_MODELS
     with api.step.nest('deserialize GenerationRequest'):
       gen_req = GenerationRequest()
       gen_req.ParseFromString(gen_req_ser)
@@ -79,16 +92,14 @@ def GenTests(api):
   # and fsi_testing_configs
 
   def create_properties(gen_req, expected_test_configs, delta_test_override=0,
-                        full_test_override=0):
+                        full_test_override=0, fsi=False):
     gen_req_ser = gen_req.SerializeToString()
     expected_test_configs_ser = tuple(
         [etc.SerializeToString() for etc in expected_test_configs])
-    return api.properties(
-        gen_req_ser=gen_req_ser,
-        expected_test_configs_ser=expected_test_configs_ser,
-        delta_test_override=delta_test_override,
-        full_test_override=full_test_override,
-    )
+    return api.properties(gen_req_ser=gen_req_ser,
+                          expected_test_configs_ser=expected_test_configs_ser,
+                          delta_test_override=delta_test_override,
+                          full_test_override=full_test_override, fsi=fsi)
 
   yield api.test(
       'delta-(m2n)-respect-configs',
@@ -102,6 +113,14 @@ def GenTests(api):
           [api.cros_paygen.EXAMPLE_TEST_REQUEST_DELTA_OMAHA],
           delta_test_override=PaygenOrchestratorProperties.FORCE_TESTS),
       api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'delta-(fsi)-force tests',
+      create_properties(
+          api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
+          [api.cros_paygen.EXAMPLE_TEST_REQUEST_DELTA_FSI],
+          delta_test_override=PaygenOrchestratorProperties.FORCE_TESTS,
+          fsi=True), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'delta-(m2n)-force-no-tests',
@@ -146,6 +165,12 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'not-unsigned-test-image',
+      'not-unsigned-image',
       create_properties(api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED[0],
                         []), api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'unsigned-not-test-image',
+      create_properties(
+          api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_RECOVERY[0], []),
+      api.post_check(post_process.StatusSuccess))
