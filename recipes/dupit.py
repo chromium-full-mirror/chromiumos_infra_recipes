@@ -16,6 +16,8 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.recipes.chromeos.dupit import DupitProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = DupitProperties
 
 

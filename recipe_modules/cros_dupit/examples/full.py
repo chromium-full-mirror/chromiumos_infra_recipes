@@ -10,6 +10,8 @@ DEPS = [
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.cros_dupit.configure(
@@ -34,7 +36,7 @@ def GenTests(api):
       api.step_data(
           'gsutil list distfiles in '
           'gs://stark-trek/the-ultimate-computer/distfiles/',
-          stdout=api.raw_io.output('''
+          stdout=api.raw_io.output_text('''
 gs://stark-trek/the-ultimate-computer/distfiles/exists-in-gs.tar.gz''')),
       api.step_data(
           'list distfiles in rsync://mirrors.do.not.exists/distfiles',

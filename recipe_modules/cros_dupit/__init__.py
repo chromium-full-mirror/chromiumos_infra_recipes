@@ -10,3 +10,5 @@ DEPS = [
     'depot_tools/gsutil',
     'easy',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

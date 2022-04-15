@@ -24,7 +24,7 @@
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_cache](#recipe_modules-cros_cache) (Python3 ✅) &mdash; API for working with CrOS cache.
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
-  * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
+  * [cros_dupit](#recipe_modules-cros_dupit) (Python3 ✅) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
   * [cros_infra_config](#recipe_modules-cros_infra_config)
   * [cros_lvfs_mirror](#recipe_modules-cros_lvfs_mirror) (Python3 ✅) &mdash; API for LvfsMirror script.
@@ -202,8 +202,8 @@
   * [cros_cache:examples/full](#recipes-cros_cache_examples_full) (Python3 ✅)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
-  * [cros_dupit:examples/arch](#recipes-cros_dupit_examples_arch)
-  * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full)
+  * [cros_dupit:examples/arch](#recipes-cros_dupit_examples_arch) (Python3 ✅)
+  * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full) (Python3 ✅)
   * [cros_history:examples/get_annealing_from_snapshot](#recipes-cros_history_examples_get_annealing_from_snapshot)
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds)
@@ -305,7 +305,7 @@
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
-  * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
+  * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [dupit_arch](#recipes-dupit_arch) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
   * [dut_interface:tests/full](#recipes-dut_interface_tests_full) (Python3 ✅)
   * [dut_tracker](#recipes-dut_tracker) &mdash; Recipe for the Star Doctor.
@@ -2269,7 +2269,7 @@ Return:
 
 [DEPS](/recipe_modules/cros_dupit/__init__.py#5): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for DupIt script. See the design of this recipe in go/cros-dupit.
 
@@ -9214,16 +9214,16 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cros_dupit/examples/arch.py#6): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/arch.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/arch.py#16)(api):**
 ### *recipes* / [cros\_dupit:examples/full](/recipe_modules/cros_dupit/examples/full.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/full.py#6): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#16)(api):**
 ### *recipes* / [cros\_history:examples/get\_annealing\_from\_snapshot](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#7): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -9950,11 +9950,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/dupit.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for syncing remote, distributed tarballs to our local cache.
 
-&mdash; **def [RunSteps](/recipes/dupit.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipes/dupit.py#24)(api, properties):**
 ### *recipes* / [dupit\_arch](/recipes/dupit_arch.py)
 
 [DEPS](/recipes/dupit_arch.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/step][recipe_engine/recipe_modules/step]
