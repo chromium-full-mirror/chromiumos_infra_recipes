@@ -430,8 +430,6 @@
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full) (Python3 ✅)
   * [sign_image](#recipes-sign_image) (Python3 ✅) &mdash; Recipe for signing ChromeOS images.
-  * [sign_paygen](#recipes-sign_paygen) (Python3 ✅) &mdash; Recipe for signing ChromeOS payloads (AU deltas etc).
-  * [signing](#recipes-signing) (Python3 ✅) &mdash; Recipe for signing ChromeOS images.
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
@@ -10978,24 +10976,6 @@ Recipe for signing ChromeOS images.
 &mdash; **def [RunSteps](/recipes/sign_image.py#112)(api, properties):**
 
 Run steps.
-### *recipes* / [sign\_paygen](/recipes/sign_paygen.py)
-
-[DEPS](/recipes/sign_paygen.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-Recipe for signing ChromeOS payloads (AU deltas etc).
-
-&mdash; **def [RunSteps](/recipes/sign_paygen.py#15)(api):**
-### *recipes* / [signing](/recipes/signing.py)
-
-[DEPS](/recipes/signing.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-Recipe for signing ChromeOS images.
-
-&mdash; **def [RunSteps](/recipes/signing.py#15)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
