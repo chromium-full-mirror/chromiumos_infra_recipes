@@ -87,12 +87,12 @@ def GenTests(api):
                            api.post_check(post_process.StatusSuccess),
                            builder='bisecting-orchestrator')
 
-  yield api.orch_menu.test('builds_with_history', data.ctp_normal,
+  yield api.orch_menu.test('builds-with-history', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess), cq=True,
                            collect_builds=data.builds, with_history=True,
                            git_footers=[])
 
-  yield api.orch_menu.test('joinable_existing_annealing_builds',
+  yield api.orch_menu.test('joinable-existing-annealing-builds',
                            data.ctp_normal,
                            annealing_builds=data.annealing_builds,
                            collect_builds=data.builds, with_history=True,
@@ -110,26 +110,26 @@ def GenTests(api):
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
-      'join_if_inflight_orchs', data.ctp_normal,
+      'join-if-inflight-orchs', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
       cq=True, with_history=True)
 
   yield api.orch_menu.test(
-      'runs_if_no_inflight_orchs', data.ctp_normal,
+      'runs-if-no-inflight-orchs', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, find_inflight_name),
       api.post_check(post_process.DoesNotRun,
                      wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
 
-  yield api.orch_menu.test('updates_refs', data.ctp_normal,
+  yield api.orch_menu.test('updates-refs', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
                            with_manifest_refs=True, collect_builds=data.builds)
 
   yield api.orch_menu.test(
-      'does_not_update_refs', data.ctp_normal,
+      'does-not-update-refs', data.ctp_normal,
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun,
                      'update manifest-internal ref refs/heads/stable'),
@@ -139,7 +139,7 @@ def GenTests(api):
       collect_builds=data.crit_fail)
 
   yield api.orch_menu.test(
-      'missing_gitiles_commit', data.ctp_normal,
+      'missing-gitiles-commit', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest-internal ref refs/heads/postsubmit'),
@@ -147,20 +147,20 @@ def GenTests(api):
                      'update manifest ref refs/heads/stable'),
       collect_builds=data.builds, revision=None, with_manifest_refs=True)
 
-  yield api.orch_menu.test('orchestrator_with_follow_on', data.ctp_normal,
+  yield api.orch_menu.test('orchestrator-with-follow_on', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
                            collect_builds=data.builds,
                            follow_on_orch=data.follow_on_orchestrator,
                            bucket='toolchain',
                            builder='orderfile-generate-orchestrator')
 
-  yield api.orch_menu.test('missing_gitiles_commit_with_defaults',
+  yield api.orch_menu.test('missing-gitiles-commit-with-defaults',
                            data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
                            collect_builds=data.builds, revision=None,
                            with_manifest_refs=True)
 
-  yield api.orch_menu.test('missing_gitiles_commit_with_changes',
+  yield api.orch_menu.test('missing-gitiles-commit-with-changes',
                            data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
                            collect_builds=data.builds, revision=None, cq=True,
@@ -175,23 +175,23 @@ def GenTests(api):
                  == u'pupr')
 
   yield api.orch_menu.test(
-      'quota_scheduler_override', data.ctp_normal,
+      'quota-scheduler-override', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(verify_qs_account_pupr), cq=True, with_history=True,
       tags=dict(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'), git_footers=[],
       collect_builds=data.builds)
 
-  yield api.orch_menu.test('retry_only_critical_builds', data.ctp_normal,
+  yield api.orch_menu.test('retry-only-critical-builds', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess), cq=True,
                            with_history=True, git_footers=[],
                            collect_builds=data.non_crit_fail)
 
-  yield api.orch_menu.test('critical_child_builder_fails', data.ctp_normal,
+  yield api.orch_menu.test('critical-child-builder-fails', data.ctp_normal,
                            api.post_check(post_process.StatusAnyFailure),
                            with_manifest_refs=True,
                            collect_builds=data.crit_fail)
 
-  yield api.orch_menu.test('non-critical_child_builder_fails', data.ctp_normal,
+  yield api.orch_menu.test('non-critical-child-builder-fails', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
                            with_manifest_refs=True,
                            collect_builds=data.non_crit_fail)

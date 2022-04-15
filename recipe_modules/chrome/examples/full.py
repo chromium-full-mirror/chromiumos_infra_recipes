@@ -180,7 +180,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'with_properties',
+      'with-properties',
       test_data(),
       api.properties(
           **{'$chromeos/chrome': ChromeProperties(parallel_sync_jobs=42)}),

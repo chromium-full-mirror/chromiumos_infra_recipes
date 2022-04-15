@@ -74,7 +74,7 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'script success',
+      'script-success',
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
           stdout=api.raw_io.output(
@@ -84,7 +84,7 @@ def GenTests(api):
               'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
 
   yield api.test(
-      'script unexpected',
+      'script-unexpected',
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
           stdout=api.raw_io.output('Unexpected Result')),

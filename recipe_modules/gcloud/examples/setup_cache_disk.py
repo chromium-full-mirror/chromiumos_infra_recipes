@@ -157,7 +157,7 @@ def GenTests(api):
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
-      'overlayfs branch not set',
+      'overlayfs-branch-not-set',
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((
@@ -165,7 +165,7 @@ def GenTests(api):
       ), retcode=3),
   )
   yield api.test(
-      'nothing returned on disk exists',
+      'nothing-returned-on-disk-exists',
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-ssdf'),
       api.step_data((

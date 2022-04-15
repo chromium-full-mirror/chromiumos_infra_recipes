@@ -95,16 +95,16 @@ def GenTests(api):
     return api.test(name, ret, *args)
 
   # The default Postsubmit build.
-  yield test('has_commit_and_no_changes',)
+  yield test('has-commit-and-no-changes',)
 
   # The default CQ build.
-  yield test('has_changes_and_no_commit', cq=True)
+  yield test('has-changes-and-no-commit', cq=True)
 
-  yield test('ignore_missing_projects', cq=True, ignore_missing_projects=True)
+  yield test('ignore-missing-projects', cq=True, ignore_missing_projects=True)
 
-  yield test('has_no_commit_and_no_changes', revision=None)
+  yield test('has-no-commit-and-no-changes', revision=None)
 
-  yield test('has_toolchain_changes', cq=True, toolchain_cls_applied=True)
+  yield test('has-toolchain-changes', cq=True, toolchain_cls_applied=True)
 
   yield test('release', git_repo=api.src_state.external_manifest.url,
              git_ref='refs/heads/release-R86.13421.B')

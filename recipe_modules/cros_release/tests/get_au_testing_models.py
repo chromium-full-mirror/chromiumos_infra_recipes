@@ -65,12 +65,12 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'no generate_test_config response',
+      'no-generate_test_config-response',
       api.step_data(_generate_test_config_step, stdout=api.raw_io.output('')),
       api.post_check(post_process.StepFailure, 'determine au testing models'))
 
   yield api.test(
-      'generate_test_config response does not contain builder',
+      'generate_test_config-response-does-not-contain-builder',
       api.step_data(
           _generate_test_config_step,
           stdout=api.raw_io.output('{"other_builder": {"foo": ["au"]}}')),

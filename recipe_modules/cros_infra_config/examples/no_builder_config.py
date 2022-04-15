@@ -19,6 +19,6 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'no_BuilderConfig_found',
+      'no-BuilderConfig-found',
       api.test_util.test_child_build('amd64-generic',
                                      builder='bad-builder-name').build)

@@ -32,7 +32,7 @@ def GenTests(api):
                        'getting config for prefix-first'))
 
   yield api.test(
-      'prefix with no config',
+      'prefix-with-no-config',
       api.properties(
           GetCurrentConfigProperties(prefix="prefix-should-return-none")),
       api.post_process(post_process.StepException,

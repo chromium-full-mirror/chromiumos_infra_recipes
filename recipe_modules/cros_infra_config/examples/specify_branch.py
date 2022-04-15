@@ -33,7 +33,7 @@ def GenTests(api):
 
   config_ref = 'refs/changes/45/12345/3'
   yield api.test(
-      'specify_CL',
+      'specify-CL',
       api.properties(
           **{
               '$chromeos/cros_infra_config':
@@ -54,7 +54,7 @@ def GenTests(api):
                                                              'cfg')))
 
   yield api.test(
-      'prod-specify_CL',
+      'prod-specify-CL',
       api.properties(
           **{
               '$chromeos/cros_infra_config':

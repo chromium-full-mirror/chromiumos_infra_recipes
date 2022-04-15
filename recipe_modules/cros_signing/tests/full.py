@@ -81,7 +81,7 @@ def GenTests(api):
   step_failed = functools.partial(api.post_check, post_process.StepFailure)
 
   yield api.test(
-      'full run',
+      'full-run',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
       api.cros_signing.mock_meta(
@@ -106,7 +106,7 @@ def GenTests(api):
 
   # Timeout test.
   yield api.test(
-      'times out',
+      'times-out',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
       api.cros_signing.mock_meta(
@@ -125,7 +125,7 @@ def GenTests(api):
 
   # Failed test.
   yield api.test(
-      'signing failed',
+      'signing-failed',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
       api.cros_signing.mock_meta(
@@ -146,7 +146,7 @@ def GenTests(api):
 
   # Malformed json
   yield api.test(
-      'malformed json',
+      'malformed-json',
       api.properties(
           **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
       # Bad json (missing closing brace).

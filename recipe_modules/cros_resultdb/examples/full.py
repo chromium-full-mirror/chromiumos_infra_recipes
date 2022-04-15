@@ -61,7 +61,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'basic_tast',
+      'basic-tast',
       api.buildbucket.ci_build(
           tags=api.cros_tags.tags(**{
               'label-board': 'board',
@@ -109,14 +109,14 @@ def GenTests(api):
   )
 
   yield api.test(
-      'rdb_failure',
+      'rdb-failure',
       api.buildbucket.ci_build(),
       api.properties(rdb_config=rdb_config_json),
       api.step_data('upload test results to rdb.run rdb', retcode=1),
   )
 
   yield api.test(
-      'cache result_adapter',
+      'cache-result_adapter',
       api.buildbucket.ci_build(),
       api.properties(rdb_config=rdb_config_json),
       api.properties(

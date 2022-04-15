@@ -95,7 +95,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'fails_install_with_many_packages', test_build(cq=True),
+      'fails-install-with-many-packages', test_build(cq=True),
       api.cros_build_api.set_api_return(
           'install packages', 'SysrootService/InstallPackages',
           json.dumps(
@@ -145,19 +145,19 @@ def GenTests(api):
                   }]))))
 
   yield api.test(
-      'no_goma', test_build(),
+      'no-goma', test_build(),
       api.cros_build_api.set_api_return('install packages',
                                         'SysrootService/InstallPackages',
                                         goma_artifacts(False)))
 
   yield api.test(
-      'with_goma', test_build(),
+      'with-goma', test_build(),
       api.cros_build_api.set_api_return('install packages',
                                         'SysrootService/InstallPackages',
                                         goma_artifacts(True)))
 
   yield api.test(
-      'with_remoteexec', test_build(),
+      'with-remoteexec', test_build(),
       api.properties(
           **{
               '$chromeos/remoteexec':

@@ -44,7 +44,7 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'custom label',
+      'custom-label',
       api.buildbucket.build(Build(id=123456789)),
       api.properties(
           **{

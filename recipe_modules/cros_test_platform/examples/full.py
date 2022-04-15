@@ -49,7 +49,7 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'custom label',
+      'custom-label',
       api.properties(
           **{
               '$chromeos/cros_test_platform':

@@ -565,7 +565,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'backfill_error',
+      'backfill-error',
       api.properties(
           **{
               'configs': [{
@@ -588,7 +588,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'staging_no_commit',
+      'staging-no-commit',
       api.buildbucket.generic_build(builder="staging-backfiller"),
       api.properties(
           **{
@@ -615,7 +615,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'not_in_manifest',
+      'not-in-manifest',
       api.properties(
           **{
               'configs': [{
@@ -643,7 +643,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'not_checked_out',
+      'not-checked-out',
       api.properties(
           **{
               'configs': [{
@@ -666,7 +666,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_changed_files',
+      'no-changed-files',
       api.properties(
           **{
               'configs': [{
@@ -689,7 +689,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'changed_files',
+      'changed-files',
       api.properties(
           **{
               'configs': [{

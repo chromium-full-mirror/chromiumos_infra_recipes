@@ -176,7 +176,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_local_manifest',
+      'no-local-manifest',
       api.properties(
           LocalManifestPresubmitProperties(
               project='chromeos',
@@ -201,7 +201,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'manifest_branch',
+      'manifest-branch',
       api.properties(
           LocalManifestPresubmitProperties(
               project='chromeos',
@@ -220,7 +220,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'local_manifest_and_manifest_branch_specified',
+      'local-manifest-and-manifest-branch-specified',
       api.properties(
           LocalManifestPresubmitProperties(
               project='chromeos',
@@ -253,7 +253,7 @@ def GenTests(api):
   # Checks against making sure a bot_update initialization is not being
   # used. bot_update blows up if it sees more than one change.
   yield api.test(
-      'multiple_changes',
+      'multiple-changes',
       api.properties(
           LocalManifestPresubmitProperties(
               project='chromeos',
@@ -292,7 +292,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_project',
+      'no-project',
       api.properties(
           LocalManifestPresubmitProperties(
               manifest_groups=['partner-config'],
@@ -305,7 +305,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_manifest_groups',
+      'no-manifest-groups',
       api.properties(LocalManifestPresubmitProperties(
           project='chromeos',
       )),
@@ -317,7 +317,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_gerrit_changes',
+      'no-gerrit-changes',
       api.properties(
           LocalManifestPresubmitProperties(
               project='chromeos',

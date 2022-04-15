@@ -97,7 +97,7 @@ def GenTests(api):
       api.test_util.test_child_build('amd64-generic').build)
 
   yield api.build_menu.test(
-      'paygen_failure',
+      'paygen-failure',
       api.properties(
           **{
               '$chromeos/cros_version':

@@ -144,13 +144,13 @@ def GenTests(api):
     }
 
   yield api.test(
-      'ctp result flow success w/o deadline',
+      'ctp-result-flow-success-without-deadline',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
       _run_ctp_flow_with_state(result_flow.common.SUCCEEDED),
   )
 
   yield api.test(
-      'ctp result flow success with deadline',
+      'ctp-result-flow-success-with-deadline',
       api.properties(
           ResultFlowProperties(ctp_flow=_canned_ctp_config(),
                                deadline=timestamp_pb2.Timestamp(seconds=55))),
@@ -158,24 +158,24 @@ def GenTests(api):
   )
 
   yield api.test(
-      'ctp result flow failed',
+      'ctp-result-flow-failed',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
       _run_ctp_flow_with_state(result_flow.common.FAILED))
 
   yield api.test(
-      'ctp result flow timed out',
+      'ctp-result-flow-timed-out',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
       _run_ctp_flow_with_state(result_flow.common.TIMED_OUT))
 
   yield api.test(
-      'test_runner result flow success w/o deadline',
+      'test_runner-result-flow-success-without-deadline',
       api.properties(
           ResultFlowProperties(test_runner_flow=_canned_test_runner_config())),
       _run_test_runner_flow_with_state(result_flow.common.SUCCEEDED),
   )
 
   yield api.test(
-      'test_runner result flow success with deadline',
+      'test_runner-result-flow-success-with-deadline',
       api.properties(
           ResultFlowProperties(test_runner_flow=_canned_test_runner_config(),
                                deadline=timestamp_pb2.Timestamp(seconds=55))),

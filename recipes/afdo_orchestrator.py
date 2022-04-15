@@ -89,28 +89,28 @@ def GenTests(api):
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
-      'join_if_inflight_orchs', data.ctp_normal,
+      'join-if-inflight-orchs', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
       cq=True, with_history=True)
 
   yield api.orch_menu.test(
-      'runs_if_no_inflight_orchs', data.ctp_normal,
+      'runs-if-no-inflight-orchs', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, find_inflight_name),
       api.post_check(post_process.DoesNotRun,
                      wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
 
-  yield api.orch_menu.test('dry_run',
+  yield api.orch_menu.test('dry-run',
                            api.post_check(post_process.DoesNotRun, 'run tests'),
                            api.post_check(post_process.StatusSuccess), cq=True,
                            dry_run=True, collect_builds=data.builds,
                            with_history=True, git_footers=[])
 
   yield api.orch_menu.test(
-      'orchestrator_with_process_child_and_followon', data.ctp_normal,
+      'orchestrator-with-process-child-and-followon', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=data.builds, process_child=data.process_child,

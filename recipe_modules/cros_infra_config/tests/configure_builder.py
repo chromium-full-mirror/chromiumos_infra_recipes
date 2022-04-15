@@ -60,14 +60,14 @@ def GenTests(api):
                  api.test_util.test_child_build('amd64-generic').build)
 
   yield api.test(
-      'with_changes',
+      'with-changes',
       api.test_util.test_orchestrator(
           bucket='toolchain',
           extra_changes=[common_pb2.GerritChange(change=1234)]).build,
       expected_changes(2))
 
   yield api.test(
-      'with_duplicate_change',
+      'with-duplicate-change',
       api.test_util.test_orchestrator(
           bucket='toolchain', extra_changes=[
               common_pb2.GerritChange(

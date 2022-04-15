@@ -42,4 +42,4 @@ def GenTests(api):
       ),
   )
 
-  yield api.test('no starlark files')
+  yield api.test('no-starlark-files')

@@ -97,14 +97,14 @@ def GenTests(api):
   props = PresubmitCqProperties(runhooks=True, timeout_s=3)
 
   # This is the normal case
-  yield api.test('normal_one_change', api.test_util.test_build(cq=True).build)
+  yield api.test('normal-one-change', api.test_util.test_build(cq=True).build)
 
   yield api.test(
-      'normal_one_change_and_props',
+      'normal-one-change-and-props',
       api.test_util.test_build(cq=True, input_properties=props).build)
 
   yield api.test(
-      'one_change_fullcheckout',
+      'one-change-fullcheckout',
       api.properties(fullcheckout_projects=['chromeos/config-internal']),
       api.test_util.test_build(
           cq=True, gerrit_changes=[
@@ -115,7 +115,7 @@ def GenTests(api):
                      'run infra-fullcheckout-presubmit'))
 
   yield api.test(
-      'normal_two_changes',
+      'normal-two-changes',
       api.test_util.test_build(
           cq=True, extra_changes=[common_pb2.GerritChange(change=1235)]).build)
 
@@ -123,12 +123,12 @@ def GenTests(api):
   yield api.test('commit_with_no_changes', api.test_util.test_build().build)
 
   yield api.test(
-      'commit_with_one_change',
+      'commit-with-one-change',
       api.test_util.test_build(
           extra_changes=[common_pb2.GerritChange(change=1234)]).build)
 
   yield api.test(
-      'commit_with_two_changes',
+      'commit-with-two-changes',
       api.test_util.test_build(extra_changes=[
           common_pb2.GerritChange(change=1234),
           common_pb2.GerritChange(change=1235),

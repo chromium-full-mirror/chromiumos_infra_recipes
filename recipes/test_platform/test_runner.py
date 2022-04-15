@@ -1382,7 +1382,7 @@ tast_missing_test.3=bar.YetAnotherTest
   ########## Test cases #########
 
   yield api.test(
-      'test_name_missing',
+      'test-name-missing',
       _misc_properties(),
       _request_properties_no_name(),
       api.post_check(post_process.StatusFailure),
@@ -1451,7 +1451,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'success_multi_duts',
+      'success-multi-duts',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_multiduts(),
@@ -1475,7 +1475,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'success_multi_duts_with_android_devices',
+      'success-multi-duts-with-android-devices',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_multiduts_with_androids(),
@@ -1508,7 +1508,7 @@ tast_missing_test.3=bar.YetAnotherTest
   r_with_passed_deadline['deadline'] = test_deadline
 
   yield api.test(
-      'deadline_passed',
+      'deadline-passed',
       api.time.seed(current_time_sec),
       _misc_properties(),
       api.properties(TestRunnerProperties(request=r_with_passed_deadline)),
@@ -1517,7 +1517,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'success_with_build_deadline',
+      'success-with-build-deadline',
       api.time.seed(current_time_sec),
       api.buildbucket.build(_build_with_execution_timeout(30)),
       _misc_properties(),
@@ -1530,7 +1530,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'success_with_request_deadline',
+      'success-with-request-deadline',
       api.time.seed(current_time_sec),
       api.buildbucket.build(_build_with_execution_timeout(66)),
       _misc_properties(),
@@ -1543,7 +1543,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'prejob_crash',
+      'prejob-crash',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1554,7 +1554,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'run_test_crash',
+      'run-test-crash',
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -1565,7 +1565,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'upload_to_tko_crash',
+      'upload-to-tko-crash',
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -1578,7 +1578,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'mismatched_test_result_directory',
+      'mismatched-test-result-directory',
       _misc_properties(),
       _request_properties(),
       api.step_data(
@@ -1602,7 +1602,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'link_to_all_archived_logs',
+      'link-to-all-archived-logs',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1621,7 +1621,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'get_results_crash',
+      'get-results-crash',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1635,7 +1635,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'results_summary',
+      'results-summary',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1665,7 +1665,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'failed_prejob_with_missing_failures_in_result',
+      'failed-prejob-with-missing-failures-in-result',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1675,7 +1675,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'failed_run-test_with_missing_failures_in_result',
+      'failed-runtest-with-missing-failures-in-result',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1686,7 +1686,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'successful_run-test_with_multiple_tests',
+      'successful-runtest-with-multiple-tests',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_multitest(),
@@ -1699,7 +1699,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'failed_fetch-crashes',
+      'failed-fetchcrashes',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1714,7 +1714,7 @@ tast_missing_test.3=bar.YetAnotherTest
       state=phosphorus.runtest.RunTestResponse.SUCCEEDED,
       crashes_rtd_only=["foobar.meta"])
   yield api.test(
-      'successful_fetch-crashes-with-missed-crashes',
+      'successful-fetchcrashes-with-missed-crashes',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1726,7 +1726,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'skip_result_flow_pubsub_due_to_missing_build_ID',
+      'skip-result-flow-pubsub-due-to-missing-build-ID',
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
@@ -1737,7 +1737,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'skip_result_flow_pubsub_due_to_missing_topic',
+      'skip-result-flow-pubsub-due-to-missing-topic',
       _set_build(bid=42),
       _misc_properties(),
       api.properties(
@@ -1760,7 +1760,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'skip_result_flow_pubsub_due_to_missing_project',
+      'skip-result-flow-pubsub-due-to-missing-project',
       _set_build(bid=42),
       _misc_properties(),
       api.properties(
@@ -1790,7 +1790,7 @@ tast_missing_test.3=bar.YetAnotherTest
       },
   })
   yield api.test(
-      'chromium_test_upload_result_to_rdb',
+      'chromium-test-upload-result-to-rdb',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_rdb('resultdb_settings=%s' %
@@ -1820,7 +1820,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'chromium_test_upload_result_to_rdb_failure',
+      'chromium-test-upload-result-to-rdb-failure',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_rdb('resultdb_settings=%s' %
@@ -1842,7 +1842,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'dut_topology_experiment_flag',
+      'dut_topology_experiment-flag',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1872,7 +1872,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'dut_topology_test_allowlist',
+      'dut_topology-test_allowlist',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties(),
@@ -1902,7 +1902,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'dut_topology_suite_allowlist',
+      'dut_topology-suite_allowlist',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_with_suite_name('dummy_suite'),
@@ -1933,26 +1933,26 @@ tast_missing_test.3=bar.YetAnotherTest
 
   ############ CTR Test Cases ##########
 
-  yield api.test('success_with_ctr', _set_build(bid=42), _misc_properties(True),
+  yield api.test('success-with-ctr', _set_build(bid=42), _misc_properties(True),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _successful_run_test_step_for_ctr())
 
   yield api.test(
-      'within_deadline_ctr', api.time.seed(2369692800), _misc_properties(True),
+      'within-deadline-ctr', api.time.seed(2369692800), _misc_properties(True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_within_deadline(
               current_time_sec=2369692800)), _mock_load_step_for_ctr(),
       _successful_prejob_step_for_ctr(), _successful_run_test_step_for_ctr())
 
   yield api.test(
-      'deadline_passed_ctr', api.time.seed(2369692800), _misc_properties(True),
+      'deadline-passed-ctr', api.time.seed(2369692800), _misc_properties(True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_passed_deadline(
               current_time_sec=2369692800)), _mock_load_step_for_ctr())
 
   yield api.test(
-      'primary_dut_missing',
+      'primary-dut-missing',
       _misc_properties(True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
@@ -1961,7 +1961,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'test_suites_missing',
+      'test-suites-missing',
       _misc_properties(True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
@@ -1970,26 +1970,26 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'provision_crash_ctr', _set_build(bid=42), _misc_properties(True),
+      'provision-crash-ctr', _set_build(bid=42), _misc_properties(True),
       _request_properties_for_ctr(), _mock_load_step_for_ctr(),
       api.step_data(
           'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
           retcode=1), api.post_check(post_process.StatusException))
 
   yield api.test(
-      'run_test_crash_ctr', _misc_properties(True),
+      'run-test-crash-ctr', _misc_properties(True),
       _request_properties_for_ctr(), _mock_load_step_for_ctr(),
       _successful_prejob_step_for_ctr(),
       api.step_data(
           'execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test',
           retcode=1), api.post_check(post_process.StatusFailure))
 
-  yield api.test('provision_failed_ctr', _set_build(bid=42),
+  yield api.test('provision-failed-ctr', _set_build(bid=42),
                  _misc_properties(True), _request_properties_for_ctr(),
                  _mock_load_step_for_ctr(), _failed_prejob_step_for_ctr(),
                  api.post_check(post_process.StatusFailure))
 
-  yield api.test('test_failed_ctr', _set_build(bid=42), _misc_properties(True),
+  yield api.test('test-failed-ctr', _set_build(bid=42), _misc_properties(True),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _failed_run_test_step_for_ctr(),

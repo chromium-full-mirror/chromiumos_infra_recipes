@@ -120,20 +120,20 @@ def GenTests(api):
 
   # This has (default) changes, and our commit.
   yield api.test(
-      'has_commit_and_changes',
+      'has-commit-and-changes',
       builder(build_target='coral', cq=True,
               revision='993335c91267d304d44f712209139e8b84a87d8c'))
 
   # This has specified changes only, and no commit.
   yield api.test(
-      'has_changes_and_no_commit',
+      'has-changes-and-no-commit',
       builder(revision=None,
               extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test('has_no_commit_and_no_changes', builder(revision=None))
 
   yield api.test(
-      'follow_gitiles_commit_ref',
+      'follow-gitiles-commit-ref',
       builder(
           build_target='grunt', builder='grunt-postsubmit',
           git_ref='refs/heads/BRANCH',
@@ -145,7 +145,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'fixes_manifest_project',
+      'fixes-manifest-project',
       builder(
           build_target='grunt', builder='grunt-postsubmit', choose_branch=False,
           git_repo='https://chromium.googlesource.com/chromium/src',
@@ -157,7 +157,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'fixes_manifest_project_choose_branch',
+      'fixes-manifest-project-choose-branch',
       builder(
           build_target='grunt', builder='grunt-postsubmit', choose_branch=True,
           git_repo='https://chromium.googlesource.com/chromium/src',
@@ -170,7 +170,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'follow_gitiles_commit_ref-main',
+      'follow-gitiles-commit-ref-main',
       builder(
           build_target='grunt', builder='grunt-postsubmit',
           git_ref='refs/heads/main',
@@ -182,7 +182,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'public_has_no_commit_and_no_changes',
+      'public-has-no-commit-and-no-changes',
       builder(
           build_target='amd64-generic', revision=None,
           expected_gitiles_commit=common_pb2.GitilesCommit(
@@ -191,7 +191,7 @@ def GenTests(api):
           )))
 
   yield api.test(
-      'branch_ref',
+      'branch-ref',
       builder(
           build_target='grunt', builder='grunt-postsubmit',
           git_repo=i_manifest.url, revision='5' * 40,
@@ -201,7 +201,7 @@ def GenTests(api):
               ref='refs/heads/BRANCH', id='5' * 40)))
 
   yield api.test(
-      'apply_gerrit_changes_false',
+      'apply-gerrit-changes-false',
       builder(
           build_target='grunt', builder='grunt-postsubmit',
           git_repo=i_manifest.url, git_ref='refs/heads/snapshot',
@@ -211,7 +211,7 @@ def GenTests(api):
           extra_changes=[common_pb2.GerritChange(change=1234)]))
 
   yield api.test(
-      'apply_gerrit_changes_false_no_choose_branch',
+      'apply-gerrit-changes-false-no-choose-branch',
       builder(build_target='grunt', builder='grunt-postsubmit',
               choose_branch=False,
               extra_changes=[common_pb2.GerritChange(change=1234)], cq=True,
@@ -220,7 +220,7 @@ def GenTests(api):
                      'configure builder.update src_state.gitiles_commit'))
 
   yield api.test(
-      'has_parent',
+      'has-parent',
       builder(tags=[
           {
               'key': 'parent_buildbucket_id',
@@ -230,7 +230,7 @@ def GenTests(api):
 
   yield api.test('experiments', builder(experiments=['test-experiment']))
 
-  yield api.test('missing_config',
+  yield api.test('missing-config',
                  builder(build_target='nosuch', builder='nosuch-cq'))
 
   yield api.test(

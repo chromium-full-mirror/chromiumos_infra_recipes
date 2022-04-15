@@ -70,7 +70,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'mirror_failure',
+      'mirror-failure',
       api.step_data(
           'mirror from %s.list distfiles in %s' %
           (MIRRORS[0].uri, MIRRORS[0].uri),
@@ -90,7 +90,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'all_mirror_failure',
+      'all-mirror-failure',
       api.step_data(
           'mirror from %s.list distfiles in %s' %
           (MIRRORS[0].uri, MIRRORS[0].uri),

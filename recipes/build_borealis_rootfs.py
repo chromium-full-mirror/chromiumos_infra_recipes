@@ -137,14 +137,14 @@ def GenTests(api):
 
   props = good_props.copy()
   del props['version_file']
-  yield api.test('no version_file', api.properties(**props),
+  yield api.test('no-version_file', api.properties(**props),
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
                  api.post_check(post_process.StatusAnyFailure),
                  api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['package_info']
-  yield api.test('no package_info', api.properties(**props),
+  yield api.test('no-package_info', api.properties(**props),
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
                  api.post_check(post_process.StatusAnyFailure),
                  api.post_check(post_process.StatusFailure))
@@ -152,21 +152,21 @@ def GenTests(api):
   props = good_props.copy()
   props['package_info'] = good_props['package_info'].copy()
   del props['package_info']['package_name']
-  yield api.test('no package_info.package_name', api.properties(**props),
+  yield api.test('no-package_info.package_name', api.properties(**props),
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
                  api.post_check(post_process.StatusAnyFailure),
                  api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['destination_gs_bucket']
-  yield api.test('no destination_gs_bucket', api.properties(**props),
+  yield api.test('no-destination_gs_bucket', api.properties(**props),
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
                  api.post_check(post_process.StatusAnyFailure),
                  api.post_check(post_process.StatusFailure))
 
   props = good_props.copy()
   del props['destination_gs_path']
-  yield api.test('no destination_gs_path', api.properties(**props),
+  yield api.test('no-destination_gs_path', api.properties(**props),
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
                  api.post_check(post_process.StatusAnyFailure),
                  api.post_check(post_process.StatusFailure))

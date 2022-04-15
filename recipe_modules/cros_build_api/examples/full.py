@@ -37,7 +37,7 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'basic_with_output',
+      'basic-with-output',
       api.properties(
           **{
               # This property is needed to capture tee_log output of build_api.

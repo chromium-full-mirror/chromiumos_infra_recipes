@@ -28,7 +28,7 @@ def attempt_retry_repo(api, attempt):
 
 def GenTests(api):
   yield api.test(
-      'repo_retry_success',
+      'repo-retry-success',
       attempt_retry_repo(api, 1),
       attempt_retry_repo(api, 2),
       api.properties(**{'$chromeos/repo': {

@@ -170,14 +170,14 @@ def GenTests(api):
       ))
 
   yield test(
-      'upload_fail',
+      'upload-fail',
       api.cros_build_api.set_api_return(
           'try to upload artifacts.upload artifacts',
           'FirmwareService/BundleFirmwareArtifacts', retcode=1),
       api.post_check(post_process.StatusSuccess))
 
   yield test(
-      'working_upload_fail',
+      'working-upload-fail',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1), api.post_check(post_process.StatusAnyFailure),
@@ -185,7 +185,7 @@ def GenTests(api):
       input_properties=(dict(firmware_location=1, working_artifacts=True)))
 
   yield test(
-      'signing_invocation', api.post_check(post_process.StatusSuccess),
+      'signing-invocation', api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'schedule signing build'),
       builder='fw-ec-postsubmit', input_properties=(dict(
           firmware_location=1,
@@ -194,7 +194,7 @@ def GenTests(api):
       )))
 
   yield test(
-      'staging_signing_invocation', api.post_check(post_process.StatusSuccess),
+      'staging-signing-invocation', api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'schedule signing build'),
       builder='fw-ec-postsubmit', bucket='staging', input_properties=(dict(
           firmware_location=1,
@@ -203,6 +203,6 @@ def GenTests(api):
               is_staging=True),
       )))
 
-  yield test('output_binary_sizes', api.post_check(post_process.StatusSuccess),
+  yield test('output-binary-sizes', api.post_check(post_process.StatusSuccess),
              api.post_check(post_process.MustRun, 'output binary sizes'),
              api.post_check(post_process.MustRun, 'output got_revision'))

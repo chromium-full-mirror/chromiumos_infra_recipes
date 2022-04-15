@@ -21,5 +21,5 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('fails when get_signed_build_metadata is called first',
+  yield api.test('fails-when-get_signed_build_metadata-is-called-first',
                  api.post_check(post_process.DoesNotRun, 'parse metadata'))

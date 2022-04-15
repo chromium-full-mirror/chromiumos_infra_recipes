@@ -42,7 +42,7 @@ def RunSteps(api):
 def GenTests(api):
 
   yield api.test(
-      'files_in_allowlist',
+      'files-in-allowlist',
       api.properties(
           **{
               '$chromeos/cros_test_plan_v2':
@@ -86,7 +86,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'file_allowlist not set',
+      'file_allowlist-not-set',
       api.properties(
           **{
               '$chromeos/cros_test_plan_v2':

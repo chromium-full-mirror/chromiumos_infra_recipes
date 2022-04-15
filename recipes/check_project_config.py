@@ -228,7 +228,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'manifest_branch',
+      'manifest-branch',
       api.properties(**properties_dict(extra_props={
           'manifest_branch': 'release-R123',
           'local_manifests': [],
@@ -258,7 +258,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'local_manifest_missing',
+      'local-manifest-missing',
       api.properties(**properties_dict(extra_props={
           'local_manifests': [],
       })),
@@ -270,7 +270,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'local_manifest_and_manifest_branch_specified',
+      'local-manifest-and-manifest-branch-specified',
       api.properties(**properties_dict(extra_props={
           'manifest_branch': 'release-R123',
       })),
@@ -287,7 +287,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'checkout_paths_missing',
+      'checkout-paths-missing',
       api.properties(
           manifest_groups=['partner-config', 'testprogram-testproject'],
           chromiumos_config_checkout_path='src/config',
@@ -301,7 +301,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_manifest_groups',
+      'no-manifest-groups',
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one manifest group must be specified.*'),
@@ -309,7 +309,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_gerrit_changes',
+      'no-gerrit-changes',
       api.properties(**properties_dict()),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE,
@@ -318,7 +318,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'checker_failed',
+      'checker-failed',
       api.properties(**properties_dict()),
       project_config_cq_build(api),
       api.step_data('check constraints', retcode=1),
@@ -327,7 +327,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'cannot_access_gerrit_changes',
+      'cannot-access-gerrit-changes',
       api.properties(**properties_dict()),
       project_config_cq_build(api),
       # The input GerritChange is not in a checked out project. The discarded

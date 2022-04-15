@@ -650,7 +650,7 @@ def GenTests(api):
     return data
 
   yield api.test(
-      'flattening_basic',
+      'flattening-basic',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -672,7 +672,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'flattening_not_allowed_project',
+      'flattening-not-allowed-project',
       default_properties(allowed_projects=[]),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -685,7 +685,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'flattening_no_entries',
+      'flattening-no-entries',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -700,7 +700,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_flattening_changes',
+      'no-flattening-changes',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -723,7 +723,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_input_files',
+      'no-input-files',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -736,7 +736,7 @@ def GenTests(api):
 
   # import to internal config stage tests
   yield api.test(
-      'aggregate_configs_basic',
+      'aggregate_configs-basic',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -760,7 +760,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'aggregate_configs_no_diff',
+      'aggregate_configs-no-diff',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -782,7 +782,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'aggregate_configs_error',
+      'aggregate_configs-error',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -798,7 +798,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'regenerate_suite_scheduler_configs_error',
+      'regenerate_suite_scheduler_configs-error',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
@@ -819,7 +819,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'regenerate_test_plan_error',
+      'regenerate_test_plan-error',
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),

@@ -91,12 +91,12 @@ def GenTests(api):
     )
 
   yield api.test(
-      'delta (m2n), respect configs',
+      'delta-(m2n)-respect-configs',
       create_properties(api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
                         []), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'delta (m2n), force tests',
+      'delta-(m2n)-force-tests',
       create_properties(
           api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
           [api.cros_paygen.EXAMPLE_TEST_REQUEST_DELTA_OMAHA],
@@ -104,14 +104,14 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'delta (m2n), force no tests',
+      'delta-(m2n)-force-no-tests',
       create_properties(
           api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0], [],
           delta_test_override=PaygenOrchestratorProperties.FORCE_NO_TESTS),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'delta (n2n), force tests',
+      'delta-(n2n)-force-tests',
       create_properties(
           api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
           [api.cros_paygen.EXAMPLE_TEST_REQUEST_DELTA_N2N],
@@ -119,18 +119,18 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'full, respect configs',
+      'full-respect-configs',
       create_properties(api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
                         [api.cros_paygen.EXAMPLE_TEST_REQUEST_FULL_N2N]),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'full, minios skipped',
+      'full-minios-skipped',
       create_properties(api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[1],
                         []), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'full, force tests',
+      'full-force-tests',
       create_properties(
           api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [
               api.cros_paygen.EXAMPLE_TEST_REQUEST_FULL_N2N,
@@ -139,13 +139,13 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'full, force no tests',
+      'full-force-no-tests',
       create_properties(
           api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [],
           full_test_override=PaygenOrchestratorProperties.FORCE_NO_TESTS),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'not unsigned-test image',
+      'not-unsigned-test-image',
       create_properties(api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED[0],
                         []), api.post_check(post_process.StatusSuccess))

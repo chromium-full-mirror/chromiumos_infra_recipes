@@ -66,12 +66,12 @@ def RunSteps(api, serialized_paygen_requests, expected_url_title):
 def GenTests(api):
 
   yield api.test(
-      'No payloads',
+      'No-payloads',
       api.properties(expected_url_title='123456 | No paygen requests'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Full Payload, Signed Image',
+      'One-Full-Payload-Signed-Image',
       api.properties(
           serialized_paygen_requests=[
               PaygenRequest(
@@ -92,7 +92,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Delta Payload, Signed Image',
+      'One-Delta-Payload-Signed-Image',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -117,7 +117,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Full Payload, Unsigned Image',
+      'One-Full-Payload-Unsigned-Image',
       api.properties(
           serialized_paygen_requests=[
               PaygenRequest(
@@ -138,7 +138,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Delta Payload, Unsigned Image',
+      'One-Delta-Payload-Unsigned-Image',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -163,7 +163,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Full Payload, DLC Image',
+      'One-Full-Payload-DLC-Image',
       api.properties(
           serialized_paygen_requests=[
               PaygenRequest(
@@ -182,7 +182,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Delta Payload, DLC Image',
+      'One-Delta-Payload-DLC-Image',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -203,7 +203,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'Multiple Full DLC Payloads, Same Target Version',
+      'Multiple-Full-DLC-Payloads-Same-Target-Version',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -231,7 +231,7 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'Multiple Full DLC Payloads, Different Target Versions',
+      'Multiple-Full-DLC-Payloads-Different-Target-Versions',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -261,7 +261,7 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'Multiple Full DLC Payloads, Some Full Some Delta',
+      'Multiple-Full-DLC-Payloads-Some-Full-Some-Delta',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -294,7 +294,7 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'Multiple Full DLC Payloads, Different Image Types',
+      'Multiple-Full-DLC-Payloads-Different-Image-Types',
       api.properties(serialized_paygen_requests=[
           PaygenRequest(
               generation_request=GenerationRequest(
@@ -322,7 +322,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'One Full MiniOS Payload',
+      'One-Full-MiniOS-Payload',
       api.properties(
           serialized_paygen_requests=[
               PaygenRequest(
@@ -344,7 +344,7 @@ def GenTests(api):
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'No Target Image',
+      'No-Target-Image',
       api.properties(
           serialized_paygen_requests=[
               PaygenRequest(
@@ -354,7 +354,7 @@ def GenTests(api):
       ), api.post_check(post_process.StepFailure, 'run'))
 
   yield api.test(
-      'No Source Image',
+      'No-Source-Image',
       api.properties(
           serialized_paygen_requests=[
               PaygenRequest(

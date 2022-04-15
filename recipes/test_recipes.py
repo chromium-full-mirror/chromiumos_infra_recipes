@@ -624,7 +624,7 @@ def GenTests(api):
                                recipes=[]))
 
   yield api.test(
-      'two_changes',
+      'two-changes',
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
@@ -655,7 +655,7 @@ def GenTests(api):
                                recipes=[]))
 
   yield api.test(
-      'two_changes_mixed_repos',
+      'two-changes-mixed-repos',
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
@@ -686,7 +686,7 @@ def GenTests(api):
                                recipes=[]))
 
   yield api.test(
-      'skipped_builder',
+      'skipped-builder',
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
@@ -716,7 +716,7 @@ def GenTests(api):
                                recipes=[]))
 
   yield api.test(
-      'failed_swarming_task',
+      'failed-swarming-task',
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify one builder to run.
       api.properties(
@@ -744,7 +744,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'invalid_skip_builder_footer',
+      'invalid-skip-builder-footer',
       api.cq(run_mode=api.cq.FULL_RUN),
       # Specify two builders to run.
       api.properties(
@@ -765,7 +765,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure))
 
   yield api.test(
-      'no_successful_builds', api.cq(run_mode=api.cq.FULL_RUN),
+      'no-successful-builds', api.cq(run_mode=api.cq.FULL_RUN),
       get_non_skipped_builders_test_data(),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'))
 
@@ -773,7 +773,7 @@ def GenTests(api):
                  api.post_check(post_process.StatusFailure))
 
   yield api.test(
-      'invalid_builders', api.cq(run_mode=api.cq.FULL_RUN),
+      'invalid-builders', api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(
           TestRecipesProperties(verifiers=[{
               'name': 'production-builder',

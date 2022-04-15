@@ -76,10 +76,10 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test('basic', api.properties(commit_changes=True))
-  yield api.test('basic_chrome',
+  yield api.test('basic-chrome',
                  api.properties(commit_changes=True, application='Chrome'))
   yield api.test(
-      'bot_fallbacks', api.properties(commit_changes=True),
+      'bot-fallbacks', api.properties(commit_changes=True),
       api.override_step_data(
           'scale bot groups.get current swarming stats.get bot count query result',
           retcode=1),

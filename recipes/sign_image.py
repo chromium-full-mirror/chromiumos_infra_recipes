@@ -260,7 +260,7 @@ def GenTests(api):
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
   yield api.test(
-      'gsc_bad_path',
+      'gsc-bad-path',
       props(
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
@@ -268,7 +268,7 @@ def GenTests(api):
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
   yield api.test(
-      'gsc_staging_with_prod_path',
+      'gsc-staging-with-prod-path',
       props(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
@@ -278,7 +278,7 @@ def GenTests(api):
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
 
   yield api.test(
-      'gsc_NodeLocked_no_device_id',
+      'gsc-NodeLocked-no-device-id',
       props(
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
@@ -287,7 +287,7 @@ def GenTests(api):
           gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED)))
 
   yield api.test(
-      'gsc_NodeLocked',
+      'gsc-NodeLocked',
       props(
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           channel=common_os.CHANNEL_CANARY,
@@ -298,7 +298,7 @@ def GenTests(api):
                                            device_id='12345678-11223344')))
 
   yield api.test(
-      'gsc_non_release_bucket_prod',
+      'gsc-non-release-bucket-prod',
       props(
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
@@ -309,7 +309,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'))
 
   yield api.test(
-      'gsc_non_release_bucket_prod_not_allowed',
+      'gsc-non-release-bucket-prod-not-allowed',
       props(
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
@@ -321,7 +321,7 @@ def GenTests(api):
                      'copy artifacts to release bucket'))
 
   yield api.test(
-      'gsc_non_release_bucket_staging',
+      'gsc-non-release-bucket-staging',
       props(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
@@ -334,7 +334,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'))
 
   yield api.test(
-      'gsc_non_release_bucket_staging_not_allowed',
+      'gsc-non-release-bucket-staging-not-allowed',
       props(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,

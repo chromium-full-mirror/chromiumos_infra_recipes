@@ -83,7 +83,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'invalid service version',
+      'invalid-service-version',
       api.properties(
           DutLeaserProperties(
               lease_length_minutes=123,

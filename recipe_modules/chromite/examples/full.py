@@ -52,7 +52,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'pass_repo_sync_args',
+      'pass-repo-sync-args',
       api.properties(cbb_config='auron-paladin', repo_sync_args=['-j16']),
       api.buildbucket.try_build(
           'basic',
@@ -61,7 +61,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'chromiumos_coverage',
+      'chromiumos-coverage',
       api.properties(clobber=None,
                      cbb_config='cros-x86-generic-tot-chrome-pfq-informational',
                      cbb_master_build_id='24601', cbb_branch='main',
@@ -76,7 +76,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'pass_branch',
+      'pass-branch',
       api.properties(cbb_config='auron-paladin', branch='foobarnch'),
       api.post_process(post_process.DropExpectation),
       api.buildbucket.try_build(

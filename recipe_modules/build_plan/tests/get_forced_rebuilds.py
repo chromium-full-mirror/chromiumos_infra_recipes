@@ -30,14 +30,14 @@ def RunSteps(api, expected_builders):
 def GenTests(api):
 
   yield api.test(
-      'No non-reusable builders',
+      'No-non-reusable-builders',
       api.git_footers.simulated_get_footers(
           [], parent_step_name='check disallow recycled builds'),
       api.git_footers.simulated_get_footers(
           [], parent_step_name='check disallow recycled builds', step_number=2))
 
   yield api.test(
-      'Non-reusable builders',
+      'Non-reusable-builders',
       api.properties(expected_builders={'hersheys', 'snickers', 'milkyway'}),
       api.git_footers.simulated_get_footers(
           ['hersheys, snickers'],
@@ -47,7 +47,7 @@ def GenTests(api):
           parent_step_name='check disallow recycled builds', step_number=2))
 
   yield api.test(
-      'No reusable builders', api.properties(expected_builders={'all'}),
+      'No-reusable-builders', api.properties(expected_builders={'all'}),
       api.git_footers.simulated_get_footers(
           ['twix,milkyway'], parent_step_name='check disallow recycled builds'),
       api.git_footers.simulated_get_footers(

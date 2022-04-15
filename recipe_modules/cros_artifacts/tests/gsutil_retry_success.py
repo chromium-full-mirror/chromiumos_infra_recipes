@@ -43,7 +43,7 @@ def attempt_download_file(api, attempt):
 
 def GenTests(api):
   yield api.test(
-      'retry_success_gsutil', attempt_download_file(api, 1),
+      'retry-success-gsutil', attempt_download_file(api, 1),
       attempt_download_file(api, 2),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='postsubmit-orchestrator'))

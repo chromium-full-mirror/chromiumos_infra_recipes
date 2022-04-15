@@ -34,19 +34,19 @@ def attempt_retry_repo(api, attempt):
 
 
 def GenTests(api):
-  yield api.test('repo_retry_failure_unspecified', attempt_retry_repo(api, 1),
+  yield api.test('repo-retry-failure-unspecified', attempt_retry_repo(api, 1),
                  attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
                  api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED))
 
-  yield api.test('repo_retry_failure_clean', attempt_retry_repo(api, 1),
+  yield api.test('repo-retry-failure-clean', attempt_retry_repo(api, 1),
                  attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
                  api.repo.repo_current_state(RepoState.STATE_CLEAN))
 
-  yield api.test('repo_retry_failure_dirty', attempt_retry_repo(api, 1),
+  yield api.test('repo-retry-failure-dirty', attempt_retry_repo(api, 1),
                  attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
                  api.repo.repo_current_state(RepoState.STATE_DIRTY))
 
   yield api.test(
-      'repo self_update failure',
+      'repo-selfupdate-failure',
       api.step_data('ensure synced checkout.repo binary update.repo selfupdate',
                     retcode=1))

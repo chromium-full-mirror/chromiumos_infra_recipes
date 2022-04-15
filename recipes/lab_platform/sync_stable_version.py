@@ -48,7 +48,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'end to end test for updating stable version',
+      'end-to-end-test-for-updating-stable-version',
       api.step_data('fetch and commit.call stable_version2.update-with-omaha',
                     stdout=api.raw_io.output_text('http://CL/123')),
   )

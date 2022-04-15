@@ -33,18 +33,18 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'retry_succeed',
+      'retry-succeed',
       attempt_git_step(1, 'push', retcode=1,
                        stdout='! HEAD:refs/fake [remote rejected]'),
       attempt_git_step(2, 'push', stdout='deadbeef2'))
 
   yield api.test(
-      'other_failure',
+      'other-failure',
       attempt_git_step(1, 'push', retcode=1,
                        stdout='! HEAD:refs/fake [remote failed]'))
 
   yield api.test(
-      'retry_too_many_times',
+      'retry-too-many-times',
       attempt_git_step(1, 'push', retcode=1,
                        stdout='! HEAD:refs/fake [remote rejected]'),
       attempt_git_step(
@@ -63,12 +63,12 @@ def GenTests(api):
                        stdout='! HEAD:refs/fake [remote rejected]'))
 
   yield api.test(
-      'update_ref_has_diff_has_new_file',
+      'update-ref-has-diff-has-new-file',
       api.step_data('update ref (3).git transaction.diff check.git ls-files',
                     retcode=1))
 
   yield api.test(
-      'update_ref_has_diff_has_change',
+      'update-ref-has-diff-has-change',
       api.step_data('update ref (3).git transaction.diff check.git ls-files',
                     retcode=0),
       api.step_data('update ref (3).git transaction.diff check.git diff',

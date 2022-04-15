@@ -105,7 +105,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'basic_arch',
+      'basic-arch',
       api.properties(**arch_props),
       api.post_process(
           post_process.MustRun,
@@ -127,7 +127,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'mirror_failure',
+      'mirror-failure',
       api.properties(**props),
       api.step_data(
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
@@ -149,7 +149,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'all_mirror_failure',
+      'all-mirror-failure',
       api.properties(**props),
       api.step_data(
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'

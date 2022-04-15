@@ -152,7 +152,7 @@ def GenTests(api):
     return api.buildbucket.build(build)
 
   yield api.test(
-      'tests_with_history',
+      'tests-with-history',
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       cq_orchestrator_build_with_gerrit_change(),
       api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
@@ -208,7 +208,7 @@ def GenTests(api):
   ]
 
   yield api.test(
-      'multi_req_per_cros_test_platform',
+      'multi-req-per-cros-test-platform',
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       api.properties(**{'$chromeos/cros_test_proctor': ProctorProperties()}),
       api.buildbucket.simulated_schedule_output(
@@ -250,7 +250,7 @@ def GenTests(api):
   api.cros_bisect.add_properties(builds[0], 'amd64-generic')
 
   yield api.test(
-      'with_test_bisection_invocation',
+      'with-test-bisection-invocation',
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       api.properties(
           **{
@@ -271,7 +271,7 @@ def GenTests(api):
           'collect skylab tasks v2.buildbucket.collect'))
 
   yield api.test(
-      'with_async_enabled',
+      'with-async-enabled',
       api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       api.properties(run_async=True),
       api.buildbucket.simulated_schedule_output(
@@ -282,7 +282,7 @@ def GenTests(api):
           'collect skylab tasks v2.buildbucket.collect'))
 
   yield api.test(
-      'with_test_plan_v2',
+      'with-test-plan-v2',
       api.properties(
           need_tests_builds_serialized=serialize_builds(builds),
           use_test_plan_v2=True, **{

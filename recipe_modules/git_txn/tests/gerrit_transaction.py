@@ -22,17 +22,17 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic')
   yield api.test(
-      'fail_empty_push_response',
+      'fail-empty-push-response',
       api.step_data('update ref.gerrit transaction.git push',
                     stderr=api.raw_io.output((''))))
   yield api.test(
-      'fail_incorrect_git_response',
+      'fail-incorrect-git-response',
       api.step_data(
           'update ref.gerrit transaction.git push', stderr=api.raw_io.output(
               ('https://chromium-review.googlesource.com'))))
 
   yield api.test(
-      'update_ref_has_diff_has_change',
+      'update-ref-has-diff-has-change',
       api.step_data(
           'update ref.gerrit transaction.git push', stderr=api.raw_io.output(
               ('remote:   https://chromium-review.googlesource'
@@ -43,7 +43,7 @@ def GenTests(api):
                     retcode=1))
 
   yield api.test(
-      'update_ref_has_diff_has_no_change',
+      'update-ref-has-diff-has-no-change',
       api.step_data(
           'update ref.gerrit transaction.git push', stderr=api.raw_io.output(
               ('remote:   https://chromium-review.googlesource'

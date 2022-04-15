@@ -104,7 +104,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'basic without release tagging',
+      'basic-without-release-tagging',
       api.properties(
           cipd_uprev.Properties(
               config=cipd_uprev.Config(instructions=[
@@ -119,7 +119,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'basic with release tagging',
+      'basic-with-release-tagging',
       api.time.seed(123),
       api.properties(
           cipd_uprev.Properties(
@@ -136,7 +136,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'CI packages with release tagging',
+      'CI-packages-with-release-tagging',
       api.time.seed(123),
       api.properties(
           cipd_uprev.Properties(
@@ -150,7 +150,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'missing ref',
+      'missing-ref',
       api.properties(
           cipd_uprev.Properties(
               config=cipd_uprev.Config(instructions=[
@@ -165,7 +165,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'missing version',
+      'missing-version',
       api.properties(
           cipd_uprev.Properties(
               config=cipd_uprev.Config(instructions=[

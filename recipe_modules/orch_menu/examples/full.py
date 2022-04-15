@@ -418,7 +418,7 @@ def GenTests(api):
       '1 build failed\n\n- amd64-generic-postsubmit: [build page](https://'
       'cr-buildbucket.appspot.com/build/8922054662172514000)')
   yield api.orch_menu.test(
-      'critical_child_builder_fails',
+      'critical-child-builder-fails',
       api.post_check(post_process.StatusAnyFailure),
       api.properties(
           FullProperties(
@@ -429,14 +429,14 @@ def GenTests(api):
       with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'non-critical_child_builder_fails', data.ctp_normal,
+      'non-critical-child-builder-fails', data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.non_crit_fail)),
       collect_builds=data.non_crit_fail, history_builds=data.history_builds,
       with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'chromium_src_ref_cq_cl_tag', data.ctp_normal,
+      'chromium-src-ref-cq-cl-tag', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',
@@ -467,7 +467,7 @@ def GenTests(api):
   ]
 
   yield api.orch_menu.test(
-      'ctp2_enabled',
+      'ctp2-enabled',
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE, 'CTP2 not implemented'),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -493,7 +493,7 @@ def GenTests(api):
   input_props_with_generate_ctpv1_format['$chromeos/cros_test_plan_v2'][
       'generate_ctpv1_format'] = True
   yield api.orch_menu.test(
-      'ctp2_enabled_generate_ctpv1_format',
+      'ctp2-enabled-generate-ctpv1-format',
       api.gerrit.set_gerrit_fetch_changes_response(
           'check test planning v2 enabled',
           gerrit_changes,

@@ -29,7 +29,7 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'properties_given',
+      'properties-given',
       api.properties(
           **{
               '$chromeos/cros_infra_config':

@@ -69,7 +69,7 @@ def GenTests(api):
   }
 
   yield api.test(
-      'has_simple_dep',
+      'has-simple-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output(
@@ -83,7 +83,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'has_fulfilled_dep',
+      'has-fulfilled-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend: chromium:12345,'
@@ -99,7 +99,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'has_missing_dep',
+      'has-missing-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
@@ -115,7 +115,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'has_missing_dep-permitted',
+      'has-missing-dep-permitted',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
@@ -135,7 +135,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'find_project_path_fails',
+      'find-project-path-fails',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'

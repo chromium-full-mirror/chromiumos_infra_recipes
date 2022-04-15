@@ -108,7 +108,7 @@ def GenTests(api):
 
   # Test a minimal invocation.
   yield api.test(
-      'swarming_builder',
+      'swarming-builder',
       api.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj',
           cbb_config='swarming-build-config',
@@ -117,7 +117,7 @@ def GenTests(api):
 
   # Tests the summary_markdown generation, only works on failure for now
   yield api.test(
-      'swarming_builder_fails',
+      'swarming-builder-fails',
       api.properties(
           bot_id='chromeos-ci-infra-us-central1-b-x16-0-nvcj',
           cbb_config='swarming-build-config',
@@ -129,7 +129,7 @@ def GenTests(api):
 
   # Test a plain tryjob.
   yield api.test(
-      'tryjob_simple',
+      'tryjob-simple',
       api.properties(cbb_config='tryjob_config',
                      cbb_extra_args='["--remote-trybot"]',
                      email='user@google.com', **common_properties),
@@ -137,7 +137,7 @@ def GenTests(api):
 
   # Test a tryjob with a branch and CLs.
   yield api.test(
-      'tryjob_complex',
+      'tryjob-complex',
       api.properties(
           cbb_config='tryjob_config',
           cbb_extra_args='["--remote-trybot", "-b", "release-R65-10323.B",'
@@ -147,14 +147,14 @@ def GenTests(api):
 
   # Test a tryjob with a branch and CLs.
   yield api.test(
-      'main_builder',
+      'main-builder',
       api.properties(branch='', cbb_branch='worker_branch',
                      cbb_config='main_config', **common_properties),
   )
 
   # Test a tryjob with a branch and CLs.
   yield api.test(
-      'complex_worker_builder',
+      'complex-worker-builder',
       api.properties(branch='', cbb_branch='worker_branch',
                      cbb_config='worker_config', cbb_master_build_id=123,
                      **common_properties),
@@ -162,7 +162,7 @@ def GenTests(api):
 
   # Test empty string args.
   yield api.test(
-      'empty_string_args',
+      'empty-string-args',
       api.properties(cbb_config='tryjob_config', cbb_extra_args='',
                      email='user@google.com', **common_properties),
   )
@@ -170,14 +170,14 @@ def GenTests(api):
   # Test tuple args. I'm not sure what mechanism gets them here, but it
   # can happen.
   yield api.test(
-      'tuple_args',
+      'tuple-args',
       api.properties(cbb_config='tryjob_config',
                      cbb_extra_args=('--remote-trybot', '-foo'),
                      email='user@google.com', **common_properties),
   )
 
   yield api.test(
-      'goma_canary',
+      'goma-canary',
       api.properties(
           cbb_config='amd64-generic-goma-canary-chromium-pfq-informational',
           cbb_goma_canary=True, email='user@google.com', **common_properties),
@@ -185,7 +185,7 @@ def GenTests(api):
 
   # Source Cache disk.
   yield api.test(
-      'source_cache_builder',
+      'source-cache-builder',
       api.properties(branch='', cbb_branch='main',
                      cbb_config='amd64-generic-msan-fuzzer',
                      **common_properties),

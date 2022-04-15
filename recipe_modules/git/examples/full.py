@@ -108,41 +108,41 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'diff_check',
+      'diff-check',
       api.git.diff_check(True),
   )
 
   yield api.test(
-      'is_reachable',
+      'is-reachable',
       api.git.is_reachable(False),
   )
 
   yield api.test(
-      'log_yields_no_output',
+      'log-yields-no-output',
       api.step_data('git log', stdout=api.raw_io.output('')),
   )
 
   yield api.test(
-      'show_file_path_not_found',
+      'show-file-path-not-found',
       api.step_data('git show', retcode=128),
   )
 
   yield api.test(
-      'detached_HEAD',
+      'detached-HEAD',
       api.step_data('git symbolic-ref', retcode=1),
   )
 
   yield api.test(
-      'diff_check_has_new_file',
+      'diff-check-has-new-file',
       api.step_data('check diffs.diff check.git ls-files', retcode=1),
   )
 
   yield api.test(
-      'is_merge_commit_fails',
+      'is-merge-commit-fails',
       api.step_data('git log (2)', retcode=1),
   )
 
   yield api.test(
-      'merge_base_fails',
+      'merge-base-fails',
       api.step_data('git merge-base (2)', retcode=1),
   )

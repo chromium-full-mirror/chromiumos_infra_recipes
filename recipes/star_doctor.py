@@ -381,7 +381,7 @@ def _abandon_old_changes(api, project):
 
 
 def GenTests(api):
-  yield api.test('dont_commit', api.time.seed(1613694623.0),
+  yield api.test('dont-commit', api.time.seed(1613694623.0),
                  api.properties(commit_changes=False))
 
   yield api.test(
@@ -390,7 +390,7 @@ def GenTests(api):
                      branches=['R9000']))
 
   yield api.test(
-      'only_irrelevant', api.time.seed(1613694623.0),
+      'only-irrelevant', api.time.seed(1613694623.0),
       api.step_data(
           'commit changes.committing to chromeos/infra/config.git status',
           stdout=api.raw_io.output(' M release/timeline_configuration.json')),
@@ -401,7 +401,7 @@ def GenTests(api):
           'commit changes.committing to chromeos/infra/config.git commit'))
 
   yield api.test(
-      'old_and_new_properties_set',
+      'old-and-new-properties-set',
       api.time.seed(1613694623.0),
       api.properties(
           StarDoctorProperties(

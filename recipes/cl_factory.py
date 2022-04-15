@@ -474,7 +474,7 @@ TEST=CQ
         step_name.format(project), stdout=api.raw_io.output(''))
 
   yield api.test(
-      'with_diff',
+      'with-diff',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -489,7 +489,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'set_source_depends',
+      'set-source-depends',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -504,7 +504,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'without_diff',
+      'without-diff',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -520,7 +520,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'with_replace_strings',
+      'with-replace-strings',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -542,7 +542,7 @@ TEST=CQ
   # Users may want to only replace strings, with no gerrit changes inputs
   # specified.
   yield api.test(
-      'no_gerrit_changes_specified',
+      'no-gerrit-changes-specified',
       build(changes=False),
       api.properties(
           ClFactoryProperties(
@@ -562,7 +562,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'with_full_sync',
+      'with-full-sync',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -578,7 +578,7 @@ TEST=CQ
   # Here we replace the canned forall return to exercise the set logic
   # that determines repos to sync in a partial sync.
   yield api.test(
-      'with_partial_sync_set_logic',
+      'with-partial-sync-set-logic',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -599,7 +599,7 @@ TEST=CQ
   # Here we replace the canned forall return to simulate the user providing
   # a regex that didn't match anything.
   yield api.test(
-      'bad_regex',
+      'bad-regex',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -617,7 +617,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'invalid_message_template_interpolation',
+      'invalid-message-template-interpolation',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -630,7 +630,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'no_repos_specified',
+      'no-repos-specified',
       build(),
       api.properties(
           ClFactoryProperties(
@@ -645,7 +645,7 @@ TEST=CQ
   )
 
   yield api.test(
-      'no_message_template_specified',
+      'no-message-template-specified',
       build(),
       api.properties(
           ClFactoryProperties(

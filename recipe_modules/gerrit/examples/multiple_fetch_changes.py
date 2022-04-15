@@ -71,7 +71,7 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'multiple_calls',
+      'multiple-calls',
       api.gerrit.set_gerrit_fetch_changes_response('test multiple',
                                                    [changes[0]],
                                                    _get_values_dict()),

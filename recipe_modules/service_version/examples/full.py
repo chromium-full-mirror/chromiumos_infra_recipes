@@ -21,10 +21,10 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('no service version (no validation performed)',)
+  yield api.test('no-service-version-no-validation-performed',)
 
   yield api.test(
-      'empty service version (no validation performed)',
+      'empty-service-version-no-validation-performed',
       api.properties(
           **{
               '$chromeos/service_version':
@@ -33,7 +33,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'good crosfleet version, bad skylab version',
+      'good-crosfleet-version-bad-skylab-version',
       api.properties(
           **{
               '$chromeos/service_version':
@@ -43,7 +43,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'bad crosfleet version, good skylab version',
+      'bad-crosfleet-version-good-skylab-version',
       api.properties(
           **{
               '$chromeos/service_version':
@@ -53,7 +53,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'bad crosfleet version, bad skylab version',
+      'bad-crosfleet-version-bad-skylab-version',
       api.properties(
           **{
               '$chromeos/service_version':
@@ -63,7 +63,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'good crosfleet version, good skylab version',
+      'good-crosfleet-version-good-skylab-version',
       api.properties(
           **{
               '$chromeos/service_version':

@@ -30,7 +30,7 @@ def GenTests(api):
   yield api.test('basic')
 
   yield api.test(
-      'staging_branch',
+      'staging-branch',
       api.properties(
           **{
               "$chromeos/cros_prebuilts":

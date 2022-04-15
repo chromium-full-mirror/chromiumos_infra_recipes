@@ -127,7 +127,7 @@ def GenTests(api):
                                   cq_equivalent_cl_group_key=equiv)))
 
   yield api.test(
-      'no_group_key_tags', api.cq(run_mode=api.cq.FULL_RUN),
+      'no-group-key-tags', api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='postsubmit-orchestrator'))
 

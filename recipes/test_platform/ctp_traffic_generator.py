@@ -236,7 +236,7 @@ def GenTests(api):
   ]
 
   yield api.test(
-      'successful run',
+      'successful-run',
       api.properties(
           **{
               'ctp_replay_max_runtime': 70 * 60,
@@ -254,14 +254,14 @@ def GenTests(api):
   )
 
   yield api.test(
-      'ctp prod build not found',
+      'ctp-prod-build-not-found',
       api.buildbucket.simulated_search_results(
           [],
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ))
 
   yield api.test(
-      'ctp build not found matching runtime limit',
+      'ctp-build-not-found-matching-runtime-limit',
       api.properties(
           **{
               'ctp_replay_max_runtime': 60 * 10,

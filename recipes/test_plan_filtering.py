@@ -299,7 +299,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_changes_produced_in_diff_causes_no_push',
+      'no-changes-produced-in-diff-causes-no-push',
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',

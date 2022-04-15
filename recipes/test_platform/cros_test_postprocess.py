@@ -113,7 +113,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no_dumps',
+      'no-dumps',
       api.properties(req),
       _mock_gs_dmp_files(tr, []),
       # A download step should not exist
@@ -121,7 +121,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no symbols bundle found',
+      'no-symbols-bundle-found',
       api.properties(req),
       _mock_gs_dmp_files(tr, ['./a/b/c.dmp', './a/b/d.dmp']),
       api.breakpad.gsutil_download_test_data(retcode=1),

@@ -20,5 +20,5 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('fails when instructions file location is malformed',
+  yield api.test('fails-when-instructions-file-location-is-malformed',
                  api.post_check(post_process.DoesNotRun, 'parse metadata'))

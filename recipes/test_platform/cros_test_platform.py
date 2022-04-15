@@ -925,11 +925,11 @@ def GenTests(api):
 
 
   # Missing request and requests should cause a recipe crash
-  yield api.test('no requests')
+  yield api.test('no-requests')
 
   # Setting request should cause a recipe crash
   yield api.test(
-      'has deprecated request',
+      'has-deprecated-request',
       api.properties(
           CrosTestPlatformProperties(
               request=Request(),
@@ -938,7 +938,7 @@ def GenTests(api):
 
   # Request with a very long timeout should cause build failure.
   yield api.test(
-      'timeout too long',
+      'timeout-too-long',
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -953,12 +953,12 @@ def GenTests(api):
               })))
 
   yield api.test(
-      'neither priority and qs_account set',
+      'neither-priority-and-qs_account-set',
       api.properties(CrosTestPlatformProperties(requests={'first': Request()})))
 
   # Request with too large priority should cause build failure.
   yield api.test(
-      'priority out of range',
+      'priority-out-of-range',
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -972,7 +972,7 @@ def GenTests(api):
 
   # Request setting both priority and qs_account should cause build failure.
   yield api.test(
-      'both priority and qs_account set',
+      'both-priority-and-qs_account-set',
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -985,7 +985,7 @@ def GenTests(api):
               })))
 
   yield api.test(
-      'deprecated managed pool',
+      'deprecated-managed-pool',
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -999,7 +999,7 @@ def GenTests(api):
               })))
 
   yield api.test(
-      'skylab-tool-launched build with invalid service version',
+      'skylab-tool-launched-build-with-invalid-service-version',
       api.properties(
           CrosTestPlatformProperties(requests={'first': Request()}), **{
               '$chromeos/service_version':
@@ -1008,7 +1008,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'skylab-tool-launched build with valid service version',
+      'skylab-tool-launched-build-with-valid-service-version',
       api.properties(
           CrosTestPlatformProperties(requests={'first': Request()}), **{
               '$chromeos/service_version':
@@ -1017,7 +1017,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'Duplicate software dependencies',
+      'Duplicate-software-dependencies',
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -1051,7 +1051,7 @@ def GenTests(api):
 
   # Config set the result flow pubsub project and topic should push build ID.
   yield api.test(
-      'Config has pubsub topic to publish CTP build ID',
+      'Config-has-pubsub-topic-to-publish-CTP-build-ID',
       _set_build(bid=42, tags={'parent_buildbucket_id': '1234'}),
       api.properties(
           CrosTestPlatformProperties(
@@ -1069,7 +1069,7 @@ def GenTests(api):
 
   # Recipe running outside Buildbucket should skip publishing build ID.
   yield api.test(
-      'Recipe runs without Build ID', _set_build(bid=0),
+      'Recipe-runs-without-Build-ID', _set_build(bid=0),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},
@@ -1080,7 +1080,7 @@ def GenTests(api):
 
   # Config missing result flow topic name should skip publishing build ID.
   yield api.test(
-      'Recipe runs without result flow pubsub topic',
+      'Recipe-runs-without-result-flow-pubsub-topic',
       _set_build(bid=8874582904031090640),
       api.properties(
           CrosTestPlatformProperties(
@@ -1090,7 +1090,7 @@ def GenTests(api):
 
   # Config missing result flow project name should skip publishing build ID.
   yield api.test(
-      'Recipe runs without result flow pubsub project',
+      'Recipe-runs-without-result-flow-pubsub-project',
       _set_build(bid=8874582904031090640),
       api.properties(
           CrosTestPlatformProperties(
@@ -1100,7 +1100,7 @@ def GenTests(api):
 
   # An end-to-end run with ctp release version tagging.
   yield api.test(
-      'end-to-end skylab execution with ctp release version tagging',
+      'end-to-end-skylab-execution-with-ctp-release-version-tagging',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1130,7 +1130,7 @@ def GenTests(api):
 
   # An end-to-end run without ctp release version tagging.
   yield api.test(
-      'end-to-end skylab execution with no ctp release version found',
+      'end-to-end-skylab-execution-with-no-ctp-release-version-found',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1154,7 +1154,7 @@ def GenTests(api):
               version='latest', test_data_tags=['random-key:random-value'])))
 
   yield api.test(
-      'end-to-end execution with passed tasks',
+      'end-to-end-execution-with-passed-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1175,7 +1175,7 @@ def GenTests(api):
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   yield api.test(
-      'end-to-end execution with passed and skipped tasks',
+      'end-to-end-execution-with-passed-and-skipped-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1203,7 +1203,7 @@ def GenTests(api):
       ))
 
   yield api.test(
-      'end-to-end execution with empty response',
+      'end-to-end-execution-with-empty-response',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1239,7 +1239,7 @@ def GenTests(api):
       ),
   ]
   yield api.test(
-      'end-to-end execution with failed tasks',
+      'end-to-end-execution-with-failed-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1349,7 +1349,7 @@ def GenTests(api):
       ),
   ]
   yield api.test(
-      'end-to-end execution with failed then passed tasks',
+      'end-to-end-execution-with-failed-then-passed-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1383,7 +1383,7 @@ def GenTests(api):
               key='dim2', value='val2'),
       ])
   yield api.test(
-      'end-to-end execution with rejected tasks',
+      'end-to-end-execution-with-rejected-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1419,7 +1419,7 @@ def GenTests(api):
       state=TaskState(life_cycle="LIFE_CYCLE_PENDING"),
   )
   yield api.test(
-      'end-to-end execution with pending tasks',
+      'end-to-end-execution-with-pending-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1452,7 +1452,7 @@ def GenTests(api):
       ),
   ]
   yield api.test(
-      'end-to-end execution with cancelled tasks',
+      'end-to-end-execution-with-cancelled-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1481,7 +1481,7 @@ def GenTests(api):
       state=TaskState(life_cycle="LIFE_CYCLE_ABORTED"),
   )
   yield api.test(
-      'end-to-end execution with aborted tasks',
+      'end-to-end-execution-with-aborted-tasks',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1503,7 +1503,7 @@ def GenTests(api):
       ))
 
   yield api.test(
-      'empty enumeration',
+      'empty-enumeration',
       api.properties(
           CrosTestPlatformProperties(requests={'first': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1511,7 +1511,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure))
 
   yield api.test(
-      'enumeration error',
+      'enumeration-error',
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -1552,7 +1552,7 @@ def GenTests(api):
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   yield api.test(
-      'execution with two failed invocations',
+      'execution-with-two-failed-invocations',
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -1602,7 +1602,7 @@ def GenTests(api):
       ))
 
   yield api.test(
-      'end-to-end multi-requests',
+      'end-to-end-multi-requests',
       api.properties(
           CrosTestPlatformProperties(
               requests={'first': _test_request('foo')},

@@ -24,6 +24,6 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'empty_file',
+      'empty-file',
       api.step_data('read chromeos version.read chromeos_version.sh',
                     api.file.read_raw('')), api.cq(run_mode=api.cq.DRY_RUN))

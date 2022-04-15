@@ -61,7 +61,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'basic_without_JSON_output',
+      'basic-without-JSON-output',
       api.buildbucket.simulated_collect_output([
           api.skylab.test_with_multi_response(
               1234,
@@ -73,7 +73,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'infra_failure',
+      'infra-failure',
       api.buildbucket.simulated_collect_output([
           api.skylab.test_with_multi_response(
               1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
@@ -82,7 +82,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'build_without_responses',
+      'build-without-responses',
       api.buildbucket.simulated_collect_output(
           [build_pb2.Build(id=1234)],
           step_name='collect skylab tasks v2.buildbucket.collect'),

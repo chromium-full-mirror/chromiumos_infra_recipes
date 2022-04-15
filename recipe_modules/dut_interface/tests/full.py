@@ -94,11 +94,11 @@ def GenTests(api):
                                         SKYLAB_DUT_ID='dummy-dut-id')))
 
   yield api.test(
-      'basic_phosphorus',
+      'basic-phosphorus',
       _misc_properties_for_phosphorus(),
   )
 
   yield api.test(
-      'basic_ctr',
+      'basic-ctr',
       _misc_properties_for_ctr(),
   )

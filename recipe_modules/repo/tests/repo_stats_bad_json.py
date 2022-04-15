@@ -22,13 +22,13 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'repo_no_event_log_succeeds',
+      'repo-no-event-log-succeeds',
       api.step_data('ensure synced checkout.repo stats.event-log', retcode=1),
       api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
-      'repo_bad_event_log_succeeds',
+      'repo-bad-event-log-succeeds',
       api.step_data('ensure synced checkout.repo stats.event-log',
                     api.file.read_text('not json yo')),
       api.post_check(post_process.StatusSuccess),
