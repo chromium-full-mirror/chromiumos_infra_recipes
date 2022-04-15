@@ -812,7 +812,7 @@
     "cmd": [
       "git",
       "log",
-      "--pretty=%H%x1E%B%x00",
+      "--pretty=%H%x1F%B%x00",
       "FROM_REV...TO_REV"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/PATH",
@@ -820,7 +820,7 @@
     "name": "ensure manifest cq-depend fulfilled (2).git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@stdout@deadbeef\u001eCq-Depend: chromium:12345,chromium:IAmNotAnInteger,chrome-internal:67890\u0000@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeef\u001fCq-Depend: chromium:12345,chromium:IAmNotAnInteger,chrome-internal:67890\u0000@@@",
       "@@@STEP_LOG_END@stdout@@@"
     ]
   },

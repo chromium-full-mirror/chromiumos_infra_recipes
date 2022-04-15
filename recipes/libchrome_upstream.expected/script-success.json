@@ -1482,7 +1482,7 @@
     "cmd": [
       "git",
       "log",
-      "--pretty=%H%x1E%B%x00",
+      "--pretty=%H%x1F%B%x00",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef...49d1e4a4a6ca65114208c498416be3b85e10cc8e"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
@@ -1490,7 +1490,7 @@
     "name": "generate new upstream branch locally.git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001emessage\u0000@@@",
+      "@@@STEP_LOG_LINE@stdout@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\u001fmessage\u0000@@@",
       "@@@STEP_LOG_END@stdout@@@"
     ]
   },

@@ -73,7 +73,7 @@ def GenTests(api):
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
           stdout=api.raw_io.output(
-              'deadbeef\x1ECq-Depend: chromium:12345\x00')),
+              'deadbeef\x1FCq-Depend: chromium:12345\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
@@ -86,7 +86,7 @@ def GenTests(api):
       'has-fulfilled-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1ECq-Depend: chromium:12345,'
+          stdout=api.raw_io.output('deadbeef\x1FCq-Depend: chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -102,7 +102,7 @@ def GenTests(api):
       'has-missing-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
+          stdout=api.raw_io.output('deadbeef\x1FCq-Depend:chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -118,7 +118,7 @@ def GenTests(api):
       'has-missing-dep-permitted',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
+          stdout=api.raw_io.output('deadbeef\x1FCq-Depend:chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -138,7 +138,7 @@ def GenTests(api):
       'find-project-path-fails',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1ECq-Depend:chromium:12345,'
+          stdout=api.raw_io.output('deadbeef\x1FCq-Depend:chromium:12345,'
                                    'chromium:IAmNotAnInteger,'
                                    'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(

@@ -496,7 +496,7 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       (list[Commit]): A list of commit metas.
     """
-    cmd = ['log', '--pretty=%H%x1E%B%x00', '%s...%s' % (from_rev, to_rev)]
+    cmd = ['log', '--pretty=%H%x1F%B%x00', '%s...%s' % (from_rev, to_rev)]
     if limit is not None:
       cmd.append('-%d' % limit)
     if paths:
@@ -504,7 +504,7 @@ class GitApi(recipe_api.RecipeApi):
       cmd.extend(paths)
     step_data = self._step(
         cmd, stdout=self.m.raw_io.output(),
-        test_stdout='%s\x1Emessage\x00' % self.test_api.test_commit_id)
+        test_stdout='%s\x1Fmessage\x00' % self.test_api.test_commit_id)
     stdout = step_data.stdout.strip().rstrip('\x00')
     self.m.step.active_result.presentation.logs['stdout'] = [step_data.stdout]
 
@@ -513,7 +513,7 @@ class GitApi(recipe_api.RecipeApi):
       # We need to check for an empty stdout, because ''.split('\x00')
       # returns [''].
       for record in stdout.split('\x00'):
-        ref, message = record.split('\x1E')
+        ref, message = record.split('\x1F')
         commits.append(self.Commit(ref.strip('\n'), message))
     return commits
 
