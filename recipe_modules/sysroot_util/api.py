@@ -244,15 +244,6 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               self.sysroot.build_target.name,
               self.m.cros_infra_config.is_staging)
 
-        step_name = (
-            '{}|call chromite.api.SysrootService/InstallPackages|{}'.format(
-                name,
-                self.m.cros_build_api.response_step_name(
-                    response, self.m.cros_build_api.failed_pkg_data_names)))
-
-        self.m.cros_bisect.set_compile_failures(response.failed_packages,
-                                                step_name,
-                                                config.general.critical.value)
         pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
                                                      response,
                                                      self.m.file.read_raw)

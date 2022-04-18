@@ -211,10 +211,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       passed_test_names += exonerated_hw_tests
       test_results = test_results._replace(skylab=exonerated_hw_results)
       self.m.cros_history.set_passed_tests(passed_test_names)
-      critical_test_count = self.critical_test_count(test_plan)
-      self.m.cros_bisect.set_test_failures(test_results.skylab,
-                                           len(crit_failure_test_names),
-                                           critical_test_count)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
       self.m.greenness.update_vmtest_info(test_results.tast_gce)
       failures = self.get_test_failures(test_results)
@@ -673,51 +669,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         requests, step_name='schedule tast GCE tests',
         url_title_fn=self.m.naming.get_build_title)
     return gce_tests
-
-  def critical_test_count(self, test_plan):
-    """Returns the number of critical tests in the build plan.
-
-    Check if we need bisection of the results per the bisection constraints.
-
-    Args:
-      test_plan (GenerateTestPlanResponse): test_plan of the orchestrator.
-
-    Returns:
-      test_count (int): Number of critical tests ran.
-    """
-    test_count = (
-        self._critical_test_count(test_plan.hw_test_units, lambda unit: unit.
-                                  hw_test_cfg, lambda cfg: cfg.hw_test) +
-        self._critical_test_count(test_plan.vm_test_units, lambda unit: unit.
-                                  vm_test_cfg, lambda cfg: cfg.vm_test) +
-        self._critical_test_count(
-            test_plan.direct_tast_vm_test_units, lambda unit: unit.
-            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test) +
-        self._critical_test_count(
-            test_plan.tast_gce_test_units, lambda unit: unit.tast_gce_test_cfg,
-            lambda cfg: cfg.tast_gce_test))
-    return test_count
-
-  def _critical_test_count(self, units, cfg_func, tests_func):
-    """Returns the count of critical tests within `units`.
-
-    Args:
-      units: (list[HwTestUnit|VmTestUnit|TastVmTestUnit]): Units to count the
-          critical tests within.
-      cfg_func: (lambda): Lambda function that takes a unit from units and
-          returns the *test_cfg field.
-      tests_func: (lambda): Lambda function that takes the *test_cfg field and
-          returns the *test field holding the list of tests.
-
-    Returns:
-      An integer count of the critical tests with `units`.
-    """
-    count = 0
-    for unit in units:
-      for test in tests_func(cfg_func(unit)):
-        if test.common.critical and test.common.critical.value:
-          count += 1
-    return count
 
   def _generate_test_summary(self, test_plan, passed_test_names):
     """Creates a summary of the test results.

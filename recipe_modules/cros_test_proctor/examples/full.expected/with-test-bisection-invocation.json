@@ -467,14 +467,6 @@
   },
   {
     "cmd": [],
-    "name": "check test results.set test_failures",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@test_failures@{\"hw_test_failures\": [{\"failed_step\": \"check test results|hw test results|kip.hw.bvt-cq\", \"suite\": \"bvt-cq\", \"test_spec\": \"{\\n  \\\"hwTestCfg\\\": {\\n    \\\"hwTest\\\": [\\n      {\\n        \\\"suite\\\": \\\"bvt-cq\\\", \\n        \\\"common\\\": {\\n          \\\"critical\\\": true, \\n          \\\"displayName\\\": \\\"kip.hw.bvt-cq\\\"\\n        }, \\n        \\\"pool\\\": \\\"bisect test pool\\\", \\n        \\\"skylabBoard\\\": \\\"amd64-generic\\\"\\n      }\\n    ]\\n  }, \\n  \\\"common\\\": {\\n    \\\"buildTarget\\\": {\\n      \\\"name\\\": \\\"amd64-generic\\\"\\n    }, \\n    \\\"buildPayload\\\": {\\n      \\\"artifactsGsBucket\\\": \\\"bucket\\\", \\n      \\\"artifactsGsPath\\\": \\\"path\\\", \\n      \\\"filesByArtifact\\\": {\\n        \\\"TAST_FILES\\\": [\\n          \\\"tast1.zip\\\", \\n          \\\"tast2.zip\\\"\\n        ], \\n        \\\"IMAGE_ZIP\\\": [\\n          \\\"image.zip\\\"\\n        ]\\n      }\\n    }\\n  }\\n}\"}], \"needs_bisection\": true}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

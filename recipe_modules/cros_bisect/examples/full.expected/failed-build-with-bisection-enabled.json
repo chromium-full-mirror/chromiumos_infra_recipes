@@ -14,13 +14,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set compile_failures",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compile_failures@{\"failed_step\": \"the|step\", \"failures\": [{\"needs_bisection\": true, \"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"uno\\\"\\n}\"], \"rule\": \"emerge\"}, {\"needs_bisection\": true, \"output_targets\": [\"{\\n  \\\"category\\\": \\\"pkg\\\", \\n  \\\"packageName\\\": \\\"dos\\\"\\n}\"], \"rule\": \"emerge\"}]}@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]

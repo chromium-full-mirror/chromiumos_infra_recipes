@@ -25,9 +25,6 @@ def RunSteps(api, properties):
   api.assertions.assertCountEqual(api.cros_bisect.get_packages(),
                                   properties.expected_packages)
 
-  api.cros_bisect.set_compile_failures(properties.failed_packages, 'the|step',
-                                       True)
-
   api.assertions.assertEqual(api.cros_bisect.get_test_child_builders(),
                              properties.expected_test_child_builders)
 
