@@ -963,6 +963,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         bucket=bucket,
         builder=builder,
         properties={'requests': paygen_requests},
+        can_outlive_parent=False,
         tags=self.m.buildbucket.tags(
             parent_buildbucket_id=str(self.m.buildbucket.build.id)),
     )

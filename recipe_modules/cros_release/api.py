@@ -198,6 +198,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           builder=pg_orch_builder,
           bucket=bucket,
           properties=paygen_properties,
+          can_outlive_parent=False,
           tags=self.m.buildbucket.tags(
               parent_buildbucket_id=str(self.m.buildbucket.build.id)),
       )
