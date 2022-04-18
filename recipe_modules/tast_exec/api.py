@@ -388,9 +388,11 @@ class TastExecApi(RecipeApi):
       try:
         yield QEMU_VM_HOST, QEMU_VM_PORT
       finally:
-        # Always kill QEMU.
-        self._kill_vm(kvm_pid_file)
-      self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
+        try:
+          # Always kill QEMU.
+          self._kill_vm(kvm_pid_file)
+        finally:
+          self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
 
     return qemu_vm_context
 
