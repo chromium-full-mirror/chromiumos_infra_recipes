@@ -10,11 +10,12 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
-    'recipe_engine/raw_io',
     'recipe_engine/step',
+    'gerrit',
     'git',
 ]
 
@@ -44,13 +45,23 @@ def RunSteps(api):
   repo_dir = api.path.mkdtemp()
   api.git.clone(REPO_URL, target_path=repo_dir, timeout_sec=3 * 60)
 
+  with api.step.nest('apply gerrit changes'), api.context(cwd=repo_dir):
+    patch_sets = api.gerrit.fetch_patch_sets(
+        x for x in api.buildbucket.build.input.gerrit_changes
+        if x.project == 'chromiumos/shim-review')
+    for patch_set in patch_sets:
+      commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
+                                    patch_set.git_fetch_ref)
+      api.git.cherry_pick(commit_id)
+
   # Get the hashes of the current files in the repo.
   with api.step.nest('get current file hashes'), api.context(cwd=repo_dir):
     original_hashes = _get_shim_sha256_digests(api, repo_dir)
 
   # Do a fresh build shim inside a container (which is required by the
   # shim-review process), then copy the files outside the container.
-  with api.step.nest('build shim'), api.context(cwd=repo_dir):
+  env = {'CONTAINER_CMD': 'sudo docker'}
+  with api.step.nest('build shim'), api.context(cwd=repo_dir, env=env):
     api.step('make build-no-cache', ['make', 'build-no-cache'])
     api.step('make copy', ['make', 'copy'])
 
@@ -64,10 +75,17 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('success', api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'success', api.buildbucket.try_build(project='chromeos',
+                                           git_repo=REPO_URL),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'hash-mismatch',
+      api.buildbucket.try_build(project='chromeos', git_repo=REPO_URL),
       api.step_data('get current file hashes.read file shimx64.efi',
                     api.file.read_raw('some arbitrary test data')),
+      api.post_check(post_process.ResultReason, 'shim binaries are stale'),
+      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation))
