@@ -23,11 +23,15 @@
   },
   {
     "cmd": [],
-    "name": "first-lookup"
+    "name": "expect failure"
   },
   {
     "cmd": [],
-    "name": "first-lookup.look up builder metadata",
+    "name": "expect success"
+  },
+  {
+    "cmd": [],
+    "name": "expect success.look up builder metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@No builder metadata cached. Querying Build API PackageService/GetBuilderMetadata.@@@",
@@ -59,7 +63,7 @@
   },
   {
     "cmd": [],
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -85,7 +89,7 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.write input file",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -106,7 +110,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call build API script",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -128,14 +132,14 @@
       ]
     },
     "infra_step": true,
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.read output file",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call response",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -144,11 +148,11 @@
   },
   {
     "cmd": [],
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"first-lookup|look up builder metadata|call chromite.api.PackageService/GetBuilderMetadata|call build API script\", @@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"expect success|look up builder metadata|call chromite.api.PackageService/GetBuilderMetadata|call build API script\", @@@",
       "@@@STEP_LOG_LINE@published event@  \"getBuilderMetadataRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {}, @@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
@@ -186,10 +190,10 @@
   },
   {
     "cmd": [],
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCb2ZpcnN0LWxvb2t1cHxsb29rIHVwIGJ1aWxkZXIgbWV0\\nYWRhdGF8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0QnVpbGRlck1ldGFkYXRh\\nfGNhbGwgYnVpbGQgQVBJIHNjcmlwdKoDIAocChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBIA\\nsgO5AQpkCgNldmUSC2dpdF9ydmMtYXJjGgZiZXJ0aGEiBzc5Nzg1MDYoATIXZXZlX3YxLjEuNjY1\\nOS1iYTIwODhlZDNCDTUuNC4xNjMtcjI4MjdKFUdvb2dsZV9FdmUuOTU4NC4yMzAuMBJRCgNldmUS\\nF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzGgNFVkUiFUdvb2dsZV9FdmUuOTU4NC4xMDcuMCoVR29v\\nZ2xlX0V2ZS45NTg0LjIzMC4w\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCcWV4cGVjdCBzdWNjZXNzfGxvb2sgdXAgYnVpbGRlciBt\\nZXRhZGF0YXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRCdWlsZGVyTWV0YWRh\\ndGF8Y2FsbCBidWlsZCBBUEkgc2NyaXB0qgMgChwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nEgCyA7kBCmQKA2V2ZRILZ2l0X3J2Yy1hcmMaBmJlcnRoYSIHNzk3ODUwNigBMhdldmVfdjEuMS42\\nNjU5LWJhMjA4OGVkM0INNS40LjE2My1yMjgyN0oVR29vZ2xlX0V2ZS45NTg0LjIzMC4wElEKA2V2\\nZRIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDMaA0VWRSIVR29vZ2xlX0V2ZS45NTg0LjEwNy4wKhVH\\nb29nbGVfRXZlLjk1ODQuMjMwLjA=\\n',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -211,7 +215,7 @@
       ]
     },
     "infra_step": true,
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.read deploy_cipd.json",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -242,7 +246,7 @@
       ]
     },
     "infra_step": true,
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.ensure_installed",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -268,79 +272,14 @@
       ]
     },
     "infra_step": true,
-    "name": "first-lookup.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCb2ZpcnN0LWxvb2t1cHxsb29rIHVwIGJ1aWxkZXIgbWV0\\nYWRhdGF8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0QnVpbGRlck1ldGFkYXRh\\nfGNhbGwgYnVpbGQgQVBJIHNjcmlwdKoDIAocChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBIA\\nsgO5AQpkCgNldmUSC2dpdF9ydmMtYXJjGgZiZXJ0aGEiBzc5Nzg1MDYoATIXZXZlX3YxLjEuNjY1\\nOS1iYTIwODhlZDNCDTUuNC4xNjMtcjI4MjdKFUdvb2dsZV9FdmUuOTU4NC4yMzAuMBJRCgNldmUS\\nF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzGgNFVkUiFUdvb2dsZV9FdmUuOTU4NC4xMDcuMCoVR29v\\nZ2xlX0V2ZS45NTg0LjIzMC4w\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "expect success.look up builder metadata.call chromite.api.PackageService/GetBuilderMetadata.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCcWV4cGVjdCBzdWNjZXNzfGxvb2sgdXAgYnVpbGRlciBt\\nZXRhZGF0YXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRCdWlsZGVyTWV0YWRh\\ndGF8Y2FsbCBidWlsZCBBUEkgc2NyaXB0qgMgChwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290\\nEgCyA7kBCmQKA2V2ZRILZ2l0X3J2Yy1hcmMaBmJlcnRoYSIHNzk3ODUwNigBMhdldmVfdjEuMS42\\nNjU5LWJhMjA4OGVkM0INNS40LjE2My1yMjgyN0oVR29vZ2xlX0V2ZS45NTg0LjIzMC4wElEKA2V2\\nZRIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDMaA0VWRSIVR29vZ2xlX0V2ZS45NTg0LjEwNy4wKhVH\\nb29nbGVfRXZlLjk1ODQuMjMwLjA=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "second-lookup"
-  },
-  {
-    "cmd": [],
-    "name": "second-lookup.look up builder metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@{@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  \"modelMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadwriteFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"firmwareKeyId\": \"EVE\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"modelName\": \"eve\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadonlyFirmwareVersion\": \"Google_Eve.9584.107.0\"@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  ], @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  \"buildTargetMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"kernelVersion\": \"5.4.163-r2827\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerTarget\": \"bertha\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerBranch\": \"git_rvc-arc\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerVersion\": \"7978506\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"arcUseSet\": true, @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"buildTarget\": \"eve\"@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  ]@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@}@@@",
-      "@@@STEP_LOG_END@builder_metadata@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "look up builder metadata",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_metadata@{@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  \"modelMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadwriteFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"firmwareKeyId\": \"EVE\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"modelName\": \"eve\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainReadonlyFirmwareVersion\": \"Google_Eve.9584.107.0\"@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  ], @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  \"buildTargetMetadata\": [@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    {@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"kernelVersion\": \"5.4.163-r2827\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"ecFirmwareVersion\": \"eve_v1.1.6659-ba2088ed3\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerTarget\": \"bertha\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerBranch\": \"git_rvc-arc\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"mainFirmwareVersion\": \"Google_Eve.9584.230.0\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"androidContainerVersion\": \"7978506\", @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"arcUseSet\": true, @@@",
-      "@@@STEP_LOG_LINE@builder_metadata@      \"buildTarget\": \"eve\"@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@    }@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@  ]@@@",
-      "@@@STEP_LOG_LINE@builder_metadata@}@@@",
-      "@@@STEP_LOG_END@builder_metadata@@@"
     ]
   },
   {

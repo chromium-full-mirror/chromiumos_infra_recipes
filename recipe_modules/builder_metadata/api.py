@@ -17,19 +17,16 @@ class BuilderMetadataApi(recipe_api.RecipeApi):
     super(BuilderMetadataApi, self).__init__(*args, **kwargs)
     self._cached_metadata = None
 
-  def look_up_builder_metadata(self, test_data=False):
+  def look_up_builder_metadata(self):
     """Looks up builder metadata for the provided build_target.
 
     Builder metadata does not change within the lifecycle of a build, so
     builder metadata is looked up once and cached.
 
-    Args:
-      test_data (bool): Whether the method is running with test data.
-
     Returns:
       builder_metadata proto describing build and model for the current target.
     """
-    if not (test_data or self.m.build_menu.packages_installed):
+    if not self.m.build_menu.packages_installed:
       raise recipe_api.StepFailure(
           'packages must be installed before look_up_builder_metadata is called'
       )
@@ -48,14 +45,11 @@ class BuilderMetadataApi(recipe_api.RecipeApi):
 
       return self._cached_metadata
 
-  def get_models(self, test_data=False):
+  def get_models(self):
     """Finds all model names associated with the active build_target.
-
-    Args:
-      test_data (bool): Whether the method is running with test data.
 
     Returns:
       List[str]: The names of all models used by this build target.
     """
-    builder_metadata = self.look_up_builder_metadata(test_data=test_data)
+    builder_metadata = self.look_up_builder_metadata()
     return [model.model_name for model in builder_metadata.model_metadata]

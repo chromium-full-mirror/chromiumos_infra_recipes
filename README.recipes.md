@@ -151,7 +151,9 @@
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand) (Python3 ✅)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status) (Python3 ✅)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count) (Python3 ✅)
-  * [builder_metadata:examples/full](#recipes-builder_metadata_examples_full) &mdash; Basic tests for the builder_metadata recipe module.
+  * [builder_metadata:tests/get_models](#recipes-builder_metadata_tests_get_models) &mdash; Tests to verify builder_metadata.
+  * [builder_metadata:tests/lookup_is_cached](#recipes-builder_metadata_tests_lookup_is_cached) &mdash; Tests to verify that builder_metadata is properly cached between invocations.
+  * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
   * [check_fit_image](#recipes-check_fit_image) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync)
@@ -1373,25 +1375,19 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module to get builder metadata.
 
-&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#51)(self, test_data=False):**
+&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#48)(self):**
 
 Finds all model names associated with the active build_target.
-
-Args:
-  test_data (bool): Whether the method is running with test data.
 
 Returns:
   List[str]: The names of all models used by this build target.
 
-&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#20)(self, test_data=False):**
+&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#20)(self):**
 
 Looks up builder metadata for the provided build_target.
 
 Builder metadata does not change within the lifecycle of a build, so
 builder metadata is looked up once and cached.
-
-Args:
-  test_data (bool): Whether the method is running with test data.
 
 Returns:
   builder_metadata proto describing build and model for the current target.
@@ -8667,15 +8663,33 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_build_count.py#19)(api):**
-### *recipes* / [builder\_metadata:examples/full](/recipe_modules/builder_metadata/examples/full.py)
+### *recipes* / [builder\_metadata:tests/get\_models](/recipe_modules/builder_metadata/tests/get_models.py)
 
-[DEPS](/recipe_modules/builder_metadata/examples/full.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/builder_metadata/tests/get_models.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-Basic tests for the builder_metadata recipe module.
+Tests to verify builder_metadata.get_models.
 
-&mdash; **def [RunSteps](/recipe_modules/builder_metadata/examples/full.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/get_models.py#18)(api):**
+### *recipes* / [builder\_metadata:tests/lookup\_is\_cached](/recipe_modules/builder_metadata/tests/lookup_is_cached.py)
+
+[DEPS](/recipe_modules/builder_metadata/tests/lookup_is_cached.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Tests to verify that builder_metadata is properly cached between invocations.
+
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/lookup_is_cached.py#18)(api):**
+### *recipes* / [builder\_metadata:tests/no\_install\_packages](/recipe_modules/builder_metadata/tests/no_install_packages.py)
+
+[DEPS](/recipe_modules/builder_metadata/tests/no_install_packages.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+Test to verify install_packages is called prior to look_up_builder_metadata.
+
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/no_install_packages.py#16)(api):**
 ### *recipes* / [check\_fit\_image](/recipes/check_fit_image.py)
 
 [DEPS](/recipes/check_fit_image.py#43): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
