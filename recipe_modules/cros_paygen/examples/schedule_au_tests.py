@@ -17,7 +17,8 @@ DEPS = [
 
 
 def RunSteps(api):
-  build_target_name = 'octopus'
+  build_target_name = 'octopus-kernelnext'
+  test_build_target = 'octopus'
   tgt_channel = 'canary-channel'
   tgt_version = '13415.0.0'
   tgt_payload_uri = (
@@ -34,9 +35,10 @@ def RunSteps(api):
   src_artifact_uri_13414 = ('gs://chromeos-releases/canary-channel/octopus/'
                             '13414.0.0')
   paygen_test_config_13414 = api.cros_paygen.PaygenTestConfig(
-      build_target_name=build_target_name, tgt_channel=tgt_channel,
-      tgt_payload_uri=tgt_payload_uri, tgt_archive_uri=tgt_archive_uri,
-      tgt_version=tgt_version, src_payload_uri=src_payload_uri_13414,
+      test_build_target=test_build_target, build_target_name=build_target_name,
+      tgt_channel=tgt_channel, tgt_payload_uri=tgt_payload_uri,
+      tgt_archive_uri=tgt_archive_uri, tgt_version=tgt_version,
+      src_payload_uri=src_payload_uri_13414,
       src_artifact_uri=src_artifact_uri_13414, src_version=src_version_13414,
       is_delta_update=True, delta_type=delta_type_omaha,
       applicable_models=applicable_models)
@@ -48,9 +50,10 @@ def RunSteps(api):
   src_artifact_uri_13413 = ('gs://chromeos-releases/canary-channel/octopus/'
                             '13413.0.0')
   paygen_test_config_13413 = api.cros_paygen.PaygenTestConfig(
-      build_target_name=build_target_name, tgt_channel=tgt_channel,
-      tgt_payload_uri=tgt_payload_uri, tgt_archive_uri=tgt_archive_uri,
-      tgt_version=tgt_version, src_payload_uri=src_payload_uri_13413,
+      test_build_target=test_build_target, build_target_name=build_target_name,
+      tgt_channel=tgt_channel, tgt_payload_uri=tgt_payload_uri,
+      tgt_archive_uri=tgt_archive_uri, tgt_version=tgt_version,
+      src_payload_uri=src_payload_uri_13413,
       src_artifact_uri=src_artifact_uri_13413, src_version=src_version_13413,
       is_delta_update=True, delta_type=delta_type_omaha,
       applicable_models=applicable_models)

@@ -91,15 +91,17 @@ class PaygenTestConfig(object):
   _REQUEST_WITH_MODEL_TAG_TEMPLATE = (
       '%(chromeos_build_name)s-%(tgt_channel)s-%(model)s')
 
-  def __init__(self, build_target_name, tgt_channel, tgt_version,
-               tgt_payload_uri, tgt_archive_uri, is_delta_update, delta_type,
-               src_version, src_payload_uri, src_artifact_uri,
+  def __init__(self, test_build_target, build_target_name, tgt_channel,
+               tgt_version, tgt_payload_uri, tgt_archive_uri, is_delta_update,
+               delta_type, src_version, src_payload_uri, src_artifact_uri,
                applicable_models=None):
     """Initialize a test configuration.
 
     Args:
-      build_target_name (str): The name of the build target being tested
-        (e.g. auron_paine).
+      test_build_target (str): The name of the physical board being tested
+        (e.g. auron_paine), must be matched for scheduling in the lab.
+      build_target_name (str): The name of the build target (e.g.
+        kevin or kevin-kernelnext).
       tgt_channel (str): The channel of the target payload
         (e.g. 'canary-channel').
       tgt_version (str): The target image version (e.g. '13373.0.0').
@@ -113,6 +115,7 @@ class PaygenTestConfig(object):
       applicable_models (list[str]): A list of models that this config should
         run against. None indicates it can run on any build_target.
     """
+    self._test_build_target = test_build_target
     self._build_target_name = build_target_name
     self._tgt_channel = tgt_channel
     self._tgt_version = tgt_version
@@ -152,6 +155,10 @@ class PaygenTestConfig(object):
   @property
   def build_target_name(self):
     return self._build_target_name
+
+  @property
+  def test_build_target(self):
+    return self._test_build_target
 
   def _get_test_plan(self):
     """A test_platform TestPlan proto with the enumerated test request."""
@@ -283,7 +290,9 @@ class PaygenTestConfig(object):
     sw_dep = params.software_dependencies.add()
     sw_dep.chromeos_build = self._chromeos_build_name
 
-    params.software_attributes.build_target.name = self._build_target_name
+    # This is used to create the swarming DUT dimensions, thus it's the
+    # "test build target", which is what is deployed in the lab.
+    params.software_attributes.build_target.name = self._test_build_target
 
     params.metadata.test_metadata_url = self._tgt_archive_uri
     params.metadata.debug_symbols_archive_url = self._tgt_archive_uri
@@ -308,7 +317,7 @@ class PaygenTestConfig(object):
     tags = {
         'label-pool': LABEL_POOL,
         'build': self._chromeos_build_name,
-        'label-board': self._build_target_name,
+        'label-board': self._test_build_target,
         'suite': self._suite_name,
         'quota_account': QS_ACCOUNT,
     }
@@ -1073,7 +1082,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
             test_build_target = hw_test_cfg[0]['skylabBoard']
 
     return PaygenTestConfig(
-        build_target_name=test_build_target, tgt_channel=tgt_channel,
+        test_build_target=test_build_target,
+        build_target_name=build_target_name, tgt_channel=tgt_channel,
         tgt_payload_uri=tgt_payload.uri, tgt_archive_uri=tgt_archive_uri,
         tgt_version=tgt_version, src_payload_uri=src_payload.uri,
         src_artifact_uri=src_artifact_uri, src_version=src_version,

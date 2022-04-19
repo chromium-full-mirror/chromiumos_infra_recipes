@@ -21,6 +21,10 @@ message TestPaygenProperties {
   // Builder name to expect in the test config. Potentially different than
   // build_name because of variant boards.
   string expected_test_build_target = 4;
+
+  // Build target name, not expected to change to accomomdate the deployed
+  // 'board' name, as opposed to 'expected_test_build_target'.
+  string expected_build_target_name = 5;
 }
 
 message GetRequestTestInputProperties {

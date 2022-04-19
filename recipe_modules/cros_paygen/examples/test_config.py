@@ -62,8 +62,12 @@ def RunSteps(api, properties):
       tgt_payload=unsigned_full_payload, delta_type=DeltaType.Value('OMAHA'),
       src_version='13336.0.1', src_channel='canary-channel')
 
-  if properties.expected_test_build_target:
+  if properties.expected_build_target_name:
     api.assertions.assertEqual(full_test_config.build_target_name,
+                               properties.expected_build_target_name)
+
+  if properties.expected_test_build_target:
+    api.assertions.assertEqual(full_test_config.test_build_target,
                                properties.expected_test_build_target)
 
   # The source payload does not exist.
@@ -139,7 +143,8 @@ def GenTests(api):
   yield api.test(
       'generate',
       api.properties(
-          builder_name='zork', expected_test_build_target='zork', **{
+          builder_name='zork', expected_test_build_target='zork',
+          expected_build_target_name='zork', **{
               '$chromeos/cros_test_plan': {
                   'generate_target_test_requirements_from_source': True,
               },
@@ -166,7 +171,8 @@ def GenTests(api):
   yield api.test(
       'variant',
       api.properties(builder_name='atlas-kernelnext',
-                     expected_test_build_target='atlas'),
+                     expected_test_build_target='atlas',
+                     expected_build_target_name='atlas-kernelnext'),
       api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
