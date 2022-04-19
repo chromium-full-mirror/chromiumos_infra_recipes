@@ -14,7 +14,7 @@ from PB.chromiumos.greenness import AggregateGreenness
 from recipe_engine import recipe_api
 
 GreennessTuple = namedtuple('GreennessTuple', ['score', 'critical', 'relevant'])
-EXCLUDE_VARIANTS = ['-asan-', '-ubsan-']
+EXCLUDE_VARIANTS = ['-asan-', '-ubsan-', '-kernel-']
 
 
 class GreennessApi(recipe_api.RecipeApi):
