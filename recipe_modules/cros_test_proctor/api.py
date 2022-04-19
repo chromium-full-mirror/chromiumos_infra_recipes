@@ -229,6 +229,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           test_results.skylab)
       passed_test_names += exonerated_hw_tests
       test_results = test_results._replace(skylab=exonerated_hw_results)
+      exonerated_vm_results, exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
+          test_results.tast_vm)
+      passed_test_names += exonerated_vm_tests
+      test_results = test_results._replace(tast_vm=exonerated_vm_results)
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
       self.m.greenness.update_vmtest_info(test_results.tast_gce)

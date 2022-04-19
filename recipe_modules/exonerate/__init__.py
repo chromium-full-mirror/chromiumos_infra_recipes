@@ -6,6 +6,8 @@ from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 
 DEPS = [
     'recipe_engine/step',
+    'cros_infra_config',
+    'naming',
     'skylab',
 ]
 

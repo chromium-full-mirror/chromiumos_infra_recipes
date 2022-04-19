@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "exonerate vm tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

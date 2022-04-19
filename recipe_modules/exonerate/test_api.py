@@ -20,8 +20,12 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
             "target": "atlas",
             "reason": "blah blah"
         }],
+        "arc.Boot": [{
+            "target": "betty",
+            "reason": "something wrong"
+        }],
         "test3": [{
-            "target": "target",
+            "target": "build_target_name",
             "reason": "blah blah"
         }]
     }

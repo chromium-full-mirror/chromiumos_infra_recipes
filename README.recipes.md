@@ -313,8 +313,13 @@
   * [easy:examples/full](#recipes-easy_examples_full) (Python3 ✅)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
-  * [exonerate:examples/disabled_exoneration](#recipes-exonerate_examples_disabled_exoneration)
+  * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration)
+  * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration)
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests)
+  * [exonerate:examples/exonerate_vmtests](#recipes-exonerate_examples_exonerate_vmtests)
+  * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests)
+  * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate)
+  * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -4265,7 +4270,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#448)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#452)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4309,7 +4314,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#362)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#366)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4640,21 +4645,55 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#7): [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#125)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#127)(self, hw_test_results):**
 
-Filter the list of HW Test failures based on configs.
+Exonerate the list of HW Test failures based on configs.
 
 Args:
   hw_test_results([Skylab_Result]): list of failures from the proctor.
 
 Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
+  tests that should be treated as success.
+
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#163)(self, test_case, build_target):**
+
+Exonerates a single test case based on configs.
+
+Args:
+  test_case(TestCaseResult in dict form): VM test_case to be
+    conditionally exonerated.
+  build_target(str): build_target on which the test was executed.
+
+Returns: test case dictionary changed based on the decision.
+
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#183)(self, all_test_cases, build_target):**
+
+Exonerates VM test cases based on configs.
+
+Args:
+  all_test_cases([Dict with predefined keys]): VM test_cases to be
+    conditionally exonerated.
+  build_target(str): build_target on which the test was executed.
+
+Returns: list of test cases modified based on configs and the new
+  overall status(common_pb2.status).
+
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#210)(self, vm_builds):**
+
+Exonerate the list of VM Test failures based on configs.
+
+Args:
+  vm_builds([build_pb2.Build]): list of vm results from the proctor.
+
+Returns:
+  [Build] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
@@ -9968,13 +10007,20 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#16)(api):**
-### *recipes* / [exonerate:examples/disabled\_exoneration](/recipe_modules/exonerate/examples/disabled_exoneration.py)
+### *recipes* / [exonerate:examples/disabled\_hw\_exoneration](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py)
 
-[DEPS](/recipe_modules/exonerate/examples/disabled_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_exoneration.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#22)(api):**
+### *recipes* / [exonerate:examples/disabled\_vm\_exoneration](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py)
+
+[DEPS](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py#23)(api):**
 ### *recipes* / [exonerate:examples/exonerate\_hwtests](/recipe_modules/exonerate/examples/exonerate_hwtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/exonerate_hwtests.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9982,6 +10028,34 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_hwtests.py#20)(api):**
+### *recipes* / [exonerate:examples/exonerate\_vmtests](/recipe_modules/exonerate/examples/exonerate_vmtests.py)
+
+[DEPS](/recipe_modules/exonerate/examples/exonerate_vmtests.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_vmtests.py#25)(api):**
+### *recipes* / [exonerate:examples/noop\_vmtests](/recipe_modules/exonerate/examples/noop_vmtests.py)
+
+[DEPS](/recipe_modules/exonerate/examples/noop_vmtests.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/noop_vmtests.py#25)(api):**
+### *recipes* / [exonerate:examples/vmtests\_cannot\_exonerate](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py)
+
+[DEPS](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py#25)(api):**
+### *recipes* / [exonerate:examples/vmtests\_missing\_results](/recipe_modules/exonerate/examples/vmtests_missing_results.py)
+
+[DEPS](/recipe_modules/exonerate/examples/vmtests_missing_results.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_missing_results.py#23)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
