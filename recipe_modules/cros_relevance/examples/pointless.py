@@ -45,10 +45,14 @@ def RunSteps(api, properties):
           ]),
       ])
 
-  pointless = api.cros_relevance.is_build_pointless(
-      properties.gerrit_changes, bbcommon_pb2.GitilesCommit(id='my hash'),
-      dep_graph=dep_graph, config=config, force_relevant=force_relevant,
-      test_value=properties.expected)
+  if config.id.type == BuilderConfig.Id.POSTSUBMIT:
+    pointless = not api.cros_relevance.postsubmit_relevance_check(
+        bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph)
+  else:
+    pointless = api.cros_relevance.is_build_pointless(
+        properties.gerrit_changes, bbcommon_pb2.GitilesCommit(id='my hash'),
+        dep_graph=dep_graph, config=config, force_relevant=force_relevant,
+        test_value=properties.expected)
   api.assertions.assertEqual(properties.expected, pointless)
   api.cros_relevance.get_dependency_graph(sysroot, Chroot())
 

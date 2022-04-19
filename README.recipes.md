@@ -852,13 +852,13 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#793)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#796)(self):**
 
 Add child build ids to output property of current build.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#68)(self):**
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#486)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#489)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -867,7 +867,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#543)(self, config=None, include_version=False, builder_path_template=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#546)(self, config=None, include_version=False, builder_path_template=None):**
 
 Build the image and run ebuild tests.
 
@@ -919,7 +919,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#655)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#658)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -954,7 +954,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph](/recipe_modules/build_menu/api.py#462)(self, packages):**
+&mdash; **def [get\_dep\_graph](/recipe_modules/build_menu/api.py#465)(self, packages):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -969,7 +969,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#58)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#499)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#502)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -1006,7 +1006,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#140)(self):**
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#581)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#584)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1077,7 +1077,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#630)(self, config=None, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#633)(self, config=None, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -1092,7 +1092,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#757)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#760)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -3017,7 +3017,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#379)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#376)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3031,7 +3031,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#434)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#431)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -3042,7 +3042,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#408)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#405)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -3079,7 +3079,7 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#498)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#495)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -3123,7 +3123,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#354)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#351)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3140,7 +3140,7 @@ Args:
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 
-&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#231)(self, gitiles_commit, dep_graph):**
+&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#228)(self, gitiles_commit, dep_graph):**
 
 Determines if postsubmit builder is relevant for given snapshot.
 
@@ -8460,13 +8460,13 @@ Recipe for linting CLs with Cargo Clippy.
 &mdash; **def [RunSteps](/recipes/build_linters.py#134)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
-[DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#41)(api, properties):**
+&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#42)(api, properties):**
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#31)(api, properties):**
 ### *recipes* / [build\_menu:tests/is\_cq\_build\_relevant](/recipe_modules/build_menu/tests/is_cq_build_relevant.py)
 
 [DEPS](/recipe_modules/build_menu/tests/is_cq_build_relevant.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [git\_footers](#recipe_modules-git_footers), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

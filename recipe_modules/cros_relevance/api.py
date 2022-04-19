@@ -195,9 +195,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       bool: Whether the build can be terminated early.
     """
     is_cq_run = config.id.type == BuilderConfig.Id.CQ
-    is_postsubmit = config.id.type == BuilderConfig.Id.POSTSUBMIT
-    if is_postsubmit:
-      return not self.postsubmit_relevance_check(gitiles_commit, dep_graph)
 
     if not is_cq_run or force_relevant or self.toolchain_cls_applied:
       # If it is not a CQ run it should never be treated as pointless. Likewise

@@ -13,6 +13,7 @@ DEPS = [
     'build_menu',
     'cros_bisect',
     'cros_build_api',
+    'cros_history',
     'test_util',
 ]
 
@@ -154,10 +155,21 @@ def GenTests(api):
                                           '{"build_relevance": "UNKNOWN"}'),
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)),
+      api.post_check(post_process.DoesNotRun, 'postsubmit relevance check'),
       input_properties={
           '$chromeos/build_menu': dict(artifact_build=True),
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
-      })
+          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
+      },
+  )
+
+  yield api.build_menu.test(
+      'snapshot-build',
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response()],
+          step_name='postsubmit relevance check.buildbucket.search',
+      ),
+      api.post_check(post_process.MustRun, 'postsubmit relevance check'),
+  )
 
   yield api.build_menu.test('toolchain-cq-build',
                             api.build_menu.set_toolchain_cls_return(True),
