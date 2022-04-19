@@ -4,11 +4,11 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/step',
     'easy',
     'support',
-    'recipe_engine/json',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

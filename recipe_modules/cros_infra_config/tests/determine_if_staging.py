@@ -13,6 +13,8 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_infra_config.tests.test import (
     DetermineIfStagingProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = DetermineIfStagingProperties
 
 

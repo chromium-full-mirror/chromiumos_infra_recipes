@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import six
+
 from google.protobuf.json_format import MessageToDict, Parse, ParseDict
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
@@ -191,7 +193,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def download_binproto(self, filename, step_test_data, timeout=None,
                         application='ChromeOS', message=None):
-    """Helper method to fetch a file from gititles."""
+    """Helper method to fetch a file from gitiles."""
     repo = CHROME_OS_REPO_URL
     if application == 'Chrome':
       repo = CHROME_REPO_URL
@@ -213,8 +215,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   def _fetch_builder_configs(self):
     """Helper method to fetch the builder configs file.
 
-    Downloads the builder configs file and returns it. This helper function
-    allows the retry to target the gitiles download specifically.
+    Downloads the builder configs file and returns its contents. This helper
+    function allows the retry to target the gitiles download specifically.
     """
     # Step nesting needs to happen here or it shows up many times in Milo,
     # once for each builder.
@@ -235,8 +237,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # once for each builder.
       with self.m.step.nest('read builder configs'), self.m.context(
           infra_steps=True):
-        builder_configs_file = self._fetch_builder_configs()
-      configs = BuilderConfigs.FromString(builder_configs_file)
+        builder_cfgs_file_contents = six.ensure_binary(
+            self._fetch_builder_configs())
+      configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
         name_to_builder_config[config.id.name] = config
       self._name_to_builder_config = name_to_builder_config
@@ -326,9 +329,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       SuiteRetryCfg as defined in the config repo.
     """
     return SuiteRetryCfg.FromString(
-        self.download_binproto('testingconfig/generated/vm_retry',
-                               self.test_api.vm_retry_test_data,
-                               message=SuiteRetryCfg()))
+        six.ensure_binary(
+            self.download_binproto('testingconfig/generated/vm_retry',
+                                   self.test_api.vm_retry_test_data,
+                                   message=SuiteRetryCfg())))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.
@@ -337,9 +341,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       TrackingPolicyCfg as defined in the config repo.
     """
     return TrackingPolicyCfg.FromString(
-        self.download_binproto('testingconfig/generated/dut_tracking',
-                               self.test_api.dut_tracking_test_data,
-                               message=TrackingPolicyCfg()))
+        six.ensure_binary(
+            self.download_binproto('testingconfig/generated/dut_tracking',
+                                   self.test_api.dut_tracking_test_data,
+                                   message=TrackingPolicyCfg())))
 
   def _has_valid_commit(self, config, commit, manifest):
     """Determine if the builder has a valid commit.

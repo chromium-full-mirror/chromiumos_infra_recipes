@@ -8,6 +8,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   policies = api.cros_infra_config.get_dut_tracking_config().policies

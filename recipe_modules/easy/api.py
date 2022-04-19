@@ -5,6 +5,8 @@
 
 """APIs for easy steps."""
 
+import six
+
 from recipe_engine import recipe_api
 from google.protobuf import json_format
 
@@ -19,7 +21,8 @@ class EasyApi(recipe_api.RecipeApi):
       step_name (str): The name of the step.
       kwargs: Keyword arguments to set as properties, key is property name
           and value is property value. Key must be a string, value may be
-          int, float, list, or dict.
+          str, int, float, list, or dict.
+          If value is bytes, it will be cast to string.
 
     Returns:
       See 'step.__call__'.
@@ -31,6 +34,12 @@ class EasyApi(recipe_api.RecipeApi):
         step_name = 'set properties'
     step = self.m.step(step_name, cmd=None)
     for k, v in kwargs.items():
+      if isinstance(v, bytes):
+        v = six.ensure_str(v)
+      elif isinstance(v, list):
+        for i, elem in enumerate(v):
+          if isinstance(elem, bytes):
+            v[i] = six.ensure_str(elem)
       step.presentation.properties[k] = v
     return step
 

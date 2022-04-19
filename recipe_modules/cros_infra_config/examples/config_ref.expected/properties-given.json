@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "props",
     "~followup_annotations": [
-      "@@@STEP_TEXT@{'$chromeos/cros_infra_config': {'config_ref': u'refs/changes/33/123433/1'}}@@@"
+      "@@@STEP_TEXT@{\"$chromeos/cros_infra_config\": {\"config_ref\": \"refs/changes/33/123433/1\"}}@@@"
     ]
   },
   {

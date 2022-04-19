@@ -11,6 +11,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (

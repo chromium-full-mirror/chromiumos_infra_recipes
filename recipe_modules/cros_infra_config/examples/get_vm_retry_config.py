@@ -8,6 +8,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   all_scenarios = api.cros_infra_config.get_vm_retry_config().suite_scenarios

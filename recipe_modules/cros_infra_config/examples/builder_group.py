@@ -11,6 +11,8 @@ DEPS = [
     'recipe_engine/properties',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.assertEqual(api.cros_infra_config.current_builder_group,

@@ -12,6 +12,8 @@ DEPS = [
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.assertIsNone(
