@@ -106,7 +106,7 @@ def _GetLints(api, affected_packages):
     return api.cros_build_api.ToolchainService.EmergeWithLinting(
         LinterRequest(packages=affected_packages,
                       sysroot=api.build_menu.sysroot,
-                      chroot=api.build_menu.chroot),
+                      chroot=api.build_menu.chroot, filter_modified=True),
         test_output_data=test_data).findings
 
 
