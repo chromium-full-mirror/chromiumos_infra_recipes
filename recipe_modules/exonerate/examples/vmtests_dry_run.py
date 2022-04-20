@@ -42,9 +42,9 @@ def RunSteps(api):
   vm_builds = [build]
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
-  api.assertions.assertEqual(exonerated_test_names, [suite_name])
-  api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.SUCCESS)
-  api.assertions.assertNotIn(
+  api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
+  api.assertions.assertIn(
       'VERDICT_FAILED',
       str(exonerated_vm_builds[0].output.properties['all_test_cases']))
 
@@ -53,7 +53,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
-      api.post_check(post_process.MustRun, 'exonerate vm tests'))
+          **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True, dry_run=True)
+          }), api.post_check(post_process.MustRun, 'exonerate vm tests'))

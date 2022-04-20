@@ -10,4 +10,8 @@ message ExonerateProperties {
   // Whether to actually perform exoneration.
   // Used to flag the feature and unittesting.
   bool enable_exoneration = 1;
+
+  // Whether to run in dry_run mode. Exoneration logic will be
+  // executed but results won't be changed.
+  bool dry_run = 2;
 }

@@ -17,7 +17,8 @@ class ExonerateApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super(ExonerateApi, self).__init__(**kwargs)
-    self._enable_exoneration = properties.enable_exoneration or False
+    self._enable_exoneration = properties.enable_exoneration
+    self._dry_run = properties.dry_run
     self._exoneration_configs = {}
     self._configs_loaded = False
     # Global log store to reduce the number of steps created.
@@ -37,13 +38,15 @@ class ExonerateApi(recipe_api.RecipeApi):
 
   def _print_logs(self, pres):
     """Print all saved logs to pres.logs and empty list after."""
+    dry_run_text = 'Exoneration is running in DRY_RUN mode.\n' if self._dry_run else ''
     if not self._global_log_lines:
       pres.logs['exoneration logs'] = 'No tests were exonerated.'
     else:
-      pres.logs['exoneration logs'] = '\n'.join(self._global_log_lines)
+      pres.logs['exoneration logs'] = (
+          dry_run_text + '\n'.join(self._global_log_lines))
       self._global_log_lines = []
 
-  def _exonerate_test_case(self, test_case, build_target):
+  def _exonerate_hw_testcase(self, test_case, build_target):
     """Exonerates a single TestCaseResult based on configs.
 
     Args:
@@ -56,9 +59,12 @@ class ExonerateApi(recipe_api.RecipeApi):
     for config in self._exoneration_configs[test_case.name]:
       bt_match = (build_target == config['target'])
       reason_match = (config['reason'] in test_case.human_readable_summary)
-      if bt_match and reason_match:
+      exoneration_decision = bt_match and reason_match
+      if exoneration_decision:
         self._add_log('Exonerated {} on {},\t{} rule'.format(
             test_case.name, config['target'], config['reason']))
+
+      if exoneration_decision and not self._dry_run:
         return ExecuteResponse.TaskResult.TestCaseResult(
             name=test_case.name, verdict=TaskState.VERDICT_PASSED,
             human_readable_summary=('Exonerated: ' +
@@ -66,7 +72,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       else:
         return test_case
 
-  def _exonerate_test_cases(self, test_cases, build_target):
+  def _exonerate_hw_test_cases(self, test_cases, build_target):
     """Exonerates [ExecuteResponse.TaskResult.TestCaseResult] based on configs.
 
     Args:
@@ -83,7 +89,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         new_test_cases.append(test_case)
       else:
         if test_case.name in self._exoneration_configs:
-          new_test_case = self._exonerate_test_case(test_case, build_target)
+          new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
 
     verdicts = [tc.verdict for tc in new_test_cases]
@@ -110,7 +116,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         filtered_results.append(result)
       else:
         new_result = result
-        new_test_cases, new_verdict = self._exonerate_test_cases(
+        new_test_cases, new_verdict = self._exonerate_hw_test_cases(
             result.test_cases, build_target)
         new_result.ClearField("test_cases")
         new_result.test_cases.extend(new_test_cases)
@@ -173,9 +179,11 @@ class ExonerateApi(recipe_api.RecipeApi):
     for config in self._exoneration_configs[test_case['name']]:
       bt_match = (build_target == config['target'])
       reason_match = (config['reason'] in test_case['humanReadableSummary'])
-      if bt_match and reason_match:
+      exoneration_decision = bt_match and reason_match
+      if exoneration_decision:
         self._add_log('Exonerated {} on {},\t{} rule'.format(
             test_case['name'], config['target'], config['reason']))
+      if exoneration_decision and not self._dry_run:
         return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
       else:
         return test_case
@@ -193,8 +201,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     """
     new_test_cases = []
     for test_case in all_test_cases:
-      if test_case['verdict'] == 'VERDICT_PASSED' or test_case[
-          'name'] not in self._exoneration_configs:
+      if (test_case['verdict'] == 'VERDICT_PASSED' or
+          test_case['name'] not in self._exoneration_configs):
         new_test_cases.append(test_case)
       else:
         new_test_case = self.exonerate_vm_testcase(test_case, build_target)
