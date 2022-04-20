@@ -6192,23 +6192,23 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with goma.
 
-#### **class [GomaApi](/recipe_modules/goma/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GomaApi](/recipe_modules/goma/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [default\_bqupload\_dir](/recipe_modules/goma/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_bqupload\_dir](/recipe_modules/goma/api.py#72)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#63)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#68)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_client\_json](/recipe_modules/goma/api.py#55)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#55)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#60)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#46)(self, also_bq_upload=False):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#51)(self, also_bq_upload=False):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#90)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#95)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
