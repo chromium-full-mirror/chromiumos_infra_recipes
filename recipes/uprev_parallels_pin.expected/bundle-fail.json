@@ -4130,7 +4130,7 @@
     "name": "build chromiumos with upreved Parallels.validate SDK reuse.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@no Gerrit changes to check for relevancy@@@"
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
     ]
   },
   {

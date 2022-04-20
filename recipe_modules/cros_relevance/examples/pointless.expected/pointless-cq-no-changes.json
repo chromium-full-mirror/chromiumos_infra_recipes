@@ -8,7 +8,7 @@
     "name": "pointless build check.depgraph relevance check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no Gerrit changes to check for relevancy@@@"
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
     ]
   },
   {

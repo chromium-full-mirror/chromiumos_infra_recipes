@@ -295,7 +295,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(name or 'path relevancy check') as presentation:
       if not gerrit_changes:
-        presentation.step_text = 'no Gerrit changes to check for relevancy'
+        presentation.step_text = 'no changes to check for relevancy'
         return False
 
       self._ensure_binaries()
