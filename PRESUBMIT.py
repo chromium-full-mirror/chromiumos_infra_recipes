@@ -40,24 +40,7 @@ def PylintCheck(input_api, output_api):
   return pylint_errors
 
 
-def CommonChecks(input_api, output_api):
-  file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
-  results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
-                                                    file_filter=file_filter)
-
-  # recipes.py test run
-  results += input_api.RunTests([
-      input_api.Command(
-          name='recipes test',
-          cmd=[input_api.python_executable, 'recipes.py', 'test', 'run'],
-          kwargs={},
-          message=output_api.PresubmitError,
-      )
-  ])
-  results += PylintCheck(input_api, output_api)
-
-  # Python formatting issues are errors, but we need to ignore recipes.py, which
-  # we do not control.
+def FormatCheck(input_api, output_api):
   bad_format = False
   cmd = [
       '-C',
@@ -72,12 +55,46 @@ def CommonChecks(input_api, output_api):
         break
 
   if bad_format:
-    results += input_api.canned_checks.CheckPatchFormatted(
+    return input_api.canned_checks.CheckPatchFormatted(
         input_api, output_api, check_python=True, check_clang_format=False,
         result_factory=output_api.PresubmitError)
 
+
+def CommitChecks(input_api, output_api):
+  file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
+  results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
+                                                    file_filter=file_filter)
+
+  # recipes.py test run
+  results += input_api.RunTests([
+      input_api.Command(
+          name='recipes test',
+          cmd=[input_api.python_executable, 'recipes.py', 'test', 'run'],
+          kwargs={},
+          message=output_api.PresubmitError,
+      )
+  ])
+  results += PylintCheck(input_api, output_api)
+  # Python formatting issues are errors, but we need to ignore recipes.py, which
+  # we do not control.
+  fmt_results = FormatCheck(input_api, output_api)
+  if fmt_results:
+    results += fmt_results
   return results
 
 
-CheckChangeOnUpload = CommonChecks
-CheckChangeOnCommit = CommonChecks
+def UploadChecks(input_api, output_api):
+  file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
+  results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
+                                                    file_filter=file_filter)
+
+  # Python formatting issues are errors, but we need to ignore recipes.py, which
+  # we do not control.
+  fmt_results = FormatCheck(input_api, output_api)
+  if fmt_results:
+    results += fmt_results
+  return results
+
+
+CheckChangeOnUpload = UploadChecks
+CheckChangeOnCommit = CommitChecks
