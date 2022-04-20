@@ -1431,12 +1431,12 @@ tast_missing_test.3=bar.YetAnotherTest
           bid=42, tags={
               'label-board': 'fake-board',
               'label-model': 'fake-model',
-              'build': 'fake-board-cq/R11-123.45'
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
-              'dut_name': 'fakedut1-row2-rack3-host4',
-              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
+              'dut_name': 'fakedut1-row2-rack3-host4'
           }),
       _keyval_file_step_data(),
       api.properties(result_format='tast'),
