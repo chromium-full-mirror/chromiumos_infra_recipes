@@ -157,7 +157,7 @@ def archive_all_logs(api, interface, test_metadata, result):
     * api (RecipeScriptApi): Ubiquitous recipe api.
     * interface (DUTInterface): The interface to run commands on the DUT.
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
-    apposite a test.
+        to access a test.
     * result (DUTResult): The results of the test.
 
     Raises:
@@ -237,34 +237,45 @@ def _collect_tests_for_phosphorus(request):
   return tests
 
 
-def _generate_resultdb_base_tags(api):
+def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
     * image:
-        e.g. R102-14632.0.0-62834-8818718496810023809.
+        e.g. R102-14632.0.0-62834-8818718496810023809
     * build:
-        e.g. R102-14632.0.0-62834-8818718496810023809.
+        e.g. R102-14632.0.0-62834-8818718496810023809
     * declared_name:
-        e.g. hatch-cq/R102-14632.0.0-62834-8818718496810023809/wificell-cq/tast.wificell-cq.
+        e.g. hatch-cq/R102-14632.0.0-62834-8818718496810023809/wificell-cq/tast.wificell-cq
     * drone:
-        e.g. skylab-drone-deployment-prod-6dc79d4f9-czjlj.
+        e.g. skylab-drone-deployment-prod-6dc79d4f9-czjlj
     * drone_server:
-        e.g. chromeos4-row4-rack1-drone8.
+        e.g. chromeos4-row4-rack1-drone8
     * host_name:
-        e.g. chromeos15-row4-rack5-host1.
+        e.g. chromeos15-row4-rack5-host1
     * queued_time:
         e.g. 2018-05-25 23:50:17.
-    * suite_task_id:
-        The parent's swarming task ID.
-    * task_id:
-        The swarming task ID.
+    * suite_task_id: The parent's swarming task ID,
+        e.g. 59ef5e9532bbd611
+    * task_id: The swarming task ID.
+        e.g. 59f0e13fe7af0710
+    * job_name: The swarming task name (swarming request name),
+        e.g. bb-8818737803155059937-chromeos/general/Full
+    * logs_url: URL for test result logs,
+        e.g. gs://chromeos-test-logs/test-runner/prod/2022-03-26/82df38d1-86fd-42c9-bad5-3e20472cf68a
+    * branch:
+        e.g. main
+    * main_builder_name: Refer to "master_builder_name" in Stainless,
+        e.g. master-release
 
-  Args:
-    api (RecipeScriptApi): Ubiquitous recipe api.
+    Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * test_metadata (DUTTestMetadata): All metadata needed for the interface
+        to access a test.
+    * autotest_keyvals (dict): The keyval labels for autotest test results.
 
-  Returns:
-    base_tags (list[tuples]): Tags for the test results.
+    Returns:
+    * base_tags (list[tuples]): Tags for the test results.
   """
   base_tags = []
 
@@ -277,6 +288,7 @@ def _generate_resultdb_base_tags(api):
   if declared_name:
     base_tags.append(('declared_name', declared_name[0]))
 
+  # Fetches the following information from buildbucket.swarming.
   drone = api.cros_tags.get_values(
       'drone', api.buildbucket.build.infra.swarming.bot_dimensions)
   if drone:
@@ -302,19 +314,42 @@ def _generate_resultdb_base_tags(api):
 
   base_tags.append(('task_id', api.swarming.task_id))
 
+  # Fetches the following information from buildbucket.build.builder.
+  builder_object = api.buildbucket.build.builder
+  job_name = 'bb-{}-{}/{}/{}'.format(api.buildbucket.build.id,
+                                     builder_object.project,
+                                     builder_object.bucket,
+                                     builder_object.builder)
+  base_tags.append(('job_name', job_name))
+
+  # Fetches the following information from test_metadata.
+  logs_url = test_metadata.gs_url
+  if logs_url:
+    base_tags.append(('logs_url', logs_url))
+
+  # Fetches the following information from autotest keyvals.
+  branch = autotest_keyvals['branch']
+  if branch:
+    base_tags.append(('branch', branch))
+  main_builder_name = autotest_keyvals['master_build_config']
+  if main_builder_name:
+    base_tags.append(('main_builder_name', main_builder_name))
+
   return base_tags
 
 
-def _generate_resultdb_variant_def(api, build_target, parent_request_uid):
+def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
+                                   autotest_keyvals):
   """Generate the variant defintions for the test results.
 
     Args:
-      api (RecipeScriptApi): Ubiquitous recipe api.
-      build_target (str): Build target.
-      parent_request_uid (str): parent request uid.
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * build_target (str): Build target.
+    * parent_request_uid (str): parent request uid.
+    * autotest_keyvals (dict): The keyval labels for autotest test results.
 
     Returns:
-      base_variant (dict): Variant attributes for the test results.
+    * base_variant (dict): Variant attributes for the test results.
     """
   base_variant = {}
 
@@ -335,7 +370,12 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid):
   # the GenerateTestPlanResponse. See http://shortn/_oPSae8w6Xc for more info.
   test_config_display_name = (
       parent_request_uid.split('/')[-1] if parent_request_uid else '')
-  base_variant['test_config'] = test_config_display_name
+  if test_config_display_name:
+    base_variant['test_config'] = test_config_display_name
+
+  builder_name = autotest_keyvals['build_config']
+  if builder_name:
+    base_variant['builder_name'] = builder_name
 
   return base_variant
 
@@ -344,6 +384,7 @@ def _upload_missing_tast_results(api, base_dir, base_variant):
   """Upload test results for missing Tast test cases to ResultDB.
 
     Args:
+      api (RecipeScriptApi): Ubiquitous recipe api.
       base_dir (string): The path of the base test results on the drone server.
       base_variant (dict): Variant key-value pairs to attach to the test
             results.
@@ -353,6 +394,8 @@ def _upload_missing_tast_results(api, base_dir, base_variant):
     content = api.file.read_text('read keyval file', keyval_file,
                                  test_data='').splitlines()
   except api.file.Error:
+    # TODO(b/230441871): Improve the behavior when failed to read the autotest
+    # keyval file
     content = []
   missing_tests = []
   for line in content:
@@ -366,12 +409,12 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
     Args:
-      api (RecipeScriptApi): Ubiquitous recipe api.
-      result (DUTResult): The results of the test.
-      properties (TestRunnerProperties): Recipe input properties.
-      interface (DUTInterface): The interface to run commands on the DUT.
-      test_metadata (DUTTestMetadata): All metadata needed for the interface
-          apposite a test.
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * result (DUTResult): The results of the test.
+    * properties (TestRunnerProperties): Recipe input properties.
+    * interface (DUTInterface): The interface to run commands on the DUT.
+    * test_metadata (DUTTestMetadata): All metadata needed for the interface
+        to access a test.
     """
   if not api.resultdb.enabled:
     return
@@ -415,6 +458,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     result_file = test_runner_result_file
     artifact_directory = None
 
+  autotest_keyvals = test_metadata.test.autotest.keyvals
   config = {
       'result_format':
           result_format,
@@ -422,9 +466,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
           _generate_resultdb_variant_def(
               api,
               properties.request.prejob.software_attributes.build_target.name,
-              properties.request.parent_request_uid),
+              properties.request.parent_request_uid, autotest_keyvals),
       'base_tags':
-          _generate_resultdb_base_tags(api),
+          _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals),
       'result_file':
           result_file,
       'artifact_directory':
@@ -454,7 +498,7 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
   * properties (TestRunnerProperties): recipe input properties.
   * interface (DUTInterface): The interface to run commands on the DUT.
   * test_metadata (DUTTestMetadata): All metadata needed for the interface
-  apposite a test.
+        to access a test.
   * max_duration_sec (int): Maximum amount of time the job should run.
   * dut_state (str): The current state of the DUT.
   * container_image_info (ContainerImageInfo): If set, info on a Docker
@@ -691,7 +735,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
   * properties (TestRunnerProperties): recipe input properties.
   * interface (DUTInterface): The interface to run commands on the DUT.
   * test_metadata (DUTTestMetadata): All metadata needed for the interface
-  apposite a test.
+        to access a test.
   * max_duration_sec (int): Maximum amount of time the job should run.
   * dut_state (str): The current state of the DUT.
   * container_image_info (ContainerImageInfo): If set, info on a Docker
@@ -713,10 +757,13 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
-      test_metadata.rdb_base_tags = _generate_resultdb_base_tags(api)
+
+      autotest_keyvals = test_metadata.autotest_keyvals
+      test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
+          api, test_metadata, autotest_keyvals)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
-          properties.cft_test_request.parent_request_uid)
+          properties.cft_test_request.parent_request_uid, autotest_keyvals)
       interface.upload_to_rdb(test_metadata, run_test_response)
 
     result = interface.parse_test_results(test_metadata)
@@ -895,7 +942,10 @@ build=board-cq/R00-0.0.0
 suite=sweet-cq
 synchronous_log_data_stainless_url=https://path/to/stainless
 synchronous_log_data_url=gs://path/to/test/logs
+branch=main
 label=board-cq/R00-0.0.0/sweet-cq/test-case
+build_config=eve-release
+master_build_config=master-release
 drone=skylab-drone-xyz
 hostname=chromeos0-row0-rack0-host0
 job_started=0
@@ -1081,7 +1131,24 @@ tast_missing_test.3=bar.YetAnotherTest
                         'name': 'dummy_name',
                         'test_args': 'foo=bar',
                         'keyvals': {
-                            'key1': 'val1'
+                            "branch":
+                                "main",
+                            "build":
+                                "bob-release/R102-14637.0.0",
+                            "build_config":
+                                "bob-release",
+                            "cidb_build_id":
+                                "5141110",
+                            "datastore_parent_key":
+                                "('Build', 5141110)",
+                            "label":
+                                "bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0",
+                            "master_build_config":
+                                "master-release",
+                            "parent_job_id":
+                                "59dfe8555444e811",
+                            "suite":
+                                "bvt-tast-informational"
                         },
                         'is_client_test': True,
                         'display_name': 'multi_test_2'
@@ -1250,7 +1317,7 @@ tast_missing_test.3=bar.YetAnotherTest
         })
     return metadata
 
-    # An example request.
+  # An example request.
   def _request_properties_for_ctr(cft_test_request=None):
     if not cft_test_request:
       cft_test_request = _canned_test_runner_request_for_ctr()
@@ -1280,7 +1347,27 @@ tast_missing_test.3=bar.YetAnotherTest
                 }]
             }
         }],
-        "container_metadata": mock_metadata()
+        "container_metadata": mock_metadata(),
+        "autotest_keyvals": {
+            "branch":
+                "main",
+            "build":
+                "bob-release/R102-14637.0.0",
+            "build_config":
+                "bob-release",
+            "cidb_build_id":
+                "5141110",
+            "datastore_parent_key":
+                "('Build', 5141110)",
+            "label":
+                "bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0",
+            "master_build_config":
+                "master-release",
+            "parent_job_id":
+                "59dfe8555444e811",
+            "suite":
+                "bvt-tast-informational"
+        }
     }
 
   def _canned_test_runner_request_for_ctr_within_deadline(current_time_sec):
