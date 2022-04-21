@@ -41,8 +41,13 @@ def RunSteps(api, properties):
   actual_build_requests = [x.builder.builder for x in new_requests]
   api.assertions.assertCountEqual(actual_build_requests,
                                   properties.expected_build_requests)
+  enabled_experiments = {
+      exp: enabled
+      for exp, enabled in new_requests[0].experiments.iteritems()
+      if enabled
+  }
   api.assertions.assertEqual({x: True for x in properties.expected_experiments},
-                             new_requests[0].experiments)
+                             enabled_experiments)
 
 
 def GenTests(api):
