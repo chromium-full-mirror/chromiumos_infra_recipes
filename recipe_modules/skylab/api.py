@@ -121,7 +121,7 @@ class SkylabApi(recipe_api.RecipeApi):
         Request instance for test that can be scheduled.
       """
       req = Request()
-      req.params.hardware_attributes.model = ''
+      req.params.hardware_attributes.model = uht.hw_test.skylab_model
       req.params.hardware_attributes.require_stable_device = require_stable_devices
       req.params.time.maximum_duration.seconds = timeout.seconds
       image_path = uht.unit.common.build_payload.artifacts_gs_path
