@@ -10,6 +10,9 @@ DEPS = [
     'cros_schedule',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+
 def RunSteps(api):
   api.cros_schedule.get_last_branched_mstone()
   api.cros_schedule.get_last_branched_mstone_n()

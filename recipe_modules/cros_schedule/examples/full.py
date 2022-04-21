@@ -10,6 +10,8 @@ DEPS = [
     'cros_schedule',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.cros_schedule.examples.test import (

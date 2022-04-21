@@ -36,7 +36,7 @@
   * [cros_release_util](#recipe_modules-cros_release_util) &mdash; An API for providing release related utility functions.
   * [cros_relevance](#recipe_modules-cros_relevance)
   * [cros_resultdb](#recipe_modules-cros_resultdb)
-  * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
+  * [cros_schedule](#recipe_modules-cros_schedule) (Python3 ✅) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_signing](#recipe_modules-cros_signing)
   * [cros_som](#recipe_modules-cros_som) (Python3 ✅)
@@ -259,8 +259,8 @@
   * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full)
   * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations)
   * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings)
-  * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
-  * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
+  * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full) (Python3 ✅)
+  * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils) (Python3 ✅)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_sdk:tests/check_sdk_cache_state](#recipes-cros_sdk_tests_check_sdk_cache_state)
@@ -3267,15 +3267,15 @@ Args:
 
 [DEPS](/recipe_modules/cros_schedule/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with CrOS's Schedule.
 
-#### **class [CrosScheduleApi](/recipe_modules/cros_schedule/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosScheduleApi](/recipe_modules/cros_schedule/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for reading, commiting, and manipulating the release schedule.
 
-&mdash; **def [fetch\_chromiumdash\_schedule](/recipe_modules/cros_schedule/api.py#32)(self, start_mstone=None, fetch_n=10):**
+&mdash; **def [fetch\_chromiumdash\_schedule](/recipe_modules/cros_schedule/api.py#33)(self, start_mstone=None, fetch_n=10):**
 
 Return the json schedule from chromiumdash.
 
@@ -3287,7 +3287,7 @@ Args:
 Returns:
   (str): JSON string representing the results of the query, or None.
 
-&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#71)(self):**
+&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#72)(self):**
 
 Gets the last branched milestone.
 
@@ -3296,11 +3296,11 @@ Returns:
 
 Raises: StepFailure if not able to find mstone.
 
-&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#103)(self):**
+&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#104)(self):**
 
 Gets the last branched milestone number as an int.
 
-&mdash; **def [json\_to\_proto](/recipe_modules/cros_schedule/api.py#25)(self, sched_str_json):**
+&mdash; **def [json\_to\_proto](/recipe_modules/cros_schedule/api.py#26)(self, sched_str_json):**
 
 Returns a FetchMilestoneScheduleResponse from JSON repr.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
@@ -9616,16 +9616,16 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/full.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/full.py#23)(api, properties):**
 ### *recipes* / [cros\_schedule:examples/utils](/recipe_modules/cros_schedule/examples/utils.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/utils.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/utils.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/utils.py#16)(api):**
 ### *recipes* / [cros\_sdk:examples/existing\_sdk\_cache](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py)
 
 [DEPS](/recipe_modules/cros_sdk/examples/existing_sdk_cache.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]

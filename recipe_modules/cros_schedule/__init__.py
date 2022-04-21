@@ -8,3 +8,5 @@ DEPS = [
     'recipe_engine/time',
     'easy',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

@@ -8,6 +8,7 @@
 from datetime import datetime
 from google.protobuf.json_format import Parse
 import json
+import six
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -52,7 +53,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
 
       # json_to_proto can't handle null/None values, so replace with empty
       # strings.
-      returned_data = returned_data.replace('null', '""')
+      returned_data = six.ensure_str(returned_data).replace('null', '""')
 
       # Validate you have real json and the expected number of records.
       try:
@@ -82,7 +83,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
     today = self.m.time.utcnow()
 
     # Guess how many to pull assuming a minimum 2 week mstone period (min 2).
-    fetch_n = max((today - start).days / 14, 2)
+    fetch_n = max(int((today - start).days / 14), 2)
     schedule_json = self.fetch_chromiumdash_schedule(start_mstone=start_mstone,
                                                      fetch_n=fetch_n)
     mstones = self.json_to_proto(schedule_json)
