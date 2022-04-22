@@ -54,17 +54,12 @@ def RunSteps(api, properties):
     api.assertions.assertTrue(api.cros_source.is_source_dirty)
   else:
     api.assertions.assertFalse(api.cros_source.is_source_dirty)
-  commits = api.cros_source.apply_gerrit_changes(
+  _ = api.cros_source.apply_gerrit_changes(
       api.src_state.gerrit_changes,
       ignore_missing_projects=properties.ignore_missing_projects)
 
   if api.src_state.gerrit_changes:
     api.cros_source.checkout_gerrit_change(api.src_state.gerrit_changes[0])
-
-  archive_path = api.path['start_dir'].join('commits.tar')
-  api.cros_source.create_project_commits_archive(archive_path, commits)
-  projects = api.cros_source.checkout_project_commits_archive(archive_path)
-  api.assertions.assertSetEqual(set(projects), {'a/b', 'a/b/c'})
 
   # The test.proto default for string is empty, the api returns a None
   # when this is not set.

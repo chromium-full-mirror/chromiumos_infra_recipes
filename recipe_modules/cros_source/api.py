@@ -6,7 +6,6 @@
 """API for working with CrOS source."""
 
 import contextlib
-import json
 import multiprocessing
 import re
 
@@ -1405,82 +1404,6 @@ class CrosSourceApi(RecipeApi):
               if self.m.path.exists(snapshot_path) else self.m.repo.manifest(
                   manifest_file=manifest.path.join('default.xml'),
                   pinned=False))
-
-  def create_project_commits_archive(self, archive_path, project_commits):
-    """Creates an archive with the given project commits from the workspace.
-
-    This uses `git bundle` to efficiently store diffs. The recipient of this
-    archive must have appropriate parent commits locally available to use
-    this archive with 'checkout_project_commits_archive'.
-
-    Args:
-      archive_path (Path): Path to archive file to create. Uses the 'archive'
-        module and inherits its archive type file extension detection.
-      project_commits (List[ProjectCommit]): Commits to add to archive. Must be
-        in patch application order.
-    """
-    with self.m.step.nest('create project commits archive'):
-      # Find first commit for each project and make a reference to its parent.
-      project_base_commits = {}
-      for project_commit in project_commits:
-        project_base_commits.setdefault(project_commit.path,
-                                        '%s^' % project_commit.commit_id)
-
-      # NOTE: The contents of this archive are an implementation detail of
-      # this module. For each project with commit(s) in the archive, a `git
-      # bundle` file is included in the archive at
-      # 'projects/<project path>/bundle'.
-      archive_root = self.m.path.mkdtemp('create_project_commits_archive')
-      package = self.m.archive.package(archive_root)
-      for project_relpath, base_commit_id in project_base_commits.items():
-        archive_project_path = archive_root.join('projects', project_relpath)
-        self.m.file.ensure_directory('project path', archive_project_path)
-        with self.m.context(cwd=self.workspace_path.join(project_relpath)):
-          bundle_path = archive_project_path.join('bundle')
-          self.m.git.create_bundle(bundle_path, base_commit_id, 'HEAD')
-          package.with_file(bundle_path)
-
-      # A metadata.json file includes information about the included bundles.
-      metadata_path = archive_root.join('metadata.json')
-      metadata = {'project_paths': project_base_commits.keys()}
-      self.m.file.write_text('metadata.json', metadata_path,
-                             json.dumps(metadata))
-      package.with_file(metadata_path)
-
-      package.archive('create archive', archive_path)
-
-  def checkout_project_commits_archive(self, archive_path):
-    """Checkout the commits in the given archive file into the workspace.
-
-    See 'create_project_commits_archive'. The local source tree must have all
-    appropriate parent commits locally available to apply an archive.
-
-    Args:
-      archive_path (Path): Path to the archive.
-
-    Returns:
-      List[str]: List of project paths with commits in the archive.
-    """
-    with self.m.step.nest('checkout project commits archive'):
-      # The archive root must not exist prior to 'extract'.
-      archive_workdir = self.m.path.mkdtemp('checkout_project_commits_archive')
-      archive_root = archive_workdir.join('archive')
-      self.m.archive.extract('extract archive', archive_path, archive_root)
-
-      metadata_path = archive_root.join('metadata.json')
-      metadata = json.loads(
-          self.m.file.read_text(
-              'metadata.json', metadata_path,
-              test_data='{"project_paths": ["a/b", "a/b/c"]}'))
-
-      # Checkout bundles into their projects.
-      for project_relpath in metadata['project_paths']:
-        with self.m.context(cwd=self.workspace_path.join(project_relpath)):
-          bundle_path = archive_root.join(project_relpath, 'bundle')
-          self.m.git.fetch_ref(bundle_path, 'HEAD')
-          self.m.git.checkout('FETCH_HEAD')
-
-      return metadata['project_paths']
 
   def uprev_packages(self, workspace_path, build_targets=None,
                      timeout_sec=(10 * 60), name='uprev ebuilds'):
