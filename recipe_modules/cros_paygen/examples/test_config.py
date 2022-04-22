@@ -95,11 +95,40 @@ def RunSteps(api, properties):
       full_test_config._get_testable_models(['woomax', 'other']),
       ['woomax', 'other'])
 
+  api.assertions.assertEqual(
+      full_test_config._get_test_runner_tags()['label-pool'],
+      properties.expected_quota_scheduler_label_pool or 'quota')
+  api.assertions.assertEqual(
+      full_test_config._get_test_runner_tags()['quota_account'],
+      properties.expected_quota_scheduler_account or 'legacypool-bvt')
+
 
 def GenTests(api):
   yield api.test(
       'basic',
       api.properties(builder_name='zork', expected_test_build_target='zork'),
+      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.cros_storage.test_listing(
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      api.cros_storage.test_listing(
+          'discover gs artifacts (2).gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+  )
+  yield api.test(
+      'test-quota-scheduler-config',
+      api.properties(
+          builder_name='zork', expected_test_build_target='zork',
+          expected_quota_scheduler_account='foo',
+          expected_quota_scheduler_label_pool='bar', **{
+              '$chromeos/cros_paygen': {
+                  'quota_scheduler_config': {
+                      'account': 'foo',
+                      'label_pool': 'bar',
+                  },
+              },
+          }),
       api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'

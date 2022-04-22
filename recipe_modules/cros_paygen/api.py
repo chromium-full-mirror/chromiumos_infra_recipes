@@ -94,7 +94,8 @@ class PaygenTestConfig(object):
   def __init__(self, test_build_target, build_target_name, tgt_channel,
                tgt_version, tgt_payload_uri, tgt_archive_uri, is_delta_update,
                delta_type, src_version, src_payload_uri, src_artifact_uri,
-               applicable_models=None):
+               applicable_models=None, quota_scheduler_account=QS_ACCOUNT,
+               quota_scheduler_label_pool=LABEL_POOL):
     """Initialize a test configuration.
 
     Args:
@@ -151,6 +152,9 @@ class PaygenTestConfig(object):
         'test_name': self._AUTOTEST_TEST_NAME,
         'unique_name_suffix': self._unique_name_suffix,
     }
+
+    self._quota_scheduler_account = quota_scheduler_account
+    self._quota_scheduler_label_pool = quota_scheduler_label_pool
 
   @property
   def build_target_name(self):
@@ -283,7 +287,7 @@ class PaygenTestConfig(object):
     # Non-CTS traffic uses MANAGED_POOL_QUOTA (go/managed-pools-deprecation).
     params.scheduling.managed_pool = \
         Request.Params.Scheduling.MANAGED_POOL_QUOTA
-    params.scheduling.qs_account = QS_ACCOUNT
+    params.scheduling.qs_account = self._quota_scheduler_account
 
     if model:
       params.hardware_attributes.model = model
@@ -315,11 +319,11 @@ class PaygenTestConfig(object):
       A dictionary of test_runner build tags specific to the model.
     """
     tags = {
-        'label-pool': LABEL_POOL,
+        'label-pool': self._quota_scheduler_label_pool,
         'build': self._chromeos_build_name,
         'label-board': self._test_build_target,
         'suite': self._suite_name,
-        'quota_account': QS_ACCOUNT,
+        'quota_account': self._quota_scheduler_account,
     }
     if model:
       tags['label-model'] = model
@@ -337,6 +341,15 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
     self._test_request_opts = properties.test_request_opts
     self._max_dlc_batch_size = properties.max_dlc_batch_size or None
+    self._quota_scheduler_account = QS_ACCOUNT
+    self._quota_scheduler_label_pool = LABEL_POOL
+    if properties.quota_scheduler_config:
+      self._quota_scheduler_account = \
+          properties.quota_scheduler_config.account or \
+          self._quota_scheduler_account
+      self._quota_scheduler_label_pool = \
+          properties.quota_scheduler_config.label_pool or \
+          self._quota_scheduler_label_pool
 
   @property
   def paygen_children_timeout_sec(self):
@@ -1088,7 +1101,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         tgt_version=tgt_version, src_payload_uri=src_payload.uri,
         src_artifact_uri=src_artifact_uri, src_version=src_version,
         is_delta_update=is_delta_update, delta_type=delta_type,
-        applicable_models=applicable_models)
+        applicable_models=applicable_models,
+        quota_scheduler_account=self._quota_scheduler_account,
+        quota_scheduler_label_pool=self._quota_scheduler_label_pool)
 
   def schedule_au_tests(self, paygen_test_configs, models=None):
     """Schedule Paygen autoupdate (AU) tests.

@@ -25,6 +25,12 @@ message TestPaygenProperties {
   // Build target name, not expected to change to accomomdate the deployed
   // 'board' name, as opposed to 'expected_test_build_target'.
   string expected_build_target_name = 5;
+
+  // The expected quota scheduler account paygen should be using.
+  string expected_quota_scheduler_account = 6;
+
+  // The expected quota scheduler label pool paygen should be using.
+  string expected_quota_scheduler_label_pool = 7;
 }
 
 message GetRequestTestInputProperties {
