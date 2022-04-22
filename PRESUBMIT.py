@@ -87,7 +87,7 @@ def UploadChecks(input_api, output_api):
   file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
   results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
                                                     file_filter=file_filter)
-
+  results += PylintCheck(input_api, output_api)
   # Python formatting issues are errors, but we need to ignore recipes.py, which
   # we do not control.
   fmt_results = FormatCheck(input_api, output_api)
