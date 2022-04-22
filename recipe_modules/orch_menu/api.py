@@ -14,6 +14,7 @@ from google.protobuf import json_format
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.test_platform.request import Request
 
@@ -282,8 +283,12 @@ class OrchMenuApi(RecipeApi):
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
 
-  def create_recipe_result(self):
+  def create_recipe_result(self, include_build_details=False):
     """Create the correct return value for RunSteps.
+
+    Args:
+      include_build_details (bool): If True augment RawResults.summary_markdown
+        with additional details about the build for both successes and failures.
 
     Returns:
       (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
@@ -301,7 +306,16 @@ class OrchMenuApi(RecipeApi):
       self.m.greenness.print_step()
       # Set child output ids if any
       self.m.build_menu.add_child_build_ids_to_output_property()
-    return self.m.failures.aggregate_failures(self.builds_status.failures)
+
+    raw_result = self.m.failures.aggregate_failures(self.builds_status.failures)
+    if include_build_details:
+      summary_markdown = "Full version: {}".format(
+          self.m.cros_version.version.legacy_version)
+      if raw_result.summary_markdown:
+        summary_markdown += "\n\n{}".format(raw_result.summary_markdown)
+      raw_result = result_pb2.RawResult(status=raw_result.status,
+                                        summary_markdown=summary_markdown)
+    return raw_result
 
   def _validate_properties(self):
     """Validate the orchestrator properties.

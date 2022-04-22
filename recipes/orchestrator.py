@@ -30,7 +30,8 @@ def RunSteps(api):
   with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
     if config:
       DoRunSteps(api)
-    return api.orch_menu.create_recipe_result()
+    return api.orch_menu.create_recipe_result(
+        include_build_details=api.orch_menu.is_release_orchestrator)
 
 
 def DoRunSteps(api):

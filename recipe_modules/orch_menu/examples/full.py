@@ -113,7 +113,8 @@ def RunSteps(api, properties):
     expected = properties.expected_recipe_result
     if not expected.status:
       expected = RawResult(status=common_pb2.SUCCESS)
-    actual = api.orch_menu.create_recipe_result()
+    actual = api.orch_menu.create_recipe_result(
+        include_build_details=api.orch_menu.is_release_orchestrator)
     api.assertions.assertEqual(expected, actual)
     return actual
 
@@ -137,10 +138,43 @@ def GenTests(api):
       'release-orchestrator',
       data.ctp_normal,
       api.properties(
-          FullProperties(is_release_orchestrator=True, use_extra_props=True)),
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0'))),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
+      api.post_check(post_process.StepTextEquals,
+                     'set up orchestrator.bump version', ''),
+      api.post_check(
+          post_process.MustRun,
+          'set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/'
+      ),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test'),
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='master'),
+      builder='main-release-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+  )
+
+  summary = ('Full version: R99-1234.56.0'
+             '\n\n3 hw tests failed\n\n- htarget.hw.bvt-cq:'
+             '\n\n- htarget.hw.bvt-inline:'
+             '\n\n- ttarget.hw.some-other-suite:')
+  yield api.orch_menu.test(
+      'release-orchestrator-with-failure',
+      data.ctp_failure,
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              expected_recipe_result=RawResult(status=common_pb2.FAILURE,
+                                               summary_markdown=summary))),
+      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
       api.post_check(
@@ -161,7 +195,11 @@ def GenTests(api):
       'staging-release-orchestrator',
       data.ctp_normal,
       api.properties(
-          FullProperties(is_release_orchestrator=True, use_extra_props=True)),
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0'))),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
