@@ -112,7 +112,7 @@ def RunSteps(api, properties):
         resp = api.cros_build_api.PayloadService.GeneratePayload(
             req.generation_request, name='making single payload',
             step_text=api.naming.get_generation_request_title(
-                MessageToDict(request).get('generationRequest', {})))
+                MessageToDict(req).get('generationRequest', {})))
 
         return CallPair(req, resp)
 
@@ -179,6 +179,19 @@ def GenTests(api):
         parent_step_name='doing paygen.running paygen operations in parallel',
         step_name='making single payload', data=data, retcode=retcode)
 
+  def StepTextEquals(check, step_odict, step, expected):
+    """Check that the step's text equals given value.
+
+    Args:
+      step (str) - The step to check the step text of.
+      expected (str) - The expected text of the step.
+
+    Usage:
+      yield TEST + \
+          api.post_process(StepTextEquals, 'step-name', 'expected-text')
+    """
+    check(step_odict[step].step_text == expected)
+
   full_payload_uri = (
       'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
       'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
@@ -213,7 +226,8 @@ def GenTests(api):
                   ]),
               dict(
                   generation_request=api.cros_paygen
-                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
+                  .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+                  autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
                   ])
@@ -225,9 +239,17 @@ def GenTests(api):
           'doing paygen.running paygen operations in parallel.making single payload'
       ),
       api.post_check(
+          StepTextEquals,
+          'doing paygen.running paygen operations in parallel.making single payload',
+          'DLC (termina-dlc) stable-channel | Full (13425.90.0)'),
+      api.post_check(
           post_process.MustRun,
           'doing paygen.running paygen operations in parallel.making single payload (2)'
       ),
+      api.post_check(
+          StepTextEquals,
+          'doing paygen.running paygen operations in parallel.making single payload (2)',
+          'Unsigned IMAGE_TYPE_TEST stable-channel | Full (13425.90.0)'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
