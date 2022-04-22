@@ -192,7 +192,7 @@ class SkylabApi(recipe_api.RecipeApi):
             # If a test config has run_via_container set, then check that we have
             # container metadata for the build target we're testing, and pass it
             # through via the Request's execution parameters.
-            if self._enable_container_support and uht.hw_test.run_via_container:
+            if self._enable_container_support and uht.hw_test.run_via_cft:
               build_target = uht.unit.common.build_target.name
 
               if (not have_container_metadata or
@@ -205,14 +205,8 @@ class SkylabApi(recipe_api.RecipeApi):
               else:
                 configure_step.step_summary_text = "(Executing via container)"
 
-              # The 'cros-test' container contains the autoserv binary we'll use
-              container_image_map = container_metadata.containers[build_target]
-              # TODO(b/227666105): Remove once CFT workflow is enabled and stable.
-              request.params.execution_param.container_image_info.CopyFrom(
-                  container_image_map.images['cros-test'],
-              )
-
               # Pass down relevant container metadata to be used in CFT workflow.
+              container_image_map = container_metadata.containers[build_target]
               req_container_metadata = ContainerMetadata(
                   containers={build_target: container_image_map})
               request.params.execution_param.container_metadata.CopyFrom(

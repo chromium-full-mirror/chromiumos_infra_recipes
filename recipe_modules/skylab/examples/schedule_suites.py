@@ -59,7 +59,7 @@ def RunSteps(api):
   hw_test_unit_container = api.cros_test_plan.test_api.hw_test_unit
   hw_test_unit_container.common.builder_name = builder_name
   hw_test_container = hw_test_unit_with_license.hw_test_cfg.hw_test[0]
-  hw_test_container.run_via_container = True
+  hw_test_container.run_via_cft = True
   unit_hw_test_container = api.skylab.UnitHwTest(
       unit=hw_test_unit_container,
       hw_test=hw_test_container,
