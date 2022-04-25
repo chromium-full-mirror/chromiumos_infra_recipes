@@ -227,10 +227,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       for test in unit.hw_test_cfg.hw_test:
         test_to_crit_map[test.common.display_name] = test.common.critical.value
 
-    for unit in test_plan.vm_test_units:
-      for test in unit.vm_test_cfg.vm_test:
-        test_to_crit_map[test.common.display_name] = test.common.critical.value
-
     for unit in test_plan.direct_tast_vm_test_units:
       for test in unit.tast_vm_test_cfg.tast_vm_test:
         test_to_crit_map[test.common.display_name] = test.common.critical.value

@@ -18,7 +18,7 @@ DEPS = [
 PROPERTIES = {
     'passed_tests': Property(default=[]),
     'is_retry': Property(default=False),
-    'expected_tests_run_count': Property(default=8),
+    'expected_tests_run_count': Property(default=6),
 }
 
 
@@ -59,4 +59,4 @@ def GenTests(api):
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='snapshot-orchestrator'),
       api.properties(is_retry=True, passed_tests=[],
-                     expected_tests_run_count=2))
+                     expected_tests_run_count=1))

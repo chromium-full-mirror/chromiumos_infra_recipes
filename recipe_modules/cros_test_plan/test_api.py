@@ -11,14 +11,12 @@ from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TastGceTestCfg
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
-from PB.testplans.target_test_requirements_config import VmTestCfg
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TastGceTestUnit
 from PB.testplans.generate_test_plan import TastVmTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
-from PB.testplans.generate_test_plan import VmTestUnit
 
 
 class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
@@ -202,37 +200,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     )
 
   @property
-  def vm_test_unit(self):
-    return VmTestUnit(
-        common=self.test_unit_common(),
-        vm_test_cfg=VmTestCfg(
-            vm_test=[
-                VmTestCfg.VmTest(
-                    common=TestSuiteCommon(display_name='vtarget.vm.auto',
-                                           critical={'value': True}),
-                    test_suite='autotest-suite',
-                ),
-            ],
-        ),
-    )
-
-  @property
-  def non_critical_vm_test_unit(self):
-    return VmTestUnit(
-        common=self.test_unit_common(),
-        vm_test_cfg=VmTestCfg(
-            vm_test=[
-                VmTestCfg.VmTest(
-                    common=TestSuiteCommon(
-                        display_name='vtarget.vm.another-auto',
-                        critical={'value': False}),
-                    test_suite='another-autotest-suite',
-                ),
-            ],
-        ),
-    )
-
-  @property
   def generate_test_plan_response(self):
     return GenerateTestPlanResponse(
         hw_test_units=[
@@ -242,7 +209,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         direct_tast_vm_test_units=[
             self.direct_tast_vm_test_unit, self.tast_vm_informational_test_unit
         ],
-        vm_test_units=[self.vm_test_unit, self.non_critical_vm_test_unit],
         tast_gce_test_units=[
             self.tast_gce_test_unit,
             self.tast_gce_informational_test_unit,
@@ -254,7 +220,6 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     return GenerateTestPlanResponse(
         hw_test_units=[self.non_critical_hw_test_unit],
         direct_tast_vm_test_units=[self.tast_vm_informational_test_unit],
-        vm_test_units=[self.non_critical_vm_test_unit],
         tast_gce_test_units=[self.tast_gce_informational_test_unit],
     )
 
@@ -265,5 +230,4 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
             self.non_critical_hw_test_unit, self.some_other_hw_test_unit
         ],
         direct_tast_vm_test_units=[self.tast_vm_informational_test_unit],
-        vm_test_units=[self.non_critical_vm_test_unit],
     )

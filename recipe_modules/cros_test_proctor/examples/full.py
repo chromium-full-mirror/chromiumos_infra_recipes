@@ -79,7 +79,7 @@ def RunSteps(api, need_tests_builds_serialized, run_async, use_test_plan_v2):
 
 def GenTests(api):
 
-  def vm_test_build(name, status=common_pb2.SUCCESS, critical=True):
+  def vm_tast_build(name, status=common_pb2.SUCCESS, critical=True):
     output = build_pb2.Build.Output()
     input_proto = build_pb2.Build.Input()
     output.properties.update({'name': name})
@@ -177,11 +177,9 @@ def GenTests(api):
           hw_tests, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'),
       api.buildbucket.simulated_collect_output([
-          vm_test_build('vm-test'),
-          vm_test_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
-      ], step_name='run tests.collect tests.collect autotest vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests'),
+          vm_tast_build('vm-test'),
+          vm_tast_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
+      ], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect tast GCE tests'))
 
@@ -218,10 +216,8 @@ def GenTests(api):
           multi_hw_tests, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'),
       api.buildbucket.simulated_collect_output(
-          [vm_test_build('vm-test')],
-          step_name='run tests.collect tests.collect autotest vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests'),
+          [vm_tast_build('vm-test')],
+          step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect tast GCE tests'))
 
@@ -305,8 +301,6 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
           'collect skylab tasks v2.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect autotest vm tests'),
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(

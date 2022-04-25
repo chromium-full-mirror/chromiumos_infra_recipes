@@ -483,7 +483,6 @@
   * [test_uefi_shim](#recipes-test_uefi_shim) &mdash; Recipe to test the UEFI shim for the reven board.
   * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
-  * [test_vm](#recipes-test_vm) &mdash; Recipe for running VM tests.
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
@@ -4272,9 +4271,9 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#452)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#437)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4283,7 +4282,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#139)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#137)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4311,14 +4310,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#115)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#113)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#366)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#360)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4343,7 +4342,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#51)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#49)(self, test_summary):**
 
 Set the test_summary for this build.
 
@@ -6502,18 +6501,6 @@ API featuring shared helpers for naming things.
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_all\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, vm_test):**
-
-Get a string to describe the VM test.
-
-Args:
-  vm_test (Build): The buildbucket build for the VM test.
-
-Returns:
-  str: A string describing the VM test.
-Raises:
-  ValueError if name not in vm_test.input.properties.
-
 &mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#20)(self, build):**
 
 Get a string to describe the build.
@@ -6524,7 +6511,7 @@ Args:
 Returns:
   str: A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#110)(self, commit):**
+&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#96)(self, commit):**
 
 Get a string to describe the commit.
 
@@ -6536,7 +6523,7 @@ Args:
 Returns:
   str: The commit title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#185)(req):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#171)(req):**
 
 Get a presentation name for a single GenerationRequest.
 
@@ -6557,7 +6544,7 @@ Args:
 Returns:
   str: The HW test title.
 
-&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#125)(self, package):**
+&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#111)(self, package):**
 
 Get a string to describe the package.
 
@@ -6567,7 +6554,7 @@ Args:
 Returns:
   str: The package title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#139)(build_id, paygen_request_dicts):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#125)(build_id, paygen_request_dicts):**
 
 Get a presentation name for a build running a batch of PaygenRequests.
 
@@ -6609,7 +6596,7 @@ Args:
 Returns:
   A str describing the test.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#94)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, vm_test):**
 
 Get a string to describe the VM test.
 
@@ -11566,29 +11553,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/test_util/tests/build_target_properties.py#16)(api):**
-### *recipes* / [test\_vm](/recipes/test_vm.py)
-
-[DEPS](/recipes/test_vm.py#28): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2
-
-Recipe for running VM tests.
-
-Because the scripts that run VM tests live within the build API,
-this recipe does a lot of what build_target does. Namely, it syncs to the
-snapshot used to build the test image, it applies gerrit patches, it inits
-the SDK, etc.
-
-The steps specific to VM testing are:
-  1. Setup workspace so it aligns with the workspace in which the image was
-     build, i.e. sync to snapshot, apply gerrit changes, init/upate SDK, etc.
-  2. Download the test image.
-  3. If the VM tests run within the autotest harness, build autotest.
-  4. Call the build API to run VM tests.
-
-&mdash; **def [DoRunSteps](/recipes/test_vm.py#56)(api, properties):**
-
-&mdash; **def [RunSteps](/recipes/test_vm.py#46)(api, properties):**
 ### *recipes* / [tricium](/recipes/tricium.py)
 
 [DEPS](/recipes/tricium.py#11): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]

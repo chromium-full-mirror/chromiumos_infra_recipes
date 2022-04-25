@@ -388,16 +388,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     ctp_normal += self.m.buildbucket.simulated_collect_output(
         [vm_test_build('vm-test')],
-        'run tests.collect tests.collect autotest vm tests')
+        'run tests.collect tests.collect tast vm tests')
     ctp_failure += self.m.buildbucket.simulated_collect_output(
         [vm_test_build('vm-test')],
-        'run tests.collect tests.collect autotest vm tests')
-
-    # We collect tast tests still, but none of them are executed.
-    ctp_normal += self.m.buildbucket.simulated_collect_output(
-        [], 'run tests.collect tests.collect tast vm tests')
-    ctp_failure += self.m.buildbucket.simulated_collect_output(
-        [], 'run tests.collect tests.collect tast vm tests')
+        'run tests.collect tests.collect tast vm tests')
 
     ctp_normal += self.m.buildbucket.simulated_collect_output(
         [], 'run tests.collect tests.collect tast GCE tests')

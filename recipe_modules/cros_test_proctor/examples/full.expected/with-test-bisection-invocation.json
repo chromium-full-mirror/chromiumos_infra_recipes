@@ -503,14 +503,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "check test results.vm test results (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all critical vm tests succeeded@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]

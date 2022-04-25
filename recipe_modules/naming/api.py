@@ -8,7 +8,7 @@
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipes.chromeos.test_vm import TestVmProperties
+from PB.recipes.chromeos.tast_vm import TastVmProperties
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -38,7 +38,7 @@ class NamingApi(recipe_api.RecipeApi):
       A str describing the test.
     """
     if isinstance(test, build_pb2.Build):
-      return self.get_all_vm_test_title(test)
+      return self.get_vm_test_title(test)
     elif isinstance(test, self.m.skylab.SkylabResult):
       return self.get_skylab_result_title(test)
     else:
@@ -77,20 +77,6 @@ class NamingApi(recipe_api.RecipeApi):
     """
     return self.get_skylab_task_title(skylab_result.task)
 
-  def get_all_vm_test_title(self, vm_test):
-    """Get a string to describe the VM test.
-
-    Args:
-      vm_test (Build): The buildbucket build for the VM test.
-
-    Returns:
-      str: A string describing the VM test.
-    Raises:
-      ValueError if name not in vm_test.input.properties.
-    """
-    all_properties = vm_test.input.properties or vm_test.output.properties
-    return all_properties['name']
-
   def get_vm_test_title(self, vm_test):
     """Get a string to describe the VM test.
 
@@ -102,7 +88,7 @@ class NamingApi(recipe_api.RecipeApi):
     """
     all_properties = vm_test.input.properties or vm_test.output.properties
     input_properties = json_format.Parse(
-        json_format.MessageToJson(all_properties), TestVmProperties(),
+        json_format.MessageToJson(all_properties), TastVmProperties(),
         ignore_unknown_fields=True)
     assert input_properties.name, 'missing name: %r' % input_properties
     return input_properties.name

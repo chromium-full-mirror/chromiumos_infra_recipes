@@ -11,13 +11,11 @@ from recipe_engine import recipe_api
 
 from . import structs
 
-from PB.chromite.api.test import VmTestRequest
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.gce_test import GceTestProperties
-from PB.recipes.chromeos.test_vm import TestVmProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest, GenerateTestPlanResponse
 
@@ -199,7 +197,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         crit_failure_test_names = []
         non_crit_failure_test_names = []
         for test_result in (test_results.tast_vm + test_results.skylab +
-                            test_results.autotest_vm + test_results.tast_gce):
+                            test_results.tast_gce):
           if test_result.status == common_pb2.SUCCESS:
             passed_test_names.append(self.m.naming.get_test_title(test_result))
           elif self.m.failures.is_critical_test_failure(test_result):
@@ -273,10 +271,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       ) if starlark_files else GenerateTestPlanResponse()
     else:
       return self.m.cros_test_plan.generate(builds, gerrit_changes, snapshot)
-
-  def _autotest_vm_test(self, build_target):
-    """Returns the autotest builder name for the given build_target."""
-    return build_target.name + '-autotest-vm'
 
   def _tast_vm_builder(self, build_target, expressions):
     """Returns the tast builder name for the given build_target and expressions."""
@@ -401,9 +395,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         container_metadata=container_metadata,
         require_stable_devices=require_stable_devices,
     )
-    autotest_vm_tests = self._schedule_autotest_vm_tests(
-        test_plan, passed_tests, snapshot, test_to_build_map, is_retry,
-        run_async=run_async)
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
                                                  snapshot, test_to_build_map,
                                                  is_retry, run_async=run_async)
@@ -413,15 +404,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                                    is_retry,
                                                    run_async=run_async)
 
-    return self.MetaTestTuple(skylab=skylab_tasks or [],
-                              autotest_vm=autotest_vm_tests or [],
+    return self.MetaTestTuple(skylab=skylab_tasks or [], autotest_vm=[],
                               tast_vm=tast_vm_tests or [],
                               tast_gce=tast_gce_tests or [])
 
   def _collect_tests(self, test_tasks, timeout):
     """Collect on all tests from test_tasks.
 
-    The tests are collected in the order: skylab, autotest_vm,
+    The tests are collected in the order: skylab,
     tast_vm, tast_gce.
 
     Args:
@@ -432,10 +422,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       MetaTestTuple of lists of tests collected.
     """
     hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
-    autotest_vm_results = self.m.buildbucket.collect_builds(
-        [vt.id for vt in test_tasks.autotest_vm],
-        step_name='collect autotest vm tests',
-        timeout=int(timeout.seconds)).values()
     tast_vm_results = self.m.buildbucket.collect_builds(
         [vt.id for vt in test_tasks.tast_vm], step_name='collect tast vm tests',
         timeout=int(timeout.seconds)).values()
@@ -444,8 +430,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         step_name='collect tast GCE tests',
         timeout=int(timeout.seconds)).values()
 
-    return self.MetaTestTuple(skylab=hw_results,
-                              autotest_vm=autotest_vm_results,
+    return self.MetaTestTuple(skylab=hw_results, autotest_vm=[],
                               tast_vm=tast_vm_results or [],
                               tast_gce=tast_gce_results)
 
@@ -458,7 +443,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[Failure]: All failures discovered in the given run.
     """
     failures = self.m.failures.get_hw_test_failures(test_results.skylab)
-    failures += self.m.failures.get_vm_test_failures(test_results.autotest_vm)
     failures += self.m.failures.get_vm_test_failures(test_results.tast_vm)
     failures += self.m.failures.get_vm_test_failures(test_results.tast_gce)
     return failures
@@ -518,58 +502,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           hw_test_build_targets=len(hw_build_targets))
       self.m.easy.set_properties_step(hw_test_suites=len(tests_to_run))
     return skylab_tasks
-
-  def _schedule_autotest_vm_tests(self, test_plan, passed_tests, snapshot,
-                                  test_to_build_map=None, is_retry=False,
-                                  run_async=False):
-    """Schedule Autotest VM Tests from the test_plan.
-
-    Args:
-      test_plan (GenerateTestPlanResponse): A plan for all tests to
-          be scheduled.
-      passed_tests (list[string]): A list of names for the tests that
-          have passed before.
-      snapshot (GitilesCommit): Start ref to be supplied to the tests.
-      test_to_build_map (dict{string->string}): Map of test names to
-          build_targets to be populated.
-      is_retry (bool): Whether this is a CQ retry.
-      run_async (bool): Should the tests be ran async and not cancel
-          on the termination of the parent (this caller).
-
-    Returns:
-      list[Build] objects of the VM tests scheduled.
-    """
-    requests = []
-    test_to_build_map = {} if test_to_build_map is None else test_to_build_map
-    for unit in test_plan.vm_test_units:
-      for test in unit.vm_test_cfg.vm_test:
-        # Do not run non-critical tests on retries.
-        if is_retry and not test.common.critical.value:
-          continue
-        if test.common.display_name not in passed_tests:
-          test_name = test.common.display_name
-          build_target = unit.common.build_target
-          test_to_build_map[test_name] = build_target.name
-          requests.append(
-              self.m.buildbucket.schedule_request(
-                  gitiles_commit=snapshot,
-                  builder=self._autotest_vm_test(build_target),
-                  bucket=self._vm_bucket, critical=test.common.critical.value,
-                  properties=self._with_props_for_child_build(
-                      json_format.MessageToDict(
-                          TestVmProperties(
-                              name=test_name, build_target=build_target,
-                              test_harness=VmTestRequest.AUTOTEST,
-                              build_payload=unit.common.build_payload,
-                              expressions=['suite:' + test.test_suite]))),
-                  tags=self.m.cros_tags.make_schedule_tags(snapshot),
-                  swarming_parent_run_id=None
-                  if run_async else self.m.swarming.task_id))
-
-    vm_tests = self.m.buildbucket.schedule(
-        requests, step_name='schedule autotest vm tests',
-        url_title_fn=self.m.naming.get_build_title)
-    return vm_tests
 
   def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,
                               test_to_build_map=None, is_retry=False,
