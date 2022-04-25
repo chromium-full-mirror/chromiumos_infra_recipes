@@ -68,28 +68,29 @@ def _FullCheckout(api, properties):
 
     with api.step.nest('run presubmit checks'):
       # Set up some variables that are used repeatedly in the for loop.
-      path_info = {
-          x.path: x for x in api.repo.project_infos(projects=[
-              x.patch_set.project for x in api.workspace_util.commits
-          ])
-      }
+
+      # One project can map to multiple ProjectInfos.
+      # For example, if a project is listed twice in the manifest under two
+      # different paths will return two ProjectInfos.
+      project_infos = api.repo.project_infos(
+          projects=[patch.project for patch in api.workspace_util.patch_sets])
       checked_paths = set()
 
-      for commit in api.workspace_util.commits:
-        if commit.path in checked_paths:
+      for project_info in project_infos:
+        if project_info.path in checked_paths:
           continue
-        checked_paths.add(commit.path)
-        full_path = workpath.join(commit.path)
-        with api.step.nest('checking %s' % commit.path) as presentation:
+        checked_paths.add(project_info.path)
+        full_path = workpath.join(project_info.path)
+        with api.step.nest('checking %s' % project_info.path) as presentation:
           # If we have a list of included projects, then exclude any projects
           # not on the list.
-          if project_names and commit.patch_set.project not in project_names:
+          if project_names and project_info.name not in project_names:
             presentation.step_text = 'Excluded by properties.project_names.'
             continue
 
-          info = path_info[commit.path]
           # All of the projects will have a branch defined by the manifest.
-          branch = api.git.extract_branch(info.branch, None)
+          branch = api.git.extract_branch(project_info.branch, None)
+          full_path = workpath.join(project_info.path)
           with api.context(cwd=full_path), api.depot_tools.on_path():
             # Several checks require that we have an upstream tracking branch.
             # This requires us to have a branch, which we don't yet have.
@@ -99,7 +100,7 @@ def _FullCheckout(api, properties):
               api.step('setup', ['git', 'checkout', '-b', '__presubmit'])
               api.step('set tracking', [
                   'git', 'branch', '--set-upstream-to',
-                  '%s/%s' % (info.remote, branch)
+                  '%s/%s' % (project_info.remote, branch)
               ])
               api.path.mock_add_paths(full_path.join(properties.test_filename))
               if api.path.exists(full_path.join('PRESUBMIT.cfg')):
