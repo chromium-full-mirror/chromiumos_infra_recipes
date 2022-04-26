@@ -1,0 +1,23 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_artifacts.tests;
+
+import "chromiumos/builder_config.proto";
+
+message ArtifactsGsPathProperties {
+  // Name of the builder.
+  string builder_name = 1;
+
+  // Name of the target.
+  string target_name = 2;
+
+  // Builder type.
+  chromiumos.BuilderConfig.Id.Type builder_type = 3;
+
+  // Expected GS artifact upload path.
+  string expected_upload_path = 4;
+}

@@ -398,6 +398,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # If there is a branch name in the builder_name, then we need to preserve
     # the builder name.
     version = self.m.cros_version.version
+    is_release = bool(kind == BuilderConfig.Id.RELEASE)
+    if is_release and not self.m.cros_infra_config.is_staging:
+      builder_name = target.name
     ret = {
         'version': str(version),
         'legacy_version': version.legacy_version,
@@ -408,8 +411,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     if kind:
       ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
       ret['label'] = ret['kind']
-    ret['gs_path'] = '%s/%s-%s' % (ret['builder_name'], ret['version'],
-                                   ret['build_id'])
+    # Ensure formatting expected by prod release pipeline (b/228878300).
+    if is_release and not self.m.cros_infra_config.is_staging:
+      ret['gs_path'] = '{builder}/{version}'.format(builder=ret['builder_name'],
+                                                    version=ret['version'])
+    else:
+      ret['gs_path'] = '{builder}/{version}-{bid}'.format(
+          builder=ret['builder_name'], version=ret['version'],
+          bid=ret['build_id'])
     return ret
 
   def artifacts_gs_path(self, builder_name, target,
