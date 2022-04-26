@@ -36,6 +36,22 @@ DEPS = [
 PROPERTIES = PaygenOrchestratorProperties
 
 
+def _summarize_failed_builds(failures):
+  # Truncate the list of failures per section to keep the summary under
+  # Buildbucket's 4000 byte limit on the summary_markdown field.
+  # To be removed when https://crbug.com/1063398 is resolved.
+  summary_markdown = ''
+  for failure in failures:
+    line = 'https://cr-buildbucket.appspot.com/build/{}'.format(failure.id)
+    if len(summary_markdown) + len(line) < 3990:
+      summary_markdown += ('\n' + line)
+    else:
+      # Abruptly truncate to avoid INFRA_FAILURE.
+      summary_markdown += '\n...'
+      break
+  return summary_markdown
+
+
 def RunSteps(api, properties):
   # Set default values for unspecified properties.
   delta_types = properties.delta_types
@@ -167,11 +183,9 @@ def RunSteps(api, properties):
   if fail:
     # Give a failure markdown with the failed paygen jobs.
     return result_pb2.RawResult(
-        status=common_pb2.FAILURE, summary_markdown='{}\n{}'.format(
-            pres.step_text, '\n'.join([
-                'https://cr-buildbucket.appspot.com/build/{}'.format(x.id)
-                for x in fail
-            ])))
+        status=common_pb2.FAILURE,
+        summary_markdown='{}\n{}'.format(pres.step_text,
+                                         _summarize_failed_builds(fail)))
 
 
 def GenTests(api):
@@ -280,3 +294,8 @@ def GenTests(api):
           'ChromeOS-factory-R87-13505.15.0-coral.tar.xz'),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))
+
+  # Verify many builds failing gets truncated.
+  summary = _summarize_failed_builds(
+      [build_pb2.Build(id=8922054662172514000, status='FAILURE')] * 70)
+  assert len(summary) < 4000
