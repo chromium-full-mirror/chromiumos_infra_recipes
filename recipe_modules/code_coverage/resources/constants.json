@@ -90,6 +90,16 @@
     "prefix": "tmp/portage/media-libs/cros-camera-hal-usb-[^/]*/work/cros-camera-hal-usb-[^/]*/camera"
   },
   {
+    "src_path": "cbor",
+    "repo": "/src/platform/",
+    "prefix": "tmp/portage/chromeos-base/cbor-[^/]*/work/cbor-[^/]*/platform2/cbor"
+  },
+  {
+    "src_path": "cdm-oemcrypto",
+    "repo": "/src/platform/",
+    "prefix": "tmp/portage/chromeos-base/cdm-oemcrypto-[^/]*/work/cdm-oemcrypto-[^/]*/platform2/cdm-oemcrypto"
+  },
+  {
     "src_path": "cfm-dfu-notification",
     "repo": "/src/platform2/",
     "prefix": "tmp/portage/chromeos-base/cfm-dfu-notification-[^/]*/work/cfm-dfu-notification-[^/]*/platform2/cfm-dfu-notification"
@@ -175,6 +185,11 @@
     "prefix": "tmp/portage/chromeos-base/easy-unlock-[^/]*/work/easy-unlock-[^/]*/easy-unlock"
   },
   {
+    "src_path": "easy-unlock-crypto",
+    "repo": "/src/platform/",
+    "prefix": "tmp/portage/chromeos-base/easy-unlock-crypto-[^/]*/work/easy-unlock-crypto"
+  },
+  {
     "src_path": "featured",
     "repo": "/src/platform2/",
     "prefix": "tmp/portage/chromeos-base/featured-[^/]*/work/featured-[^/]*/featured"
@@ -195,6 +210,11 @@
     "prefix":  "tmp/portage/chromeos-base/g2f_tools-[^/]*/work/g2f_tools-[^/]*/u2fd/g2f_tools"
   },
   {
+    "src_path": "gestures",
+    "repo": "/src/platform/",
+    "prefix": "tmp/portage/chromeos-base/gestures-[^/]*/work/gestures"
+  },
+  {
     "src_path": "glib-bridge",
     "repo": "/src/platform2/",
     "prefix": "tmp/portage/chromeos-base/glib-bridge-[^/]*/work/glib-bridge-[^/]*/glib-bridge"
@@ -203,6 +223,11 @@
     "src_path": "goldfishd",
     "repo": "/src/platform2/",
     "prefix": "tmp/portage/chromeos-base/goldfishd-[^/]*/work/goldfishd-[^/]*/goldfishd"
+  },
+  {
+    "src_path": "google-lpa",
+    "repo": "/src/platform/",
+    "prefix": "tmp/portage/chromeos-base/google-lpa-[^/]*/work/google-lpa-[^/]*/platform2/google-lpa"
   },
   {
     "src_path": "hammerd",
@@ -358,6 +383,11 @@
     "src_path": "ml",
     "repo": "/src/platform2/",
     "prefix": "tmp/portage/chromeos-base/ml-[^/]*/work/ml-[^/]*/platform2/ml"
+  },
+  {
+    "src_path": "ml",
+    "repo": "/src/platform/",
+    "prefix": "tmp/portage/chromeos-base/ml-benchmark-drivers-[^/]*/work/ml-benchmark-drivers-[^/]*/platform2/ml-benchmark-drivers"
   },
   {
     "src_path": "ml",
