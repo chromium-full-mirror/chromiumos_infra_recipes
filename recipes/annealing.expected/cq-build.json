@@ -2835,9 +2835,9 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
-      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],

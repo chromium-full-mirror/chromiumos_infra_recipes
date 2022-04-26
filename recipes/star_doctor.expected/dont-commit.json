@@ -2267,9 +2267,9 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
-      "\nimport shutil\nimport sys\nshutil.copy(sys.argv[1], sys.argv[2])\n",
+      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
       "[CLEANUP]/tmp_tmp_1/release/timeline_configuration.json",
       "/path/to/tmp/json"
     ],
