@@ -51,7 +51,7 @@ def GenTests(api):
           '}',
       ),
       api.properties(
-          expected_url_title='Unsigned IMAGE_TYPE_TEST canary-channel (minios) | Full (100.0.0)'
+          expected_url_title='Unsigned IMAGE_TYPE_TEST canary-channel, minios | Full (100.0.0)'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -76,5 +76,5 @@ def GenTests(api):
           '}',
       ),
       api.properties(
-          expected_url_title='Unsigned IMAGE_TYPE_TEST canary-channel (minios) | Delta (100.0.0-100.0.0)'
+          expected_url_title='Unsigned IMAGE_TYPE_TEST canary-channel, minios | Delta-N2N (100.0.0-100.0.0)'
       ), api.post_check(post_process.StatusSuccess))

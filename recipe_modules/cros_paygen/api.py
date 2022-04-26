@@ -6,6 +6,7 @@
 # pylint: disable=protected-access
 
 """API for working with Paygen and its config."""
+import collections
 
 from future.standard_library import install_aliases
 install_aliases()
@@ -674,11 +675,20 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         listed in the same order as the batches.
     """
     with self.m.step.nest('present') as presentation:
+      # Create holder dict.
+      title_to_url_dict = collections.OrderedDict()
+      # Create all presentational lines.
       for (paygen_requests, build) in zip(paygen_request_batches, builds):
         url_title = self.m.naming.get_paygen_build_title(
             build.id, paygen_requests)
         url_dest = self.m.buildbucket.build_url(build_id=build.id)
-        presentation.links[url_title] = url_dest
+        title_to_url_dict[url_title] = url_dest
+      # Sort the lines.
+      title_to_url_dict = collections.OrderedDict(
+          sorted(title_to_url_dict.items(), key=lambda t: t[0].split('|')[1]))
+      # Shove them into presentation.
+      for (key, value) in title_to_url_dict.items():
+        presentation.links[key] = value
 
   def _get_au_test_configs_for_full_payload(self, gen_req, configured_payloads,
                                             force_tests=False):

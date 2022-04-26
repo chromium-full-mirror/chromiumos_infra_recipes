@@ -152,7 +152,7 @@ class NamingApi(recipe_api.RecipeApi):
         img_type == image_types_without_suffices[0]
         for img_type in image_types_without_suffices
     ]):
-      image_type_part = '%d %ss' % (len(paygen_request_dicts),
+      image_type_part = '%dx %s' % (len(paygen_request_dicts),
                                     image_types_without_suffices[0])
     else:
       image_type_part = '%d payloads, various image types' % len(
@@ -194,6 +194,14 @@ class NamingApi(recipe_api.RecipeApi):
       """Get an image type from the request dict."""
       return req.get(image_field_name, {}).get('imageType', 'unknown-type')
 
+    def _get_delta_string(image_field_name, target_version):
+      """Get the string representation of a delta for a given image type."""
+      source_version = _get_img_version(image_field_name)
+      label = 'Delta'
+      if source_version == target_version:
+        label += '-N2N'
+      return '%s (%s-%s)' % (label, source_version, tgt_version)
+
     tgt_version = ''
     if req.get('tgtDlcImage', {}):
       image_type_part = 'DLC (%s) %s' % (req['tgtDlcImage'].get(
@@ -210,18 +218,15 @@ class NamingApi(recipe_api.RecipeApi):
     else:
       raise StepFailure('No tgt image in gen req: %s' % str(req))
     if req.get('minios', False):
-      image_type_part += ' (minios)'
+      image_type_part += ', minios'
     if req.get('fullUpdate', False):
       version_part = 'Full (%s)' % tgt_version
     elif req.get('srcDlcImage', {}):
-      src_version = _get_img_version('srcDlcImage')
-      version_part = 'Delta (%s-%s)' % (src_version, tgt_version)
+      version_part = _get_delta_string('srcDlcImage', tgt_version)
     elif req.get('srcSignedImage', {}):
-      src_version = _get_img_version('srcSignedImage')
-      version_part = 'Delta (%s-%s)' % (src_version, tgt_version)
+      version_part = _get_delta_string('srcSignedImage', tgt_version)
     elif req.get('srcUnsignedImage', {}):
-      src_version = _get_img_version('srcUnsignedImage')
-      version_part = 'Delta (%s-%s)' % (src_version, tgt_version)
+      version_part = _get_delta_string('srcUnsignedImage', tgt_version)
     else:
       version_part = 'No src image found (?-%s)' % tgt_version
     return '%s | %s' % (image_type_part, version_part)

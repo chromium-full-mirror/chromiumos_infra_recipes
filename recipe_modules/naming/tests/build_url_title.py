@@ -227,7 +227,7 @@ def GenTests(api):
                   full_update=True,
               ),
           ).SerializeToString(),
-      ]), api.properties(expected_url_title='123456 | 2 DLCs | Full (100.0.0)'),
+      ]), api.properties(expected_url_title='123456 | 2x DLC | Full (100.0.0)'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -257,7 +257,7 @@ def GenTests(api):
           ).SerializeToString(),
       ]),
       api.properties(
-          expected_url_title='123456 | 2 DLCs | Full (various versions)'),
+          expected_url_title='123456 | 2x DLC | Full (various versions)'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -290,7 +290,7 @@ def GenTests(api):
           ).SerializeToString(),
       ]),
       api.properties(
-          expected_url_title='123456 | 2 DLCs | Some full, some delta'),
+          expected_url_title='123456 | 2x DLC | Some full, some delta'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -340,7 +340,47 @@ def GenTests(api):
           ],
       ),
       api.properties(
-          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel (minios) | Full (100.0.0)'
+          expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel, minios | Full (100.0.0)'
+      ), api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'One-Full-One-N2N-MiniOS-Payload',
+      api.properties(
+          serialized_paygen_requests=[
+              PaygenRequest(
+                  generation_request=GenerationRequest(
+                      tgt_signed_image=SignedImage(
+                          build=Build(
+                              version='100.0.0',
+                              channel='canary-channel',
+                          ),
+                          image_type=ImageType.IMAGE_TYPE_RECOVERY,
+                      ),
+                      full_update=True,
+                      minios=True,
+                  )).SerializeToString(),
+              PaygenRequest(
+                  generation_request=GenerationRequest(
+                      tgt_signed_image=SignedImage(
+                          build=Build(
+                              version='100.0.0',
+                              channel='canary-channel',
+                          ),
+                          image_type=ImageType.IMAGE_TYPE_RECOVERY,
+                      ),
+                      src_signed_image=SignedImage(
+                          build=Build(
+                              version='100.0.0',
+                              channel='canary-channel',
+                          ),
+                          image_type=ImageType.IMAGE_TYPE_RECOVERY,
+                      ),
+                      minios=True,
+                  )).SerializeToString(),
+          ],
+      ),
+      api.properties(
+          expected_url_title='123456 | 2x Signed IMAGE_TYPE_RECOVERY canary-channel, minios | Some full, some delta'
       ), api.post_check(post_process.StatusSuccess))
 
   yield api.test(

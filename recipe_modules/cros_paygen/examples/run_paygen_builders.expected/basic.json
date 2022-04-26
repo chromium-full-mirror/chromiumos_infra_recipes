@@ -457,11 +457,11 @@
     "name": "running children.present",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@8922054662172514004 | 2x DLC | Some full, some delta@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
+      "@@@STEP_LINK@8922054662172514003 | 2x Unsigned IMAGE_TYPE_TEST stable-channel | Some full, some delta@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
       "@@@STEP_LINK@8922054662172514000 | Signed IMAGE_TYPE_RECOVERY stable-channel | Delta (13421.89.0-13425.90.0)@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@8922054662172514001 | Unsigned IMAGE_TYPE_TEST stable-channel | Delta (13421.89.0-13425.90.0)@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_LINK@8922054662172514002 | Signed IMAGE_TYPE_RECOVERY stable-channel | Full (13425.90.0)@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@8922054662172514003 | 2 Unsigned IMAGE_TYPE_TEST stable-channels | Some full, some delta@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
-      "@@@STEP_LINK@8922054662172514004 | 2 DLCs | Some full, some delta@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@8922054662172514001 | Unsigned IMAGE_TYPE_TEST stable-channel | Delta (13421.89.0-13425.90.0)@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
     ]
   },
   {

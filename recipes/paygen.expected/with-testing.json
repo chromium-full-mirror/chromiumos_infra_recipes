@@ -1485,7 +1485,7 @@
     "name": "doing paygen.running paygen operations in parallel.making single payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Unsigned IMAGE_TYPE_TEST stable-channel | Delta (13425.90.0-13425.90.0)@@@",
+      "@@@STEP_TEXT@Unsigned IMAGE_TYPE_TEST stable-channel | Delta-N2N (13425.90.0-13425.90.0)@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"verify\": true, @@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
