@@ -310,12 +310,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     test_data = None if not test_data else test_data.replace(
         '@@DIR@@', str(outpath))
-    try:
-      resp = service.Get(req, infra_step=True, test_output_data=test_data)
-    except Exception as e:  # pragma: nocover
-      self.m.disk_usage.track(step_name='track disk usage', depth=2,
-                              d=self.m.path['cache'])
-      raise e
+    resp = service.Get(req, infra_step=True, test_output_data=test_data)
+
 
     # Create files_by_artifact.
     files_by_artifact = {}
@@ -365,18 +361,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       files.update(
           self._bundle_firmware(chroot, outpath, artifacts_info.firmware))
 
-    try:
-      # Sorting is done here only to give us consistency in the expected.json
-      # for our tests.
-      for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
-        files.update(
-            func(chroot, sysroot, outpath, types, artifacts_info.profile_info))
-    except Exception as e:  # pragma: nocover
-      self.m.disk_usage.track(step_name='track disk usage', depth=0)
-      self.m.disk_usage.track(
-          step_name='track disk usage', depth=1,
-          d='/'.join(str(self.m.path['cache']).split('/')[:-2]))
-      raise e
+    # Sorting is done here only to give us consistency in the expected.json
+    # for our tests.
+    for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
+      files.update(
+          func(chroot, sysroot, outpath, types, artifacts_info.profile_info))
 
     return {
         k: [self.m.path.relpath(f, outpath) for f in v
@@ -589,8 +578,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     with self.m.step.nest(name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts
-      files_by_artifact = func(chroot, sysroot, artifacts_info, outpath,
-                               test_data)
+      try:
+        files_by_artifact = func(chroot, sysroot, artifacts_info, outpath,
+                                 test_data)
+      except Exception as e:
+        self.m.disk_usage.track(step_name='track disk usage', depth=2,
+                                d=self.m.path['cache'])
+        raise e
 
       if not files_by_artifact:
         presentation.step_text = 'No artifacts found.'

@@ -108,3 +108,9 @@ def GenTests(api):
 
   yield api.test('no-ArtifactsService/Get',
                  api.cros_build_api.remove_endpoints(['ArtifactsService/Get']))
+
+  yield api.test(
+      'upload-artifacts-exception',
+      api.cros_build_api.set_api_return(parent_step_name='upload artifacts',
+                                        endpoint='ArtifactsService/Get',
+                                        retcode=1))
