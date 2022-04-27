@@ -588,5 +588,15 @@
     "src_path": "",
     "repo": "",
     "prefix": "/mnt/host/source/src/platform2/"
+  },
+  {
+    "src_path": "",
+    "repo": "/src/platform/",
+    "prefix": "src/platform/"
+  },
+  {
+    "src_path": "",
+    "repo": "/src/platform2/",
+    "prefix": "src/platform2/"
   }
 ]
