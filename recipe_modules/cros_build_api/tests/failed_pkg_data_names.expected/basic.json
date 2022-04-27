@@ -83,13 +83,7 @@
     "name": "call chromite.api.SysrootService/InstallToolchain.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.SysrootService/InstallToolchain|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"installToolchainResponse\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"installToolchainRequest\": {}, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\"@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"installToolchainRequest\":{},\"installToolchainResponse\":{},\"requestTime\":\"2012-05-14T12:53:21.500Z\",\"responseTime\":\"2012-05-14T12:53:23Z\",\"stepName\":\"call chromite.api.SysrootService/InstallToolchain|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -98,7 +92,7 @@
     "name": "call chromite.api.SysrootService/InstallToolchain.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIwYDE/QQQgMq17gEiBgjDgMT9BPIBAPoBANoCR2NhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RT\\nZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIwYDE/QQQgMq17gEiBgjDgMT9BPIBAPoBANoCR2NhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -178,7 +172,7 @@
     },
     "infra_step": true,
     "name": "call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BPIBAPoBANoCR2NhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RT\\nZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIwYDE/QQQgMq17gEiBgjDgMT9BPIBAPoBANoCR2NhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxUb29sY2hhaW58Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

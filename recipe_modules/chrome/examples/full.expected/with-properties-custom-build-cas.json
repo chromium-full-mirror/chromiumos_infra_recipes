@@ -219,20 +219,7 @@
     "name": "check chrome source needed.try uprev chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"check chrome source needed|try uprev chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }, @@@",
-      "@@@STEP_LOG_LINE@published event@    \"chroot\": {}@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:26Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:27.500Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
-      "@@@STEP_LOG_LINE@published event@  }@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"getChromeVersionRequest\":{\"buildTarget\":{\"name\":\"target\"},\"chroot\":{}},\"getChromeVersionResponse\":{\"version\":\"version\"},\"requestTime\":\"2012-05-14T12:53:26Z\",\"responseTime\":\"2012-05-14T12:53:27.500Z\",\"stepName\":\"check chrome source needed|try uprev chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -241,7 +228,7 @@
     "name": "check chrome source needed.try uprev chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCc2NoZWNrIGNocm9tZSBzb3VyY2UgbmVlZGVkfHRyeSB1\\ncHJldiBjaHJvbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVy\\nc2lvbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSCAwwKABIICgZ0YXJnZXSKAwkKB3ZlcnNpb24=\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCc2NoZWNrIGNocm9tZSBzb3VyY2UgbmVlZGVkfHRyeSB1cHJldiBjaHJvbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSCAwwKABIICgZ0YXJnZXSKAwkKB3ZlcnNpb24=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -321,7 +308,7 @@
     },
     "infra_step": true,
     "name": "check chrome source needed.try uprev chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCc2NoZWNrIGNocm9tZSBzb3VyY2UgbmVlZGVkfHRyeSB1\\ncHJldiBjaHJvbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVy\\nc2lvbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSCAwwKABIICgZ0YXJnZXSKAwkKB3ZlcnNpb24=\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCc2NoZWNrIGNocm9tZSBzb3VyY2UgbmVlZGVkfHRyeSB1cHJldiBjaHJvbWV8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvR2V0Q2hyb21lVmVyc2lvbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSCAwwKABIICgZ0YXJnZXSKAwkKB3ZlcnNpb24=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

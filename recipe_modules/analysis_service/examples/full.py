@@ -16,6 +16,8 @@ from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 # Test JSON protos.
 INSTALL_PACKAGES_REQUEST = """
 {

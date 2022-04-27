@@ -11,4 +11,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
     AnalysisServiceProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = AnalysisServiceProperties

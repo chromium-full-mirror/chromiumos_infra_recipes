@@ -3,7 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
-  * [analysis_service](#recipe_modules-analysis_service)
+  * [analysis_service](#recipe_modules-analysis_service) (Python3 ✅)
   * [android](#recipe_modules-android)
   * [bot_cost](#recipe_modules-bot_cost) (Python3 ✅)
   * [bot_scaling](#recipe_modules-bot_scaling)
@@ -100,7 +100,7 @@
 **[Recipes](#Recipes)**
   * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
   * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
-  * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
+  * [analysis_service:examples/full](#recipes-analysis_service_examples_full) (Python3 ✅)
   * [android:examples/full](#recipes-android_examples_full)
   * [android:examples/misc](#recipes-android_examples_misc)
   * [android:examples/uprev](#recipes-android_examples_uprev)
@@ -499,11 +499,11 @@
 
 [DEPS](/recipe_modules/analysis_service/__init__.py#5): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#59)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#63)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#185)(self, request, response):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#189)(self, request, response):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -524,7 +524,7 @@ Args:
 Return:
   bool
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#209)(self, request, response, request_time, response_time, step_data, step_output=None):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#213)(self, request, response, request_time, response_time, step_data, step_output=None):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -8163,9 +8163,9 @@ Recipe for building an AFDO benchmark profile.
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#39)(api):**
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#41)(api):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
 [DEPS](/recipe_modules/android/examples/full.py#11): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

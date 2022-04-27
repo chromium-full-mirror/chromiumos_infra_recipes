@@ -3,6 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
+import json
+import six
+
 from PB.analysis_service.analysis_service import AnalysisServiceEvent
 
 from google.protobuf import json_format
@@ -256,14 +260,19 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       analysis_service_event.request_time.CopyFrom(request_time)
       analysis_service_event.response_time.CopyFrom(response_time)
 
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['published event'] = [
-          json_format.MessageToJson(analysis_service_event)
+          json.dumps(
+              json_format.MessageToDict(analysis_service_event),
+              separators=(',', ':'), sort_keys=True)
       ]
 
       # Data is passed to the publish-message support binary via JSON. The
       # serialized proto must be base64 encoded to prevent UnicodeDecodeErrors.
       # It will be unencoded by the publish-message support binary before it
       # is published.
-      self.m.cloud_pubsub.publish_message(
-          self._pubsub_project_id, self._pubsub_topic_id,
-          analysis_service_event.SerializeToString().encode('base64'))
+      event_serialized = analysis_service_event.SerializeToString()
+      event_b64 = six.ensure_str(base64.b64encode(event_serialized))
+      self.m.cloud_pubsub.publish_message(self._pubsub_project_id,
+                                          self._pubsub_topic_id, event_b64)

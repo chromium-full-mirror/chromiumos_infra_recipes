@@ -24,25 +24,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@stdout_truncation@Full step output is 6 bytes, no truncation@@@",
       "@@@STEP_LOG_END@stdout_truncation@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"1970-01-01T00:01:40Z\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stdout\": \"\\u570b\\u83ef\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"basic_with_stdout\", @@@",
-      "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"/a/b/c\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"failedPackages\": [@@@",
-      "@@@STEP_LOG_LINE@published event@      {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"packageName\": \"A package\"@@@",
-      "@@@STEP_LOG_LINE@published event@      }@@@",
-      "@@@STEP_LOG_LINE@published event@    ]@@@",
-      "@@@STEP_LOG_LINE@published event@  }, @@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"1970-01-01T00:03:20Z\"@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"installPackagesRequest\":{\"sysroot\":{\"path\":\"/a/b/c\"}},\"installPackagesResponse\":{\"failedPackages\":[{\"packageName\":\"A package\"}]},\"requestTime\":\"1970-01-01T00:01:40Z\",\"responseTime\":\"1970-01-01T00:03:20Z\",\"stdout\":\"\\u570b\\u83ef\",\"stepName\":\"basic_with_stdout\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -51,7 +33,7 @@
     "name": "publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBuWci+iPrw==\\n',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193aXRoX3N0ZG91dJIDBuWci+iPrw==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -152,7 +134,7 @@
       }
     },
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193\\naXRoX3N0ZG91dJIDBuWci+iPrw==\\n\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEg0KCwoJQSBwYWNrYWdlGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193aXRoX3N0ZG91dJIDBuWci+iPrw==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
