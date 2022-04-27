@@ -25,7 +25,6 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
   Holds metadata specific to one test or a group of tests.
   Passable to DutInterface that requires info from this class to provision, run tests etc.
   """
-  DUT_HOSTNAME_SUFFIX = 'cros'
 
   def __init__(self, interface, test_id, test, autotest_keyvals=None,
                artifact_dir='', image_storage_server=''):
@@ -50,9 +49,6 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     # But there should be always one lab_dut_topology as we load one dut info at a time.
     # TODO(b/220801220): When multi-dut testing is enabled for CFT, make sure first dut is always primary dut.
     self.primary_dut = self.load_response.lab_dut_topology[0].duts[0]
-    # CTR expects hostname.cros format for ssh endpoint address
-    self.primary_dut.chromeos.ssh.address = '{}.{}'.format(
-        self.primary_dut.chromeos.ssh.address, self.DUT_HOSTNAME_SUFFIX)
     # TODO(b/220801220): Match peer_duts appropriately when multi-dut testing feature is enabled for CFT.
     self.peer_duts = []
     # Unix time of when test execution finished. Used to be passed via keyvals for autotests.

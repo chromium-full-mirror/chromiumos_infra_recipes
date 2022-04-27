@@ -462,7 +462,7 @@
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"chromeos\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"ssh\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"address\": \"fake_host.cros\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"address\": \"fake_host\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"dutModel\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"buildTarget\": \"fake_board\", @@@",
@@ -572,7 +572,7 @@
       }
     },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
-    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"cacheServer\": {\n          \"address\": {\n            \"port\": 123, \n            \"address\": \"0.0.0.0\"\n          }\n        }, \n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host.cros\"\n          }, \n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\", \n            \"modelName\": \"fake_model\"\n          }\n        }, \n        \"id\": {\n          \"value\": \"fake_host\"\n        }\n      }, \n      \"provisionState\": {}, \n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"cacheServer\": {\n          \"address\": {\n            \"port\": 123, \n            \"address\": \"0.0.0.0\"\n          }\n        }, \n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host\"\n          }, \n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\", \n            \"modelName\": \"fake_model\"\n          }\n        }, \n        \"id\": {\n          \"value\": \"fake_host\"\n        }\n      }, \n      \"provisionState\": {}, \n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -816,23 +816,22 @@
       "@@@STEP_LOG_LINE@skylab_result@  \"autotestResult\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@skylab_result@      {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_PASS\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
       "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.stub_Pass\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@      }@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ], @@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"incomplete\": true@@@",
       "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
-      "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\", @@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {}, @@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"autotestResults\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"original_test\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@      \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@skylab_result@        {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_PASS\", @@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
       "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.stub_Pass\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@        }@@@",
-      "@@@STEP_LOG_LINE@skylab_result@      ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      ], @@@",
+      "@@@STEP_LOG_LINE@skylab_result@      \"incomplete\": true@@@",
       "@@@STEP_LOG_LINE@skylab_result@    }@@@",
       "@@@STEP_LOG_LINE@skylab_result@  }, @@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"prejob\": {@@@",
@@ -855,7 +854,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkL0KwjAUhambwdpScXF0cEvTH0XwKcQXKGm9pIEmN+Sm9SV9KC04dvQbDmc6Hxy2ZzuWBDkG\\nzCmMbXOXRGmUJSxma+dx0qTRpqvDO2IPRTchut6jASQegAIfUJHo0Bi0HOwkqqKseHHh5VkUP/hC\\nzJR1fc2mPgQ3z1KQ2g5AlHfoXa4Q1QDfbkTr8UXwX+9xyzYW4EmNBye1r04sRq+VtnJoZkG2/MsH\\nDxpX5w==\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjEucS5uIvSSwtydcrLilNig9ILC4WYBZgFOLn4uXiLCjKL8sszszPE2CSYlDi4+LJS01NKY4v\\nSi1IzCwy0uDizS/KTM/MS8yJL0ktLhHCZRgAgUMcmQ==\\n\"@@@"
     ]
   },
   {

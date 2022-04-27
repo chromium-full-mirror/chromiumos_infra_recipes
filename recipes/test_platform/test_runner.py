@@ -766,10 +766,10 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
     test_verdict = Result.Autotest.TestCase.VERDICT_NO_VERDICT
     log_data = TaskLogData()
 
-    if ctr_result:
+    # Parsing required only when prejob is successful
+    if ctr_result and ctr_result.prejob_response and not ctr_result.prejob_response.any_provision_failed:
       # Parse prejob result
-      if ctr_result.prejob_response and not ctr_result.prejob_response.any_provision_failed:
-        prejob_verdict = Result.Prejob.Step.VERDICT_PASS
+      prejob_verdict = Result.Prejob.Step.VERDICT_PASS
       # Parse test results
       is_incomplete = False
       if ctr_result.test_responses and ctr_result.test_responses[0].is_failure(
