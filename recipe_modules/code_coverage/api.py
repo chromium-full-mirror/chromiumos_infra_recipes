@@ -3,9 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import copy
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
-
 
 class CoverageFileSettings(object):
   """Contains parameters used to drive different coverage upload workflows."""
@@ -231,8 +231,17 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       coverage_data = []
       for data in data_to_clean['data']:
         for file_data in data['files']:
-          if file_data['filename'].strip().lower() in patch_set_file_names:
-            coverage_data.append(file_data)
+
+          for patch_file_name in patch_set_file_names:
+            # file_data[filename] contains src prefix example: /src/platform2/vm/foo.cc.
+            # patch_file_name does not contain src prefix. example: vm/foo.cc.
+            # So perform filtering based on endswith check.
+            if file_data['filename'].strip().lower().endswith(patch_file_name):
+              # Zoss expects filename without src prefix. So update file_data
+              # filename
+              file_data_copy = copy.deepcopy(file_data)
+              file_data_copy['filename'] = patch_file_name
+              coverage_data.append(file_data_copy)
 
       # Write out the results and return the path to the filtered file.
       cleaned_and_filtered_path_file = tmp_dir.join('cleaned_and_filtered.file')
