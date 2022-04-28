@@ -149,7 +149,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"package_name\": \"chrome-icu\", \"version\": \"1-r52\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

@@ -9,6 +9,8 @@ DEPS = [
     'cros_build_api',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 import json
 
 from google.protobuf import empty_pb2

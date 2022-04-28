@@ -7,6 +7,7 @@
 
 import functools
 import hashlib
+import json
 
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
@@ -153,6 +154,7 @@ class CrosBuildApiApi(RecipeApi):
   The stub will perform some validation and then call the build API command.
   """
 
+  @functools.total_ordering
   class Version(object):
 
     def __init__(self, major=1, minor=1, bug=0):
@@ -160,12 +162,15 @@ class CrosBuildApiApi(RecipeApi):
       self.minor = minor
       self.bug = bug
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
+      return self.major == other.major and self.minor == other.minor and self.bug == other.bug
+
+    def __lt__(self, other):
       if self.major == other.major:
         if self.minor == other.minor:
-          return self.bug - other.bug
-        return self.minor - other.minor
-      return self.major - other.major
+          return self.bug < other.bug
+        return self.minor < other.minor
+      return self.major < other.major
 
     def __repr__(self):
       return '%d.%d.%d' % (self.major, self.minor, self.bug)
@@ -181,9 +186,14 @@ class CrosBuildApiApi(RecipeApi):
       Returns:
         VersionGetResponse, the Build API response for this version.
       """
-      return json_format.MessageToJson(
-          meta_api.VersionGetResponse(
-              version=dict(major=self.major, minor=self.minor, bug=self.bug)))
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
+      return json.dumps(
+          json_format.MessageToDict(
+              meta_api.VersionGetResponse(
+                  version=dict(major=self.major, minor=self.minor,
+                               bug=self.bug))), separators=(',', ':'),
+          sort_keys=True)
 
   def initialize(self):
     """Expose all client stubs defined in this module."""
@@ -323,7 +333,7 @@ class CrosBuildApiApi(RecipeApi):
     # If it's extremely long add elipsis and a fancy sha to make unique.
     if len(failed_packages) > 50:
       fp_sha = hashlib.sha256()
-      fp_sha.update(failed_packages)
+      fp_sha.update(str(failed_packages).encode('utf-8'))
       failed_packages = (
           failed_packages[:50] + ('...(%s)' % fp_sha.hexdigest()[0:4]))
     if failed_packages:
@@ -352,7 +362,7 @@ class CrosBuildApiApi(RecipeApi):
     # If it's extremely long add elipsis and a fancy sha to make unique.
     if len(failed_packages) > 50:
       fp_sha = hashlib.sha256()
-      fp_sha.update(failed_packages)
+      fp_sha.update(str(failed_packages).encode('utf-8'))
       failed_packages = (
           failed_packages[:50] + ('...(%s)' % fp_sha.hexdigest()[0:4]))
     if failed_packages:

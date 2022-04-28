@@ -13,7 +13,7 @@ from .api import CrosBuildApiApi
 
 def jsonify(**kwargs):
   """Return the kwargs as a json string."""
-  return json.dumps(kwargs)
+  return json.dumps(kwargs, sort_keys=True)
 
 
 class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):

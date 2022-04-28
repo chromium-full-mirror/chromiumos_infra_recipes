@@ -514,7 +514,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"version\": \"1.2.3\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

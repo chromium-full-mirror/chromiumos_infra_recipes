@@ -10,12 +10,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"version\": {@@@",
-      "@@@STEP_LOG_LINE@response@    \"bug\": 5555, @@@",
-      "@@@STEP_LOG_LINE@response@    \"minor\": 5555@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\":{\"bug\":5555,\"minor\":5555}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

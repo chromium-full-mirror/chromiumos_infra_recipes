@@ -8,6 +8,8 @@ DEPS = [
     'cros_build_api',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # Verify that the version defaults to 1.1.0.

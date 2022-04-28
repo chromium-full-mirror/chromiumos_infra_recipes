@@ -2070,7 +2070,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"version\": \"1.2.3\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2836,7 +2836,7 @@
       "@@@STEP_LOG_LINE@request@  \"firmwareLocation\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"metrics\": {\"value\": [{\"target_name\": \"ti50\", \"platform_name\": \"dauntless\", \"fw_section\": [{\"track_on_gerrit\": true, \"used\": 432012, \"region\": \"total-image-size\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"metrics\": {\"value\": [{\"fw_section\": [{\"region\": \"total-image-size\", \"track_on_gerrit\": true, \"used\": 432012}], \"platform_name\": \"dauntless\", \"target_name\": \"ti50\"}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

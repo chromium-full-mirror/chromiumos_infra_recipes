@@ -554,7 +554,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"package_name\": \"chrome-icu\", \"version\": \"1-r52\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -897,7 +897,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_version\": \"7123456\", \"android_branch\": \"git_rvc-arc\", \"android_package\": \"android-vm-rvc\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"android_branch\": \"git_rvc-arc\", \"android_package\": \"android-vm-rvc\", \"android_version\": \"7123456\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

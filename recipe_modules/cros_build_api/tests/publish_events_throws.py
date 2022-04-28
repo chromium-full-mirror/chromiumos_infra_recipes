@@ -8,6 +8,8 @@ DEPS = [
     'cros_build_api',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromite.api import sysroot
 
 

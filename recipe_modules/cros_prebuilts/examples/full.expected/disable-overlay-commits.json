@@ -1266,7 +1266,7 @@
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"uploads_dir\": \"[START_DIR]/uploads/dir\", \"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"upload_targets\": [{\"path\": \"foo.tbz2\"}], \"uploads_dir\": \"[START_DIR]/uploads/dir\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

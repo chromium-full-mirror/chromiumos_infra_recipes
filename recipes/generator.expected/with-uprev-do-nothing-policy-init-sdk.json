@@ -1458,7 +1458,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"additional_commit_info\": \"additional info to be rendered on uprev cl.\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"additional_commit_info\": \"additional info to be rendered on uprev cl.\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"version\": \"1.2.3\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

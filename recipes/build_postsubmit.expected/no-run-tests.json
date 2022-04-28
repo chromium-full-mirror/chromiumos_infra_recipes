@@ -2076,7 +2076,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"version\": \"1.2.3\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3046,7 +3046,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_target_version\": \"bertha\", \"chrome_version\": \"chrome_version\", \"full_version\": \"full_version\", \"android_branch_version\": \"git_rvc-arc\", \"platform_version\": \"platform_version\", \"android_version\": \"1\", \"milestone_version\": \"milestone_version\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"android_branch_version\": \"git_rvc-arc\", \"android_target_version\": \"bertha\", \"android_version\": \"1\", \"chrome_version\": \"chrome_version\", \"full_version\": \"full_version\", \"milestone_version\": \"milestone_version\", \"platform_version\": \"platform_version\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3189,7 +3189,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"version\": \"1-r52\", \"package_name\": \"chrome-icu\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"package_name\": \"chrome-icu\", \"version\": \"1-r52\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3600,7 +3600,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"reasons\": [\"LOCAL_UPREV\", \"NO_PREBUILT\"], \"needs_chrome_source\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"needs_chrome_source\": true, \"reasons\": [\"LOCAL_UPREV\", \"NO_PREBUILT\"]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

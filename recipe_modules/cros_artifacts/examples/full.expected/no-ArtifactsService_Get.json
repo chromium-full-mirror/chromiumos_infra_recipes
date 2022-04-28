@@ -113,7 +113,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"artifacts\": [{\"artifact_type\": \"FIRMWARE_TARBALL\", \"paths\": [{\"path\": \"[START_DIR]/from_source.tar.bz2\", \"location\": 2}], \"location\": \"PLATFORM_EC\"}, {\"artifact_type\": \"FIRMWARE_TARBALL_INFO\", \"paths\": [{\"path\": \"[START_DIR]/fw_metadata.json\", \"location\": 2}], \"location\": \"PLATFORM_EC\"}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"artifacts\": [{\"artifact_type\": \"FIRMWARE_TARBALL\", \"location\": \"PLATFORM_EC\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/from_source.tar.bz2\"}]}, {\"artifact_type\": \"FIRMWARE_TARBALL_INFO\", \"location\": \"PLATFORM_EC\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/fw_metadata.json\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -461,7 +461,7 @@
       "@@@STEP_LOG_LINE@request@  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifacts\": [{\"path\": \"my_output_artifact\"}], \"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"artifacts\": [{\"path\": \"my_output_artifact\"}]}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

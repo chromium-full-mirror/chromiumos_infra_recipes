@@ -14,6 +14,8 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
     CrosBuildApiProperties)
 

@@ -2071,7 +2071,7 @@
       "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"1.2.3\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"version\": \"1.2.3\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2835,7 +2835,7 @@
       "@@@STEP_LOG_LINE@request@  \"firmwareLocation\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"metrics\": {\"value\": [{\"target_name\": \"ti50\", \"platform_name\": \"dauntless\", \"fw_section\": [{\"track_on_gerrit\": true, \"used\": 432012, \"region\": \"total-image-size\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"metrics\": {\"value\": [{\"fw_section\": [{\"region\": \"total-image-size\", \"track_on_gerrit\": true, \"used\": 432012}], \"platform_name\": \"dauntless\", \"target_name\": \"ti50\"}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3181,7 +3181,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"artifacts\": [{\"artifact_type\": \"FIRMWARE_TARBALL\", \"paths\": [{\"path\": \"[START_DIR]/from_source.tar.bz2\", \"location\": 2}], \"location\": \"PLATFORM_EC\"}, {\"artifact_type\": \"FIRMWARE_TARBALL_INFO\", \"paths\": [{\"path\": \"[START_DIR]/fw_metadata.json\", \"location\": 2}], \"location\": \"PLATFORM_EC\"}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"artifacts\": [{\"artifact_type\": \"FIRMWARE_TARBALL\", \"location\": \"PLATFORM_EC\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/from_source.tar.bz2\"}]}, {\"artifact_type\": \"FIRMWARE_TARBALL_INFO\", \"location\": \"PLATFORM_EC\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/fw_metadata.json\"}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3326,7 +3326,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [{\"path\": \"[START_DIR]/log.tar.gz\", \"location\": 2}]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [{\"path\": \"[START_DIR]/orderfile\", \"location\": 2}]}]}}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/log.tar.gz\"}]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/orderfile\"}]}]}}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

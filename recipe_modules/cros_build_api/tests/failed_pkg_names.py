@@ -9,6 +9,8 @@ DEPS = [
     'cros_build_api',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromite.api import image
 from PB.chromiumos import common as chromiumos
 
