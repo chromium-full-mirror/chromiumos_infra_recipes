@@ -6,3 +6,5 @@
 DEPS = [
     'skylab',
 ]
+
+PYTHON_VERSION_DEPENDENCY = 'PY2+3'

@@ -1,9 +1,0 @@
-[
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "Expected Build or SkylabResult,got <type 'int'>"
-    },
-    "name": "$result"
-  }
-]

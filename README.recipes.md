@@ -10635,28 +10635,28 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/full.py#20)(api):**
 ### *recipes* / [naming:examples/get\_test\_title](/recipe_modules/naming/examples/get_test_title.py)
 
 [DEPS](/recipe_modules/naming/examples/get_test_title.py#6): [naming](#recipe_modules-naming)
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/naming/examples/get_test_title.py#15)(api):**
 ### *recipes* / [naming:tests/build\_url\_title](/recipe_modules/naming/tests/build_url_title.py)
 
 [DEPS](/recipe_modules/naming/tests/build_url_title.py#5): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/naming/tests/build_url_title.py#44)(api, serialized_paygen_requests, expected_url_title):**
+&mdash; **def [RunSteps](/recipe_modules/naming/tests/build_url_title.py#46)(api, serialized_paygen_requests, expected_url_title):**
 ### *recipes* / [naming:tests/get\_generation\_request\_title](/recipe_modules/naming/tests/get_generation_request_title.py)
 
 [DEPS](/recipe_modules/naming/tests/get_generation_request_title.py#6): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/naming/tests/get_generation_request_title.py#30)(api, serialized_paygen_request, expected_url_title):**
+&mdash; **def [RunSteps](/recipe_modules/naming/tests/get_generation_request_title.py#32)(api, serialized_paygen_request, expected_url_title):**
 ### *recipes* / [non\_manifest\_project\_presubmit](/recipes/non_manifest_project_presubmit.py)
 
 [DEPS](/recipes/non_manifest_project_presubmit.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -9,6 +9,8 @@ DEPS = [
     'naming',
 ]
 
+PYTHON_VERSION_DEPENDENCY = 'PY2+3'
+
 from copy import deepcopy
 
 from recipe_engine import post_process

@@ -7,6 +7,8 @@ DEPS = [
     'naming',
 ]
 
+PYTHON_VERSION_DEPENDENCY = 'PY2+3'
+
 from recipe_engine import post_process
 
 
@@ -18,4 +20,5 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )
