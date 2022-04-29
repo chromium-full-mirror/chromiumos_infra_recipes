@@ -41,6 +41,10 @@ _LEGACY_ENDPOINTS_BY_ARTIFACT = {
     BuilderConfig.Artifacts.DEBUG_SYMBOLS: 'BundleDebugSymbols',
 }
 
+# The default number of concurrent artifact bundling calls to be made if not set
+# by input properties. The current default is to bundle artifacts one at a time.
+_DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS = 1
+
 
 class UploadedArtifacts(
     collections.namedtuple('UploadedArtifacts',
@@ -60,6 +64,23 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   """A module for bundling and uploading build artifacts."""
 
   UploadedArtifacts = UploadedArtifacts
+
+  def __init__(self, props, *args, **kwargs):
+    super(CrosArtifactsApi, self).__init__(*args, **kwargs)
+
+    self._max_concurrent_bundling_requests = (
+        props.max_concurrent_bundling_requests or
+        _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
+
+  def initialize(self):
+    # TODO(b/216849056): Remove once go/cros-build-target-builder-parallelization
+    # is fully rolled out.
+    # If the parallelization experiment is not enabled on the builder, then
+    # artifact bundling should be set to the default value (1).
+    if ('chromeos.cros_infra_config.image_builder_parallelization' not in
+        self.m.cros_infra_config.experiments):
+      self._max_concurrent_bundling_requests = (
+          _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
 
   def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -81,7 +102,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         service, name) else None)
 
   def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types,
-                               _artifact_profile_info):
+                               _artifact_profile_info, semaphore):
     """Bundle legacy artifacts.
 
     Batch handler for legacy artifact types.
@@ -92,27 +113,32 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _artifact_profile_info (ArtifactProfileInfo): profile information.
+      semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
+          artifact bundling calls.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are absolute.
     """
-    files_by_artifact = {}
-    for artifact in artifact_types:
-      name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
-      with self.m.step.nest('bundle %s for upload' % name):
-        endpoint = self._get_legacy_endpoint(artifact)
-        response = artifacts.BundleResponse()
-        if endpoint:
-          request = artifacts.BundleRequest(chroot=chroot, sysroot=sysroot,
-                                            build_target=sysroot.build_target,
-                                            output_dir=str(path))
-          response = endpoint(request, infra_step=True)
+    # TODO(b/216849056): This function makes multiple Build API calls. Consider
+    # spawning one future per-call in order to increase concurrency.
+    with semaphore:
+      files_by_artifact = {}
+      for artifact in artifact_types:
+        name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
+        with self.m.step.nest('bundle %s for upload' % name):
+          endpoint = self._get_legacy_endpoint(artifact)
+          response = artifacts.BundleResponse()
+          if endpoint:
+            request = artifacts.BundleRequest(chroot=chroot, sysroot=sysroot,
+                                              build_target=sysroot.build_target,
+                                              output_dir=str(path))
+            response = endpoint(request, infra_step=True)
 
-        files_by_artifact[name] = [art.path for art in response.artifacts]
-    return files_by_artifact
+          files_by_artifact[name] = [art.path for art in response.artifacts]
+      return files_by_artifact
 
   def _bundle_infra_artifacts(self, _chroot, _sysroot, outpath, artifact_types,
-                              _artifact_profile_info):
+                              _artifact_profile_info, semaphore):
     """Bundle infra artifacts.
 
     Batch handler for infra artifact types.
@@ -123,22 +149,25 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       outpath (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       _artifact_profile_info (ArtifactProfileInfo): profile information.
+      semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
+          artifact bundling calls.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are absolute.
     """
-    files_by_artifact = {}
-    if ArtifactsByService.Infra.ArtifactType.BUILD_MANIFEST in artifact_types:
-      with self.m.step.nest('create manifest.xml artifact'):
-        outpath = outpath.join('manifest.xml')
+    with semaphore:
+      files_by_artifact = {}
+      if ArtifactsByService.Infra.ArtifactType.BUILD_MANIFEST in artifact_types:
+        with self.m.step.nest('create manifest.xml artifact'):
+          outpath = outpath.join('manifest.xml')
 
-        pinned_manifest_data = self.m.cros_source.pinned_manifest
-        self.m.file.write_raw('write manifest.xml', outpath,
-                              pinned_manifest_data)
+          pinned_manifest_data = self.m.cros_source.pinned_manifest
+          self.m.file.write_raw('write manifest.xml', outpath,
+                                pinned_manifest_data)
 
-        files_by_artifact['BUILD_MANIFEST'] = [str(outpath)]
+          files_by_artifact['BUILD_MANIFEST'] = [str(outpath)]
 
-    return files_by_artifact
+      return files_by_artifact
 
   def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
                        _input_artifacts, _artifact_profile_info, test_data):
@@ -187,7 +216,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return resp.build_relevance
 
   def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
-                        artifact_profile_info):
+                        artifact_profile_info, semaphore):
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
@@ -198,25 +227,28 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
       artifact_profile_info (ArtifactProfileInfo): profile information.
+      semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
+          artifact bundling calls.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are absolute.
     """
-    req = toolchain.BundleToolchainRequest(sysroot=sysroot, chroot=chroot,
-                                           output_dir=str(path),
-                                           artifact_types=artifact_types,
-                                           profile_info=artifact_profile_info)
-    resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
-        req, infra_step=True)
-    ret = {}
-    for art_info in resp.artifacts_info:
-      artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
-          art_info.artifact_type)
-      artifact_files = [art.path for art in art_info.artifacts]
-      ret[artifact_name] = artifact_files
-    return ret
+    with semaphore:
+      req = toolchain.BundleToolchainRequest(sysroot=sysroot, chroot=chroot,
+                                             output_dir=str(path),
+                                             artifact_types=artifact_types,
+                                             profile_info=artifact_profile_info)
+      resp = self.m.cros_build_api.ToolchainService.BundleArtifacts(
+          req, infra_step=True)
+      ret = {}
+      for art_info in resp.artifacts_info:
+        artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
+            art_info.artifact_type)
+        artifact_files = [art.path for art in art_info.artifacts]
+        ret[artifact_name] = artifact_files
+      return ret
 
-  def _bundle_firmware(self, chroot, path, artifact_info):
+  def _bundle_firmware(self, chroot, path, artifact_info, semaphore):
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
@@ -226,25 +258,28 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
       artifact_info (ArtifactsByService.Firmware): firmware artifact info.
+      semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
+          artifact bundling calls.
 
     Returns:
       dict(artifact_name: list(artifact paths)).  Paths are absolute.
     """
-    ret = {}
-    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.FirmwareService,
-                                          'BundleFirmwareArtifacts'):
-      req = firmware.BundleFirmwareArtifactsRequest(
-          chroot=chroot, result_path=self._result_path(path),
-          artifacts=artifact_info)
-      req.bcs_version_info.version_string = str(self.m.cros_version.version)
-      resp = self.m.cros_build_api.FirmwareService.BundleFirmwareArtifacts(
-          req, infra_step=True)
-      for art_info in resp.artifacts.artifacts:
-        artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
-            art_info.artifact_type)
-        artifact_files = [art.path for art in art_info.paths]
-        ret[artifact_name] = artifact_files
-    return ret
+    with semaphore:
+      ret = {}
+      if self.m.cros_build_api.has_endpoint(
+          self.m.cros_build_api.FirmwareService, 'BundleFirmwareArtifacts'):
+        req = firmware.BundleFirmwareArtifactsRequest(
+            chroot=chroot, result_path=self._result_path(path),
+            artifacts=artifact_info)
+        req.bcs_version_info.version_string = str(self.m.cros_version.version)
+        resp = self.m.cros_build_api.FirmwareService.BundleFirmwareArtifacts(
+            req, infra_step=True)
+        for art_info in resp.artifacts.artifacts:
+          artifact_name = BuilderConfig.Artifacts.ArtifactTypes.Name(
+              art_info.artifact_type)
+          artifact_files = [art.path for art in art_info.paths]
+          ret[artifact_name] = artifact_files
+      return ret
 
   def _bundle_artifacts(self, chroot, sysroot, artifacts_info, outpath,
                         test_data=None):
@@ -263,19 +298,38 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
     """
-    # TODO(crbug/1034529): The migration path has us calling both legacy and
-    # ArtifactsService/Get, and merging the results. Eventually, the legacy
-    # endpoints will be gone from all release branches that we need to support,
-    # and we can remove the calls completely.
-    #
-    # The Build API will only return artifacts for a given artifact_type in one
-    # of the endpoints, never both.
-    ret = self._bundle_artifacts_individually(chroot, sysroot, artifacts_info,
-                                              outpath)
-    ret.update(
-        self._bundle_artifacts_by_service(chroot, sysroot, artifacts_info,
-                                          outpath, test_data))
-    return ret
+    semaphore = self.m.futures.make_bounded_semaphore(
+        self._max_concurrent_bundling_requests)
+    futures = []
+
+    futures.extend(
+        self._bundle_artifacts_individually(chroot, sysroot, artifacts_info,
+                                            outpath, semaphore))
+
+    # Artifacts which are under the Get endpoint
+    futures.append(
+        self.m.futures.spawn(self._bundle_artifacts_by_service, chroot, sysroot,
+                             artifacts_info, outpath, test_data, semaphore,
+                             __name='bundle by service'))
+
+    files_by_artifact = {}
+    for f in self.m.futures.iwait(futures):
+      ex = f.exception()
+      if ex:
+        raise ex
+
+      # The _bundle_artifacts_by_service function already returns the
+      # artifacts in the correct form.
+      if f.name == 'bundle by service':
+        files_by_artifact.update(f.result())
+        continue
+
+      for artifact, files in f.result().items():
+        files_by_artifact[artifact] = [
+            self.m.path.relpath(x, outpath) for x in files
+        ]
+
+    return files_by_artifact
 
   @staticmethod
   def _result_path(path, location=common_pb.Path.OUTSIDE):
@@ -284,7 +338,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         path=common_pb.Path(path=str(path), location=location))
 
   def _bundle_artifacts_by_service(self, chroot, sysroot, artifacts_info,
-                                   outpath, test_data):
+                                   outpath, test_data, semaphore):
     """Defer to the build API to bundle the given artifact.
 
     Args:
@@ -295,37 +349,39 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       test_data (str): Some data for this step to return when running under
           simulation.  The string "@@DIR@@" is replaced with the output_dir
           path throughout.
+      semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
+          artifact bundling calls.
 
     Returns:
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
     """
-    service = self.m.cros_build_api.ArtifactsService
-    if not self.m.cros_build_api.has_endpoint(service, 'Get'):
-      return {}
+    with semaphore:
+      service = self.m.cros_build_api.ArtifactsService
+      if not self.m.cros_build_api.has_endpoint(service, 'Get'):
+        return {}
 
-    req = artifacts.GetRequest(chroot=chroot, sysroot=sysroot,
-                               artifact_info=artifacts_info,
-                               result_path=self._result_path(outpath))
+      req = artifacts.GetRequest(chroot=chroot, sysroot=sysroot,
+                                 artifact_info=artifacts_info,
+                                 result_path=self._result_path(outpath))
 
-    test_data = None if not test_data else test_data.replace(
-        '@@DIR@@', str(outpath))
-    resp = service.Get(req, infra_step=True, test_output_data=test_data)
+      test_data = None if not test_data else test_data.replace(
+          '@@DIR@@', str(outpath))
+      resp = service.Get(req, infra_step=True, test_output_data=test_data)
 
+      # Create files_by_artifact.
+      files_by_artifact = {}
+      for service in json_format.MessageToDict(resp.artifacts).values():
+        for paths in service.get('artifacts', []):
+          files_by_artifact[paths['artifactType']] = [
+              self.m.path.relpath(f['path'], outpath) for f in paths['paths']
+          ]
 
-    # Create files_by_artifact.
-    files_by_artifact = {}
-    for service in json_format.MessageToDict(resp.artifacts).values():
-      for paths in service.get('artifacts', []):
-        files_by_artifact[paths['artifactType']] = [
-            self.m.path.relpath(f['path'], outpath) for f in paths['paths']
-        ]
-
-    return files_by_artifact
+      return files_by_artifact
 
   def _bundle_artifacts_individually(self, chroot, sysroot, artifacts_info,
-                                     outpath):
-    """Call the per-artifact_type bundle functions.
+                                     outpath, semaphore):
+    """Create Futures to call the per-artifact_type bundle functions.
 
     These are transitioning to ArtifactsService/BundleArtifacts (and
     _bundle_artifacts_by_service above), but will need to remain while any
@@ -336,10 +392,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): sysroot to use
       artifacts_info (ArtifactsByService): artifact information.
       outpath (Path): Path to output artifact bundles.
+      semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
+          artifact bundling calls.
 
     Returns:
-      dict(str: list[str]): Artifact name, list of artifact file paths
-          relative to |outpath|.
+      futures (list[Future]): A list of futures that call the per-artifact_type
+          bundle functions.
     """
     funcs = collections.defaultdict(list)
     for _, service in artifacts_info.ListFields():
@@ -347,6 +405,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         # The individual functions only exist for Toolchain, Legacy, and Infra.
         # FirmwareService is a special case immediately below, and the others
         # are only handled by ArtifactsService.Get().
+        # TODO(b/231245311): Consider raising an exception if the artifact
+        # belongs to a service which the Recipe does have logic to process.
         if service.DESCRIPTOR.name == 'Toolchain':
           funcs[self._bundle_toolchain].extend(art_info.artifact_types)
         elif service.DESCRIPTOR.name == 'Legacy':
@@ -354,23 +414,21 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         elif service.DESCRIPTOR.name == 'Infra':
           funcs[self._bundle_infra_artifacts].extend(art_info.artifact_types)
 
-    files = {}
-
+    futures = []
     # Handle BundleFirmwareArtifacts separately.
     if artifacts_info.firmware.output_artifacts:
-      files.update(
-          self._bundle_firmware(chroot, outpath, artifacts_info.firmware))
+      futures.append(
+          self.m.futures.spawn(self._bundle_firmware, chroot, outpath,
+                               artifacts_info.firmware, semaphore))
 
     # Sorting is done here only to give us consistency in the expected.json
     # for our tests.
     for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
-      files.update(
-          func(chroot, sysroot, outpath, types, artifacts_info.profile_info))
+      futures.append(
+          self.m.futures.spawn(func, chroot, sysroot, outpath, types,
+                               artifacts_info.profile_info, semaphore))
 
-    return {
-        k: [self.m.path.relpath(f, outpath) for f in v
-           ] for k, v in files.items()
-    }
+    return futures
 
   def _artifacts_gs_path_dict(self, builder_name, target, kind):
     """Returns the dictionary tokens for expanding location templates.

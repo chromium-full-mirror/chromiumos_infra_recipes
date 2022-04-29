@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/file',
+    'recipe_engine/futures',
     'recipe_engine/led',
     'recipe_engine/path',
     'recipe_engine/step',
@@ -22,3 +23,7 @@ DEPS = [
     'easy',
     'metadata',
 ]
+
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
+
+PROPERTIES = CrosArtifactsProperties

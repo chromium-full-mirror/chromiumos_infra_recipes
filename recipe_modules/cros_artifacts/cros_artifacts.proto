@@ -1,0 +1,12 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_artifacts;
+
+message CrosArtifactsProperties {
+  // The maximum number of Build API calls to make when bundling artifacts.
+  int32 max_concurrent_bundling_requests = 1;
+}
