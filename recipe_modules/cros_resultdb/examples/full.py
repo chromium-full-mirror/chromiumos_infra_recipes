@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from recipe_engine import post_process
+from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -36,6 +37,10 @@ def RunSteps(api):
           'some-key': 'some-value',
           'board': 'fake-board'
       })
+  bigquery_export = invocation_pb2.BigQueryExport(
+      project="cros-test-analytics", dataset="resultdb", table="test_results",
+      test_results=invocation_pb2.BigQueryExport.TestResults())
+  api.cros_resultdb.export_invocation_to_bigquery([bigquery_export])
 
 
 def GenTests(api):
@@ -106,6 +111,14 @@ def GenTests(api):
       api.step_data('upload missing test cases',
                     api.raw_io.stream_output_text('{}'), retcode=1),
       api.post_process(post_process.MustRun, 'upload missing test cases (2)'),
+  )
+
+  yield api.test(
+      'export-invocation-to-bigquery',
+      api.buildbucket.ci_build(),
+      api.properties(rdb_config=rdb_config_json),
+      api.post_process(post_process.StepSuccess,
+                       'mark resultdb invocation for bigquery export'),
   )
 
   yield api.test(

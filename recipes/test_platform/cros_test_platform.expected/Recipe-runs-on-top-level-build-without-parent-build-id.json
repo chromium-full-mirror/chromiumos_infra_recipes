@@ -19,7 +19,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -68,9 +68,95 @@
   },
   {
     "cmd": [],
-    "name": "publish build ID",
+    "name": "publish build ID"
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID.call `result_flow`",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID.call `result_flow`.ensure result_flow",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_flow",
+      "-ensure-file",
+      "chromiumos/infra/result_flow/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish build ID.call `result_flow`.ensure result_flow.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/result_flow/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish build ID.call `result_flow`.publish",
+    "stdin": "{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -168,7 +254,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -233,7 +319,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -301,7 +387,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"build\": {\n    \"create_time\": \"2018-05-25T23:50:17Z\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"pubsub\": {\n          \"project\": \"foo-proj\",\n          \"topic\": \"foo-topic\"\n        }\n      },\n      \"enumeration\": {\n        \"autotest_invocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      },\n      \"request_params\": {\n        \"hardware_attributes\": {\n          \"model\": \"default-model\"\n        },\n        \"metadata\": {\n          \"debug_symbols_archive_url\": \"default-metadata-url\",\n          \"test_metadata_url\": \"default-metadata-url\"\n        },\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"single-build\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
+      "{\n  \"build\": {\n    \"create_time\": \"2018-05-25T23:50:17Z\",\n    \"id\": \"42\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"pubsub\": {\n          \"project\": \"foo-proj\",\n          \"topic\": \"foo-topic\"\n        }\n      },\n      \"enumeration\": {\n        \"autotest_invocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      },\n      \"request_params\": {\n        \"hardware_attributes\": {\n          \"model\": \"default-model\"\n        },\n        \"metadata\": {\n          \"debug_symbols_archive_url\": \"default-metadata-url\",\n          \"test_metadata_url\": \"default-metadata-url\"\n        },\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"single-build\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
       "[START_DIR]/input.json"
     ],
     "infra_step": true,
@@ -311,7 +397,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -322,7 +408,8 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input.json@{@@@",
       "@@@STEP_LOG_LINE@input.json@  \"build\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@    \"create_time\": \"2018-05-25T23:50:17Z\"@@@",
+      "@@@STEP_LOG_LINE@input.json@    \"create_time\": \"2018-05-25T23:50:17Z\",@@@",
+      "@@@STEP_LOG_LINE@input.json@    \"id\": \"42\"@@@",
       "@@@STEP_LOG_LINE@input.json@  },@@@",
       "@@@STEP_LOG_LINE@input.json@  \"tagged_requests\": {@@@",
       "@@@STEP_LOG_LINE@input.json@    \"default\": {@@@",
@@ -395,14 +482,14 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "execute.call binary.launch luciexe",
-    "stdin": "\u0012,\n\bchromeos\u0012\ftestplatform\u001a\u0012cros_test_platform\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002zb\u0012`\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\u001b\u0012\u0002 \u001e*\u0015\u0012\u0013invocations/build:0",
+    "stdin": "\b*\u0012,\n\bchromeos\u0012\ftestplatform\u001a\u0012cros_test_platform\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002zb\u0012`\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\u001c\u0012\u0002 \u001e*\u0016\u0012\u0014invocations/build:42",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
@@ -429,7 +516,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -488,9 +575,45 @@
   },
   {
     "cmd": [],
-    "name": "publish build ID (2)",
+    "name": "publish build ID (2)"
+  },
+  {
+    "cmd": [],
+    "name": "publish build ID (2).call `result_flow`",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"},\"shouldPollForCompletion\":true}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish build ID (2).call `result_flow`.publish",
+    "stdin": "{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"},\"shouldPollForCompletion\":true}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -518,14 +641,14 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "postprocess.default.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"debugSymbolsArchiveUrl\": \"default-metadata-url\", \"testResults\": [{\"logData\": {}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"chromeos\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"debugSymbolsArchiveUrl\": \"default-metadata-url\", \"testResults\": [{\"logData\": {}}]}, \"requestId\": \"42-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"42\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -572,11 +695,11 @@
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"42-00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"42\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
@@ -626,14 +749,14 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "summarize.resultdb.update_included_invocations",
-    "stdin": "{\"addInvocations\": [\"invocations/build-100\"], \"includingInvocation\": \"invocations/build:0\"}",
+    "stdin": "{\"addInvocations\": [\"invocations/build-100\"], \"includingInvocation\": \"invocations/build:42\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -642,7 +765,7 @@
       "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
       "@@@STEP_LOG_LINE@json.input@    \"invocations/build-100\"@@@",
       "@@@STEP_LOG_LINE@json.input@  ], @@@",
-      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:42\"@@@",
       "@@@STEP_LOG_LINE@json.input@}@@@",
       "@@@STEP_LOG_END@json.input@@@"
     ]
@@ -666,14 +789,14 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:0",
+          "name": "invocations/build:42",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "configure resultdb bigquery export.mark resultdb invocation for bigquery export",
-    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:0\"}, \"updateMask\": \"bigqueryExports\"}",
+    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:42\"}, \"updateMask\": \"bigqueryExports\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -688,7 +811,7 @@
       "@@@STEP_LOG_LINE@json.input@        \"testResults\": {}@@@",
       "@@@STEP_LOG_LINE@json.input@      }@@@",
       "@@@STEP_LOG_LINE@json.input@    ], @@@",
-      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:42\"@@@",
       "@@@STEP_LOG_LINE@json.input@  }, @@@",
       "@@@STEP_LOG_LINE@json.input@  \"updateMask\": \"bigqueryExports\"@@@",
       "@@@STEP_LOG_LINE@json.input@}@@@",

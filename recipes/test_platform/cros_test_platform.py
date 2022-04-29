@@ -23,6 +23,7 @@ from PB.test_platform.request import Request
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
 from PB.test_platform.steps.execute.build import Build
+from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 
 import collections
 import re
@@ -43,6 +44,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
+    'cros_resultdb',
     'cros_tags',
     'cros_test_platform',
     'result_flow',
@@ -301,6 +303,7 @@ def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
   link_to_parent(api)
+
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
   publish_to_result_flow(api, properties.config)
@@ -317,15 +320,26 @@ def RunSteps(api, properties):
                            should_poll_for_completion=True)
     postprocess(api, requests, tagged_responses)
   summarize(api, enumerations, tagged_responses)
+  _top_level_export_to_bigquery(api)
 
 
 def link_to_parent(api):
+  """Attach the parent buildbucket id(s) to the current buildbucket id if any
+  parent buildbucket(s) exists.
+
+  Returns:
+    The parent bucketbucket id list if it exists. Otherwise, returns an empty
+    list.
+  """
+  # TODO(zhihuixie): Replace `parent_buildbucket_id` tag with build.ancestor_ids
+  # when verifying if the parent build exists.
   build = api.buildbucket.build
   parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
   if parent:
     with api.step.nest('link to parent') as presentation:
       presentation.links['parent link'] = api.buildbucket.build_url(
           build_id=parent[0])
+  return parent
 
 
 def postprocess(api, requests, responses):
@@ -482,6 +496,20 @@ def _get_requests_from_properties(api, properties):
         'Must set "requests" in input properties (found %s)' %
         properties.requests)
   return properties.requests
+
+
+def _top_level_export_to_bigquery(api):
+  if not api.resultdb.enabled:
+    return
+
+  # Skips the BigQuery export step if the current build has any parent.
+  if link_to_parent(api):
+    return
+  with api.step.nest('configure resultdb bigquery export'):
+    bigquery_export = invocation_pb2.BigQueryExport(
+        project="cros-test-analytics", dataset="resultdb", table="test_results",
+        test_results=invocation_pb2.BigQueryExport.TestResults())
+    api.cros_resultdb.export_invocation_to_bigquery([bigquery_export])
 
 
 def set_output_properties(api, responses):
@@ -1047,6 +1075,55 @@ def GenTests(api):
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
+
+  # Recipe running on the top level build without parent build ID.
+  yield api.test(
+      'Recipe-runs-on-top-level-build-without-parent-build-id',
+      _set_build(bid=42),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={'default': _test_request('default')},
+              config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
+          )),
+      api.step_data(
+          'publish build ID.call `result_flow`.publish',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  result_flow_pb2.publish.PublishResponse(
+                      state=result_flow_pb2.common.SUCCEEDED)))),
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_process(post_process.StepSuccess,
+                       'configure resultdb bigquery export'),
+      api.post_process(
+          post_process.StepSuccess,
+          'configure resultdb bigquery export.mark resultdb invocation for bigquery export'
+      ),
+  )
+
+  # Recipe running on the child build with parent build ID. ResultDB BigQuery
+  # export is skipped.
+  yield api.test(
+      'Recipe-runs-on-child-build-with-parent-build-id',
+      _set_build(bid=42, tags={'parent_buildbucket_id': '1234'}),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={'default': _test_request('default')},
+              config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
+          )),
+      api.step_data(
+          'publish build ID.call `result_flow`.publish',
+          stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  result_flow_pb2.publish.PublishResponse(
+                      state=result_flow_pb2.common.SUCCEEDED)))),
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_process(post_process.DoesNotRun,
+                       'configure resultdb bigquery export'),
+  )
 
   # Recipe running outside Buildbucket should skip publishing build ID.
   yield api.test(

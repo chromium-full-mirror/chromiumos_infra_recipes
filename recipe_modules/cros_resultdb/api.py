@@ -8,11 +8,13 @@ import re
 
 import six
 from google.protobuf.json_format import MessageToDict, ParseDict
+from google.protobuf import field_mask_pb2
 
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.test_platform.request import Request
 
@@ -48,6 +50,38 @@ class ResultDBCommand(recipe_api.RecipeApi):
     inv_id = self.m.resultdb.invocation_ids(
         [self.m.resultdb.current_invocation])
     return str(inv_id[0])
+
+  def export_invocation_to_bigquery(self, bigquery_exports=None):
+    """Modifies the current invocation to be exported to BigQuery (along with
+    its children) once it is finalized.
+
+    This should only be called on top level invocations, if it is called on a
+    parent and a child, all test results in the child will be exported twice.
+
+    Note that this should normally be configured on the builder definition in
+    infra/config rather than in the recipe.  Only use this when a builder
+    cannot be determined to always export to Bigquery at configuration time,
+    but needs to determine it at recipe runtime.
+
+    Args:
+      bigquery_exports (list(resultdb.BigQueryExport)): The BigQuery export
+      configurations of tables and predicates of what to export.
+    """
+    if not self.m.resultdb.enabled or not bigquery_exports:
+      return
+
+    inv = invocation_pb2.Invocation(name=self.m.resultdb.current_invocation,
+                                    bigquery_exports=bigquery_exports)
+    update_mask = field_mask_pb2.FieldMask(paths=['bigquery_exports'])
+    req = recorder_pb2.UpdateInvocationRequest(invocation=inv,
+                                               update_mask=update_mask)
+    # TODO(mwarton): move this method implementation to the resultdb API class
+    # (in chromium src) once it is tested and verified to be working.
+    self.m.resultdb._rpc(  # pylint: disable=protected-access
+        "mark resultdb invocation for bigquery export",
+        "luci.resultdb.v1.Recorder", "UpdateInvocation", MessageToDict(req),
+        include_update_token=True,
+        step_test_data=lambda: self.m.json.test_api.output_stream({}))
 
   def extract_chromium_resultdb_settings(self, test_args):
     """Extract resultdb settings from test_args for chromium test results.
@@ -369,6 +403,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
     upload_status = 'SUCCESS'
     for _ in range(2):
       try:
+        # TODO(mwarton): move this method implementation to the resultdb API class
+        # (in chromium src) once it is tested and verified to be working. pylint
+        # disable is here to enable upload of WIP CL.
         self.m.resultdb._rpc(  # pylint: disable=protected-access
             'upload missing test cases', 'luci.resultdb.v1.Recorder',
             'BatchCreateTestResults', req=MessageToDict(req),
