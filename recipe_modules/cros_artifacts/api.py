@@ -413,8 +413,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ret['label'] = ret['kind']
     # Ensure formatting expected by prod release pipeline (b/228878300).
     if is_release and not self.m.cros_infra_config.is_staging:
-      ret['gs_path'] = '{builder}/{version}'.format(builder=ret['builder_name'],
-                                                    version=ret['version'])
+      ret['gs_path'] = '{builder}-release/{version}'.format(
+          builder=ret['builder_name'], version=ret['version'])
     else:
       ret['gs_path'] = '{builder}/{version}-{bid}'.format(
           builder=ret['builder_name'], version=ret['version'],
