@@ -55,7 +55,7 @@ def DoRunSteps(api, properties):
     else:
       api.build_menu.bootstrap_sysroot()
       api.build_menu.install_packages()
-      api.build_menu.build_and_test_images()
+      api.build_menu.build_and_test_images(run_in_parallel=True)
       api.build_menu.build_and_test_images(
           include_version=True,
           builder_path_template='{target}-release/{version}')
@@ -372,7 +372,6 @@ def GenTests(api):
         '{staging?}{build-target}-cq.{cros-version}-{bbid}'
       )
     ),
-
     # Simulate a failure running unit tests
     api.cros_build_api.set_api_return(
       'run ebuild tests',
