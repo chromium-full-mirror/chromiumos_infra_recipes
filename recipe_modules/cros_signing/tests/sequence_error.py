@@ -12,6 +12,8 @@ DEPS = [
     'cros_signing',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 
@@ -21,5 +23,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('fails-when-get_signed_build_metadata-is-called-first',
-                 api.post_check(post_process.DoesNotRun, 'parse metadata'))
+  yield api.test(
+      'fails-when-get_signed_build_metadata-is-called-first',
+      api.post_check(post_process.DoesNotRun, 'parse metadata'),
+      api.post_process(post_process.DropExpectation),
+  )

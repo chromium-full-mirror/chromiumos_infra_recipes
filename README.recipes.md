@@ -38,7 +38,7 @@
   * [cros_resultdb](#recipe_modules-cros_resultdb)
   * [cros_schedule](#recipe_modules-cros_schedule) (Python3 ✅) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
-  * [cros_signing](#recipe_modules-cros_signing)
+  * [cros_signing](#recipe_modules-cros_signing) (Python3 ✅)
   * [cros_som](#recipe_modules-cros_som) (Python3 ✅)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_storage](#recipe_modules-cros_storage) (Python3 ✅) &mdash; API featuring shared helpers for locating and naming stored artifacts.
@@ -268,9 +268,9 @@
   * [cros_sdk:tests/is_chroot_usable](#recipes-cros_sdk_tests_is_chroot_usable)
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
   * [cros_sdk:tests/missing_endpoints](#recipes-cros_sdk_tests_missing_endpoints)
-  * [cros_signing:tests/full](#recipes-cros_signing_tests_full) &mdash; Success workflow tests for the cros_signing recipe module.
-  * [cros_signing:tests/invalid_file_format](#recipes-cros_signing_tests_invalid_file_format) &mdash; Verify that instructions files are in the appropriate format.
-  * [cros_signing:tests/sequence_error](#recipes-cros_signing_tests_sequence_error) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
+  * [cros_signing:tests/full](#recipes-cros_signing_tests_full) (Python3 ✅) &mdash; Success workflow tests for the cros_signing recipe module.
+  * [cros_signing:tests/invalid_file_format](#recipes-cros_signing_tests_invalid_file_format) (Python3 ✅) &mdash; Verify that instructions files are in the appropriate format.
+  * [cros_signing:tests/sequence_error](#recipes-cros_signing_tests_sequence_error) (Python3 ✅) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
   * [cros_som:examples/full](#recipes-cros_som_examples_full) (Python3 ✅)
   * [cros_source:examples/checkout_branch](#recipes-cros_source_examples_checkout_branch)
   * [cros_source:examples/checkout_manifests](#recipes-cros_source_examples_checkout_manifests)
@@ -3549,7 +3549,7 @@ Returns:
 
 [DEPS](/recipe_modules/cros_signing/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [CrosSigningApi](/recipe_modules/cros_signing/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -9645,30 +9645,30 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cros_signing/tests/full.py#12): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Success workflow tests for the cros_signing recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/full.py#52)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/full.py#54)(api):**
 ### *recipes* / [cros\_signing:tests/invalid\_file\_format](/recipe_modules/cros_signing/tests/invalid_file_format.py)
 
 [DEPS](/recipe_modules/cros_signing/tests/invalid_file_format.py#8): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Verify that instructions files are in the appropriate format.
 
-&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/invalid_file_format.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/invalid_file_format.py#19)(api):**
 ### *recipes* / [cros\_signing:tests/sequence\_error](/recipe_modules/cros_signing/tests/sequence_error.py)
 
 [DEPS](/recipe_modules/cros_signing/tests/sequence_error.py#9): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Verify that wait_for_signing is required before retrieving signed build
 metadata.
 
-&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/sequence_error.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_signing/tests/sequence_error.py#20)(api):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

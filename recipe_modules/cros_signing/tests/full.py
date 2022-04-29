@@ -17,6 +17,8 @@ DEPS = [
     'cros_signing',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 _RUNNING = {
@@ -75,7 +77,13 @@ def GenTests(api):
       yield TEST + \
           api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
     """
-    check(sorted(step_odict[step].step_summary_text) == sorted(expected))
+    # Verify arrays same size.
+    check(len(step_odict[step].step_summary_text) == len(expected))
+    # Verify arrays same contents.
+    for elem in expected:
+      check(
+          expected.count(elem) == step_odict[step].step_summary_text.count(
+              elem))
 
   step_passed = functools.partial(api.post_check, post_process.StepSuccess)
   step_failed = functools.partial(api.post_check, post_process.StepFailure)
@@ -102,6 +110,7 @@ def GenTests(api):
       step_passed('verify results.parse metadata'),
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, _PASSED_COMPLETE]),
+      api.post_process(post_process.DropExpectation),
   )
 
   # Timeout test.
@@ -121,7 +130,9 @@ def GenTests(api):
           'verify results',
           # Until a signing is finalized it won't populate the meta map.
           [None, None]),
-      step_failed('verify results'))
+      step_failed('verify results'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   # Failed test.
   yield api.test(
@@ -139,10 +150,13 @@ def GenTests(api):
           _RUNNING),
       api.cros_signing.mock_meta(
           'gs://bucket/directory1/directory2/releases/file2.instructions.json',
-          _FAILED, run=2), step_passed('verify results.parse metadata'),
+          _FAILED, run=2),
+      step_passed('verify results.parse metadata'),
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, _FAILED_COMPLETE]),
-      step_failed('verify results'))
+      step_failed('verify results'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   # Malformed json
   yield api.test(
@@ -160,6 +174,8 @@ def GenTests(api):
       # Verify that the good metadata makes it way in.
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, None]),
-      step_failed('verify results'))
+      step_failed('verify results'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   api.cros_signing.setup_mocks()
