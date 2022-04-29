@@ -414,6 +414,7 @@
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
+  * [os_install_vm](#recipes-os_install_vm) (Python3 ✅) &mdash; Test reven (aka ChromeOS Flex) installation.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full) (Python3 ✅)
   * [paygen](#recipes-paygen) (Python3 ✅) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
   * [paygen_orchestrator](#recipes-paygen_orchestrator) (Python3 ✅) &mdash; Recipe for orchestrating ChromeOS payloads (AU deltas etc).
@@ -10848,6 +10849,60 @@ All builders run against the same source tree.
 &mdash; **def [DoRunSteps](/recipes/orchestrator.py#37)(api):**
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#29)(api):**
+### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
+
+[DEPS](/recipes/os_install_vm.py#46): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+Test reven (aka ChromeOS Flex) installation.
+
+Reven can be installed by end users from a USB device. This operation
+can be tested with the OsInstall tast test, but that test can't be
+run as part of the regular suite of VM tests as it requires some
+additional setup, which this recipe provides. Specifically, OS
+installation shuts the machine down at the end. The test then waits
+for the machine to be powered back up in the installed state to
+verify the installation succeeded.
+
+Here's how the recipe operates:
+
+1. An empty target disk is created as the destination to install to.
+
+2. A BuildPayload is downloaded and prepped. The board being tested
+   is reven-vmtest. That board inherits from the base reven board and
+   is specifically intended for VM tests. The source disk must be
+   tweaked slightly to make it look like an installer image, see
+   `make_into_installer`.
+
+3. A VM is launched with two disks: the source installer disk and the
+   empty target disk.
+
+4. A future is spawned to run the OsInstall tast test.
+
+5. The recipe then starts polling, waiting for the VM to shut down.
+
+6. Once the VM shuts down, a new VM is launched with just the target
+   disk, which should now contain the installed image.
+
+7. Meanwhile the future with the tast test is still running. Once the
+   VM boots back up the test will reconnect to it and verify if
+   installation succeeded.
+
+&mdash; **def [RunSteps](/recipes/os_install_vm.py#138)(api, properties):**
+
+&mdash; **def [make\_into\_installer](/recipes/os_install_vm.py#65)(api, image_path):**
+
+Modify the raw disk image at `image_path` to make it installable.
+
+The disk layout of the reven-vmtest board is slightly different from
+the reven board; to allow update testing to work it has a full-size
+ROOT-B partition. The OS installer distinguishes an installer from an
+installed image by checking if the ROOT-A and ROOT-B partitions have
+different sizes, so to make the image being tested look like an
+installer, shrink the ROOT-B partition down to a single block.
+
+&mdash; **def [run\_tast](/recipes/os_install_vm.py#120)(api, properties, vm, tast_inputs, test_results_dir):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
