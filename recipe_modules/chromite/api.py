@@ -157,7 +157,9 @@ class ChromiteApi(recipe_api.RecipeApi):
     arg_list.append('--')
     arg_list.extend(cmd)
 
-    return self.m.python(name, chroot_cmd, arg_list, **kwargs)
+    kwarg_list = ['%s=%s' % kwarg for kwarg in kwargs.items()]
+
+    return self.m.step(name, ['python', chroot_cmd] + arg_list + kwarg_list)
 
   # Only used by the internal goma recipe.
   def setup_board(self, board, args=None, **kwargs):

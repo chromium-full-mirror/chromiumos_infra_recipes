@@ -30,10 +30,11 @@ class CTSResultsArchive(recipe_api.RecipeApi):
           'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
       }
       step.logs['json_input'] = str(json_input)
-      result = self.m.python(
+      result = self.m.step(
           'prepare uploads',
-          self.resource('prepare_uploads.py'),
           [
+              'python',
+              self.resource('prepare_uploads.py'),
               '--json-input',
               self.m.json.input(json_input),
               '--json-output',

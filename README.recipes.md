@@ -1406,7 +1406,7 @@ Returns:
   builder_metadata proto describing build and model for the current target.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -1419,7 +1419,7 @@ Sync Chrome cache using existing cached repositories.
 Args:
   cache_path (Path): Path to mount of cache.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#215)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#222)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1432,7 +1432,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#268)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#275)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1448,13 +1448,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#241)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#248)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
 &mdash; **def [initialize](/recipe_modules/chrome/api.py#66)(self):**
 
 Initialization that follows all module loading.
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#308)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#315)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1466,7 +1466,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#249)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#256)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1482,7 +1482,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#379)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#386)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1496,7 +1496,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#123)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#126)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -1509,13 +1509,13 @@ Args:
   internal (bool): True for internal checkout.
 ### *recipe_modules* / [chromite](/recipe_modules/chromite)
 
-[DEPS](/recipe_modules/chromite/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gcloud](#recipe_modules-gcloud), [gitiles](#recipe_modules-gitiles), [goma](#recipe_modules-goma), [repo](#recipe_modules-repo), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/chromite/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gcloud](#recipe_modules-gcloud), [gitiles](#recipe_modules-gitiles), [goma](#recipe_modules-goma), [repo](#recipe_modules-repo), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 #### **class [ChromiteApi](/recipe_modules/chromite/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [build\_packages](/recipe_modules/chromite/api.py#172)(self, board, args=None, \*\*kwargs):**
+&mdash; **def [build\_packages](/recipe_modules/chromite/api.py#174)(self, board, args=None, \*\*kwargs):**
 
 Run the build_packages script inside the chroot.
 
@@ -1543,7 +1543,7 @@ Returns (bool): True if the value was found.
 
 &mdash; **def [checkout](/recipe_modules/chromite/api.py#134)(self, manifest_url=None, repo_url=None, branch=None):**
 
-&mdash; **def [checkout\_chromite](/recipe_modules/chromite/api.py#192)(self):**
+&mdash; **def [checkout\_chromite](/recipe_modules/chromite/api.py#194)(self):**
 
 Checks out the configured Chromite branch.
     
@@ -1552,7 +1552,7 @@ Checks out the configured Chromite branch.
 
 &emsp; **@property**<br>&mdash; **def [chromite\_path](/recipe_modules/chromite/api.py#57)(self):**
 
-&mdash; **def [configure](/recipe_modules/chromite/api.py#180)(self, \*\*KWARGS):**
+&mdash; **def [configure](/recipe_modules/chromite/api.py#182)(self, \*\*KWARGS):**
 
 Loads configuration from build properties into this recipe config.
 
@@ -1577,7 +1577,7 @@ Return: (config) A 'gclient' recipe module configuration.
 
 &mdash; **def [get\_config\_defaults](/recipe_modules/chromite/api.py#69)(self):**
 
-&mdash; **def [run](/recipe_modules/chromite/api.py#229)(self, goma_dir=None):**
+&mdash; **def [run](/recipe_modules/chromite/api.py#231)(self, goma_dir=None):**
 
 Runs the configured 'cbuildbot' build.
 
@@ -1602,13 +1602,13 @@ Args:
             directory so that cbuildbot can find it automatically.
 Returns: (Step) the 'cbuildbot' execution step.
 
-&mdash; **def [setup\_board](/recipe_modules/chromite/api.py#163)(self, board, args=None, \*\*kwargs):**
+&mdash; **def [setup\_board](/recipe_modules/chromite/api.py#165)(self, board, args=None, \*\*kwargs):**
 
 Run the setup_board script inside the chroot.
 
 Used by the internal goma recipe.
 
-&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#202)(self):**
+&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#204)(self):**
 
 Prepare a directory with the system python binary available.
 
@@ -1651,7 +1651,7 @@ Raises:
   InfraFailure: If the publish fails and raise_on_failed_publish.
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
-[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -2597,7 +2597,7 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_lvfs\_mirror](/recipe_modules/cros_lvfs_mirror)
 
-[DEPS](/recipe_modules/cros_lvfs_mirror/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_lvfs_mirror/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -2614,11 +2614,11 @@ Configure the LvfsMirror script module.
 Args:
   * mirror_address: The mirror address for the LVFS repository.
 
-&emsp; **@property**<br>&mdash; **def [gs\_uri](/recipe_modules/cros_lvfs_mirror/api.py#66)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_uri](/recipe_modules/cros_lvfs_mirror/api.py#68)(self):**
 
-&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#70)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_cache](/recipe_modules/cros_lvfs_mirror/api.py#72)(self):**
 
-&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [mirror\_address](/recipe_modules/cros_lvfs_mirror/api.py#64)(self):**
 
 &mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#50)(self):**
 ### *recipe_modules* / [cros\_paygen](/recipe_modules/cros_paygen)
@@ -4463,7 +4463,7 @@ Raises:
 The Version of the workspace checkout.
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
 
-[DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -4512,7 +4512,7 @@ Returns:
 Upload debug symbols to the crash service.
 ### *recipe_modules* / [disk\_usage](/recipe_modules/disk_usage)
 
-[DEPS](/recipe_modules/disk_usage/__init__.py#6): [recipe\_engine/python][recipe_engine/recipe_modules/python]
+[DEPS](/recipe_modules/disk_usage/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -5957,7 +5957,7 @@ Returns:
   str: The command output.
 ### *recipe_modules* / [git\_footers](/recipe_modules/git_footers)
 
-[DEPS](/recipe_modules/git_footers/__init__.py#6): [gerrit](#recipe_modules-gerrit), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/git_footers/__init__.py#6): [gerrit](#recipe_modules-gerrit), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -5973,7 +5973,7 @@ Call git_footers.py with the given args.
 
 Args:
   args: Arguments for git_footers.py
-  kwargs: Keyword arguments for recipe_engine/python.
+  kwargs: Keyword arguments for python call.
 
 Returns:
   list[str]: All matching footer values, or None
@@ -8714,13 +8714,13 @@ Return:
   (Fit Version, { filename => SHA-256 hash })
 ### *recipes* / [check\_project\_config](/recipes/check_project_config.py)
 
-[DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#34)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#33)(api, properties):**
 ### *recipes* / [chrome:examples/cache\_sync](/recipe_modules/chrome/examples/cache_sync.py)
 
 [DEPS](/recipe_modules/chrome/examples/cache_sync.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

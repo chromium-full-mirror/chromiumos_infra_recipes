@@ -172,18 +172,18 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
     tmp_dir = self.m.path.mkdtemp(prefix='cleaned-coverage')
     cleaned_path_file = tmp_dir.join('cleaned.file')
-    self.m.python(
-        'writing cleaned coverage file',
-        self.resource('clean_coverage_file.py'), args=[
-            '--coverage-file',
-            path_to_coverage_file,
-            '--constants-file',
-            self.resource('constants.json'),
-            '--output-file',
-            cleaned_path_file,
-            '--build-target',
-            build_target_name,
-        ], venv=True)
+    self.m.step('writing cleaned coverage file', [
+        'vpython',
+        self.resource('clean_coverage_file.py'),
+        '--coverage-file',
+        path_to_coverage_file,
+        '--constants-file',
+        self.resource('constants.json'),
+        '--output-file',
+        cleaned_path_file,
+        '--build-target',
+        build_target_name,
+    ])
 
     # Read the file and include it in the log for debugging purposes.
     self.m.file.read_text('read cleaned.file', cleaned_path_file,
@@ -401,23 +401,23 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       path_to_coverage_file = self._write_cleaned_coverage_file(
           fpath, build_target_name, absolute_chromium_settings)
 
-      self.m.python(
-          'converting metadata for test coverage',
-          self.resource('convert_coverage_metadata_from_llvm.py'), args=[
-              '--checkout-dir',
-              self.m.cros_source.workspace_path,
-              '--project-dir',
-              self.m.cros_source.find_project_paths(project_name_to_use,
-                                                    self._branch)[0],
-              '--output-dir',
-              self.metadata_dir,
-              '--constants-file',
-              self.resource('constants.json'),
-              '--path-to-coverage-file',
-              path_to_coverage_file,
-              '--build-target',
-              build_target_name,
-          ], venv=True)
+      self.m.step('converting metadata for test coverage', [
+          'vpython',
+          self.resource('convert_coverage_metadata_from_llvm.py'),
+          '--checkout-dir',
+          self.m.cros_source.workspace_path,
+          '--project-dir',
+          self.m.cros_source.find_project_paths(project_name_to_use,
+                                                self._branch)[0],
+          '--output-dir',
+          self.metadata_dir,
+          '--constants-file',
+          self.resource('constants.json'),
+          '--path-to-coverage-file',
+          path_to_coverage_file,
+          '--build-target',
+          build_target_name,
+      ])
 
       gs_path = self._compose_gs_path_for_chromium_coverage('metadata')
       upload_step = self.m.gsutil.upload(self.metadata_dir, self._gs_bucket,

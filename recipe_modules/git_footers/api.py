@@ -16,7 +16,7 @@ class GitFootersApi(recipe_api.RecipeApi):
 
     Args:
       args: Arguments for git_footers.py
-      kwargs: Keyword arguments for recipe_engine/python.
+      kwargs: Keyword arguments for python call.
 
     Returns:
       list[str]: All matching footer values, or None
@@ -24,10 +24,10 @@ class GitFootersApi(recipe_api.RecipeApi):
     kwargs.setdefault('infra_step', True)
     kwargs.setdefault('step_test_data',
                       self.test_api.step_test_data_factory('my-footer'))
-    result = self.m.python('read git footers',
-                           self.m.depot_tools.root.join('git_footers.py'), args,
-                           stdout=self.m.raw_io.output(), ok_ret=(0, 1),
-                           **kwargs)
+    result = self.m.step(
+        'read git footers',
+        ['python', self.m.depot_tools.root.join('git_footers.py')] + list(args),
+        stdout=self.m.raw_io.output(), ok_ret=(0, 1), **kwargs)
 
     if result.retcode == 1:
       return None

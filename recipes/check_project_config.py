@@ -19,7 +19,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/path',
-    'recipe_engine/python',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_source',
@@ -132,10 +131,9 @@ def RunSteps(api, properties):
           '--program', program_path, '--project', project_path, '--factory_dir',
           factory_dir
       ]
-      api.python(
+      api.step(
           'check constraints',
-          checker_path,
-          checker_args,
+          ['python', checker_path] + checker_args,
           stdout=api.raw_io.output(add_output_log=True),
       )
 

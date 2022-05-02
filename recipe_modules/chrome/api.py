@@ -96,9 +96,10 @@ class ChromeApi(recipe_api.RecipeApi):
               "solutions = {}\ncache_dir = '../chrome_cache'".format(
                   GCLIENT_CACHE_CONFIG)
           ]
-          self.m.python('gclient config',
-                        self.m.depot_tools.root.join('gclient.py'),
-                        gclient_config_cmd, infra_step=True)
+          self.m.step(
+              'gclient config',
+              ['python', self.m.depot_tools.root.join('gclient.py')] +
+              gclient_config_cmd, infra_step=True)
         cache_cmd = [
             'populate',
             '-v',
@@ -107,18 +108,20 @@ class ChromeApi(recipe_api.RecipeApi):
             CHROMIUM_GIT_URL,
             '--reset-fetch-config',
         ]
-        self.m.python('populate git cache',
-                      self.m.depot_tools.root.join('git_cache.py'), cache_cmd,
-                      infra_step=True)
+        self.m.step(
+            'populate git cache',
+            ['python', self.m.depot_tools.root.join('git_cache.py')] +
+            cache_cmd, infra_step=True)
         gclient_sync_cmd = [
             'sync',
             '--reset',
             '--with_branch_heads',
             '--with_tags',
         ]
-        self.m.python('gclient sync',
-                      self.m.depot_tools.root.join('gclient.py'),
-                      gclient_sync_cmd, infra_step=True, timeout=60 * 60)
+        self.m.step(
+            'gclient sync',
+            ['python', self.m.depot_tools.root.join('gclient.py')] +
+            gclient_sync_cmd, infra_step=True, timeout=60 * 60)
 
   def sync(self, chrome_root, chroot, build_target, internal):
     """Sync Chrome source code.
@@ -186,9 +189,11 @@ class ChromeApi(recipe_api.RecipeApi):
           try:
             with self.m.depot_tools.on_path():
               # Writes out the .gclient file.
-              self.m.python('gclient config',
-                            self.m.depot_tools.root.join('gclient.py'),
-                            config_cmd, infra_step=True)
+              self.m.step(
+                  'gclient config',
+                  ['python',
+                   self.m.depot_tools.root.join('gclient.py')] + config_cmd,
+                  infra_step=True)
 
               # Reads what we just wrote for user consumption.
               gclient_text = (
@@ -198,10 +203,12 @@ class ChromeApi(recipe_api.RecipeApi):
               pres.logs['gclient configuration'] = gclient_text.splitlines()
 
               # Finally, start the sync.
-              self.m.python('gclient sync',
-                            self.m.depot_tools.root.join('gclient.py'),
-                            sync_cmd, infra_step=True,
-                            timeout=self.test_api.gclient_sync_timeout_seconds)
+              self.m.step(
+                  'gclient sync',
+                  ['python',
+                   self.m.depot_tools.root.join('gclient.py')] + sync_cmd,
+                  infra_step=True,
+                  timeout=self.test_api.gclient_sync_timeout_seconds)
               break
           except StepFailure as ex:
             if (ex.had_timeout and

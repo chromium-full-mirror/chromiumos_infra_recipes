@@ -8,7 +8,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
-    'recipe_engine/python',
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/depot_tools',

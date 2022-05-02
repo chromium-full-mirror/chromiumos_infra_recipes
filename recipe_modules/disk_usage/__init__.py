@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 DEPS = [
-    'recipe_engine/python',
+    'recipe_engine/step',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

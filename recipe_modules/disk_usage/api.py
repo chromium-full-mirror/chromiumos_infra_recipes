@@ -31,6 +31,6 @@ class DiskUsageApi(recipe_api.RecipeApi):
     args = ['--depth', str(depth)]
     if d:
       args += ['--dir', d]
-    self.m.python(step_name or 'track disk usage',
-                  self.resource('track_disk_usage.py'), args=args, venv=True,
-                  timeout=timeout, ok_ret='any')
+    self.m.step((step_name or 'track disk usage'),
+                ['vpython', self.resource('track_disk_usage.py')] + args,
+                timeout=timeout, ok_ret='any')

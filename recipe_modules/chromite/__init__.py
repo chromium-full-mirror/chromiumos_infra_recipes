@@ -11,7 +11,6 @@ DEPS = {
     'legacy_annotation': 'recipe_engine/legacy_annotation',
     'path': 'recipe_engine/path',
     'properties': 'recipe_engine/properties',
-    'python': 'recipe_engine/python',
     'runtime': 'recipe_engine/runtime',
     'step': 'recipe_engine/step',
     'bot_update': 'depot_tools/bot_update',

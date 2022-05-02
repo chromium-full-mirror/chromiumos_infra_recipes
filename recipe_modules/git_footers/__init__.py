@@ -6,6 +6,6 @@
 DEPS = [
     'depot_tools/depot_tools',
     'gerrit',
-    'recipe_engine/python',
     'recipe_engine/raw_io',
+    'recipe_engine/step',
 ]
