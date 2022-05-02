@@ -2254,7 +2254,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -2280,7 +2279,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",

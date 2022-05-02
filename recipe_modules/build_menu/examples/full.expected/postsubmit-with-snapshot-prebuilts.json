@@ -2078,7 +2078,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--position-num"
@@ -4571,7 +4570,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -4653,7 +4651,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
@@ -7053,7 +7050,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--key",

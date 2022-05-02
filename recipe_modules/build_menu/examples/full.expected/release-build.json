@@ -2079,7 +2079,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "release-R90-13816.B-HEAD-SHA",
       "--position-num"
@@ -4243,7 +4242,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -4325,7 +4323,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",

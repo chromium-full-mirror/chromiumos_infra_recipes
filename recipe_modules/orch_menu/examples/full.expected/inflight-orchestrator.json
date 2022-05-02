@@ -1767,7 +1767,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--key",
@@ -2584,7 +2583,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Slim-Builds"
@@ -2621,7 +2619,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Force-Relevant-Builds"
@@ -2656,7 +2653,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Recycled-Builds"
@@ -2838,7 +2834,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"
@@ -8362,7 +8357,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"
@@ -8751,7 +8745,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"

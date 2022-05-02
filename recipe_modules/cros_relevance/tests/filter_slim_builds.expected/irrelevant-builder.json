@@ -124,7 +124,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Slim-Builds"

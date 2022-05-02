@@ -233,7 +233,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "[START_DIR]/chromite/bin/cros_sdk",
       "--cache-dir",
       ".cache",
@@ -259,7 +258,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "[START_DIR]/chromite/bin/cros_sdk",
       "--",
       "./build_packages",
@@ -283,7 +281,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "[START_DIR]/chromite/bin/cros_sdk",
       "var1=value",
       "--",

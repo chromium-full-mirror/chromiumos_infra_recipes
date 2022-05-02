@@ -9,7 +9,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
       "--host",
@@ -65,7 +64,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "changes",
       "--host",
@@ -119,7 +117,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--json",
       "/path/to/tmp/json"

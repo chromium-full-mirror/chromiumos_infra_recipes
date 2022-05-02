@@ -73,7 +73,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -97,7 +96,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cache.py",
       "populate",
       "-v",
@@ -124,7 +122,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--reset",

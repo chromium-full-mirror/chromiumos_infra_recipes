@@ -71,7 +71,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/gerrit_client.py",
       "abandon",
       "--host",

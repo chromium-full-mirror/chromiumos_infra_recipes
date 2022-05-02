@@ -1179,7 +1179,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "main-HEAD-SHA",
       "--key",

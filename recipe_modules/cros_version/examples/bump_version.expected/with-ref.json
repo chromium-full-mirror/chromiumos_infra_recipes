@@ -864,7 +864,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789",
       "--position-num"
@@ -1102,7 +1101,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -1140,7 +1138,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "-r"
@@ -1174,7 +1171,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -1317,7 +1313,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "1"
@@ -1351,7 +1346,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
       "-f",

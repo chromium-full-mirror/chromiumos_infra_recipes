@@ -2559,7 +2559,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "staging-snapshot-HEAD-SHA",
       "--position-num"

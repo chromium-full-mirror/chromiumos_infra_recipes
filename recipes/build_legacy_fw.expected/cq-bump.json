@@ -2313,7 +2313,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"
@@ -2635,7 +2634,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "firmware-board-9999.B-HEAD-SHA",
       "--position-num"

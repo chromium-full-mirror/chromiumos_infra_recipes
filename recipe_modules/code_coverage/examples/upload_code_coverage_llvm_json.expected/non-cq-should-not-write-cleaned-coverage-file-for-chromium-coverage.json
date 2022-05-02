@@ -2078,7 +2078,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--position-num"
@@ -4180,7 +4179,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -4262,7 +4260,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
@@ -5355,7 +5352,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/clean_coverage_file.py",
       "--coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
@@ -5567,7 +5563,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/convert_coverage_metadata_from_llvm.py",
       "--checkout-dir",
       "[CLEANUP]/chromiumos_workspace",

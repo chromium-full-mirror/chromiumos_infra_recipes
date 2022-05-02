@@ -2584,7 +2584,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Reviewed-on"
@@ -2631,7 +2630,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "FETCH_HEAD",
       "--key",
@@ -2714,7 +2712,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"
@@ -2958,7 +2955,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"

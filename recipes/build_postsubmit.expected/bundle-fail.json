@@ -2078,7 +2078,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--position-num"
@@ -4180,7 +4179,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -4262,7 +4260,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
@@ -6113,7 +6110,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_MODULE[chromeos::disk_usage]/resources/track_disk_usage.py",
       "--depth",
       "2",

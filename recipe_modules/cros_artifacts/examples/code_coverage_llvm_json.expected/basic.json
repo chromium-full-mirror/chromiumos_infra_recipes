@@ -2406,7 +2406,6 @@
   {
     "cmd": [
       "python",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--position-num"
@@ -4085,7 +4084,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/clean_coverage_file.py",
       "--coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",

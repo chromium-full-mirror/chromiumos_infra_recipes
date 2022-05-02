@@ -154,7 +154,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "123"
@@ -176,7 +175,6 @@
   {
     "cmd": [
       "vpython",
-      "-u",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
       "-f",
