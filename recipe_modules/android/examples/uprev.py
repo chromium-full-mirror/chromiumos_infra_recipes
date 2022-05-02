@@ -12,6 +12,8 @@ DEPS = [
     'android',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   chroot = Chroot()

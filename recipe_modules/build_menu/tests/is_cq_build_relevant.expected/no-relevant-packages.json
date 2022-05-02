@@ -433,7 +433,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"srcPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/project/my/fake/file\"@@@",
@@ -453,7 +453,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }, \n  \"srcPaths\": [\n    {\n      \"path\": \"src/project/my/fake/file\"\n    }\n  ]\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/project/my/fake/file\"\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

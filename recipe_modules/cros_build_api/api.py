@@ -422,8 +422,11 @@ class CrosBuildApiApi(RecipeApi):
 
       # Write the input proto JSON to a temp file (which is how it's passed to
       # the build API) and record it to the step logs for debugging.
-      input_json = json_format.MessageToJson(input_proto,
-                                             use_integers_for_enums=True)
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
+      input_json = json.dumps(
+          json_format.MessageToDict(input_proto, use_integers_for_enums=True),
+          separators=(',', ': '), indent=2, sort_keys=True)
       self.m.file.write_raw('write input file', input_path, input_json)
       presentation.logs['request'] = [input_json]
       presentation.logs['response'] = ['{}']

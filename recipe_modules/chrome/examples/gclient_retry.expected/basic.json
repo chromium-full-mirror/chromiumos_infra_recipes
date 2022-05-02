@@ -44,7 +44,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {},@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -60,7 +60,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "{\n  \"buildTarget\": {},\n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -465,7 +465,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {},@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -481,7 +481,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "{\n  \"buildTarget\": {},\n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -825,7 +825,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {},@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -841,7 +841,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "{\n  \"buildTarget\": {},\n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
@@ -1186,7 +1186,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {}, @@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {},@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -1202,7 +1202,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {}, \n  \"chroot\": {}\n}",
+      "{\n  \"buildTarget\": {},\n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,

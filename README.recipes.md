@@ -4,7 +4,7 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service) (Python3 ✅)
-  * [android](#recipe_modules-android)
+  * [android](#recipe_modules-android) (Python3 ✅)
   * [bot_cost](#recipe_modules-bot_cost) (Python3 ✅)
   * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad) (Python3 ✅)
@@ -101,9 +101,9 @@
   * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
   * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full) (Python3 ✅)
-  * [android:examples/full](#recipes-android_examples_full)
-  * [android:examples/misc](#recipes-android_examples_misc)
-  * [android:examples/uprev](#recipes-android_examples_uprev)
+  * [android:examples/full](#recipes-android_examples_full) (Python3 ✅)
+  * [android:examples/misc](#recipes-android_examples_misc) (Python3 ✅)
+  * [android:examples/uprev](#recipes-android_examples_uprev) (Python3 ✅)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) (Python3 ✅)
@@ -551,7 +551,7 @@ Args:
 
 [DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -2127,7 +2127,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#524)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#527)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2158,7 +2158,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#521)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#524)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#233)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -8173,23 +8173,23 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/android/examples/full.py#11): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#23)(api, properties):**
 ### *recipes* / [android:examples/misc](/recipe_modules/android/examples/misc.py)
 
 [DEPS](/recipe_modules/android/examples/misc.py#5): [android](#recipe_modules-android), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/misc.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/misc.py#13)(api):**
 ### *recipes* / [android:examples/uprev](/recipe_modules/android/examples/uprev.py)
 
 [DEPS](/recipe_modules/android/examples/uprev.py#11): [android](#recipe_modules-android)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#18)(api):**
 ### *recipes* / [android\_uprev\_orchestrator](/recipes/android_uprev_orchestrator.py)
 
 [DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

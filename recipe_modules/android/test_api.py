@@ -1,6 +1,7 @@
 # Copyright 2021 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+import json
 
 from google.protobuf import json_format
 
@@ -29,8 +30,11 @@ class AndroidApiTestApi(recipe_test_api.RecipeTestApi):
       response.android_atom.version = '%s-r1' % self.android_version
 
     return self.m.cros_build_api.set_api_return(
-        'uprev android', 'AndroidService/MarkStable',
-        json_format.MessageToJson(response))
+        'uprev android',
+        'AndroidService/MarkStable',
+        # TODO(b/217973414): Replace with MessageToJson once we don't need to
+        # fix the separator spacing between py2 and py3 MessageToJson.
+        json.dumps(json_format.MessageToDict(response), sort_keys=True))
 
   def set_mark_stable_success(self):
     return self._mark_stable_response(

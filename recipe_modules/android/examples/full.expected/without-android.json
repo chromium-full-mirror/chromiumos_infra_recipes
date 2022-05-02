@@ -14,7 +14,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"build_target\"@@@",
-      "@@@STEP_LOG_LINE@request@  }, @@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -30,7 +30,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"build_target\"\n  }, \n  \"chroot\": {}\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"build_target\"\n  },\n  \"chroot\": {}\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

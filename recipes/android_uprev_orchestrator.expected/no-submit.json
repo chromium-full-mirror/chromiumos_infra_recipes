@@ -2017,7 +2017,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"androidPackage\": \"android-package\", @@@",
+      "@@@STEP_LOG_LINE@request@  \"androidPackage\": \"android-package\",@@@",
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"7123456\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2033,7 +2033,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"androidPackage\": \"android-package\", \n  \"androidVersion\": \"7123456\"\n}",
+      "{\n  \"androidPackage\": \"android-package\",\n  \"androidVersion\": \"7123456\"\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,

@@ -6,3 +6,5 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
