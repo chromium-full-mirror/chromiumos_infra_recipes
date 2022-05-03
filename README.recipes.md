@@ -227,6 +227,7 @@
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config)
   * [cros_infra_config:examples/specify_branch](#recipes-cros_infra_config_examples_specify_branch)
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder)
+  * [cros_infra_config:tests/determine_if_staging](#recipes-cros_infra_config_tests_determine_if_staging)
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
   * [cros_lvfs_mirror:examples/full](#recipes-cros_lvfs_mirror_examples_full) (Python3 ✅)
@@ -2402,7 +2403,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#585)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#591)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -2433,7 +2434,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#478)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#490)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
 
 Configure the builder.
 
@@ -2458,6 +2459,10 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [current\_builder\_group](/recipe_modules/cros_infra_config/api.py#171)(self):**
 
 Get the builder group for the currently running builder.
+
+&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#478)(self, is_staging=None, config=None):**
+
+Configure the builder's knowledge of whether it's running in staging.
 
 &emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#190)(self, filename, step_test_data, timeout=None, application='ChromeOS', message=None):**
 
@@ -2492,7 +2497,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#547)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#553)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -2503,7 +2508,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#571)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#577)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -9362,6 +9367,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/configure_builder.py#23)(api, properties):**
+### *recipes* / [cros\_infra\_config:tests/determine\_if\_staging](/recipe_modules/cros_infra_config/tests/determine_if_staging.py)
+
+[DEPS](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#19)(api, properties):**
 ### *recipes* / [cros\_infra\_config:tests/get\_build\_target](/recipe_modules/cros_infra_config/tests/get_build_target.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/get_build_target.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11035,13 +11047,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/service_version/examples/full.py#19)(api):**
 ### *recipes* / [sign\_image](/recipes/sign_image.py)
 
-[DEPS](/recipes/sign_image.py#31): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/sign_image.py#31): [cros\_infra\_config](#recipe_modules-cros_infra_config), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for signing ChromeOS images.
 
-&mdash; **def [RunSteps](/recipes/sign_image.py#112)(api, properties):**
+&mdash; **def [RunSteps](/recipes/sign_image.py#113)(api, properties):**
 
 Run steps.
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)

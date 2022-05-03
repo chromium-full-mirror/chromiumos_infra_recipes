@@ -475,6 +475,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           ret = self._package_git_revision
     return ret
 
+  def determine_if_staging(self, is_staging=None, config=None):
+    """Configure the builder's knowledge of whether it's running in staging."""
+    build = self.m.buildbucket.build
+    if is_staging is None:
+      is_staging = (
+          build.builder.bucket == 'staging' or
+          build.builder.builder.startswith('staging-') or
+          # Cast to bool because python evaluates `None and bool` to None.
+          (bool(config) and
+           config.general.environment == BuilderConfig.General.STAGING))
+    self._is_staging = is_staging
+
   def configure_builder(self, commit=None, changes=None, is_staging=None,
                         name='configure builder', choose_branch=True,
                         config_ref=None):
@@ -518,13 +530,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       else:
         presentation.step_text = 'config not found, assuming deleted'
 
-      if is_staging is None:
-        is_staging = (
-            build.builder.bucket == 'staging' or
-            build.builder.builder.startswith('staging-') or
-            (config and
-             config.general.environment == BuilderConfig.General.STAGING))
-      self._is_staging = is_staging
+      self.determine_if_staging(is_staging=is_staging, config=config)
 
       parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
       if parent:

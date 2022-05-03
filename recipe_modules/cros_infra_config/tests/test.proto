@@ -10,3 +10,7 @@ message TestInputProperties {
   // How many gerrit_changes are expected in the cooked config?
   int32 expected_change_count = 1;
 }
+
+message DetermineIfStagingProperties {
+  bool expected_is_staging = 1;
+}

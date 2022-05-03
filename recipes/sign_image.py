@@ -36,6 +36,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/random',
     'recipe_engine/step',
+    'cros_infra_config',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -114,6 +115,12 @@ def RunSteps(api, properties):
 
   local_dir = api.path['cleanup']
   non_release_signer_bucket = False
+
+  with api.step.nest('determine is_staging') as presentation:
+    # Configure knowledge of whether this is running in staging.
+    api.cros_infra_config.determine_if_staging()
+    presentation.step_text = "Running build with is_staging set to {}".format(
+        api.cros_infra_config.is_staging)
 
   with api.step.nest('validate request') as presentation:
     image_type = properties.image_type
@@ -232,16 +239,19 @@ def RunSteps(api, properties):
     presentation.step_text = 'instructions uploaded'
 
   with api.step.nest('trigger gsc signing') as presentation:
-    # TODO(lamontjones): Put some info there instead of /dev/null.
-    trigger_data = r''
-    trigger_base = '50,' + rel_insn_path.replace('/', ',')
-    trigger_path = gs.gs_path('tobesigned', trigger_base)
+    if not api.cros_infra_config.is_staging:
+      # TODO(lamontjones): Put some info there instead of /dev/null.
+      trigger_data = r''
+      trigger_base = '50,' + rel_insn_path.replace('/', ',')
+      trigger_path = gs.gs_path('tobesigned', trigger_base)
 
-    local_trigger = local_dir.join(trigger_base)
-    api.file.write_raw(name='trigger file', dest=local_trigger,
-                       data=trigger_data)
-    api.gsutil(['cp', local_trigger, trigger_path])
-    presentation.step_text = 'trigger uploaded'
+      local_trigger = local_dir.join(trigger_base)
+      api.file.write_raw(name='trigger file', dest=local_trigger,
+                         data=trigger_data)
+      api.gsutil(['cp', local_trigger, trigger_path])
+      presentation.step_text = 'trigger uploaded'
+    else:
+      presentation.step_text = "skipped in staging"
 
 
 def GenTests(api):
@@ -306,7 +316,8 @@ def GenTests(api):
                    'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
           allow_non_release_signer_bucket=True),
       api.post_check(post_process.StatusSuccess),
-      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'))
+      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
+      api.post_check(post_process.MustRun, 'trigger gsc signing.trigger file'))
 
   yield api.test(
       'gsc-non-release-bucket-prod-not-allowed',
@@ -322,6 +333,7 @@ def GenTests(api):
 
   yield api.test(
       'gsc-non-release-bucket-staging',
+      api.buildbucket.generic_build(builder="staging-sign-image"),
       props(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
@@ -331,7 +343,9 @@ def GenTests(api):
               'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
           allow_non_release_signer_bucket=True),
       api.post_check(post_process.StatusSuccess),
-      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'))
+      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
+      api.post_check(post_process.DoesNotRun,
+                     'trigger gsc signing.trigger file'))
 
   yield api.test(
       'gsc-non-release-bucket-staging-not-allowed',
