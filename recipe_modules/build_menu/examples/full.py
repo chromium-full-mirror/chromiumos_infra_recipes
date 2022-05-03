@@ -55,7 +55,7 @@ def DoRunSteps(api, properties):
     else:
       api.build_menu.bootstrap_sysroot()
       api.build_menu.install_packages()
-      api.build_menu.build_and_test_images(run_in_parallel=True)
+      api.build_menu.build_and_test_images()
       api.build_menu.build_and_test_images(
           include_version=True,
           builder_path_template='{target}-release/{version}')
@@ -100,6 +100,21 @@ def GenTests(api):
           child_builds[0] == '101' and child_builds[1] == '102')
     else:
       check(not expect_child_builds)
+
+  # Build with parallelization experiment.
+  # TODO(b/216849056): Remove test case once fully enabled.
+  yield api.test(
+      'parallel-experiment',
+      api.buildbucket.ci_build(
+          builder='atlas-cq', experiments=[
+              'chromeos.cros_infra_config.image_builder_parallelization'
+          ]),
+      # Simulate a failure running unit tests
+      api.cros_build_api.set_api_return(
+          'run ebuild tests', endpoint='TestService/BuildTargetUnitTest',
+          data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
+      ),
+  )
 
   yield api.build_menu.test(
       'cq-build',

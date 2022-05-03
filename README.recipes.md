@@ -853,7 +853,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#812)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#811)(self):**
 
 Add child build ids to output property of current build.
 
@@ -868,7 +868,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#546)(self, config=None, include_version=False, builder_path_template=None, run_in_parallel=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#546)(self, config=None, include_version=False, builder_path_template=None):**
 
 Build the image and run ebuild tests.
 
@@ -880,8 +880,6 @@ Args:
     to sysroot_util.build.
   builder_path_template (str): Template to use for the builder_path. If not
     set, uses the cros_artifacts.artifacts_gs_path default.
-  run_in_parallel (bool): Whether to run unittests concurrently with
-    building and testing the image.
 Returns:
   (bool): Whether to continue with the build.
 
@@ -922,7 +920,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#674)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#673)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1009,7 +1007,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#140)(self):**
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#600)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#599)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1080,7 +1078,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#649)(self, config=None, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#648)(self, config=None, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -1095,7 +1093,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#776)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#775)(self, config=None):**
 
 Upload prebuilts from the build.
 

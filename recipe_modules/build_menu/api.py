@@ -544,7 +544,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self.packages_installed
 
   def build_and_test_images(self, config=None, include_version=False,
-                            builder_path_template=None, run_in_parallel=False):
+                            builder_path_template=None):
     """Build the image and run ebuild tests.
 
     This behavior is adjusted by the run_spec values in config.
@@ -555,8 +555,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
         to sysroot_util.build.
       builder_path_template (str): Template to use for the builder_path. If not
         set, uses the cros_artifacts.artifacts_gs_path default.
-      run_in_parallel (bool): Whether to run unittests concurrently with
-        building and testing the image.
     Returns:
       (bool): Whether to continue with the build.
     """
@@ -576,7 +574,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       extra_kwargs = {'version': str(version.platform_version)}
 
-    if run_in_parallel:
+    if ('chromeos.cros_infra_config.image_builder_parallelization' in
+        self.m.cros_infra_config.experiments):
       futures = [
           self.m.futures.spawn(self.m.sysroot_util.build_images,
                                build_images.image_types, builder_path,
