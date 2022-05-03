@@ -13,33 +13,34 @@ import shutil
 import code_coverage_util
 
 
-def clean_file_paths(path_to_coverage_file, path_to_constants_file,
-                     path_to_output_file, build_target_name):
+def clean_file_paths(coverage_file, path_mapping_file, output_file,
+                     to_absolute_path):
   """Cleans the file paths in a given coverage file and writes out the results.
 
     Args:
-      path_to_coverage_file: the coverage file to process.
-      path_to_constants_file: the constants file containing the mappings.
-      path_to_output_file: where to write the cleaned file.
-      build_target_name: name of the build target.
+      coverage_file: the coverage file to process.
+      path_mapping_file: the file of the path mappings configs.
+      output_file: where to write the cleaned file.
+      to_absolute_path: True clean file path as absolute path, otherwise
+        as relative path(the part showing up on gerrit frontend, which is
+        decided by repo settings).
   """
-  with open(path_to_coverage_file,
-            'r') as coverage_file, open(path_to_constants_file,
-                                        'r') as constants_file:
+  with open(coverage_file, 'r') as coverage_file, open(path_mapping_file,
+                                                       'r') as config_file:
     coverage_file_data = coverage_file.read()
 
     # Write the data as is if it can't be cleaned.
     if not code_coverage_util.is_valid_llvm_coverage_json_file(
         coverage_file_data):
-      shutil.copyfile(path_to_coverage_file, path_to_output_file)
+      shutil.copyfile(coverage_file, output_file)
       return
 
     data = json.loads(coverage_file_data)
-    constants = json.load(constants_file)
+    path_mappings = json.load(config_file)
     results = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, constants, build_target_name)
+        data, path_mappings, to_absolute_path)
 
-    with open(path_to_output_file, 'w') as out_file:
+    with open(output_file, 'w') as out_file:
       json.dump(results, out_file)
 
 
@@ -60,8 +61,8 @@ def _parse_args(args):
       '--output-file', required=True, type=str,
       help='absolute path to where the cleaned file should be placed.')
 
-  parser.add_argument('--build-target', required=True, type=str,
-                      help='the target code coverage was built for')
+  parser.add_argument('--to_absolute_path', required=True, type=bool,
+                      help='clean file paths as absolute or relative path')
 
   return parser.parse_args(args=args)
 
@@ -72,14 +73,15 @@ def main():
   if not os.path.exists(params.coverage_file):
     raise RuntimeError('Coverage file %s must exist' % params.coverage_file)
 
-  if not os.path.exists(params.constants_file):
-    raise RuntimeError('Constants file %s must exist' % params.constants_file)
+  if not os.path.exists(params.path_mapping_file):
+    raise RuntimeError('Path mappings config %s must exist' %
+                       params.path_mapping_file)
 
   if os.path.exists(params.output_file):
     raise RuntimeError('Output file %s already exists' % params.output_file)
 
-  clean_file_paths(params.coverage_file, params.constants_file,
-                   params.output_file, params.build_target)
+  clean_file_paths(params.coverage_file, params.path_mapping_file,
+                   params.output_file, params.to_absolute_path)
 
 
 if __name__ == '__main__':

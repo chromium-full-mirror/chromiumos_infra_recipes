@@ -3,15 +3,17 @@
 # Copyright 2021 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+import csv
 import json
 import unittest
 import os
+from pathlib import Path
 import sys
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.abspath(os.path.join(THIS_DIR, os.pardir)))
+__THIS_DIR__ = os.path.dirname(os.path.abspath(__file__))
+__RESOURCES_DIR__ = str(Path(__file__).parent.parent.resolve())
+sys.path.insert(0, os.path.abspath(os.path.join(__THIS_DIR__, os.pardir)))
 import code_coverage_util
-
 
 class IsValidLlvmCoverageJsonTest(unittest.TestCase):
 
@@ -32,78 +34,27 @@ class IsValidLlvmCoverageJsonTest(unittest.TestCase):
 class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
 
   def setUp(self):
-    self.constants_file = [{
-        "src_path":
-            "bluetooth",
-        "repo":
-            "/test/",
-        "prefix":
-            "tmp/portage/chromeos-base/bluetooth-[^/]*/work/bluetooth-[^/]*/bluetooth"
-    }, {
-        "src_path": "biod",
-        "repo": "/test/",
-        "prefix": "tmp/portage/chromeos-base/biod-[^/]*/work/biod-[^/]*/biod"
-    }, {
-        "src_path": "",
-        "repo": "",
-        "prefix": "/mnt/host/source/src/platform2/"
-    }]
+    with open(os.path.join(__RESOURCES_DIR__, "path_mapping.json"),
+              'r') as constant_file:
+      self.path_mappings = json.load(constant_file)
 
-  def _getStructuredFile(self, file_names):
-    return {
-        'data': [{
-            'files': [{
-                'filename': x
-            } for x in file_names]
-        }],
-        'version': '1.0',
-        'type': 'llvm.coverage.json.export'
-    }
+  def testCleanFileName(self):
+    # expected tuples of (artifact, absolute_path, relative_path)
+    expectations = []
+    with open(
+        os.path.join(__THIS_DIR__, 'path_mapping_test_data.csv'),
+        newline='') as f:
+      reader = csv.reader(f)
+      expectations = [(row[0], row[1], row[2]) for row in reader if len(row) > 0
+                     ]
 
-  def testIgnoresFileNamesThatArentInConstantsFile(self):
-    data = self._getStructuredFile(['/path/a.txt', '/path/b.txt'])
-    result = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, [], 'sarien')
-    self.assertListEqual(result['data'][0]['files'], [])
-
-  def testRemapsAllFileNames(self):
-    data = self._getStructuredFile([
-        '/build/sarien/var/cache/portage/chromeos-base/bluetooth/out/Default/../../../../../../../tmp/portage/chromeos-base/bluetooth-0.0.1-r666/work/bluetooth-0.0.1/bluetooth/common/bluetooth_daemon.h',
-        '/build/sarien/var/cache/portage/chromeos-base/bluetooth/out/Default/../../../../../../../tmp/portage/chromeos-base/bluetooth-0.0.1-r666/work/bluetooth-0.0.1/bluetooth/common/dbus_daemon.cc',
-        '/build/sarien/tmp/portage/chromeos-base/biod-0.0.1-r2062/work/build/out/Default/../../../biod-0.0.1/biod/biod_config.cc',
-        '/build/sarien/var/cache/portage/chromeos-base/lorgnette/out/Default/../../../../../../../../../mnt/host/source/src/platform2/common-mk/testrunner.cc',
-    ])
-    result = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, self.constants_file, 'sarien')
-
-    result_filenames = [x['filename'] for x in result['data'][0]['files']]
-    self.assertEqual(len(result_filenames), 4)
-    self.assertEqual(
-        len([
-            x for x in result_filenames
-            if x == '/test/bluetooth/common/bluetooth_daemon.h'
-        ]), 1)
-    self.assertEqual(
-        len([
-            x for x in result_filenames
-            if x == '/test/bluetooth/common/dbus_daemon.cc'
-        ]), 1)
-    self.assertEqual(
-        len([x for x in result_filenames if x == '/test/biod/biod_config.cc']),
-        1)
-    self.assertEqual(
-        len([x for x in result_filenames if x == 'common-mk/testrunner.cc']), 1)
-
-  def testRemapsAllFileNamesWithPrepends(self):
-    data = self._getStructuredFile([
-        '/build/sarien/tmp/portage/chromeos-base/biod-0.0.1-r2062/work/build/out/Default/../../../biod-0.0.1/biod/biod_config.cc'
-    ])
-    result = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, self.constants_file, 'sarien')
-    result_filenames = [x['filename'] for x in result['data'][0]['files']]
-    self.assertEqual(
-        len([x for x in result_filenames if x == '/test/biod/biod_config.cc']),
-        1)
+    # real tuples of (artifact, absolute_path, relative_path)
+    real_outputs = []
+    for row in expectations:
+      mapped = code_coverage_util.clean_file_name(row[0], self.path_mappings)
+      if mapped:
+        real_outputs.append((row[0], mapped[0], mapped[1]))
+    self.assertEqual(expectations, real_outputs)
 
 
 if __name__ == '__main__':

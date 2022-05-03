@@ -29,36 +29,46 @@ def is_valid_llvm_coverage_json_file(data):
     return False
 
 
-def clean_file_name(file_name, constants, build_target_name):
+def clean_file_name(file_path, path_mappings):
   """Cleans a file name based on the provided mappings.
 
-  TODO(b/187795079) The provided constants file gives a mapping of regex
-  `prefix`s to match the given file name to. If one is found, the prefix
-  portion is replaced with the corresponding `src_path`. This function
-  encapsulates the conversion function that should eventually live in chromite.
+  Step 1. normalize the file_path with removing the lib version
+  For example,
+  ..bluez-5.54-r711/work/bluez-5.54/bluez/current/src/profile.c
+  should be converted to
+  ..bluez/work/bluez/bluez/current/src/profile.c
+
+  Step 2. find path mappings from configuration
+  For example,
+  paths like ".*/bluez/current/src/(.*)" should be mapping to
+  "third_party/bluez/current/src/[group(0)]"
+
+  Step 3. extract the matching group to combine absolute path
+  and relative path respectively, and return
 
   Args:
     file_name (str): The file name from the coverage llvm json file.
-    constants (str): Content containing prefix/src_path pairs per project.
-    build_target_name(str): The name of the build target (i.e. brya).
+    path_mappings (str): Content containing path mappings.
 
   Returns:
-    A string formatted as: {constants[src_path]}/{file_name}
-    if a mapping is found otherwise None.
+    A tuple of (absolute_path, relative_path) if a mapping is found
+    otherwise None.
   """
-  coverage_path = os.path.normpath(file_name)
+  absolute_path = os.path.normpath(file_path)
+  absolute_path = re.sub(r'\-\d+(\.\d+)*(\-[\w\d]+)?/', '/', absolute_path)
 
-  for mapping in constants:
-    pre = '(/build/{})?/?{}'.format(build_target_name, mapping['prefix'])
-    if re.match(pre, coverage_path):
-      coverage_path = re.sub(pre, mapping['src_path'], coverage_path)
-      return mapping['repo'] + coverage_path
+  for mapping in path_mappings:
+    m = re.match(mapping['path_pattern'], absolute_path)
+    if m:
+      absolute_path = os.path.join(mapping['absolute_path'], m.group(1))
+      relative_path = os.path.join(mapping['relative_path'], m.group(1))
+      return absolute_path, relative_path
 
   return None
 
 
-def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, constants,
-                                           build_target_name):
+def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, path_mappings,
+                                           to_absolute_path=True):
   """Cleans an llvm coverage json file's file names.
 
   Takes a valid llvm coverage json file, and runs all the file names through
@@ -68,8 +78,10 @@ def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, constants,
 
   Args:
     llvm_coverage_json (str): The content from the llvm coverage json file.
-    constants (str): Content containing prefix/src_path pairs per project.
-    build_target_name(str): The name of the build target (i.e. sarien).
+    path_mappings (str): Path matching rules for relative and absolute path.
+    to_absolute_path (bool): Clean file path to absolute path or relative path,
+      the former is used for absolute coverage data, and the latter is used
+      for incremental coverage data.
 
   Returns:
     A json object in the coverage llvm json format with file names that
@@ -82,10 +94,12 @@ def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, constants,
   for datum in llvm_coverage_json['data']:
     for file_data in datum['files']:
       filename = file_data['filename']
-      cleaned_file_name = clean_file_name(filename, constants,
-                                          build_target_name)
+      cleaned_file_name = clean_file_name(filename, path_mappings)
       if cleaned_file_name is not None:
-        file_data['filename'] = cleaned_file_name
+        if to_absolute_path:
+          file_data['filename'] = cleaned_file_name[0]
+        else:
+          file_data['filename'] = cleaned_file_name[1]
         coverage_data.append(file_data)
 
   return {

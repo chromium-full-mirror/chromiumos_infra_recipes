@@ -4088,11 +4088,11 @@
       "--coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
       "--constants-file",
-      "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/path_mapping.json",
       "--output-file",
       "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
-      "--build-target",
-      "amd64-generic"
+      "--to_absolute_path",
+      "False"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {
