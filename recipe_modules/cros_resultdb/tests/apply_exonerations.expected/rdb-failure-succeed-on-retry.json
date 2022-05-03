@@ -61,7 +61,7 @@
       }
     },
     "name": "exonerate ResultDB results.exonerate non-critical failures",
-    "stdin": "{\"invocation\": \"invocations/build:123\", \"requestId\": \"00000000-0000-0000-0000-000000001337\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}, {\"testExoneration\": {\"explanationHtml\": \"unexpectedly skipped but is not critical\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:123\", \"requestId\": \"00000000-0000-0000-0000-000000001337\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"reason\": \"NOT_CRITICAL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}, {\"testExoneration\": {\"explanationHtml\": \"unexpectedly skipped but is not critical\", \"reason\": \"NOT_CRITICAL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"board\": \"fake-board\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",

@@ -11873,7 +11873,7 @@
       }
     },
     "name": "clean up orchestrator.non-critical test check.exonerate ResultDB results.exonerate non-critical failures",
-    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requestId\": \"00000000-0000-0000-0000-00000000134f\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requestId\": \"00000000-0000-0000-0000-00000000134f\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"reason\": \"NOT_CRITICAL\", \"testId\": \"test/1\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-cq\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -11885,6 +11885,7 @@
       "@@@STEP_LOG_LINE@json.input@    {@@@",
       "@@@STEP_LOG_LINE@json.input@      \"testExoneration\": {@@@",
       "@@@STEP_LOG_LINE@json.input@        \"explanationHtml\": \"failed but is not critical\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"reason\": \"NOT_CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"test/1\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
       "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
@@ -11961,7 +11962,7 @@
       }
     },
     "name": "clean up orchestrator.non-critical test check.exonerate ResultDB results (2).exonerate non-critical failures",
-    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requestId\": \"00000000-0000-0000-0000-000000001352\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requestId\": \"00000000-0000-0000-0000-000000001352\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"reason\": \"NOT_CRITICAL\", \"testId\": \"test/2\", \"variant\": {\"def\": {\"test_config\": \"htarget.hw.bvt-inline\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -11973,6 +11974,7 @@
       "@@@STEP_LOG_LINE@json.input@    {@@@",
       "@@@STEP_LOG_LINE@json.input@      \"testExoneration\": {@@@",
       "@@@STEP_LOG_LINE@json.input@        \"explanationHtml\": \"failed but is not critical\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"reason\": \"NOT_CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"test/2\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
       "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
@@ -12049,7 +12051,7 @@
       }
     },
     "name": "clean up orchestrator.non-critical test check.exonerate ResultDB results (3).exonerate non-critical failures",
-    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requestId\": \"00000000-0000-0000-0000-000000001355\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requestId\": \"00000000-0000-0000-0000-000000001355\", \"requests\": [{\"testExoneration\": {\"explanationHtml\": \"failed but is not critical\", \"reason\": \"NOT_CRITICAL\", \"testId\": \"test/3\", \"variant\": {\"def\": {\"test_config\": \"ttarget.hw.some-other-suite\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -12061,6 +12063,7 @@
       "@@@STEP_LOG_LINE@json.input@    {@@@",
       "@@@STEP_LOG_LINE@json.input@      \"testExoneration\": {@@@",
       "@@@STEP_LOG_LINE@json.input@        \"explanationHtml\": \"failed but is not critical\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"reason\": \"NOT_CRITICAL\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"test/3\", @@@",
       "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
       "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",

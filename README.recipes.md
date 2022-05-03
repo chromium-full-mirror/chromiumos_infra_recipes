@@ -3249,7 +3249,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#321)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#322)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB.
 

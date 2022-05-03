@@ -309,7 +309,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
               test_id=result.test_id, variant=result.variant,
               explanation_html='unexpectedly skipped but is not critical'
               if result.status == test_result_pb2.SKIP else
-              'failed but is not critical')
+              'failed but is not critical',
+              reason=test_result_pb2.ExonerationReason.NOT_CRITICAL)
           for result in unexpected_results
           # Unexpected passes are currently exonerated by default.
           if not result.expected and result.status != test_result_pb2.PASS and
