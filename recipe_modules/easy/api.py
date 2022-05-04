@@ -145,6 +145,22 @@ class EasyApi(recipe_api.RecipeApi):
       step_data = step_data.split(parse_before_str)[0]  # pragma: no cover
     return json_format.Parse(step_data, output, ignore_unknown_fields=True)
 
+  # TODO(crbug/1322624): Clean up when LUCI supports this for free.
+  def log_parent_step(self, log_if_no_parent=True):
+    """Creates a short step to log the current builder's parent build ID.
+
+    Args:
+      log_if_no_parent: If True and there is no parent build, create an empty
+        step stating that there's no parent build. If False and there is no
+        parent build, do nothing.
+    """
+    parent_id = self.m.cros_tags.get_single_value('parent_buildbucket_id')
+    if parent_id:
+      with self.m.step.nest('Parent build: {}'.format(parent_id)) as pres:
+        pres.links[parent_id] = self.m.buildbucket.build_url(build_id=parent_id)
+    elif log_if_no_parent:
+      self.m.step.empty('No parent build.')
+
 
 def maybe_lazy_test_data(test_data):
   """Wraps test_data in a lambda if it isn't already callable."""

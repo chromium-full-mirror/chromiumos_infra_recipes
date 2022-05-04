@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-from PB.go.chromium.org.luci.swarming.proto.api.swarming import StringPair
 
 from PB.recipe_modules.chromeos.cros_tags.examples.test import (
     TestInputProperties)
@@ -20,11 +19,6 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = TestInputProperties
-
-
-def _string_pairs(*pairs):
-  """Convert list of tuples into list of StringPairs."""
-  return [StringPair(key=k, value=v) for k, v in pairs]
 
 
 def RunSteps(api, properties):
@@ -83,33 +77,6 @@ def RunSteps(api, properties):
   tags3 = api.buildbucket.tags(baz='foo:bar', cq_cl_tag='ha:lol')
   api.assertions.assertEqual(api.cros_tags.cq_cl_tag_value('foo', tags3), None)
   api.assertions.assertEqual(api.cros_tags.cq_cl_tag_value('ha', tags3), 'lol')
-
-  # Test that retrieve tags works as expected
-  api.assertions.assertEqual(
-      api.cros_tags.get_values(
-          'test-key',
-          _string_pairs(('test-key', 'foo')),
-      ),
-      ['foo'],
-  )
-
-  api.assertions.assertEqual(
-      api.cros_tags.get_values(
-          'test-key',
-          _string_pairs(('test-key', 'foo'), ('another-key', 'bar'),
-                        ('test-key', 'baz')),
-      ),
-      ['foo', 'baz'],
-  )
-
-  api.assertions.assertEqual(
-      api.cros_tags.get_values(
-          'key-not-present',
-          _string_pairs(('test-key', 'foo')),
-          default='default-value',
-      ),
-      ['default-value'],
-  )
 
 
 def GenTests(api):

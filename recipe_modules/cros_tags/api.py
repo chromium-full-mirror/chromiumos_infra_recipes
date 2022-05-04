@@ -68,7 +68,7 @@ class CrosTagsApi(recipe_api.RecipeApi):
         (defaults to tags for current build)
       default (str): A default value to return if no values found
 
-    Returns
+    Returns:
       List of tag values, or [default] if none found.
     """
     tags = tags or self.m.buildbucket.build.tags
@@ -78,9 +78,29 @@ class CrosTagsApi(recipe_api.RecipeApi):
       if tag.key == key:
         results.append(tag.value)
 
-    if not results and default:
+    if not results and default is not None:
       return [default]
     return results
+
+  def get_single_value(self, key, tags=None, default=None):
+    """Return a single value from a list of tags.
+
+    If the key has more than one value, only the first value will be returned.
+
+    Args:
+      key (str): The key to look up values for.
+      tags ([StringPair]): A list of tags in which to look up values.
+        (defaults to tags for current build)
+      default (str): A default value to return if no values found.
+
+    Returns:
+      str|None, the first value found for the key among the tags.
+    """
+    tags = tags or self.m.buildbucket.build.tags
+    for tag in tags:
+      if tag.key == key:
+        return tag.value
+    return default
 
   def cq_cl_tag_value(self, cl_tag_key, tags):
     """Returns the value for the given cq_cl_tag, if it is found."""

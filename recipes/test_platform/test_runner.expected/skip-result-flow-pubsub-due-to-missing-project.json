@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "No parent build."
+  },
+  {
+    "cmd": [],
     "name": "inputs",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",

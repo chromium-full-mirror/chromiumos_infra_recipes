@@ -29,9 +29,15 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import post_process
 
 DEPS = [
-    'depot_tools/gsutil', 'recipe_engine/buildbucket', 'recipe_engine/file',
-    'recipe_engine/path', 'recipe_engine/properties', 'recipe_engine/random',
-    'recipe_engine/step', 'cros_infra_config', 'easy'
+    'depot_tools/gsutil',
+    'recipe_engine/buildbucket',
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/random',
+    'recipe_engine/step',
+    'cros_infra_config',
+    'easy',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -107,6 +113,7 @@ _channel_to_name = {
 
 def RunSteps(api, properties):
   """Run steps."""
+  api.easy.log_parent_step()
 
   local_dir = api.path['cleanup']
   non_release_signer_bucket = False

@@ -21,6 +21,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'debug_symbols',
+    'easy',
 ]
 
 from google.protobuf.json_format import MessageToDict, MessageToJson
@@ -40,6 +41,7 @@ StepDetails = BuildReport.StepDetails
 
 
 def RunSteps(api):
+  api.easy.log_parent_step()
 
   if api.cros_infra_config.is_staging:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)

@@ -61,6 +61,7 @@ DEPS = [
     'cros_tool_runner',
     'cts_results_archive',
     'dut_interface',
+    'easy',
     'phosphorus',
     'result_flow',
 ]
@@ -888,6 +889,8 @@ def _validate_inputs_for_ctr(api, properties):
 
 
 def RunSteps(api, properties):
+  api.easy.log_parent_step()
+
   if api.cros_test_runner.is_enabled():  # pragma: nocover
     # Experimental code path for using the new test_runner binary rather
     # than the normal test_runner workflow.

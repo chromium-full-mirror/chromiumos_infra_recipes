@@ -4,9 +4,11 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/json',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_tags',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

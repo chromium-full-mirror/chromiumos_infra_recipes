@@ -35,6 +35,10 @@
   },
   {
     "cmd": [],
+    "name": "No parent build."
+  },
+  {
+    "cmd": [],
     "name": "build status pubsub update",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",

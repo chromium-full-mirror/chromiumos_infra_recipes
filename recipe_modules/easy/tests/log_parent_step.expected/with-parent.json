@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [],
+    "name": "Parent build: 123456",
+    "~followup_annotations": [
+      "@@@STEP_LINK@123456@https://cr-buildbucket.appspot.com/build/123456@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

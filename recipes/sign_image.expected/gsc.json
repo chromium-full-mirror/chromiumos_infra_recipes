@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "No parent build."
+  },
+  {
+    "cmd": [],
     "name": "determine is_staging",
     "~followup_annotations": [
       "@@@STEP_TEXT@Running build with is_staging set to False@@@"

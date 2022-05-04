@@ -86,6 +86,8 @@ def _set_up_test_configs(api, request, response):
 
 
 def RunSteps(api, properties):
+  api.easy.log_parent_step()
+
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
     with api.step.nest('initialization'):
 

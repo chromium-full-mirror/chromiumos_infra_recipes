@@ -289,6 +289,8 @@
   * [cros_storage:examples/discover](#recipes-cros_storage_examples_discover) (Python3 ✅)
   * [cros_storage:examples/full](#recipes-cros_storage_examples_full) (Python3 ✅)
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full) (Python3 ✅)
+  * [cros_tags:tests/get_single_value](#recipes-cros_tags_tests_get_single_value) (Python3 ✅)
+  * [cros_tags:tests/get_values](#recipes-cros_tags_tests_get_values) (Python3 ✅)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
   * [cros_test_plan_v2:examples/ctpv1_compatible](#recipes-cros_test_plan_v2_examples_ctpv1_compatible)
@@ -316,6 +318,7 @@
   * [easy:examples/full](#recipes-easy_examples_full) (Python3 ✅)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
+  * [easy:tests/log_parent_step](#recipes-easy_tests_log_parent_step)
   * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration)
   * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration)
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests)
@@ -4013,7 +4016,7 @@ API for generating tags.
 
 A module for generating tags.
 
-&mdash; **def [add\_tags\_to\_current\_build](/recipe_modules/cros_tags/api.py#139)(self, \*\*tags):**
+&mdash; **def [add\_tags\_to\_current\_build](/recipe_modules/cros_tags/api.py#159)(self, \*\*tags):**
 
 Adds arbitrary tags during the runtime of a build.
 
@@ -4021,23 +4024,38 @@ Args:
   tags (dict): Dict mapping keys to values.  If the value is a list,
       multiple tags for the same key will be created.
 
-&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#110)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_cl\_group\_key](/recipe_modules/cros_tags/api.py#130)(self):**
 
 Return the cq_cl_group_key, if any.
 
 Returns:
   (str) cq_cl_group_key, or None
 
-&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#85)(self, cl_tag_key, tags):**
+&mdash; **def [cq\_cl\_tag\_value](/recipe_modules/cros_tags/api.py#105)(self, cl_tag_key, tags):**
 
 Returns the value for the given cq_cl_tag, if it is found.
 
-&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_equivalent\_cl\_group\_key](/recipe_modules/cros_tags/api.py#113)(self):**
 
 Return the cq_equivalent_cl_group_key, if any.
 
 Returns:
   (str) cq_equivalent_cl_group_key, or None
+
+&mdash; **def [get\_single\_value](/recipe_modules/cros_tags/api.py#85)(self, key, tags=None, default=None):**
+
+Return a single value from a list of tags.
+
+If the key has more than one value, only the first value will be returned.
+
+Args:
+  key (str): The key to look up values for.
+  tags ([StringPair]): A list of tags in which to look up values.
+    (defaults to tags for current build)
+  default (str): A default value to return if no values found.
+
+Returns:
+  str|None, the first value found for the key among the tags.
 
 &mdash; **def [get\_values](/recipe_modules/cros_tags/api.py#59)(self, key, tags=None, default=None):**
 
@@ -4052,7 +4070,7 @@ Args:
     (defaults to tags for current build)
   default (str): A default value to return if no values found
 
-Returns
+Returns:
   List of tag values, or [default] if none found.
 
 &mdash; **def [has\_entry](/recipe_modules/cros_tags/api.py#52)(self, key, value, tags):**
@@ -4070,7 +4088,7 @@ Args:
 Returns:
   list[StringPair] to pass as buildbucket tags
 
-&mdash; **def [tags](/recipe_modules/cros_tags/api.py#127)(self, \*\*tags):**
+&mdash; **def [tags](/recipe_modules/cros_tags/api.py#147)(self, \*\*tags):**
 
 Helper for generating a list of StringPair messages.
 
@@ -4555,7 +4573,7 @@ Returns:
   DUTInterface
 ### *recipe_modules* / [easy](/recipe_modules/easy)
 
-[DEPS](/recipe_modules/easy/__init__.py#6): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/easy/__init__.py#6): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -4564,6 +4582,15 @@ APIs for easy steps.
 #### **class [EasyApi](/recipe_modules/easy/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for easy steps.
+
+&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#149)(self, log_if_no_parent=True):**
+
+Creates a short step to log the current builder's parent build ID.
+
+Args:
+  log_if_no_parent: If True and there is no parent build, create an empty
+    step stating that there's no parent build. If False and there is no
+    parent build, do nothing.
 
 &mdash; **def [set\_properties\_step](/recipe_modules/easy/api.py#15)(self, step_name=None, \*\*kwargs):**
 
@@ -8375,7 +8402,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#54)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#55)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#28)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
@@ -8545,15 +8572,15 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#21)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#70)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#72)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#42)(api):**
+&mdash; **def [RunSteps](/recipes/build_release.py#43)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9785,11 +9812,25 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/cros_storage/examples/full.py#16)(api):**
 ### *recipes* / [cros\_tags:examples/full](/recipe_modules/cros_tags/examples/full.py)
 
-[DEPS](/recipe_modules/cros_tags/examples/full.py#12): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_tags/examples/full.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/examples/full.py#24)(api, properties):**
+### *recipes* / [cros\_tags:tests/get\_single\_value](/recipe_modules/cros_tags/tests/get_single_value.py)
+
+[DEPS](/recipe_modules/cros_tags/tests/get_single_value.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/tests/get_single_value.py#32)(api, keyvals, check_key, expected_value):**
+### *recipes* / [cros\_tags:tests/get\_values](/recipe_modules/cros_tags/tests/get_values.py)
+
+[DEPS](/recipe_modules/cros_tags/tests/get_values.py#11): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_tags/tests/get_values.py#32)(api, keyvals, check_key, expected_values):**
 ### *recipes* / [cros\_test\_plan:examples/full](/recipe_modules/cros_test_plan/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -9992,6 +10033,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#16)(api):**
+### *recipes* / [easy:tests/log\_parent\_step](/recipe_modules/easy/tests/log_parent_step.py)
+
+[DEPS](/recipe_modules/easy/tests/log_parent_step.py#10): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2
+
+&mdash; **def [RunSteps](/recipe_modules/easy/tests/log_parent_step.py#21)(api):**
 ### *recipes* / [exonerate:examples/disabled\_hw\_exoneration](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py)
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11031,7 +11079,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for signing ChromeOS images.
 
-&mdash; **def [RunSteps](/recipes/sign_image.py#108)(api, properties):**
+&mdash; **def [RunSteps](/recipes/sign_image.py#114)(api, properties):**
 
 Run steps.
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
@@ -11364,15 +11412,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#45): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#45): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#890)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#891)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#153)(api, interface, test_metadata, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#154)(api, interface, test_metadata, result):**
 
 Archive all test logs to Google Storage, updating result in the process.
 
@@ -11386,7 +11434,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#793)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#794)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -11398,7 +11446,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#663)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#664)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -11414,7 +11462,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#590)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#591)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -11430,7 +11478,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#561)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#562)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -11441,7 +11489,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#90)(step, name, link):**
+&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#91)(step, name, link):**
 
 Add a link `link` named `link_name` to the `step` if it exists.
 
@@ -11450,7 +11498,7 @@ Args:
 * name (str): Link name.
 * link (str): Like URI to add.
 
-&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#78)(step, name, log):**
+&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#79)(step, name, log):**
 
 Add a `log` to a `step`'s log under `name` is it exists.
 
@@ -11459,7 +11507,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#214)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#215)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -11467,7 +11515,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#848)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#849)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -11475,7 +11523,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [summarize\_results\_from\_phosphorus\_results](/recipes/test_platform/test_runner.py#173)(api, result):**
+&mdash; **def [summarize\_results\_from\_phosphorus\_results](/recipes/test_platform/test_runner.py#174)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -11483,7 +11531,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#138)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#139)(api, test):**
 
 Validate the TestRunnerProperties.
 

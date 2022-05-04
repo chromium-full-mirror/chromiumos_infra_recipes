@@ -53,6 +53,8 @@ def _summarize_failed_builds(failures):
 
 
 def RunSteps(api, properties):
+  api.easy.log_parent_step()
+
   # Set default values for unspecified properties.
   delta_types = properties.delta_types
   delta_types = delta_types or api.cros_paygen.default_delta_types
