@@ -36,7 +36,8 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                      filename)) as f:
       data = f.read().strip()
     msg = jsonpb.Parse(data, message)
-    return self.m.depot_gitiles.make_encoded_file(msg.SerializeToString())
+    return self.m.depot_gitiles.make_encoded_file_from_bytes(
+        msg.SerializeToString())
 
   @property
   def builder_configs_test_data(self):
@@ -100,11 +101,16 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
                                'read builder configs (%d)' % iteration))
     step_name += '.fetch {}:generated/builder_configs.{}'.format(
         ref, 'binaryproto' if binaryproto else 'cfg')
-    data = (
-        message.SerializeToString()
-        if binaryproto else jsonpb.MessageToJson(message))
-    return self.step_data(step_name,
-                          self.m.depot_gitiles.make_encoded_file(data))
+
+    if binaryproto:
+      return self.step_data(
+          step_name,
+          self.m.depot_gitiles.make_encoded_file_from_bytes(
+              message.SerializeToString()))
+
+    return self.step_data(
+        step_name,
+        self.m.depot_gitiles.make_encoded_file(jsonpb.MessageToJson(message)))
 
   def current_builder_group(self, group):
     """Set the builder group for the currently running builder."""
