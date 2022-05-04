@@ -98,7 +98,7 @@ class TastExecApi(RecipeApi):
     """Run tast tests in a VM with one retry and upload logs to Google storage.
 
     Args:
-      suite_name (str): Name of the suite to run.
+      suite_name (str): Unique name used to record test results.
       expressions (list[str]): Expressions to test.
       vm_context (contextlib.contextmanager): The VM context manager, created
         by create_qemu_vm_context/create_gce_vm_context.
