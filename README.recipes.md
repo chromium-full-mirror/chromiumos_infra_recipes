@@ -7697,11 +7697,11 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#429)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#432)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7720,7 +7720,7 @@ Returns:
       (host, port) for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#351)(self, qcow_image_path, private_key_path):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#354)(self, qcow_image_path, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -7734,7 +7734,7 @@ Returns:
       (host, port) for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#37)(self, build_payload, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#66)(self, build_payload, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -7744,7 +7744,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#57)(self, build_payload, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#86)(self, build_payload, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -7759,24 +7759,20 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#204)(self, dut_name, expressions, test_artifacts_dir, build_payload, test_results_dir, private_key_path=None, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#215)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
 Args:
   dut_name (str): The identity of the DUT to connect to,
     for example, my-dut-host-name or localhost:9222 (if testing a VM).
-  expressions (list[str]): Expressions describing tests to run.
-  test_artifacts_dir (Path): Dir containing test artifacts.
-  build_payload (BuildPayload): Describes where the artifact is on GS.
+  tast_inputs (TastInputs): Common inputs for running tast tests.
   test_results_dir (Path): Path to store tast results.
-  private_key_path (Path): Path to private key to use (optional).
-  run_args (list[str]): Additional arguments to pass to tast (optional).
 
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#158)(self, expressions, vm_context, test_artifacts_dir, private_key_path, build_payload, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#178)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -7784,27 +7780,21 @@ Args:
   expressions (list[str]): Expressions describing tests to run.
   vm_context (contextlib.contextmanager): The VM context manager, created
     by create_qemu_vm_context/create_gce_vm_context.
-  test_artifacts_dir (Path): Dir containing test artifacts.
-  private_key_path (Path): Path to private key.
-  build_payload (BuildPayload): Describes where the artifact is on GS.
+  tast_inputs (TastInputs): Common inputs for running tast tests.
   test_results_dir (Path): Path to store tast results.
-  run_args (list[str]): Additional arguments to pass to tast (optional).
 
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#96)(self, suite_name, expressions, vm_context, test_artifacts_dir, private_key_path, build_payload):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#125)(self, suite_name, vm_context, tast_inputs):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
 Args:
-  suite_name (str): Name of the suite to run.
-  expressions (list[str]): Expressions to test.
+  suite_name (str): Unique name used to record test results.
   vm_context (contextlib.contextmanager): The VM context manager, created
     by create_qemu_vm_context/create_gce_vm_context.
-  test_artifacts_dir (Path): Dir containing test artifacts.
-  private_key_path (Path): Path to private key.
-  build_payload (BuildPayload): Describes where the artifact is on GS.
+  tast_inputs (TastInputs): Common inputs for running tast tests.
 
 Returns:
   A tuple of list(Failures) and a bool indicating whether

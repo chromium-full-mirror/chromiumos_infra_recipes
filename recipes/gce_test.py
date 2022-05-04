@@ -65,8 +65,9 @@ def RunSteps(api, properties):
 
     with api.step.nest('run tast tests'):
       failures, empty_result = api.tast_exec.run_vm(
-          properties.name, properties.expressions, vm_context,
-          test_artifacts_dir, private_key_path, properties.build_payload)
+          properties.name, vm_context,
+          api.tast_exec.TastInputs(properties.expressions, test_artifacts_dir,
+                                   properties.build_payload, private_key_path))
 
     api.tast_results.print_results(failures, empty_result)
 

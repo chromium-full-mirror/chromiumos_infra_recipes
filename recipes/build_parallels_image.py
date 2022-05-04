@@ -190,9 +190,11 @@ def invoke_tast(api, test_artifacts_dir, build_payload, dest_path):
   with api.step.nest('invoke tast') as presentation:
     tast_results_dir = api.path.mkdtemp(prefix='tast-results')
     tests = api.tast_exec.run_direct(
-        api.phosphorus.read_dut_hostname(), [_TAST_NAME], test_artifacts_dir,
-        build_payload, tast_results_dir,
-        run_args=['-var=pita.windowsLicensed=true'])
+        api.phosphorus.read_dut_hostname(),
+        api.tast_exec.TastInputs([_TAST_NAME], test_artifacts_dir,
+                                 build_payload,
+                                 run_args=['-var=pita.windowsLicensed=true']),
+        tast_results_dir)
 
     try:
       src_path = tast_results_dir.join('tests').join(_TAST_NAME).join(

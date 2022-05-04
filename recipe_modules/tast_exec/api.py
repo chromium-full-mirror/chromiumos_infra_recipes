@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import contextlib
+import copy
 import os
 from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -25,6 +26,34 @@ GCE_VM_PORT = '22'
 
 class TastExecApi(RecipeApi):
   """A module to execute tast commands."""
+
+  class TastInputs(object):
+    """Common inputs for TastExecApi methods.
+
+    Args:
+      expressions (list[str]): Expressions describing tests to run.
+      test_artifacts_dir (Path): Dir containing test artifacts.
+      build_payload (BuildPayload): Where the build artifact is on GS.
+      private_key_path (Path): Path to private key.
+      run_args (list[str]): Additional arguments to pass to tast (optional).
+    """
+
+    def __init__(self, expressions, test_artifacts_dir, build_payload,
+                 private_key_path=None, run_args=None):
+      self.expressions = expressions
+      self.test_artifacts_dir = test_artifacts_dir
+      self.build_payload = build_payload
+      self.private_key_path = private_key_path
+      self.run_args = run_args or []
+
+    def copy(self):
+      """Make a new TastInputs with the same field values."""
+      return copy.deepcopy(self)
+
+    def build_artifacts_url(self):
+      """GS URL where the build artifacts are located."""
+      return 'gs://{}/{}/'.format(self.build_payload.artifacts_gs_bucket,
+                                  self.build_payload.artifacts_gs_path)
 
   def __init__(self, properties, *args, **kwargs):
     super(TastExecApi, self).__init__(*args, **kwargs)
@@ -93,26 +122,20 @@ class TastExecApi(RecipeApi):
                   ['chmod', '400', str(private_key_path)])
     return qcow_image_path, private_key_path
 
-  def run_vm(self, suite_name, expressions, vm_context, test_artifacts_dir,
-             private_key_path, build_payload):
+  def run_vm(self, suite_name, vm_context, tast_inputs):
     """Run tast tests in a VM with one retry and upload logs to Google storage.
 
     Args:
       suite_name (str): Unique name used to record test results.
-      expressions (list[str]): Expressions to test.
       vm_context (contextlib.contextmanager): The VM context manager, created
         by create_qemu_vm_context/create_gce_vm_context.
-      test_artifacts_dir (Path): Dir containing test artifacts.
-      private_key_path (Path): Path to private key.
-      build_payload (BuildPayload): Describes where the artifact is on GS.
+      tast_inputs (TastInputs): Common inputs for running tast tests.
 
     Returns:
       A tuple of list(Failures) and a bool indicating whether
         the results were empty.
     """
-    task_result = self._retry_iter(suite_name, expressions, vm_context,
-                                   test_artifacts_dir, private_key_path,
-                                   'first', build_payload)
+    task_result = self._retry_iter(suite_name, vm_context, tast_inputs, 'first')
     tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
     all_test_cases = []
     if task_result.test_cases:
@@ -123,10 +146,10 @@ class TastExecApi(RecipeApi):
         task_result, tests_to_retry)
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
     if tests_to_retry:
-      retry_task_result = self._retry_iter(suite_name, tests_to_retry,
-                                           vm_context, test_artifacts_dir,
-                                           private_key_path, 'second',
-                                           build_payload)
+      tast_inputs = tast_inputs.copy()
+      tast_inputs.expressions = tests_to_retry
+      retry_task_result = self._retry_iter(suite_name, vm_context, tast_inputs,
+                                           'second')
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       retry_failures, retry_tcs = self.m.tast_results.get_failures(
           retry_task_result)
@@ -145,87 +168,67 @@ class TastExecApi(RecipeApi):
 
     return failures, empty_result
 
-  def _retry_iter(self, suite_name, expressions, vm_context, test_artifacts_dir,
-                  private_key_path, tag, build_payload):
+  def _retry_iter(self, suite_name, vm_context, tast_inputs, tag):
     with self.m.step.nest('%s tast iteration' % tag):
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
-      tests = self.run_direct_vm(expressions, vm_context, test_artifacts_dir,
-                                 private_key_path, build_payload,
-                                 test_results_dir)
+      tests = self.run_direct_vm(vm_context, test_results_dir, tast_inputs)
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests)
 
-  def run_direct_vm(self, expressions, vm_context, test_artifacts_dir,
-                    private_key_path, build_payload, test_results_dir,
-                    run_args=None):
+  def run_direct_vm(self, vm_context, test_results_dir, tast_inputs):
     """Run tast tests in a VM without retries or results processing.
 
     Args:
       expressions (list[str]): Expressions describing tests to run.
       vm_context (contextlib.contextmanager): The VM context manager, created
         by create_qemu_vm_context/create_gce_vm_context.
-      test_artifacts_dir (Path): Dir containing test artifacts.
-      private_key_path (Path): Path to private key.
-      build_payload (BuildPayload): Describes where the artifact is on GS.
+      tast_inputs (TastInputs): Common inputs for running tast tests.
       test_results_dir (Path): Path to store tast results.
-      run_args (list[str]): Additional arguments to pass to tast (optional).
 
     Returns:
       list[str]: The list of tests that met the specified expression(s).
     """
-    if run_args is None:
-      run_args = []
-    else:
-      run_args = list(run_args)
+    tast_inputs = tast_inputs.copy()
     if self._flag_exists(
-        test_artifacts_dir.join('tast'), 'systemservicestimeout'):
-      run_args.append('-systemservicestimeout={}'.format(
+        tast_inputs.test_artifacts_dir.join('tast'), 'systemservicestimeout'):
+      tast_inputs.run_args.append('-systemservicestimeout={}'.format(
           self._vm_system_services_timeout))  # pragma: no cover
 
     # Entering vm_context instantiates the VM we are to test against. The VM
     # is cleaned up automatically when exiting the context.
     with vm_context() as (host, port):
-      tests = self.run_direct('{}:{}'.format(host, port), expressions,
-                              test_artifacts_dir, build_payload,
-                              test_results_dir,
-                              private_key_path=private_key_path,
-                              run_args=run_args)
+      tests = self.run_direct('{}:{}'.format(host, port), tast_inputs,
+                              test_results_dir)
 
       # b/219966100: Occasionally the `tast run` step will leave the VM in an
       # unresponsive state. Make sure we can establish an SSH connection before
       # attempting to archive artifacts.
-      self.m.step('connect via ssh',
-                  self._get_ssh_cmd(host, port, private_key_path, ['true']))
+      self.m.step(
+          'connect via ssh',
+          self._get_ssh_cmd(host, port, tast_inputs.private_key_path, ['true']))
 
       # Add logs and other artifacts from DUT into the test results directory.
-      self._archive_vm_artifacts(host, port, private_key_path, test_results_dir)
+      self._archive_vm_artifacts(host, port, tast_inputs.private_key_path,
+                                 test_results_dir)
     return tests
 
-  def run_direct(self, dut_name, expressions, test_artifacts_dir, build_payload,
-                 test_results_dir, private_key_path=None, run_args=None):
+  def run_direct(self, dut_name, tast_inputs, test_results_dir):
     """Run tast tests without retries or results processing.
 
     Args:
       dut_name (str): The identity of the DUT to connect to,
         for example, my-dut-host-name or localhost:9222 (if testing a VM).
-      expressions (list[str]): Expressions describing tests to run.
-      test_artifacts_dir (Path): Dir containing test artifacts.
-      build_payload (BuildPayload): Describes where the artifact is on GS.
+      tast_inputs (TastInputs): Common inputs for running tast tests.
       test_results_dir (Path): Path to store tast results.
-      private_key_path (Path): Path to private key to use (optional).
-      run_args (list[str]): Additional arguments to pass to tast (optional).
 
     Returns:
       list[str]: The list of tests that met the specified expression(s).
     """
     # Used by tast to determine where to download private bundles.
-    build_artifacts_url = 'gs://{}/{}/'.format(
-        build_payload.artifacts_gs_bucket, build_payload.artifacts_gs_path)
-    tast_dir = test_artifacts_dir.join('tast')
-    tests = self._list_tests(dut_name, expressions, tast_dir, private_key_path,
-                             build_artifacts_url)
-    self._run_tests(dut_name, expressions, tast_dir, private_key_path,
-                    build_artifacts_url, test_results_dir, run_args)
+    tast_inputs = tast_inputs.copy()
+    tast_inputs.test_artifacts_dir = tast_inputs.test_artifacts_dir.join('tast')
+    tests = self._list_tests(dut_name, tast_inputs)
+    self._run_tests(dut_name, tast_inputs, test_results_dir)
     return tests
 
   @staticmethod
@@ -269,20 +272,20 @@ class TastExecApi(RecipeApi):
     self.m.step('download artifacts from VM', cmd, infra_step=True,
                 timeout=5 * 60)
 
-  def _list_tests(self, dut_name, expressions, tast_dir, private_key_path,
-                  build_artifacts_url):
+  def _list_tests(self, dut_name, tast_inputs):
+    tast_dir = tast_inputs.test_artifacts_dir
     private_builder = 'false' if self._public_builder else 'true'
     private_bundles_str = '-downloadprivatebundles={}'.format(private_builder)
     keyfile_args = []
-    if private_key_path is not None:
-      keyfile_args = ['-keyfile={}'.format(private_key_path)]
+    if tast_inputs.private_key_path is not None:
+      keyfile_args = ['-keyfile={}'.format(tast_inputs.private_key_path)]
 
     list_stdout = self.m.easy.stdout_step('tast list', [
         str(tast_dir.join('tast')), \
         'list', \
         '-build=false', \
         private_bundles_str, \
-        '-buildartifactsurl={}'.format(build_artifacts_url), \
+        '-buildartifactsurl={}'.format(tast_inputs.build_artifacts_url()), \
         '-remotebundledir={}'.format(
             str(tast_dir.join('bundles').join('remote'))), \
         '-remotedatadir={}'.format(str(
@@ -291,7 +294,7 @@ class TastExecApi(RecipeApi):
             str(tast_dir.join('remote_test_runner')))] + \
     keyfile_args + \
     [dut_name] + \
-    list(expressions), timeout=5 * 60)
+    list(tast_inputs.expressions), timeout=5 * 60)
 
     tests = [t.strip() for t in list_stdout.splitlines()]
     return tests
@@ -312,16 +315,16 @@ class TastExecApi(RecipeApi):
       flag_name = '-{}'.format(flag_name)
     return flag_name in self._tast_cli_supported_flags
 
-  def _run_tests(self, dut_name, expressions, tast_dir, private_key_path,
-                 build_artifacts_url, test_results_dir, extra_args):
+  def _run_tests(self, dut_name, tast_inputs, test_results_dir):
+    tast_dir = tast_inputs.test_artifacts_dir
     private_builder = 'false' if self._public_builder else 'true'
     private_bundles_str = '-downloadprivatebundles={}'.format(private_builder)
     maybemissingvars_args = []
     if self._public_builder:
       maybemissingvars_args = [r'-maybemissingvars=.+\..+']
     keyfile_args = []
-    if private_key_path is not None:
-      keyfile_args = ['-keyfile={}'.format(private_key_path)]
+    if tast_inputs.private_key_path is not None:
+      keyfile_args = ['-keyfile={}'.format(tast_inputs.private_key_path)]
 
     self.m.step('tast run', [
         str(tast_dir.join('tast')), \
@@ -330,7 +333,7 @@ class TastExecApi(RecipeApi):
         '-build=false', \
         '-sshretries=2', \
         private_bundles_str, \
-        '-buildartifactsurl={}'.format(build_artifacts_url), \
+        '-buildartifactsurl={}'.format(tast_inputs.build_artifacts_url()), \
         '-waituntilready', \
         '-continueafterfailure', \
         '-extrauseflags=tast_vm', \
@@ -344,9 +347,9 @@ class TastExecApi(RecipeApi):
             str(tast_dir.join('remote_test_runner')))] + \
         keyfile_args + \
         maybemissingvars_args + \
-        extra_args + \
+        tast_inputs.run_args + \
         [dut_name] + \
-        list(expressions), ok_ret='any', timeout=self._exec_timeout)
+        list(tast_inputs.expressions), ok_ret='any', timeout=self._exec_timeout)
 
   def create_qemu_vm_context(self, qcow_image_path, private_key_path):
     """Creates a context manager which performs setup/teardown of a QEMU VM.

@@ -33,39 +33,42 @@ def RunSteps(api):
 
   # Run with retry
   api.tast_exec.run_vm(
-      'tast_vm', ['!informational'], vm_context, test_artifacts,
-      private_key_path,
-      BuildPayload(
-          artifacts_gs_bucket='artifacts-bucket',
-          artifacts_gs_path='artifacts-path',
-      ))
+      'tast_vm', vm_context,
+      api.tast_exec.TastInputs(['!informational'], test_artifacts,
+                               BuildPayload(
+                                   artifacts_gs_bucket='artifacts-bucket',
+                                   artifacts_gs_path='artifacts-path',
+                               ), private_key_path))
 
   # Run without retry
   results_dir = api.path.mkdtemp(prefix='temp')
-  api.tast_exec.run_direct_vm(['!informational'], vm_context, test_artifacts,
-                              private_key_path,
-                              BuildPayload(
-                                  artifacts_gs_bucket='artifacts-bucket',
-                                  artifacts_gs_path='artifacts-path',
-                              ), results_dir)
-  api.tast_exec.run_direct_vm(['example.Pass'], vm_context, test_artifacts,
-                              private_key_path,
-                              BuildPayload(
-                                  artifacts_gs_bucket='artifacts-bucket',
-                                  artifacts_gs_path='artifacts-path',
-                              ), results_dir, run_args=['-var=myVar=myVal'])
+  api.tast_exec.run_direct_vm(
+      vm_context, results_dir,
+      api.tast_exec.TastInputs(['!informational'], test_artifacts,
+                               BuildPayload(
+                                   artifacts_gs_bucket='artifacts-bucket',
+                                   artifacts_gs_path='artifacts-path',
+                               ), private_key_path))
+  api.tast_exec.run_direct_vm(
+      vm_context, results_dir,
+      api.tast_exec.TastInputs(['example.Pass'], test_artifacts,
+                               BuildPayload(
+                                   artifacts_gs_bucket='artifacts-bucket',
+                                   artifacts_gs_path='artifacts-path',
+                               ), private_key_path,
+                               run_args=['-var=myVar=myVal']))
 
   # Run with GCE VM
   vm_context = api.tast_exec.create_gce_vm_context('image', 'project',
                                                    'machine', 'zone', 'network',
                                                    'subnet', private_key_path)
   api.tast_exec.run_vm(
-      'tast_vm', ['!informational'], vm_context, test_artifacts,
-      private_key_path,
-      BuildPayload(
-          artifacts_gs_bucket='artifacts-bucket',
-          artifacts_gs_path='artifacts-path',
-      ))
+      'tast_vm', vm_context,
+      api.tast_exec.TastInputs(['!informational'], test_artifacts,
+                               BuildPayload(
+                                   artifacts_gs_bucket='artifacts-bucket',
+                                   artifacts_gs_path='artifacts-path',
+                               ), private_key_path))
 
 
 def GenTests(api):
