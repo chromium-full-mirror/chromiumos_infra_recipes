@@ -17,7 +17,7 @@ class CloudPubsubApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))
   def publish_message(self, project_id, topic_id, data, ordering_key=None,
-                      endpoint=None):
+                      endpoint=None, raise_on_failed_publish=True):
     """Publish a message to Cloud Pub/Sub
 
     When specifying an ordering key to ensure message ordering, an explicit
@@ -32,6 +32,10 @@ class CloudPubsubApi(recipe_api.RecipeApi):
       * ordering_key (str): ordering key to be sent with message
       * endpoint (str): specific pub/sub endpoint to use
           eg: "us-east1-pubsub.googleapis.com"
+      * raise_on_failed_publish (bool): If True, raise exception on failure.
+
+    Raises:
+      InfraFailure: If the publish fails and raise_on_failed_publish.
     """
     with self.m.step.nest('publish message') as presentation,\
          self.m.context(infra_steps=True):
@@ -47,5 +51,12 @@ class CloudPubsubApi(recipe_api.RecipeApi):
       presentation.logs['request'] = [pprint.pformat(publish_input)]
 
       test_output_data = {'message_id': '12345'}
-      self.m.support.call('publish-message', publish_input,
-                          test_output_data=test_output_data)
+      try:
+        self.m.support.call('publish-message', publish_input, infra_step=True,
+                            test_output_data=test_output_data)
+      except recipe_api.InfraFailure as e:
+        if raise_on_failed_publish:
+          raise e
+        else:
+          presentation.step_text = 'Failed but not fatal.'
+          presentation.status = self.m.step.INFRA_FAILURE

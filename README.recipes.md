@@ -166,6 +166,7 @@
   * [cipd_uprev](#recipes-cipd_uprev) (Python3 ✅)
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full) (Python3 ✅)
+  * [cloud_pubsub:tests/raises_on_failed_publish](#recipes-cloud_pubsub_tests_raises_on_failed_publish) (Python3 ✅)
   * [cloudready_shim](#recipes-cloudready_shim) &mdash; Recipe for building the Cloudready shim.
   * [code_coverage:examples/firmware_lcov](#recipes-code_coverage_examples_firmware_lcov)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
@@ -1216,29 +1217,31 @@ API implemention for build reporting.
 
 &emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#128)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#207)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#210)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#287)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#290)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
 Args:
-  step_name: Predefined step name, one of BuildReport.StepDetails.StepName
-  start_time: UTC datemite indicating step start time
-  end_time: UTC datetime indicating step end time
-  status: Step status (default: running)
+  step_name (StepDetails.StepName): The predefined step name.
+  start_time (Datetime): UTC datetime indicating step start time
+  end_time (Datetime): UTC datetime indicating step end time
+  status (StepDetails.Status): Step status (default: STATUS_RUNNING)
+  raise_on_failed_publish (bool): Should this publish fail, fail the whole
+      build.
 
 Return:
    _MessageDelegate wrapping StepDetails instance
 
 &emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#132)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#157)(self, build_report):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#157)(self, build_report, raise_on_failed_publish=False):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1246,28 +1249,30 @@ Also aggregates the published BuildReport which is then available through
 the merged_build_report property.
 
 Args:
-  build_report: Instance of BuildReport to send to pub/sub
+  build_report (BuildReport): Instance to send to pub/sub.
+  raise_on_failed_publish (bool): Should this publish fail, fail the whole
+      build.
 
 Return:
-  Reference to input message
+  Reference to BuildReport input message.
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#251)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#254)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
 Args:
-  artifact_type: BuildReport.BuildArtifact.Type for artifact
-  gs_uri: GS bucket URI for artifact (eg: gs://foo/bar/baz.tgz)
-  sha256: SHA256 hash for artifact
-  created (optional): datetime for when artifact was created (default: now)
+  artifact_type (BuildArtifact.Type): Type of the artifact.
+  gs_uri (str): GS bucket URI for artifact (eg: gs://foo/bar/baz.tgz).
+  sha256 (str): SHA256 hash for artifact.
+  created (Datetime): Optional creation time (default: now).
 
-Throws:
-  ValueError if gs_uri isn't properly formatted with gs:// prefix
+Raises:
+  ValueError if gs_uri isn't properly formatted with gs:// prefix.
 
 Return:
-  Nothing
+  None
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#380)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#389)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1276,18 +1281,18 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#400)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#409)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#219)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#222)(self, status):**
 
 Publish and merge build status.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#227)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#230)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1309,7 +1314,7 @@ Set the type for the build, must be set once and only once.
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#322)(self, step_name):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#329)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 
@@ -1327,8 +1332,9 @@ If a StepFailure occurs, status is set to STATUS_FAILURE automatically, and
 similarly, InfraFailure sets status to STATUS_INFRA_FAILURE.
 
 Args:
-  step_name: Predefined step name, one of BuildReport.StepDetails.StepName
-
+  step_name (StepDetails.StepName): The predefined step name.
+  raise_on_failed_publish (bool): Should this publish fail, fail the whole
+      build.
 Return:
   Handle which is used to set the step status.
 ### *recipe_modules* / [buildbucket\_stats](/recipe_modules/buildbucket_stats)
@@ -1623,7 +1629,7 @@ APIs for using Cloud Pub/Sub
 
 A module for Cloud Pub/Sub
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
 
 Publish a message to Cloud Pub/Sub
 
@@ -1639,6 +1645,10 @@ Args:
   * ordering_key (str): ordering key to be sent with message
   * endpoint (str): specific pub/sub endpoint to use
       eg: "us-east1-pubsub.googleapis.com"
+  * raise_on_failed_publish (bool): If True, raise exception on failure.
+
+Raises:
+  InfraFailure: If the publish fails and raise_on_failed_publish.
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
 [DEPS](/recipe_modules/code_coverage/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8558,7 +8568,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#69)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#70)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#42)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -8848,6 +8858,13 @@ For more details on the input properties, see cl_factory.proto.
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cloud_pubsub/examples/full.py#11)(api):**
+### *recipes* / [cloud\_pubsub:tests/raises\_on\_failed\_publish](/recipe_modules/cloud_pubsub/tests/raises_on_failed_publish.py)
+
+[DEPS](/recipe_modules/cloud_pubsub/tests/raises_on_failed_publish.py#5): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cloud_pubsub/tests/raises_on_failed_publish.py#21)(api, raise_on_failed_publish):**
 ### *recipes* / [cloudready\_shim](/recipes/cloudready_shim.py)
 
 [DEPS](/recipes/cloudready_shim.py#8): [git](#recipe_modules-git), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

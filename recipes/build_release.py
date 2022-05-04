@@ -49,7 +49,8 @@ def RunSteps(api):
 
     #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
     with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
-      with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL):
+      with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
+                                              raise_on_failed_publish=True):
         with api.build_menu.configure_builder() as config, \
             api.build_menu.setup_workspace_and_chroot():
           return DoRunSteps(api, config)

@@ -154,17 +154,19 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._step_order = make_oneup()
     self._msg_counter = make_oneup()
 
-  def publish(self, build_report):
+  def publish(self, build_report, raise_on_failed_publish=False):
     """Send a BuildReport to the pubsub topic.
 
     Also aggregates the published BuildReport which is then available through
     the merged_build_report property.
 
     Args:
-      build_report: Instance of BuildReport to send to pub/sub
+      build_report (BuildReport): Instance to send to pub/sub.
+      raise_on_failed_publish (bool): Should this publish fail, fail the whole
+          build.
 
     Return:
-      Reference to input message
+      Reference to BuildReport input message.
     """
     if not isinstance(build_report, BuildReport):
       raise TypeError("Can only publish BuildReport messages.")
@@ -200,6 +202,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
           self._build_report.SerializeToString().encode('base64'),
           ordering_key=str(self.m.buildbucket.build.id or 'led-launch'),
           endpoint=PUBSUB_ENDPOINT,
+          raise_on_failed_publish=raise_on_failed_publish,
       )
 
     return build_report
@@ -258,16 +261,16 @@ class BuildReportingApi(recipe_api.RecipeApi):
     """Publish and merge information about a created artifact.
 
     Args:
-      artifact_type: BuildReport.BuildArtifact.Type for artifact
-      gs_uri: GS bucket URI for artifact (eg: gs://foo/bar/baz.tgz)
-      sha256: SHA256 hash for artifact
-      created (optional): datetime for when artifact was created (default: now)
+      artifact_type (BuildArtifact.Type): Type of the artifact.
+      gs_uri (str): GS bucket URI for artifact (eg: gs://foo/bar/baz.tgz).
+      sha256 (str): SHA256 hash for artifact.
+      created (Datetime): Optional creation time (default: now).
 
-    Throws:
-      ValueError if gs_uri isn't properly formatted with gs:// prefix
+    Raises:
+      ValueError if gs_uri isn't properly formatted with gs:// prefix.
 
     Return:
-      Nothing
+      None
     """
     created = created or self.m.time.utcnow()
 
@@ -290,14 +293,17 @@ class BuildReportingApi(recipe_api.RecipeApi):
       start_time=None,
       end_time=None,
       status=BuildReport.StepDetails.STATUS_RUNNING,
+      raise_on_failed_publish=False,
   ):
     """Create a StepDetails instance to publish information for a step.
 
     Args:
-      step_name: Predefined step name, one of BuildReport.StepDetails.StepName
-      start_time: UTC datemite indicating step start time
-      end_time: UTC datetime indicating step end time
-      status: Step status (default: running)
+      step_name (StepDetails.StepName): The predefined step name.
+      start_time (Datetime): UTC datetime indicating step start time
+      end_time (Datetime): UTC datetime indicating step end time
+      status (StepDetails.Status): Step status (default: STATUS_RUNNING)
+      raise_on_failed_publish (bool): Should this publish fail, fail the whole
+          build.
 
     Return:
        _MessageDelegate wrapping StepDetails instance
@@ -316,11 +322,12 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     return _MessageDelegate(
         step_details,
-        lambda: self.publish(build_report),
+        lambda: self.publish(build_report,
+                             raise_on_failed_publish=raise_on_failed_publish),
     )
 
   @contextlib.contextmanager
-  def step_reporting(self, step_name):
+  def step_reporting(self, step_name, raise_on_failed_publish=False):
     """Create a context manager to automatically send out step status.
 
     When created, initial step status is published with the current time and
@@ -337,8 +344,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
     similarly, InfraFailure sets status to STATUS_INFRA_FAILURE.
 
     Args:
-      step_name: Predefined step name, one of BuildReport.StepDetails.StepName
-
+      step_name (StepDetails.StepName): The predefined step name.
+      raise_on_failed_publish (bool): Should this publish fail, fail the whole
+          build.
     Return:
       Handle which is used to set the step status.
     """
@@ -360,6 +368,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     step_info = self.create_step_info(
         step_name,
         start_time=self.m.time.utcnow(),
+        raise_on_failed_publish=raise_on_failed_publish,
     )
     step_info.publish()
 
