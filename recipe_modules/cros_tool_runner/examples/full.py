@@ -10,6 +10,8 @@ DEPS = [
     'cros_tool_runner',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.build.api import container_metadata
 

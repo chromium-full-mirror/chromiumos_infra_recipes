@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -36,9 +38,13 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     if not self._images_file_path:
       self.container_metadata = container_metadata
       self._images_file_path = self.m.path.mkstemp(prefix='container_images')
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix the separator
+      # spacing between py2 and py3 MessageToJson.
+      container_metadata_output = json.dumps(
+          json_format.MessageToDict(self.container_metadata),
+          separators=(',', ':'), sort_keys=True)
       self.m.file.write_text('writing container metadata to file',
-                             self._images_file_path,
-                             json_format.MessageToJson(self.container_metadata))
+                             self._images_file_path, container_metadata_output)
 
   def _run(self, subcommand, request, request_type, response_type=None,
            send_response=False):

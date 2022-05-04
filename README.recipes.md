@@ -49,7 +49,7 @@
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess) (Python3 ✅)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor)
   * [cros_test_runner](#recipe_modules-cros_test_runner) (Python3 ✅)
-  * [cros_tool_runner](#recipe_modules-cros_tool_runner)
+  * [cros_tool_runner](#recipe_modules-cros_tool_runner) (Python3 ✅)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) (Python3 ✅) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
@@ -301,7 +301,7 @@
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
   * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests)
   * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full) (Python3 ✅)
-  * [cros_tool_runner:examples/full](#recipes-cros_tool_runner_examples_full)
+  * [cros_tool_runner:examples/full](#recipes-cros_tool_runner_examples_full) (Python3 ✅)
   * [cros_version:examples/bump_version](#recipes-cros_version_examples_bump_version)
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
@@ -4372,49 +4372,49 @@ Returns: bool
 
 [DEPS](/recipe_modules/cros_tool_runner/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosToolRunnerCommand](/recipe_modules/cros_tool_runner/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosToolRunnerCommand](/recipe_modules/cros_tool_runner/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing CrosToolRunner commands
 
-&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#30)(self, container_metadata):**
+&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#32)(self, container_metadata):**
 
 Create a temp file with provided container metadata.
 
 Args:
   container_metadata: (ContainerMetadata) container metadata.
 
-&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#163)(self):**
+&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#169)(self):**
 
 Ensure the CrosToolRunner CLI is installed.
 
-&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#97)(self, request):**
+&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#103)(self, request):**
 
 Find tests via `test-finder` subcommand.
 
 Args:
   request: a CrosToolRunnerTestFinderRequest.
 
-&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#88)(self, request):**
+&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#94)(self, request):**
 
 Run provision via `provision` subcommand.
 
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#200)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#206)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#107)(self, request):**
+&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#113)(self, request):**
 
 Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#116)(self, autotest_dir, results_dir):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#122)(self, autotest_dir, results_dir):**
 
 Upload test results to TKO via tko-parse.
 This command does not call into CTR. It directly invokes tko-parse in autotest.
@@ -9878,11 +9878,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_tool_runner/examples/full.py#6): [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_tool_runner/examples/full.py#41)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_tool_runner/examples/full.py#43)(api):**
 
-&mdash; **def [mock\_metadata](/recipe_modules/cros_tool_runner/examples/full.py#17)(target='test-target'):**
+&mdash; **def [mock\_metadata](/recipe_modules/cros_tool_runner/examples/full.py#19)(target='test-target'):**
 ### *recipes* / [cros\_version:examples/bump\_version](/recipe_modules/cros_version/examples/bump_version.py)
 
 [DEPS](/recipe_modules/cros_version/examples/bump_version.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
