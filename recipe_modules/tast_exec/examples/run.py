@@ -12,39 +12,60 @@ DEPS = [
 ]
 
 from recipe_engine import post_process
+from PB.testplans.generate_test_plan import BuildPayload
 
 
 def RunSteps(api):
   test_artifacts = api.path.mkdtemp(prefix='temp')
-  api.tast_exec.download_tast('bucket', 'path', test_artifacts)
+  api.tast_exec.download_tast(
+      BuildPayload(
+          artifacts_gs_bucket='bucket',
+          artifacts_gs_path='path',
+      ), test_artifacts)
   vm_dir = api.path.mkdtemp(prefix='temp')
   qcow_image, private_key_path = api.tast_exec.download_vm(
-      'bucket', 'path', vm_dir)
+      BuildPayload(
+          artifacts_gs_bucket='bucket',
+          artifacts_gs_path='path',
+      ), vm_dir)
   vm_context = api.tast_exec.create_qemu_vm_context(qcow_image,
                                                     private_key_path)
 
   # Run with retry
-  api.tast_exec.run_vm('tast_vm', ['!informational'], vm_context,
-                       test_artifacts, private_key_path, 'artifacts-bucket',
-                       'artifacts-path')
+  api.tast_exec.run_vm(
+      'tast_vm', ['!informational'], vm_context, test_artifacts,
+      private_key_path,
+      BuildPayload(
+          artifacts_gs_bucket='artifacts-bucket',
+          artifacts_gs_path='artifacts-path',
+      ))
 
   # Run without retry
   results_dir = api.path.mkdtemp(prefix='temp')
   api.tast_exec.run_direct_vm(['!informational'], vm_context, test_artifacts,
-                              private_key_path, 'artifacts-bucket',
-                              'artifacts-path', results_dir)
+                              private_key_path,
+                              BuildPayload(
+                                  artifacts_gs_bucket='artifacts-bucket',
+                                  artifacts_gs_path='artifacts-path',
+                              ), results_dir)
   api.tast_exec.run_direct_vm(['example.Pass'], vm_context, test_artifacts,
-                              private_key_path, 'artifacts-bucket',
-                              'artifacts-path', results_dir,
-                              run_args=['-var=myVar=myVal'])
+                              private_key_path,
+                              BuildPayload(
+                                  artifacts_gs_bucket='artifacts-bucket',
+                                  artifacts_gs_path='artifacts-path',
+                              ), results_dir, run_args=['-var=myVar=myVal'])
 
   # Run with GCE VM
   vm_context = api.tast_exec.create_gce_vm_context('image', 'project',
                                                    'machine', 'zone', 'network',
                                                    'subnet', private_key_path)
-  api.tast_exec.run_vm('tast_vm', ['!informational'], vm_context,
-                       test_artifacts, private_key_path, 'artifacts-bucket',
-                       'artifacts-path')
+  api.tast_exec.run_vm(
+      'tast_vm', ['!informational'], vm_context, test_artifacts,
+      private_key_path,
+      BuildPayload(
+          artifacts_gs_bucket='artifacts-bucket',
+          artifacts_gs_path='artifacts-path',
+      ))
 
 
 def GenTests(api):

@@ -21,6 +21,7 @@ from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
 from PB.test_platform.taskstate import TaskState
+from PB.testplans.generate_test_plan import BuildPayload
 
 DEPS = [
     'depot_tools/gsutil',
@@ -94,8 +95,9 @@ def build_vm_image(api, properties):
   """
   # Download tast runner.
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
-  api.tast_exec.download_tast(properties.build_gs_bucket,
-                              properties.build_gs_path, test_artifacts_dir)
+  build_payload = BuildPayload(artifacts_gs_bucket=properties.build_gs_bucket,
+                               artifacts_gs_path=properties.build_gs_path)
+  api.tast_exec.download_tast(build_payload, test_artifacts_dir)
 
   # Provision the DUT with the requested version of Chrome OS and pita DLC.
   with api.step.nest('provision DUT') as presentation:
@@ -116,8 +118,7 @@ def build_vm_image(api, properties):
   image_path = image_dir.join(image_name)
 
   # Invoke tast to build the VM image.
-  invoke_tast(api, test_artifacts_dir, properties.build_gs_bucket,
-              properties.build_gs_path, image_path)
+  invoke_tast(api, test_artifacts_dir, build_payload, image_path)
 
   upload_path = '{}/{}'.format(properties.test_image_gs_path, image_name)
   with api.step.nest('upload image') as presentation:
@@ -176,16 +177,13 @@ def build_vm_image(api, properties):
   return image_name, size, sha256
 
 
-def invoke_tast(api, test_artifacts_dir, build_gs_bucket, build_gs_path,
-                dest_path):
+def invoke_tast(api, test_artifacts_dir, build_payload, dest_path):
   """Runs tast to build the new VM image.
 
   Args:
     test_artifacts_dir (Path): The location of test artifacts produced by the
       build.
-    build_gs_bucket (str): The google storage bucket of build output artifacts.
-    build_gs_path (str): The path of build output artifacts, within
-      build_gs_bucket.
+    build_payload (BuildPayload): Describes where the artifact is on GS.
     dest_path (Path): The location that the produced VM image should be copied
       to (on the local disk).
   """
@@ -193,7 +191,7 @@ def invoke_tast(api, test_artifacts_dir, build_gs_bucket, build_gs_path,
     tast_results_dir = api.path.mkdtemp(prefix='tast-results')
     tests = api.tast_exec.run_direct(
         api.phosphorus.read_dut_hostname(), [_TAST_NAME], test_artifacts_dir,
-        build_gs_bucket, build_gs_path, tast_results_dir,
+        build_payload, tast_results_dir,
         run_args=['-var=pita.windowsLicensed=true'])
 
     try:

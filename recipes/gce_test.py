@@ -31,9 +31,7 @@ _IMAGE_LICENSES = [
 
 def RunSteps(api, properties):
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
-  api.tast_exec.download_tast(properties.build_payload.artifacts_gs_bucket,
-                              properties.build_payload.artifacts_gs_path,
-                              test_artifacts_dir)
+  api.tast_exec.download_tast(properties.build_payload, test_artifacts_dir)
 
   api.gcloud.set_gce_project(project=properties.gce_metadata.project)
   api.gcloud.auth_list()
@@ -68,9 +66,7 @@ def RunSteps(api, properties):
     with api.step.nest('run tast tests'):
       failures, empty_result = api.tast_exec.run_vm(
           properties.name, properties.expressions, vm_context,
-          test_artifacts_dir, private_key_path,
-          properties.build_payload.artifacts_gs_bucket,
-          properties.build_payload.artifacts_gs_path)
+          test_artifacts_dir, private_key_path, properties.build_payload)
 
     api.tast_results.print_results(failures, empty_result)
 

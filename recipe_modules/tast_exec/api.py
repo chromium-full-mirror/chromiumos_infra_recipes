@@ -34,14 +34,11 @@ class TastExecApi(RecipeApi):
     self._public_builder = properties.public_builder
     self._tast_cli_supported_flags = []
 
-  def download_tast(self, artifacts_gs_bucket, artifacts_gs_path,
-                    test_artifacts_dir):
+  def download_tast(self, build_payload, test_artifacts_dir):
     """Downloads the tast executable from specified build artifacts.
 
     Args:
-      artifacts_gs_bucket (str): The bucket containing build artifacts.
-      artifacts_gs_path (str): The bucket path containing the build output,
-        for example, "eve-paladin/R78-11588.0.0".
+      build_payload (BuildPayload): Describes where the artifact is on GS.
       test_artifacts_dir (str): The directory to which files should be
         downloaded. The tast executable will be found at tast/tast relative
         to this directory.
@@ -49,21 +46,19 @@ class TastExecApi(RecipeApi):
     with self.m.step.nest('setup tast') as presentation:
       presentation.text = 'download tast executable'
       sp_tar_file = test_artifacts_dir.join('autotest_server_package.tar.bz2')
-      archive_path = os.path.join(artifacts_gs_path,
+      archive_path = os.path.join(build_payload.artifacts_gs_path,
                                   'autotest_server_package.tar.bz2')
-      self.m.gsutil.download(artifacts_gs_bucket, archive_path, sp_tar_file,
-                             name='download tast bundle from GS')
+      self.m.gsutil.download(build_payload.artifacts_gs_bucket, archive_path,
+                             sp_tar_file, name='download tast bundle from GS')
       self.m.step(
           'untar tast',
           ['tar', 'xjf', sp_tar_file, '--directory', test_artifacts_dir])
 
-  def download_vm(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):
+  def download_vm(self, build_payload, vm_dir):
     """Downloads the VM image from specified build artifacts.
 
     Args:
-      artifacts_gs_bucket (str): The bucket containing build artifacts.
-      artifacts_gs_path (str): The bucket path containing the build output,
-        for example, "eve-paladin/R78-11588.0.0".
+      build_payload (BuildPayload): Describes where the artifact is on GS.
       vm_dir (Path): The directory to which files should be
         downloaded.
 
@@ -79,10 +74,10 @@ class TastExecApi(RecipeApi):
       vm_image_path = test_image_dir.join(VM_IMAGE_NAME)
       qcow_image_path = test_image_dir.join(QCOW_IMG_NAME)
       private_key_path = test_image_dir.join(PRIVATE_KEY_NAME)
-      self.m.gsutil.download(artifacts_gs_bucket,
-                             os.path.join(artifacts_gs_path,
-                                          'image.zip'), test_image_zip,
-                             name='download image bundle from GS')
+      self.m.gsutil.download(
+          build_payload.artifacts_gs_bucket,
+          os.path.join(build_payload.artifacts_gs_path, 'image.zip'),
+          test_image_zip, name='download image bundle from GS')
       self.m.archive.extract('unzip image bundle', test_image_zip,
                              test_image_dir,
                              include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
@@ -99,7 +94,7 @@ class TastExecApi(RecipeApi):
     return qcow_image_path, private_key_path
 
   def run_vm(self, suite_name, expressions, vm_context, test_artifacts_dir,
-             private_key_path, artifacts_gs_bucket, artifacts_gs_path):
+             private_key_path, build_payload):
     """Run tast tests in a VM with one retry and upload logs to Google storage.
 
     Args:
@@ -109,9 +104,7 @@ class TastExecApi(RecipeApi):
         by create_qemu_vm_context/create_gce_vm_context.
       test_artifacts_dir (Path): Dir containing test artifacts.
       private_key_path (Path): Path to private key.
-      artifacts_gs_bucket (str): The bucket containing build artifacts.
-      artifacts_gs_path (str): The bucket path containing the build output,
-        for example, "eve-paladin/R78-11588.0.0".
+      build_payload (BuildPayload): Describes where the artifact is on GS.
 
     Returns:
       A tuple of list(Failures) and a bool indicating whether
@@ -119,8 +112,7 @@ class TastExecApi(RecipeApi):
     """
     task_result = self._retry_iter(suite_name, expressions, vm_context,
                                    test_artifacts_dir, private_key_path,
-                                   'first', artifacts_gs_bucket,
-                                   artifacts_gs_path)
+                                   'first', build_payload)
     tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
     all_test_cases = []
     if task_result.test_cases:
@@ -134,8 +126,7 @@ class TastExecApi(RecipeApi):
       retry_task_result = self._retry_iter(suite_name, tests_to_retry,
                                            vm_context, test_artifacts_dir,
                                            private_key_path, 'second',
-                                           artifacts_gs_bucket,
-                                           artifacts_gs_path)
+                                           build_payload)
       all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       retry_failures, retry_tcs = self.m.tast_results.get_failures(
           retry_task_result)
@@ -155,19 +146,18 @@ class TastExecApi(RecipeApi):
     return failures, empty_result
 
   def _retry_iter(self, suite_name, expressions, vm_context, test_artifacts_dir,
-                  private_key_path, tag, artifacts_gs_bucket,
-                  artifacts_gs_path):
+                  private_key_path, tag, build_payload):
     with self.m.step.nest('%s tast iteration' % tag):
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
       tests = self.run_direct_vm(expressions, vm_context, test_artifacts_dir,
-                                 private_key_path, artifacts_gs_bucket,
-                                 artifacts_gs_path, test_results_dir)
+                                 private_key_path, build_payload,
+                                 test_results_dir)
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests)
 
   def run_direct_vm(self, expressions, vm_context, test_artifacts_dir,
-                    private_key_path, artifacts_gs_bucket, artifacts_gs_path,
-                    test_results_dir, run_args=None):
+                    private_key_path, build_payload, test_results_dir,
+                    run_args=None):
     """Run tast tests in a VM without retries or results processing.
 
     Args:
@@ -176,9 +166,7 @@ class TastExecApi(RecipeApi):
         by create_qemu_vm_context/create_gce_vm_context.
       test_artifacts_dir (Path): Dir containing test artifacts.
       private_key_path (Path): Path to private key.
-      artifacts_gs_bucket (str): The bucket containing build artifacts.
-      artifacts_gs_path (str): The bucket path containing the build output,
-        for example, "eve-paladin/R78-11588.0.0".
+      build_payload (BuildPayload): Describes where the artifact is on GS.
       test_results_dir (Path): Path to store tast results.
       run_args (list[str]): Additional arguments to pass to tast (optional).
 
@@ -198,8 +186,8 @@ class TastExecApi(RecipeApi):
     # is cleaned up automatically when exiting the context.
     with vm_context() as (host, port):
       tests = self.run_direct('{}:{}'.format(host, port), expressions,
-                              test_artifacts_dir, artifacts_gs_bucket,
-                              artifacts_gs_path, test_results_dir,
+                              test_artifacts_dir, build_payload,
+                              test_results_dir,
                               private_key_path=private_key_path,
                               run_args=run_args)
 
@@ -213,9 +201,8 @@ class TastExecApi(RecipeApi):
       self._archive_vm_artifacts(host, port, private_key_path, test_results_dir)
     return tests
 
-  def run_direct(self, dut_name, expressions, test_artifacts_dir,
-                 artifacts_gs_bucket, artifacts_gs_path, test_results_dir,
-                 private_key_path=None, run_args=None):
+  def run_direct(self, dut_name, expressions, test_artifacts_dir, build_payload,
+                 test_results_dir, private_key_path=None, run_args=None):
     """Run tast tests without retries or results processing.
 
     Args:
@@ -223,9 +210,7 @@ class TastExecApi(RecipeApi):
         for example, my-dut-host-name or localhost:9222 (if testing a VM).
       expressions (list[str]): Expressions describing tests to run.
       test_artifacts_dir (Path): Dir containing test artifacts.
-      artifacts_gs_bucket (str): The bucket containing build artifacts.
-      artifacts_gs_path (str): The bucket path containing the build output,
-        for example, "eve-paladin/R78-11588.0.0".
+      build_payload (BuildPayload): Describes where the artifact is on GS.
       test_results_dir (Path): Path to store tast results.
       private_key_path (Path): Path to private key to use (optional).
       run_args (list[str]): Additional arguments to pass to tast (optional).
@@ -234,8 +219,8 @@ class TastExecApi(RecipeApi):
       list[str]: The list of tests that met the specified expression(s).
     """
     # Used by tast to determine where to download private bundles.
-    build_artifacts_url = 'gs://{}/{}/'.format(artifacts_gs_bucket,
-                                               artifacts_gs_path)
+    build_artifacts_url = 'gs://{}/{}/'.format(
+        build_payload.artifacts_gs_bucket, build_payload.artifacts_gs_path)
     tast_dir = test_artifacts_dir.join('tast')
     tests = self._list_tests(dut_name, expressions, tast_dir, private_key_path,
                              build_artifacts_url)

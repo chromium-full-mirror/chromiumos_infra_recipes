@@ -7701,7 +7701,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#444)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#429)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7720,7 +7720,7 @@ Returns:
       (host, port) for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#366)(self, qcow_image_path, private_key_path):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#351)(self, qcow_image_path, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -7734,26 +7734,22 @@ Returns:
       (host, port) for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#37)(self, artifacts_gs_bucket, artifacts_gs_path, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#37)(self, build_payload, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
 Args:
-  artifacts_gs_bucket (str): The bucket containing build artifacts.
-  artifacts_gs_path (str): The bucket path containing the build output,
-    for example, "eve-paladin/R78-11588.0.0".
+  build_payload (BuildPayload): Describes where the artifact is on GS.
   test_artifacts_dir (str): The directory to which files should be
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#60)(self, artifacts_gs_bucket, artifacts_gs_path, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#57)(self, build_payload, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
 Args:
-  artifacts_gs_bucket (str): The bucket containing build artifacts.
-  artifacts_gs_path (str): The bucket path containing the build output,
-    for example, "eve-paladin/R78-11588.0.0".
+  build_payload (BuildPayload): Describes where the artifact is on GS.
   vm_dir (Path): The directory to which files should be
     downloaded.
 
@@ -7763,7 +7759,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#216)(self, dut_name, expressions, test_artifacts_dir, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, private_key_path=None, run_args=None):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#204)(self, dut_name, expressions, test_artifacts_dir, build_payload, test_results_dir, private_key_path=None, run_args=None):**
 
 Run tast tests without retries or results processing.
 
@@ -7772,9 +7768,7 @@ Args:
     for example, my-dut-host-name or localhost:9222 (if testing a VM).
   expressions (list[str]): Expressions describing tests to run.
   test_artifacts_dir (Path): Dir containing test artifacts.
-  artifacts_gs_bucket (str): The bucket containing build artifacts.
-  artifacts_gs_path (str): The bucket path containing the build output,
-    for example, "eve-paladin/R78-11588.0.0".
+  build_payload (BuildPayload): Describes where the artifact is on GS.
   test_results_dir (Path): Path to store tast results.
   private_key_path (Path): Path to private key to use (optional).
   run_args (list[str]): Additional arguments to pass to tast (optional).
@@ -7782,7 +7776,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#168)(self, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path, test_results_dir, run_args=None):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#158)(self, expressions, vm_context, test_artifacts_dir, private_key_path, build_payload, test_results_dir, run_args=None):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -7792,16 +7786,14 @@ Args:
     by create_qemu_vm_context/create_gce_vm_context.
   test_artifacts_dir (Path): Dir containing test artifacts.
   private_key_path (Path): Path to private key.
-  artifacts_gs_bucket (str): The bucket containing build artifacts.
-  artifacts_gs_path (str): The bucket path containing the build output,
-    for example, "eve-paladin/R78-11588.0.0".
+  build_payload (BuildPayload): Describes where the artifact is on GS.
   test_results_dir (Path): Path to store tast results.
   run_args (list[str]): Additional arguments to pass to tast (optional).
 
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#101)(self, suite_name, expressions, vm_context, test_artifacts_dir, private_key_path, artifacts_gs_bucket, artifacts_gs_path):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#96)(self, suite_name, expressions, vm_context, test_artifacts_dir, private_key_path, build_payload):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
@@ -7812,9 +7804,7 @@ Args:
     by create_qemu_vm_context/create_gce_vm_context.
   test_artifacts_dir (Path): Dir containing test artifacts.
   private_key_path (Path): Path to private key.
-  artifacts_gs_bucket (str): The bucket containing build artifacts.
-  artifacts_gs_path (str): The bucket path containing the build output,
-    for example, "eve-paladin/R78-11588.0.0".
+  build_payload (BuildPayload): Describes where the artifact is on GS.
 
 Returns:
   A tuple of list(Failures) and a bool indicating whether
@@ -8473,7 +8463,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 &mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no_dep_graph.py#16)(api):**
 ### *recipes* / [build\_parallels\_image](/recipes/build_parallels_image.py)
 
-[DEPS](/recipes/build_parallels_image.py#25): [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_parallels_image.py#26): [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -8489,9 +8479,9 @@ for more details.
 
 This recipe is invoked as part of uprev_parallels_pin.
 
-&mdash; **def [RunSteps](/recipes/build_parallels_image.py#56)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_parallels_image.py#57)(api, properties):**
 
-&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#87)(api, properties):**
+&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#88)(api, properties):**
 
 Builds a new VM image for testing.
 
@@ -8500,16 +8490,14 @@ Returns:
   image_size(int): The size of the generated image, in bytes.
   image_hash(str): The base64-encoded SHA256 hash of the generated image.
 
-&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#179)(api, test_artifacts_dir, build_gs_bucket, build_gs_path, dest_path):**
+&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#180)(api, test_artifacts_dir, build_payload, dest_path):**
 
 Runs tast to build the new VM image.
 
 Args:
   test_artifacts_dir (Path): The location of test artifacts produced by the
     build.
-  build_gs_bucket (str): The google storage bucket of build output artifacts.
-  build_gs_path (str): The path of build output artifacts, within
-    build_gs_bucket.
+  build_payload (BuildPayload): Describes where the artifact is on GS.
   dest_path (Path): The location that the produced VM image should be copied
     to (on the local disk).
 ### *recipes* / [build\_plan:examples/bisect\_build\_plan](/recipe_modules/build_plan/examples/bisect_build_plan.py)
@@ -11209,7 +11197,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
-&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#18)(api):**
 ### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
