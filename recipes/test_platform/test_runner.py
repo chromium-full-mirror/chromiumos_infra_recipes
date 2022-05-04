@@ -238,7 +238,36 @@ def _collect_tests_for_phosphorus(request):
   return tests
 
 
-def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals):
+def _read_crossystem_keyvals(api, crossystem_file_path):
+  """Reads the contents of crossystem keyval file.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * crossystem_file_path (string): The path to the crossystem file.
+  Returns:
+  * sysinfo_keyvals (dict): Contents of the crossystem keyval file.
+  """
+  try:
+    contents = api.file.read_text('read crossystem keyval file',
+                                  crossystem_file_path,
+                                  test_data='').splitlines()
+    crossystem_keyvals = {}
+    for line in contents:
+      # Line example:
+      # "fwid = Google_Voema.13672.224.0 # [RO/str] Active firmware ID"
+      line = line.split('#')[0].replace(' ', '')
+      items = line.split('=')
+      if len(items) < 2:
+        continue
+      crossystem_keyvals[items[0]] = items[1]
+
+    return crossystem_keyvals
+  except api.file.Error:
+    return {}
+
+
+def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
+                                 crossystem_keyvals):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
@@ -268,12 +297,18 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals):
         e.g. main
     * main_builder_name: Refer to "master_builder_name" in Stainless,
         e.g. master-release
+    * ro_fwid: Read-only firmware version,
+        e.g. Google_Voema.13672.224.0
+    * rw_fwid: Read-write firmware version,
+        e.g. Google_Voema.13672.224.0
+
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
     * autotest_keyvals (dict): The keyval labels for autotest test results.
+    * crossystem_keyvals (dict): The keyval labels for crossystem.
 
     Returns:
     * base_tags (list[tuples]): Tags for the test results.
@@ -336,6 +371,14 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals):
   if main_builder_name:
     base_tags.append(('main_builder_name', main_builder_name))
 
+  # Fetches the following information from crossystem keyvals.
+  ro_fwid = crossystem_keyvals.get('ro_fwid')
+  if ro_fwid:
+    base_tags.append(('ro_fwid', ro_fwid))
+  rw_fwid = crossystem_keyvals.get('fwid')
+  if rw_fwid:
+    base_tags.append(('rw_fwid', rw_fwid))
+
   return base_tags
 
 
@@ -392,7 +435,7 @@ def _upload_missing_tast_results(api, base_dir, base_variant):
     """
   keyval_file = os.path.join(base_dir, 'autoserv_test', 'keyval')
   try:
-    content = api.file.read_text('read keyval file', keyval_file,
+    content = api.file.read_text('read autotest keyval file', keyval_file,
                                  test_data='').splitlines()
   except api.file.Error:
     # TODO(b/230441871): Improve the behavior when failed to read the autotest
@@ -460,6 +503,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     artifact_directory = None
 
   autotest_keyvals = test_metadata.test.autotest.keyvals
+  crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
+                                      'crossystem')
+  crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
   config = {
       'result_format':
           result_format,
@@ -469,7 +515,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
               properties.request.prejob.software_attributes.build_target.name,
               properties.request.parent_request_uid, autotest_keyvals),
       'base_tags':
-          _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals),
+          _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
+                                       crossystem_keyvals),
       'result_file':
           result_file,
       'artifact_directory':
@@ -759,9 +806,21 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
 
+      # Gets the result dir path for the first test case result,
+      # e.g. "/home/chromeos-test/skylab_bots/c6-r1-r24-h11.584871424/w/ir/x/w
+      #  /recipe_cleanup/output_dirWVny4f
+      #  /cros-test/artifact/tauto
+      #  /results-1-bluetooth_AdapterAdvHealth.adv_reboot_advertising_test"
+      results_dir = ""
+      if len(run_test_response.test_dut_responses) > 0:
+        ctr_test_response = run_test_response.test_dut_responses[0].data
+        results_dir = ctr_test_response.result_dir_path.path
+      crossystem_file_path = os.path.join(results_dir, 'sysinfo', 'crossystem')
+      crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
       autotest_keyvals = test_metadata.autotest_keyvals
+
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
-          api, test_metadata, autotest_keyvals)
+          api, test_metadata, autotest_keyvals, crossystem_keyvals)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
           properties.cft_test_request.parent_request_uid, autotest_keyvals)
@@ -936,9 +995,9 @@ def GenTests(api):
         execution_timeout=duration_pb2.Duration(seconds=timeout_s),
     )
 
-  def _keyval_file_step_data():
+  def _autotest_keyval_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read keyval file',
+        'execution steps.original_test.read autotest keyval file',
         api.file.read_text("""
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
@@ -958,6 +1017,24 @@ tast_missing_test.0=foo.SomeTest
 tast_missing_test.1=foo.SomeOtherTest
 tast_missing_test.2=bar.DifferentTest
 tast_missing_test.3=bar.YetAnotherTest
+    """))
+
+  def _crossystem_keyval_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.read crossystem keyval file',
+        api.file.read_text("""
+fw_prev_result          = success                        # [RO/str] Firmware result of previous boot
+fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)
+fw_result               = success                        # [RW/str] Firmware result this boot
+fw_tried                = B                              # [RO/str] Firmware tried this boot (A or B)
+fw_try_count            = 0                              # [RW/int] Number of times to try fw_try_next
+fw_try_next             = B                              # [RW/str] Firmware to try next (A or B)
+fw_vboot2               = 1                              # [RO/int] 1 if firmware was selected by vboot2 or 0 otherwise
+fwb_tries               = 0                              # [RW/int] Try firmware B count
+fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmware ID
+fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)
+hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
+ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
     """))
 
   # Required for initial module set up.
@@ -1463,11 +1540,29 @@ tast_missing_test.3=bar.YetAnotherTest
 
   def _test_case_result_resp_with_state_for_ctr(state):
     test_case_result = ctr_api.test_case_result.TestCaseResult(
-        test_case_id=ctr_api.test_case.TestCase.Id(value="dummy_id"),
+        test_case_id=ctr_api.test_case.TestCase.Id(value="tauto.dummy_id"),
         result_dir_path=StoragePath(host_type=StoragePath.HostType.LOCAL,
                                     path="dummy-results-dir/subdir"))
     data = {state: {}}
     return json_format.ParseDict(data, test_case_result)
+
+  def _crossystem_keyval_file_step_data_for_ctr():
+    return api.step_data(
+        'execution steps.read crossystem keyval file',
+        api.file.read_text("""
+fw_prev_result          = success                        # [RO/str] Firmware result of previous boot
+fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)
+fw_result               = success                        # [RW/str] Firmware result this boot
+fw_tried                = B                              # [RO/str] Firmware tried this boot (A or B)
+fw_try_count            = 0                              # [RW/int] Number of times to try fw_try_next
+fw_try_next             = B                              # [RW/str] Firmware to try next (A or B)
+fw_vboot2               = 1                              # [RO/int] 1 if firmware was selected by vboot2 or 0 otherwise
+fwb_tries               = 0                              # [RW/int] Try firmware B count
+fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmware ID
+fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)
+hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
+ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
+    """))
 
   ########## Test cases #########
 
@@ -1491,7 +1586,7 @@ tast_missing_test.3=bar.YetAnotherTest
   )
 
   yield api.test(
-      'no-tast-keyval-file',
+      'no-tast-autotest-keyval-file',
       _set_build(
           bid=42, tags={
               'label-board': 'fake-board',
@@ -1503,7 +1598,32 @@ tast_missing_test.3=bar.YetAnotherTest
               'drone_server': 'fakeserver1-row2-drone3',
               'dut_name': 'fakedut1-row2-rack3-host4',
           }),
-      api.step_data('execution steps.original_test.read keyval file',
+      api.step_data('execution steps.original_test.read autotest keyval file',
+                    api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'no-tast-crossystem-keyval-file',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+          }),
+      api.step_data('execution steps.original_test.read crossystem keyval file',
                     api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -1528,7 +1648,8 @@ tast_missing_test.3=bar.YetAnotherTest
               'drone_server': 'fakeserver1-row2-drone3',
               'dut_name': 'fakedut1-row2-rack3-host4'
           }),
-      _keyval_file_step_data(),
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -2024,6 +2145,7 @@ tast_missing_test.3=bar.YetAnotherTest
   ############ CTR Test Cases ##########
 
   yield api.test('success-with-ctr', _set_build(bid=42), _misc_properties(True),
+                 _crossystem_keyval_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _successful_run_test_step_for_ctr())

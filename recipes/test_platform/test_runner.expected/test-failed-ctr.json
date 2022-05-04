@@ -637,7 +637,7 @@
       "@@@STEP_LOG_LINE@response@      }, @@@",
       "@@@STEP_LOG_LINE@response@      \"fail\": {}, @@@",
       "@@@STEP_LOG_LINE@response@      \"testCaseId\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"value\": \"dummy_id\"@@@",
+      "@@@STEP_LOG_LINE@response@        \"value\": \"tauto.dummy_id\"@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  ]@@@",
@@ -687,11 +687,41 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.CrosToolRunner: upload to TKO.dummy_id",
+    "name": "execution steps.CrosToolRunner: upload to TKO.tauto.dummy_id",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
+      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'tauto.dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
       "@@@STEP_LOG_END@TKO upload skipped@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/crossystem",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read crossystem keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@crossystem@@@"
     ]
   },
   {
@@ -703,7 +733,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.CrosToolRunner: upload to rdb.dummy_id",
+    "name": "execution steps.CrosToolRunner: upload to rdb.tauto.dummy_id",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1012,7 +1042,7 @@
   },
   {
     "cmd": [],
-    "name": "test results.dummy_id",
+    "name": "test results.tauto.dummy_id",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
