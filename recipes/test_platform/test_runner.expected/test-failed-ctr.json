@@ -788,7 +788,7 @@
     "name": "execution steps.Archive CTS results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json_input@{'cts_results_gsurl': u'', 'dir': '[CLEANUP]/output_dir_tmp_1', 'cts_apfe_gsurl': u''}@@@",
+      "@@@STEP_LOG_LINE@json_input@{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"[CLEANUP]/output_dir_tmp_1\"}@@@",
       "@@@STEP_LOG_END@json_input@@@",
       "@@@STEP_LOG_LINE@instructions@[OrderedDict([('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction'), ('source', 'local/directory/to/upload')])]@@@",
       "@@@STEP_LOG_END@instructions@@@"

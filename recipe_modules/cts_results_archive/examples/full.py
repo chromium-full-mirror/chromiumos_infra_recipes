@@ -10,6 +10,8 @@ DEPS = [
     'cts_results_archive',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.cts_results_archive.archive('source_dir')

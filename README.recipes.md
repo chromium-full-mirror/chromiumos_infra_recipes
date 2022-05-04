@@ -51,7 +51,7 @@
   * [cros_test_runner](#recipe_modules-cros_test_runner) (Python3 ✅)
   * [cros_tool_runner](#recipe_modules-cros_tool_runner)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
-  * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
+  * [cts_results_archive](#recipe_modules-cts_results_archive) (Python3 ✅) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
@@ -306,7 +306,7 @@
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
   * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
-  * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
+  * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full) (Python3 ✅)
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
   * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -4470,15 +4470,15 @@ The Version of the workspace checkout.
 
 [DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API to archive test results to CTS specific buckets
 
-#### **class [CTSResultsArchive](/recipe_modules/cts_results_archive/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CTSResultsArchive](/recipe_modules/cts_results_archive/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API to archive test results to CTS specific buckets
 
-&mdash; **def [archive](/recipe_modules/cts_results_archive/api.py#18)(self, d_dir):**
+&mdash; **def [archive](/recipe_modules/cts_results_archive/api.py#20)(self, d_dir):**
 
 Archive CTS result files to CTS specific GS buckets.
 
@@ -9917,9 +9917,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cts_results_archive/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cts_results_archive/examples/full.py#16)(api):**
 ### *recipes* / [debug\_symbols:examples/full](/recipe_modules/debug_symbols/examples/full.py)
 
 [DEPS](/recipe_modules/debug_symbols/examples/full.py#7): [debug\_symbols](#recipe_modules-debug_symbols), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

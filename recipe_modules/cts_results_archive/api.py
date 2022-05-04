@@ -5,6 +5,8 @@
 
 """API to archive test results to CTS specific buckets"""
 
+import json
+
 from recipe_engine import recipe_api
 
 
@@ -29,7 +31,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
           'cts_results_gsurl': self._properties.cts_results_gsurl,
           'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
       }
-      step.logs['json_input'] = str(json_input)
+      step.logs['json_input'] = json.dumps(json_input, sort_keys=True)
       result = self.m.step(
           'prepare uploads',
           [
