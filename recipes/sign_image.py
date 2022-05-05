@@ -36,8 +36,10 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/random',
     'recipe_engine/step',
+    'recipe_engine/time',
     'cros_infra_config',
     'easy',
+    'cros_tags',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -109,6 +111,39 @@ _target_type_to_name = {
 _channel_to_name = {
     v: k.lower().replace('channel_', '') for k, v in common_os.Channel.items()
 }
+
+
+def _get_trigger_file_contents(api):
+  """Generate trigger file contents.
+
+  The signer does not actually use the contents of the trigger file, it just
+  uses the name of the file, so we can put metadata inside the file to provide
+  info about the build that generated it.
+
+  Args:
+    api (RecipesApi): the recipes api to use.
+
+  Returns:
+    A raw string of the file contents.
+  """
+  parent_build_id = api.cros_tags.get_single_value('parent_buildbucket_id')
+  contents = r'BUILD={build_id}\n' \
+             r'BUILD_URL={url}\n' \
+             r'TIMESTAMP={timestamp} UTC\n'
+  values = {
+      'build_id': api.buildbucket.build.id,
+      'url': api.buildbucket.build_url(),
+      'timestamp': api.time.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+  }
+  if parent_build_id:
+    contents += r'PARENT_BUILD={parent_build}\n' \
+                r'PARENT_BUILD_URL={parent_build_url}\n'
+    values.update({
+        'parent_build': parent_build_id,
+        'parent_build_url': api.buildbucket.build_url(build_id=parent_build_id)
+    })
+
+  return contents.format(**values)
 
 
 def RunSteps(api, properties):
@@ -241,8 +276,7 @@ def RunSteps(api, properties):
 
   with api.step.nest('trigger gsc signing') as presentation:
     if not api.cros_infra_config.is_staging:
-      # TODO(lamontjones): Put some info there instead of /dev/null.
-      trigger_data = r''
+      trigger_data = _get_trigger_file_contents(api)
       trigger_base = '50,' + rel_insn_path.replace('/', ',')
       trigger_path = gs.gs_path('tobesigned', trigger_base)
 
@@ -319,7 +353,9 @@ def GenTests(api):
           archive=('gs://chromeos-image-archive/firmware-ti50-postsubmit/'
                    'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
           allow_non_release_signer_bucket=True),
-      api.post_check(post_process.StatusSuccess),
+      api.buildbucket.generic_build(tags=[
+          common_pb2.StringPair(key='parent_buildbucket_id', value='1234')
+      ]), api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
       api.post_check(post_process.MustRun, 'trigger gsc signing.trigger file'),
       api.post_check(lambda check, steps: check_build_output(

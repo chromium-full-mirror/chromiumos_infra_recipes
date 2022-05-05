@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "No parent build."
+    "name": "Parent build: 1234",
+    "~followup_annotations": [
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
+    ]
   },
   {
     "cmd": [],
@@ -34,6 +37,18 @@
       "gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2/ti50.tar.bz2"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "copy artifacts to release bucket.gsutil copy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -63,6 +78,18 @@
       "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload gsc instructions.instructions file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -81,6 +108,18 @@
       "gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload gsc instructions.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -109,10 +148,22 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "",
+      "BUILD=8945511751514863184\\nBUILD_URL=https://cr-buildbucket.appspot.com/build/8945511751514863184\\nTIMESTAMP=2012-05-14 12:53:21 UTC\\nPARENT_BUILD=1234\\nPARENT_BUILD_URL=https://cr-buildbucket.appspot.com/build/1234\\n",
       "[CLEANUP]/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ti50.tar.bz2,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "trigger gsc signing.trigger file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -131,6 +182,18 @@
       "gs://chromeos-releases/tobesigned/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ti50.tar.bz2,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "trigger gsc signing.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
