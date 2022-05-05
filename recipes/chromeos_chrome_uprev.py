@@ -11,6 +11,7 @@ and triggering a CQ dry-run.
 """
 
 import functools
+import six
 
 DEPS = [
     'recipe_engine/context',
@@ -22,6 +23,8 @@ DEPS = [
     'git_cl',
     'gitiles',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 _BUILDBUCKET_BASE_URL = 'https://ci.chromium.org/b'
 _CHROMEOS_GERRIT_HOST = 'chromium-review.googlesource.com'
@@ -79,7 +82,7 @@ def RunSteps(api):
           field='url', fast=True, step_test_data=functools.partial(
               api.raw_io.test_api.stream_output,
               'crrev.com/c/%s' % _FAKE_GERRIT_CHANGE_ID))
-      step.links['uprev CL'] = gerrit_change_url
+      step.links['uprev CL'] = six.ensure_str(gerrit_change_url)
 
 
 def GenTests(api):
