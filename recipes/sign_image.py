@@ -29,14 +29,9 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import post_process
 
 DEPS = [
-    'depot_tools/gsutil',
-    'recipe_engine/buildbucket',
-    'recipe_engine/file',
-    'recipe_engine/path',
-    'recipe_engine/properties',
-    'recipe_engine/random',
-    'recipe_engine/step',
-    'cros_infra_config',
+    'depot_tools/gsutil', 'recipe_engine/buildbucket', 'recipe_engine/file',
+    'recipe_engine/path', 'recipe_engine/properties', 'recipe_engine/random',
+    'recipe_engine/step', 'cros_infra_config', 'easy'
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -177,9 +172,7 @@ def RunSteps(api, properties):
       new_archive = archive.replace(non_release_gs.bucket, gs.bucket)
       # Add new directory and copy the artifact.
       base = os.path.basename(new_archive)
-      new_archive = os.path.join(
-          os.path.dirname(new_archive),
-          base.split('.')[0], base)
+      new_archive = os.path.join(os.path.dirname(new_archive), base, base)
       api.gsutil.copy(non_release_gs.bucket, non_release_gs.rel_path(archive),
                       gs.bucket, gs.rel_path(new_archive))
       # Update archive.
@@ -237,6 +230,7 @@ def RunSteps(api, properties):
 
     api.gsutil(['cp', local_insn, insn_path])
     presentation.step_text = 'instructions uploaded'
+    api.easy.set_properties_step(instructions_file=insn_path)
 
   with api.step.nest('trigger gsc signing') as presentation:
     if not api.cros_infra_config.is_staging:
@@ -258,6 +252,9 @@ def GenTests(api):
 
   def props(**kwargs):
     return api.properties(SignImageProperties(**kwargs))
+
+  def check_build_output(check, steps, output_prop, value):
+    check(post_process.GetBuildProperties(steps).get(output_prop) == value)
 
   yield api.test('basic')
 
@@ -317,7 +314,26 @@ def GenTests(api):
           allow_non_release_signer_bucket=True),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
-      api.post_check(post_process.MustRun, 'trigger gsc signing.trigger file'))
+      api.post_check(post_process.MustRun, 'trigger gsc signing.trigger file'),
+      api.post_check(lambda check, steps: check_build_output(
+          check, steps, 'instructions_file',
+          'gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions'
+      )))
+
+  yield api.test(
+      'gsc-non-release-bucket-prod-efi',
+      props(
+          image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
+          keyset='ti50-accessory-premp', channel=common_os.CHANNEL_CANARY,
+          archive=('gs://chromeos-image-archive/firmware-ti50-postsubmit/'
+                   'R97-14299.0.0-55770-8832698563268919201/ti50.efi.tar.bz2'),
+          allow_non_release_signer_bucket=True),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
+      api.post_check(lambda check, steps: check_build_output(
+          check, steps, 'instructions_file',
+          'gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.efi.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions'
+      )))
 
   yield api.test(
       'gsc-non-release-bucket-prod-not-allowed',

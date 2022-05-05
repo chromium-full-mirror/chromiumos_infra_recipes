@@ -61,6 +61,14 @@
   },
   {
     "cmd": [],
+    "name": "upload gsc instructions.set instructions_file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@instructions_file@\"gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "trigger gsc signing",
     "~followup_annotations": [
       "@@@STEP_TEXT@trigger uploaded@@@"
