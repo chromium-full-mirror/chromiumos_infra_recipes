@@ -210,7 +210,8 @@ class GomaApi(recipe_api.RecipeApi):
           # use for pre-prod integration tests.
           if not is_staging:
             self.m.support.call('bq-insert', support_input,
-                                test_output_data=test_output_data)
+                                test_output_data=test_output_data,
+                                raise_on_failure=False)
 
     return None
 

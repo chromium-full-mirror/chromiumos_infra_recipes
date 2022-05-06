@@ -7547,7 +7547,7 @@ APIs for running recipes/support tools.
 
 A module for support tool steps.
 
-&mdash; **def [call](/recipe_modules/support/api.py#42)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None):**
+&mdash; **def [call](/recipe_modules/support/api.py#42)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, \*\*kwargs):**
 
 Run a tool from the support package.
 
@@ -7557,6 +7557,7 @@ Args:
   test_output_data (dict|list|Callable): Data to return in tests.
   infra_step (bool): Whether or not this is an infrastructure step.
   timeout (int): Timeout of the step in seconds.
+  * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   Data passed as output from the tool (deserialized from JSON).
