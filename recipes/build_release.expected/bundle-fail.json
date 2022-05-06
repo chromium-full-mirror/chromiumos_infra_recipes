@@ -5033,6 +5033,10 @@
   },
   {
     "cmd": [],
+    "name": "try creating test service containers"
+  },
+  {
+    "cmd": [],
     "name": "determine build and model metadata"
   },
   {

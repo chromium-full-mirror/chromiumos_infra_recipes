@@ -78,6 +78,15 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
+      # TODO(b/231739303): Make this step critical once cloud container build stablizes.
+      with api.step.nest('try creating test service containers') as step:
+        try:
+          api.build_menu.create_containers(config)
+        except StepFailure as sf:
+          # For now only mark the step as failed. Do not fail the build.
+          step.status = api.step.FAILURE
+          step.step_summary_text = 'One or more test service containers failed to build.'
+
       with api.step.nest('determine build and model metadata'):
         # First look up builder metadata from build-api.
         builder_metadata = api.builder_metadata.look_up_builder_metadata()
@@ -268,5 +277,35 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       tags=api.cros_tags.tags(parent_buildbucket_id='123'),
       cq=True,
+      build_target='kukui-main',
+  )
+
+  # Release build with container creation failure.
+  yield api.build_menu.test(
+      'container-creation-fail',
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui-main',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-release.{cros-version}",
+              },
+          }),
+      api.cros_signing.setup_mocks(),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.build_menu.set_build_api_return(
+          'try creating test service containers.create test service containers',
+          'TestService/BuildTestServiceContainers', retcode=1),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun,
+                     'determine build and model metadata'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess),
+      bucket='release',
       build_target='kukui-main',
   )
