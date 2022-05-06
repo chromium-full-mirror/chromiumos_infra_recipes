@@ -475,7 +475,8 @@ class GcloudApi(recipe_api.RecipeApi):
       ]
       uuid = self.m.easy.stdout_step(
           'determine UUID', uuid_cmd,
-          test_stdout='860a9e6a-f624-4f86-a00d-33a5cede3430').rstrip()
+          test_stdout='860a9e6a-f624-4f86-a00d-33a5cede3430').decode(
+              'utf-8').rstrip()
       self.m.step(
           'update fstab for %s' % self._attached_disks[name],
           ['sudo', 'tee', '-a', '/etc/fstab'], stdin=self.m.raw_io.input_text(
@@ -619,7 +620,7 @@ class GcloudApi(recipe_api.RecipeApi):
         ], infra_step=True)
       except self.m.step.InfraFailure as e:
         # Check output that indicates we've actually succeded.
-        if not _is_set_size(e.result.stdout):
+        if not _is_set_size(e.result.stdout.decode('utf-8')):
           raise
 
       self.m.easy.stdout_step(
@@ -782,8 +783,9 @@ class GcloudApi(recipe_api.RecipeApi):
       with self.m.step.nest('retrieve image version from storage'):
         try:
           remote_version = self.m.gsutil.cat(
-              'gs://{}/{}'.format(GCE_CACHE_BUCKET, self._version_file),
-              infra_step=True, stdout=self.m.raw_io.output()).stdout.strip()
+              'gs://{}/{}'.format(GCE_CACHE_BUCKET,
+                                  self._version_file), infra_step=True,
+              stdout=self.m.raw_io.output_text()).stdout.strip()
         except self.m.step.StepFailure:
           self.m.step.active_result.presentation.status = 'SUCCESS'
           with self.m.step.nest(
@@ -814,7 +816,7 @@ class GcloudApi(recipe_api.RecipeApi):
                                         image=snapshot, disk_type=disk_type)
           except self.m.step.StepFailure as e:
             if not e.result.stdout or not _RE_DISK_EXISTS.search(
-                e.result.stdout):
+                e.result.stdout.decode('utf-8')):
               self.create_disk_from_image(disk=self._disk, zone=self._zone,
                                           image=snapshot,
                                           disk_type='pd-standard')

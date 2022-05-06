@@ -17,3 +17,5 @@ DEPS = [
     'easy',
     'overlayfs',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

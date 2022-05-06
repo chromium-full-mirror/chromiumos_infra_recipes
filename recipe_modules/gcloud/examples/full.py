@@ -10,6 +10,8 @@ DEPS = [
     'gcloud',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 GCE_PROJECT = 'chromeos-gce-tests'
 
 
