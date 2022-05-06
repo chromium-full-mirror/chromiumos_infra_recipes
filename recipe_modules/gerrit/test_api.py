@@ -153,8 +153,9 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
   def test_gerrit_fetch_changes(self, request, gerrit_changes):
     return {
         'changes':
-            map(self.test_fetch_changes_response, request['changes'],
-                gerrit_changes)
+            list(
+                map(self.test_fetch_changes_response, request['changes'],
+                    gerrit_changes))
     }
 
   def test_patch_set(self):

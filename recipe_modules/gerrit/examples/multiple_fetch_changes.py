@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 DEPS = [
@@ -11,6 +13,8 @@ DEPS = [
     'gerrit',
     'src_state',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 changes = [
     GerritChange(host='chromium-review.googlesource.com', change=1,
@@ -79,4 +83,4 @@ def GenTests(api):
                                                    [changes[1]],
                                                    _get_values_dict(),
                                                    iteration=2),
-  )
+      api.post_check(post_process.StatusSuccess))

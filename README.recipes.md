@@ -60,7 +60,7 @@
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider) (Python3 ✅)
   * [gcloud](#recipe_modules-gcloud) (Python3 ✅)
-  * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
+  * [gerrit](#recipe_modules-gerrit) (Python3 ✅) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) (Python3 ✅) &mdash; API for working with git.
   * [git_cl](#recipe_modules-git_cl) (Python3 ✅) &mdash; API for working with git cl.
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
@@ -349,21 +349,21 @@
   * [gcloud:examples/lookup_device_id](#recipes-gcloud_examples_lookup_device_id)
   * [gcloud:examples/setup_cache_disk](#recipes-gcloud_examples_setup_cache_disk) (Python3 ✅)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
-  * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
-  * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
-  * [gerrit:examples/changes_are_submittable](#recipes-gerrit_examples_changes_are_submittable)
-  * [gerrit:examples/create_change](#recipes-gerrit_examples_create_change)
-  * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets)
-  * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description)
-  * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes)
-  * [gerrit:examples/multiple_fetch_changes](#recipes-gerrit_examples_multiple_fetch_changes)
-  * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change)
-  * [gerrit:examples/parse_gerrit_change_url](#recipes-gerrit_examples_parse_gerrit_change_url)
-  * [gerrit:examples/parse_qualified_gerrit_host](#recipes-gerrit_examples_parse_qualified_gerrit_host)
-  * [gerrit:examples/query_changes](#recipes-gerrit_examples_query_changes)
-  * [gerrit:examples/set_change_description](#recipes-gerrit_examples_set_change_description)
-  * [gerrit:examples/set_change_labels](#recipes-gerrit_examples_set_change_labels)
-  * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change)
+  * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change) (Python3 ✅)
+  * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment) (Python3 ✅)
+  * [gerrit:examples/changes_are_submittable](#recipes-gerrit_examples_changes_are_submittable) (Python3 ✅)
+  * [gerrit:examples/create_change](#recipes-gerrit_examples_create_change) (Python3 ✅)
+  * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets) (Python3 ✅)
+  * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description) (Python3 ✅)
+  * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes) (Python3 ✅)
+  * [gerrit:examples/multiple_fetch_changes](#recipes-gerrit_examples_multiple_fetch_changes) (Python3 ✅)
+  * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change) (Python3 ✅)
+  * [gerrit:examples/parse_gerrit_change_url](#recipes-gerrit_examples_parse_gerrit_change_url) (Python3 ✅)
+  * [gerrit:examples/parse_qualified_gerrit_host](#recipes-gerrit_examples_parse_qualified_gerrit_host) (Python3 ✅)
+  * [gerrit:examples/query_changes](#recipes-gerrit_examples_query_changes) (Python3 ✅)
+  * [gerrit:examples/set_change_description](#recipes-gerrit_examples_set_change_description) (Python3 ✅)
+  * [gerrit:examples/set_change_labels](#recipes-gerrit_examples_set_change_labels) (Python3 ✅)
+  * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change) (Python3 ✅)
   * [git:examples/bad_ref](#recipes-git_examples_bad_ref) (Python3 ✅)
   * [git:examples/branch_exists](#recipes-git_examples_branch_exists) (Python3 ✅)
   * [git:examples/fetch_refs](#recipes-git_examples_fetch_refs) (Python3 ✅)
@@ -5293,19 +5293,19 @@ Args:
 
 [DEPS](/recipe_modules/gerrit/__init__.py#6): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#193)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#195)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#199)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#201)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#698)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#701)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -5313,7 +5313,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#621)(self, gerrit_change, comment, project_path=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#624)(self, gerrit_change, comment, project_path=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -5326,7 +5326,7 @@ Args:
 Returns:
   str: The new message ref (primarily for testing).
 
-&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#378)(self, gerrit_changes, test_output_data=None):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#380)(self, gerrit_changes, test_output_data=None):**
 
 Checks if the provided changes can be merged onto their Git branches.
 
@@ -5336,7 +5336,7 @@ Args:
 Raises:
   StepFailure if the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#420)(self, project, reviewers=None, ccs=None, topic=None, ref=None, hashtags=None, project_path=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#422)(self, project, reviewers=None, ccs=None, topic=None, ref=None, hashtags=None, project_path=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -5360,7 +5360,7 @@ Args:
 Returns:
   GerritChange: The newly created change.
 
-&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#290)(self, change, include_files=False, test_output_data=None):**
+&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#292)(self, change, include_files=False, test_output_data=None):**
 
 Fetch and return PatchSet associated with the given GerritChange.
 
@@ -5375,7 +5375,7 @@ Args:
 Returns:
   PatchSet: The corresponding PatchSet.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#235)(self, gerrit_changes, include_files=False, include_commit_info=False, include_messages=False, test_output_data=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#237)(self, gerrit_changes, include_files=False, include_commit_info=False, include_messages=False, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -5391,13 +5391,13 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_patch\_sets](/recipe_modules/gerrit/api.py#206)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_patch\_sets](/recipe_modules/gerrit/api.py#208)(self):**
 
 The gerrit patches last fetched.
 
 These may or may not include files, but always include commit info.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#641)(self, gerrit_change, memoize=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#644)(self, gerrit_change, memoize=False):**
 
 Get the description of the given Gerrit change.
 
@@ -5408,7 +5408,7 @@ Args:
 Returns:
   str: The change description.
 
-&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#312)(self, gerrit_change_url):**
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#314)(self, gerrit_change_url):**
 
 Parse GerritChange proto from a gerrit change URL.
 
@@ -5422,7 +5422,7 @@ Args:
 Returns:
   GerritChange: The parsed proto.
 
-&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#342)(self, gerrit_change):**
+&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#344)(self, gerrit_change):**
 
 Transform a GerritChange proto into a Gerrit change URL.
 
@@ -5432,7 +5432,7 @@ Args:
 Returns:
   str: The Gerrit URL.
 
-&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#363)(self, gerrit_change):**
+&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#365)(self, gerrit_change):**
 
 Transform a GerritChange proto into a fully qualified host.
 
@@ -5442,7 +5442,7 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#738)(self, host, query_params):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#741)(self, host, query_params):**
 
 Query gerrit for the given changes.
 
@@ -5455,7 +5455,7 @@ Args:
 Returns:
   list[GerritChange]: Changes that match the query.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#669)(self, gerrit_change, description, amend_local=False, project_path=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#672)(self, gerrit_change, description, amend_local=False, project_path=None):**
 
 Set the description of the given Gerrit change.
 
@@ -5468,7 +5468,7 @@ Args:
   project_path (Path): If set, will use this as the project path rather than
     any value inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#569)(self, gerrit_change, labels, branch=None, ref=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#572)(self, gerrit_change, labels, branch=None, ref=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -5484,7 +5484,7 @@ Args:
 Returns:
   str: The ref used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#501)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#504)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
   set_change_labels only works when the change exists in the local checkout.
@@ -5497,7 +5497,7 @@ Args:
 Returns:
   str: The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#712)(self, gerrit_change, retries=0, project_path=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#715)(self, gerrit_change, retries=0, project_path=None):**
 
 Submits the given change.
 
@@ -10280,107 +10280,107 @@ Returns whether the given `UprevPackagesResponse` contains changes.
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/abandon_change.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/abandon_change.py#15)(api):**
 ### *recipes* / [gerrit:examples/add\_change\_comment](/recipe_modules/gerrit/examples/add_change_comment.py)
 
 [DEPS](/recipe_modules/gerrit/examples/add_change_comment.py#8): [gerrit](#recipe_modules-gerrit)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/add_change_comment.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/add_change_comment.py#15)(api):**
 ### *recipes* / [gerrit:examples/changes\_are\_submittable](/recipe_modules/gerrit/examples/changes_are_submittable.py)
 
 [DEPS](/recipe_modules/gerrit/examples/changes_are_submittable.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#17)(api):**
 ### *recipes* / [gerrit:examples/create\_change](/recipe_modules/gerrit/examples/create_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/create_change.py#6): [gerrit](#recipe_modules-gerrit), [git\_cl](#recipe_modules-git_cl), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/create_change.py#20)(api):**
 ### *recipes* / [gerrit:examples/fetch\_patch\_sets](/recipe_modules/gerrit/examples/fetch_patch_sets.py)
 
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#89)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#91)(api):**
 ### *recipes* / [gerrit:examples/get\_change\_description](/recipe_modules/gerrit/examples/get_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/get_change_description.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_description.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_description.py#16)(api):**
 ### *recipes* / [gerrit:examples/has\_chromite\_changes](/recipe_modules/gerrit/examples/has_chromite_changes.py)
 
 [DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/has_chromite_changes.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/has_chromite_changes.py#19)(api):**
 ### *recipes* / [gerrit:examples/multiple\_fetch\_changes](/recipe_modules/gerrit/examples/multiple_fetch_changes.py)
 
-[DEPS](/recipe_modules/gerrit/examples/multiple_fetch_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/examples/multiple_fetch_changes.py#10): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/multiple_fetch_changes.py#56)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/multiple_fetch_changes.py#60)(api):**
 ### *recipes* / [gerrit:examples/parse\_gerrit\_change](/recipe_modules/gerrit/examples/parse_gerrit_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/parse_gerrit_change.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change.py#21)(api, properties):**
 ### *recipes* / [gerrit:examples/parse\_gerrit\_change\_url](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py)
 
 [DEPS](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_gerrit_change_url.py#21)(api, properties):**
 ### *recipes* / [gerrit:examples/parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py)
 
 [DEPS](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/parse_qualified_gerrit_host.py#21)(api, properties):**
 ### *recipes* / [gerrit:examples/query\_changes](/recipe_modules/gerrit/examples/query_changes.py)
 
 [DEPS](/recipe_modules/gerrit/examples/query_changes.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#51)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#52)(api):**
 ### *recipes* / [gerrit:examples/set\_change\_description](/recipe_modules/gerrit/examples/set_change_description.py)
 
-[DEPS](/recipe_modules/gerrit/examples/set_change_description.py#8): [gerrit](#recipe_modules-gerrit)
+[DEPS](/recipe_modules/gerrit/examples/set_change_description.py#10): [gerrit](#recipe_modules-gerrit)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/set_change_description.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/set_change_description.py#17)(api):**
 ### *recipes* / [gerrit:examples/set\_change\_labels](/recipe_modules/gerrit/examples/set_change_labels.py)
 
 [DEPS](/recipe_modules/gerrit/examples/set_change_labels.py#9): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/set_change_labels.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/set_change_labels.py#17)(api):**
 ### *recipes* / [gerrit:examples/submit\_change](/recipe_modules/gerrit/examples/submit_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/submit_change.py#9): [gerrit](#recipe_modules-gerrit)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/submit_change.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/submit_change.py#16)(api):**
 ### *recipes* / [git:examples/bad\_ref](/recipe_modules/git/examples/bad_ref.py)
 
 [DEPS](/recipe_modules/git/examples/bad_ref.py#5): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

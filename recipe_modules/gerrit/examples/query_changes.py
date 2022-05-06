@@ -8,6 +8,7 @@ DEPS = [
     'gerrit',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 gerrit_changes_json = [
     {

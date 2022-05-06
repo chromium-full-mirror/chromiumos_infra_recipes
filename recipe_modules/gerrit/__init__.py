@@ -20,3 +20,5 @@ DEPS = {
     'src_state': 'src_state',
     'support': 'support',
 }
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

@@ -10,6 +10,8 @@ DEPS = [
     'gerrit',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   gerrit_change = GerritChange(

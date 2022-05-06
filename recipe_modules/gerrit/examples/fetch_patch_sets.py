@@ -12,6 +12,8 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 step_name = 'testing'
 changes = [
     GerritChange(host='chromium-review.googlesource.com', change=91827,

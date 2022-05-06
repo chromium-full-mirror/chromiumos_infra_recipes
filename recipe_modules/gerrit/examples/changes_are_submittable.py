@@ -11,6 +11,8 @@ DEPS = [
     'gerrit',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # TODO(evanhernandez): Need to normalize how we handle test data.
