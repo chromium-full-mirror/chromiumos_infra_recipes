@@ -5,6 +5,7 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+from recipe_engine.post_process import DropExpectation, LogContains
 from recipe_engine.recipe_api import Property
 
 DEPS = [
@@ -60,3 +61,14 @@ def GenTests(api):
                                builder='snapshot-orchestrator'),
       api.properties(is_retry=True, passed_tests=[],
                      expected_tests_run_count=1))
+
+  # When bucket is `staging`, cros_infra_config.is_staging returns True.
+  yield api.test(
+      'schedule-staging-tast-vm-tests',
+      api.buildbucket.ci_build(bucket='staging'),
+      api.post_check(
+          LogContains,
+          'schedule tast vm tests',
+          'json.output',
+          ['staging-', '-direct-tast-vm'],
+      ), api.post_process(DropExpectation))

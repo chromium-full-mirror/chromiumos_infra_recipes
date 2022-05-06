@@ -274,10 +274,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def _tast_vm_builder(self, build_target, expressions):
     """Returns the tast builder name for the given build_target and expressions."""
+    staging_prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     if '!informational' in ''.join(expressions):
-      return build_target.name + '-direct-tast-vm'
+      return staging_prefix + build_target.name + '-direct-tast-vm'
     else:
-      return build_target.name + '-tast-vm-informational'
+      return staging_prefix + build_target.name + '-tast-vm-informational'
 
   def _tast_gce_builder(self, build_target, expressions):
     """Returns the GCE builder name for the given build_target and expressions."""
