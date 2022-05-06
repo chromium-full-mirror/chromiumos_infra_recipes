@@ -81,7 +81,7 @@
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) (Python3 ✅) &mdash; API for calling 'recipes.
   * [remoteexec](#recipe_modules-remoteexec) (Python3 ✅) &mdash; API for working with re-client for remote execution.
-  * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
+  * [repo](#recipe_modules-repo) (Python3 ✅) &mdash; API for working with the 'repo' VCS tool.
   * [result_flow](#recipe_modules-result_flow) (Python3 ✅)
   * [service_version](#recipe_modules-service_version) (Python3 ✅)
   * [skylab](#recipe_modules-skylab)
@@ -429,19 +429,19 @@
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full) (Python3 ✅)
-  * [repo:examples/annealing](#recipes-repo_examples_annealing)
-  * [repo:examples/branching](#recipes-repo_examples_branching)
-  * [repo:examples/cache_builder](#recipes-repo_examples_cache_builder)
-  * [repo:examples/image_builder](#recipes-repo_examples_image_builder)
-  * [repo:examples/project_infos](#recipes-repo_examples_project_infos)
-  * [repo:tests/find_root](#recipes-repo_tests_find_root)
-  * [repo:tests/project_infos_bad_regex](#recipes-repo_tests_project_infos_bad_regex)
-  * [repo:tests/repo_retry_failure](#recipes-repo_tests_repo_retry_failure)
-  * [repo:tests/repo_retry_success](#recipes-repo_tests_repo_retry_success)
-  * [repo:tests/repo_stats_bad_json](#recipes-repo_tests_repo_stats_bad_json)
-  * [repo:tests/source_cache_feature](#recipes-repo_tests_source_cache_feature)
-  * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass)
-  * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
+  * [repo:examples/annealing](#recipes-repo_examples_annealing) (Python3 ✅)
+  * [repo:examples/branching](#recipes-repo_examples_branching) (Python3 ✅)
+  * [repo:examples/cache_builder](#recipes-repo_examples_cache_builder) (Python3 ✅)
+  * [repo:examples/image_builder](#recipes-repo_examples_image_builder) (Python3 ✅)
+  * [repo:examples/project_infos](#recipes-repo_examples_project_infos) (Python3 ✅)
+  * [repo:tests/find_root](#recipes-repo_tests_find_root) (Python3 ✅)
+  * [repo:tests/project_infos_bad_regex](#recipes-repo_tests_project_infos_bad_regex) (Python3 ✅)
+  * [repo:tests/repo_retry_failure](#recipes-repo_tests_repo_retry_failure) (Python3 ✅)
+  * [repo:tests/repo_retry_success](#recipes-repo_tests_repo_retry_success) (Python3 ✅)
+  * [repo:tests/repo_stats_bad_json](#recipes-repo_tests_repo_stats_bad_json) (Python3 ✅)
+  * [repo:tests/source_cache_feature](#recipes-repo_tests_source_cache_feature) (Python3 ✅)
+  * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass) (Python3 ✅)
+  * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest) (Python3 ✅)
   * [result_flow:examples/full](#recipes-result_flow_examples_full) (Python3 ✅)
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full) (Python3 ✅)
@@ -7060,7 +7060,7 @@ Fetches the reclient directory and returns its path.
 
 [DEPS](/recipe_modules/repo/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with the 'repo' VCS tool.
 
@@ -7070,7 +7070,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#417)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#416)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -7078,13 +7078,13 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#370)(self, manifest_data):**
+&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#369)(self, manifest_data):**
 
 Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#627)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#626)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -7102,7 +7102,7 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#734)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#733)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -7110,7 +7110,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#585)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#584)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -7132,7 +7132,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#78)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#527)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#526)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -7150,7 +7150,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#815)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#814)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -7187,7 +7187,7 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/repo/api.py#67)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#554)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#553)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -7204,11 +7204,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#809)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#808)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_exists](/recipe_modules/repo/api.py#503)(self, project):**
+&mdash; **def [project\_exists](/recipe_modules/repo/api.py#502)(self, project):**
 
 Use 'repo info' to determine if the project exists in the checkout.
 
@@ -7218,7 +7218,7 @@ Args:
 Returns:
   (bool): whether or not the project exists.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#488)(self, project=None):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#487)(self, project=None):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -7229,7 +7229,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&mdash; **def [project\_infos](/recipe_modules/repo/api.py#431)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
+&mdash; **def [project\_infos](/recipe_modules/repo/api.py#430)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -7251,7 +7251,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#74)(self):**
 
-&mdash; **def [start](/recipe_modules/repo/api.py#403)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#402)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -7282,7 +7282,7 @@ Args:
   prune (bool): Delete refs that no longer exist on the remote.
   repo_event_log (bool): Write the repo event log, do analysis steps.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#384)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#383)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
@@ -10950,105 +10950,105 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/repo/examples/annealing.py#6): [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/annealing.py#29)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/annealing.py#31)(api, properties):**
 ### *recipes* / [repo:examples/branching](/recipe_modules/repo/examples/branching.py)
 
 [DEPS](/recipe_modules/repo/examples/branching.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/branching.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/branching.py#25)(api, properties):**
 ### *recipes* / [repo:examples/cache\_builder](/recipe_modules/repo/examples/cache_builder.py)
 
 [DEPS](/recipe_modules/repo/examples/cache_builder.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/cache_builder.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/cache_builder.py#27)(api, properties):**
 ### *recipes* / [repo:examples/image\_builder](/recipe_modules/repo/examples/image_builder.py)
 
 [DEPS](/recipe_modules/repo/examples/image_builder.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/image_builder.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/image_builder.py#28)(api, properties):**
 
-&mdash; **def [WithArgsTest](/recipe_modules/repo/examples/image_builder.py#75)(api, state_name, state, local_manifest):**
+&mdash; **def [WithArgsTest](/recipe_modules/repo/examples/image_builder.py#77)(api, state_name, state, local_manifest):**
 
-&mdash; **def [WithManifestNameTest](/recipe_modules/repo/examples/image_builder.py#65)(api, state_name, state):**
+&mdash; **def [WithManifestNameTest](/recipe_modules/repo/examples/image_builder.py#67)(api, state_name, state):**
 
-&mdash; **def [WithNonePruneTest](/recipe_modules/repo/examples/image_builder.py#127)(api, state_name, state):**
+&mdash; **def [WithNonePruneTest](/recipe_modules/repo/examples/image_builder.py#129)(api, state_name, state):**
 
-&mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#101)(api, state_name, state, local_manifest):**
+&mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#103)(api, state_name, state, local_manifest):**
 ### *recipes* / [repo:examples/project\_infos](/recipe_modules/repo/examples/project_infos.py)
 
 [DEPS](/recipe_modules/repo/examples/project_infos.py#6): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos.py#24)(api, properties):**
 ### *recipes* / [repo:tests/find\_root](/recipe_modules/repo/tests/find_root.py)
 
 [DEPS](/recipe_modules/repo/tests/find_root.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/find_root.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/find_root.py#17)(api):**
 ### *recipes* / [repo:tests/project\_infos\_bad\_regex](/recipe_modules/repo/tests/project_infos_bad_regex.py)
 
 [DEPS](/recipe_modules/repo/tests/project_infos_bad_regex.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/project_infos_bad_regex.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/project_infos_bad_regex.py#15)(api):**
 ### *recipes* / [repo:tests/repo\_retry\_failure](/recipe_modules/repo/tests/repo_retry_failure.py)
 
 [DEPS](/recipe_modules/repo/tests/repo_retry_failure.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_failure.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_failure.py#16)(api):**
 
-&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_failure.py#23)(api, attempt):**
+&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_failure.py#25)(api, attempt):**
 ### *recipes* / [repo:tests/repo\_retry\_success](/recipe_modules/repo/tests/repo_retry_success.py)
 
 [DEPS](/recipe_modules/repo/tests/repo_retry_success.py#6): [repo](#recipe_modules-repo), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_success.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_retry_success.py#15)(api):**
 
-&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_success.py#19)(api, attempt):**
+&mdash; **def [attempt\_retry\_repo](/recipe_modules/repo/tests/repo_retry_success.py#21)(api, attempt):**
 ### *recipes* / [repo:tests/repo\_stats\_bad\_json](/recipe_modules/repo/tests/repo_stats_bad_json.py)
 
 [DEPS](/recipe_modules/repo/tests/repo_stats_bad_json.py#6): [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_stats_bad_json.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/repo_stats_bad_json.py#19)(api):**
 ### *recipes* / [repo:tests/source\_cache\_feature](/recipe_modules/repo/tests/source_cache_feature.py)
 
 [DEPS](/recipe_modules/repo/tests/source_cache_feature.py#6): [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/source_cache_feature.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/source_cache_feature.py#20)(api):**
 ### *recipes* / [repo:tests/source\_cache\_feature\_bypass](/recipe_modules/repo/tests/source_cache_feature_bypass.py)
 
 [DEPS](/recipe_modules/repo/tests/source_cache_feature_bypass.py#6): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/source_cache_feature_bypass.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/source_cache_feature_bypass.py#19)(api):**
 ### *recipes* / [repo:tests/tmp\_manifest](/recipe_modules/repo/tests/tmp_manifest.py)
 
 [DEPS](/recipe_modules/repo/tests/tmp_manifest.py#6): [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/repo/tests/tmp_manifest.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/repo/tests/tmp_manifest.py#17)(api):**
 ### *recipes* / [result\_flow:examples/full](/recipe_modules/result_flow/examples/full.py)
 
 [DEPS](/recipe_modules/result_flow/examples/full.py#6): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

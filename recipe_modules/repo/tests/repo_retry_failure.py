@@ -8,6 +8,8 @@ DEPS = [
     'repo',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos.repo_cache_state import RepoState
 
 

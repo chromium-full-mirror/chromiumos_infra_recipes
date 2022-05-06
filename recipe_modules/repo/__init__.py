@@ -21,4 +21,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.repo.repo import (RepoProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = RepoProperties

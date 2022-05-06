@@ -12,7 +12,7 @@ from google.protobuf.json_format import MessageToDict
 from collections import defaultdict, namedtuple
 import json
 import re
-import types
+import six
 
 from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
@@ -103,7 +103,7 @@ class RepoApi(recipe_api.RecipeApi):
       name = 'repo'
       # Add first non-flag argument to name.
       for arg in args:
-        if isinstance(arg, types.StringTypes) and arg[:1] != '-':
+        if isinstance(arg, six.string_types) and arg[:1] != '-':
           name += ' ' + arg
           break
     kwargs.setdefault('infra_step', True)
@@ -177,7 +177,7 @@ class RepoApi(recipe_api.RecipeApi):
     if reference is not None:
       cmd += ['--reference', reference]
     if groups is not None:
-      assert not isinstance(groups, types.StringTypes)
+      assert not isinstance(groups, six.string_types)
       cmd += ['--groups', ','.join(groups)]
     if depth is not None:
       cmd += ['--depth', '%d' % depth]
@@ -305,8 +305,7 @@ class RepoApi(recipe_api.RecipeApi):
           except StepFailure as e:
             # Don't fail the builder on issues reporting stats.
             pres.status = self.m.step.INFRA_FAILURE
-            pres.step_text = 'failure reading repo request logs {}'.format(
-                e.message)
+            pres.step_text = 'failure reading repo request logs {}'.format(e)
       if step_exception:
         # We're certain that this is an Exception.
         raise step_exception  #pylint: disable=raising-bad-type
@@ -467,7 +466,7 @@ class RepoApi(recipe_api.RecipeApi):
                            step_test_data=step_test_data)
 
     infos = []
-    lines = step_data.stdout.strip().split('\n')
+    lines = six.ensure_str(step_data.stdout).strip().split('\n')
 
     # If nothing was matched, return the empty infos.
     if len(lines) == 1 and lines[0] == '':
@@ -515,7 +514,7 @@ class RepoApi(recipe_api.RecipeApi):
                              stderr=self.m.raw_io.output(add_output_log=True),
                              ok_ret=[0, 1])
 
-      stderr = step_data.stderr
+      stderr = six.ensure_str(step_data.stderr)
       if stderr.strip():
         errmsg = 'project {} not found'.format(project)
         # Non-empty stderr

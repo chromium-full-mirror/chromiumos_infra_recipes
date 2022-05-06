@@ -17,6 +17,8 @@ from PB.recipe_modules.chromeos.repo.examples.image_builder import (
     ImageBuilderProperties)
 from PB.recipe_modules.chromeos.repo.examples import common
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ImageBuilderProperties
 
 # This example shows the normal flow of events for build_menu.

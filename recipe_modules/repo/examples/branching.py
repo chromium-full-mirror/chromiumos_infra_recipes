@@ -10,10 +10,14 @@ DEPS = [
     'repo',
 ]
 
+import six
+
 from google.protobuf import json_format
 
 from PB.recipe_modules.chromeos.repo.examples.branching import (
     BranchingProperties, BranchProjects)
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = BranchingProperties
 
@@ -26,7 +30,7 @@ def RunSteps(api, properties):
     sync_opts = json_format.MessageToDict(properties.sync_opts,
                                           preserving_proto_field_name=True)
     api.repo.sync_manifest(properties.manifest_url,
-                           str(properties.manifest_data.decode('utf-8')),
+                           six.ensure_str(properties.manifest_data),
                            **sync_opts)
 
     if properties.HasField('start_args'):

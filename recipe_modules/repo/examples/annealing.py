@@ -23,6 +23,8 @@ from PB.recipe_modules.chromeos.repo.examples.annealing import (
 
 PROPERTIES = AnnealingProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 # This example shows the normal flow of events for build_menu.
 
 

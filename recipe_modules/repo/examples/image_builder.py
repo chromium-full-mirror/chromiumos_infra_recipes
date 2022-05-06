@@ -18,6 +18,8 @@ from PB.chromiumos.repo_cache_state import RepoState
 from PB.recipe_modules.chromeos.repo.examples.image_builder import (
     ImageBuilderProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ImageBuilderProperties
 
 # This example shows the normal flow of events for build_menu.

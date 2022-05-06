@@ -13,6 +13,8 @@ DEPS = [
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   init_opts = dict(manifest_branch='snapshot')
@@ -25,6 +27,7 @@ def GenTests(api):
       'repo-no-event-log-succeeds',
       api.step_data('ensure synced checkout.repo stats.event-log', retcode=1),
       api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -32,4 +35,5 @@ def GenTests(api):
       api.step_data('ensure synced checkout.repo stats.event-log',
                     api.file.read_text('not json yo')),
       api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )

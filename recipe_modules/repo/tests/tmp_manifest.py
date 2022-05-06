@@ -11,6 +11,8 @@ DEPS = [
 
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.context(cwd=api.path['cleanup']):

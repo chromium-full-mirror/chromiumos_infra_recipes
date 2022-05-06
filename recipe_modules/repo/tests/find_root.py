@@ -11,6 +11,8 @@ DEPS = [
     'repo',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   cwd = api.path['cleanup']

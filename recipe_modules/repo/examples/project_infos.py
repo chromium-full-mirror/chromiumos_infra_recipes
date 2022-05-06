@@ -16,6 +16,8 @@ from PB.recipe_modules.chromeos.repo.examples.project_infos import (
     ProjectInfo, ProjectInfosProperties)
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ProjectInfosProperties
 
 

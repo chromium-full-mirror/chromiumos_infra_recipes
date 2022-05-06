@@ -9,6 +9,8 @@ DEPS = [
     'repo',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   infos = api.repo.project_infos(regexes=['some/bad/regex'])
