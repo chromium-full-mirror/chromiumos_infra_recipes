@@ -54,7 +54,7 @@
     "cmd": [],
     "name": "ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_TEXT@cache tracking snapshot branch@@@",
+      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -296,7 +296,7 @@
     "name": "ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -326,7 +326,7 @@
     "name": "ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

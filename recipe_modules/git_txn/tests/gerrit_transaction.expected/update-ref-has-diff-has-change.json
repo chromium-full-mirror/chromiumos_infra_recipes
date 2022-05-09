@@ -51,8 +51,8 @@
     "name": "update ref.gerrit transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@remote:   https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123 git_txn: test@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@remote:   https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123 git_txn: test@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -147,8 +147,8 @@
     "name": "update ref.gerrit transaction.submit CL 123.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/infra/recipes|src/chromiumos/infra/recipes|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/recipes|src/chromiumos/infra/recipes|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "name": "update ref (3).gerrit transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

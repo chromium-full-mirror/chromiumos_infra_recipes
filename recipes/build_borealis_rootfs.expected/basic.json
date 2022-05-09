@@ -659,7 +659,7 @@
     "name": "sync cached directory.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking snapshot branch@@@"
+      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
     ]
   },
   {
@@ -857,7 +857,7 @@
     "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -887,7 +887,7 @@
     "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1283,7 +1283,7 @@
     "name": "sync to gitiles commit.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2101,8 +2101,8 @@
     "name": "update VERSION-PIN.commit version pin file.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2245,7 +2245,7 @@
     "name": "update VERSION-PIN.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc.check if project [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2271,8 +2271,8 @@
     "name": "update VERSION-PIN.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2360,8 +2360,8 @@
     "name": "update VERSION-PIN.upload CL to gerrit.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

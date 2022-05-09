@@ -29,6 +29,8 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 from PB.recipe_modules.chromeos.cros_source.examples.full import FullProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = FullProperties
 
 
@@ -96,7 +98,7 @@ def GenTests(api):
       'merge-commit-fails', manifest_branch,
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
-                    api.raw_io.stream_output('commitsha1 commitsha2')),
+                    api.raw_io.stream_output_text('commitsha1 commitsha2')),
       api.post_check(post_process.StatusFailure), gerrit_changes=[
           GerritChange(host='host', project='project', change=555, patchset=3)
       ])
@@ -105,7 +107,7 @@ def GenTests(api):
       'cherry-picks', manifest_branch,
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
-                    api.raw_io.stream_output('commitsha1')),
+                    api.raw_io.stream_output_text('commitsha1')),
       api.post_check(post_process.StatusSuccess), gerrit_changes=[
           GerritChange(host='host', project='project', change=555, patchset=3)
       ])
@@ -190,10 +192,10 @@ def GenTests(api):
           data=[_project_data(api.src_state.external_manifest)]),
       api.step_data(
           'patch manifest.git commit',
-          api.raw_io.stream_output('HEAD detached at 99caf97f\n'
-                                   'nothing to commit, working tree clean\n'),
-          retcode=1), cq=True, git_repo=api.src_state.internal_manifest.url,
-      gerrit_changes=changes)
+          api.raw_io.stream_output_text(
+              'HEAD detached at 99caf97f\n'
+              'nothing to commit, working tree clean\n'), retcode=1), cq=True,
+      git_repo=api.src_state.internal_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
       'commit-failure-full.xml', manifest_branch,
@@ -205,13 +207,14 @@ def GenTests(api):
           'patch manifest.chromiumos/manifest: apply gerrit patch sets',
           data=[_project_data(api.src_state.external_manifest)]),
       api.step_data('patch manifest.git commit',
-                    api.raw_io.stream_output('Commit failed\n'),
+                    api.raw_io.stream_output_text('Commit failed\n'),
                     retcode=1), cq=True,
       git_repo=api.src_state.internal_manifest.url, gerrit_changes=changes)
 
   yield api.cros_source.test(
       'manifest-no-changes', api.post_check(post_process.StatusSuccess),
-      cq=True, git_repo=api.src_state.internal_manifest.url, gerrit_changes=[
+      api.post_process(post_process.DropExpectation), cq=True,
+      git_repo=api.src_state.internal_manifest.url, gerrit_changes=[
           GerritChange(host='host', project='project', change=555, patchset=3)
       ])
 

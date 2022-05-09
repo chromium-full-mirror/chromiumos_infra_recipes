@@ -82,9 +82,9 @@ def GenTests(api):
                               rrev=api.src_state.default_ref)
               ])),
       api.step_data('check if project foo/bar exists.repo info',
-                    stderr=api.raw_io.output('project foo/bar not found')),
+                    stderr=api.raw_io.output_text('project foo/bar not found')),
       api.step_data('check if project blah exists.repo info',
-                    stderr=api.raw_io.output('spooky phantom error')),
+                    stderr=api.raw_io.output_text('spooky phantom error')),
   )
 
   test_hash = '0123456789ABCDEFabcdef555555555555555555'
@@ -93,9 +93,9 @@ def GenTests(api):
 
   yield api.test(
       'snapshot',
-      api.step_data('repo forall', stdout=api.raw_io.output(with_hash)),
+      api.step_data('repo forall', stdout=api.raw_io.output_text(with_hash)),
       api.step_data('ensure manifest is pinned.repo forall',
-                    stdout=api.raw_io.output(with_hash)),
+                    stdout=api.raw_io.output_text(with_hash)),
       api.properties(
           ProjectInfosProperties(
               projects=['galaxy'], expected_infos=[
@@ -103,9 +103,9 @@ def GenTests(api):
                               branch=api.src_state.default_ref, rrev=test_hash),
               ])),
       api.step_data('check if project foo/bar exists.repo info',
-                    stderr=api.raw_io.output('project foo/bar not found')),
+                    stderr=api.raw_io.output_text('project foo/bar not found')),
       api.step_data('check if project blah exists.repo info',
-                    stderr=api.raw_io.output('spooky phantom error')),
+                    stderr=api.raw_io.output_text('spooky phantom error')),
   )
 
   yield api.test(
@@ -133,7 +133,7 @@ def GenTests(api):
   yield api.test(
       'no-upstream-attribute',
       api.step_data('ensure manifest is pinned.repo forall',
-                    stdout=api.raw_io.output(missing_refs_heads)),
+                    stdout=api.raw_io.output_text(missing_refs_heads)),
       api.step_data('repo forall',
-                    stdout=api.raw_io.output(missing_refs_heads)),
+                    stdout=api.raw_io.output_text(missing_refs_heads)),
   )

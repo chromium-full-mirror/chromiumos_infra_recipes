@@ -19,6 +19,8 @@ from PB.recipe_modules.chromeos.cros_source.examples.sync_cache import (
 
 PROPERTIES = SyncCacheProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api, properties):
   api.cros_source.configure_builder(default_main=True)

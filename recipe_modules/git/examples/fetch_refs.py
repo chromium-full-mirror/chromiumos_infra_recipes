@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import six
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -26,7 +24,6 @@ def RunSteps(api, properties):
   shas = api.git.fetch_refs(
       'https://{}/{}'.format(snapshot.host, snapshot.project), snapshot.ref,
       count=properties.count)
-  shas = [six.ensure_str(sha) for sha in shas]
   api.assertions.assertEqual(properties.expected_shas, shas)
 
 
@@ -46,12 +43,14 @@ def GenTests(api):
                 count=count, expected_shas=expected_shas or [])))
     if len(expected_shas) == count:
       ret += api.step_data(
-          'git log', stdout=api.raw_io.output('\n'.join(expected_shas) + '\n'))
+          'git log',
+          stdout=api.raw_io.output_text('\n'.join(expected_shas) + '\n'))
     else:
       ret += api.step_data('git log', retcode=1)
       for idx, val in enumerate(expected_shas, start=1):
         step_name = 'git rev-parse' if idx == 1 else 'git rev-parse (%d)' % idx
-        ret += api.step_data(step_name, stdout=api.raw_io.output('%s\n' % val))
+        ret += api.step_data(step_name,
+                             stdout=api.raw_io.output_text('%s\n' % val))
         if count != len(expected_shas):
           ret += api.step_data('git rev-parse (%d)' % (len(expected_shas) + 1),
                                retcode=1)

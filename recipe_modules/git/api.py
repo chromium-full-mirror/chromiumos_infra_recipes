@@ -49,7 +49,7 @@ class GitApi(recipe_api.RecipeApi):
     if test_stdout is not None:
       assert 'step_test_data' not in kwargs, 'test_stdout with step_test_data'
       kwargs['step_test_data'] = (
-          lambda: self.m.raw_io.test_api.stream_output(test_stdout))
+          lambda: self.m.raw_io.test_api.stream_output_text(test_stdout))
 
     kwargs.setdefault('infra_step', True)
     return self.m.step(name, ['git'] + args, **kwargs)
@@ -65,7 +65,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     return self._step(
         ['rev-parse', '--show-toplevel'],
-        stdout=self.m.raw_io.output(),
+        stdout=self.m.raw_io.output_text(),
         test_stdout=str(self.m.context.cwd),
         name=step_name,
     ).stdout.strip()
@@ -135,13 +135,13 @@ class GitApi(recipe_api.RecipeApi):
     cmd += [from_rev] if from_rev else []
     cmd += [to_rev] if to_rev else []
 
-    step_data = self._step(cmd, stdout=self.m.raw_io.output(),
+    step_data = self._step(cmd, stdout=self.m.raw_io.output_text(),
                            test_stdout=test_stdout)
 
     output = step_data.stdout.strip()
     if not output:
       return []
-    return six.ensure_str(output).split('\n')
+    return output.split('\n')
 
   def get_working_dir_diff_files(self):
     """Finds all changed files (including untracked)."""
@@ -150,14 +150,11 @@ class GitApi(recipe_api.RecipeApi):
 ?? new.txt
 """
     step_data = self._step(['status', '--porcelain'],
-                           stdout=self.m.raw_io.output(),
+                           stdout=self.m.raw_io.output_text(),
                            test_stdout=test_stdout)
 
     # Need to strip the diff mode characters, e.g. "?? "
-    return [
-        six.ensure_str(line[2:]).strip()
-        for line in step_data.stdout.strip().splitlines()
-    ]
+    return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
 
   def _fetch(self, remote, refspecs, timeout_sec):
     """Runs 'git fetch'.
@@ -208,8 +205,8 @@ class GitApi(recipe_api.RecipeApi):
     # too new, then this command will fail, and we will loop.
     step_data = self._step(
         ['log', 'FETCH_HEAD~%d..FETCH_HEAD' % count, '--pretty=%H'],
-        stdout=self.m.raw_io.output(), timeout=timeout_sec,
-        step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+        stdout=self.m.raw_io.output_text(), timeout=timeout_sec,
+        step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
             '\n'.join(test_ids) + '\n', retcode=test_retcode), ok_ret=(0, 1))
     if step_data.retcode == 0:
       return step_data.stdout.splitlines()
@@ -217,7 +214,8 @@ class GitApi(recipe_api.RecipeApi):
     ret = []
     for idx in range(count):
       step_data = self._step(['rev-parse', 'FETCH_HEAD~%d' % idx],
-                             stdout=self.m.raw_io.output(), timeout=timeout_sec,
+                             stdout=self.m.raw_io.output_text(),
+                             timeout=timeout_sec,
                              test_stdout='%s\n' % test_ids[idx], ok_ret=(0, 1))
       if step_data.retcode:
         break
@@ -239,9 +237,10 @@ class GitApi(recipe_api.RecipeApi):
     self.fetch(remote, ['%s:' % ref])
 
     step_data = self._step(['rev-parse', 'FETCH_HEAD'],
-                           stdout=self.m.raw_io.output(), timeout=timeout_sec,
+                           stdout=self.m.raw_io.output_text(),
+                           timeout=timeout_sec,
                            test_stdout='%s\n' % self.test_api.test_commit_id)
-    return six.ensure_str(step_data.stdout).strip()
+    return step_data.stdout.strip()
 
   @exponential_retry(retries=20, delay=timedelta(minutes=1))
   def remote_update(self, step_name, timeout_sec=None):
@@ -277,6 +276,7 @@ class GitApi(recipe_api.RecipeApi):
       args (tuple): Additional arguments to git merge.
       kwargs (dict): Passed to recipe_engine/step.
     """
+    kwargs.setdefault('stdout', self.m.raw_io.output_text())
     self._step(['merge', ref, '-m', message] + list(args), **kwargs)
 
   def merge_silent_fail(self, ref, message, **kwargs):
@@ -292,6 +292,7 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       (bool): whether the merge succeeded
     """
+    kwargs.setdefault('stdout', self.m.raw_io.output_text())
     success = self._step(['merge', ref, '-m', message], ok_ret=(0, 1),
                          **kwargs).retcode == 0
     return success
@@ -303,6 +304,7 @@ class GitApi(recipe_api.RecipeApi):
       commit (str): The commit to cherry pick.
       kwargs (dict): Passed to recipe_engine/step.
     """
+    kwargs.setdefault('stdout', self.m.raw_io.output_text())
     self._step(['cherry-pick', commit], **kwargs)
 
   def merge_abort(self):
@@ -316,6 +318,7 @@ class GitApi(recipe_api.RecipeApi):
       message (str): The commit message.
       kwargs (dict): Passed to recipe_engine/step.
     """
+    kwargs.setdefault('stdout', self.m.raw_io.output_text())
     # Single argument can't exceed 128kiB (crbug/987630), write to temp
     # and pass the argument as a file
     commit_msg_path = self.m.path.mkstemp(prefix='commit_msg')
@@ -375,9 +378,9 @@ class GitApi(recipe_api.RecipeApi):
     if capture_stdout or capture_stderr:
       args += ['--porcelain']
     if capture_stdout:
-      stdout = self.m.raw_io.output(add_output_log=True)
+      stdout = self.m.raw_io.output_text(add_output_log=True)
     if capture_stderr:
-      stderr = self.m.raw_io.output(add_output_log=True)
+      stderr = self.m.raw_io.output_text(add_output_log=True)
     args += [remote, refspec]
     return self._step(args, stdout=stdout, stderr=stderr, **kwargs)
 
@@ -412,10 +415,10 @@ class GitApi(recipe_api.RecipeApi):
       (str): The branch name pointed to by HEAD.
       None: If HEAD is detached.
     """
-    step_data = self._step(['symbolic-ref', '--short', 'HEAD'],
-                           ok_ret=(0, 1, 128), stdout=self.m.raw_io.output(),
-                           test_stdout='{}\n'.format(
-                               self.m.src_state.default_branch))
+    step_data = self._step(
+        ['symbolic-ref', '--short', 'HEAD'], ok_ret=(0, 1, 128),
+        stdout=self.m.raw_io.output_text(),
+        test_stdout='{}\n'.format(self.m.src_state.default_branch))
     if step_data.retcode != 0:
       return None
     ret = step_data.stdout.strip()
@@ -438,11 +441,11 @@ class GitApi(recipe_api.RecipeApi):
     step_data = self._step(
         ['ls-remote', '--symref', remote, 'HEAD'],
         ok_ret=(0, 1),
-        stdout=self.m.raw_io.output(),
+        stdout=self.m.raw_io.output_text(),
         test_stdout=test_stdout,
     )
 
-    for line in six.ensure_str(step_data.stdout).split('\n'):
+    for line in step_data.stdout.split('\n'):
       if line.startswith('ref:'):
         _, ref, _ = line.split()
         return ref
@@ -450,7 +453,7 @@ class GitApi(recipe_api.RecipeApi):
 
   def head_commit(self):
     """Returns the HEAD commit ID."""
-    ret = self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output(),
+    ret = self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output_text(),
                      test_stdout='%s\n' %
                      self.test_api.test_commit_id).stdout.strip()
     self.m.step.active_result.presentation.logs['HEAD'] = [ret]
@@ -464,7 +467,7 @@ class GitApi(recipe_api.RecipeApi):
     try:
       yield
     finally:
-      self.checkout(six.ensure_str(head))
+      self.checkout(head)
 
   def ls_remote(self, refs, repo_url=None):
     """Return ls-remote output for a repository.
@@ -479,7 +482,7 @@ class GitApi(recipe_api.RecipeApi):
     cmd = ['ls-remote', repo_url or '.'] + refs
     test_stdout = '\n'.join(
         '%s\t%s' % (self.test_api.test_commit_id, x) for x in refs)
-    stdout = self._step(cmd, stdout=self.m.raw_io.output(),
+    stdout = self._step(cmd, stdout=self.m.raw_io.output_text(),
                         test_stdout=test_stdout).stdout.strip()
     refs = []
     for line in stdout.splitlines():
@@ -506,9 +509,9 @@ class GitApi(recipe_api.RecipeApi):
       cmd.append('--')
       cmd.extend(paths)
     step_data = self._step(
-        cmd, stdout=self.m.raw_io.output(),
+        cmd, stdout=self.m.raw_io.output_text(),
         test_stdout='%s\x1Fmessage\x00' % self.test_api.test_commit_id)
-    stdout = six.ensure_str(step_data.stdout).strip().rstrip('\x00')
+    stdout = step_data.stdout.strip().rstrip('\x00')
     self.m.step.active_result.presentation.logs['stdout'] = [step_data.stdout]
 
     commits = []
@@ -516,7 +519,7 @@ class GitApi(recipe_api.RecipeApi):
       # We need to check for an empty stdout, because ''.split('\x00')
       # returns [''].
       for record in stdout.split('\x00'):
-        ref, message = six.ensure_str(record).split('\x1F')
+        ref, message = record.split('\x1F')
         commits.append(self.Commit(ref.strip('\n'), message))
     return commits
 
@@ -559,11 +562,11 @@ class GitApi(recipe_api.RecipeApi):
       (str) stdout of the command, or None for errors.
     """
     kwargs.setdefault('ok_ret', (0, 1, 128))
-    kwargs.setdefault('stdout', self.m.raw_io.output())
+    kwargs.setdefault('stdout', self.m.raw_io.output_text())
     step_data = self._step(['merge-base'] + list(args), **kwargs)
     if step_data.retcode != 0:
       return None
-    return six.ensure_str(step_data.stdout).strip() or None
+    return step_data.stdout.strip() or None
 
   def show_file(self, rev, path, test_contents=None):
     """Returns the contents of the given file path at the given revision.
@@ -576,7 +579,7 @@ class GitApi(recipe_api.RecipeApi):
       (str): The contents of the file, None if the file does not exist in |rev|.
     """
     step_data = self._step(['show', '%s:%s' % (rev, path)], ok_ret=(0, 128),
-                           stdout=self.m.raw_io.output(),
+                           stdout=self.m.raw_io.output_text(),
                            test_stdout=test_contents)
     if step_data.retcode != 0:
       return None
@@ -706,9 +709,9 @@ class GitApi(recipe_api.RecipeApi):
       (list[str]): parent commit hash(es).
     """
     step_data = self._step(['log', '--pretty=%P', '-n 1', commit_id],
-                           stdout=self.m.raw_io.output(),
+                           stdout=self.m.raw_io.output_text(),
                            test_stdout=test_contents)
-    return six.ensure_str(step_data.stdout).split(' ')
+    return step_data.stdout.split(' ')
 
   def is_merge_commit(self, commit_id):
     """Determines if the commit_id is a merge commit.
@@ -731,19 +734,19 @@ class GitApi(recipe_api.RecipeApi):
     Returns:
       (GitilesCommit): The GitilesCommit corresponding to HEAD.
     """
-    remote = six.ensure_str(
-        self._step(['remote'], stdout=self.m.raw_io.output(),
-                   test_stdout=test_remote).stdout.splitlines()[0])
+    remote = self._step(['remote'], stdout=self.m.raw_io.output_text(),
+                        test_stdout=test_remote).stdout.splitlines()[0]
     test_url = (
         test_url or
         'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
     url_parts = urlparse(
-        self._step(['remote', 'get-url', remote], stdout=self.m.raw_io.output(),
+        self._step(['remote', 'get-url', remote],
+                   stdout=self.m.raw_io.output_text(),
                    test_stdout=test_url).stdout.strip())
     commit_sha = self.head_commit()
-    ref = 'refs/heads/{}'.format(six.ensure_str(self.current_branch()))
+    ref = 'refs/heads/{}'.format(self.current_branch())
     return GitilesCommit(host=url_parts.netloc, id=commit_sha, ref=ref,
-                         project=six.ensure_str(url_parts.path).strip('/'))
+                         project=url_parts.path.strip('/'))
 
   def remote_url(self, remote='origin'):
     """Get the URL for a defined remote.
@@ -756,10 +759,10 @@ class GitApi(recipe_api.RecipeApi):
     """
     result = self._step(
         ["remote", "get-url", remote],
-        stdout=self.m.raw_io.output(),
+        stdout=self.m.raw_io.output_text(),
         test_stdout="https://chromium.googlesource.com",
     )
-    return six.ensure_str(result.stdout).strip()
+    return result.stdout.strip()
 
   def set_upstream(self, remote, branch):
     """ Set the upretrem for the given branch.
@@ -773,7 +776,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     result = self._step(
         ['branch', '--set-upstream-to=%s/%s' % (remote, branch)],
-        stdout=self.m.raw_io.output())
+        stdout=self.m.raw_io.output_text())
 
     return result
 
@@ -785,19 +788,18 @@ class GitApi(recipe_api.RecipeApi):
 
     Returns: (str): commit author email.
     """
-    return six.ensure_str(
-        self._step(['log', '--format=%aE', '-n', '-1', commit_id],
-                   stdout=self.m.raw_io.output(), test_stdout='%s\n' %
-                   self.test_api.test_author_email).stdout).strip()
+    return self._step(['log', '--format=%aE', '-n', '-1', commit_id],
+                      stdout=self.m.raw_io.output_text(), test_stdout='%s\n' %
+                      self.test_api.test_author_email).stdout.strip()
 
   def remote(self):
     """Return the name of the remote.
 
     Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
     """
-    result = self._step(['remote'], stdout=self.m.raw_io.output())
+    result = self._step(['remote'], stdout=self.m.raw_io.output_text())
 
-    remotes = six.ensure_str(result.stdout.strip()).split('\n')
+    remotes = result.stdout.strip().split('\n')
     if len(remotes) > 1:
       raise recipe_api.StepFailure(
           'more than one remote ({}), not sure which to return'.format(
@@ -826,9 +828,6 @@ class GitApi(recipe_api.RecipeApi):
 
     Returns: (bool) Whether or not the branch exists.
     """
-    result = self._step(['branch'], stdout=self.m.raw_io.output())
-    branches = [
-        b.lstrip('* ')
-        for b in six.ensure_str(result.stdout).strip().split('\n')
-    ]
+    result = self._step(['branch'], stdout=self.m.raw_io.output_text())
+    branches = [b.lstrip('* ') for b in result.stdout.strip().split('\n')]
     return branch in branches

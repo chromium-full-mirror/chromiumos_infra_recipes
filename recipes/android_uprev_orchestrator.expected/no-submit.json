@@ -1095,7 +1095,7 @@
     "name": "set up orchestrator.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking snapshot branch@@@"
+      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
     ]
   },
   {
@@ -1392,7 +1392,7 @@
     "name": "set up orchestrator.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1436,7 +1436,7 @@
     "name": "set up orchestrator.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1874,8 +1874,8 @@
     "name": "create branch and sync overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -11190,7 +11190,7 @@
     "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.check if project src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -11226,8 +11226,8 @@
     "name": "commit and generate CL.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-cheets-private|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

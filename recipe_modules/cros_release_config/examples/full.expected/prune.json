@@ -55,9 +55,9 @@
     "name": "get project info.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@chromeos/infra/config|src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromeos/infra/config|src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -358,7 +358,7 @@
     "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.check if project [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -382,8 +382,8 @@
     "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromiumos/chromite.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -463,8 +463,8 @@
     "name": "create CLs.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|src/[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -587,7 +587,7 @@
     "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.check if project [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -611,8 +611,8 @@
     "name": "create CLs.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -692,8 +692,8 @@
     "name": "create CLs.set labels on CL 1 (2).repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

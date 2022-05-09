@@ -675,7 +675,7 @@
     "name": "sync cached directory.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking main branch@@@"
+      "@@@STEP_TEXT@cache tracking \"main\" branch@@@"
     ]
   },
   {
@@ -873,7 +873,7 @@
     "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -903,7 +903,7 @@
     "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1287,8 +1287,8 @@
     "name": "commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/overlay|src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/overlay|src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1312,8 +1312,8 @@
     "name": "commit uprev.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/chromiumos_workspace/src/private-overlay|src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlay|src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1989,7 +1989,7 @@
     "name": "generate CLs.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.check if project src/[CLEANUP]/chromiumos_workspace/src/overlay exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2013,8 +2013,8 @@
     "name": "generate CLs.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2103,7 +2103,7 @@
     "name": "generate CLs.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlay.check if project src/[CLEANUP]/chromiumos_workspace/src/private-overlay exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2127,8 +2127,8 @@
     "name": "generate CLs.create gerrit change for src/[CLEANUP]/chromiumos_workspace/src/private-overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2305,8 +2305,8 @@
     "name": "cq-depend generated CLs.set cq-depend for src/[CLEANUP]/chromiumos_workspace/src/overlay CL.set CL 1 description.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2481,8 +2481,8 @@
     "name": "cq-depend generated CLs.set cq-depend for src/[CLEANUP]/chromiumos_workspace/src/private-overlay CL.set CL 1 description.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2586,8 +2586,8 @@
     "name": "update CL labels.comment on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/overlay|src/src/[CLEANUP]/chromiumos_workspace/src/overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2649,8 +2649,8 @@
     "name": "update CL labels.comment on CL 1 (2).repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@src/[CLEANUP]/chromiumos_workspace/src/private-overlay|src/src/[CLEANUP]/chromiumos_workspace/src/private-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

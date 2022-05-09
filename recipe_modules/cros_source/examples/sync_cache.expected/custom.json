@@ -902,7 +902,7 @@
     "cmd": [],
     "name": "ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_TEXT@cache tracking release-R90-13816.B branch@@@"
+      "@@@STEP_TEXT@cache tracking \"release-R90-13816.B\" branch@@@"
     ]
   },
   {

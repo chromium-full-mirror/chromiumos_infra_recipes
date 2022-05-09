@@ -14,6 +14,8 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_source.tests.mismatch_args import (
     MismatchArgsProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = MismatchArgsProperties
 
 

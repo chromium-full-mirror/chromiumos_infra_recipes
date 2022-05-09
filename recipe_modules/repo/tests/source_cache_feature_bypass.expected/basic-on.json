@@ -32,7 +32,7 @@
     "cmd": [],
     "name": "ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_TEXT@cache tracking snapshot branch@@@"
+      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
     ]
   },
   {

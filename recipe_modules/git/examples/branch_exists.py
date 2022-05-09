@@ -19,6 +19,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.step_data('git branch',
-                    stdout=api.raw_io.output('  main\n* mybranch\n  foo\n')),
+      api.step_data(
+          'git branch',
+          stdout=api.raw_io.output_text('  main\n* mybranch\n  foo\n')),
   )

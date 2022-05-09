@@ -96,7 +96,7 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
     name += 'repo forall'
     name += '' if iteration == 1 else ' (%d)' % iteration
     content = self.project_infos_test_data(data)
-    return self.step_data(name, stdout=self.m.raw_io.output(content))
+    return self.step_data(name, stdout=self.m.raw_io.output_text(content))
 
   @recipe_test_api.mod_test_data
   @staticmethod

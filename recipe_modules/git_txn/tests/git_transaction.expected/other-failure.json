@@ -27,8 +27,8 @@
     "name": "update ref.git transaction.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@! HEAD:refs/fake [remote failed]@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@! HEAD:refs/fake [remote failed]@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },

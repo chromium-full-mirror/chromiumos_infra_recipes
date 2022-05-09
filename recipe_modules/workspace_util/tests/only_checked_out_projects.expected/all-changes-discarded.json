@@ -724,8 +724,8 @@
     "name": "failing apply changes.apply gerrit patch sets.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@error: project chromiumos/config not found@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@error: project chromiumos/config not found@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -932,8 +932,8 @@
     "name": "successful apply changes.apply gerrit patch sets.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@privateproject3|src/privateproject3|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@privateproject3|src/privateproject3|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

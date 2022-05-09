@@ -17,6 +17,8 @@ from PB.recipe_modules.chromeos.cros_source.examples.push_uprevs import (
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = PushUprevsArgs
 
 
@@ -128,7 +130,7 @@ def GenTests(api):
       api.step_data(
           'push uprevs.push to ../tmp_tmp_1.git push ../tmp_tmp_1',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               ' ! [remote rejected]   HEAD -> main (no new changes)'),
       ),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
@@ -145,7 +147,7 @@ def GenTests(api):
       api.step_data(
           'push uprevs.push to ../tmp_tmp_1.git push ../tmp_tmp_1',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (fetch first)'),
       ),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
@@ -161,7 +163,7 @@ def GenTests(api):
       api.step_data(
           'push uprevs.push to ../tmp_tmp_1.git push ../tmp_tmp_1',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (fetch first)'),
       ),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
@@ -178,7 +180,7 @@ def GenTests(api):
       api.step_data(
           'push uprevs.push to ../tmp_tmp_1.git push ../tmp_tmp_1',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (non-fast-forward)'),
       ),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
@@ -209,28 +211,28 @@ def GenTests(api):
       api.step_data(
           'push uprevs.push to ../tmp_tmp_1.git push ../tmp_tmp_1',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (non-fast-forward)'),
       ),
       api.step_data(
           ('push uprevs.push to ../tmp_tmp_1.retry uprev to '
            '../tmp_tmp_1.git push ../tmp_tmp_1'),
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (non-fast-forward)'),
       ),
       api.step_data(
           ('push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.'
            'git push ../tmp_tmp_1 (2)'),
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (non-fast-forward)'),
       ),
       api.step_data(
           ('push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.'
            'git push ../tmp_tmp_1 (3)'),
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '!	HEAD:refs/heads/main	[rejected] (non-fast-forward)'),
       ),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',

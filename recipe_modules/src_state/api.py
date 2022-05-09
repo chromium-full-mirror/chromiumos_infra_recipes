@@ -34,6 +34,8 @@ from . import common
 class SrcStateApi(recipe_api.RecipeApi):
   """Source State related attributes for Chrome OS recipes."""
 
+  ManifestProject = common.ManifestProject
+
   def __init__(self, properties, *args, **kwargs):
     super(SrcStateApi, self).__init__(*args, **kwargs)
     self.properties = properties

@@ -33,4 +33,6 @@ DEPS = {
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosSourceProperties

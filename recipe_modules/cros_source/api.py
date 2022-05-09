@@ -959,7 +959,7 @@ class CrosSourceApi(RecipeApi):
         with self.m.context(cwd=manifests.extern.path):
           res = self.m.git.commit(
               'Syncing with internal manifest.',
-              stdout=self.m.raw_io.output(add_output_log=True),
+              stdout=self.m.raw_io.output_text(add_output_log=True),
               test_stdout='HEAD detached at 99caf97f', ok_ret=(0, 1))
           clean_msg = 'nothing to commit, working tree clean'
           if clean_msg in res.stdout.splitlines():
@@ -1010,10 +1010,10 @@ class CrosSourceApi(RecipeApi):
         self.m.step('clone', ['git', 'clone', '--bare', '.', new_dir])
 
         # Determine the correct name for the remote.
-        step_test_data = lambda: self.m.raw_io.test_api.output(
+        step_test_data = lambda: self.m.raw_io.test_api.output_text(
             'cros' if external else 'cros-internal')
         remote = self.m.step('remote', ['git', 'remote'],
-                             stdout=self.m.raw_io.output(),
+                             stdout=self.m.raw_io.output_text(),
                              step_test_data=step_test_data).stdout.strip()
 
         # Now push the manifest repo, and make the branches look as they
@@ -1283,8 +1283,8 @@ class CrosSourceApi(RecipeApi):
                                  manifest_branch=manifest_branch)
       else:
         manifest_xml = self.m.gsutil.cat(
-            manifest_gs_path, stdout=self.m.raw_io.output(),
-            step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+            manifest_gs_path, stdout=self.m.raw_io.output_text(),
+            step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
                 testdata)).stdout.strip()
         self._sync_target = dict(
             call='sync_to_manifest',

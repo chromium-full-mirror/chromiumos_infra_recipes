@@ -57,11 +57,11 @@ def GenTests(api):
       api.path.exists(api.src_state.workspace_path),
       api.step_data(
           'create gerrit change for baz.git branch',
-          stdout=api.raw_io.output('main\notherbranch\n'),
+          stdout=api.raw_io.output_text('main\notherbranch\n'),
       ),
       api.git_cl.issues('create gerrit change for baz',
                         {'refs/heads/remotebranch': '123'}),
       api.step_data(
           'create gerrit change for foo.check if project foo exists.repo info',
-          stderr=api.raw_io.output('project foo not found')),
+          stderr=api.raw_io.output_text('project foo not found')),
   )

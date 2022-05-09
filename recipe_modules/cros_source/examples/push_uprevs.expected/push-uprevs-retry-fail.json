@@ -353,9 +353,9 @@
     "name": "push uprevs.push to ../tmp_tmp_1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/tmp_tmp_1/test1.ebuild|src/[CLEANUP]/tmp_tmp_1/test1.ebuild|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@[CLEANUP]/tmp_tmp_1/test2.ebuild|src/[CLEANUP]/tmp_tmp_1/test2.ebuild|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/tmp_tmp_1/test1.ebuild|src/[CLEANUP]/tmp_tmp_1/test1.ebuild|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/tmp_tmp_1/test2.ebuild|src/[CLEANUP]/tmp_tmp_1/test2.ebuild|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -384,8 +384,8 @@
     "name": "push uprevs.push to ../tmp_tmp_1.git push ../tmp_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LOG_LINE@exception@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
       "@@@STEP_LOG_END@exception@@@",
       "@@@STEP_WARNINGS@@@"
@@ -559,8 +559,8 @@
     "name": "push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.git push ../tmp_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -749,8 +749,8 @@
     "name": "push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.git push ../tmp_tmp_1 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -939,8 +939,8 @@
     "name": "push uprevs.push to ../tmp_tmp_1.retry uprev to ../tmp_tmp_1.git push ../tmp_tmp_1 (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@!\tHEAD:refs/heads/main\t[rejected] (non-fast-forward)@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },

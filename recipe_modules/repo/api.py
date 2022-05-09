@@ -450,7 +450,8 @@ class RepoApi(recipe_api.RecipeApi):
     if test_data is None:
       test_data = self.test_api.project_infos_test_data(
           [dict(project=p) for p in projects or self.test_api.test_projects])
-    step_test_data = lambda: self.m.raw_io.test_api.stream_output(test_data)
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output_text(test_data
+                                                                      )
 
     cmd = []
     cmd += ['forall']
@@ -461,9 +462,9 @@ class RepoApi(recipe_api.RecipeApi):
         '-c', r'echo $REPO_PROJECT\|$REPO_PATH\|$REPO_REMOTE\|$REPO_RREV\|'
         r'$REPO_UPSTREAM'
     ]
-    step_data = self._step(cmd,
-                           stdout=self.m.raw_io.output(add_output_log=True),
-                           step_test_data=step_test_data)
+    step_data = self._step(
+        cmd, stdout=self.m.raw_io.output_text(add_output_log=True),
+        step_test_data=step_test_data)
 
     infos = []
     lines = six.ensure_str(step_data.stdout).strip().split('\n')
@@ -510,9 +511,9 @@ class RepoApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('check if project {} exists'.format(project)):
       cmd = ['info', project]
-      step_data = self._step(cmd,
-                             stderr=self.m.raw_io.output(add_output_log=True),
-                             ok_ret=[0, 1])
+      step_data = self._step(
+          cmd, stderr=self.m.raw_io.output_text(add_output_log=True),
+          ok_ret=[0, 1])
 
       stderr = six.ensure_str(step_data.stderr)
       if stderr.strip():
@@ -567,7 +568,7 @@ class RepoApi(recipe_api.RecipeApi):
     Returns:
       str: The manifest XML as a string.
     """
-    step_test_data = lambda: self.m.raw_io.test_api.stream_output(
+    step_test_data = lambda: self.m.raw_io.test_api.stream_output_text(
         test_data or '<manifest></manifest>')
 
     cmd = ['manifest']
@@ -576,9 +577,9 @@ class RepoApi(recipe_api.RecipeApi):
     if manifest_file:
       cmd += ['-m', manifest_file]
 
-    step_data = self._step(cmd,
-                           stdout=self.m.raw_io.output(add_output_log=True),
-                           step_test_data=step_test_data, name=step_name)
+    step_data = self._step(
+        cmd, stdout=self.m.raw_io.output_text(add_output_log=True),
+        step_test_data=step_test_data, name=step_name)
     return step_data.stdout.strip()
 
   def diff_remote_and_local_manifests(self, from_manifest_url,
@@ -766,7 +767,7 @@ class RepoApi(recipe_api.RecipeApi):
       gc_args = ['--ignore-missing', '-j', '32', '-c', 'git', 'gc']
       try:
         self._step(cmd + gc_args,
-                   stdout=self.m.raw_io.output(add_output_log=True),
+                   stdout=self.m.raw_io.output_text(add_output_log=True),
                    ok_ret='any')
       except recipe_api.StepFailure:  # pragma: nocover
         self.m.step.active_result.presentation.status = self.m.step.WARNING
@@ -788,7 +789,7 @@ class RepoApi(recipe_api.RecipeApi):
       ]
       try:
         self._step(cmd + reset_args,
-                   stdout=self.m.raw_io.output(add_output_log=True),
+                   stdout=self.m.raw_io.output_text(add_output_log=True),
                    ok_ret='any')
       except recipe_api.StepFailure:  # pragma: nocover
         self.m.step.active_result.presentation.status = self.m.step.WARNING
@@ -799,7 +800,7 @@ class RepoApi(recipe_api.RecipeApi):
       ]
       try:
         self._step(cmd + clean_args,
-                   stdout=self.m.raw_io.output(add_output_log=True),
+                   stdout=self.m.raw_io.output_text(add_output_log=True),
                    ok_ret='any')
       except recipe_api.StepFailure:  # pragma: nocover
         self.m.step.active_result.presentation.status = self.m.step.WARNING
@@ -928,8 +929,8 @@ class RepoApi(recipe_api.RecipeApi):
         # Manifest branch must be passed with init_opts
         assert 'manifest_branch' in init_opts, (
             'manifest tracking branch not specified.')
-        presentation.step_text = 'cache tracking %s branch' % init_opts[
-            'manifest_branch']
+        presentation.step_text = 'cache tracking {} branch'.format(
+            json.dumps(init_opts['manifest_branch'], sort_keys=True))
         if manifest_name:
           # Our API calls for manifest_name to be a Path, and the underlying
           # routines need manifest_name to be a string, giving the name of the

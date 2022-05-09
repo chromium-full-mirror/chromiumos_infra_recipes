@@ -68,6 +68,11 @@ class ManifestProject(object):
             self.path == other.path and self.ref == other.ref and
             self.gerrit_host == other.gerrit_host)
 
+  def __hash__(self):
+    """Any class with custom __eq__ must have __hash__ to work in sets/dicts."""
+    return hash('{} {} {} {}'.format(self.url, self.path, self.ref,
+                                     self.gerrit_host))
+
   def __contains__(self, change):
     """Return whether |change| applies to this manifest.
 

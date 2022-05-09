@@ -28,6 +28,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data('single remote.git remote',
-                    stdout=api.raw_io.output('origin\n')),
+                    stdout=api.raw_io.output_text('origin\n')),
       api.step_data('multiple remotes.git remote',
-                    stdout=api.raw_io.output('origin\ncros\n')))
+                    stdout=api.raw_io.output_text('origin\ncros\n')))

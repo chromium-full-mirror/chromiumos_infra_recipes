@@ -10,7 +10,10 @@ DEPS = [
     'repo',
     'src_state',
 ]
+
 from recipe_engine import post_process
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):

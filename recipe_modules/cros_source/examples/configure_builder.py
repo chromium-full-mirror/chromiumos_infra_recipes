@@ -20,6 +20,8 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
 from PB.recipe_modules.chromeos.cros_source.examples.configure_builder import (
     ConfigureBuilderProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ConfigureBuilderProperties
 
 

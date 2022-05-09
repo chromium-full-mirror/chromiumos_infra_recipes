@@ -235,7 +235,7 @@
     "cmd": [],
     "name": "ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_TEXT@cache tracking release-R123 branch@@@"
+      "@@@STEP_TEXT@cache tracking \"release-R123\" branch@@@"
     ]
   },
   {
