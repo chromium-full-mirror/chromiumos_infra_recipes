@@ -22,6 +22,8 @@ DEPS = [
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   url = ('https://chrome-internal.googlesource.com/'

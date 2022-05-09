@@ -19,6 +19,8 @@ DEPS = [
     'git',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 REPO_URL = 'https://chromium.googlesource.com/chromiumos/shim-review'
 
 # List of shim binary file names built by this repo. These files

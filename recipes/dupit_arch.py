@@ -15,6 +15,8 @@ from collections import namedtuple
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 Mirror = namedtuple("Mirror", "uri rate")
 
 # list of of (uri, rate limit) for mirrors to try, in order

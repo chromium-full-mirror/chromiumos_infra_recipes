@@ -312,13 +312,13 @@
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
   * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
-  * [dupit_arch](#recipes-dupit_arch) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
+  * [dupit_arch](#recipes-dupit_arch) (Python3 ✅) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
   * [dut_interface:tests/full](#recipes-dut_interface_tests_full) (Python3 ✅)
-  * [dut_tracker](#recipes-dut_tracker) &mdash; Recipe for the Star Doctor.
+  * [dut_tracker](#recipes-dut_tracker) (Python3 ✅) &mdash; Recipe for the Star Doctor.
   * [easy:examples/full](#recipes-easy_examples_full) (Python3 ✅)
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
-  * [easy:tests/log_parent_step](#recipes-easy_tests_log_parent_step)
+  * [easy:tests/log_parent_step](#recipes-easy_tests_log_parent_step) (Python3 ✅)
   * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration)
   * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration)
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests)
@@ -340,13 +340,13 @@
   * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
-  * [forge_commit](#recipes-forge_commit) &mdash; Recipe for forcing forge commit failure.
+  * [forge_commit](#recipes-forge_commit) (Python3 ✅) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
   * [gcloud:examples/full](#recipes-gcloud_examples_full) (Python3 ✅)
-  * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks)
-  * [gcloud:examples/lookup_device_id](#recipes-gcloud_examples_lookup_device_id)
+  * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks) (Python3 ✅)
+  * [gcloud:examples/lookup_device_id](#recipes-gcloud_examples_lookup_device_id) (Python3 ✅)
   * [gcloud:examples/setup_cache_disk](#recipes-gcloud_examples_setup_cache_disk) (Python3 ✅)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change) (Python3 ✅)
@@ -478,15 +478,15 @@
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
-  * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser)
+  * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser) (Python3 ✅)
   * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower) (Python3 ✅)
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader) (Python3 ✅)
-  * [test_platform/result_flow](#recipes-test_platform_result_flow)
+  * [test_platform/result_flow](#recipes-test_platform_result_flow) (Python3 ✅)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_rules_cros](#recipes-test_rules_cros) &mdash; Recipe that runs bazel rules_cros unit tests.
   * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
-  * [test_uefi_shim](#recipes-test_uefi_shim) &mdash; Recipe to test the UEFI shim for the reven board.
+  * [test_uefi_shim](#recipes-test_uefi_shim) (Python3 ✅) &mdash; Recipe to test the UEFI shim for the reven board.
   * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
@@ -9986,11 +9986,11 @@ Recipe for syncing remote, distributed tarballs to our local cache.
 
 [DEPS](/recipes/dupit_arch.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for syncing Archlinux to our local cache for Borealis VM image.
 
-&mdash; **def [RunSteps](/recipes/dupit_arch.py#33)(api):**
+&mdash; **def [RunSteps](/recipes/dupit_arch.py#35)(api):**
 ### *recipes* / [dut\_interface:tests/full](/recipe_modules/dut_interface/tests/full.py)
 
 [DEPS](/recipe_modules/dut_interface/tests/full.py#6): [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
@@ -10002,14 +10002,14 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/dut_tracker.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for the Star Doctor.
 
 Automatically updates binary config files and updates Goldeneye config
 json files.
 
-&mdash; **def [RunSteps](/recipes/dut_tracker.py#24)(api):**
+&mdash; **def [RunSteps](/recipes/dut_tracker.py#26)(api):**
 ### *recipes* / [easy:examples/full](/recipe_modules/easy/examples/full.py)
 
 [DEPS](/recipe_modules/easy/examples/full.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -10035,9 +10035,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/easy/tests/log_parent_step.py#10): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/tests/log_parent_step.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/tests/log_parent_step.py#23)(api):**
 ### *recipes* / [exonerate:examples/disabled\_hw\_exoneration](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py)
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -10193,7 +10193,7 @@ Recipe that schedules child builders and watches for failures.
 
 [DEPS](/recipes/forge_commit.py#13): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for forcing forge commit failure.
 
@@ -10201,7 +10201,7 @@ Recipe used to force a forge commit failure so the failure response
 can be analyzed to determine what user is being used for the invocation.
 See https://crbug.com/1068743.
 
-&mdash; **def [RunSteps](/recipes/forge_commit.py#26)(api):**
+&mdash; **def [RunSteps](/recipes/forge_commit.py#28)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -10236,16 +10236,16 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/gcloud/examples/gcloud_disks.py#6): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/gcloud_disks.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/gcloud_disks.py#17)(api):**
 ### *recipes* / [gcloud:examples/lookup\_device\_id](/recipe_modules/gcloud/examples/lookup_device_id.py)
 
 [DEPS](/recipe_modules/gcloud/examples/lookup_device_id.py#7): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/lookup_device_id.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/lookup_device_id.py#18)(api):**
 ### *recipes* / [gcloud:examples/setup\_cache\_disk](/recipe_modules/gcloud/examples/setup_cache_disk.py)
 
 [DEPS](/recipe_modules/gcloud/examples/setup_cache_disk.py#6): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -11378,11 +11378,11 @@ Recipe that triggers cros_test_platform runs.
 &mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#34)(api, properties):**
 ### *recipes* / [test\_platform/dut\_leaser](/recipes/test_platform/dut_leaser.py)
 
-[DEPS](/recipes/test_platform/dut_leaser.py#13): [phosphorus](#recipe_modules-phosphorus), [service\_version](#recipe_modules-service_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/test_platform/dut_leaser.py#15): [phosphorus](#recipe_modules-phosphorus), [service\_version](#recipe_modules-service_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipes/test_platform/dut_leaser.py#29)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/dut_leaser.py#33)(api, properties):**
 ### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
 
 [DEPS](/recipes/test_platform/multi_bot/follower.py#8): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11399,15 +11399,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipes/test_platform/multi_bot/leader.py#20)(api, properties):**
 ### *recipes* / [test\_platform/result\_flow](/recipes/test_platform/result_flow.py)
 
-[DEPS](/recipes/test_platform/result_flow.py#8): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/result_flow.py#12): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipes/test_platform/result_flow.py#47)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/result_flow.py#53)(api, properties):**
 
-&mdash; **def [run\_test\_ctp\_flow](/recipes/test_platform/result_flow.py#28)(api, config, deadline):**
+&mdash; **def [run\_test\_ctp\_flow](/recipes/test_platform/result_flow.py#34)(api, config, deadline):**
 
-&mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#18)(api, config, deadline):**
+&mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#24)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
 [DEPS](/recipes/test_platform/test_runner.py#45): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
@@ -11574,11 +11574,11 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 [DEPS](/recipes/test_uefi_shim.py#12): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe to test the UEFI shim for the reven board.
 
-&mdash; **def [RunSteps](/recipes/test_uefi_shim.py#44)(api):**
+&mdash; **def [RunSteps](/recipes/test_uefi_shim.py#46)(api):**
 ### *recipes* / [test\_util:examples/full](/recipe_modules/test_util/examples/full.py)
 
 [DEPS](/recipe_modules/test_util/examples/full.py#6): [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

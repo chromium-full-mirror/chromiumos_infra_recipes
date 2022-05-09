@@ -18,6 +18,8 @@ DEPS = [
 
 from PB.chromiumos.dut_tracking import MAX_PEND_TIME
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 TASK_STATES = ['RUNNING', 'PENDING']
 
 

@@ -1,3 +1,7 @@
+# Copyright 2020 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 from PB.test_platform import result_flow
 from PB.recipes.chromeos.test_platform.result_flow import \
   ResultFlowProperties
@@ -11,6 +15,8 @@ DEPS = [
     'recipe_engine/step',
     'result_flow',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = ResultFlowProperties
 

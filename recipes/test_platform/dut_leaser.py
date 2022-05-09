@@ -10,6 +10,8 @@ from PB.test_platform import skylab_local_state, service_version
 
 from google.protobuf import json_format
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -18,6 +20,8 @@ DEPS = [
     'phosphorus',
     'service_version',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = DutLeaserProperties
 
@@ -80,6 +84,8 @@ def GenTests(api):
                       results_dir='dummy-results-dir', dut_topology=[
                           skylab_local_state.load.Dut(hostname="dummy-hostname")
                       ])))),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
