@@ -20,7 +20,6 @@ from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
 
 def RunSteps(api):
-  _ = api.skylab.resultdb_elegible_projects
   builder_name = 'test-board-release-main'
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test_unit.common.builder_name = builder_name
@@ -108,10 +107,5 @@ def GenTests(api):
                                             experiments={'chromeos.a.b': True})
   yield api.test(
       'experiments', api.buildbucket.build(build),
-      api.properties(
-          **{
-              '$chromeos/skylab':
-                  SkylabProperties(resultdb_elegible_projects=['chromeos'])
-          }),
       api.git_footers.simulated_get_footers(['chromeos.c.d', 'chromeos.e.f'],
                                             'schedule skylab tests v2'))

@@ -30,17 +30,11 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
-    self._resultdb_elegible_projects = properties.resultdb_elegible_projects
     self._enable_container_support = properties.enable_container_support
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
   CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
-
-  @property
-  def resultdb_elegible_projects(self):
-    """Returns the names of the repos elegible for go/cros-gerrit-results."""
-    return self._resultdb_elegible_projects
 
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
