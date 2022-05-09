@@ -208,7 +208,7 @@
     "name": "enumerate tests.enumeration error",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@some tests are missing@@@",
+      "@@@STEP_LOG_LINE@summary@default : some tests are missing@@@",
       "@@@STEP_LOG_END@summary@@@",
       "@@@STEP_FAILURE@@@"
     ]
@@ -392,7 +392,7 @@
     "name": "summarize.default task results.enumeration error",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@summary@some tests are missing@@@",
+      "@@@STEP_LOG_LINE@summary@default : some tests are missing@@@",
       "@@@STEP_LOG_END@summary@@@",
       "@@@STEP_FAILURE@@@"
     ]

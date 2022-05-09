@@ -212,7 +212,7 @@ def enumerate_tests(api, requests):
         })
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
     for tag, response in enum_responses.tagged_responses.iteritems():
-      _log_enumeration_errors(api, response)
+      _log_enumeration_errors(api, response, tag)
       name = 'autotest tests for %s' % tag
       step.presentation.logs[name] = _enumeration_log(response)
     return enum_responses.tagged_responses
@@ -439,7 +439,7 @@ def summarize(api, enumerations, responses):
   with api.step.nest('summarize') as step:
     for tag, response in sorted(responses.iteritems()):
       with api.step.nest('%s task results' % tag):
-        _log_enumeration_errors(api, enumerations[tag])
+        _log_enumeration_errors(api, enumerations[tag], tag)
         _log_task_results(api, response.task_results)
         invocations.extend(_get_rdb_invocations(response.task_results))
         if response.state.verdict in _SUCCESSFUL_VERDICTS:
@@ -521,10 +521,10 @@ def set_output_properties(api, responses):
         marshalled)
 
 
-def _log_enumeration_errors(api, enum):
+def _log_enumeration_errors(api, enum, tag):
   if enum.error_summary:
     with api.step.nest('enumeration error') as step:
-      step.logs['summary'] = [enum.error_summary]
+      step.logs['summary'] = ['{} : {}'.format(tag, enum.error_summary)]
       step.presentation.status = api.step.FAILURE
 
 
