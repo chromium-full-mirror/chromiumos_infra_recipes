@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@{'betty': GreennessTuple(score=78, critical=True, relevant=True)}@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('betty', GreennessTuple(score=78, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

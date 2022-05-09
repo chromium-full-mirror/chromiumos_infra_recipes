@@ -6,6 +6,7 @@
 """API providing a menu for calculating greenness metric."""
 
 from collections import namedtuple
+from collections import OrderedDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
@@ -24,7 +25,7 @@ class GreennessApi(recipe_api.RecipeApi):
     super(GreennessApi, self).__init__(*args, **kwargs)
     self._publish_property = properties.publish_property
     # _greenness_dict contains a map target -> (score, critical)
-    self._greenness_dict = {}
+    self._greenness_dict = OrderedDict()
 
   @property
   def greenness_dict(self):

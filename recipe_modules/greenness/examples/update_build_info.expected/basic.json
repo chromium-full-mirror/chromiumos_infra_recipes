@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@{'eve-kernelnext-not-relevant': GreennessTuple(score=0, critical=False, relevant=False), 'eve-kernelnext': GreennessTuple(score=100, critical=False, relevant=True)}@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, critical=False, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=0, critical=False, relevant=False))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },
@@ -12,7 +12,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"context\": \"IRRELEVANT\", \"target\": \"eve-kernelnext-not-relevant\"}, {\"metric\": \"100\", \"target\": \"eve-kernelnext\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"context\": \"IRRELEVANT\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
     ]
   },
   {

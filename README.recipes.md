@@ -67,7 +67,7 @@
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) (Python3 ✅) &mdash; APIs for dealing with Gitiles.
   * [goma](#recipe_modules-goma) (Python3 ✅) &mdash; API for working with goma.
-  * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
+  * [greenness](#recipe_modules-greenness) (Python3 ✅) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) (Python3 ✅) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
   * [iterutils](#recipe_modules-iterutils) (Python3 ✅)
@@ -384,9 +384,9 @@
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma) (Python3 ✅)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts) (Python3 ✅)
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs) (Python3 ✅)
-  * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
-  * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
-  * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
+  * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info) (Python3 ✅)
+  * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info) (Python3 ✅)
+  * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info) (Python3 ✅)
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full) (Python3 ✅)
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs) (Python3 ✅)
   * [ipc:examples/full](#recipes-ipc_examples_full) (Python3 ✅)
@@ -6273,15 +6273,15 @@ Returns:
 
 [DEPS](/recipe_modules/greenness/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#33)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#34)(self, target):**
 
 Returns the greenness metric for a specific target.
 
@@ -6291,17 +6291,17 @@ Args:
 Returns: Metric of the target or None if the target wasn't
 launched.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#29)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#30)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#105)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#106)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#112)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#113)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#51)(self, builds):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#52)(self, builds):**
 
 Update Grenness with build information.
 
@@ -6309,14 +6309,14 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#69)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#70)(self, results):**
 
 Update Grenness with HW test information.
 
 Args:
   results([SkylabResult]): Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#92)(self, results):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#93)(self, results):**
 
 Update Grenness with VM test information.
 
@@ -10529,23 +10529,23 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/greenness/examples/update_build_info.py#6): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#18)(api):**
 ### *recipes* / [greenness:examples/update\_hwtest\_info](/recipe_modules/greenness/examples/update_hwtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_hwtest_info.py#6): [greenness](#recipe_modules-greenness), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_hwtest_info.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_hwtest_info.py#18)(api):**
 ### *recipes* / [greenness:examples/update\_vmtest\_info](/recipe_modules/greenness/examples/update_vmtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_vmtest_info.py#6): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_vmtest_info.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_vmtest_info.py#16)(api):**
 ### *recipes* / [gs\_step\_logging:examples/full](/recipe_modules/gs_step_logging/examples/full.py)
 
 [DEPS](/recipe_modules/gs_step_logging/examples/full.py#6): [gs\_step\_logging](#recipe_modules-gs_step_logging), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
