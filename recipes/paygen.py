@@ -39,6 +39,8 @@ from PB.recipes.chromeos.paygen import PaygenProperties
 
 PROPERTIES = PaygenProperties
 
+_PAYGEN_TRY_COUNT = 2
+
 
 def _set_up_test_configs(api, request, response):
   """Set up test configs for a paygen response, if applicable.
@@ -101,22 +103,36 @@ def RunSteps(api, properties):
       api.cros_sdk.create_chroot(version=None, use_image=False,
                                  timeout_sec=None)
 
-    # Set up holder of paygen test configs.
-    paygen_test_configs = []
-    # Set up holder of paygen uris.
-    paygen_uris = []
+    # Set up holder objects.
+    paygen_test_configs, paygen_uris = [], []
 
-    CallPair = namedtuple('CallPair', ['req', 'resp'])
+    CallPair = namedtuple('CallPair', ['req', 'resp', 'call_count'])
 
     def _execute_paygen(req, semaphore):
-      """Return PayloadService.GeneratePayload with the request."""
-      with semaphore:
-        resp = api.cros_build_api.PayloadService.GeneratePayload(
-            req.generation_request, name='making single payload',
-            step_text=api.naming.get_generation_request_title(
-                MessageToDict(req).get('generationRequest', {})))
+      """Executes a paygen call to build-api, retrying to _PAYGEN_TRY_COUNT
 
-        return CallPair(req, resp)
+      Returns:
+        CallPair that contains the request and either the response, or the
+            exception that was thrown, followed by the try count.
+      """
+      num_tries = 0
+      last_err = None
+      while num_tries < _PAYGEN_TRY_COUNT:
+        try:
+          with semaphore:
+            suffix = '' if not num_tries else ' retry ({})'.format(num_tries)
+            num_tries += 1
+            # Make the call to generate payload.
+            resp = api.cros_build_api.PayloadService.GeneratePayload(
+                req.generation_request,
+                name='making single payload{}'.format(suffix),
+                step_text=api.naming.get_generation_request_title(
+                    MessageToDict(req).get('generationRequest', {})))
+
+            return CallPair(req, resp, num_tries)
+        except StepFailure as e:
+          last_err = e
+      return CallPair(req, last_err, num_tries)
 
     with api.step.nest('doing paygen') as presentation:
 
@@ -138,13 +154,20 @@ def RunSteps(api, properties):
               api.m.futures.spawn(_execute_paygen, request,
                                   semaphore_for_requests))
 
+      errors, total_retries = [], 0
       for f in api.m.futures.iwait(futures):
         f_result = f.result()
 
         response = f_result.resp
         request = f_result.req
 
-        paygen_uris.append(response.remote_uri)
+        total_retries += f_result.call_count - 1
+
+        # If an exception was thrown, add it to errors and move on to the next
+        # request.
+        if isinstance(response, StepFailure):
+          errors.append(f_result)
+          continue
 
         if response.failure_reason:
           # See go/rubik-must-paygen-minios for more info about minios skips.
@@ -152,14 +175,26 @@ def RunSteps(api, properties):
             presentation.step_text = 'not compatible with miniOS, skipping'
             continue
           else:
-            raise StepFailure('paygen failed with error {}'.format(
-                response.failure_reason))
+            errors.append(
+                CallPair(request, StepFailure(response.failure_reason),
+                         f_result.call_count))
+
+        paygen_uris.append(response.remote_uri)
 
         test_configs = _set_up_test_configs(api, request, response)
         if test_configs:
           paygen_test_configs.extend(test_configs)
 
-    api.easy.set_properties_step(payload_uris=paygen_uris)
+      api.easy.set_properties_step(payload_uris=paygen_uris)
+      api.easy.set_properties_step(paygen_retries=total_retries)
+
+      if errors:
+        raise StepFailure('paygen failed with errors: {}'.format('\n'.join([
+            '{request} - {error}'.format(
+                request=api.naming.get_generation_request_title(
+                    MessageToDict(x.req).get('generationRequest', {})),
+                error=x.resp) for x in errors
+        ])))
 
     if paygen_test_configs:
       # Test all paygens.
@@ -173,13 +208,16 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def generate_payload_response(api, is_success=True, local_path='',
-                                remote_uri='', failure_reason=None, retcode=0):
+                                remote_uri='', failure_reason=None, retcode=0,
+                                retry=0):
+    suffix = '' if not retry else ' retry ({})'.format(retry)
     data = json.dumps(
         dict(success=is_success, local_path=local_path, remote_uri=remote_uri,
              failure_reason=failure_reason))
     return api.cros_build_api.set_api_return(
         parent_step_name='doing paygen.running paygen operations in parallel',
-        step_name='making single payload', data=data, retcode=retcode)
+        step_name='making single payload{}'.format(suffix), data=data,
+        retcode=retcode)
 
   def StepTextEquals(check, step_odict, step, expected):
     """Check that the step's text equals given value.
@@ -301,6 +339,21 @@ def GenTests(api):
           ])),
       generate_payload_response(api, is_success=False, retcode=2,
                                 failure_reason=2),
+      api.post_check(post_process.StepFailure, 'doing paygen'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+  )
+
+  yield api.test(
+      'failed-paygen-exception',
+      api.properties(
+          PaygenProperties(requests=[
+              dict(generation_request=api.cros_paygen
+                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
+          ])),
+      generate_payload_response(api, is_success=False, retcode=3,
+                                failure_reason=2),
+      generate_payload_response(api, is_success=False, retcode=3,
+                                failure_reason=2, retry=1),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
   )

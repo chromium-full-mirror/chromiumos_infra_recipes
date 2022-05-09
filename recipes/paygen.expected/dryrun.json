@@ -1560,9 +1560,18 @@
   },
   {
     "cmd": [],
-    "name": "set payload_uris",
+    "name": "doing paygen.set payload_uris",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@payload_uris@[\"\"]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.set paygen_retries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@paygen_retries@0@@@"
     ]
   },
   {

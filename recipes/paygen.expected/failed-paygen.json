@@ -1547,6 +1547,30 @@
   },
   {
     "cmd": [],
+    "name": "doing paygen.setting up paygen test config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@dry run, skip testing@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.set payload_uris",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@payload_uris@[\"\"]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "doing paygen.set paygen_retries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@paygen_retries@0@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {
@@ -1921,7 +1945,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "paygen failed with error 2"
+      "humanReason": "paygen failed with errors: DLC (termina-dlc) stable-channel | Full (13425.90.0) - 2"
     },
     "name": "$result"
   }
