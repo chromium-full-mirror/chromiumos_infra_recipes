@@ -63,7 +63,7 @@
   * [gerrit](#recipe_modules-gerrit) (Python3 ✅) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) (Python3 ✅) &mdash; API for working with git.
   * [git_cl](#recipe_modules-git_cl) (Python3 ✅) &mdash; API for working with git cl.
-  * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
+  * [git_footers](#recipe_modules-git_footers) (Python3 ✅) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) (Python3 ✅) &mdash; APIs for dealing with Gitiles.
   * [goma](#recipe_modules-goma) (Python3 ✅) &mdash; API for working with goma.
@@ -374,7 +374,7 @@
   * [git_cl:examples/issues](#recipes-git_cl_examples_issues) (Python3 ✅)
   * [git_cl:examples/status](#recipes-git_cl_examples_status) (Python3 ✅)
   * [git_cl:examples/upload](#recipes-git_cl_examples_upload) (Python3 ✅)
-  * [git_footers:examples/full](#recipes-git_footers_examples_full) &mdash; Test git_footers calls.
+  * [git_footers:examples/full](#recipes-git_footers_examples_full) (Python3 ✅) &mdash; Test git_footers calls.
   * [git_txn:tests/gerrit_transaction](#recipes-git_txn_tests_gerrit_transaction)
   * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction)
   * [gitiles:examples/full](#recipes-gitiles_examples_full) (Python3 ✅)
@@ -5992,15 +5992,15 @@ Returns:
 
 [DEPS](/recipe_modules/git_footers/__init__.py#6): [gerrit](#recipe_modules-gerrit), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API wrapping the git_footers script..
 
-#### **class [GitFootersApi](/recipe_modules/git_footers/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitFootersApi](/recipe_modules/git_footers/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for calling git_footers.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/git_footers/api.py#14)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/git_footers/api.py#16)(self, \*args, \*\*kwargs):**
 
 Call git_footers.py with the given args.
 
@@ -6011,7 +6011,7 @@ Args:
 Returns:
   list[str]: All matching footer values, or None
 
-&mdash; **def [edit\_add\_change\_description](/recipe_modules/git_footers/api.py#122)(self, change_message, footer, footer_text):**
+&mdash; **def [edit\_add\_change\_description](/recipe_modules/git_footers/api.py#125)(self, change_message, footer, footer_text):**
 
 Edit or add the given footer to the change_message.
 
@@ -6024,7 +6024,7 @@ Args:
 Returns:
   str: Modified change_message.
 
-&mdash; **def [from\_gerrit\_change](/recipe_modules/git_footers/api.py#36)(self, gerrit_change, key=None, memoize=True, \*\*kwargs):**
+&mdash; **def [from\_gerrit\_change](/recipe_modules/git_footers/api.py#39)(self, gerrit_change, key=None, memoize=True, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
@@ -6040,7 +6040,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#55)(self, message, key=None, \*\*kwargs):**
+&mdash; **def [from\_message](/recipe_modules/git_footers/api.py#58)(self, message, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the commit message for the given key.
 
@@ -6054,7 +6054,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the commit message.
 
-&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#77)(self, ref, key=None, \*\*kwargs):**
+&mdash; **def [from\_ref](/recipe_modules/git_footers/api.py#80)(self, ref, key=None, \*\*kwargs):**
 
 Return the footer value(s) in the given ref for the given key.
 
@@ -6065,7 +6065,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [get\_footer\_values](/recipe_modules/git_footers/api.py#154)(self, gerrit_changes, key, \*\*kwargs):**
+&mdash; **def [get\_footer\_values](/recipe_modules/git_footers/api.py#157)(self, gerrit_changes, key, \*\*kwargs):**
 
 Gets a list of values from a footer.
 
@@ -6082,7 +6082,7 @@ Args:
 Returns:
   values (set(str)): A set of values.  May be empty.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#95)(self, ref, test_position_num=None, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#98)(self, ref, test_position_num=None, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -10455,11 +10455,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/git_footers/examples/full.py#13): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Test git_footers calls.
 
-&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#43)(api, invalid_cr_commit_position):**
+&mdash; **def [RunSteps](/recipe_modules/git_footers/examples/full.py#45)(api, invalid_cr_commit_position):**
 ### *recipes* / [git\_txn:tests/gerrit\_transaction](/recipe_modules/git_txn/tests/gerrit_transaction.py)
 
 [DEPS](/recipe_modules/git_txn/tests/gerrit_transaction.py#6): [git\_txn](#recipe_modules-git_txn), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

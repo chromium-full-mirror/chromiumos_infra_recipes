@@ -5,6 +5,8 @@
 
 """API wrapping the git_footers script.."""
 
+import six
+
 from recipe_engine import recipe_api
 
 
@@ -31,7 +33,8 @@ class GitFootersApi(recipe_api.RecipeApi):
 
     if result.retcode == 1:
       return None
-    return [l.strip() for l in result.stdout.splitlines() if l.strip()]
+    stdout = six.ensure_str(result.stdout)
+    return [l.strip() for l in stdout.splitlines() if l.strip()]
 
   def from_gerrit_change(self, gerrit_change, key=None, memoize=True, **kwargs):
     """Return the footer value(s) in the commit message for the given key.
