@@ -73,14 +73,14 @@ def main():
   if not os.path.exists(params.coverage_file):
     raise RuntimeError('Coverage file %s must exist' % params.coverage_file)
 
-  if not os.path.exists(params.path_mapping_file):
+  if not os.path.exists(params.constants_file):
     raise RuntimeError('Path mappings config %s must exist' %
-                       params.path_mapping_file)
+                       params.constants_file)
 
   if os.path.exists(params.output_file):
     raise RuntimeError('Output file %s already exists' % params.output_file)
 
-  clean_file_paths(params.coverage_file, params.path_mapping_file,
+  clean_file_paths(params.coverage_file, params.constants_file,
                    params.output_file, params.to_absolute_path)
 
 
