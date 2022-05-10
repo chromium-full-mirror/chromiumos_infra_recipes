@@ -396,7 +396,8 @@ def GenTests(api):
       'only-irrelevant', api.time.seed(1613694623.0),
       api.step_data(
           'commit changes.committing to chromeos/infra/config.git status',
-          stdout=api.raw_io.output(' M release/timeline_configuration.json')),
+          stdout=api.raw_io.output_text(
+              ' M release/timeline_configuration.json')),
       api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
                      branches=['R9000']),
       api.post_check(
