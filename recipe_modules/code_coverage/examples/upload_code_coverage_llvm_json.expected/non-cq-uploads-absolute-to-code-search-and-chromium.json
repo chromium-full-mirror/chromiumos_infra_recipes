@@ -5321,7 +5321,9 @@
     "cmd": [],
     "name": "upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@chunked_files@['[CLEANUP]/chunked_tmp_1/coverage.json']@@@",
+      "@@@STEP_LOG_END@chunked_files@@@"
     ]
   },
   {
@@ -5418,6 +5420,68 @@
   },
   {
     "cmd": [
+      "vpython",
+      "RECIPE_MODULE[chromeos::code_coverage]/resources/chunk_coverage_file.py",
+      "--coverage-file",
+      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
+      "--coverage-type",
+      "LLVM",
+      "--file-entries-per-chunk",
+      "5000",
+      "--chunk-dest-dir",
+      "[CLEANUP]/chunked_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search.Chunking coverage file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/chunked_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search.listdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chunked_tmp_1/coverage.json@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
       "luci-auth",
       "context",
       "--",
@@ -5441,7 +5505,7 @@
       "--format",
       "LLVM",
       "--coverage_file",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file"
+      "[CLEANUP]/chunked_tmp_1/coverage.json"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {

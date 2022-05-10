@@ -83,6 +83,10 @@ def GenTests(api):
           post_process.MustRun,
           'upload code coverage data (code coverage llvm json).upload absolute coverage to chromium coverage'
       ),
+      api.post_check(
+          post_process.MustRun,
+          'upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search.Chunking coverage file'
+      ),
       cq=False,
       input_properties={
           '$chromeos/code_coverage': dict(project='chromiumos/platform2'),

@@ -4,8 +4,10 @@
 # found in the LICENSE file.
 
 import copy
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+
 
 class CoverageFileSettings(object):
   """Contains parameters used to drive different coverage upload workflows."""
@@ -33,6 +35,9 @@ INCREMENTAL_COVERAGE_CIPD_FILE = 'incremental_code_coverage'
 ABSOLUTE_COVERAGE_CIPD_PACKAGE = 'experimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage'
 ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:362552734'
 ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
+
+# Number of file coverage entries per chunk
+FILE_ENTRIES_PER_CHUNK = 5000
 
 
 class CodeCoverageApi(recipe_api.RecipeApi):
@@ -269,7 +274,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     if self.m.cq.active or absolute_cs_settings is None:
       return
 
-    with self.m.step.nest('upload absolute coverage to Code Search'):
+    with self.m.step.nest(
+        'upload absolute coverage to Code Search') as presentation:
       absolute_coverage_file = self._write_cleaned_coverage_file(
           fpath, absolute_cs_settings)
 
@@ -277,36 +283,43 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
       build = self.m.buildbucket.build
 
-      self.m.step(
-          'absolute coverage upload for {}'.format(fpath),
-          [
-              'luci-auth',
-              'context',
-              '--',
-              self._absolute_coverage_tool,
-              '--absolute_coverage_service_env',
-              self._coverage_env,
-              '--timeout',
-              '10m',
-              '--host',
-              PUBLIC_CODE_HOST,
-              '--project',
-              CODESEARCH_PROJECT,
-              '--commit_id',
-              codesearch_commit_id,
-              '--ref',
-              # self._branch,
-              # TODO(b/189193947): must be master for code search integration.
-              'refs/heads/master',
-              '--uploader_name',
-              build.builder.builder,
-              '--uploader_id',
-              codesearch_commit_id + '_' + str(build.id),
-              '--format',
-              coverage_type,
-              '--coverage_file',
-              str(absolute_coverage_file),
-          ])
+      chunks_file = self._chunk_coverage_file(absolute_coverage_file,
+                                              coverage_type)
+
+      presentation.logs['chunked_files'] = [str(chunks_file)]
+
+      for chunk_file in chunks_file:
+
+        self.m.step(
+            'absolute coverage upload for {}'.format(fpath),
+            [
+                'luci-auth',
+                'context',
+                '--',
+                self._absolute_coverage_tool,
+                '--absolute_coverage_service_env',
+                self._coverage_env,
+                '--timeout',
+                '10m',
+                '--host',
+                PUBLIC_CODE_HOST,
+                '--project',
+                CODESEARCH_PROJECT,
+                '--commit_id',
+                codesearch_commit_id,
+                '--ref',
+                # self._branch,
+                # TODO(b/189193947): must be master for code search integration.
+                'refs/heads/master',
+                '--uploader_name',
+                build.builder.builder,
+                '--uploader_id',
+                codesearch_commit_id + '_' + str(build.id),
+                '--format',
+                coverage_type,
+                '--coverage_file',
+                str(chunk_file),
+            ])
 
   def _upload_incremental_coverage_to_gerrit(self, fpath, coverage_type,
                                              incremental_settings):
@@ -443,3 +456,34 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           'gitiles_commit_project'] = project_name_to_use
       result.presentation.properties['gitiles_commit_ref'] = self._branch
       result.presentation.properties['gitiles_commit_id'] = commit_id
+
+  def _chunk_coverage_file(self, coverage_file, coverage_type):
+    """ Splits large |coverage_file| into smaller files.
+
+    Method to split coverage |coverage_file| into smaller files,
+    each containing |chunk_size| coverage records.
+
+    Args:
+      coverage_file (str): Path of the coverage file to be chunked.
+      coverage_type (str): Type of coverage.
+
+    Returns:
+      Absolute paths of the chunked files.
+    """
+
+    dest_dir = self.m.path.mkdtemp(prefix='chunked')
+
+    self.m.step('Chunking coverage file', [
+        'vpython',
+        self.resource('chunk_coverage_file.py'), '--coverage-file',
+        coverage_file, '--coverage-type', coverage_type,
+        '--file-entries-per-chunk', FILE_ENTRIES_PER_CHUNK, '--chunk-dest-dir',
+        str(dest_dir)
+    ])
+
+    result = []
+    for f in self.m.file.listdir('listdir', dest_dir,
+                                 test_data=('coverage.json',)):
+      result.append(str(f))
+
+    return result

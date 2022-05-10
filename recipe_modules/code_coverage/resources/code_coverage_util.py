@@ -67,6 +67,29 @@ def clean_file_name(file_path, path_mappings):
   return None
 
 
+def create_llvm_coverage_json(coverage_data,
+                              coverage_type='llvm.coverage.json.export',
+                              coverage_version='2.0.1'):
+  """Given coverage_data, generate llvm format coverage json.
+
+  Args:
+    coverage_data (List): The coverage data containing array of file cov info.
+    coverate_type (str): Type of coverage
+    coverage_version (str): Coverage version
+
+  Returns:
+    coverage json llvm format.
+  """
+  coverage_json = {
+      'data': [{
+          'files': coverage_data,
+      }],
+      'type': coverage_type,
+      'version': coverage_version,
+  }
+  return coverage_json
+
+
 def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, path_mappings,
                                            to_absolute_path=True):
   """Cleans an llvm coverage json file's file names.
@@ -102,10 +125,5 @@ def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, path_mappings,
           file_data['filename'] = cleaned_file_name[1]
         coverage_data.append(file_data)
 
-  return {
-      'data': [{
-          'files': coverage_data
-      }],
-      'type': coverage_type,
-      'version': coverage_version,
-  }
+  return create_llvm_coverage_json(coverage_data, coverage_type,
+                                   coverage_version)

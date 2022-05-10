@@ -5,15 +5,16 @@
 # found in the LICENSE file.
 import csv
 import json
-import unittest
 import os
 from pathlib import Path
 import sys
+import unittest
 
 __THIS_DIR__ = os.path.dirname(os.path.abspath(__file__))
 __RESOURCES_DIR__ = str(Path(__file__).parent.parent.resolve())
 sys.path.insert(0, os.path.abspath(os.path.join(__THIS_DIR__, os.pardir)))
 import code_coverage_util
+
 
 class IsValidLlvmCoverageJsonTest(unittest.TestCase):
 
@@ -55,6 +56,17 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
       if mapped:
         real_outputs.append((row[0], mapped[0], mapped[1]))
     self.assertEqual(expectations, real_outputs)
+
+
+class CreateLlvmCoverageJsonTest(unittest.TestCase):
+
+  def testLlvmCoverageJson(self):
+    filename = '/path/to/src/program.cc'
+    coverage_data = [{'filename': filename}]
+    coverage_json = code_coverage_util.create_llvm_coverage_json(coverage_data)
+    self.assertEqual(filename, coverage_json['data'][0]['files'][0]['filename'])
+    self.assertEqual(1, len(coverage_json['data']))
+    self.assertEqual(1, len(coverage_json['data'][0]['files']))
 
 
 if __name__ == '__main__':
