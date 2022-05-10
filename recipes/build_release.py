@@ -15,6 +15,7 @@ DEPS = [
     'build_menu',
     'build_reporting',
     'builder_metadata',
+    'cros_build_api',
     'cros_infra_config',
     'cros_release',
     'cros_signing',
@@ -125,8 +126,9 @@ def DoRunSteps(api, config):
       api.debug_symbols.upload_debug_symbols(gs_image_dir)
 
   # Signing does not work in staging, so we shouldn't wait for it in that case.
+  # We also can't sign anything if push_and_sign_images returned 0 instructions.
   # Otherwise, wait for signing to complete.
-  if not api.cros_infra_config.is_staging:
+  if not api.cros_infra_config.is_staging and instructions:
     with api.step.nest('get signed build metadata'):
       # Wait for signing to complete. Note - "complete" does not mean "passed",
       # it means "signing returned a terminal state or timed out".
@@ -141,6 +143,10 @@ def DoRunSteps(api, config):
       # Now that we've published informational artifacts, we need to fail the
       # build if the outcome was anything other than "passed".
       api.cros_signing.verify_signing_success(metadata)
+  elif not instructions:
+    with api.step.nest('wait for signing') as pres:
+      pres.step_text = 'no signing instructions generated'
+      pres.status = api.m.step.FAILURE
 
   api.cros_release.schedule_payload_generation()
 
@@ -185,6 +191,43 @@ def GenTests(api):
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess),
+      build_target='kukui-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'release-no-instructions',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/cros_signing':
+                  MessageToDict(CrosSigningProperties(timeout=5))
+          }),
+      api.cros_build_api.set_api_return(parent_step_name='push images',
+                                        endpoint='ImageService/PushImage',
+                                        data='{}', retcode=0),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun,
+                     'determine build and model metadata'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
+      api.post_check(post_process.MustRun, 'wait for signing'),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui-main',
       bucket='release',
