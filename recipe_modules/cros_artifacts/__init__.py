@@ -7,6 +7,7 @@ from recipe_engine.recipe_api import Property
 
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/file',

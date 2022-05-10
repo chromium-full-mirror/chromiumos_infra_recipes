@@ -605,7 +605,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   def upload_artifacts(self, builder_name, kind, gs_bucket, _kwonly=(),
                        artifacts_info=None, chroot=None, sysroot=None,
                        name='upload artifacts', test_data=None,
-                       private_bundle_func=None):
+                       private_bundle_func=None, report_to_spike=False):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -629,6 +629,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       private_bundle_func (func): If a private bundling method is needed (such
           as when there is no Build API on the branch), this will be called
           instead of the internal bundling method.
+      report_to_spike(bool): If True, will call bcid_reporter to report artifact
+          information and trigger Spike to upload the provenance as
+          [artifact-name].attestation if kind is RELEASE. Right now, this only
+          reports on the base image.tar.xz.
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
@@ -656,6 +660,21 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           'https://console.cloud.google.com/storage/browser/%s/%s' %
           (gs_bucket, gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
+
+      if report_to_spike and kind == BuilderConfig.Id.Type.RELEASE:
+        images = files_by_artifact['IMAGE_ARCHIVES']
+        base_image = [
+            i for i in images
+            if self.m.path.basename(i) == 'chromiumos_base_image.tar.xz'
+        ]
+        if len(base_image) == 1:
+          file_hash = self.m.file.file_hash(base_image[0], test_data='deadbeef')
+          self.m.bcid_reporter.report_gcs(file_hash, upload_uri)
+        else:
+          presentation.logs[
+              'base_image_length'] = 'the base_image length is %d' % len(
+                  base_image)
+
       for retries in range(3):
         try:
           self.m.gsutil(['rsync', '-r', outpath, upload_uri],
