@@ -7375,15 +7375,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Module for issuing commands to Skylab
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#47)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#47)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
 Args:
   tagged_requests (dict): Dictionary of string to test_platform.Request
     objects.
-  swarming_parent_run_id (str): Swarming run id to with which to associate
-    the child build request.
+  can_outlive_parent (bool): Whether this build can outlive its parent. The
+    default is True.
   bb_tags (dict or list[StringPair]): If of the type list[StringPair], will
     be used directly as a bb_tag list. If a dict, used to map keys to values.
     If the value is a list, multiple tags for the same key will be created.
@@ -7392,7 +7392,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#92)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#94)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -7414,7 +7414,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#301)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#303)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

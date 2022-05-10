@@ -570,8 +570,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               build_payload=unit.common.build_payload,
                               expressions=expressions))),
                   tags=self.m.cros_tags.make_schedule_tags(snapshot),
-                  swarming_parent_run_id=None
-                  if run_async else self.m.swarming.task_id))
+                  swarming_parent_run_id=None if run_async else
+                  self.m.swarming.task_id, can_outlive_parent=run_async))
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_build_title)
@@ -631,8 +631,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               expressions=expressions,
                               gce_metadata=properties_gce_metadata))),
                   tags=self.m.cros_tags.make_schedule_tags(snapshot),
-                  swarming_parent_run_id=None
-                  if run_async else self.m.swarming.task_id))
+                  swarming_parent_run_id=None if run_async else
+                  self.m.swarming.task_id, can_outlive_parent=run_async))
     gce_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast GCE tests',
         url_title_fn=self.m.naming.get_build_title)

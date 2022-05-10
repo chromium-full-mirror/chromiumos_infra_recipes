@@ -44,15 +44,15 @@ class SkylabApi(recipe_api.RecipeApi):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
 
-  def schedule_ctp_requests(self, tagged_requests, swarming_parent_run_id=None,
+  def schedule_ctp_requests(self, tagged_requests, can_outlive_parent=True,
                             bb_tags=None, **kwargs):
     """Schedule a cros_test_platform build.
 
     Args:
       tagged_requests (dict): Dictionary of string to test_platform.Request
         objects.
-      swarming_parent_run_id (str): Swarming run id to with which to associate
-        the child build request.
+      can_outlive_parent (bool): Whether this build can outlive its parent. The
+        default is True.
       bb_tags (dict or list[StringPair]): If of the type list[StringPair], will
         be used directly as a bb_tag list. If a dict, used to map keys to values.
         If the value is a list, multiple tags for the same key will be created.
@@ -83,7 +83,9 @@ class SkylabApi(recipe_api.RecipeApi):
         # gitiles_commit from src_state to create CTP tile. Relying on buildset
         # tags here is incorrect according to buildbucket V2.
         gerrit_changes=self.m.src_state.gerrit_changes,
-        swarming_parent_run_id=swarming_parent_run_id,
+        can_outlive_parent=can_outlive_parent,
+        swarming_parent_run_id=self.m.swarming.task_id
+        if not can_outlive_parent else None,
         # Disable inheriting the version from the parent builder.
         exe_cipd_version='',
         **kwargs)
@@ -226,10 +228,10 @@ class SkylabApi(recipe_api.RecipeApi):
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
-      swarming_parent_run_id = None if async_suite_run else self.m.swarming.task_id
-      build = self.schedule_ctp_requests(
-          tagged_requests=reqs, swarming_parent_run_id=swarming_parent_run_id,
-          bb_tags=bb_tags, inherit_buildsets=False)
+      build = self.schedule_ctp_requests(tagged_requests=reqs,
+                                         can_outlive_parent=async_suite_run,
+                                         bb_tags=bb_tags,
+                                         inherit_buildsets=False)
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
       presentation.links['suite link'] = build_url
