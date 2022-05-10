@@ -21,6 +21,8 @@ DEPS = [
     'cros_resultdb',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

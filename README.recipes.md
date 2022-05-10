@@ -35,7 +35,7 @@
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
   * [cros_release_util](#recipe_modules-cros_release_util) &mdash; An API for providing release related utility functions.
   * [cros_relevance](#recipe_modules-cros_relevance)
-  * [cros_resultdb](#recipe_modules-cros_resultdb)
+  * [cros_resultdb](#recipe_modules-cros_resultdb) (Python3 ✅)
   * [cros_schedule](#recipe_modules-cros_schedule) (Python3 ✅) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_signing](#recipe_modules-cros_signing) (Python3 ✅)
@@ -259,9 +259,9 @@
   * [cros_relevance:examples/postsubmit_relevance_check](#recipes-cros_relevance_examples_postsubmit_relevance_check)
   * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain)
   * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds)
-  * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full)
-  * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations)
-  * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings)
+  * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full) (Python3 ✅)
+  * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations) (Python3 ✅)
+  * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings) (Python3 ✅)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full) (Python3 ✅)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils) (Python3 ✅)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache)
@@ -3183,13 +3183,13 @@ Whether there are toolchain CLs applied to the source tree.
 
 [DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#232)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#233)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3208,11 +3208,11 @@ Args:
   variant_filter (dict): Attributes which must all be present in the test
       result variant definition in order to exonerate.
 
-&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#41)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#42)(self):**
 
 Return the current invocation's id.
 
-&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#51)(self, test_args):**
+&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#52)(self, test_args):**
 
 Extract resultdb settings from test_args for chromium test results.
 
@@ -3234,7 +3234,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#113)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#114)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -3253,7 +3253,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#89)(self, base_dir, result_format):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#90)(self, base_dir, result_format):**
 
 Get the path to the test results file on the drone.
 
@@ -3268,7 +3268,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#322)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#323)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB.
 
@@ -3277,7 +3277,7 @@ Args:
   base_variant (dict): Variant key-value pairs to attach to the test
       results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#137)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#138)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 
@@ -9603,23 +9603,23 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cros_resultdb/examples/full.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#21)(api):**
 ### *recipes* / [cros\_resultdb:tests/apply\_exonerations](/recipe_modules/cros_resultdb/tests/apply_exonerations.py)
 
 [DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#16): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#29)(api, properties):**
 ### *recipes* / [cros\_resultdb:tests/extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py)
 
-[DEPS](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py#9): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/extract_chromium_resultdb_settings.py#19)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]

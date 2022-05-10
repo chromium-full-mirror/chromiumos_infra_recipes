@@ -15,7 +15,7 @@ DEPS = [
     'cros_tags',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
@@ -27,7 +27,7 @@ def RunSteps(api):
       'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
           '/base/dir', result_format) or ''
   api.cros_resultdb.upload(rdb_config,
-                           'gs://chromeos-test-logs/common-env/UUID/logs')
+                           b'gs://chromeos-test-logs/common-env/UUID/logs')
   if api.properties.get('result_adapter_cached'):
     # pylint: disable=protected-access
     api.cros_resultdb._ensure_result_adapter_executables()
@@ -103,8 +103,8 @@ def GenTests(api):
       api.properties(
           rdb_config=rdb_config_json,
           missing_test_names=['missing-test', 'another-missing-test']),
-      api.step_data('upload missing test cases', api.raw_io.stream_output('{}'),
-                    retcode=1),
+      api.step_data('upload missing test cases',
+                    api.raw_io.stream_output_text('{}'), retcode=1),
       api.post_process(post_process.MustRun, 'upload missing test cases (2)'),
   )
 

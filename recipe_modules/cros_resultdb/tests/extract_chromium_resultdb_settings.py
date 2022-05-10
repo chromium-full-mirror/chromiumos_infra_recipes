@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import base64
+import six
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,21 +13,26 @@ DEPS = [
     'cros_resultdb',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
-  test_args = 'resultdb_settings=%s' % base64.b64encode(
-      api.json.dumps({
-          'base_tags': ['test_suite:fake-suite'],
-          'result_format': 'tast',
-          'result_file': './path/to/results.json'
-      }))
+  test_args = 'resultdb_settings=%s' % six.ensure_str(
+      base64.b64encode(
+          six.ensure_binary(
+              api.json.dumps({
+                  'base_tags': ['test_suite:fake-suite'],
+                  'result_format': 'tast',
+                  'result_file': './path/to/results.json'
+              }))))
   config = api.cros_resultdb.extract_chromium_resultdb_settings(test_args)
   api.cros_resultdb.upload(config)
 
-  bad_test_args = 'not_resultdb_settings=%s' % base64.b64encode(
-      api.json.dumps({
-          'result_format': 'tast',
-      }))
+  bad_test_args = 'not_resultdb_settings=%s' % six.ensure_str(
+      base64.b64encode(
+          six.ensure_binary(api.json.dumps({
+              'result_format': 'tast',
+          }))))
   api.assertions.assertRaises(
       ValueError, api.cros_resultdb.extract_chromium_resultdb_settings,
       bad_test_args)

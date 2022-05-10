@@ -6,6 +6,7 @@ import base64
 import os
 import re
 
+import six
 from google.protobuf.json_format import MessageToDict, ParseDict
 
 from recipe_engine import recipe_api
@@ -80,7 +81,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       raise ValueError('test_args should contain resultdb_settings to '
                        'upload result to resultdb. Got %s')
 
-    rdb_config = self.m.json.loads(rdb_settings)
+    rdb_config = self.m.json.loads(six.ensure_str(rdb_settings))
     rdb_config['base_tags'] = [
         tuple(x.split(':', 1)) for x in rdb_config.get('base_tags', [])
     ]
@@ -372,7 +373,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
             'upload missing test cases', 'luci.resultdb.v1.Recorder',
             'BatchCreateTestResults', req=MessageToDict(req),
             include_update_token=True, step_test_data=lambda: self.m.raw_io.
-            test_api.stream_output(step_test_data))
+            test_api.stream_output_text(step_test_data))
         break
       except self.m.step.StepFailure:
         upload_status = 'WARNING'
