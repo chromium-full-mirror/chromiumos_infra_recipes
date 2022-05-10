@@ -41,7 +41,7 @@
     "name": "schedule skylab tests v2.create test requests.configure test-builder",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Execution via container requested, but no container metadata for build target 'target'@@@",
+      "@@@STEP_SUMMARY_TEXT@Execution via container requested, but no container metadata for build target 'another_target'@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

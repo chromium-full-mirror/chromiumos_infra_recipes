@@ -9,11 +9,12 @@ package recipe_modules.chromeos.cros_test_proctor;
 import "google/protobuf/duration.proto";
 
 message ProctorProperties {
-  reserved 1, 2;
-
   // Timeout for the proctor execution.
-  google.protobuf.Duration timeout = 5;
+  google.protobuf.Duration timeout = 1;
 
   // Buildbucket Bucket for VM execution.
-  string vm_bucket = 6;
+  string vm_bucket = 2;
+
+  // Split the skylab invocations by build target.
+  bool skylab_task_per_build_target = 3;
 }

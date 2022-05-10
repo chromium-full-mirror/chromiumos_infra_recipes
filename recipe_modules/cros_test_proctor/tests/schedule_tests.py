@@ -4,8 +4,9 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_test_proctor.proctor import ProctorProperties
 
-from recipe_engine.post_process import DropExpectation, LogContains
+from recipe_engine.post_process import DropExpectation, LogContains, MustRun, StatusSuccess
 from recipe_engine.recipe_api import Property
 
 DEPS = [
@@ -28,6 +29,7 @@ def RunSteps(api, passed_tests, is_retry, expected_tests_run_count):
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
+
   tasks = api.cros_test_proctor.schedule_tests(test_plan, set(passed_tests),
                                                api.cros_test_proctor.timeout,
                                                {}, snapshot, is_retry=is_retry)
@@ -72,3 +74,17 @@ def GenTests(api):
           'json.output',
           ['staging-', '-direct-tast-vm'],
       ), api.post_process(DropExpectation))
+
+  yield api.test(
+      'split-build-targets',
+      api.properties(is_retry=True, passed_tests=passed_tests,
+                     expected_tests_run_count=len(expected_tests_run)),
+      api.properties(
+          **{
+              '$chromeos/cros_test_proctor':
+                  ProctorProperties(skylab_task_per_build_target=True),
+          }),
+      api.post_process(
+          MustRun,
+          'schedule hardware tests.another_target.buildbucket.schedule'),
+      api.post_check(StatusSuccess))

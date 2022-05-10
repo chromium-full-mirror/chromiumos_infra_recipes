@@ -10,6 +10,7 @@ from google.protobuf import duration_pb2
 from recipe_engine import recipe_api
 
 from . import structs
+from collections import defaultdict
 
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import HwTestUnit
@@ -39,6 +40,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     if not self.timeout.seconds:
       self.timeout = duration_pb2.Duration(seconds=9 * 60 * 60)
     self._vm_bucket = properties.vm_bucket or "staging"
+    self._skylab_task_per_build_target = properties.skylab_task_per_build_target
     self._test_summary = []
 
   @property
@@ -395,6 +397,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         run_async=run_async,
         container_metadata=container_metadata,
         require_stable_devices=require_stable_devices,
+        task_per_build_target=self._skylab_task_per_build_target,
     )
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
                                                  snapshot, test_to_build_map,
@@ -451,7 +454,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
                              test_to_build_map=None, is_retry=False,
                              run_async=False, container_metadata=None,
-                             require_stable_devices=False):
+                             require_stable_devices=False,
+                             task_per_build_target=False):
     """Schedule skylab tests from the test_plan.
 
     Args:
@@ -466,9 +470,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       run_async (bool): Should the tests be ran async and not cancel
           on the termination of the parent (this caller).
       container_metadata (ContainerMetadata): Information on container
-        images used for test execution.
-      require_stable_devices (bool): whether to only run on devices with
-        label-device-stable: True
+          images used for test execution.
+      require_stable_devices (bool): Whether to only run on devices with
+          label-device-stable: True
+      task_per_build_target (bool): Should we schedule a unique invocation
+          of cros_test_platform per build target.
 
     Returns:
       list[SkylabTask] of the tests scheduled.
@@ -476,7 +482,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     skylab_tasks = []
     test_to_build_map = {} if test_to_build_map is None else test_to_build_map
     with self.m.step.nest('schedule hardware tests'):
-      tests_to_run = []
+      # A map from {build_target_name: [test_name]}.
+      tests_to_run = defaultdict(list)
       hw_build_targets = set()
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
@@ -484,24 +491,32 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           if is_retry and not test.common.critical.value:
             continue
           if test.common.display_name not in passed_tests:
-            test_name = test.common.display_name
             build_target = unit.common.build_target
-            test_to_build_map[test_name] = build_target.name
-            tests_to_run.append(
+            test_to_build_map[test.common.display_name] = build_target.name
+            tests_to_run[build_target.name].append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             hw_build_targets.add(build_target.name)
+
+      _ALL_BUILD_TARGETS = 'all build targets'
       if tests_to_run:
-        skylab_tasks.extend(
-            self.m.skylab.schedule_suites(
-                tests_to_run,
-                timeout,
-                async_suite_run=run_async,
-                container_metadata=container_metadata,
-                require_stable_devices=require_stable_devices,
-            ))
+        # If we aren't scheduling per build_target, flatten into one invocation.
+        if not task_per_build_target:
+          tests_to_run = {_ALL_BUILD_TARGETS: sum(tests_to_run.values(), [])}  #pylint: disable=redefined-variable-type
+        for test_build_target, bt_tests_to_run in tests_to_run.items():
+          skylab_tasks.extend(
+              self.m.skylab.schedule_suites(
+                  bt_tests_to_run,
+                  timeout,
+                  async_suite_run=run_async,
+                  container_metadata=container_metadata,
+                  require_stable_devices=require_stable_devices,
+                  name=None if test_build_target == _ALL_BUILD_TARGETS else
+                  test_build_target,
+              ))
       self.m.easy.set_properties_step(
           hw_test_build_targets=len(hw_build_targets))
-      self.m.easy.set_properties_step(hw_test_suites=len(tests_to_run))
+      self.m.easy.set_properties_step(
+          hw_test_suites=len(sum(tests_to_run.values(), [])))
     return skylab_tasks
 
   def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,

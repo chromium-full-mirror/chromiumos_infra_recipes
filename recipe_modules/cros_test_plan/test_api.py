@@ -22,9 +22,9 @@ from PB.testplans.generate_test_plan import TestUnitCommon
 class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for cros_test_plan api."""
 
-  def test_unit_common(self, artifacts=None):
+  def test_unit_common(self, target_name='target', artifacts=None):
     common = TestUnitCommon(
-        build_target=BuildTarget(name='target'),
+        build_target=BuildTarget(name=target_name),
         build_payload=BuildPayload(
             artifacts_gs_bucket='chromeos-image-archive',
             artifacts_gs_path='target-cq/R12-3.4.5-6789',
@@ -61,14 +61,14 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   @property
   def another_hw_test_unit(self):
     return HwTestUnit(
-        common=self.test_unit_common(),
+        common=self.test_unit_common(target_name='another_target'),
         hw_test_cfg=HwTestCfg(
             hw_test=[
                 HwTestCfg.HwTest(
                     common=TestSuiteCommon(display_name='htarget.hw.bvt-inline',
                                            critical={'value': True}),
                     suite='bvt-inline',
-                    skylab_board='target',
+                    skylab_board='another_target',
                     pool='my skylab pool',
                     hw_test_suite_type=HwTestCfg.AUTOTEST,
                 ),
