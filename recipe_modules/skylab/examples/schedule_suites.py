@@ -18,6 +18,8 @@ from google.protobuf import duration_pb2
 from PB.lab import license as license_pb2
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   builder_name = 'test-board-release-main'

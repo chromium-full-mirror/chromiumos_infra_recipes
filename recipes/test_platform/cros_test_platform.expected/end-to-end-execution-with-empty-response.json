@@ -338,8 +338,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\"@@@"
     ]
   },
   {

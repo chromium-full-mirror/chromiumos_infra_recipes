@@ -396,8 +396,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPq7xAa5+Lp5+7kq1QDUlicXZQanFQJOLgaqikc0mRnteYi5YOi0/X7cgNS8l\\nMy9dqTYWKJGcn1ecn5OZAjQsBcX8xJKS1NwCatoGhLUAJJhb6g==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTsuRiT0lNSyzNKRHS4xKUYuJgVOJOy8/XLUjNS8nMSxdi4WAUYJISxiIFAICMDWY=\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyljkEKwjAURO8y63qB7iRNJVCKlCKIlBCaXwmmSTFRkJK7m4ILl4LLGd4Mb4WmST1sRLli9C54a7SKpDsKuQ0oLytUjDQvn+DUTCgxeb9byGnjrigQYt5sF9ZMxF6j3ZBG1FyyM2u4PPK2Eu0BKQ1p+B0v8KS7NmO2w4l3lWC9rPei4RVSgajC7Vvzb7P0Bnf+Wao=\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTsuRiT0lNSyzNKRHS4xKUYuJgVOJOy8/XLUjNS8nMSxdi4WAUYJISxiIFAICMDWY=\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"name\": \"foo-pending\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_PENDING\"}}]}@@@"
     ]
   },

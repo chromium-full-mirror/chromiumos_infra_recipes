@@ -84,7 +84,7 @@
   * [repo](#recipe_modules-repo) (Python3 ✅) &mdash; API for working with the 'repo' VCS tool.
   * [result_flow](#recipe_modules-result_flow) (Python3 ✅)
   * [service_version](#recipe_modules-service_version) (Python3 ✅)
-  * [skylab](#recipe_modules-skylab)
+  * [skylab](#recipe_modules-skylab) (Python3 ✅)
   * [src_state](#recipe_modules-src_state) (Python3 ✅) &mdash; API providing frequently needed values, that we sometimes override.
   * [stable_version](#recipe_modules-stable_version) (Python3 ✅)
   * [support](#recipe_modules-support) (Python3 ✅) &mdash; APIs for running recipes/support tools.
@@ -446,10 +446,10 @@
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full) (Python3 ✅)
   * [sign_image](#recipes-sign_image) (Python3 ✅) &mdash; Recipe for signing ChromeOS images.
-  * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
-  * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
-  * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
-  * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target)
+  * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites) (Python3 ✅)
+  * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites) (Python3 ✅)
+  * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg) (Python3 ✅)
+  * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target) (Python3 ✅)
   * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
   * [src_state:examples/build_manifest](#recipes-src_state_examples_build_manifest) (Python3 ✅)
   * [src_state:examples/external_manifest](#recipes-src_state_examples_external_manifest) (Python3 ✅)
@@ -7352,13 +7352,13 @@ Validate the caller's service version if they sent one.
 
 [DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#43)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#47)(self, tagged_requests, swarming_parent_run_id=None, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -7375,7 +7375,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#88)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#92)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -7393,11 +7393,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#39)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#43)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#288)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#301)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -11085,30 +11085,30 @@ Run steps.
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#24)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites](/recipe_modules/skylab/examples/wait_on_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites.py#20)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites\_empty\_arg](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#17)(api):**
 ### *recipes* / [skylab:tests/no\_build\_target](/recipe_modules/skylab/tests/no_build_target.py)
 
 [DEPS](/recipe_modules/skylab/tests/no_build_target.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/tests/no_build_target.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/tests/no_build_target.py#25)(api):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
 [DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11312,7 +11312,7 @@ Updates test plan rules to reflect new risk-based rules
 &mdash; **def [RunSteps](/recipes/test_plan_filtering.py#230)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#38): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#37): [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -11355,11 +11355,11 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#509)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#487)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#586)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#567)(task_results):**
 
 &mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#430)(api, enumerations, responses):**
 

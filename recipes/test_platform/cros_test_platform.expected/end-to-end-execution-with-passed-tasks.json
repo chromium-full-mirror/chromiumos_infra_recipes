@@ -408,8 +408,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzVj1ELgkAMx7+K7LnQXn2L8wLBSNSCiJDTmyGdnnhXUOJ3b4YQvfcSY2Ps/+O/bQCJlbgpC74z\\ngLHC4ru7Yy/rcprCgSdByLI8XqcpD2DhgKorZI9STShE4Ybn7MgiqrttHPGMoJEoK8w1QUPehrjT\\nj92Vvux7NSHUGd91C9FTPmHePIuV1h/NLVaeNwGtaHBWl50wBiWMZ5qXujVa1ZLulF+nC2ux6f7k\\nEYrxBaUJkik=\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTambkYk9JTUsszSkRquAyExJKy8+30tdPSiwC4ir9JEMDAykWjgIBRiUuoIxuQWJxcWqKFl9O\\nfnoxQpkQWIWUBbn6AYAqJOI=\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzNT9EKgkAQ/Jd9NrRX3+K8QDAStSBC5PLWkE5PvCsouX9vpaA+oIcedtmdHWZ2JpDYiKuyEE5Q695o1UphUWZoCDUQHicQ1mI3vBelz7tRQTgPJvT9kxipHuBBLzokvNF6MQhjUBJmLInN2qptkN1rNTOSeM0rdmAJ9e0mTXjBI+LecJRtTZ/AnmdRzIoqXeU5nZwHVpjLy5bkP67+aRkE4EpX/tbqO/1/BnZPjV2OaQ==\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTambkYk9JTUsszSkRquAyExJKy8+30tdPSiwC4ir9JEMDAykWjgIBRiUuoIxuQWJxcWqKFl9OfnoxQpkQWIWUBbn6AYAqJOI=\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}@@@"
     ]
   },

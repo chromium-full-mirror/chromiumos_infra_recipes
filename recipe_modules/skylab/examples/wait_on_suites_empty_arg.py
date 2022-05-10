@@ -11,6 +11,8 @@ DEPS = [
 
 from google.protobuf import duration_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   responses = api.skylab.wait_on_suites(

@@ -354,8 +354,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbPKUotSMpNBokphrkEuns4h8W6Onj6uLko6Cko5mWmpzpXJ\\nOSClSj6ebq7xzpHOPkDS3zfAxzUEqKi2thYABjgbvA==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgAgAo8APS\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRsqpWKi5JLEkFMXIy01KdK5NzgBwlH08313jnSGcfIOnvG+DjGuLqoqSjVJZalJKZDNSmFOYa5OLpHBLv5ujpA5Sqra0FAK6HGxw=\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgAgAo8APS\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}}@@@"
     ]
   },

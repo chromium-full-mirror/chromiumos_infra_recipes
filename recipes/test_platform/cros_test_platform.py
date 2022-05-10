@@ -25,7 +25,6 @@ from PB.test_platform.config.config import Config
 from PB.test_platform.steps.execute.build import Build
 
 import collections
-import json
 import re
 
 from google.protobuf import duration_pb2
@@ -48,6 +47,7 @@ DEPS = [
     'cros_test_platform',
     'result_flow',
     'service_version',
+    'skylab',
 ]
 
 # Each CIPD package instance of cros_test_platform that has been promoted to
@@ -484,41 +484,22 @@ def _get_requests_from_properties(api, properties):
   return properties.requests
 
 
-#######################
-# Keep this block in sync with recipe_modules/skylab/test_api.py
-# TODO(chromium:1067440): refactor both to call the same code
-def _marshal_responses(responses):
-  responses_dict = json_format.MessageToDict(responses)
-  return responses_dict.get("taggedResponses", {})
-
-
-def _base64_compress_dict(some_dict):
-  return json.dumps(some_dict).encode('zlib_codec').encode('base64_codec')
-
-
-def _base64_compress_proto(proto):
-  wire_format = proto.SerializeToString()
-  return wire_format.encode('zlib_codec').encode('base64_codec')
-
-
-# Keep this block in sync with recipe_modules/skylab/test_api.py
-# TODO(chromium:1067440): refactor both to call the same code
-#######################
-
-
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
-    marshalled = _marshal_responses(responses)
+    marshalled = api.skylab.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
     # request cannot handle compressed responses, see crbug.com/1086075.
     if 'default' in marshalled:
       step.properties['response'] = marshalled['default']
 
-    step.properties['compressed_responses'] = _base64_compress_proto(responses)
-    step.properties['compressed_json_responses'] = _base64_compress_dict(
-        marshalled)
+    step.properties[
+        'compressed_responses'] = api.skylab.test_api.base64_compress_proto(
+            responses)
+    step.properties[
+        'compressed_json_responses'] = api.skylab.test_api.base64_compress_dict(
+            marshalled)
 
 
 def _log_enumeration_errors(api, enum, tag):

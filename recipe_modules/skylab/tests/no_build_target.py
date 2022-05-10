@@ -19,6 +19,8 @@ from recipe_engine import post_process
 from google.protobuf import duration_pb2
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # Run with non-existent build target to trigger error path

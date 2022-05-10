@@ -149,7 +149,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"1234\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlkL1KxEAUhUnYYpkqBkQQC7EUMrPBxZ+AWtotFtvKcHe8JsNmcoe5d8kjWPimdr6BUVgEfQSL\\nA6c53zmc8jVXB7FHYLQjeLE02IDlR6bes/KuE4ncGOO6RAGJKx4hBT+0GmLkSKIdBSPA23v/fLu8\\nquHyYuNu3PK6XtSL49k8FtnZkesQhe2KxL94B+JpWCPL+dMezwJ+6JF5wqWoW6K2x2/0JtHI+NMP\\nOyGZslVC3vXCZj+o+l1umrmaTcukyJpTdfLltIOACfQatsgPCUEeOxLiIivzSW+5OvzzhBWi//jG\\nJ2ARtSw=\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlkL1KxEAUhUnYYpkqBkQQC7EUMrPBxZ+AWtotFtvKcHe8JsNmcoe5d8kjWPimdr6BUVgEfQSLA6c53zmc8jVXB7FHYLQjeLE02IDlR6bes/KuE4ncGOO6RAGJKx4hBT+0GmLkSKIdBSPA23v/fLu8quHyYuNu3PK6XtSL49k8FtnZkesQhe2KxL94B+JpWCPL+dMezwJ+6JF5wqWoW6K2x2/0JtHI+NMPOyGZslVC3vXCZj+o+l1umrmaTcukyJpTdfLltIOACfQatsgPCUEeOxLiIivzSW+5OvzzhBWi//jGJ2ARtSw=\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",

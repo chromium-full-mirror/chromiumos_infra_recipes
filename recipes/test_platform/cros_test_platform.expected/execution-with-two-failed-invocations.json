@@ -535,8 +535,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzlkU0LwjAMhv+K5KxsXneTfcCgoowpiMjo1laK3SptFXTsv5uNgezuRSW0vOR9SJOmBcsr3TAI\\nZi1YRx0f1J0bJiuHGvZxFqVhXiSrlMQRzGegpODho1I9CiRN4iI8hATvzXpL4hyhDilH7SXj9qac\\nRe744epKn3dG9QgqG3heSQ2eJ4wvj6bQ+u155dL3e6Ch9VAdcwtBpeIMuhPm8SOsVpJhn2zSOnWO\\n19cvGQQDLSGNdX+5VXR/Y6uTQTC6F5FBIXI=\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTamLkYitOTc7PSxGq4DITEkrLz7fS109KLALiKv0kQwMDKRaOAgEmJS4gXzctMTMnNUWLLyc/\\nvRihTAisQsqCbP2NjFysaZlFxSWE3ACUocgNuPUDAPwpSCM=\\n\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzlUV0LgjAU/S/32dBefQudICwKsSBCZLoZo+liW0HJ/ntXCuoHBAU93Mv94px7OCN00lgH8QitHqxWkjMneCHsWTkL8X4E5pzoT89G6cPGKIinwsZh2DCDcYMABtYLnHdazzomleA4sw7BJmwlO5FcWzVd0DwjdbJLKObVck1JSVK8vQjDZYufwJYUaZ6UdbbIKa58AI7Z44MW4V+sYTOPIvCVrz5L9a7+NwUjk0C/+Od8w+a/fPuKYH8Hi9cZ0g==\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTamLkYitOTc7PSxGq4DITEkrLz7fS109KLALiKv0kQwMDKRaOAgEmJS4gXzctMTMnNUWLLyc/vRihTAisQsqCbP2NjFysaZlFxSWE3ACUocgNuPUDAPwpSCM=\"@@@"
     ]
   },
   {

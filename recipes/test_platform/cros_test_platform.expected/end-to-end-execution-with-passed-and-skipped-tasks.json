@@ -452,8 +452,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzVkVELgjAUhf9K7LkwX30LNRAsIy2IEFluhriaeFdQ0n/vTgZRLxL1UIyNw87h7uOsJYwX9CQU\\ncQYtAUUV79SZN6zM9S1Z+0svcJNsMYlj3yPDARFlwd1LLnSUhMHUz9yNG+IZzRahn2DohilFoVpy\\nwNmAue2Xpwu5XzVCR1CBY1k72uC+EvOyMQspH561s8djHTjSAzfuqKYAnOmZPYTzKDPyc0q7D9N+\\nxYSqrGvNmaKRyyNIUTKkZU8VU6X4of6PwtOu8jeIf+UDcN3uxjH9HQ==\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwT+sXIxZ6SmpZYmlMi9I6Ry0xIKC0/30pfPymxCIir9JMMDQykWDgKBBiVuIAyugWJxcWpKVp8\\nOfnpxQhlXBZY9BmC9TErcYP0FWdnFhQANfKjajQUApstZUGuzVJW5NsNAELoR04=\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzNkUELgkAQhf/LnA3z6i3UILAMtSAiZHXXkLZ2cbagxP/eLAXVqQ4eOuwy83Z487GvAy5qdpYG/A4qdUIlG86M4KlAUhH8bQfMGHHUz0aq/aqV4NsCfdctWUvnBg6c2FGQXis10gxRcNLQkJn1lk0tgmsl7UQ8m0ZFsAliupP5Mo7yKKTZi2h5UxEJrKM0nAV5sZxkGT31DhiGh8dasn9tdUtvPIZ+1zu/UXqfmHhotB6Ac5EUz/ILq2dZd8N+y3tS/xiO899p9He3MfZ9\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwT+sXIxZ6SmpZYmlMi9I6Ry0xIKC0/30pfPymxCIir9JMMDQykWDgKBBiVuIAyugWJxcWpKVp8OfnpxQhlXBZY9BmC9TErcYP0FWdnFhQANfKjajQUApstZUGuzVJW5NsNAELoR04=\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}, {\"attempts\": [{\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-skipped\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_NO_VERDICT\"}, \"taskUrl\": \"foo://bar/baz/b101\"}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}, {\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-skipped\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_NO_VERDICT\"}, \"taskUrl\": \"foo://bar/baz/b101\"}]}@@@"
     ]
   },

@@ -476,8 +476,8 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzdkMGKwjAQhl9F5izUevQmaYRKRSkqyCISm+kSTRtpoqCl776TWpEePCx7W0LCZObLP3+mBom5\\nuGoHk0EN1gmHbXTDSqrMZ2HL0yhm68NsGic8guEAtMqR3TPtUUjiGT+wHUvoXC5WCV8T1BDlhD2n\\naEnbEvdVQ4UnzBzKSBVYWmXKLn8T+tpKURB6/TPe/VWqIvRKfWLcJ8bQ7Cnxdv7JXMrnnL28afO9\\nqbQnKLKTIDiKivYDOt9dMTfmXQuO4WjkgVIU2FWf9n7Z/PXe92vNZzQKo5UkFdmbmHAOi8u/nt++\\nNdj/6J/mSav5AQR43xQ=\\n\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTOsTIxZ6SmpZYmlMitI2Ry1NIKC0/30pfPymxCIir9JMMDQykmDiclJiB4lp8OfnpxQjZJB4u\\nlpTMXEMhlrLEHEMozwjMM+LihGgDKhNi4SgQYJLypqLpUtxI5gMAwIIxUw==\\n\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzdkMGKgzAQht9lzoLVo7cSU3CxdJHuQimLRDOWtNEsJi204rvvZFuo3gp720NIZibzzzf/ABIbcdYOkgFq01mjlRQOZYGWshaS/QDCOWy/H4E2h49eQ+IfNgnDSvR0bhBAJ1qkfGMMBT0esSadVLXYWUXKv90nvNIXqdqI/lyEPvsOuiMYg0k1nldjGL8CsI7APKdWDbJrrX01z1a8ZDuW87Lgb5xteUpS4IQ93TEJ50kZVtFiQWJ+2GyrB/t9kdcHkdILYGyzfs+5b6CtsJeqJrvhkxdpxrblapnlT+ip7//B6uAv3o4/+5fYNA==\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTOsTIxZ6SmpZYmlMitI2Ry1NIKC0/30pfPymxCIir9JMMDQykmDiclJiB4lp8OfnpxQjZJB4ulpTMXEMhlrLEHEMozwjMM+LihGgDKhNi4SgQYJLypqLpUtxI5gMAwIIxUw==\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo\", \"rejectedDimensions\": [{\"key\": \"dim1\", \"value\": \"val1\"}, {\"key\": \"dim2\", \"value\": \"val2\"}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}, {\"attempts\": [{\"name\": \"baz\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo\", \"rejectedDimensions\": [{\"key\": \"dim1\", \"value\": \"val1\"}, {\"key\": \"dim2\", \"value\": \"val2\"}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}, {\"name\": \"baz\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_REJECTED\"}}]}@@@"
     ]
   },

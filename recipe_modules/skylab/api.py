@@ -3,6 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
+import json
+import zlib
+
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -165,8 +169,12 @@ class SkylabApi(recipe_api.RecipeApi):
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
+      # TODO (b/217973414): Replace with MessageToJson once we don't need to fix
+      # the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['container metadata'] = [
-          json_format.MessageToJson(container_metadata)
+          json.dumps(
+              json_format.MessageToDict(container_metadata),
+              separators=(',', ':'), sort_keys=True, indent=2)
       ] if have_container_metadata else '{}'
 
       # str -> (Request dict)
@@ -206,8 +214,13 @@ class SkylabApi(recipe_api.RecipeApi):
               request.params.execution_param.container_metadata.CopyFrom(
                   req_container_metadata)
 
+            # TODO (b/217973414): Replace with MessageToJson once we don't need
+            # to fix the separator spacing between py2 and py3 MessageToJson.
+            request.params.decorations.tags.sort()
             configure_step.logs['request'] = [
-                json_format.MessageToJson(request)
+                json.dumps(
+                    json_format.MessageToDict(request), separators=(',', ':'),
+                    sort_keys=True, indent=2)
             ]
             reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(request)
 
@@ -328,7 +341,7 @@ class SkylabApi(recipe_api.RecipeApi):
       resps = build.output.properties['compressed_responses']
     except ValueError:
       return ExecuteResponses().tagged_responses
-    wire_format = resps.decode('base64_codec').decode('zlib_codec')
+    wire_format = zlib.decompress(base64.b64decode(resps))
     responses = ExecuteResponses.FromString(wire_format)
     return responses.tagged_responses
 
