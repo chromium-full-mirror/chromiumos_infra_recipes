@@ -14,6 +14,7 @@ from collections import namedtuple
 import functools
 import json
 from google.protobuf.text_format import MessageToString
+import six
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -40,6 +41,8 @@ DEPS = [
     'git_cl',
     'gitiles',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
 INTERNAL_HOST_DOMAIN = 'chrome-internal.googlesource.com'
@@ -204,7 +207,7 @@ def _fetch_and_write_keyset_config(api, repo_dirs):
     keyset_json = api.gitiles.get_file(
         INTERNAL_HOST_DOMAIN, 'chromeos/platform/release-keys',
         'generated/keyset.json', public=False,
-        test_output_data=base64.b64encode('{"abc": 123}'))
+        test_output_data=base64.b64encode(b'{"abc": 123}'))
     # Ensure it's json after all, then write.
     validated_keys = json.dumps(
         json.loads(keyset_json), sort_keys=True, indent=2)
@@ -332,7 +335,7 @@ def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
 
   with api.step.nest(step_name) as presentation:
     with api.context(cwd=repo_dir):
-      branch = api.git.current_branch()
+      branch = six.ensure_str(api.git.current_branch())
       changed_files = api.git.get_working_dir_diff_files()
 
       # If there aren't leftover files when we subtract the irrelevant ones.
@@ -353,7 +356,7 @@ def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
           field='url', fast=True,
           step_test_data=functools.partial(api.raw_io.test_api.stream_output,
                                            'https://crrev.com/i/somenumber'))
-      presentation.links['change uploaded'] = gerrit_change_url
+      presentation.links['change uploaded'] = six.ensure_str(gerrit_change_url)
 
 
 def _abandon_old_changes(api, project):
