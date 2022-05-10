@@ -43,7 +43,7 @@
   * [cros_source](#recipe_modules-cros_source) (Python3 ✅) &mdash; API for working with CrOS source.
   * [cros_storage](#recipe_modules-cros_storage) (Python3 ✅) &mdash; API featuring shared helpers for locating and naming stored artifacts.
   * [cros_tags](#recipe_modules-cros_tags) (Python3 ✅) &mdash; API for generating tags.
-  * [cros_test_plan](#recipe_modules-cros_test_plan)
+  * [cros_test_plan](#recipe_modules-cros_test_plan) (Python3 ✅)
   * [cros_test_plan_v2](#recipe_modules-cros_test_plan_v2)
   * [cros_test_platform](#recipe_modules-cros_test_platform) (Python3 ✅)
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess) (Python3 ✅)
@@ -291,8 +291,8 @@
   * [cros_tags:examples/full](#recipes-cros_tags_examples_full) (Python3 ✅)
   * [cros_tags:tests/get_single_value](#recipes-cros_tags_tests_get_single_value) (Python3 ✅)
   * [cros_tags:tests/get_values](#recipes-cros_tags_tests_get_values) (Python3 ✅)
-  * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
-  * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
+  * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full) (Python3 ✅)
+  * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary) (Python3 ✅)
   * [cros_test_plan_v2:examples/ctpv1_compatible](#recipes-cros_test_plan_v2_examples_ctpv1_compatible)
   * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes)
   * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes)
@@ -4120,13 +4120,13 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_plan/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#121)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#122)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -4140,7 +4140,7 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#74)(self, builders=None, paygen=False):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#75)(self, builders=None, paygen=False):**
 
 Generate target test requirements config in config-internal using
   ./board_config/generate_test_config.
@@ -4156,7 +4156,7 @@ Args:
 Returns:
   JSON structure of target test requirements or None.
 
-&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#39)(self, builders=None):**
+&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#40)(self, builders=None):**
 
 Fetch target test requirements config.
 
@@ -4168,7 +4168,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#215)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#220)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -4179,7 +4179,7 @@ Returns:
   test_to_crit_map (dict{string: bool}): Map of test display name to
     criticality.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#28)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#29)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9851,16 +9851,16 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_test_plan/examples/full.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#55)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#57)(api):**
 ### *recipes* / [cros\_test\_plan:tests/test\_plan\_summary](/recipe_modules/cros_test_plan/tests/test_plan_summary.py)
 
 [DEPS](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#6): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#14)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/ctpv1\_compatible](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#5): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

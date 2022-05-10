@@ -21,7 +21,9 @@ DEPS = [
     'repo',
 ]
 
-TEST_TARGET_TEST_REQUIREMENTS_DATA = '''{
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+TEST_TARGET_TEST_REQUIREMENTS_DATA = b'''{
     "perTargetTestRequirements": [
         {
             "targetCriteria": {
@@ -136,18 +138,18 @@ def GenTests(api):
       'generate-test-config',
       api.properties(
           **{
-              "$chromeos/cros_test_plan": {
-                  "board_priority_config_path":
-                      "something/bpcp.binary_proto",
-                  "source_tree_test_config_path":
-                      "something/sttp.binary_proto",
-                  "target_test_requirements_path":
-                      "something/ttrp.binary_proto",
-                  "source_gitiles_repo":
-                      "chromeos/infra/config",
-                  "source_gitiles_branch":
-                      "release-R93-14092.B",
-                  "generate_target_test_requirements_from_source":
+              '$chromeos/cros_test_plan': {
+                  'board_priority_config_path':
+                      'something/bpcp.binary_proto',
+                  'source_tree_test_config_path':
+                      'something/sttp.binary_proto',
+                  'target_test_requirements_path':
+                      'something/ttrp.binary_proto',
+                  'source_gitiles_repo':
+                      'chromeos/infra/config',
+                  'source_gitiles_branch':
+                      'release-R93-14092.B',
+                  'generate_target_test_requirements_from_source':
                       True,
               }
           }),
@@ -158,7 +160,7 @@ def GenTests(api):
           'path': 'src/config-internal'
       }]),
       api.step_data('generate target test requirements.generate_test_config',
-                    stdout=api.raw_io.output_text(generate_test_config_output)),
+                    stdout=api.raw_io.output(generate_test_config_output)),
       api.post_check(post_process.StepCommandContains,
                      'generate target test requirements.generate_test_config', [
                          './board_config/generate_test_config',
@@ -174,18 +176,18 @@ def GenTests(api):
       'generate-test-config-child',
       api.properties(
           **{
-              "$chromeos/cros_test_plan": {
-                  "board_priority_config_path":
-                      "something/bpcp.binary_proto",
-                  "source_tree_test_config_path":
-                      "something/sttp.binary_proto",
-                  "target_test_requirements_path":
-                      "something/ttrp.binary_proto",
-                  "source_gitiles_repo":
-                      "chromeos/infra/config",
-                  "source_gitiles_branch":
-                      "release-R93-14092.B",
-                  "generate_target_test_requirements_from_source":
+              '$chromeos/cros_test_plan': {
+                  'board_priority_config_path':
+                      'something/bpcp.binary_proto',
+                  'source_tree_test_config_path':
+                      'something/sttp.binary_proto',
+                  'target_test_requirements_path':
+                      'something/ttrp.binary_proto',
+                  'source_gitiles_repo':
+                      'chromeos/infra/config',
+                  'source_gitiles_branch':
+                      'release-R93-14092.B',
+                  'generate_target_test_requirements_from_source':
                       True,
               }
           }),
@@ -196,7 +198,7 @@ def GenTests(api):
           'path': 'src/config-internal'
       }]),
       api.step_data('generate target test requirements.generate_test_config',
-                    stdout=api.raw_io.output_text(generate_test_config_output)),
+                    stdout=api.raw_io.output(generate_test_config_output)),
       api.post_check(
           post_process.StepCommandContains,
           'generate target test requirements.generate_test_config',
@@ -219,9 +221,9 @@ def GenTests(api):
       'with-ref',
       api.properties(
           **{
-              "$chromeos/cros_test_plan": {
-                  "test_plan_generator_cipd_package": "test_plan_generator_foo",
-                  "test_plan_generator_cipd_ref": "bar",
+              '$chromeos/cros_test_plan': {
+                  'test_plan_generator_cipd_package': 'test_plan_generator_foo',
+                  'test_plan_generator_cipd_ref': 'bar',
               }
           }),
       api.post_check(post_process.StepCommandContains,

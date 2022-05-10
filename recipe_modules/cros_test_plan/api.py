@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 import json
+import six
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -27,12 +28,12 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._test_planner_path = None
-    self._test_planner_cipd_package = (
+    self._test_planner_cipd_package = six.ensure_str(
         self._properties.test_plan_generator_cipd_package.encode('utf-8') or
-        "chromiumos/infra/test_plan_generator/${platform}")
+        'chromiumos/infra/test_plan_generator/${platform}')
 
-    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
-    self._test_planner_cipd_ref = (
+    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
+    self._test_planner_cipd_ref = six.ensure_str(
         self._properties.test_plan_generator_cipd_ref.encode('utf-8') or
         default_ref)
 
@@ -145,8 +146,12 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
               ProtoBytes(serialized_proto=Build.SerializeToString(build))
               for build in builds
           ])
-      request_json = json_format.MessageToJson(request_proto)
-      presentation.logs['planner_input'] = [str(request_json)]
+      request_dict = json_format.MessageToDict(request_proto)
+      # TODO(b/217973414): Clean up once we don't need to fix the separator
+      # spacing between py3 and py3 anymore.
+      presentation.logs['planner_input'] = [
+          json.dumps(request_dict, separators=(',', ':'), sort_keys=True)
+      ]
 
       messages_path = self.m.path.mkdtemp(prefix='test-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
