@@ -648,7 +648,7 @@ Args:
   child_builds (list[build_pb2.Build]): The child builds for this cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
-[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
@@ -3181,7 +3181,7 @@ Returns:
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
 
-[DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/python][recipe_engine/recipe_modules/python], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -11843,7 +11843,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 [recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-legacy_annotation
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-properties
-[recipe_engine/recipe_modules/python]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-python
 [recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-random
 [recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/resultdb]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/bb1fb5af7df7af67167321440d19dd855abc7518/README.recipes.md#recipe_modules-resultdb
