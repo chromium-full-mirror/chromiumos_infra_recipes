@@ -17,6 +17,8 @@ DEPS = [
     'cros_history',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {
     'expected_builder_names': Property(default=[]),
 }

@@ -4,6 +4,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
+import zlib
+
 from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
@@ -68,8 +71,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     build_output = json_format.MessageToDict(annealing_build.output.properties)
     compressed_response = build_output.get(UPREV_RESPONSE_KEY, '')
-    response_str = compressed_response.decode('base64_codec').decode(
-        'zlib_codec')
+    response_str = zlib.decompress(base64.b64decode(compressed_response))
     uprev_response = UprevPackagesResponse.FromString(response_str)
     return uprev_response.packages
 
@@ -180,7 +182,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # TODO(b:232246919): Figure out why this is failing, and re-enable.
     #if len(tests) != len(set(tests)):
     #      raise ValueError('test names must be unique, found: %r' % tests)
-    self.m.easy.set_properties_step(**{PASSED_TESTS_KEY: list(set(tests))})
+    self.m.easy.set_properties_step(
+        **{PASSED_TESTS_KEY: sorted(list(set(tests)))})
 
   def get_snapshot_builds(self, snapshot, builder_list=None, statuses=None,
                           patches=None):

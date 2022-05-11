@@ -13,6 +13,8 @@ DEPS = [
     'cros_history',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   previous_builds = api.cros_history.get_matching_builds(

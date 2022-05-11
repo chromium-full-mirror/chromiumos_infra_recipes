@@ -12197,7 +12197,7 @@
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.some-suite\", \"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\", \"vm-test\", \"ttarget.hw.some-other-suite\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"htarget.hw.some-suite\", \"ttarget.hw.some-other-suite\", \"vm-test\"]@@@"
     ]
   },
   {

@@ -7074,7 +7074,7 @@
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-inline\", \"htarget.hw.bvt-cq\", \"ttarget.hw.some-other-suite\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"ttarget.hw.some-other-suite\"]@@@"
     ]
   },
   {

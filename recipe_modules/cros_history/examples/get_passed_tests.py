@@ -10,6 +10,8 @@ DEPS = [
     'cros_history',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.assertCountEqual(api.cros_history.get_passed_tests(),

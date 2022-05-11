@@ -21,6 +21,8 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_history.examples.get_passed_builds import (
     GetPassedBuildsProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = GetPassedBuildsProperties
 
 

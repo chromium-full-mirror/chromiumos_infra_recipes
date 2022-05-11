@@ -15,4 +15,6 @@ DEPS = [
     'naming',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosHistoryProperties

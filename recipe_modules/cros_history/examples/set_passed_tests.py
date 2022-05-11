@@ -11,6 +11,8 @@ DEPS = [
     'cros_history',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # Puke and die when duplicate test IDs provided.

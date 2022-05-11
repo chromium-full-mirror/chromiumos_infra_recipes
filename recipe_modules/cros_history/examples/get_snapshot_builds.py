@@ -16,6 +16,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   expected = ['eve-snapshot', 'bob-snapshot']
