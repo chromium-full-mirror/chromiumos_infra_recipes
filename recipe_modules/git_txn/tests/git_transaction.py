@@ -12,6 +12,8 @@ DEPS = [
     'git_txn',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.context(cwd=api.src_state.workspace_path.join('src/project')):
@@ -28,7 +30,7 @@ def GenTests(api):
     if attempt > 1:
       message += ' attempt 1 of 2'
     return api.step_data('%s.git %s' % (message, git_subcmd), retcode=retcode,
-                         stdout=api.raw_io.output(stdout))
+                         stdout=api.raw_io.output_text(stdout))
 
   yield api.test('basic')
 

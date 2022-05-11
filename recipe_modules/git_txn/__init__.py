@@ -10,3 +10,5 @@ DEPS = [
     'git',
     'repo',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

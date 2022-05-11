@@ -64,7 +64,7 @@
   * [git](#recipe_modules-git) (Python3 ✅) &mdash; API for working with git.
   * [git_cl](#recipe_modules-git_cl) (Python3 ✅) &mdash; API for working with git cl.
   * [git_footers](#recipe_modules-git_footers) (Python3 ✅) &mdash; API wrapping the git_footers script.
-  * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
+  * [git_txn](#recipe_modules-git_txn) (Python3 ✅) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) (Python3 ✅) &mdash; APIs for dealing with Gitiles.
   * [goma](#recipe_modules-goma) (Python3 ✅) &mdash; API for working with goma.
   * [greenness](#recipe_modules-greenness) (Python3 ✅) &mdash; API providing a menu for calculating greenness metric.
@@ -375,8 +375,8 @@
   * [git_cl:examples/status](#recipes-git_cl_examples_status) (Python3 ✅)
   * [git_cl:examples/upload](#recipes-git_cl_examples_upload) (Python3 ✅)
   * [git_footers:examples/full](#recipes-git_footers_examples_full) (Python3 ✅) &mdash; Test git_footers calls.
-  * [git_txn:tests/gerrit_transaction](#recipes-git_txn_tests_gerrit_transaction)
-  * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction)
+  * [git_txn:tests/gerrit_transaction](#recipes-git_txn_tests_gerrit_transaction) (Python3 ✅)
+  * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction) (Python3 ✅)
   * [gitiles:examples/full](#recipes-gitiles_examples_full) (Python3 ✅)
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload) (Python3 ✅)
@@ -6116,7 +6116,7 @@ Returns:
 
 [DEPS](/recipe_modules/git_txn/__init__.py#5): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for updating remote git repositories transactionally.
 
@@ -10478,16 +10478,16 @@ Test git_footers calls.
 
 [DEPS](/recipe_modules/git_txn/tests/gerrit_transaction.py#6): [git\_txn](#recipe_modules-git_txn), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/git_txn/tests/gerrit_transaction.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_txn/tests/gerrit_transaction.py#16)(api):**
 ### *recipes* / [git\_txn:tests/git\_transaction](/recipe_modules/git_txn/tests/git_transaction.py)
 
 [DEPS](/recipe_modules/git_txn/tests/git_transaction.py#6): [git\_txn](#recipe_modules-git_txn), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/git_txn/tests/git_transaction.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_txn/tests/git_transaction.py#18)(api):**
 ### *recipes* / [gitiles:examples/full](/recipe_modules/gitiles/examples/full.py)
 
 [DEPS](/recipe_modules/gitiles/examples/full.py#6): [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -10,6 +10,8 @@ DEPS = [
     'git_txn',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.context(cwd=api.src_state.workspace_path.join('src/project')):
@@ -24,17 +26,19 @@ def GenTests(api):
   yield api.test(
       'fail-empty-push-response',
       api.step_data('update ref.gerrit transaction.git push',
-                    stderr=api.raw_io.output((''))))
+                    stderr=api.raw_io.output_text((''))))
   yield api.test(
       'fail-incorrect-git-response',
       api.step_data(
-          'update ref.gerrit transaction.git push', stderr=api.raw_io.output(
+          'update ref.gerrit transaction.git push',
+          stderr=api.raw_io.output_text(
               ('https://chromium-review.googlesource.com'))))
 
   yield api.test(
       'update-ref-has-diff-has-change',
       api.step_data(
-          'update ref.gerrit transaction.git push', stderr=api.raw_io.output(
+          'update ref.gerrit transaction.git push',
+          stderr=api.raw_io.output_text(
               ('remote:   https://chromium-review.googlesource'
                '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
       api.step_data('update ref (3).gerrit transaction.diff check.git ls-files',
@@ -45,7 +49,8 @@ def GenTests(api):
   yield api.test(
       'update-ref-has-diff-has-no-change',
       api.step_data(
-          'update ref.gerrit transaction.git push', stderr=api.raw_io.output(
+          'update ref.gerrit transaction.git push',
+          stderr=api.raw_io.output_text(
               ('remote:   https://chromium-review.googlesource'
                '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
       api.step_data('update ref (3).gerrit transaction.diff check.git ls-files',
