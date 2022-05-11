@@ -95,7 +95,7 @@
   * [test_util](#recipe_modules-test_util) (Python3 ✅) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) (Python3 ✅) &mdash; API for creating task URLs out of complex data structures.
   * [util](#recipe_modules-util) (Python3 ✅) &mdash; Module providing importable utilities.
-  * [workspace_util](#recipe_modules-workspace_util) &mdash; API for various support functions for building.
+  * [workspace_util](#recipe_modules-workspace_util) (Python3 ✅) &mdash; API for various support functions for building.
 
 **[Recipes](#Recipes)**
   * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
@@ -496,10 +496,10 @@
   * [urls:examples/full](#recipes-urls_examples_full) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [util:tests/util](#recipes-util_tests_util) (Python3 ✅)
-  * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
-  * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
-  * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups)
-  * [workspace_util:tests/only_checked_out_projects](#recipes-workspace_util_tests_only_checked_out_projects)
+  * [workspace_util:examples/full](#recipes-workspace_util_examples_full) (Python3 ✅)
+  * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch) (Python3 ✅)
+  * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups) (Python3 ✅)
+  * [workspace_util:tests/only_checked_out_projects](#recipes-workspace_util_tests_only_checked_out_projects) (Python3 ✅)
 ## Recipe Modules
 
 ### *recipe_modules* / [analysis\_service](/recipe_modules/analysis_service)
@@ -8046,7 +8046,7 @@ Includable utilities.
 
 [DEPS](/recipe_modules/workspace_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for various support functions for building.
 
@@ -11792,30 +11792,30 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#6): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#28)(api, properties):**
 ### *recipes* / [workspace\_util:examples/manifest\_branch](/recipe_modules/workspace_util/examples/manifest_branch.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/manifest_branch.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_branch.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_branch.py#16)(api):**
 ### *recipes* / [workspace\_util:examples/manifest\_groups](/recipe_modules/workspace_util/examples/manifest_groups.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/manifest_groups.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_groups.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_groups.py#27)(api, properties):**
 ### *recipes* / [workspace\_util:tests/only\_checked\_out\_projects](/recipe_modules/workspace_util/tests/only_checked_out_projects.py)
 
 [DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#6): [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#22)(api):**
 
 [depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/31bfd519956b011b822769f227fd7dcf679f2f43/recipes/README.recipes.md#recipe_modules-bot_update
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/31bfd519956b011b822769f227fd7dcf679f2f43/recipes/README.recipes.md#recipe_modules-depot_tools

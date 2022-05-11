@@ -19,4 +19,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.workspace_util.workspace_util import (
     WorkspaceUtilProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = WorkspaceUtilProperties

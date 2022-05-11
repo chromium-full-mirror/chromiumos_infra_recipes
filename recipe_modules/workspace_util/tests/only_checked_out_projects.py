@@ -16,6 +16,8 @@ from recipe_engine import post_process
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   changes = [
@@ -42,7 +44,7 @@ def GenTests(api):
       api.step_data(
           'failing apply changes.apply gerrit patch sets.repo forall',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               'error: project chromiumos/config not found'),
       ),
       # When ignore_missing_projects is True, do a repo forall to find out
@@ -73,7 +75,7 @@ def GenTests(api):
       api.step_data(
           'failing apply changes.apply gerrit patch sets.repo forall',
           retcode=1,
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               'error: project chromiumos/config not found'),
       ),
       api.repo.project_infos_step_data(

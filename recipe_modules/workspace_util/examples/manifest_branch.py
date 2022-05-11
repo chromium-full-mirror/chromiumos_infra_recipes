@@ -10,6 +10,8 @@ DEPS = [
     'workspace_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # Configure the builder so that we have

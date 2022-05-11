@@ -20,6 +20,8 @@ from PB.recipe_modules.chromeos.workspace_util.examples.test import (
     TestInputProperties)
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 
