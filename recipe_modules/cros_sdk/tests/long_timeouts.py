@@ -8,6 +8,8 @@ DEPS = [
     'cros_sdk',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.assertFalse(api.cros_sdk.long_timeouts)

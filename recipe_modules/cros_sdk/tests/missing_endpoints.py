@@ -13,6 +13,8 @@ DEPS = [
 
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.cros_sdk.cleanup_context(checkout_path=api.src_state.workspace_path):

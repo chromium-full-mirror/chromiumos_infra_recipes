@@ -24,6 +24,8 @@ from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

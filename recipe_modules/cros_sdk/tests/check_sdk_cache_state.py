@@ -12,6 +12,8 @@ from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 # pylint: disable=protected-access
 def RunSteps(api):

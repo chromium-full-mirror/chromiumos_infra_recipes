@@ -17,6 +17,8 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {
     'is_chroot_usable': Property(default=False),
 }

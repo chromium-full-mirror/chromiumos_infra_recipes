@@ -24,4 +24,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosSdkProperties

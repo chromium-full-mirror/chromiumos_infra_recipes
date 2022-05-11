@@ -12,6 +12,8 @@ DEPS = [
 
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   workspace = api.path['cleanup'].join('workspace')
