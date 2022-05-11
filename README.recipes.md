@@ -57,7 +57,7 @@
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
   * [exonerate](#recipe_modules-exonerate) (Python3 ✅)
-  * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
+  * [failures](#recipe_modules-failures) (Python3 ✅) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider) (Python3 ✅)
   * [gcloud](#recipe_modules-gcloud) (Python3 ✅)
   * [gerrit](#recipe_modules-gerrit) (Python3 ✅) &mdash; APIs for managing Gerrit changes.
@@ -328,17 +328,17 @@
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate) (Python3 ✅)
   * [exonerate:examples/vmtests_dry_run](#recipes-exonerate_examples_vmtests_dry_run) (Python3 ✅)
   * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results) (Python3 ✅)
-  * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
-  * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
-  * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
-  * [failures:examples/ignore_exceptions](#recipes-failures_examples_ignore_exceptions)
-  * [failures:examples/image_test_failures](#recipes-failures_examples_image_test_failures)
-  * [failures:examples/is_critical_test_failure](#recipes-failures_examples_is_critical_test_failure)
-  * [failures:examples/package_failures](#recipes-failures_examples_package_failures)
-  * [failures:examples/step_failures](#recipes-failures_examples_step_failures)
-  * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures)
-  * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures)
-  * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures)
+  * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures) (Python3 ✅)
+  * [failures:examples/build_failures](#recipes-failures_examples_build_failures) (Python3 ✅)
+  * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures) (Python3 ✅)
+  * [failures:examples/ignore_exceptions](#recipes-failures_examples_ignore_exceptions) (Python3 ✅)
+  * [failures:examples/image_test_failures](#recipes-failures_examples_image_test_failures) (Python3 ✅)
+  * [failures:examples/is_critical_test_failure](#recipes-failures_examples_is_critical_test_failure) (Python3 ✅)
+  * [failures:examples/package_failures](#recipes-failures_examples_package_failures) (Python3 ✅)
+  * [failures:examples/step_failures](#recipes-failures_examples_step_failures) (Python3 ✅)
+  * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures) (Python3 ✅)
+  * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures) (Python3 ✅)
+  * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures) (Python3 ✅)
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [forge_commit](#recipes-forge_commit) (Python3 ✅) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
@@ -4739,7 +4739,7 @@ Returns:
 
 [DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for raising failures and presenting them in cute ways.
 
@@ -10123,81 +10123,81 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#17)(api):**
 ### *recipes* / [failures:examples/build\_failures](/recipe_modules/failures/examples/build_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/build_failures.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#30)(api, properties):**
 ### *recipes* / [failures:examples/hw\_test\_failures](/recipe_modules/failures/examples/hw_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/hw_test_failures.py#6): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/hw_test_failures.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/hw_test_failures.py#19)(api):**
 ### *recipes* / [failures:examples/ignore\_exceptions](/recipe_modules/failures/examples/ignore_exceptions.py)
 
-[DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#6): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#8): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#16)(api):**
 ### *recipes* / [failures:examples/image\_test\_failures](/recipe_modules/failures/examples/image_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/image_test_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/image_test_failures.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/image_test_failures.py#19)(api):**
 ### *recipes* / [failures:examples/is\_critical\_test\_failure](/recipe_modules/failures/examples/is_critical_test_failure.py)
 
 [DEPS](/recipe_modules/failures/examples/is_critical_test_failure.py#6): [failures](#recipe_modules-failures)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/is_critical_test_failure.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/is_critical_test_failure.py#15)(api):**
 ### *recipes* / [failures:examples/package\_failures](/recipe_modules/failures/examples/package_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/package_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#17)(api):**
 ### *recipes* / [failures:examples/step\_failures](/recipe_modules/failures/examples/step_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/step_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/step_failures.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/step_failures.py#15)(api):**
 ### *recipes* / [failures:examples/update\_non\_critical\_failures](/recipe_modules/failures/examples/update_non_critical_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/update_non_critical_failures.py#8): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_failures.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_failures.py#18)(api):**
 ### *recipes* / [failures:examples/update\_non\_critical\_test\_failures](/recipe_modules/failures/examples/update_non_critical_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/update_non_critical_test_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_test_failures.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_test_failures.py#15)(api):**
 ### *recipes* / [failures:examples/vm\_test\_failures](/recipe_modules/failures/examples/vm_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/vm_test_failures.py#6): [failures](#recipe_modules-failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/vm_test_failures.py#25)(api):**
 
-&mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#17)(\*\*kwargs):**
+&mdash; **def [vm\_build](/recipe_modules/failures/examples/vm_test_failures.py#19)(\*\*kwargs):**
 ### *recipes* / [firmware\_cq\_orchestrator](/recipes/firmware_cq_orchestrator.py)
 
 [DEPS](/recipes/firmware_cq_orchestrator.py#9): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -9,6 +9,8 @@ DEPS = [
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.failures.is_critical_test_failure(1234)
@@ -18,4 +20,5 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )

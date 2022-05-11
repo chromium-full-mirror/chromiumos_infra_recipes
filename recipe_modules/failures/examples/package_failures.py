@@ -11,6 +11,8 @@ DEPS = [
 
 from PB.chromiumos.common import PackageInfo
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.step.nest('test1') as test_step:

@@ -13,6 +13,8 @@ from PB.chromite.api.image import Image
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import IMAGE_TYPE_TEST
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.failures.raise_failed_image_tests([])

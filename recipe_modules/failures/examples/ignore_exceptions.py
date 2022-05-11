@@ -3,10 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/step',
     'failures',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
@@ -15,4 +19,6 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic', api.step_data('a failed step', retcode=1))
+  yield api.test('basic', api.step_data('a failed step', retcode=1),
+                 api.post_check(post_process.StatusSuccess),
+                 api.post_process(post_process.DropExpectation))
