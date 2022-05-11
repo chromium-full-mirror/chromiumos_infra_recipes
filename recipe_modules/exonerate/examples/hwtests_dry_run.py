@@ -16,6 +16,8 @@ from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)

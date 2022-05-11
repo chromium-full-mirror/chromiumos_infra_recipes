@@ -56,7 +56,7 @@
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
-  * [exonerate](#recipe_modules-exonerate)
+  * [exonerate](#recipe_modules-exonerate) (Python3 ✅)
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [gce_provider](#recipe_modules-gce_provider) (Python3 ✅)
   * [gcloud](#recipe_modules-gcloud) (Python3 ✅)
@@ -319,15 +319,15 @@
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
   * [easy:tests/log_parent_step](#recipes-easy_tests_log_parent_step) (Python3 ✅)
-  * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration)
-  * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration)
-  * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests)
-  * [exonerate:examples/exonerate_vmtests](#recipes-exonerate_examples_exonerate_vmtests)
-  * [exonerate:examples/hwtests_dry_run](#recipes-exonerate_examples_hwtests_dry_run)
-  * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests)
-  * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate)
-  * [exonerate:examples/vmtests_dry_run](#recipes-exonerate_examples_vmtests_dry_run)
-  * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results)
+  * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration) (Python3 ✅)
+  * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration) (Python3 ✅)
+  * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests) (Python3 ✅)
+  * [exonerate:examples/exonerate_vmtests](#recipes-exonerate_examples_exonerate_vmtests) (Python3 ✅)
+  * [exonerate:examples/hwtests_dry_run](#recipes-exonerate_examples_hwtests_dry_run) (Python3 ✅)
+  * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests) (Python3 ✅)
+  * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate) (Python3 ✅)
+  * [exonerate:examples/vmtests_dry_run](#recipes-exonerate_examples_vmtests_dry_run) (Python3 ✅)
+  * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results) (Python3 ✅)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
   * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
@@ -4687,7 +4687,7 @@ Returns:
 
 [DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -10060,65 +10060,65 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#24)(api):**
 ### *recipes* / [exonerate:examples/disabled\_vm\_exoneration](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py)
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/disabled_vm_exoneration.py#25)(api):**
 ### *recipes* / [exonerate:examples/exonerate\_hwtests](/recipe_modules/exonerate/examples/exonerate_hwtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/exonerate_hwtests.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_hwtests.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_hwtests.py#22)(api):**
 ### *recipes* / [exonerate:examples/exonerate\_vmtests](/recipe_modules/exonerate/examples/exonerate_vmtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/exonerate_vmtests.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_vmtests.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_vmtests.py#27)(api):**
 ### *recipes* / [exonerate:examples/hwtests\_dry\_run](/recipe_modules/exonerate/examples/hwtests_dry_run.py)
 
 [DEPS](/recipe_modules/exonerate/examples/hwtests_dry_run.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/hwtests_dry_run.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/hwtests_dry_run.py#22)(api):**
 ### *recipes* / [exonerate:examples/noop\_vmtests](/recipe_modules/exonerate/examples/noop_vmtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/noop_vmtests.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/noop_vmtests.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/noop_vmtests.py#27)(api):**
 ### *recipes* / [exonerate:examples/vmtests\_cannot\_exonerate](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py)
 
 [DEPS](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py#27)(api):**
 ### *recipes* / [exonerate:examples/vmtests\_dry\_run](/recipe_modules/exonerate/examples/vmtests_dry_run.py)
 
 [DEPS](/recipe_modules/exonerate/examples/vmtests_dry_run.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_dry_run.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_dry_run.py#27)(api):**
 ### *recipes* / [exonerate:examples/vmtests\_missing\_results](/recipe_modules/exonerate/examples/vmtests_missing_results.py)
 
 [DEPS](/recipe_modules/exonerate/examples/vmtests_missing_results.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_missing_results.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_missing_results.py#25)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -19,6 +19,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # A failed build that has no test results.
