@@ -7,3 +7,5 @@ DEPS = [
     'recipe_engine/step',
     'gerrit',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

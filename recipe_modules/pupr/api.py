@@ -195,7 +195,7 @@ class PuprApi(recipe_api.RecipeApi):
 
     # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
     # If a CL is in the process of running, no retry will occur.
-    running_cls = filter(is_running_cl, open_cls)
+    running_cls = list(filter(is_running_cl, open_cls))
     if running_cls:
       return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
           [cl.display_url for cl in running_cls])), False)

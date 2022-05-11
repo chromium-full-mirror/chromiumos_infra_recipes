@@ -78,7 +78,7 @@
   * [overlayfs](#recipe_modules-overlayfs) (Python3 ✅) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [phosphorus](#recipe_modules-phosphorus) (Python3 ✅)
   * [portage](#recipe_modules-portage) (Python3 ✅) &mdash; APIs for CrOS Portage.
-  * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
+  * [pupr](#recipe_modules-pupr) (Python3 ✅) &mdash; APIs for PUpr.
   * [recipe_analyze](#recipe_modules-recipe_analyze) (Python3 ✅) &mdash; API for calling 'recipes.
   * [remoteexec](#recipe_modules-remoteexec) (Python3 ✅) &mdash; API for working with re-client for remote execution.
   * [repo](#recipe_modules-repo) (Python3 ✅) &mdash; API for working with the 'repo' VCS tool.
@@ -424,8 +424,8 @@
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
   * [project_buildspec](#recipes-project_buildspec) &mdash; Recipe for invoking the per project buildspec tool.
-  * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry)
-  * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen)
+  * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry) (Python3 ✅)
+  * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen) (Python3 ✅)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full) (Python3 ✅)
@@ -6986,7 +6986,7 @@ Args:
 
 [DEPS](/recipe_modules/pupr/__init__.py#6): [gerrit](#recipe_modules-gerrit), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for PUpr.
 
@@ -10926,18 +10926,18 @@ Recipe for invoking the per project buildspec tool.
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#31)(api):**
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#33)(api):**
 
-&mdash; **def [patch\_set\_from\_dict](/recipe_modules/pupr/examples/identify_retry.py#23)(api, changes):**
+&mdash; **def [patch\_set\_from\_dict](/recipe_modules/pupr/examples/identify_retry.py#25)(api, changes):**
 ### *recipes* / [pupr:examples/retries\_frozen](/recipe_modules/pupr/examples/retries_frozen.py)
 
 [DEPS](/recipe_modules/pupr/examples/retries_frozen.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#17)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

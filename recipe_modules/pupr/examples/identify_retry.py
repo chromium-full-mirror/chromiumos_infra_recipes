@@ -19,6 +19,8 @@ from PB.recipes.chromeos.generator import (
     DRY_RUN,
 )
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def patch_set_from_dict(api, changes):
   return [
