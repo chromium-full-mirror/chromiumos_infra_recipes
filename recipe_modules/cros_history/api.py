@@ -177,7 +177,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Args:
       tests (sequence[str]): (Unique) names of the tests that passed.
     """
-    # TODO(dhanyaganesh): Figure out why this is failing.
+    # TODO(b:232246919): Figure out why this is failing, and re-enable.
     #if len(tests) != len(set(tests)):
     #      raise ValueError('test names must be unique, found: %r' % tests)
     self.m.easy.set_properties_step(**{PASSED_TESTS_KEY: list(set(tests))})

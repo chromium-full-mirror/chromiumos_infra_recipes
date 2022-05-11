@@ -14,6 +14,7 @@ DEPS = [
 
 def RunSteps(api):
   # Puke and die when duplicate test IDs provided.
+  # TODO(b:232246919): Re-enable once uniqueness checking is re-enabled.
   #api.assertions.assertRaises(ValueError, api.cros_history.set_passed_tests,
   #                            ['a', 'a', 'b'])
 
