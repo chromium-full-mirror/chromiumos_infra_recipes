@@ -24,4 +24,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import (
     CrosRelevanceProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosRelevanceProperties

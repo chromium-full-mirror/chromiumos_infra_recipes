@@ -14,6 +14,8 @@ from PB.chromiumos.common import Chroot
 from PB.recipe_modules.chromeos.cros_relevance.examples.toolchain import (
     ToolchainTest)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ToolchainTest
 
 

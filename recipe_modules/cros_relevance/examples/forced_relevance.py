@@ -14,6 +14,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_relevance.examples.forced_relevance import ForcedRelevanceTest
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ForcedRelevanceTest
 
 

@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from collections import namedtuple
+import six
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
@@ -44,18 +45,18 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     # Toolchain changes have been detected.
     self._toolchain_cls_applied = False
 
-    self._build_planner_cipd_package = (
+    self._build_planner_cipd_package = six.ensure_str(
         self._properties.build_plan_generator_cipd_package.encode('utf-8') or
         "chromiumos/infra/build_plan_generator/${platform}")
-    self._pointless_build_checker_cipd_package = (
+    self._pointless_build_checker_cipd_package = six.ensure_str(
         self._properties.pointless_build_checker_cipd_package.encode('utf-8') or
         "chromiumos/infra/pointless_build_checker/${platform}")
 
     default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
-    self._build_planner_cipd_ref = (
+    self._build_planner_cipd_ref = six.ensure_str(
         self._properties.build_plan_generator_cipd_ref.encode('utf-8') or
         default_ref)
-    self._pointless_build_checker_cipd_ref = (
+    self._pointless_build_checker_cipd_ref = six.ensure_str(
         self._properties.pointless_build_checker_cipd_ref.encode('utf-8') or
         default_ref)
 
@@ -442,7 +443,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       force_relevant_targets = self.m.git_footers.get_footer_values(
           gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER)
       pres.logs['found footer builders'] = 'found build(s): %s' % ','.join(
-          [x for x in force_relevant_targets])
+          sorted([x for x in force_relevant_targets]))
       # Handle forcing relevance via footer value.
       f_rel = [
           cfg.id.name

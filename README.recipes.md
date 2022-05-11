@@ -34,7 +34,7 @@
   * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
   * [cros_release_util](#recipe_modules-cros_release_util) &mdash; An API for providing release related utility functions.
-  * [cros_relevance](#recipe_modules-cros_relevance)
+  * [cros_relevance](#recipe_modules-cros_relevance) (Python3 ✅)
   * [cros_resultdb](#recipe_modules-cros_resultdb) (Python3 ✅)
   * [cros_schedule](#recipe_modules-cros_schedule) (Python3 ✅) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
@@ -252,13 +252,13 @@
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
   * [cros_release_util:examples/full](#recipes-cros_release_util_examples_full) (Python3 ✅)
   * [cros_release_util:examples/match_channels](#recipes-cros_release_util_examples_match_channels) (Python3 ✅)
-  * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
-  * [cros_relevance:examples/forced_relevance](#recipes-cros_relevance_examples_forced_relevance)
-  * [cros_relevance:examples/package_dependencies](#recipes-cros_relevance_examples_package_dependencies)
-  * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless)
-  * [cros_relevance:examples/postsubmit_relevance_check](#recipes-cros_relevance_examples_postsubmit_relevance_check)
-  * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain)
-  * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds)
+  * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan) (Python3 ✅)
+  * [cros_relevance:examples/forced_relevance](#recipes-cros_relevance_examples_forced_relevance) (Python3 ✅)
+  * [cros_relevance:examples/package_dependencies](#recipes-cros_relevance_examples_package_dependencies) (Python3 ✅)
+  * [cros_relevance:examples/pointless](#recipes-cros_relevance_examples_pointless) (Python3 ✅)
+  * [cros_relevance:examples/postsubmit_relevance_check](#recipes-cros_relevance_examples_postsubmit_relevance_check) (Python3 ✅)
+  * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain) (Python3 ✅)
+  * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds) (Python3 ✅)
   * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full) (Python3 ✅)
   * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations) (Python3 ✅)
   * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings) (Python3 ✅)
@@ -3033,13 +3033,13 @@ Return:
 
 [DEPS](/recipe_modules/cros_relevance/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#376)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#377)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3053,7 +3053,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#431)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#432)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -3064,7 +3064,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#405)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#406)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -3080,7 +3080,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#70)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#71)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -3101,7 +3101,7 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#495)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#496)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -3118,11 +3118,11 @@ Args:
 Returns:
   (List[str]): A list of package dependencies for the build target.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#40)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#41)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#174)(self, gerrit_changes, gitiles_commit, dep_graph, config, force_relevant=False, test_value=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#175)(self, gerrit_changes, gitiles_commit, dep_graph, config, force_relevant=False, test_value=None):**
 
 Determines if build(s) can be terminated early.
 
@@ -3145,7 +3145,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#351)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#352)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3162,7 +3162,7 @@ Args:
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 
-&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#228)(self, gitiles_commit, dep_graph):**
+&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#229)(self, gitiles_commit, dep_graph):**
 
 Determines if postsubmit builder is relevant for given snapshot.
 
@@ -3176,7 +3176,7 @@ Returns:
   bool: Whether any packages that target depends on have been upreved
   in the latest snapshot or the build was forced relevant.
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#63)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
@@ -9571,51 +9571,51 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#29)(api, properties):**
 ### *recipes* / [cros\_relevance:examples/forced\_relevance](/recipe_modules/cros_relevance/examples/forced_relevance.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/forced_relevance.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/forced_relevance.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/forced_relevance.py#22)(api, properties):**
 ### *recipes* / [cros\_relevance:examples/package\_dependencies](/recipe_modules/cros_relevance/examples/package_dependencies.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/package_dependencies.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/package_dependencies.py#21)(api, patch_sets):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/package_dependencies.py#23)(api, patch_sets):**
 ### *recipes* / [cros\_relevance:examples/pointless](/recipe_modules/cros_relevance/examples/pointless.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/pointless.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/pointless.py#32)(api, properties):**
 ### *recipes* / [cros\_relevance:examples/postsubmit\_relevance\_check](/recipe_modules/cros_relevance/examples/postsubmit_relevance_check.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/postsubmit_relevance_check.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/postsubmit_relevance_check.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/postsubmit_relevance_check.py#27)(api):**
 ### *recipes* / [cros\_relevance:examples/toolchain](/recipe_modules/cros_relevance/examples/toolchain.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/toolchain.py#6): [cros\_relevance](#recipe_modules-cros_relevance), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/toolchain.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/toolchain.py#22)(api, properties):**
 ### *recipes* / [cros\_relevance:tests/filter\_slim\_builds](/recipe_modules/cros_relevance/tests/filter_slim_builds.py)
 
 [DEPS](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#8): [cros\_relevance](#recipe_modules-cros_relevance), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#24)(api, expected_builders):**
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/tests/filter_slim_builds.py#26)(api, expected_builders):**
 ### *recipes* / [cros\_resultdb:examples/full](/recipe_modules/cros_resultdb/examples/full.py)
 
 [DEPS](/recipe_modules/cros_resultdb/examples/full.py#9): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

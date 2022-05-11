@@ -20,6 +20,8 @@ from PB.recipe_modules.chromeos.cros_relevance.examples.build_plan import (
     BuildPlanTest)
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildPlanTest
 _BUILDER_NAME = 'my little builder'
 

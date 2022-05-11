@@ -24,6 +24,8 @@ from PB.recipe_modules.chromeos.cros_relevance.examples.pointless import (
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = PointlessTest
 
 

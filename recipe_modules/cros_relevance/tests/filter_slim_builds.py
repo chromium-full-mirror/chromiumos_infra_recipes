@@ -16,6 +16,8 @@ from recipe_engine.recipe_api import Property
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {
     'expected_builders': Property(default=['a-slim-cq', 'b-slim-cq', 'c-cq']),
 }

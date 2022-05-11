@@ -15,6 +15,8 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {'patch_sets': Property(default=[])}
 
 
