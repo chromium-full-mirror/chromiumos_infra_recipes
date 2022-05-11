@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 from recipe_engine import recipe_api
 
-TEST_MANIFEST = """<?xml version="1.0" encoding="UTF-8"?>
+TEST_MANIFEST = b"""<?xml version="1.0" encoding="UTF-8"?>
 <manifest>
   <include name="_remotes.xml" />
   <default revision="refs/heads/main"

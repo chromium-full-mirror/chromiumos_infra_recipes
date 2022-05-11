@@ -13,6 +13,8 @@ DEPS = [
     'recipe_engine/swarming',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.chromite.set_config('chromiumos_coverage')
