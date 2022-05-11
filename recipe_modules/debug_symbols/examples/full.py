@@ -10,6 +10,8 @@ DEPS = [
     'debug_symbols',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.debug_symbols.upload_debug_symbols()

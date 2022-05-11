@@ -52,7 +52,7 @@
   * [cros_tool_runner](#recipe_modules-cros_tool_runner) (Python3 ✅)
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) (Python3 ✅) &mdash; API to archive test results to CTS specific buckets.
-  * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
+  * [debug_symbols](#recipe_modules-debug_symbols) (Python3 ✅) &mdash; Module for working with debug symbols.
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
@@ -309,7 +309,7 @@
   * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
   * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full) (Python3 ✅)
-  * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
+  * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full) (Python3 ✅)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
   * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [dupit_arch](#recipes-dupit_arch) (Python3 ✅) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
@@ -4526,7 +4526,7 @@ GS buckets and archives them if required.
 
 [DEPS](/recipe_modules/debug_symbols/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Module for working with debug symbols.
 
@@ -9981,9 +9981,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/debug_symbols/examples/full.py#7): [debug\_symbols](#recipe_modules-debug_symbols), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/debug_symbols/examples/full.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/debug_symbols/examples/full.py#16)(api):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#6): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

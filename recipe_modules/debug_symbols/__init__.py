@@ -14,4 +14,6 @@ DEPS = [
     'easy',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = DebugSymbolsProperties
