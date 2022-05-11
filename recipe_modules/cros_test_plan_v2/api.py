@@ -4,6 +4,7 @@
 
 import base64
 import re
+import six
 
 from recipe_engine import recipe_api
 
@@ -15,6 +16,8 @@ from google.protobuf import text_format
 from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 class CrosTestPlanV2Api(recipe_api.RecipeApi):
@@ -211,7 +214,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       * Path to the file where the protobuf was written.
     """
     test_output_contents = base64.b64encode(
-        json_format.MessageToJson(test_output_message))
+        six.ensure_binary(json_format.MessageToJson(test_output_message)))
     contents = self.m.gitiles.get_file(host, project, path, public=False,
                                        test_output_data=test_output_contents)
 

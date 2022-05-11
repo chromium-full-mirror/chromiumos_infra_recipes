@@ -20,4 +20,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import (
     CrosTestPlanV2Properties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosTestPlanV2Properties

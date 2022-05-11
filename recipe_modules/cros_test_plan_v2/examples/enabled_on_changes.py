@@ -14,6 +14,8 @@ from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 gerrit_changes = [
     GerritChange(
         host="chromium-review.googlesource.com",

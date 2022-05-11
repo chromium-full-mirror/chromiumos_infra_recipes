@@ -18,6 +18,8 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   relevant_plans = api.cros_test_plan_v2.relevant_plans([
@@ -51,7 +53,7 @@ def RunSteps(api):
                                                 main="example2.star"),
       ],
       generate_test_plan_request=GenerateTestPlanRequest(
-          buildbucket_protos=[ProtoBytes(serialized_proto='abc123')],
+          buildbucket_protos=[ProtoBytes(serialized_proto=b'abc123')],
       ),
   )
 
@@ -137,4 +139,6 @@ def GenTests(api):
               "/input/generatetestplanresp.binaryproto",
           ],
       ),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )

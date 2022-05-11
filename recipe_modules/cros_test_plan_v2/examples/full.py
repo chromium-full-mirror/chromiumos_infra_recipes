@@ -17,6 +17,8 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.api.v1.plan import HWTestPlan
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   relevant_plans = api.cros_test_plan_v2.relevant_plans([
@@ -110,5 +112,5 @@ def GenTests(api):
               '-out',
               '[CLEANUP]/test_plan_tmp_1',
           ],
-      ),
-  )
+      ), api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
