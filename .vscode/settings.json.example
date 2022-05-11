@@ -1,5 +1,5 @@
 {
-        "python.pythonPath": "${env:HOME}/.local/lib/depot_tools/vpython",
+        "python.defaultInterpreterPath": "${env:HOME}/.local/lib/depot_tools/vpython",
         "python.linting.pylintEnabled": true,
         "python.linting.enabled": true,
         "python.linting.pylintPath": "${env:HOME}/.local/lib/depot_tools/pylint",
