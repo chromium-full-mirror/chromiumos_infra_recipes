@@ -50,7 +50,7 @@
   * [cros_test_proctor](#recipe_modules-cros_test_proctor)
   * [cros_test_runner](#recipe_modules-cros_test_runner) (Python3 ✅)
   * [cros_tool_runner](#recipe_modules-cros_tool_runner) (Python3 ✅)
-  * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
+  * [cros_version](#recipe_modules-cros_version) (Python3 ✅) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) (Python3 ✅) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) (Python3 ✅) &mdash; Module for working with debug symbols.
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
@@ -304,10 +304,10 @@
   * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests)
   * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full) (Python3 ✅)
   * [cros_tool_runner:examples/full](#recipes-cros_tool_runner_examples_full) (Python3 ✅)
-  * [cros_version:examples/bump_version](#recipes-cros_version_examples_bump_version)
-  * [cros_version:examples/full](#recipes-cros_version_examples_full)
-  * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
-  * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
+  * [cros_version:examples/bump_version](#recipes-cros_version_examples_bump_version) (Python3 ✅)
+  * [cros_version:examples/full](#recipes-cros_version_examples_full) (Python3 ✅)
+  * [cros_version:examples/version](#recipes-cros_version_examples_version) (Python3 ✅) &mdash; Tests for api.
+  * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version) (Python3 ✅)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full) (Python3 ✅)
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full) (Python3 ✅)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
@@ -4464,15 +4464,15 @@ Args:
 
 [DEPS](/recipe_modules/cros_version/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with CrOS version numbers.
 
-#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#132)(self, dry_run=True):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#133)(self, dry_run=True):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
 and pushes the change to the chromiumos-overlay repo.
@@ -4483,11 +4483,11 @@ is running for (main/tot --> build, release-* --> branch).
 Args:
   dry_run (bool): Whether the git push is --dry-run.
 
-&mdash; **def [initialize](/recipe_modules/cros_version/api.py#51)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_version/api.py#52)(self):**
 
 Initializes the module.
 
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#61)(self, name='read chromeos version'):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#62)(self, name='read chromeos version'):**
 
 Read the Chrome OS version from the workspace.
 
@@ -4499,7 +4499,7 @@ Args:
 Raises:
   ValueError: if the version file had unexpected formatting.
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_version/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_version/api.py#47)(self):**
 
 The Version of the workspace checkout.
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
@@ -9944,32 +9944,32 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_version/examples/bump_version.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/bump_version.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/bump_version.py#24)(api):**
 ### *recipes* / [cros\_version:examples/full](/recipe_modules/cros_version/examples/full.py)
 
 [DEPS](/recipe_modules/cros_version/examples/full.py#6): [cros\_version](#recipe_modules-cros_version), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/full.py#27)(api, properties):**
 ### *recipes* / [cros\_version:examples/version](/recipe_modules/cros_version/examples/version.py)
 
 [DEPS](/recipe_modules/cros_version/examples/version.py#8): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Tests for api.cros_version.Version.
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/version.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/examples/version.py#16)(api):**
 ### *recipes* / [cros\_version:tests/bad\_version](/recipe_modules/cros_version/tests/bad_version.py)
 
 [DEPS](/recipe_modules/cros_version/tests/bad_version.py#6): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#18)(api):**
 ### *recipes* / [cts\_results\_archive:examples/full](/recipe_modules/cts_results_archive/examples/full.py)
 
 [DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

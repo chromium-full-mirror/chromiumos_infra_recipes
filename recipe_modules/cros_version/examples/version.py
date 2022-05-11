@@ -10,6 +10,8 @@ DEPS = [
     'cros_version',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   version = api.cros_version.Version

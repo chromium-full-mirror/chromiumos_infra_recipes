@@ -10,6 +10,8 @@ DEPS = [
     'cros_version',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine.recipe_api import StepFailure
 
 
@@ -26,4 +28,4 @@ def GenTests(api):
   yield api.test(
       'empty-file',
       api.step_data('read chromeos version.read chromeos_version.sh',
-                    api.file.read_raw('')), api.cq(run_mode=api.cq.DRY_RUN))
+                    api.file.read_text('')), api.cq(run_mode=api.cq.DRY_RUN))
