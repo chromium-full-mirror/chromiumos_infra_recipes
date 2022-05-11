@@ -34,7 +34,12 @@ PROPERTIES = BuildFirmwareProperties
 
 
 def RunSteps(api, properties):
-  with api.build_menu.configure_builder() \
+  if properties.manifest_branch:
+    commit = api.src_state.internal_manifest.as_gitiles_commit_proto
+    commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
+  else:
+    commit = None
+  with api.build_menu.configure_builder(commit=commit) \
      as config, api.build_menu.setup_workspace():
     chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
     api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
@@ -164,6 +169,9 @@ def GenTests(api):
       api.step_data(
           'read chromiumos-sdk pin.read [CLEANUP]/chromiumos_workspace/{}'
           .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.DoesNotRun,
+                     'configure builder.cros_infra_config.gitiles-fetch-ref'),
       cq=True, builder='firmware-ti50-cq', input_properties=dict(
           firmware_location=3,
           chromiumos_sdk_pin_file=sdk_pin_path,
@@ -206,3 +214,19 @@ def GenTests(api):
   yield test('output-binary-sizes', api.post_check(post_process.StatusSuccess),
              api.post_check(post_process.MustRun, 'output binary sizes'),
              api.post_check(post_process.MustRun, 'output got_revision'))
+
+  yield test(
+      'branched-manifest', api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun,
+                     'configure builder.cros_infra_config.gitiles-fetch-ref'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'ensure synced checkout.repo init',
+          [
+              '--manifest-branch',
+              'factory-firmware-ti50-B',
+          ],
+      ), builder='firmware-ti50-cq',
+      input_properties=dict(firmware_location=3,
+                            chromiumos_sdk_pin_file=sdk_pin_path,
+                            manifest_branch="factory-firmware-ti50-B"))
