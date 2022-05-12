@@ -1554,7 +1554,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  }, \n  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", \n  \"profile\": {\n    \"name\": \"base\"\n  }, \n  \"snapshotNumber\": 101, \n  \"snapshotSha\": \"snapshot-HEAD-SHA\"\n}\n",
+      "{\"buildTarget\":{\"name\":\"amd64-generic\"},\"location\":\"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\"profile\":{\"name\":\"base\"},\"snapshotNumber\":101,\"snapshotSha\":\"snapshot-HEAD-SHA\"}\n",
       "[CLEANUP]/metadata_tmp_2/PackageIndexInfo.json"
     ],
     "infra_step": true,
@@ -1573,17 +1573,7 @@
     "name": "upload prebuilts.upload metadata.write metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@{@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }, @@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\", @@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"profile\": {@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"base\"@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }, @@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotNumber\": 101, @@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotSha\": \"snapshot-HEAD-SHA\"@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@}@@@",
+      "@@@STEP_LOG_LINE@PackageIndexInfo.json@{\"buildTarget\":{\"name\":\"amd64-generic\"},\"location\":\"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\"profile\":{\"name\":\"base\"},\"snapshotNumber\":101,\"snapshotSha\":\"snapshot-HEAD-SHA\"}@@@",
       "@@@STEP_LOG_END@PackageIndexInfo.json@@@"
     ]
   },

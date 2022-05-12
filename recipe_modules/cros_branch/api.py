@@ -6,11 +6,14 @@
 """API wrapping the cros branch tool."""
 
 import re
+import six
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.branch import Branch
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 BRANCH_UTIL_REGEX = r"Creating branch: (?P<branch>.*)\s*"
 
@@ -26,12 +29,12 @@ class CrosBranchApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._branch_util_path = None
 
-    self._branch_util_cipd_package = (
+    self._branch_util_cipd_package = six.ensure_str(
         self._properties.branch_util_cipd_package.encode('utf-8') or
         "chromiumos/infra/branch_util/${platform}")
 
     default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
-    self._branch_util_cipd_ref = (
+    self._branch_util_cipd_ref = six.ensure_str(
         self._properties.branch_util_cipd_ref.encode('utf-8') or default_ref)
 
   def __call__(self, cmd, step_name=None, force=False, push=False, **kwargs):
@@ -57,8 +60,8 @@ class CrosBranchApi(recipe_api.RecipeApi):
     step_data = self.m.step(
         step_name or '%s branch' % cmd[0],
         [self._branch_util_path] + cmd + branch_args,
-        stdout=self.m.raw_io.output(name='branch_util stdout',
-                                    add_output_log=True), **kwargs)
+        stdout=self.m.raw_io.output_text(name='branch_util stdout',
+                                         add_output_log=True), **kwargs)
 
     res = re.search(BRANCH_UTIL_REGEX, step_data.stdout)
     if not res:

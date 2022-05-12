@@ -19,4 +19,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_cq_depends.cros_cq_depends import (
     CrosCqDependsProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosCqDependsProperties

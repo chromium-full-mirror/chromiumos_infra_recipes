@@ -16,6 +16,8 @@ DEPS = [
     'cros_branch',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   download_path = api.path.mkdtemp(prefix='manifests-').join('download.xml')
@@ -61,7 +63,7 @@ def GenTests(api):
                      'ensure branch_util.ensure_installed',
                      ['chromiumos/infra/branch_util/${platform} prod']),
       api.step_data('create branch from buildspec',
-                    stdout=api.raw_io.output(TEST_STDOUT)),
+                    stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.post_check(
           post_process.StepCommandContains, 'create branch from buildspec',
           ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
@@ -78,7 +80,7 @@ def GenTests(api):
                      'ensure branch_util.ensure_installed',
                      ['chromiumos/infra/branch_util/${platform} staging']),
       api.step_data('create branch from buildspec',
-                    stdout=api.raw_io.output(TEST_STDOUT)),
+                    stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.post_check(
           post_process.StepCommandContains, 'create branch from buildspec',
           ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
@@ -96,7 +98,7 @@ def GenTests(api):
               }
           }),
       api.step_data('create branch from buildspec',
-                    stdout=api.raw_io.output(TEST_STDOUT)),
+                    stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.post_check(post_process.StepCommandContains,
                      'ensure branch_util.ensure_installed',
                      ['chromiumos/infra/branch_util_foo bar']),

@@ -5,6 +5,7 @@
 
 """API for uploading CrOS prebuilts to Google Storage."""
 
+import json
 import os
 
 from google.protobuf import json_format
@@ -195,9 +196,13 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       metadata_file = self.m.path.mkdtemp(
           prefix='metadata').join('PackageIndexInfo.json')
 
-      self.m.file.write_text(
-          'write metadata', metadata_file, '%s\n' % json_format.MessageToJson(
-              metadata, sort_keys=True, use_integers_for_enums=True))
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
+      metadata_json = json.dumps(
+          json_format.MessageToDict(metadata, use_integers_for_enums=True),
+          separators=(',', ':'), sort_keys=True)
+      self.m.file.write_text('write metadata', metadata_file,
+                             '%s\n' % metadata_json)
 
       snapshot_strs = [commit.id]
 

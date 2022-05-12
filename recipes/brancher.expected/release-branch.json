@@ -88,11 +88,11 @@
     "name": "create branch.create branch from buildspec manifest 89/13729.0.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest@@@",
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {

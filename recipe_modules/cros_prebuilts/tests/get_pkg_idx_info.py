@@ -22,6 +22,8 @@ from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
 from PB.recipe_modules.chromeos.cros_prebuilts.tests.get_pkg_idx_info import (
     GetPkgIdxInfoProperties, TestDataMap)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = GetPkgIdxInfoProperties
 
 

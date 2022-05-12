@@ -24,6 +24,9 @@ from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import (
     FullProperties)
 
 from recipe_engine.post_process import MustRun, DoesNotRun
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = FullProperties
 
 
@@ -135,7 +138,7 @@ def GenTests(api):
               api.step_data(
                   ('upload prebuilts.update binhost conf file.update ref'
                    '.gerrit transaction.git push'),
-                  stderr=api.raw_io.output(
+                  stderr=api.raw_io.output_text(
                       ('remote:   https://chromium-review.googlesource'
                        '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
 

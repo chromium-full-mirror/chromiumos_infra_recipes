@@ -68,7 +68,7 @@
     },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {
@@ -95,7 +95,7 @@
     },
     "name": "create branch from http://chromium.org/manifest.xml",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {
@@ -126,11 +126,11 @@
     },
     "name": "create branch from buildspec",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B@@@",
-      "@@@STEP_LOG_LINE@raw_io.output[branch_util stdout]@2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest@@@",
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[branch_util stdout]@2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {
@@ -159,7 +159,7 @@
     },
     "name": "create branch from manifest [CLEANUP]/manifests-_tmp_1/download.xml (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {
@@ -184,7 +184,7 @@
     },
     "name": "rename branch my_branch to branch_new_name",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {
@@ -208,7 +208,7 @@
     },
     "name": "delete branch my_branch",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {

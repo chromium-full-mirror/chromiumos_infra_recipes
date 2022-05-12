@@ -88,7 +88,7 @@
     "name": "create branch.create branch from buildspec manifest 89/13729.0.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {

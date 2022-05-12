@@ -10,6 +10,8 @@ DEPS = [
     'cros_cq_depends',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   gerrit_change = GerritChange(

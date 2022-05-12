@@ -19,6 +19,8 @@ import json
 from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.cros_source.configure_builder()
@@ -72,7 +74,7 @@ def GenTests(api):
       'has-simple-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               'deadbeef\x1FCq-Depend: chromium:12345\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
@@ -86,9 +88,9 @@ def GenTests(api):
       'has-fulfilled-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1FCq-Depend: chromium:12345,'
-                                   'chromium:IAmNotAnInteger,'
-                                   'chrome-internal:67890\x00')),
+          stdout=api.raw_io.output_text('deadbeef\x1FCq-Depend: chromium:12345,'
+                                        'chromium:IAmNotAnInteger,'
+                                        'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
@@ -102,9 +104,9 @@ def GenTests(api):
       'has-missing-dep',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1FCq-Depend:chromium:12345,'
-                                   'chromium:IAmNotAnInteger,'
-                                   'chrome-internal:67890\x00')),
+          stdout=api.raw_io.output_text('deadbeef\x1FCq-Depend:chromium:12345,'
+                                        'chromium:IAmNotAnInteger,'
+                                        'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
@@ -118,9 +120,9 @@ def GenTests(api):
       'has-missing-dep-permitted',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1FCq-Depend:chromium:12345,'
-                                   'chromium:IAmNotAnInteger,'
-                                   'chrome-internal:67890\x00')),
+          stdout=api.raw_io.output_text('deadbeef\x1FCq-Depend:chromium:12345,'
+                                        'chromium:IAmNotAnInteger,'
+                                        'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
@@ -138,15 +140,15 @@ def GenTests(api):
       'find-project-path-fails',
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).git log',
-          stdout=api.raw_io.output('deadbeef\x1FCq-Depend:chromium:12345,'
-                                   'chromium:IAmNotAnInteger,'
-                                   'chrome-internal:67890\x00')),
+          stdout=api.raw_io.output_text('deadbeef\x1FCq-Depend:chromium:12345,'
+                                        'chromium:IAmNotAnInteger,'
+                                        'chrome-internal:67890\x00')),
       api.gerrit.set_gerrit_fetch_changes_response(
           'ensure manifest cq-depend fulfilled (2)', changes, value_dict),
       api.step_data(
           'ensure manifest cq-depend fulfilled (2).repo forall (2)',
-          stdout=api.raw_io.output('c|src/c|cros|refs/heads/other-branch'
-                                   '|refs/heads/another-branch')),
+          stdout=api.raw_io.output_text('c|src/c|cros|refs/heads/other-branch'
+                                        '|refs/heads/another-branch')),
       api.post_check(verify_dep_fetched, 2, 12345),
       api.post_check(verify_dep_fetched, 2, 67890),
       api.post_check(post_process.StatusSuccess),

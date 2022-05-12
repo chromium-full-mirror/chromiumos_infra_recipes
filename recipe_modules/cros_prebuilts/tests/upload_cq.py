@@ -14,6 +14,8 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   # Uploading prebuilts for a CQ builder is invalid and raises ValueError.

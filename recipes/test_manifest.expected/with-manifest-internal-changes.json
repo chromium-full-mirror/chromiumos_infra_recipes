@@ -3244,7 +3244,7 @@
     },
     "name": "test branch_util for chromeos/manifest-internal",
     "~followup_annotations": [
-      "@@@STEP_LOG_END@raw_io.output[branch_util stdout]@@@"
+      "@@@STEP_LOG_END@raw_io.output_text[branch_util stdout]@@@"
     ]
   },
   {

@@ -13,6 +13,8 @@ DEPS = [
     'cros_branch',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   download_path = api.path.mkdtemp(prefix='manifests-').join('download.xml')
