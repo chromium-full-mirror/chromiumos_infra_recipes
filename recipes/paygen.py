@@ -7,7 +7,7 @@
 
 import json
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 DEPS = [
     'recipe_engine/futures',
@@ -252,6 +252,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -293,6 +295,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -328,6 +332,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -341,6 +347,8 @@ def GenTests(api):
                                 failure_reason=2),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -356,6 +364,8 @@ def GenTests(api):
                                 failure_reason=2, retry=1),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -370,6 +380,8 @@ def GenTests(api):
           failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -382,6 +394,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -413,6 +427,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -429,6 +445,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -445,4 +463,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )

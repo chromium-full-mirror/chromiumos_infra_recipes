@@ -416,7 +416,7 @@
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect)
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full) (Python3 ✅)
-  * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
+  * [paygen](#recipes-paygen) (Python3 ✅) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
   * [paygen_orchestrator](#recipes-paygen_orchestrator) &mdash; Recipe for orchestrating ChromeOS payloads (AU deltas etc).
   * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image) (Python3 ✅)
   * [phosphorus:examples/full](#recipes-phosphorus_examples_full) (Python3 ✅)
@@ -10858,7 +10858,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/paygen.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
