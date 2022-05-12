@@ -15,6 +15,8 @@ DEPS = [
     'bot_scaling',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BotDropProperties
 
 

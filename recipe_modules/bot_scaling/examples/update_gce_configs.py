@@ -13,6 +13,8 @@ DEPS = [
 
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   bot_policy_config = api.bot_scaling.test_api.robocrop_bot_policy_config()

@@ -10,6 +10,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   bot_policy_config = api.cros_infra_config.get_bot_policy_config()

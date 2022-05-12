@@ -6,7 +6,7 @@
   * [analysis_service](#recipe_modules-analysis_service) (Python3 ✅)
   * [android](#recipe_modules-android) (Python3 ✅)
   * [bot_cost](#recipe_modules-bot_cost) (Python3 ✅)
-  * [bot_scaling](#recipe_modules-bot_scaling)
+  * [bot_scaling](#recipe_modules-bot_scaling) (Python3 ✅)
   * [breakpad](#recipe_modules-breakpad) (Python3 ✅)
   * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan) (Python3 ✅)
@@ -109,16 +109,16 @@
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) (Python3 ✅)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost) (Python3 ✅)
   * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size) (Python3 ✅)
-  * [bot_scaling:examples/drop_cpus](#recipes-bot_scaling_examples_drop_cpus)
-  * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
-  * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config)
-  * [bot_scaling:examples/get_quota_usage](#recipes-bot_scaling_examples_get_quota_usage)
-  * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
-  * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
-  * [bot_scaling:examples/get_swarming_demand](#recipes-bot_scaling_examples_get_swarming_demand)
-  * [bot_scaling:examples/get_swarming_stats](#recipes-bot_scaling_examples_get_swarming_stats)
-  * [bot_scaling:examples/update_bot_policy_config](#recipes-bot_scaling_examples_update_bot_policy_config)
-  * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs)
+  * [bot_scaling:examples/drop_cpus](#recipes-bot_scaling_examples_drop_cpus) (Python3 ✅)
+  * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request) (Python3 ✅)
+  * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config) (Python3 ✅)
+  * [bot_scaling:examples/get_quota_usage](#recipes-bot_scaling_examples_get_quota_usage) (Python3 ✅)
+  * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action) (Python3 ✅)
+  * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action) (Python3 ✅)
+  * [bot_scaling:examples/get_swarming_demand](#recipes-bot_scaling_examples_get_swarming_demand) (Python3 ✅)
+  * [bot_scaling:examples/get_swarming_stats](#recipes-bot_scaling_examples_get_swarming_stats) (Python3 ✅)
+  * [bot_scaling:examples/update_bot_policy_config](#recipes-bot_scaling_examples_update_bot_policy_config) (Python3 ✅)
+  * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs) (Python3 ✅)
   * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
   * [breakpad:examples/full](#recipes-breakpad_examples_full) (Python3 ✅)
   * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols) (Python3 ✅)
@@ -650,7 +650,7 @@ Args:
 
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -8291,72 +8291,72 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/bot_scaling/examples/drop_cpus.py#11): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/drop_cpus.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/drop_cpus.py#23)(api, properties):**
 ### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_bot_request.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_bot_request.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_bot_request.py#17)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_gce\_config](/recipe_modules/bot_scaling/examples/get_gce_config.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_gce_config.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_gce_config.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_gce_config.py#16)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_quota\_usage](/recipe_modules/bot_scaling/examples/get_quota_usage.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_quota_usage.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_quota_usage.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_quota_usage.py#17)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_robocrop\_action](/recipe_modules/bot_scaling/examples/get_robocrop_action.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_robocrop_action.py#20)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_scaling\_action](/recipe_modules/bot_scaling/examples/get_scaling_action.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_scaling_action.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_scaling_action.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_scaling_action.py#19)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_swarming\_demand](/recipe_modules/bot_scaling/examples/get_swarming_demand.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#16)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_swarming\_stats](/recipe_modules/bot_scaling/examples/get_swarming_stats.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#16)(api):**
 ### *recipes* / [bot\_scaling:examples/update\_bot\_policy\_config](/recipe_modules/bot_scaling/examples/update_bot_policy_config.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/update_bot_policy_config.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_bot_policy_config.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_bot_policy_config.py#18)(api):**
 ### *recipes* / [bot\_scaling:examples/update\_gce\_configs](/recipe_modules/bot_scaling/examples/update_gce_configs.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/update_gce_configs.py#7): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_gce_configs.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_gce_configs.py#19)(api):**
 ### *recipes* / [brancher](/recipes/brancher.py)
 
 [DEPS](/recipes/brancher.py#8): [cros\_branch](#recipe_modules-cros_branch), [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

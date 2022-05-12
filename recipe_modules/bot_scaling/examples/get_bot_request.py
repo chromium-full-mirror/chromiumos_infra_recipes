@@ -11,6 +11,8 @@ DEPS = [
 
 from PB.chromiumos.bot_scaling import BotPolicy
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
 

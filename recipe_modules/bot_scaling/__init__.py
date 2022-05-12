@@ -15,3 +15,5 @@ DEPS = [
     'recipe_engine/step',
     'swarming_cli',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

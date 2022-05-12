@@ -10,6 +10,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   gce_config = api.bot_scaling.get_current_gce_config(

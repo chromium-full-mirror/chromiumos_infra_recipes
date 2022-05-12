@@ -13,6 +13,8 @@ DEPS = [
 from PB.chromiumos.bot_scaling import BotPolicy, ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   bot_policy_config = api.bot_scaling.test_api.robocrop_bot_policy_config()
