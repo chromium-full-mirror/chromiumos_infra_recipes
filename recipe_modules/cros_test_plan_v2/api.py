@@ -163,9 +163,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       # Output contains relevant plans in separate textproto files.
       output_files = self.m.file.listdir(
-          'list output files',
-          output,
-      )
+          'list output files', output,
+          test_data=['relevant_plan_1.textpb', 'relevant_plan_2.textpb'])
       relevant_plans = []
 
       for f in output_files:

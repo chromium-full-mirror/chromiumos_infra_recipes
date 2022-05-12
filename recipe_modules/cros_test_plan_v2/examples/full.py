@@ -71,11 +71,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data(
-          'find relevant plans.list output files',
-          api.file.listdir(['relevant_plan_1.textpb',
-                            'relevant_plan_2.textpb']),
-      ),
-      api.step_data(
           'find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb',
           api.raw_io.output(
               text_format.MessageToString(

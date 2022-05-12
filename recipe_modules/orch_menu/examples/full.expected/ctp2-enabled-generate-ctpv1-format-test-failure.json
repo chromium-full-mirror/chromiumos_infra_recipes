@@ -2648,7 +2648,7 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all tests passed.@@@"
+      "@@@STEP_TEXT@3 critical test(s) failed@@@"
     ]
   },
   {
@@ -9355,7 +9355,7 @@
       "@@@STEP_LOG_LINE@return value@    pool: \"my skylab pool\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
       "@@@STEP_LOG_LINE@return value@state {@@@",
       "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
       "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
@@ -9849,7 +9849,7 @@
       "@@@STEP_LOG_LINE@return value@    skylab_model: \"model\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
       "@@@STEP_LOG_LINE@return value@state {@@@",
       "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
       "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
@@ -10341,7 +10341,7 @@
       "@@@STEP_LOG_LINE@return value@    pool: \"my skylab pool\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
       "@@@STEP_LOG_LINE@return value@state {@@@",
       "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
       "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
@@ -10831,7 +10831,7 @@
       "@@@STEP_LOG_LINE@return value@    pool: \"my skylab pool\"@@@",
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
-      "@@@STEP_LOG_LINE@return value@), status=12, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
+      "@@@STEP_LOG_LINE@return value@), status=20, child_results=[task_url: \"https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010\"@@@",
       "@@@STEP_LOG_LINE@return value@state {@@@",
       "@@@STEP_LOG_LINE@return value@  life_cycle: LIFE_CYCLE_COMPLETED@@@",
       "@@@STEP_LOG_LINE@return value@  verdict: VERDICT_PASSED@@@",
@@ -10917,12 +10917,12 @@
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"4321\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"compressed_json_responses\": \"eJztkV9rwjAUxb9LnttUmexPYYxRuyG4TbQbjDEkxmsTbJsu96oM2Xff7dwEfXDvIoFwHg4n5+S3FoaUz4GkWcnJkkL9IeK1QFIEjViCn1pNIhYv6bDbS7Lx4HY0SrviKxCkcD4EXBSEIn5bi8Llz75gqyGqMY4iTrFVAYhSO1/L3Lm8ANZlNPFuhRBp410JDkO1IEeAFPpNXoQr5Utb5WHnoq3Ozyb6Sncu2612KxKBqFTJ5YQ2AITjR0d2ZrUi66qMM9iwrV/YGSSfumjs/d5dOk5ekz7fTw+DfprxjODfhbuTto3/CkpV11g7+pnV+G/s9Hq/ND/TrEsUwuarfhewnw5X2LFKzdormak54L0HRQPjyOHBiHc+wT5lxmIrOJE+btLIA0JcWDqRPkbStEfakQF/4n2kvL++AWB6lqE=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlk79KxEAQxkm44tgqBkRQC7EUsrng4Z+AWl4nFteKTNYxu1ySiTsT8wgWVr6mnW/gKhxCXuGKgYFhvu/jB1/6Eat9K+BrFG1HzdRixoMTTL8j9RWlt1ak5zLPjfXhRpzxCL51Xa2h77kn0YbaXIA3d+75ZnlZwMV5Za7N8qpYFIvD2bxPotMDYxGFn+5J3IszII66NbKcPW7lWcB1DTIHOd/rmqhu8E+68jQy/vvDICThN/PIQyOcbwNlU/O8nKtZSCZJVJ6o499NG2jRg17DBnnlEeTBkhAnURqHmdCo3iQLqVy3mzTeY7U3oWFed5LEZ6yOZNISEot+d7vyAyiDbIo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_json_responses\": \"eJztke1qwjAUhu8lv/uhTPZRGENqHUK3iXaDMUaJ8dgE06bLOSpDvPelc3MowwsQCYTz4+XkffKsmSRuC6BAroLJknzxwaI1Q+IEzbAEO1WCWMReklFvEGd5vztIkx7beIw4zkeAC03Iorc106Z4ttpFJVGNURi6LarSgBgIY+ugMKbQ4OYynFizQgiFtKYEgz5fkCFA8u12X4grbktVFX7nqs0vLybiRnSu2612K2Qeq3jpyjEhAQjzR0NqpgQnZarM7XCBXX2tZhB/Ct3E00E/yePXOHX308MwTTKH4f1DOOyOx3+E+0i7xr8FA17XWBv6xmryd2p6e1jaPdPQxRxh+1U/BC5PxyvsRQPhZsuDjM8B7y1wGkpDBo+ueHfHO7TstKgKzqZP2zQ6AB8Xis6mT9E0HZg2JMGefZ+o780XcKqWNQ==\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlkz9LxEAQxUm44tgqBkRQC7EUsrng4Z+AWl4nFteKTNYxu1ySWXcm5iNYWPk17fwGRuEQ8hWuG3jMe48fvPQjVvtWINQo2g6aqcWMeyeYfkfqK0pvrYjnMs+NDaNGnPEAoXVdrcF79iTaUJsL8ObOPd8sLwu4OK/MtVleFYticTib+yQ6PTAWUfjpnsS9OAPiqFsjy9nj1p4FXNcg82gXvK6J6gb/rKtAA+N/PvRCMv5mAblvhPNtoWwanpdzNRubSRKVJ+r499IGWgyg17BBXgUEebAkxEmUxkmcTmhUb5KNrVy3mzTeY7U3oWFed5LEZ6yOZLISEothd7fyAy7lbI4=\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"responses\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"htarget.hw.bvt-cq\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_FAILED\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }, @@@",
       "@@@STEP_LOG_LINE@json.output@                \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@                  {@@@",
@@ -10948,7 +10948,7 @@
       "@@@STEP_LOG_LINE@json.output@              }, @@@",
       "@@@STEP_LOG_LINE@json.output@              \"htarget.hw.bvt-inline\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_FAILED\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }, @@@",
       "@@@STEP_LOG_LINE@json.output@                \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@                  {@@@",
@@ -10974,7 +10974,7 @@
       "@@@STEP_LOG_LINE@json.output@              }, @@@",
       "@@@STEP_LOG_LINE@json.output@              \"htarget.hw.some-suite\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_FAILED\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }, @@@",
       "@@@STEP_LOG_LINE@json.output@                \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@                  {@@@",
@@ -11000,7 +11000,7 @@
       "@@@STEP_LOG_LINE@json.output@              }, @@@",
       "@@@STEP_LOG_LINE@json.output@              \"ttarget.hw.some-other-suite\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"verdict\": \"VERDICT_FAILED\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }, @@@",
       "@@@STEP_LOG_LINE@json.output@                \"taskResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@                  {@@@",
@@ -11254,19 +11254,22 @@
     "name": "run tests.collect tests.set test_summary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test_summary@[{\"critical\": true, \"name\": \"htarget.hw.bvt-cq\", \"status\": \"SUCCESS\"}, {\"critical\": true, \"name\": \"htarget.hw.bvt-inline\", \"status\": \"SUCCESS\"}, {\"critical\": true, \"name\": \"ttarget.hw.some-other-suite\", \"status\": \"SUCCESS\"}, {\"critical\": false, \"name\": \"htarget.hw.some-suite\", \"status\": \"SUCCESS\"}, {\"critical\": true, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}, {\"critical\": false, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}, {\"critical\": true, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}, {\"critical\": false, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}]@@@"
+      "@@@SET_BUILD_PROPERTY@test_summary@[{\"critical\": true, \"name\": \"htarget.hw.bvt-cq\", \"status\": \"FAILURE\"}, {\"critical\": true, \"name\": \"htarget.hw.bvt-inline\", \"status\": \"FAILURE\"}, {\"critical\": true, \"name\": \"ttarget.hw.some-other-suite\", \"status\": \"FAILURE\"}, {\"critical\": false, \"name\": \"htarget.hw.some-suite\", \"status\": \"FAILURE\"}, {\"critical\": true, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}, {\"critical\": false, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}, {\"critical\": true, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}, {\"critical\": false, \"name\": \"ttarget.tast.sweet\", \"status\": \"FAILURE\"}]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "check test results"
+    "name": "check test results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@passed_tests@[\"htarget.hw.bvt-cq\", \"htarget.hw.bvt-inline\", \"htarget.hw.some-suite\", \"ttarget.hw.some-other-suite\", \"vm-test\"]@@@"
+      "@@@SET_BUILD_PROPERTY@passed_tests@[\"vm-test\"]@@@"
     ]
   },
   {
@@ -11274,7 +11277,8 @@
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all critical hw tests succeeded@@@"
+      "@@@STEP_TEXT@4 hw tests failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -11282,7 +11286,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -11290,7 +11294,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -11298,7 +11302,7 @@
     "name": "check test results.hw test results.htarget.hw.some-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_TEXT@failed but is not critical@@@"
     ]
   },
   {
@@ -11306,7 +11310,7 @@
     "name": "check test results.hw test results.ttarget.hw.some-other-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -11331,66 +11335,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all critical vm tests succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update manifest-internal ref refs/heads/test"
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:refs/heads/test"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "update manifest-internal ref refs/heads/test.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update manifest ref refs/heads/test"
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "https://chromium.googlesource.com/chromiumos/manifest",
-      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:refs/heads/test"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "update manifest ref refs/heads/test.git push",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -11447,7 +11391,89 @@
     "name": "clean up orchestrator.non-critical test check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no critical test failures@@@"
+      "@@@STEP_TEXT@test planning v2 enabled, skipping non-critical test check@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.non-critical test check.check test planning v2 enabled",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@enabling test planning v2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "clean up orchestrator.non-critical test check.check test planning v2 enabled.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1234, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1234, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"patch_set\": 5, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/platform\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 5, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 5, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/34/1234/5\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromiumos/platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"a/b/d/test.txt\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/34/1234/5\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.non-critical test check.set test_planning_v2_enabled",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test_planning_v2_enabled@true@@@"
     ]
   },
   {
@@ -11642,6 +11668,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- ttarget.hw.some-other-suite:"
+    },
     "name": "$result"
   }
 ]

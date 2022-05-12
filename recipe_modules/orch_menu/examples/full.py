@@ -545,6 +545,58 @@ def GenTests(api):
               },
           },
       ),
+      data.ctp_normal,
+      input_properties=input_props_with_generate_ctpv1_format,
+      builder='postsubmit-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      extra_changes=gerrit_changes,
+  )
+
+  summary = ('3 hw tests failed\n\n- htarget.hw.bvt-cq:'
+             '\n\n- htarget.hw.bvt-inline:'
+             '\n\n- ttarget.hw.some-other-suite:')
+  yield api.orch_menu.test(
+      'ctp2-enabled-generate-ctpv1-format-test-failure',
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(status=common_pb2.FAILURE,
+                                               summary_markdown=summary))),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'check test planning v2 enabled',
+          gerrit_changes,
+          {
+              1234: {
+                  'patch_set': 5,
+                  'files': {
+                      'a/b/d/test.txt': {},
+                  },
+                  'branch': 'main',
+              },
+          },
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'clean up orchestrator.non-critical test check.check test planning v2 enabled',
+          gerrit_changes,
+          {
+              1234: {
+                  'patch_set': 5,
+                  'files': {
+                      'a/b/d/test.txt': {},
+                  },
+                  'branch': 'main',
+              },
+          },
+      ),
+      data.ctp_failure,
+      api.post_check(post_process.StatusFailure),
+      # The criticality update step should not run if test planning v2 is
+      # enabled.
+      api.post_process(post_process.PropertiesDoNotContain,
+                       'test_criticality_update_count'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'clean up orchestrator.non-critical test check.generate test plan'),
       input_properties=input_props_with_generate_ctpv1_format,
       builder='postsubmit-orchestrator',
       with_manifest_refs=True,

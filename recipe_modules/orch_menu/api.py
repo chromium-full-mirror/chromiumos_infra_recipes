@@ -393,6 +393,11 @@ class OrchMenuApi(RecipeApi):
         pres.step_text = 'no critical test failures'
         return
 
+      if self.gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
+          self.gerrit_changes):
+        pres.step_text = 'test planning v2 enabled, skipping non-critical test check'
+        return
+
       refreshed_test_plan = self.m.cros_test_plan.generate(
           self.builds_status.completed_builds, self.gerrit_changes,
           self.gitiles_commit)
@@ -767,7 +772,7 @@ class OrchMenuApi(RecipeApi):
             testable_builds or self._builds_status.testable_builds,
             self.gitiles_commit,
             self.gerrit_changes,
-            self._properties.enable_history,
+            False,            # self._properties.enable_history,
             require_stable_devices=self.config.orchestrator
             .require_stable_devices,
             run_async=self._properties.run_tests_async,

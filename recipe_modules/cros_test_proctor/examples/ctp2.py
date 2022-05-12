@@ -33,13 +33,12 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  yield api.test('basic')
+
   yield api.test(
-      'basic',
+      'no-starlark-files',
       api.step_data(
           'run tests.schedule tests.find relevant plans.list output files',
-          api.file.listdir(['relevant_plan_1.textpb',
-                            'relevant_plan_2.textpb']),
+          api.file.listdir([]),
       ),
   )
-
-  yield api.test('no-starlark-files')

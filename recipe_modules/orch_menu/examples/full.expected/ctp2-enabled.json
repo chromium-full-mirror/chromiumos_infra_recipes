@@ -2648,7 +2648,24 @@
     "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@No starlark files found.@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@{@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\": [@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"kernel:4.4\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    }, @@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"kernel:5.2\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    }@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  ]@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@}@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@{@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\": [@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"wifiA\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@    }@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  ]@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@}@@@",
+      "@@@STEP_LOG_END@hw_test_plans@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -2771,7 +2788,706 @@
     "name": "run tests.schedule tests.find relevant plans.list output files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb@@@",
       "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chromium.googlesource.com/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "-v",
+      "--progress"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chromium.googlesource.com/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "-v",
+      "--progress"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.git clone (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"kernel:4.4\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"kernel:5.2\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_LINE@hw test plans@@@@",
+      "@@@STEP_LOG_LINE@hw test plans@coverage_rules {@@@",
+      "@@@STEP_LOG_LINE@hw test plans@  name: \"wifiA\"@@@",
+      "@@@STEP_LOG_LINE@hw test plans@}@@@",
+      "@@@STEP_LOG_END@hw test plans@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@docker version@1.2.3@@@",
+      "@@@STEP_LOG_END@docker version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "which",
+      "docker"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.ensure docker installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "version"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_TEXT@1.2.3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/cloud-platform",
+      "-lifetime",
+      "3m"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.get access token for default account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_MODULE[infra::docker]/resources/docker_login.py",
+      "--server",
+      "us-docker.pkg.dev",
+      "--service-account-token-file",
+      "extra.secret.token.should.not.be.logged",
+      "--config-file",
+      "[CLEANUP]/.docker"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker login",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "docker",
+      "--config",
+      "[CLEANUP]/.docker",
+      "pull",
+      "us-docker.pkg.dev/cros-registry/test-services/testplan:prod"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker pull testplan:prod",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.write input files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"portageBuildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@data@          \"overlayName\": \"overlayA\"@@@",
+      "@@@STEP_LOG_LINE@data@        }@@@",
+      "@@@STEP_LOG_LINE@data@      }@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"buildTarget\": {\n        \"portageBuildTarget\": {\n          \"overlayName\": \"overlayA\"\n        }\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write build_metadata.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"designList\": [@@@",
+      "@@@STEP_LOG_LINE@data@        {@@@",
+      "@@@STEP_LOG_LINE@data@          \"name\": \"design1\"@@@",
+      "@@@STEP_LOG_LINE@data@        }@@@",
+      "@@@STEP_LOG_LINE@data@      ]@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"designList\": [\n        {\n          \"name\": \"design1\"\n        }\n      ]\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_3/configs.jsonproto"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write configs.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"dutAttributes\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"value\": \"attribute1\"@@@",
+      "@@@STEP_LOG_LINE@data@      }@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write dut_attributes.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@data@{@@@",
+      "@@@STEP_LOG_LINE@data@  \"boardPriorities\": [@@@",
+      "@@@STEP_LOG_LINE@data@    {@@@",
+      "@@@STEP_LOG_LINE@data@      \"priority\": -100, @@@",
+      "@@@STEP_LOG_LINE@data@      \"skylabBoard\": \"testboardA\"@@@",
+      "@@@STEP_LOG_LINE@data@    }@@@",
+      "@@@STEP_LOG_LINE@data@  ]@@@",
+      "@@@STEP_LOG_LINE@data@}@@@",
+      "@@@STEP_LOG_END@data@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-b",
+      "[HOME]/.git-credential-cache/cookie",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"boardPriorities\": [\n    {\n      \"priority\": -100, \n      \"skylabBoard\": \"testboardA\"\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_3/board_priority.cfg"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write input files.write board_priority.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_3/testrepoA"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/testrepoB"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_MODULE[infra::docker]/resources/docker_run.py",
+      "--config-file",
+      "[CLEANUP]/.docker",
+      "--image",
+      "us-docker.pkg.dev/cros-registry/test-services/testplan:prod",
+      "--dir-map",
+      "[CLEANUP]/tmp_tmp_3",
+      "/input",
+      "--",
+      "generate",
+      "-alsologtostderr",
+      "-v",
+      "2",
+      "-boardprioritylist",
+      "/input/board_priority.cfg",
+      "-buildmetadata",
+      "/input/build_metadata.jsonproto",
+      "-configbundlelist",
+      "/input/configs.jsonproto",
+      "-dutattributes",
+      "/input/dut_attributes.jsonproto",
+      "-out",
+      "/input/hw_test_plans.jsonproto",
+      "-plan",
+      "/input/testrepoA/a/b/kernel1.star",
+      "-plan",
+      "/input/testrepoB/kernel2.star"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.docker run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_3/hw_test_plans.jsonproto",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.read output [CLEANUP]/tmp_tmp_3/hw_test_plans.jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2932,7 +3648,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/examples/full.py\", line 99, in RunSteps",
       "    builds_status = api.orch_menu.plan_and_run_tests()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 778, in plan_and_run_tests",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/orch_menu/api.py\", line 783, in plan_and_run_tests",
       "    self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_test_proctor/api.py\", line 137, in run_proctor_v2",
       "    raise ValueError('CTP2 not implemented')",
