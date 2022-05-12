@@ -16,6 +16,8 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromite.api.payload import GenerationRequest
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {
     # Following the pattern from create_au_test_configs.py.
     'max_batch_size':

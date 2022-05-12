@@ -9,11 +9,15 @@ from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import CrosPaygenPropert
 from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import TestRequestOpts
 from PB.chromiumos.common import DeltaType
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_paygen',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
@@ -83,7 +87,8 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.post_check(post_process.StatusSuccess),
+                 api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'with-request-overrides',
@@ -94,4 +99,5 @@ def GenTests(api):
                       test_request_opts=TestRequestOpts(
                           max_retries=1, timeout=duration_pb2.Duration(
                               seconds=100)))
-          }))
+          }), api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))

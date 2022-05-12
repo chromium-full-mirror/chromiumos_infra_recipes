@@ -20,7 +20,7 @@ from PB.chromite.api.payload import GenerationRequest
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = {
     # Recipes seem unable to handle unhashable inline-defined PROPERTIES, such
@@ -28,7 +28,7 @@ PROPERTIES = {
     # repeated fields.
     'gen_req_ser':
         Property(
-            kind=str,
+            kind=bytes,
             help='The serialized GenerationRequest for which to create tests.',
             default=''),
     'expected_test_configs_ser':

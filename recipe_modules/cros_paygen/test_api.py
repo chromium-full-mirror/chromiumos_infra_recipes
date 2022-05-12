@@ -38,7 +38,7 @@ def _read_test_file(filename):
     return f.read().strip()
 
 
-TEST_TARGET_TEST_REQUIREMENTS_DATA = '''{
+TEST_TARGET_TEST_REQUIREMENTS_DATA = b'''{
     "perTargetTestRequirements": [
         {
             "targetCriteria": {

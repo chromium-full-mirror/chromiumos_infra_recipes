@@ -16,6 +16,8 @@ DEPS = [
     'cros_paygen',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = GetRequestTestInputProperties
 
 

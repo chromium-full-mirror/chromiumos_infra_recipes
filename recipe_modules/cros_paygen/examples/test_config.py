@@ -18,7 +18,7 @@ from recipe_engine import post_process
 from PB.chromiumos.common import DeltaType, ImageType
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = TestPaygenProperties
 
@@ -168,10 +168,10 @@ def GenTests(api):
           }),
       api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.step_data('generate target test requirements.generate_test_config',
-                    stdout=api.raw_io.output_text(generate_test_config_output)),
+                    stdout=api.raw_io.output(generate_test_config_output)),
       api.step_data(
           'generate target test requirements (2).generate_test_config',
-          stdout=api.raw_io.output_text(generate_test_config_output)),
+          stdout=api.raw_io.output(generate_test_config_output)),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),

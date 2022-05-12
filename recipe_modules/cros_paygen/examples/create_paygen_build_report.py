@@ -16,6 +16,8 @@ from PB.chromite.api.payload import Build, DLCImage, GenerationRequest, SignedIm
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 import PB.chromiumos.common as common_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.assertions.maxDiff = None

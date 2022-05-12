@@ -28,12 +28,12 @@
   * [cros_history](#recipe_modules-cros_history) (Python3 ✅)
   * [cros_infra_config](#recipe_modules-cros_infra_config) (Python3 ✅)
   * [cros_lvfs_mirror](#recipe_modules-cros_lvfs_mirror) (Python3 ✅) &mdash; API for LvfsMirror script.
-  * [cros_paygen](#recipe_modules-cros_paygen) &mdash; API for working with Paygen and its config.
+  * [cros_paygen](#recipe_modules-cros_paygen) (Python3 ✅) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_provenance](#recipe_modules-cros_provenance) (Python3 ✅) &mdash; API for adding provenenace to generated artifacts.
   * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
-  * [cros_release_util](#recipe_modules-cros_release_util) &mdash; An API for providing release related utility functions.
+  * [cros_release_util](#recipe_modules-cros_release_util) (Python3 ✅) &mdash; An API for providing release related utility functions.
   * [cros_relevance](#recipe_modules-cros_relevance) (Python3 ✅)
   * [cros_resultdb](#recipe_modules-cros_resultdb) (Python3 ✅)
   * [cros_schedule](#recipe_modules-cros_schedule) (Python3 ✅) &mdash; API for working with CrOS's Schedule.
@@ -231,17 +231,17 @@
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target) (Python3 ✅)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils) (Python3 ✅)
   * [cros_lvfs_mirror:examples/full](#recipes-cros_lvfs_mirror_examples_full) (Python3 ✅)
-  * [cros_paygen:examples/create_paygen_build_report](#recipes-cros_paygen_examples_create_paygen_build_report)
-  * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full)
-  * [cros_paygen:examples/get_delta_requests](#recipes-cros_paygen_examples_get_delta_requests)
-  * [cros_paygen:examples/get_full_requests](#recipes-cros_paygen_examples_get_full_requests)
-  * [cros_paygen:examples/get_n2n_requests](#recipes-cros_paygen_examples_get_n2n_requests)
-  * [cros_paygen:examples/run_paygen_builders](#recipes-cros_paygen_examples_run_paygen_builders)
-  * [cros_paygen:examples/schedule_au_tests](#recipes-cros_paygen_examples_schedule_au_tests)
-  * [cros_paygen:examples/test_config](#recipes-cros_paygen_examples_test_config)
-  * [cros_paygen:tests/batch_paygen_request_dicts_batching](#recipes-cros_paygen_tests_batch_paygen_request_dicts_batching)
-  * [cros_paygen:tests/create_au_test_configs](#recipes-cros_paygen_tests_create_au_test_configs)
-  * [cros_paygen:tests/verify_paygen_timeout](#recipes-cros_paygen_tests_verify_paygen_timeout)
+  * [cros_paygen:examples/create_paygen_build_report](#recipes-cros_paygen_examples_create_paygen_build_report) (Python3 ✅)
+  * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full) (Python3 ✅)
+  * [cros_paygen:examples/get_delta_requests](#recipes-cros_paygen_examples_get_delta_requests) (Python3 ✅)
+  * [cros_paygen:examples/get_full_requests](#recipes-cros_paygen_examples_get_full_requests) (Python3 ✅)
+  * [cros_paygen:examples/get_n2n_requests](#recipes-cros_paygen_examples_get_n2n_requests) (Python3 ✅)
+  * [cros_paygen:examples/run_paygen_builders](#recipes-cros_paygen_examples_run_paygen_builders) (Python3 ✅)
+  * [cros_paygen:examples/schedule_au_tests](#recipes-cros_paygen_examples_schedule_au_tests) (Python3 ✅)
+  * [cros_paygen:examples/test_config](#recipes-cros_paygen_examples_test_config) (Python3 ✅)
+  * [cros_paygen:tests/batch_paygen_request_dicts_batching](#recipes-cros_paygen_tests_batch_paygen_request_dicts_batching) (Python3 ✅)
+  * [cros_paygen:tests/create_au_test_configs](#recipes-cros_paygen_tests_create_au_test_configs) (Python3 ✅)
+  * [cros_paygen:tests/verify_paygen_timeout](#recipes-cros_paygen_tests_verify_paygen_timeout) (Python3 ✅)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
@@ -2634,7 +2634,7 @@ Args:
 
 [DEPS](/recipe_modules/cros_paygen/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with Paygen and its config.
 
@@ -2983,7 +2983,7 @@ release_branch (str): Release branch, e.g. "release-R89-13729.B".
 
 [DEPS](/recipe_modules/cros_release_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for providing release related utility functions.
 
@@ -9420,79 +9420,79 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_paygen/examples/create_paygen_build_report.py#5): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/create_paygen_build_report.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/create_paygen_build_report.py#22)(api):**
 ### *recipes* / [cros\_paygen:examples/full](/recipe_modules/cros_paygen/examples/full.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/full.py#5): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/full.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/full.py#22)(api, properties):**
 ### *recipes* / [cros\_paygen:examples/get\_delta\_requests](/recipe_modules/cros_paygen/examples/get_delta_requests.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/get_delta_requests.py#13): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_delta_requests.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_delta_requests.py#24)(api, properties):**
 ### *recipes* / [cros\_paygen:examples/get\_full\_requests](/recipe_modules/cros_paygen/examples/get_full_requests.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/get_full_requests.py#10): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_full_requests.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_full_requests.py#21)(api, properties):**
 ### *recipes* / [cros\_paygen:examples/get\_n2n\_requests](/recipe_modules/cros_paygen/examples/get_n2n_requests.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/get_n2n_requests.py#10): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_n2n_requests.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/get_n2n_requests.py#21)(api, properties):**
 ### *recipes* / [cros\_paygen:examples/run\_paygen\_builders](/recipe_modules/cros_paygen/examples/run_paygen_builders.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/run_paygen_builders.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/run_paygen_builders.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/run_paygen_builders.py#19)(api):**
 ### *recipes* / [cros\_paygen:examples/schedule\_au\_tests](/recipe_modules/cros_paygen/examples/schedule_au_tests.py)
 
-[DEPS](/recipe_modules/cros_paygen/examples/schedule_au_tests.py#12): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_paygen/examples/schedule_au_tests.py#14): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/schedule_au_tests.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/schedule_au_tests.py#23)(api):**
 ### *recipes* / [cros\_paygen:examples/test\_config](/recipe_modules/cros_paygen/examples/test_config.py)
 
 [DEPS](/recipe_modules/cros_paygen/examples/test_config.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [cros\_storage](#recipe_modules-cros_storage), [gitiles](#recipe_modules-gitiles), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/examples/test_config.py#26)(api, properties):**
 ### *recipes* / [cros\_paygen:tests/batch\_paygen\_request\_dicts\_batching](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py)
 
 [DEPS](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py#37)(api, max_batch_size, paygen_requests, expected_batches):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/batch_paygen_request_dicts_batching.py#39)(api, max_batch_size, paygen_requests, expected_batches):**
 ### *recipes* / [cros\_paygen:tests/create\_au\_test\_configs](/recipe_modules/cros_paygen/tests/create_au_test_configs.py)
 
 [DEPS](/recipe_modules/cros_paygen/tests/create_au_test_configs.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/create_au_test_configs.py#60)(api, gen_req_ser, expected_test_configs_ser, delta_test_override, full_test_override, fsi):**
 ### *recipes* / [cros\_paygen:tests/verify\_paygen\_timeout](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py)
 
 [DEPS](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py#7): [cros\_paygen](#recipe_modules-cros_paygen), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py#17)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

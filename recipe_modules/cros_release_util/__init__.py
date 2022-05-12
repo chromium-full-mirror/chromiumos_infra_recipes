@@ -7,3 +7,5 @@ DEPS = [
     'cros_infra_config',
     'cros_source',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

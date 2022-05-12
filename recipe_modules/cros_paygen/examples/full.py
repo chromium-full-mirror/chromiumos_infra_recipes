@@ -14,6 +14,8 @@ import PB.chromiumos.common as common_pb2
 
 from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestPaygenProperties
 
 

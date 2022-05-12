@@ -9,6 +9,8 @@ DEPS = [
     'cros_paygen',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 from PB.recipes.chromeos.paygen import PaygenProperties
