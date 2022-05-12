@@ -106,6 +106,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "input validation.request.container metadata url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "request validation failed"

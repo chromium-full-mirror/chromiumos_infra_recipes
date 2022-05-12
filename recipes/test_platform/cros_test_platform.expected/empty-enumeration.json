@@ -102,6 +102,13 @@
   },
   {
     "cmd": [],
+    "name": "input validation.request.container metadata url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate tests"
   },
   {
@@ -168,8 +175,9 @@
       "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -188,7 +196,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"first\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"first\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\", \n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

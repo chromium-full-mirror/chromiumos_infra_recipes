@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 """Recipe for the ChromeOS Test Frontend."""
-
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
@@ -24,8 +23,11 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
 from PB.test_platform.steps.execute.build import Build
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
+from PB.chromiumos.common import BuildTarget
 
 import collections
+import json
 import re
 
 from google.protobuf import duration_pb2
@@ -36,6 +38,7 @@ from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 
 DEPS = [
+    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -93,10 +96,31 @@ def validated_requests(api, properties):
       validation_errors.append(_validate_timeouts(api, requests))
       validation_errors.append(_validate_scheduling_params(api, requests))
       validation_errors.append(_validate_software_dependencies(api, requests))
+      validation_errors.append(_validate_container_metadata_url(api, requests))
     if any(validation_errors):
       raise api.step.StepFailure('request validation failed')
 
   return requests
+
+
+def _validate_container_metadata_url(api, requests):
+  """Validate container metadata is provided if run_via_cft is set.
+
+  Returns: True if requests are valid, False otherwise.
+  """
+  validation_error = False
+  with api.step.nest('container metadata url') as step:
+    for t, r in requests.iteritems():
+      if r.params.run_via_cft and not r.params.metadata.container_metadata_url:
+        step.presentation.logs[t] = [
+            'Error in container_metadata_url: %s' %
+            'container metadata url is required for CFT test request.'
+        ]
+        validation_error = True
+
+    if validation_error:
+      step.presentation.status = api.step.FAILURE
+  return validation_error
 
 
 def _validate_software_dependencies(api, requests):
@@ -195,12 +219,13 @@ def _get_scheduling_error(request):
       return 'priority %d is out of valid range [50, 255]' % priority
 
 
-def enumerate_tests(api, requests):
+def enumerate_tests(api, requests, error_in_requests):
   """Resolve request into list of tests and their metadata.
 
   Args:
     * api (object): See RunSteps documentation.
     * requests: {tag: test_platform.Request} dict.
+    * error_in_requests: {tag: error(str)} dict.
 
   Returns: {tag: EnumerationResponse} dict.
   """
@@ -210,7 +235,7 @@ def enumerate_tests(api, requests):
             t: EnumerationRequest(
                 metadata=r.params.metadata,
                 test_plan=r.test_plan,
-            ) for t, r in requests.iteritems()
+            ) for t, r in requests.iteritems() if t not in error_in_requests
         })
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
     for tag, response in enum_responses.tagged_responses.iteritems():
@@ -271,30 +296,33 @@ def execute(api, requests):
     return api.cros_test_platform.execute_luciexe(requests)
 
 
-def _execute_requests(api, requests, enumerations, config):
+def _execute_requests(api, requests, enumerations, config, error_in_requests):
   """Create the request payload for execution.
   Args:
     requests: {tag: test_platform.Request} dict.
     enumerations: {tag: EnumerationResponse} dict.
     config: test_platform.Config instance.
+    error_in_requests: {tag: error(str)} dict.
 
   Returns:
     ExecutionRequests payload.
   """
-  _ensure_all_requests_enumerated(requests, enumerations)
+  _ensure_all_requests_enumerated(requests, enumerations, error_in_requests)
   return ExecuteRequests(
       tagged_requests={
           t: ExecuteRequest(request_params=r.params,
                             enumeration=enumerations[t], config=config)
           for t, r in requests.iteritems()
+          if t not in error_in_requests
       },
       build=Build(id=api.buildbucket.build.id,
                   create_time=api.buildbucket.build.create_time),
   )
 
 
-def _ensure_all_requests_enumerated(requests, enumerations):
-  missing = set(requests.keys()) - set(enumerations.keys())
+def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
+  missing = (set(requests.keys()) - set(error_in_requests.keys())) - set(
+      enumerations.keys())
   if missing:
     raise StepFailure('No enumerations for requests tagged %s' % missing)
 
@@ -309,9 +337,17 @@ def RunSteps(api, properties):
   publish_to_result_flow(api, properties.config)
   requests = validated_requests(api, properties)
   with api.context(infra_steps=True):
-    enumerations = enumerate_tests(api, requests)
+    # {tag: error(str)} dict that will store error msg for respective tag.
+    error_in_requests = {}
+    add_container_metadata(api, requests, error_in_requests)
+    enumerations = enumerate_tests(api, requests, error_in_requests)
     responses = execute(
-        api, _execute_requests(api, requests, enumerations, properties.config))
+        api,
+        _execute_requests(api, requests, enumerations, properties.config,
+                          error_in_requests))
+    # Add error responses for each request that had error.
+    # This is necessary so that output properties have all responses.
+    responses = _append_error_responses(error_in_requests, responses)
     tagged_responses = responses.tagged_responses
     set_output_properties(api, responses)
     # Push the Build ID to notify the subscribers that test plan execution
@@ -319,8 +355,118 @@ def RunSteps(api, properties):
     publish_to_result_flow(api, properties.config,
                            should_poll_for_completion=True)
     postprocess(api, requests, tagged_responses)
-  summarize(api, enumerations, tagged_responses)
+  summarize(api, enumerations, tagged_responses, error_in_requests)
   _top_level_export_to_bigquery(api)
+
+
+def _append_error_responses(error_in_requests, responses):
+  """Add error responses to test result responses.
+
+  Args:
+    * error_in_requests: {tag: error(str)} dict.
+    * responses: ExecuteResponses.
+  Returns:
+    Updated ExecuteResponses.
+  """
+  responses_dict = json_format.MessageToDict(responses)
+  for t, _ in error_in_requests.iteritems():
+    responses_dict['taggedResponses'][t] = _error_response()
+  return json_format.ParseDict(responses_dict, ExecuteResponses())
+
+
+def _error_response():
+  """ExecuteResponse for error cases."""
+  return json_format.MessageToDict(
+      ExecuteResponse.TaskResult(
+          state=TaskState(verdict="VERDICT_FAILED",
+                          life_cycle='LIFE_CYCLE_COMPLETED'),
+      ))
+
+
+def add_container_metadata(api, requests, error_in_requests):
+  """Add container metadata to requests when required.
+
+  Args:
+    * api (RecipeApi): Recipe api object.
+    * requests: ExecuteRequests.tagged_requests.
+    * error_in_requests: {tag: error(str)} dict.
+  """
+  # Multiple requests may have same container metadata.
+  # Run time can be cut down by only downloading them once.
+  unique_metadata_urls = list(
+      set(r.params.metadata.container_metadata_url
+          for r in requests.values()
+          if r.params.run_via_cft))
+
+  # No CFT requests defined. So no need to get and add container metadata.
+  if not unique_metadata_urls:
+    return
+
+  url_to_metadata_map = {}
+  url_to_error_map = {}
+  with api.step.nest('retrieve container metadata') as step:
+    step.presentation.logs['unique container metadata urls in request'] = [
+        '/n'.join(unique_metadata_urls)
+    ]
+    for url in unique_metadata_urls:
+      url_to_metadata_map[url] = _get_container_metadata(
+          api, url, url_to_error_map)
+
+  with api.step.nest('assign container metadata to requests') as step:
+    for t, r in requests.iteritems():
+      error = ""
+      if r.params.run_via_cft:
+        with api.step.nest(t) as step:
+          build_target = r.params.software_attributes.build_target.name
+          metadata_url = r.params.metadata.container_metadata_url
+          metadata = url_to_metadata_map[metadata_url]
+          if metadata:
+            if build_target in metadata.containers:
+              r.params.execution_param.container_metadata.CopyFrom(metadata)
+              step.presentation.logs['container metadata'] = [
+                  json_format.MessageToJson(metadata)
+              ]
+            else:
+              error = "No container information found in container metadata for request '{}', build target '{}', container metadata url '{}'.".format(
+                  t, build_target, metadata_url)
+          else:
+            error = url_to_error_map[metadata_url]
+
+          if error:
+            # mark this entry to be skipped so that enumeration and execution steps ignore this request.
+            error_in_requests[t] = error
+            step.presentation.logs['container metadata error'] = error
+
+
+def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
+  """Get container metadata from GS.
+
+  Args:
+    * api (RecipeApi): Recipe api object.
+    * metadata_gs_url (str): ExecuteRequests.tagged_requests.
+    * url_to_error_map: {tag: error(str)} dict.
+  Returns:
+    Container metadata if successully retrieved. Otherwise None.
+  """
+  metadata = None
+  with api.step.nest('get container metadata from GS') as step:
+    # Retrieve container metadata and log any parsing errors that occur,
+    # but don't allow it to fail the overall build.
+    try:
+      cat_res = api.gsutil.cat(metadata_gs_url, infra_step=True,
+                               name='cat {}'.format(metadata_gs_url),
+                               stdout=api.raw_io.output(add_output_log=True))
+      res = cat_res.stdout
+      metadata = json_format.Parse(res, ContainerMetadata())
+    # pylint: disable=broad-except
+    except Exception as ex:
+      step.presentation.logs['container metadata error'] = str(ex)
+      url_to_error_map[
+          metadata_gs_url] = 'Error while retrieving container metadata from {}: {}'.format(
+              metadata_gs_url, str(ex))
+      step.status = api.step.FAILURE
+
+  return metadata
 
 
 def link_to_parent(api):
@@ -441,7 +587,7 @@ def _classify_request_failure(consolidated_results):
   return _REQUEST_FAILURE
 
 
-def summarize(api, enumerations, responses):
+def summarize(api, enumerations, responses, error_in_requests):
   # Failures in summarization are non-infra related.
   failures = 0
   invocations = []
@@ -453,6 +599,9 @@ def summarize(api, enumerations, responses):
   with api.step.nest('summarize') as step:
     for tag, response in sorted(responses.iteritems()):
       with api.step.nest('%s task results' % tag):
+        if tag in error_in_requests:
+          _log_error_in_request(api, tag, error_in_requests[tag])
+
         _log_enumeration_errors(api, enumerations[tag], tag)
         _log_task_results(api, response.task_results)
         invocations.extend(_get_rdb_invocations(response.task_results))
@@ -515,6 +664,7 @@ def _top_level_export_to_bigquery(api):
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
+    step.presentation.logs["output"] = json_format.MessageToJson(responses)
     marshalled = api.skylab.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
@@ -535,6 +685,12 @@ def _log_enumeration_errors(api, enum, tag):
     with api.step.nest('enumeration error') as step:
       step.logs['summary'] = ['{} : {}'.format(tag, enum.error_summary)]
       step.presentation.status = api.step.FAILURE
+
+
+def _log_error_in_request(api, tag, error):
+  with api.step.nest('container metadata error') as step:
+    step.logs['summary'] = ['{} : {}'.format(tag, error)]
+    step.presentation.status = api.step.FAILURE
 
 
 # The odd-looking string.replaced items below are listed as such to aid in code
@@ -683,14 +839,20 @@ def _default_software_dependencies():
   ]
 
 
-def _test_request(tag, scheduling=_test_scheduling()):
+def _test_request(tag, build_target="foo-build-target",
+                  scheduling=_test_scheduling()):
   return Request(
       params=Request.Params(
+          software_attributes=Request.Params.SoftwareAttributes(
+              build_target=BuildTarget(
+                  name=build_target,
+              )),
           hardware_attributes=Request.Params.HardwareAttributes(
               model='%s-model' % tag),
           metadata=Request.Params.Metadata(
-              test_metadata_url='%s-metadata-url' % tag,
-              debug_symbols_archive_url='%s-metadata-url' % tag),
+              test_metadata_url='gs://%s-metadata-url' % tag,
+              debug_symbols_archive_url='gs://%s-metadata-url' % tag,
+              container_metadata_url='gs://%s-container-metadata-url' % tag),
           scheduling=scheduling,
           software_dependencies=_default_software_dependencies(),
       ),
@@ -698,10 +860,41 @@ def _test_request(tag, scheduling=_test_scheduling()):
   )
 
 
+def _cft_test_request(tag, build_target="foo-build-target"):
+  test_req = _test_request(tag, build_target)
+  test_req.params.run_via_cft = True
+  return test_req
+
+
+def _cft_test_request_without_container_metadata(tag):
+  test_req = _cft_test_request(tag)
+  test_req.params.metadata.container_metadata_url = ""
+  return test_req
+
+
 def _test_config(tag):
   return Config(
       skylab_worker=Config.SkylabWorker(luci_project='%s luci project' % tag),
   )
+
+
+def _mock_container_metadata_step(api, tag, build_target="foo-build-target"):
+  return api.step_data(
+      'retrieve container metadata'
+      '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
+      .format(tag=tag), stdout=api.raw_io.output(
+          json.dumps({
+              'containers': {
+                  build_target: {
+                      'images': {
+                          'some-service': {
+                              'digest': '123abc',
+                          },
+                      },
+                  }
+              }
+          }),
+      ))
 
 
 def _succeeded_request_execute_response():
@@ -1691,3 +1884,51 @@ def GenTests(api):
       ),
       api.post_check(lambda check, steps: check(
           len(GetBuildProperties(steps).get('compressed_responses', {})) > 0)))
+
+  yield api.test(
+      'cft-test-execution-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={'default': _cft_test_request('foo')},
+              config=_test_config('foo'))),
+      _mock_container_metadata_step(api, 'foo'),
+      _generic_enumerate_response(api), _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-test-execution-with-missing-container-metadata',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default': _cft_test_request_without_container_metadata('foo')
+              }, config=_test_config('foo'))),
+      api.post_check(post_process.StatusFailure))
+
+  yield api.test(
+      'cft-test-execution-with-failed-metadata-reading-but-forgiven',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default': _test_request('foo'),
+                  'cft-default': _cft_test_request('foo')
+              }, config=_test_config('foo'))),
+      api.step_data(
+          'retrieve container metadata'
+          '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
+          .format(tag='foo'),
+          retcode=1,
+      ), _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusFailure))
+
+  yield api.test(
+      'cft-test-execution-with-no-valid-container-metadata-for-build-target',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default': _test_request('foo'),
+                  'cft-default': _cft_test_request('foo', 'build_target123')
+              }, config=_test_config('foo'))),
+      _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
+      _generic_enumerate_response(api), _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusFailure))

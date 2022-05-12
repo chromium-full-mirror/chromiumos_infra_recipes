@@ -102,6 +102,13 @@
   },
   {
     "cmd": [],
+    "name": "input validation.request.container metadata url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_END@autotest tests for default@@@",
@@ -178,8 +185,9 @@
       "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }, @@@",
       "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -198,7 +206,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"foo-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\", \n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -243,7 +251,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"build\": {\n    \"create_time\": \"1970-01-01T00:00:00Z\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"skylab_worker\": {\n          \"luci_project\": \"foo luci project\"\n        }\n      },\n      \"enumeration\": {\n        \"error_summary\": \"some tests are missing\"\n      },\n      \"request_params\": {\n        \"hardware_attributes\": {\n          \"model\": \"foo-model\"\n        },\n        \"metadata\": {\n          \"debug_symbols_archive_url\": \"foo-metadata-url\",\n          \"test_metadata_url\": \"foo-metadata-url\"\n        },\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"single-build\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
+      "{\n  \"build\": {\n    \"create_time\": \"1970-01-01T00:00:00Z\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"skylab_worker\": {\n          \"luci_project\": \"foo luci project\"\n        }\n      },\n      \"enumeration\": {\n        \"error_summary\": \"some tests are missing\"\n      },\n      \"request_params\": {\n        \"hardware_attributes\": {\n          \"model\": \"foo-model\"\n        },\n        \"metadata\": {\n          \"container_metadata_url\": \"gs://foo-container-metadata-url\",\n          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",\n          \"test_metadata_url\": \"gs://foo-metadata-url\"\n        },\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_attributes\": {\n          \"build_target\": {\n            \"name\": \"foo-build-target\"\n          }\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"single-build\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
       "[START_DIR]/input.json"
     ],
     "infra_step": true,
@@ -269,11 +277,17 @@
       "@@@STEP_LOG_LINE@input.json@          \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
       "@@@STEP_LOG_LINE@input.json@        \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@          \"debug_symbols_archive_url\": \"foo-metadata-url\",@@@",
-      "@@@STEP_LOG_LINE@input.json@          \"test_metadata_url\": \"foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@input.json@          \"container_metadata_url\": \"gs://foo-container-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@input.json@          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@input.json@          \"test_metadata_url\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
       "@@@STEP_LOG_LINE@input.json@        \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@input.json@          \"qs_account\": \"foo-qs-account\"@@@",
+      "@@@STEP_LOG_LINE@input.json@        },@@@",
+      "@@@STEP_LOG_LINE@input.json@        \"software_attributes\": {@@@",
+      "@@@STEP_LOG_LINE@input.json@          \"build_target\": {@@@",
+      "@@@STEP_LOG_LINE@input.json@            \"name\": \"foo-build-target\"@@@",
+      "@@@STEP_LOG_LINE@input.json@          }@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
       "@@@STEP_LOG_LINE@input.json@        \"software_dependencies\": [@@@",
       "@@@STEP_LOG_LINE@input.json@          {@@@",
@@ -354,6 +368,17 @@
     "cmd": [],
     "name": "set output properties",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@output@{@@@",
+      "@@@STEP_LOG_LINE@output@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@output@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@output@      \"state\": {@@@",
+      "@@@STEP_LOG_LINE@output@        \"verdict\": \"VERDICT_FAILED\", @@@",
+      "@@@STEP_LOG_LINE@output@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@output@      }@@@",
+      "@@@STEP_LOG_LINE@output@    }@@@",
+      "@@@STEP_LOG_LINE@output@  }@@@",
+      "@@@STEP_LOG_LINE@output@}@@@",
+      "@@@STEP_LOG_END@output@@@",
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRsqpWKi5JLEkFMXIy01KdK5NzgBwlH08313jnSGcfIOnvG+DjGuLqoqSjVJZalJKZDNSmFOYa5OLpHBLv5ujpA5Sqra0FAK6HGxw=\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgAgAo8APS\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_FAILED\"}}@@@"

@@ -109,6 +109,57 @@
   },
   {
     "cmd": [],
+    "name": "retrieve container metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@unique container metadata urls in request@gs://foo-container-metadata-url@@@",
+      "@@@STEP_LOG_END@unique container metadata urls in request@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retrieve container metadata.get container metadata from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@container metadata error@Infra Failure: Step('retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url') (retcode: 1)@@@",
+      "@@@STEP_LOG_END@container metadata error@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://foo-container-metadata-url"
+    ],
+    "infra_step": true,
+    "name": "retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "assign container metadata to requests"
+  },
+  {
+    "cmd": [],
+    "name": "assign container metadata to requests.cft-default",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@container metadata error@Error while retrieving container metadata from gs://foo-container-metadata-url: Infra Failure: Step('retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url') (retcode: 1)@@@",
+      "@@@STEP_LOG_END@container metadata error@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
@@ -242,15 +293,6 @@
       "@@@STEP_LOG_LINE@responses@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz/b100\", @@@",
       "@@@STEP_LOG_LINE@responses@          \"name\": \"foo-passed\"@@@",
-      "@@@STEP_LOG_LINE@responses@        }, @@@",
-      "@@@STEP_LOG_LINE@responses@        {@@@",
-      "@@@STEP_LOG_LINE@responses@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@responses@            \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
-      "@@@STEP_LOG_LINE@responses@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@responses@          }, @@@",
-      "@@@STEP_LOG_LINE@responses@          \"logUrl\": \"logs://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz/b101\", @@@",
-      "@@@STEP_LOG_LINE@responses@          \"name\": \"foo-skipped\"@@@",
       "@@@STEP_LOG_LINE@responses@        }@@@",
       "@@@STEP_LOG_LINE@responses@      ], @@@",
       "@@@STEP_LOG_LINE@responses@      \"consolidatedResults\": [@@@",
@@ -264,19 +306,6 @@
       "@@@STEP_LOG_LINE@responses@              \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@responses@              \"taskUrl\": \"foo://bar/baz/b100\", @@@",
       "@@@STEP_LOG_LINE@responses@              \"name\": \"foo-passed\"@@@",
-      "@@@STEP_LOG_LINE@responses@            }@@@",
-      "@@@STEP_LOG_LINE@responses@          ]@@@",
-      "@@@STEP_LOG_LINE@responses@        }, @@@",
-      "@@@STEP_LOG_LINE@responses@        {@@@",
-      "@@@STEP_LOG_LINE@responses@          \"attempts\": [@@@",
-      "@@@STEP_LOG_LINE@responses@            {@@@",
-      "@@@STEP_LOG_LINE@responses@              \"state\": {@@@",
-      "@@@STEP_LOG_LINE@responses@                \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
-      "@@@STEP_LOG_LINE@responses@                \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@responses@              }, @@@",
-      "@@@STEP_LOG_LINE@responses@              \"logUrl\": \"logs://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@responses@              \"taskUrl\": \"foo://bar/baz/b101\", @@@",
-      "@@@STEP_LOG_LINE@responses@              \"name\": \"foo-skipped\"@@@",
       "@@@STEP_LOG_LINE@responses@            }@@@",
       "@@@STEP_LOG_LINE@responses@          ]@@@",
       "@@@STEP_LOG_LINE@responses@        }@@@",
@@ -417,19 +446,6 @@
       "@@@STEP_LOG_LINE@output.json@              \"task_url\": \"foo://bar/baz/b100\"@@@",
       "@@@STEP_LOG_LINE@output.json@            }@@@",
       "@@@STEP_LOG_LINE@output.json@          ]@@@",
-      "@@@STEP_LOG_LINE@output.json@        },@@@",
-      "@@@STEP_LOG_LINE@output.json@        {@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"attempts\": [@@@",
-      "@@@STEP_LOG_LINE@output.json@            {@@@",
-      "@@@STEP_LOG_LINE@output.json@              \"log_url\": \"logs://bar/baz1\",@@@",
-      "@@@STEP_LOG_LINE@output.json@              \"name\": \"foo-skipped\",@@@",
-      "@@@STEP_LOG_LINE@output.json@              \"state\": {@@@",
-      "@@@STEP_LOG_LINE@output.json@                \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
-      "@@@STEP_LOG_LINE@output.json@                \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
-      "@@@STEP_LOG_LINE@output.json@              },@@@",
-      "@@@STEP_LOG_LINE@output.json@              \"task_url\": \"foo://bar/baz/b101\"@@@",
-      "@@@STEP_LOG_LINE@output.json@            }@@@",
-      "@@@STEP_LOG_LINE@output.json@          ]@@@",
       "@@@STEP_LOG_LINE@output.json@        }@@@",
       "@@@STEP_LOG_LINE@output.json@      ],@@@",
       "@@@STEP_LOG_LINE@output.json@      \"state\": {@@@",
@@ -445,15 +461,6 @@
       "@@@STEP_LOG_LINE@output.json@            \"verdict\": \"VERDICT_PASSED\"@@@",
       "@@@STEP_LOG_LINE@output.json@          },@@@",
       "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz/b100\"@@@",
-      "@@@STEP_LOG_LINE@output.json@        },@@@",
-      "@@@STEP_LOG_LINE@output.json@        {@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"log_url\": \"logs://bar/baz1\",@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"name\": \"foo-skipped\",@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@output.json@            \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
-      "@@@STEP_LOG_LINE@output.json@            \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
-      "@@@STEP_LOG_LINE@output.json@          },@@@",
-      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz/b101\"@@@",
       "@@@STEP_LOG_LINE@output.json@        }@@@",
       "@@@STEP_LOG_LINE@output.json@      ]@@@",
       "@@@STEP_LOG_LINE@output.json@    }@@@",
@@ -482,15 +489,6 @@
       "@@@STEP_LOG_LINE@output@          \"logUrl\": \"logs://bar/baz\", @@@",
       "@@@STEP_LOG_LINE@output@          \"taskUrl\": \"foo://bar/baz/b100\", @@@",
       "@@@STEP_LOG_LINE@output@          \"name\": \"foo-passed\"@@@",
-      "@@@STEP_LOG_LINE@output@        }, @@@",
-      "@@@STEP_LOG_LINE@output@        {@@@",
-      "@@@STEP_LOG_LINE@output@          \"state\": {@@@",
-      "@@@STEP_LOG_LINE@output@            \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
-      "@@@STEP_LOG_LINE@output@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@output@          }, @@@",
-      "@@@STEP_LOG_LINE@output@          \"logUrl\": \"logs://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@output@          \"taskUrl\": \"foo://bar/baz/b101\", @@@",
-      "@@@STEP_LOG_LINE@output@          \"name\": \"foo-skipped\"@@@",
       "@@@STEP_LOG_LINE@output@        }@@@",
       "@@@STEP_LOG_LINE@output@      ], @@@",
       "@@@STEP_LOG_LINE@output@      \"consolidatedResults\": [@@@",
@@ -506,28 +504,21 @@
       "@@@STEP_LOG_LINE@output@              \"name\": \"foo-passed\"@@@",
       "@@@STEP_LOG_LINE@output@            }@@@",
       "@@@STEP_LOG_LINE@output@          ]@@@",
-      "@@@STEP_LOG_LINE@output@        }, @@@",
-      "@@@STEP_LOG_LINE@output@        {@@@",
-      "@@@STEP_LOG_LINE@output@          \"attempts\": [@@@",
-      "@@@STEP_LOG_LINE@output@            {@@@",
-      "@@@STEP_LOG_LINE@output@              \"state\": {@@@",
-      "@@@STEP_LOG_LINE@output@                \"verdict\": \"VERDICT_NO_VERDICT\", @@@",
-      "@@@STEP_LOG_LINE@output@                \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
-      "@@@STEP_LOG_LINE@output@              }, @@@",
-      "@@@STEP_LOG_LINE@output@              \"logUrl\": \"logs://bar/baz1\", @@@",
-      "@@@STEP_LOG_LINE@output@              \"taskUrl\": \"foo://bar/baz/b101\", @@@",
-      "@@@STEP_LOG_LINE@output@              \"name\": \"foo-skipped\"@@@",
-      "@@@STEP_LOG_LINE@output@            }@@@",
-      "@@@STEP_LOG_LINE@output@          ]@@@",
       "@@@STEP_LOG_LINE@output@        }@@@",
       "@@@STEP_LOG_LINE@output@      ]@@@",
+      "@@@STEP_LOG_LINE@output@    }, @@@",
+      "@@@STEP_LOG_LINE@output@    \"cft-default\": {@@@",
+      "@@@STEP_LOG_LINE@output@      \"state\": {@@@",
+      "@@@STEP_LOG_LINE@output@        \"verdict\": \"VERDICT_FAILED\", @@@",
+      "@@@STEP_LOG_LINE@output@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@output@      }@@@",
       "@@@STEP_LOG_LINE@output@    }@@@",
       "@@@STEP_LOG_LINE@output@  }@@@",
       "@@@STEP_LOG_LINE@output@}@@@",
       "@@@STEP_LOG_END@output@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzNkUELgkAQhf/LnA3z6i3UILAMtSAiZHXXkLZ2cbagxP/eLAXVqQ4eOuwy83Z487GvAy5qdpYG/A4qdUIlG86M4KlAUhH8bQfMGHHUz0aq/aqV4NsCfdctWUvnBg6c2FGQXis10gxRcNLQkJn1lk0tgmsl7UQ8m0ZFsAliupP5Mo7yKKTZi2h5UxEJrKM0nAV5sZxkGT31DhiGh8dasn9tdUtvPIZ+1zu/UXqfmHhotB6Ac5EUz/ILq2dZd8N+y3tS/xiO899p9He3MfZ9\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwT+sXIxZ6SmpZYmlMi9I6Ry0xIKC0/30pfPymxCIir9JMMDQykWDgKBBiVuIAyugWJxcWpKVp8OfnpxQhlXBZY9BmC9TErcYP0FWdnFhQANfKjajQUApstZUGuzVJW5NsNAELoR04=\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}, {\"attempts\": [{\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-skipped\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_NO_VERDICT\"}, \"taskUrl\": \"foo://bar/baz/b101\"}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}, {\"logUrl\": \"logs://bar/baz1\", \"name\": \"foo-skipped\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_NO_VERDICT\"}, \"taskUrl\": \"foo://bar/baz/b101\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzNT80KgkAQfpc5K9rVm/gDgpGoBREiq7sb0uqKuwUl++6NFOS9Dh1m+GaG+X5maLm2KePkKjR4MyhNNFuA6DgL7q3AAdIkjurgGKTYd9ssjcooBAtubKJdi29wiPIwCco69pMUT8ZYsOJs5aCk6Cgy05wp3CrwTjMQrVk/vgchz/tJIBcC5TlOQyasB8oMpF9McCntkSjFKO6+s5n5RbHYtEATdXnJIv1H1Wk2rgumMtVvpdbp/zOweQJ7UKoi\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTambkYk9JTUsszSkRquAyExJKy8+30tdPSiwC4ir9JEMDAykWjgIBRiUuoIxuQWJxcWqKFl9OfnoxQpkQWIWUBdn6Rbm4k9NKdGEOYQMbyAQAFBIqJQ==\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}@@@"
     ]
   },
   {
@@ -557,7 +548,7 @@
     ],
     "infra_step": true,
     "name": "postprocess.default.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\", \"testResults\": [{\"logData\": {}}, {\"logData\": {}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\", \"testResults\": [{\"logData\": {}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -592,9 +583,6 @@
       "@@@STEP_LOG_LINE@request@          \"testResults\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
       "@@@STEP_LOG_LINE@request@              \"logData\": {}@@@",
-      "@@@STEP_LOG_LINE@request@            }, @@@",
-      "@@@STEP_LOG_LINE@request@            {@@@",
-      "@@@STEP_LOG_LINE@request@              \"logData\": {}@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -619,7 +607,30 @@
   },
   {
     "cmd": [],
-    "name": "summarize"
+    "name": "summarize",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@overall verdict@VERDICT_FAILED@@@",
+      "@@@STEP_LOG_END@overall verdict@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize.cft-default task results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize.cft-default task results.container metadata error",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@summary@cft-default : Error while retrieving container metadata from gs://foo-container-metadata-url: Infra Failure: Step('retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url') (retcode: 1)@@@",
+      "@@@STEP_LOG_END@summary@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -638,15 +649,10 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "summarize.default task results.skipped",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@1. (log)   foo-skipped@logs://bar/baz1@@@",
-      "@@@STEP_LINK@1. (task)  foo-skipped@foo://bar/baz/b101@@@"
-    ]
-  },
-  {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 out of 2 requests were unsuccessful\n\n- Succeeded: 1 request\n\n- Failed with incomplete results: 1 request"
+    },
     "name": "$result"
   }
 ]
