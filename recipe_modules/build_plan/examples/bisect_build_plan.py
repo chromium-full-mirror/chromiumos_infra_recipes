@@ -13,6 +13,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   child_specs = api.cros_infra_config.get_builder_config(

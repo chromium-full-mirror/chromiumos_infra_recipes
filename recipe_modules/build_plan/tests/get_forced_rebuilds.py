@@ -14,6 +14,8 @@ DEPS = [
     'git_footers',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {'expected_builders': Property(default=[])}
 
 

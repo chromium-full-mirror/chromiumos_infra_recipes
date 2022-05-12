@@ -16,6 +16,8 @@ DEPS = [
     'cros_infra_config',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   input_proto = api.build_plan.test_api.input_proto

@@ -733,11 +733,11 @@
     "name": "check disallow recycled builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@force rebuild 3 target(s)@@@",
-      "@@@STEP_LOG_LINE@found footer values@found value(s): :Disallow-Recycled-Builds,a quick description,Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@found footer values@found value(s): :Disallow-Recycled-Builds,Change-Id: deadbeef,a quick description@@@",
       "@@@STEP_LOG_END@found footer values@@@",
       "@@@STEP_LOG_LINE@forced rebuilds@:Disallow-Recycled-Builds@@@",
-      "@@@STEP_LOG_LINE@forced rebuilds@a quick description@@@",
       "@@@STEP_LOG_LINE@forced rebuilds@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@forced rebuilds@a quick description@@@",
       "@@@STEP_LOG_END@forced rebuilds@@@"
     ]
   },

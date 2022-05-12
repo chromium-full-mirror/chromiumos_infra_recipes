@@ -20,4 +20,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildPlanProperties

@@ -3,14 +3,14 @@
     "cmd": [],
     "name": "unfinished or failed snapshots",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-3 in the last 14 hours, found 1 build(s)@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-3 is green for build(s) [12]@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-2 in the last 14 hours, found 1 build(s)@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-2 is green for build(s) [12]@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-1 in the last 14 hours, found 1 build(s)@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-1 is green for build(s) [4]@@@",
       "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-0 in the last 14 hours, found 1 build(s)@@@",
       "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-0 is green for build(s) [12]@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-1 in the last 14 hours, found 1 build(s)@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-1 is green for build(s) [4]@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-2 in the last 14 hours, found 1 build(s)@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-2 is green for build(s) [12]@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot success-snapshot-3 in the last 14 hours, found 1 build(s)@@@",
+      "@@@STEP_LOG_LINE@unfinished or failed snapshots@Snapshot success-snapshot-3 is green for build(s) [12]@@@",
       "@@@STEP_LOG_LINE@unfinished or failed snapshots@CQ looks: All snapshots green. Proceeding.@@@",
       "@@@STEP_LOG_END@unfinished or failed snapshots@@@"
     ]
@@ -28,13 +28,13 @@
       "-fields",
       "builder,critical,id,status,tags",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-3\"}]}",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-2\"}]}",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-0\"}]}",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-1\"}]}",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-0\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-2\"}]}",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"success-snapshot-3\"}]}"
     ],
     "infra_step": true,
     "luci_context": {

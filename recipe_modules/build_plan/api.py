@@ -124,7 +124,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
       # Check if CQ looks experiment is enabled
-      if 'chromeos.cros_infra_config.cq_looks' in child_exps:
+      if b'chromeos.cros_infra_config.cq_looks' in child_exps \
+          or 'chromeos.cros_infra_config.cq_looks' in child_exps:
         # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
         # wait-only CQ looks behaviors.
         cq_looks_enabled = True
@@ -352,17 +353,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     Returns: A list of build_pb2.Build objects, deduped and prioritized.
     """
-
-    def build_orderer(b1, b2):
-      if b1.status == common_pb2.SUCCESS and b2.status != common_pb2.SUCCESS:
-        return -1
-      elif b2.status == common_pb2.SUCCESS and b1.status != common_pb2.SUCCESS:
-        return 1
-      else:
-        # otherwise get the earliest created, which will be reasonable for
-        # running builds and scheduled builds if scheduling is fair.
-        return int(b1.create_time.seconds - b2.create_time.seconds)
-
     # add all of them to dict: build_target -> build proto
     build_map = defaultdict(list)
     for b in builds:
@@ -371,9 +361,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
         build_map[bt].append(b)
 
     best_builds_list = []
-    for _, build_list in build_map.items():
-      best_build = sorted(build_list,
-                          cmp=build_orderer)[0]  # [0] most preferable
+    for build_list in build_map.values():
+      build_list = [b for b in build_list if b.status == common_pb2.SUCCESS] \
+                   or build_list
+      best_build = min(build_list, key=lambda b: b.create_time.seconds)
       best_builds_list.append(best_build)
 
     # return reduced list
@@ -403,7 +394,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         return forced_rebuilds
 
       pres.logs['found footer values'] = 'found value(s): %s' % ','.join(
-          list(forced_rebuilds))
+          sorted(list(forced_rebuilds)))
 
       if 'all' in forced_rebuilds:
         pres.step_text = 'rebuild all targets'
@@ -414,7 +405,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         forced_rebuilds.remove('test-failures')
         forced_rebuilds.update(test_failure_builders)
 
-      pres.logs['forced rebuilds'] = forced_rebuilds
+      pres.logs['forced rebuilds'] = sorted(list(forced_rebuilds))
       pres.step_text = 'force rebuild %s target(s)' % len(forced_rebuilds)
       return forced_rebuilds
 

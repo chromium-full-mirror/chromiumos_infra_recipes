@@ -21,6 +21,8 @@ DEPS = [
     'cros_history',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {
     'forced_rebuilds': Property(default=[]),
     'expected_completed': Property(default=[])

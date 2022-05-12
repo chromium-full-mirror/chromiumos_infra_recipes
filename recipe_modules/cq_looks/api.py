@@ -36,7 +36,7 @@ class CqLooksApi(recipe_api.RecipeApi):
       LOOKBACK_HOURS = 14
       unfinished, failed = set(), set()
       build_predicates = []
-      for sid in snapshot_ids:
+      for sid in sorted(list(snapshot_ids)):
         predicate = builds_service_pb2.BuildPredicate(
             create_time=common_pb2.TimeRange(
                 start_time=timestamp_pb2.Timestamp(
@@ -64,8 +64,8 @@ class CqLooksApi(recipe_api.RecipeApi):
             except KeyError:
               builds_by_snapshot_ids[tag.value] = [build.status]
 
-      for sid in snapshot_ids:
-        if sid in builds_by_snapshot_ids.keys():
+      for sid in sorted(list(snapshot_ids)):
+        if sid in sorted(builds_by_snapshot_ids.keys()):
           builds = builds_by_snapshot_ids[sid]
           cqlooks_log.append(
               'For snapshot {} in the last {} hours, found {} build(s)'.format(

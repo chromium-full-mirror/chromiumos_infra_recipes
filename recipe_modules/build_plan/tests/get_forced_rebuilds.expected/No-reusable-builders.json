@@ -4,7 +4,7 @@
     "name": "check disallow recycled builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@rebuild all targets@@@",
-      "@@@STEP_LOG_LINE@found footer values@found value(s): all,twix,snickers,milkyway@@@",
+      "@@@STEP_LOG_LINE@found footer values@found value(s): all,milkyway,snickers,twix@@@",
       "@@@STEP_LOG_END@found footer values@@@"
     ]
   },

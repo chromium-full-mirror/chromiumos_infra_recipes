@@ -9,7 +9,7 @@
   * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad) (Python3 ✅)
   * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
-  * [build_plan](#recipe_modules-build_plan)
+  * [build_plan](#recipe_modules-build_plan) (Python3 ✅)
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats) (Python3 ✅)
   * [builder_metadata](#recipe_modules-builder_metadata)
@@ -17,7 +17,7 @@
   * [chromite](#recipe_modules-chromite) (Python3 ✅)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage)
-  * [cq_looks](#recipe_modules-cq_looks)
+  * [cq_looks](#recipe_modules-cq_looks) (Python3 ✅)
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
@@ -134,12 +134,12 @@
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
   * [build_parallels_image](#recipes-build_parallels_image) &mdash; Recipe for building a Parallels image for testing.
-  * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan)
-  * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
-  * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
-  * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
-  * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
-  * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds)
+  * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan) (Python3 ✅)
+  * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan) (Python3 ✅)
+  * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds) (Python3 ✅)
+  * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan) (Python3 ✅)
+  * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds) (Python3 ✅)
+  * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds) (Python3 ✅)
   * [build_postsubmit](#recipes-build_postsubmit) &mdash; Recipe for building a BuildTarget image for Postsubmit.
   * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
   * [build_reporting:examples/contexts_1](#recipes-build_reporting_examples_contexts_1)
@@ -174,7 +174,7 @@
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov)
   * [config_backfill](#recipes-config_backfill) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
-  * [cq_looks:examples/full](#recipes-cq_looks_examples_full)
+  * [cq_looks:examples/full](#recipes-cq_looks_examples_full) (Python3 ✅)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
@@ -1111,7 +1111,7 @@ Args:
 
 [DEPS](/recipe_modules/build_plan/__init__.py#6): [cq\_looks](#recipe_modules-cq_looks), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -1140,7 +1140,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#286)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#287)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1154,7 +1154,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#382)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#373)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1170,7 +1170,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#421)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#412)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1181,7 +1181,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#343)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#344)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -1704,7 +1704,7 @@ Args:
 
 [DEPS](/recipe_modules/cq_looks/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [CqLooksApi](/recipe_modules/cq_looks/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -8537,44 +8537,44 @@ Args:
 
 [DEPS](/recipe_modules/build_plan/examples/bisect_build_plan.py#9): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/bisect_build_plan.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/bisect_build_plan.py#19)(api):**
 ### *recipes* / [build\_plan:examples/cq\_build\_plan](/recipe_modules/build_plan/examples/cq_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#16): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#33)(api, properties):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
 [DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#16): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#30)(api, forced_rebuilds, expected_completed):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#32)(api, forced_rebuilds, expected_completed):**
 ### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#22)(api):**
 ### *recipes* / [build\_plan:examples/prioritize\_builds](/recipe_modules/build_plan/examples/prioritize_builds.py)
 
 [DEPS](/recipe_modules/build_plan/examples/prioritize_builds.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#22)(api):**
 ### *recipes* / [build\_plan:tests/get\_forced\_rebuilds](/recipe_modules/build_plan/tests/get_forced_rebuilds.py)
 
 [DEPS](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#10): [build\_plan](#recipe_modules-build_plan), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#20)(api, expected_builders):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#22)(api, expected_builders):**
 ### *recipes* / [build\_postsubmit](/recipes/build_postsubmit.py)
 
 [DEPS](/recipes/build_postsubmit.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9015,9 +9015,9 @@ returns a list of repos to make commits to.
 
 [DEPS](/recipe_modules/cq_looks/examples/full.py#12): [cq\_looks](#recipe_modules-cq_looks), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cq_looks/examples/full.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cq_looks/examples/full.py#25)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
