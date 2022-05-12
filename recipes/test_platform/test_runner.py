@@ -238,6 +238,59 @@ def _collect_tests_for_phosphorus(request):
   return tests
 
 
+def _populate_timestamps_for_results(result, autotest_keyval_file):
+  """Fetches timestamp information from autotest keyval file and pass them to
+     the test cases in autotest result.
+
+    Args:
+    * result (DUTResult): The result for all tests run in this run without
+        timestamp information.
+    * autotest_keyval_file (dict): The contents for autotest keyval file
+        in logs.
+
+    Returns:
+    * result (DUTResult): The result for all tests run in this run with
+        timestamp information.
+  """
+  for _, autotest_result in result.get_test_results():
+    for test_case in autotest_result.test_cases:
+      test_case.start_time.CopyFrom(
+          timestamp_pb2.Timestamp(
+              seconds=long(autotest_keyval_file['job_started'])))
+      test_case.end_time.CopyFrom(
+          timestamp_pb2.Timestamp(
+              seconds=long(autotest_keyval_file['job_finished'])))
+
+  return result
+
+
+def _read_autotest_keyval_file(api, base_dir):
+  """Reads the contents of crossystem keyval file.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * base_dir (string): The path of the base test results on the drone server.
+
+  Returns:
+  * autotest_keyval_file (dict): Contents of the autotest keyval file.
+  """
+  autotest_keyval_path = os.path.join(base_dir, 'autoserv_test', 'keyval')
+  try:
+    contents = api.file.read_text('read autotest keyval file',
+                                  autotest_keyval_path,
+                                  test_data='').splitlines()
+    autotest_keyval_file = {}
+    for line in contents:
+      # Line example: build=zork-cq/R103-14765.0.0-64613-8815327479433497233
+      items = line.split('=')
+      if len(items) < 2:
+        continue
+      autotest_keyval_file[items[0]] = items[1]
+    return autotest_keyval_file
+  except api.file.Error:
+    return {}
+
+
 def _read_crossystem_keyvals(api, crossystem_file_path):
   """Reads the contents of crossystem keyval file.
 
@@ -424,32 +477,25 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
   return base_variant
 
 
-def _upload_missing_tast_results(api, base_dir, base_variant):
+def _upload_missing_tast_results(api, base_variant, autotest_keyval_file):
   """Upload test results for missing Tast test cases to ResultDB.
 
     Args:
-      api (RecipeScriptApi): Ubiquitous recipe api.
-      base_dir (string): The path of the base test results on the drone server.
-      base_variant (dict): Variant key-value pairs to attach to the test
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * base_variant (dict): Variant key-value pairs to attach to the test
             results.
+    * autotest_keyval_file (dict): The contents for autotest keyval file
+        in logs.
     """
-  keyval_file = os.path.join(base_dir, 'autoserv_test', 'keyval')
-  try:
-    content = api.file.read_text('read autotest keyval file', keyval_file,
-                                 test_data='').splitlines()
-  except api.file.Error:
-    # TODO(b/230441871): Improve the behavior when failed to read the autotest
-    # keyval file
-    content = []
   missing_tests = []
-  for line in content:
-    if line.startswith(TAST_MISSING_TEST_KEY):
-      test = line.split('=')[-1]
-      missing_tests.append(test)
+  for key, value in autotest_keyval_file.items():
+    if key.startswith(TAST_MISSING_TEST_KEY):
+      missing_tests.append(value)
   api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant)
 
 
-def _upload_to_resultdb(api, result, properties, interface, test_metadata):
+def _upload_to_resultdb(api, result, properties, interface, test_metadata,
+                        autotest_keyval_file):
   """Upload test results to ResultDB.
 
     Args:
@@ -459,6 +505,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     * interface (DUTInterface): The interface to run commands on the DUT.
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
+    * autotest_keyval_file (dict): The contents for autotest keyval file
+        in logs.
     """
   if not api.resultdb.enabled:
     return
@@ -524,7 +572,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   }
 
   api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
-  _upload_missing_tast_results(api, base_dir, config.get('base_variant'))
+  _upload_missing_tast_results(api, config.get('base_variant'),
+                               autotest_keyval_file)
   api.cros_resultdb.apply_exonerations(
       [api.cros_resultdb.current_invocation_id],
       properties.request.default_test_execution_behavior)
@@ -560,6 +609,10 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
   result = None
   run_test_response = None
 
+  # Autotest keyval file is created after test execution is done, so the file
+  # needs to be read after test execution.
+  autotest_keyval_file = {}
+  base_dir = interface.get_results_directory(test_metadata)
   try:
     # prejob and test failures are detected when parsing results.
     # An exception from the steps here indicates an infrastructure
@@ -582,6 +635,8 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
     result = interface.parse_test_results(test_metadata)
     result.add_prejob_response(prejob_response)
     result.add_test_response(run_test_response)
+    autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
+    result = _populate_timestamps_for_results(result, autotest_keyval_file)
     if not prejob_response.is_failure():
       dut_state = result.get_dut_state()
   finally:
@@ -591,7 +646,8 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
 
-    _upload_to_resultdb(api, result, properties, interface, test_metadata)
+    _upload_to_resultdb(api, result, properties, interface, test_metadata,
+                        autotest_keyval_file)
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
@@ -1010,9 +1066,10 @@ build_config=eve-release
 master_build_config=master-release
 drone=skylab-drone-xyz
 hostname=chromeos0-row0-rack0-host0
-job_started=0
+job_started=1651467359
 status_version=0
 user=test-user
+job_finished=1651468010
 tast_missing_test.0=foo.SomeTest
 tast_missing_test.1=foo.SomeOtherTest
 tast_missing_test.2=bar.DifferentTest
@@ -1751,6 +1808,36 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success-with-timestamp-in-results',
+      _set_build(bid=42),
+      _autotest_keyval_file_step_data(),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_results={
+                          "original_test":
+                              Result.Autotest(test_cases=[
+                                  Result.Autotest.TestCase(
+                                      name='pass_test_case_1', verdict=Result
+                                      .Autotest.TestCase.VERDICT_PASS),
+                                  Result.Autotest.TestCase(
+                                      name='pass_test_case_2', verdict=Result
+                                      .Autotest.TestCase.VERDICT_PASS)
+                              ])
+                      },
+                  )))),
   )
 
   yield api.test(
