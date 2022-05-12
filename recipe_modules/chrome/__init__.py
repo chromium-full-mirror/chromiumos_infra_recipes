@@ -22,4 +22,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ChromeProperties

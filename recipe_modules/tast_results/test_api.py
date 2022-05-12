@@ -114,4 +114,5 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def test_streamed_results_jsonl(self):
-    return "\n".join([json.dumps(x) for x in self.test_results_json])
+    return "\n".join(
+        [json.dumps(x, sort_keys=True) for x in self.test_results_json])

@@ -11,4 +11,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosBisectProperties

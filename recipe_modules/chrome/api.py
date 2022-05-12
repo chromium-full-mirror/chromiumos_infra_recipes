@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
 import re
 
 from recipe_engine import recipe_api
@@ -94,7 +95,7 @@ class ChromeApi(recipe_api.RecipeApi):
           gclient_config_cmd = [
               'config', '--spec',
               "solutions = {}\ncache_dir = '../chrome_cache'".format(
-                  GCLIENT_CACHE_CONFIG)
+                  json.dumps(GCLIENT_CACHE_CONFIG, sort_keys=True))
           ]
           self.m.step(
               'gclient config',
@@ -424,8 +425,8 @@ class ChromeApi(recipe_api.RecipeApi):
         for k, v in NeedsChromeSourceResponse.Reason.items()
         if v
     }
-    presentation.step_text = (' '.join(k for k, v in csnr.items() if v) or
-                              'not needed')
+    presentation.step_text = (' '.join(k for k, v in sorted(csnr.items()) if v)
+                              or 'not needed')
     self.m.easy.set_properties_step(chrome_source_reasons=csnr,
                                     builds_chrome=response.builds_chrome)
 

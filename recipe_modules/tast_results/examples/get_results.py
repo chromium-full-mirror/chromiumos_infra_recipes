@@ -14,6 +14,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')

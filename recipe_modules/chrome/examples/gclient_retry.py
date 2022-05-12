@@ -13,6 +13,8 @@ DEPS = [
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   chroot = Chroot()

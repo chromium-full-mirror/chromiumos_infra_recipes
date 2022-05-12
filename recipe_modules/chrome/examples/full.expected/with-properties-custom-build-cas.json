@@ -25,7 +25,7 @@
     "cmd": [],
     "name": "check chrome source needed",
     "~followup_annotations": [
-      "@@@STEP_TEXT@local_uprev follower_lacks_prebuilt no_prebuilt@@@"
+      "@@@STEP_TEXT@follower_lacks_prebuilt local_uprev no_prebuilt@@@"
     ]
   },
   {

@@ -123,7 +123,7 @@ class CrosBisectApi(recipe_api.RecipeApi):
         failures.append(ex)
 
     response = GenerateTestPlanResponse()
-    for _, units in hw_test_units.iteritems():
+    for _, units in hw_test_units.items():
       # This is the TestUnitCommon from the failed invocation. Here we update
       # the BuildPayload for the builds we are bisecting on.
       test_unit_common = units[0].common

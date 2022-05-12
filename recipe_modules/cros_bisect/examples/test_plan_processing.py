@@ -19,6 +19,8 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
 from google.protobuf import json_format as jsonpb
 from google.protobuf import struct_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   build1 = build_pb2.Build(

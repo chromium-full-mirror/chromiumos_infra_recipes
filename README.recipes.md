@@ -13,13 +13,13 @@
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats) (Python3 ✅)
   * [builder_metadata](#recipe_modules-builder_metadata)
-  * [chrome](#recipe_modules-chrome)
+  * [chrome](#recipe_modules-chrome) (Python3 ✅)
   * [chromite](#recipe_modules-chromite) (Python3 ✅)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage)
   * [cq_looks](#recipe_modules-cq_looks) (Python3 ✅)
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
-  * [cros_bisect](#recipe_modules-cros_bisect) &mdash; API for interacting with FindIt.
+  * [cros_bisect](#recipe_modules-cros_bisect) (Python3 ✅) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) (Python3 ✅) &mdash; API for working with the protobuf-based Build API.
   * [cros_cache](#recipe_modules-cros_cache) (Python3 ✅) &mdash; API for working with CrOS cache.
@@ -91,7 +91,7 @@
   * [swarming_cli](#recipe_modules-swarming_cli) (Python3 ✅)
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
-  * [tast_results](#recipe_modules-tast_results)
+  * [tast_results](#recipe_modules-tast_results) (Python3 ✅)
   * [test_util](#recipe_modules-test_util) (Python3 ✅) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) (Python3 ✅) &mdash; API for creating task URLs out of complex data structures.
   * [util](#recipe_modules-util) (Python3 ✅) &mdash; Module providing importable utilities.
@@ -156,10 +156,10 @@
   * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
   * [check_fit_image](#recipes-check_fit_image) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
-  * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync)
-  * [chrome:examples/full](#recipes-chrome_examples_full)
-  * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry)
-  * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt)
+  * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
+  * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
+  * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry) (Python3 ✅)
+  * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot)
   * [chromeos_chrome_uprev](#recipes-chromeos_chrome_uprev) (Python3 ✅) &mdash; Recipe for the Chrome uprev builder.
   * [chromite:examples/full](#recipes-chromite_examples_full) (Python3 ✅)
@@ -185,8 +185,8 @@
   * [cros_artifacts:tests/gsutil_retry_success](#recipes-cros_artifacts_tests_gsutil_retry_success)
   * [cros_artifacts:tests/has_artifacts](#recipes-cros_artifacts_tests_has_artifacts)
   * [cros_artifacts:tests/upload_artifacts](#recipes-cros_artifacts_tests_upload_artifacts)
-  * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full)
-  * [cros_bisect:examples/test_plan_processing](#recipes-cros_bisect_examples_test_plan_processing)
+  * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full) (Python3 ✅)
+  * [cros_bisect:examples/test_plan_processing](#recipes-cros_bisect_examples_test_plan_processing) (Python3 ✅)
   * [cros_branch:examples/full](#recipes-cros_branch_examples_full) (Python3 ✅)
   * [cros_branch:tests/errors](#recipes-cros_branch_tests_errors) (Python3 ✅)
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full) (Python3 ✅)
@@ -468,10 +468,10 @@
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
   * [sysroot_util:tests/update_artifact_for_build](#recipes-sysroot_util_tests_update_artifact_for_build)
   * [tast_exec:examples/run](#recipes-tast_exec_examples_run)
-  * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir)
-  * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult)
-  * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
-  * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs)
+  * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir) (Python3 ✅)
+  * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult) (Python3 ✅)
+  * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results) (Python3 ✅)
+  * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs) (Python3 ✅)
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
@@ -1413,18 +1413,18 @@ Returns:
 
 [DEPS](/recipe_modules/chrome/__init__.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#79)(self, cache_path):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#80)(self, cache_path):**
 
 Sync Chrome cache using existing cached repositories.
 
 Args:
   cache_path (Path): Path to mount of cache.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#222)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#223)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1437,7 +1437,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#275)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#276)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1453,13 +1453,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#248)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#249)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [initialize](/recipe_modules/chrome/api.py#66)(self):**
+&mdash; **def [initialize](/recipe_modules/chrome/api.py#67)(self):**
 
 Initialization that follows all module loading.
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#315)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#316)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1471,7 +1471,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#256)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#257)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1487,7 +1487,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#386)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#387)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1501,7 +1501,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#126)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#127)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -1889,7 +1889,7 @@ Returns:
 
 [DEPS](/recipe_modules/cros_bisect/__init__.py#5): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for interacting with FindIt.
 
@@ -7846,17 +7846,17 @@ Returns:
 
 [DEPS](/recipe_modules/tast_results/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#22)(self, props, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#24)(self, props, \*args, \*\*kwargs):**
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#27)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#29)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -7867,7 +7867,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#133)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#135)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -7877,7 +7877,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#117)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#119)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -7887,7 +7887,7 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#158)(self, task_result, exclude_tests=None):**
+&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#160)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Failure objects and dicts.
 
@@ -7900,7 +7900,7 @@ Returns:
   A tuple of list(Failure) and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#52)(self, test_results_path, suite_name, tag, tests):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#54)(self, test_results_path, suite_name, tag, tests):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -7915,7 +7915,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#243)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#245)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -7926,7 +7926,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#192)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#194)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -7934,14 +7934,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#217)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#219)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#290)(self, test_results_path, suite_name, missing_test_names):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#292)(self, test_results_path, suite_name, missing_test_names):**
 
 Upload the test results to ResultDB.
 
@@ -8751,34 +8751,34 @@ Checks a project conforms to its program's constraints.
 
 [DEPS](/recipe_modules/chrome/examples/cache_sync.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/cache_sync.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/cache_sync.py#16)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#6): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#40)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#42)(api, properties):**
 
-&mdash; **def [jsonify](/recipe_modules/chrome/examples/full.py#35)(\*\*kwargs):**
+&mdash; **def [jsonify](/recipe_modules/chrome/examples/full.py#37)(\*\*kwargs):**
 
 Return the kwargs as a json string.
 ### *recipes* / [chrome:examples/gclient\_retry](/recipe_modules/chrome/examples/gclient_retry.py)
 
 [DEPS](/recipe_modules/chrome/examples/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/gclient_retry.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/gclient_retry.py#19)(api):**
 ### *recipes* / [chrome:tests/follower\_needs\_chrome\_no\_has\_prebuilt](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py)
 
 [DEPS](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#20)(api):**
 ### *recipes* / [chromeos\_cbuildbot](/recipes/chromeos_cbuildbot.py)
 
 [DEPS](/recipes/chromeos_cbuildbot.py#13): [bot\_cost](#recipe_modules-bot_cost), [chromite](#recipe_modules-chromite), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -9098,16 +9098,16 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/full.py#24)(api, properties):**
 ### *recipes* / [cros\_bisect:examples/test\_plan\_processing](/recipe_modules/cros_bisect/examples/test_plan_processing.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/test_plan_processing.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/test_plan_processing.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_bisect/examples/test_plan_processing.py#25)(api):**
 ### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
 
 [DEPS](/recipe_modules/cros_branch/examples/full.py#9): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11263,30 +11263,30 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/archive_dir.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/archive_dir.py#19)(api):**
 ### *recipes* / [tast\_results:examples/convert\_to\_taskcaseresult](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py)
 
 [DEPS](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/convert_to_taskcaseresult.py#20)(api):**
 ### *recipes* / [tast\_results:examples/get\_results](/recipe_modules/tast_results/examples/get_results.py)
 
 [DEPS](/recipe_modules/tast_results/examples/get_results.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/get_results.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/get_results.py#20)(api):**
 ### *recipes* / [tast\_results:examples/record\_logs](/recipe_modules/tast_results/examples/record_logs.py)
 
 [DEPS](/recipe_modules/tast_results/examples/record_logs.py#7): [tast\_results](#recipe_modules-tast_results)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/record_logs.py#12)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_results/examples/record_logs.py#14)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
 [DEPS](/recipes/tast_vm.py#13): [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

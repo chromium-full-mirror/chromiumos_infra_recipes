@@ -14,6 +14,8 @@ from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   chroot = Chroot()

@@ -29,6 +29,8 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.chrome.examples.test import TestInputProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

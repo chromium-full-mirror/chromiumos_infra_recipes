@@ -13,6 +13,8 @@ DEPS = [
 from PB.recipe_modules.chromeos.tast_results.tast_results import (
     TastResultsProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')

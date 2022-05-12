@@ -16,6 +16,8 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
 from PB.recipe_modules.chromeos.cros_bisect.examples.test import (
     TestInputProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

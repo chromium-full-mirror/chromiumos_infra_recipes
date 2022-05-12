@@ -14,6 +14,8 @@ from google.protobuf import json_format as jsonpb
 from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   passed_test_result = jsonpb.Parse(

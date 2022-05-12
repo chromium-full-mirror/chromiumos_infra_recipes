@@ -8,6 +8,8 @@ DEPS = [
     'tast_results',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.tast_results.record_logs('/var/log')
