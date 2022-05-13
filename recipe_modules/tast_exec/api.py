@@ -55,6 +55,28 @@ class TastExecApi(RecipeApi):
       return 'gs://{}/{}/'.format(self.build_payload.artifacts_gs_bucket,
                                   self.build_payload.artifacts_gs_path)
 
+  class VmInfo(object):
+    """Info about a VM that has been launched.
+
+    Args:
+      host (str): Host name or IP.
+      port (str): SSH port.
+      pid_file (Path): PID of the QEMU process, if available (optional).
+    """
+
+    def __init__(self, host, port, pid_file=None):
+      self.host = host
+      self.port = port
+      self.pid_file = pid_file
+
+    def address(self):
+      """Get a "host:port" connection string.
+
+      Returns:
+        str: Connection string.
+      """
+      return '{}:{}'.format(self.host, self.port)
+
   def __init__(self, properties, *args, **kwargs):
     super(TastExecApi, self).__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
@@ -196,19 +218,19 @@ class TastExecApi(RecipeApi):
 
     # Entering vm_context instantiates the VM we are to test against. The VM
     # is cleaned up automatically when exiting the context.
-    with vm_context() as (host, port):
-      tests = self.run_direct('{}:{}'.format(host, port), tast_inputs,
-                              test_results_dir)
+    with vm_context() as vm:
+      tests = self.run_direct(vm.address(), tast_inputs, test_results_dir)
 
       # b/219966100: Occasionally the `tast run` step will leave the VM in an
       # unresponsive state. Make sure we can establish an SSH connection before
       # attempting to archive artifacts.
       self.m.step(
           'connect via ssh',
-          self._get_ssh_cmd(host, port, tast_inputs.private_key_path, ['true']))
+          self._get_ssh_cmd(vm.host, vm.port, tast_inputs.private_key_path,
+                            ['true']))
 
       # Add logs and other artifacts from DUT into the test results directory.
-      self._archive_vm_artifacts(host, port, tast_inputs.private_key_path,
+      self._archive_vm_artifacts(vm.host, vm.port, tast_inputs.private_key_path,
                                  test_results_dir)
     return tests
 
@@ -360,8 +382,8 @@ class TastExecApi(RecipeApi):
 
     Returns:
       A context manager that
-        - when entered, prepares a VM to test against, and yields the
-          (host, port) for connecting to it.
+        - when entered, prepares a VM to test against, and yields a
+          VmInfo object for connecting to it.
         - when exited, terminates the VM and performs cleanup.
     """
 
@@ -374,7 +396,7 @@ class TastExecApi(RecipeApi):
       self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
                       kvm_monitor_serial_file, private_key_path)
       try:
-        yield QEMU_VM_HOST, QEMU_VM_PORT
+        yield TastExecApi.VmInfo(QEMU_VM_HOST, QEMU_VM_PORT, kvm_pid_file)
       finally:
         try:
           # Always kill QEMU.
@@ -444,8 +466,8 @@ class TastExecApi(RecipeApi):
 
     Returns:
       A context manager that
-        - when entered, prepares a VM to test against, and yields the
-          (host, port) for connecting to it.
+        - when entered, prepares a VM to test against, and yields a
+          VmInfo object for connecting to it.
         - when exited, terminates the VM and performs cleanup.
     """
 
@@ -455,7 +477,7 @@ class TastExecApi(RecipeApi):
                                                         zone, network, subnet)
       try:
         self._test_ssh_conn(ip_addr, GCE_VM_PORT, private_key_path)
-        yield ip_addr, GCE_VM_PORT
+        yield TastExecApi.VmInfo(ip_addr, GCE_VM_PORT)
       finally:
         try:
           self.m.gcloud.get_instance_serial_output(instance, project, zone)

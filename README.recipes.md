@@ -7748,7 +7748,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#432)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#454)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7763,11 +7763,11 @@ Args:
 
 Returns:
   A context manager that
-    - when entered, prepares a VM to test against, and yields the
-      (host, port) for connecting to it.
+    - when entered, prepares a VM to test against, and yields a
+      VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#354)(self, qcow_image_path, private_key_path):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#376)(self, qcow_image_path, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -7777,11 +7777,11 @@ Args:
 
 Returns:
   A context manager that
-    - when entered, prepares a VM to test against, and yields the
-      (host, port) for connecting to it.
+    - when entered, prepares a VM to test against, and yields a
+      VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#66)(self, build_payload, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#88)(self, build_payload, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -7791,7 +7791,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#86)(self, build_payload, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#108)(self, build_payload, vm_dir):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -7806,7 +7806,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#215)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#237)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -7819,7 +7819,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#178)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#200)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -7833,7 +7833,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#125)(self, suite_name, vm_context, tast_inputs):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#147)(self, suite_name, vm_context, tast_inputs):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
