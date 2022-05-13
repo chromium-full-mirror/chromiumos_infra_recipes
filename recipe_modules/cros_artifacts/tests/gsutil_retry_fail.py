@@ -15,6 +15,8 @@ from PB.chromiumos.builder_config import BuilderConfig
 
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   target = common.BuildTarget()

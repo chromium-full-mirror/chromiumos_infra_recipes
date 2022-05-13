@@ -14,6 +14,8 @@ from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.sysroot_util.examples.test import (
     TestInputProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

@@ -15,6 +15,8 @@ from PB.chromite.api.artifacts import PrepareForBuildResponse
 from PB.recipe_modules.chromeos.sysroot_util.tests.test import (
     TestInputProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

@@ -13,6 +13,8 @@ DEPS = [
 
 from PB.chromiumos.common import BuildTarget
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   config = api.cros_infra_config.config

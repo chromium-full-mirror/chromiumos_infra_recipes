@@ -9,6 +9,8 @@ DEPS = [
     'metadata_json',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   api.metadata_json.add_stage_results()

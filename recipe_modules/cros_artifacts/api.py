@@ -6,6 +6,7 @@
 """API for uploading CrOS build artifacts to Google Storage."""
 
 import collections
+import six
 
 from google.protobuf import json_format
 
@@ -55,7 +56,8 @@ class UploadedArtifacts(
     assert self.gs_bucket == other.gs_bucket
     assert self.gs_path == other.gs_path
     value = lambda inst, key: inst.files_by_artifact.get(key, [])
-    keys = set(self.files_by_artifact.keys() + other.files_by_artifact.keys())
+    keys = set(self.files_by_artifact.keys()) | set(
+        other.files_by_artifact.keys())
     result = {k: (value(self, k) + value(other, k)) for k in sorted(keys)}
     return UploadedArtifacts(self.gs_bucket, self.gs_path, result)
 
@@ -721,7 +723,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('upload {} metadata'.format(name)):
       # Wrap target up into a BuildTarget proto if needed
-      if isinstance(target, basestring):
+      if isinstance(target, six.string_types):
         target = common_pb.BuildTarget(name=target)
 
       # Add a .jsonpb extension to the filename if we don't have one.

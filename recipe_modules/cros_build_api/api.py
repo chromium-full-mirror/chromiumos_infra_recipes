@@ -496,6 +496,7 @@ class CrosBuildApiApi(RecipeApi):
             resp_pres.logs['build api stdout'] = file_contents or ''
             pkg_logs = pkg_logs_lambda(input_proto, output_proto,
                                        self.m.file.read_raw)
+            pkg_logs.sort(key=lambda pl: pl[0].package_name)
             resp_pres.logs.update({
                 '%s/%s log' % (p.category, p.package_name): log_contents
                 for (p, log_contents) in pkg_logs

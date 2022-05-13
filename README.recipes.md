@@ -18,7 +18,7 @@
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage) (Python3 ✅)
   * [cq_looks](#recipe_modules-cq_looks) (Python3 ✅)
-  * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
+  * [cros_artifacts](#recipe_modules-cros_artifacts) (Python3 ✅) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) (Python3 ✅) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) (Python3 ✅) &mdash; API for working with the protobuf-based Build API.
@@ -72,7 +72,7 @@
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
   * [iterutils](#recipe_modules-iterutils) (Python3 ✅)
   * [metadata](#recipe_modules-metadata) (Python3 ✅) &mdash; API to support metadata generation and wrangling.
-  * [metadata_json](#recipe_modules-metadata_json)
+  * [metadata_json](#recipe_modules-metadata_json) (Python3 ✅)
   * [naming](#recipe_modules-naming) (Python3 ✅) &mdash; API featuring shared helpers for naming things.
   * [orch_menu](#recipe_modules-orch_menu) &mdash; API providing a menu for orchestrator steps.
   * [overlayfs](#recipe_modules-overlayfs) (Python3 ✅) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
@@ -175,16 +175,16 @@
   * [config_backfill](#recipes-config_backfill) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
   * [cq_looks:examples/full](#recipes-cq_looks_examples_full) (Python3 ✅)
-  * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json)
-  * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
-  * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
-  * [cros_artifacts:examples/prepare_for_build](#recipes-cros_artifacts_examples_prepare_for_build)
-  * [cros_artifacts:tests/artifacts_gs_path](#recipes-cros_artifacts_tests_artifacts_gs_path)
-  * [cros_artifacts:tests/download_artifacts](#recipes-cros_artifacts_tests_download_artifacts)
-  * [cros_artifacts:tests/gsutil_retry_fail](#recipes-cros_artifacts_tests_gsutil_retry_fail)
-  * [cros_artifacts:tests/gsutil_retry_success](#recipes-cros_artifacts_tests_gsutil_retry_success)
-  * [cros_artifacts:tests/has_artifacts](#recipes-cros_artifacts_tests_has_artifacts)
-  * [cros_artifacts:tests/upload_artifacts](#recipes-cros_artifacts_tests_upload_artifacts)
+  * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json) (Python3 ✅)
+  * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts) (Python3 ✅)
+  * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full) (Python3 ✅)
+  * [cros_artifacts:examples/prepare_for_build](#recipes-cros_artifacts_examples_prepare_for_build) (Python3 ✅)
+  * [cros_artifacts:tests/artifacts_gs_path](#recipes-cros_artifacts_tests_artifacts_gs_path) (Python3 ✅)
+  * [cros_artifacts:tests/download_artifacts](#recipes-cros_artifacts_tests_download_artifacts) (Python3 ✅)
+  * [cros_artifacts:tests/gsutil_retry_fail](#recipes-cros_artifacts_tests_gsutil_retry_fail) (Python3 ✅)
+  * [cros_artifacts:tests/gsutil_retry_success](#recipes-cros_artifacts_tests_gsutil_retry_success) (Python3 ✅)
+  * [cros_artifacts:tests/has_artifacts](#recipes-cros_artifacts_tests_has_artifacts) (Python3 ✅)
+  * [cros_artifacts:tests/upload_artifacts](#recipes-cros_artifacts_tests_upload_artifacts) (Python3 ✅)
   * [cros_bisect:examples/full](#recipes-cros_bisect_examples_full) (Python3 ✅)
   * [cros_bisect:examples/test_plan_processing](#recipes-cros_bisect_examples_test_plan_processing) (Python3 ✅)
   * [cros_branch:examples/full](#recipes-cros_branch_examples_full) (Python3 ✅)
@@ -399,11 +399,11 @@
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [metadata:examples/full](#recipes-metadata_examples_full) (Python3 ✅)
-  * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
-  * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
-  * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
-  * [metadata_json:examples/finalize_build](#recipes-metadata_json_examples_finalize_build)
-  * [metadata_json:examples/finalize_build_crashing_out](#recipes-metadata_json_examples_finalize_build_crashing_out)
+  * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results) (Python3 ✅)
+  * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries) (Python3 ✅)
+  * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries) (Python3 ✅)
+  * [metadata_json:examples/finalize_build](#recipes-metadata_json_examples_finalize_build) (Python3 ✅)
+  * [metadata_json:examples/finalize_build_crashing_out](#recipes-metadata_json_examples_finalize_build_crashing_out) (Python3 ✅)
   * [naming:examples/full](#recipes-naming_examples_full) (Python3 ✅)
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title) (Python3 ✅)
   * [naming:tests/build_url_title](#recipes-naming_tests_build_url_title) (Python3 ✅)
@@ -462,10 +462,10 @@
   * [star_doctor](#recipes-star_doctor) (Python3 ✅) &mdash; Recipe for the Star Doctor.
   * [support:examples/full](#recipes-support_examples_full) (Python3 ✅)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full) (Python3 ✅)
-  * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot)
-  * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full)
-  * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
-  * [sysroot_util:tests/update_artifact_for_build](#recipes-sysroot_util_tests_update_artifact_for_build)
+  * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot) (Python3 ✅)
+  * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full) (Python3 ✅)
+  * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build) (Python3 ✅)
+  * [sysroot_util:tests/update_artifact_for_build](#recipes-sysroot_util_tests_update_artifact_for_build) (Python3 ✅)
   * [tast_exec:examples/run](#recipes-tast_exec_examples_run)
   * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir) (Python3 ✅)
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult) (Python3 ✅)
@@ -1721,15 +1721,15 @@ Returns:
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [metadata](#recipe_modules-metadata), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for uploading CrOS build artifacts to Google Storage.
 
-#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#63)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosArtifactsApi](/recipe_modules/cros_artifacts/api.py#65)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#471)(self, builder_name, target, kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template='{gs_path}'):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#473)(self, builder_name, target, kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template='{gs_path}'):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -1747,7 +1747,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#770)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#772)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1762,7 +1762,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#804)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#806)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1777,7 +1777,7 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#586)(self, artifacts_info):**
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#588)(self, artifacts_info):**
 
 Return whether there are output artifacts.
 
@@ -1787,16 +1787,16 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [initialize](/recipe_modules/cros_artifacts/api.py#75)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_artifacts/api.py#77)(self):**
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#747)(self, properties):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#749)(self, properties):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#824)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#826)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1817,7 +1817,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#942)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#944)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1835,7 +1835,7 @@ Args:
 Returns:
   PushImageResponse
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#603)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#605)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1864,7 +1864,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#703)(self, name, builder_name, target, gs_bucket, filename, message):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#705)(self, name, builder_name, target, gs_bucket, filename, message):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -2138,7 +2138,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#527)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#528)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2169,7 +2169,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#524)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#525)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#233)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -6455,7 +6455,7 @@ Returns:
 
 [DEPS](/recipe_modules/metadata_json/__init__.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -9022,78 +9022,78 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#19)(api):**
 ### *recipes* / [cros\_artifacts:examples/download\_artifacts](/recipe_modules/cros_artifacts/examples/download_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/download_artifacts.py#17)(api):**
 ### *recipes* / [cros\_artifacts:examples/full](/recipe_modules/cros_artifacts/examples/full.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/full.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/full.py#24)(api):**
 ### *recipes* / [cros\_artifacts:examples/prepare\_for\_build](/recipe_modules/cros_artifacts/examples/prepare_for_build.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/prepare_for_build.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/prepare_for_build.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/prepare_for_build.py#27)(api, properties):**
 ### *recipes* / [cros\_artifacts:tests/artifacts\_gs\_path](/recipe_modules/cros_artifacts/tests/artifacts_gs_path.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/artifacts_gs_path.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/artifacts_gs_path.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/artifacts_gs_path.py#26)(api, properties):**
 ### *recipes* / [cros\_artifacts:tests/download\_artifacts](/recipe_modules/cros_artifacts/tests/download_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/download_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/download_artifacts.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/download_artifacts.py#17)(api):**
 ### *recipes* / [cros\_artifacts:tests/gsutil\_retry\_fail](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#21)(api):**
 
-&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#38)(api, attempt):**
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#40)(api, attempt):**
 
-&mdash; **def [attempt\_publish\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#47)(api, attempt):**
+&mdash; **def [attempt\_publish\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_fail.py#49)(api, attempt):**
 ### *recipes* / [cros\_artifacts:tests/gsutil\_retry\_success](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#19)(api):**
 
-&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#35)(api, attempt):**
+&mdash; **def [attempt\_download\_file](/recipe_modules/cros_artifacts/tests/gsutil_retry_success.py#37)(api, attempt):**
 ### *recipes* / [cros\_artifacts:tests/has\_artifacts](/recipe_modules/cros_artifacts/tests/has_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/has_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/has_artifacts.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/has_artifacts.py#16)(api):**
 ### *recipes* / [cros\_artifacts:tests/upload\_artifacts](/recipe_modules/cros_artifacts/tests/upload_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#6): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#20)(api):**
 ### *recipes* / [cros\_bisect:examples/full](/recipe_modules/cros_bisect/examples/full.py)
 
 [DEPS](/recipe_modules/cros_bisect/examples/full.py#6): [cros\_bisect](#recipe_modules-cros_bisect), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -10679,37 +10679,37 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/add_stage_results.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/add_stage_results.py#15)(api):**
 ### *recipes* / [metadata\_json:examples/add\_version\_entries](/recipe_modules/metadata_json/examples/add_version_entries.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_version_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/add_version_entries.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/add_version_entries.py#16)(api):**
 ### *recipes* / [metadata\_json:examples/default\_entries](/recipe_modules/metadata_json/examples/default_entries.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/default_entries.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/default_entries.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/default_entries.py#16)(api):**
 ### *recipes* / [metadata\_json:examples/finalize\_build](/recipe_modules/metadata_json/examples/finalize_build.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/finalize_build.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/finalize_build.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/finalize_build.py#19)(api):**
 ### *recipes* / [metadata\_json:examples/finalize\_build\_crashing\_out](/recipe_modules/metadata_json/examples/finalize_build_crashing_out.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/finalize_build_crashing_out.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/finalize_build_crashing_out.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata_json/examples/finalize_build_crashing_out.py#19)(api):**
 ### *recipes* / [naming:examples/full](/recipe_modules/naming/examples/full.py)
 
 [DEPS](/recipe_modules/naming/examples/full.py#6): [git](#recipe_modules-git), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -11194,30 +11194,30 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/create_sysroot.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/create_sysroot.py#22)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/full](/recipe_modules/sysroot_util/examples/full.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/full.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#28)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/update\_for\_artifact\_build](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#21)(api, properties):**
 ### *recipes* / [sysroot\_util:tests/update\_artifact\_for\_build](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py)
 
 [DEPS](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#23)(api, properties):**
 ### *recipes* / [tast\_exec:examples/run](/recipe_modules/tast_exec/examples/run.py)
 
 [DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

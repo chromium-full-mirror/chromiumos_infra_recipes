@@ -26,4 +26,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosArtifactsProperties

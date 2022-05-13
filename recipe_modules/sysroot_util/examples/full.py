@@ -20,6 +20,8 @@ from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecPropertie
 from PB.recipe_modules.chromeos.sysroot_util.examples.full import (
     FullTestProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = FullTestProperties
 
 
@@ -70,7 +72,7 @@ def GenTests(api):
               "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
           ]
       }
-    return json.dumps(ret)
+    return json.dumps(ret, sort_keys=True)
 
   yield api.test('basic', test_build())
 
@@ -142,7 +144,7 @@ def GenTests(api):
                           "path": "/all/your/overlay/are/belong/to/us",
                           "location": 1,
                       },
-                  }]))))
+                  }]), sort_keys=True)))
 
   yield api.test(
       'no-goma', test_build(),

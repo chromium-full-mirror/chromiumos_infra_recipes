@@ -10,6 +10,8 @@ DEPS = [
 
 from PB.chromiumos.common import ArtifactsByService
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   Legacy = ArtifactsByService.Legacy

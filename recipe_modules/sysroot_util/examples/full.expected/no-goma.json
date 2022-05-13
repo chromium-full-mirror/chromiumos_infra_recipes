@@ -1298,7 +1298,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"events\": [{\"name\": \"fake_package-path/fake-package-name-0.0.1-r2\", \"durationMilliseconds\": \"1523\", \"timestampMilliseconds\": \"1580481610805\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"events\": [{\"durationMilliseconds\": \"1523\", \"name\": \"fake_package-path/fake-package-name-0.0.1-r2\", \"timestampMilliseconds\": \"1580481610805\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

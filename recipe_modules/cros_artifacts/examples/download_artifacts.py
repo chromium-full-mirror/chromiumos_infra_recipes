@@ -11,6 +11,8 @@ DEPS = [
 
 from PB.chromiumos.builder_config import BuilderConfig
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   build_payload = api.cros_test_plan.test_api.test_unit_common(

@@ -19,6 +19,8 @@ from PB.chromiumos import common
 from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
     TestInputProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestInputProperties
 
 

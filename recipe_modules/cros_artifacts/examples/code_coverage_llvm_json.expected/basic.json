@@ -3764,7 +3764,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"test\": {\"artifacts\": [{\"paths\": [{\"path\": \"[START_DIR]/coverage.tbz2\", \"location\": 2}], \"artifactType\": 39}]}}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"test\": {\"artifacts\": [{\"artifactType\": 39, \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/coverage.tbz2\"}]}]}}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

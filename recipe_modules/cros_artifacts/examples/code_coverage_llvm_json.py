@@ -13,6 +13,8 @@ DEPS = [
 
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.build_menu.configure_builder() as config, \
@@ -25,20 +27,21 @@ def GenTests(api):
       'basic',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'ArtifactsService/Get',
-          json.dumps({
-              'artifacts': {
-                  'test': {
-                      'artifacts': [{
-                          'artifactType':
-                              39,
-                          'paths': [{
-                              'path': '[START_DIR]/coverage.tbz2',
-                              'location': 2
-                          }]
-                      },]
+          json.dumps(
+              {
+                  'artifacts': {
+                      'test': {
+                          'artifacts': [{
+                              'artifactType':
+                                  39,
+                              'paths': [{
+                                  'path': '[START_DIR]/coverage.tbz2',
+                                  'location': 2
+                              }]
+                          },]
+                      }
                   }
-              }
-          })),
+              }, sort_keys=True)),
       api.post_check(
           post_process.MustRun,
           'upload artifacts.upload code coverage data (code coverage llvm json)'

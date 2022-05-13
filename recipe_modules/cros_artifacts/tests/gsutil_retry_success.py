@@ -13,6 +13,8 @@ from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   target = common.BuildTarget()
