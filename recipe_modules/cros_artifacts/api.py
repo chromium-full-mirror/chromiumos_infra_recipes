@@ -675,12 +675,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
       for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
-        self.m.code_coverage.upload_firmware_lcov(sysroot.build_target.name,
-                                                  outpath.join(fname))
+        self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
       for fname in files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', []):
-        self.m.code_coverage.upload_code_coverage_llvm_json(
-            sysroot.build_target.name, outpath.join(fname))
+        self.m.code_coverage.upload_code_coverage_llvm_json(outpath.join(fname))
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.

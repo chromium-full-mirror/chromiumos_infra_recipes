@@ -4058,7 +4058,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/clean_coverage_file.py",
       "--coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",

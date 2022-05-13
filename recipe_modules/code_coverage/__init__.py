@@ -20,6 +20,8 @@ DEPS = [
     'gerrit',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.code_coverage.code_coverage import (
     CodeCoverageProperties)
 

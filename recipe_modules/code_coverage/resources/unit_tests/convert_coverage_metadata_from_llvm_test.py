@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -122,7 +122,6 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
 
   @mock.patch('__builtin__.open', new=mocked_open)
   def test_to_compressed_file_record(self):
-    build_target = 'betty'
     file_coverage_data = {
         'segments': [
             [1, 12, 1, True, True],
@@ -179,7 +178,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     }
     self.maxDiff = None
     record = converter.to_compressed_file_record(file_coverage_data,
-                                                 CONSTANTS_FILE, build_target)
+                                                 CONSTANTS_FILE)
     self.assertDictEqual(expected_record, record)
 
   # This test uses made-up segments, and the intention is to test that for
@@ -188,7 +187,6 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
   # shouldn't be merged together.
   @mock.patch('__builtin__.open', new=mocked_open)
   def test_to_compressed_file_record_for_uncontinous_lines(self):
-    build_target = 'betty'
     file_coverage_data = {
         'segments': [
             [102, 35, 4, True, True],
@@ -227,7 +225,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     }
     self.maxDiff = None
     record = converter.to_compressed_file_record(file_coverage_data,
-                                                 CONSTANTS_FILE, build_target)
+                                                 CONSTANTS_FILE)
     self.assertDictEqual(expected_record, record)
 
   def test_rebase_line_and_block_data(self):
@@ -248,7 +246,6 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
 
   @mock.patch('__builtin__.open', new=mocked_open)
   def test_to_compressed_file_record_with_diff_mapping(self):
-    build_target = 'betty'
     file_coverage_data = {
         'segments': [
             [1, 12, 1, True, True],
@@ -278,8 +275,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
     }
 
     record = converter.to_compressed_file_record(file_coverage_data,
-                                                 CONSTANTS_FILE, build_target,
-                                                 diff_mapping)
+                                                 CONSTANTS_FILE, diff_mapping)
 
     expected_record = {
         'path':
@@ -362,9 +358,8 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         },
     ]
     coverage_files = ['coverage.json']
-    build_target = 'betty'
     files_coverage_data = converter.load_files_coverage_data(
-        coverage_files, CONSTANTS_FILE, build_target, None)
+        coverage_files, CONSTANTS_FILE, None)
     self.maxDiff = None
     self.assertListEqual(expected_files_coverage_data, files_coverage_data)
 
@@ -429,7 +424,6 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         project_dir='project_dir',
         output_dir='/path/to/output_dir',
         constants_file='constants.json',
-        build_target='betty',
         diff_mapping=None,
     )
 

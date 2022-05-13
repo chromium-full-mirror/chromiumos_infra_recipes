@@ -10,6 +10,8 @@ DEPS = [
     'code_coverage',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 
@@ -21,7 +23,7 @@ def RunSteps(api):
     api.build_menu.install_packages()
     api.build_menu.build_and_test_images()
     api.code_coverage.upload_code_coverage_llvm_json(
-        'sarien', '[START_DIR]/coverage.tbz2')
+        '[START_DIR]/coverage.tbz2')
 
 
 def GenTests(api):

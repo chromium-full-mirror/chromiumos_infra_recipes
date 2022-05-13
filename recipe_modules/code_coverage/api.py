@@ -79,25 +79,22 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     return self.m.path['start_dir'].join('code_coverage')
 
   def upload_firmware_lcov(
-      self, build_target_name, tarfile,
-      step_name='upload code coverage data (firmware lcov)'):
+      self, tarfile, step_name='upload code coverage data (firmware lcov)'):
     """Uploads firmware lcov code coverage.
 
       Args:
-        build_target_name (str): name of the build target.
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
     """
-    self.process_coverage_data(build_target_name, tarfile, 'LCOV', step_name,
+    self.process_coverage_data(tarfile, 'LCOV', step_name,
                                CoverageFileSettings(False, False, True))
 
   def upload_code_coverage_llvm_json(
-      self, build_target_name, tarfile,
+      self, tarfile,
       step_name='upload code coverage data (code coverage llvm json)'):
     """Uploads code coverage llvm json.
 
       Args:
-        build_target_name (str): name of the build target.
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
     """
@@ -108,11 +105,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     # Settings for capturing absolute coverage on Chromium dashboard.
     absolute_chromium_settings = CoverageFileSettings(False, False, True)
 
-    self.process_coverage_data(build_target_name, tarfile, 'LLVM', step_name,
-                               incremental_settings, absolute_settings,
-                               absolute_chromium_settings)
+    self.process_coverage_data(tarfile, 'LLVM', step_name, incremental_settings,
+                               absolute_settings, absolute_chromium_settings)
 
-  def process_coverage_data(self, build_target_name, tarfile, coverage_type,
+  def process_coverage_data(self, tarfile, coverage_type,
                             step_name='upload code coverage data',
                             incremental_settings=None,
                             absolute_cs_settings=None,
@@ -120,7 +116,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     """Uploads code coverage data to the requested external sources.
 
       Args:
-        build_target_name (str): name of the build target.
         tarfile (Path): path to tarfile.
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         step_name (str): name for the step.
@@ -146,8 +141,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             self._upload_absolute_coverage_to_code_search(
                 coverage_file, coverage_type, absolute_cs_settings)
             self._upload_absolute_coverage_to_chromium_coverage(
-                coverage_file, build_target_name, self._project,
-                absolute_chromium_settings)
+                coverage_file, self._project, absolute_chromium_settings)
       except StepFailure:
         self.m.step.active_result.presentation.properties[
             'process_coverage_data_failure'] = True
@@ -179,7 +173,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     cleaned_path_file = tmp_dir.join('cleaned.file')
 
     self.m.step('writing cleaned coverage file', [
-        'vpython',
+        'vpython3',
         self.resource('clean_coverage_file.py'),
         '--coverage-file',
         path_to_coverage_file,
@@ -215,7 +209,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             patch_set_file_names[f.strip().lower()] = True
 
       # Write out the changed file names for debugging.
-      presentation.logs['output'] = [str(patch_set_file_names.keys())]
+      presentation.logs['output'] = [str(list(patch_set_file_names.keys()))]
       presentation.step_text = 'found %d file changes.' % len(
           patch_set_file_names.keys())
 
@@ -382,13 +376,11 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     )
 
   def _upload_absolute_coverage_to_chromium_coverage(
-      self, fpath, build_target_name, project_name_to_use,
-      absolute_chromium_settings):
+      self, fpath, project_name_to_use, absolute_chromium_settings):
     """Uploads the coverage data to chromium coverage.
 
       Args:
         fpath (str): path to the coverage file.
-        build_target_name (str): name of the build target.
         project_name_to_use (str): name of the project.
         absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage.
     """
@@ -412,7 +404,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           fpath, absolute_chromium_settings)
 
       self.m.step('converting metadata for test coverage', [
-          'vpython',
+          'vpython3',
           self.resource('convert_coverage_metadata_from_llvm.py'),
           '--checkout-dir',
           self.m.cros_source.workspace_path,
@@ -425,8 +417,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           self.resource('constants.json'),
           '--path-to-coverage-file',
           path_to_coverage_file,
-          '--build-target',
-          build_target_name,
       ])
 
       gs_path = self._compose_gs_path_for_chromium_coverage('metadata')

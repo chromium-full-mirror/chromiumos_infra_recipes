@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -205,7 +205,7 @@ def rebase_line_and_block_data(line_data, block_data, line_mapping):
   return rebased_line_data, rebased_block_data
 
 
-def to_compressed_file_record(file_coverage_data, constants_file, build_target,
+def to_compressed_file_record(file_coverage_data, constants_file,
                               diff_mapping=None):
   """Converts the given Clang file coverage data to coverage metadata format.
 
@@ -234,7 +234,6 @@ def to_compressed_file_record(file_coverage_data, constants_file, build_target,
         bool HasCount;
         /// Whether this enters a new region or returns to a previous count.
         bool IsRegionEntry;
-    build_target: The target code coverage was built for.
     diff_mapping: A map whose key is a file name that is relative to the source
                   root, and the corresponding value is another map that maps
                   from local diff's line number to Gerrit diff's line number as
@@ -253,7 +252,7 @@ def to_compressed_file_record(file_coverage_data, constants_file, build_target,
     constants = json.load(f)
 
   coverage_path = code_coverage_util.clean_file_name(
-      file_coverage_data['filename'], constants, build_target)
+      file_coverage_data['filename'], constants)
 
   # Skip files that we don't know how to map to the chromiumos repo.
   if coverage_path is None:
@@ -359,13 +358,11 @@ def _convert_clang_summary_to_metadata(clang_summary):
   } for k, v in sorted(clang_summary.iteritems())]
 
 
-def load_files_coverage_data(coverage_files, constants_file, build_target,
-                             diff_mapping):
+def load_files_coverage_data(coverage_files, constants_file, diff_mapping):
   """Loads coverage data from json files
 
   Args:
     coverage_files: List of absolute paths to coverage json.
-    build_target: The target code coverage was built for.
     diff_mapping: A json object that stores the diff mapping. Only meaningful to
                   per-cl coverage.
 
@@ -382,7 +379,7 @@ def load_files_coverage_data(coverage_files, constants_file, build_target,
     for datum in data['data']:
       for file_data in datum['files']:
         record = to_compressed_file_record(file_data, constants_file,
-                                           build_target, diff_mapping)
+                                           diff_mapping)
         if record is not None:
           path = record['path']
           if path in path_to_coverage_file:
@@ -419,13 +416,12 @@ def load_files_coverage_data(coverage_files, constants_file, build_target,
 
 
 def convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
-                     constants_file, build_target, diff_mapping):
+                     constants_file, diff_mapping):
   """Convert coverage metadata from LLVM format.
 
   Args:
     coverage_files: The coverage files to process.
     output_dir: Output directory for the generated artifacts.
-    build_target: The target code coverage was built for.
     diff_mapping: A json object that stores the diff mapping. Only meaningful to
                   per-cl coverage.
 
@@ -436,7 +432,7 @@ def convert_metadata(coverage_files, checkout_dir, project_dir, output_dir,
   logging.info('Processing coverage data ...')
   start_time = time.time()
   files_coverage_data = load_files_coverage_data(coverage_files, constants_file,
-                                                 build_target, diff_mapping)
+                                                 diff_mapping)
 
   per_directory_coverage_data = {}
   if diff_mapping is None:
@@ -532,9 +528,6 @@ def main():
   if params.diff_mapping_path and not os.path.isfile(params.diff_mapping_path):
     raise RuntimeError('Diff mapping %s is missing' % params.diff_mapping_path)
 
-  if not params.build_target:
-    raise RuntimeError('Build target is required')
-
   diff_mapping = None
   if params.diff_mapping_path:
     with open(params.diff_mapping_path) as f:
@@ -543,7 +536,7 @@ def main():
   compressed_data = convert_metadata([params.path_to_coverage_file],
                                      params.checkout_dir, params.project_dir,
                                      params.output_dir, params.constants_file,
-                                     params.build_target, diff_mapping)
+                                     diff_mapping)
 
   with open(os.path.join(params.output_dir, 'all.json.gz'), 'wb') as f:
     f.write(zlib.compress(json.dumps(compressed_data)))

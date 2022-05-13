@@ -2903,7 +2903,7 @@
       "@@@STEP_LOG_LINE@response@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
       "@@@STEP_LOG_LINE@response@    \"path\": \"/build/amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -4602,18 +4602,18 @@
       "@@@STEP_LOG_LINE@response@    {@@@",
       "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/base.bin\", @@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/base.bin\",@@@",
       "@@@STEP_LOG_LINE@response@      \"type\": \"IMAGE_TYPE_BASE\"@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
       "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@response@        \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@response@      }, @@@",
-      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/test.bin\", @@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/test.bin\",@@@",
       "@@@STEP_LOG_LINE@response@      \"type\": \"IMAGE_TYPE_TEST\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ], @@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
       "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -5328,7 +5328,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/clean_coverage_file.py",
       "--coverage-file",
       "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
@@ -5601,7 +5601,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/convert_coverage_metadata_from_llvm.py",
       "--checkout-dir",
       "[CLEANUP]/chromiumos_workspace",
@@ -5612,9 +5612,7 @@
       "--constants-file",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/constants.json",
       "--path-to-coverage-file",
-      "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
-      "--build-target",
-      "sarien"
+      "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {

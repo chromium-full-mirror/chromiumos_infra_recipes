@@ -10,6 +10,8 @@ DEPS = [
     'recipe_engine/cq',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 
@@ -20,8 +22,7 @@ def RunSteps(api):
     api.build_menu.bootstrap_sysroot()
     api.build_menu.install_packages()
     api.build_menu.build_and_test_images()
-    api.code_coverage.upload_firmware_lcov('sarien',
-                                           '[START_DIR]/coverage.tbz2')
+    api.code_coverage.upload_firmware_lcov('[START_DIR]/coverage.tbz2')
 
 
 def GenTests(api):

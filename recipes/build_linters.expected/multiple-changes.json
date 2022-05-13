@@ -3765,7 +3765,7 @@
       "@@@STEP_LOG_LINE@response@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"name\": \"atlas\"@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
       "@@@STEP_LOG_LINE@response@    \"path\": \"/build/atlas\"@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",

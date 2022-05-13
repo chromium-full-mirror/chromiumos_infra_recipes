@@ -2855,7 +2855,7 @@
       "@@@STEP_LOG_LINE@response@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@response@      \"name\": \"arm-generic\"@@@",
-      "@@@STEP_LOG_LINE@response@    }, @@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
       "@@@STEP_LOG_LINE@response@    \"path\": \"/build/arm-generic\"@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
