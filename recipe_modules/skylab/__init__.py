@@ -15,6 +15,7 @@ DEPS = [
     'easy',
     'git_footers',
     'greenness',
+    'metadata',
     'src_state',
 ]
 

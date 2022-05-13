@@ -38,19 +38,22 @@ def RunSteps(api):
       'chromeos_13414.0.0_octopus_canary-channel_full_test.bin-def')
   src_artifact_uri_13414 = ('gs://chromeos-releases/canary-channel/octopus/'
                             '13414.0.0')
+  tgt_container_metadata_uri = 'gs://chromeos-releases/canary-channel/octopus/13414.0.0/metadata/containers.jsonpb'
   paygen_test_config_13414 = api.cros_paygen.PaygenTestConfig(
       test_build_target=test_build_target, build_target_name=build_target_name,
       tgt_channel=tgt_channel, tgt_payload_uri=tgt_payload_uri,
-      tgt_archive_uri=tgt_archive_uri, tgt_version=tgt_version,
-      src_payload_uri=src_payload_uri_13414,
+      tgt_archive_uri=tgt_archive_uri,
+      tgt_container_metadata_uri=tgt_container_metadata_uri,
+      tgt_version=tgt_version, src_payload_uri=src_payload_uri_13414,
       src_artifact_uri=src_artifact_uri_13414, src_version=src_version_13414,
       is_delta_update=True, delta_type=delta_type_omaha,
       applicable_models=applicable_models)
   paygen_test_config_13414_no_models = api.cros_paygen.PaygenTestConfig(
       test_build_target=test_build_target, build_target_name=build_target_name,
       tgt_channel=tgt_channel, tgt_payload_uri=tgt_payload_uri,
-      tgt_archive_uri=tgt_archive_uri, tgt_version=tgt_version,
-      src_payload_uri=src_payload_uri_13414,
+      tgt_archive_uri=tgt_archive_uri,
+      tgt_container_metadata_uri=tgt_container_metadata_uri,
+      tgt_version=tgt_version, src_payload_uri=src_payload_uri_13414,
       src_artifact_uri=src_artifact_uri_13414, src_version=src_version_13414,
       is_delta_update=True, delta_type=delta_type_omaha, applicable_models=[])
 
@@ -63,8 +66,9 @@ def RunSteps(api):
   paygen_test_config_13413 = api.cros_paygen.PaygenTestConfig(
       test_build_target=test_build_target, build_target_name=build_target_name,
       tgt_channel=tgt_channel, tgt_payload_uri=tgt_payload_uri,
-      tgt_archive_uri=tgt_archive_uri, tgt_version=tgt_version,
-      src_payload_uri=src_payload_uri_13413,
+      tgt_archive_uri=tgt_archive_uri,
+      tgt_container_metadata_uri=tgt_container_metadata_uri,
+      tgt_version=tgt_version, src_payload_uri=src_payload_uri_13413,
       src_artifact_uri=src_artifact_uri_13413, src_version=src_version_13413,
       is_delta_update=True, delta_type=delta_type_omaha,
       applicable_models=applicable_models)

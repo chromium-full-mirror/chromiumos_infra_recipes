@@ -13,11 +13,22 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
+  gs_bucket = 'chromeos-image-archive'
+  gs_path = 'target-cq/R12-3.4.5-6789'
+  metadata_rel_path = 'metadata/containers.jsonpb'
+  # Check relative path
   api.assertions.assertEqual(
       api.metadata.gspath(
           api.metadata.METADATA_PAYLOADS['container'],
       ),
-      'metadata/containers.jsonpb',
+      metadata_rel_path,
+  )
+
+  # Check full path
+  api.assertions.assertEqual(
+      api.metadata.gspath(api.metadata.METADATA_PAYLOADS['container'],
+                          gs_bucket, gs_path),
+      'gs://{}/{}/{}'.format(gs_bucket, gs_path, metadata_rel_path),
   )
 
   # Force coverage on mock metadata

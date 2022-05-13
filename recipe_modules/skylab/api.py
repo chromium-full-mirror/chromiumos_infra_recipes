@@ -14,7 +14,6 @@ from recipe_engine import recipe_api
 from . import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
@@ -129,6 +128,9 @@ class SkylabApi(recipe_api.RecipeApi):
       gs_url = ('gs://' + image_bucket + '/' + image_path)
       req.params.metadata.test_metadata_url = gs_url
       req.params.metadata.debug_symbols_archive_url = gs_url
+      container_metadata_info = self.m.metadata.METADATA_PAYLOADS['container']
+      req.params.metadata.container_metadata_url = self.m.metadata.gspath(
+          container_metadata_info, image_bucket, image_path)
       self._set_pool(req.params.scheduling, uht.hw_test.pool)
       sw_dep = req.params.software_dependencies.add()
       sw_dep.chromeos_build = image_path
@@ -193,7 +195,7 @@ class SkylabApi(recipe_api.RecipeApi):
             # If container execution support is enabled, then we can handle
             # requests to opt-in test execution via containers.
             #
-            # If a test config has run_via_container set, then check that we have
+            # If a test config has run_via_cft set, then check that we have
             # container metadata for the build target we're testing, and pass it
             # through via the Request's execution parameters.
             if self._enable_container_support and uht.hw_test.run_via_cft:
@@ -207,14 +209,8 @@ class SkylabApi(recipe_api.RecipeApi):
                   "but no container metadata for build target '{}'".format(build_target)
                 continue
               else:
+                request.params.run_via_cft = True
                 configure_step.step_summary_text = "(Executing via container)"
-
-              # Pass down relevant container metadata to be used in CFT workflow.
-              container_image_map = container_metadata.containers[build_target]
-              req_container_metadata = ContainerMetadata(
-                  containers={build_target: container_image_map})
-              request.params.execution_param.container_metadata.CopyFrom(
-                  req_container_metadata)
 
             # TODO (b/217973414): Replace with MessageToJson once we don't need
             # to fix the separator spacing between py2 and py3 MessageToJson.

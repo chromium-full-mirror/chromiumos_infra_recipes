@@ -901,17 +901,9 @@ class OrchMenuApi(RecipeApi):
                 skipped.append((build_target, 'no artifacts path'))
                 continue
 
-              payload_path = self.m.path.join(
-                  gs_bucket,
-                  gs_path,
-                  self.m.metadata.gspath(metadata_info),
-              )
-
-              # Force path to have a gs:// prefix.
-              prefix = '' if payload_path.startswith('gs://') else 'gs://'
-              payload_path = prefix + payload_path
-
               # Download the build's metadata payload.
+              payload_path = self.m.metadata.gspath(metadata_info, gs_bucket,
+                                                    gs_path)
               result = self.m.gsutil.cat(
                   payload_path,
                   name='reading payload for {}'.format(build_target),

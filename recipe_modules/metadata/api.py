@@ -48,17 +48,32 @@ class MetadataApi(recipe_api.RecipeApi):
       'container': CONTAINER_METADATA_INFO,
   }
 
-  def gspath(self, metadata_info):
-    """Return relative path to a metadata payload.
+  def gspath(self, metadata_info, gs_bucket=None, gs_path=None):
+    """Return full or relative path to a metadata payload
+    depending on if bucket info is provided or not.
 
     Args:
       metadata_info (MetadataInfo): Metadata config information
+      gs_bucket (str): optional gs bucket
+      gs_path (str): optional gs path
 
     Returns:
-      The relative GCS path for metadata.
+      The relative GCS path for metadata if gs_bucket, gs_path not provided.
+      Otherwise, returns the full GCS path to metadata.
     """
+    if not gs_bucket and not gs_path:
+      return self.m.path.join(
+          MetadataApi.METADATA_GSDIR,
+          metadata_info.filename,
+      )
 
-    return self.m.path.join(
+    full_gcs_path = self.m.path.join(
+        gs_bucket,
+        gs_path,
         MetadataApi.METADATA_GSDIR,
         metadata_info.filename,
     )
+
+    # Force path to have a gs:// prefix.
+    prefix = '' if full_gcs_path.startswith('gs://') else 'gs://'
+    return '{}{}'.format(prefix, full_gcs_path)

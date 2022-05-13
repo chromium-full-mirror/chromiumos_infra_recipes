@@ -93,8 +93,9 @@ class PaygenTestConfig(object):
       '%(chromeos_build_name)s-%(tgt_channel)s-%(model)s')
 
   def __init__(self, test_build_target, build_target_name, tgt_channel,
-               tgt_version, tgt_payload_uri, tgt_archive_uri, is_delta_update,
-               delta_type, src_version, src_payload_uri, src_artifact_uri,
+               tgt_version, tgt_payload_uri, tgt_archive_uri,
+               tgt_container_metadata_uri, is_delta_update, delta_type,
+               src_version, src_payload_uri, src_artifact_uri,
                applicable_models=None, quota_scheduler_account=QS_ACCOUNT,
                quota_scheduler_label_pool=LABEL_POOL):
     """Initialize a test configuration.
@@ -109,6 +110,7 @@ class PaygenTestConfig(object):
       tgt_version (str): The target image version (e.g. '13373.0.0').
       tgt_payload_uri (str): The target payload URI.
       tgt_archive_uri (str): The location of target build archive artifacts.
+      tgt_container_metadata_uri (str): The location of target container metadata.
       is_delta_update (bool): Whether this is a delta update test.
       delta_type (DeltaType): The type of update to do with the payload.
       src_version (str): The source image version (e.g. '13373.0.0').
@@ -123,6 +125,7 @@ class PaygenTestConfig(object):
     self._tgt_version = tgt_version
     self._tgt_payload_uri = tgt_payload_uri
     self._tgt_archive_uri = tgt_archive_uri
+    self._tgt_container_metadata_uri = tgt_container_metadata_uri
 
     self._src_version = src_version
     self._src_payload_uri = src_payload_uri
@@ -279,6 +282,7 @@ class PaygenTestConfig(object):
 
     params.metadata.test_metadata_url = self._tgt_archive_uri
     params.metadata.debug_symbols_archive_url = self._tgt_archive_uri
+    params.metadata.container_metadata_url = self._tgt_container_metadata_uri
 
     params.decorations.autotest_keyvals['build'] = self._chromeos_build_name
     params.decorations.autotest_keyvals['suite'] = self._suite_name
@@ -1099,6 +1103,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     tgt_archive_uri = tgt_image.archive_uri
     src_artifact_uri = src_image._artifact_root.uri
 
+    container_metadata_info = self.m.metadata.METADATA_PAYLOADS['container']
+    tgt_container_metadata_uri = self.m.path.join(
+        src_artifact_uri, self.m.metadata.gspath(container_metadata_info))
+
     # Fetch target test requirements to get the proper build target.
     # We can't take the build target directly from the artifact because it won't
     # necessarily match what CTP expects (e.g. atlas-kernelnext vs atlas).
@@ -1124,6 +1132,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         test_build_target=test_build_target,
         build_target_name=build_target_name, tgt_channel=tgt_channel,
         tgt_payload_uri=tgt_payload.uri, tgt_archive_uri=tgt_archive_uri,
+        tgt_container_metadata_uri=tgt_container_metadata_uri,
         tgt_version=tgt_version, src_payload_uri=src_payload.uri,
         src_artifact_uri=src_artifact_uri, src_version=src_version,
         is_delta_update=is_delta_update, delta_type=delta_type,
