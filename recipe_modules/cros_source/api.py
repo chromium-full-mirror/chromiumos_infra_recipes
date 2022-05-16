@@ -1468,7 +1468,8 @@ class CrosSourceApi(RecipeApi):
 
       with self.m.step.nest('commit uprevs'):
         # Cycle through the modifed ebuild and push the change.
-        for repository, requests in modified_ebuilds_by_repository.items():
+        for repository, requests in sorted(
+            modified_ebuilds_by_repository.items()):
           repo_name = self.m.path.relpath(repository,
                                           self.m.src_state.workspace_path)
           with self.m.context(cwd=self.m.path.abs_to_path(repository)):
@@ -1491,7 +1492,8 @@ class CrosSourceApi(RecipeApi):
       all_uprevs_passed = True
       failed_uprevs = []
       passed_uprevs = []
-      for repository, requests in modified_ebuilds_by_repository.items():
+      for repository, requests in sorted(
+          modified_ebuilds_by_repository.items()):
         repo_name = self.m.path.relpath(repository,
                                         self.m.src_state.workspace_path)
         with self.m.step.nest('push to {}'.format(repo_name)) as push_pres:
@@ -1557,8 +1559,8 @@ class CrosSourceApi(RecipeApi):
         # If they all eventually succeeded, the step was successful.
         push_uprevs_pres.status = self.m.step.SUCCESS
       else:
-        push_uprevs_pres.logs['Failed Uprevs'] = failed_uprevs
-      push_uprevs_pres.logs['Passed Uprevs'] = passed_uprevs
+        push_uprevs_pres.logs['Failed Uprevs'] = sorted(failed_uprevs)
+      push_uprevs_pres.logs['Passed Uprevs'] = sorted(passed_uprevs)
 
       return all_uprevs_passed
 

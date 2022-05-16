@@ -17,7 +17,11 @@ The annealing builders run in serial and do the following:
 """
 
 import collections
-import urlparse
+import json
+
+from six.moves import urllib
+import base64
+import zlib
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties
@@ -25,8 +29,6 @@ from PB.chromite.api.packages import RevBumpChromeRequest
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
-
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -51,6 +53,8 @@ DEPS = [
     'repo',
     'src_state',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = AnnealingProperties
 
@@ -302,7 +306,9 @@ def _sync_manifest(api, _properties, manifest_ref, prior_internal,
     for e_path in e_paths:
       if api.git.diff_check(e_path):
         diff_paths[repo].append(api.path.abspath(e_path))
-    presentation.logs['diffs'] = [str(diff_paths)]
+    presentation.logs['diffs'] = [
+        json.dumps(diff_paths, sort_keys=True, indent=2, separators=(',', ':'))
+    ]
     return diff_paths
 
 
@@ -323,8 +329,8 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
   uprev_info = []
   with api.step.nest('uprev packages'):
     response = api.cros_source.uprev_packages(workspace_path)
-    compressed_response = response.SerializeToString().encode(
-        'zlib_codec').encode('base64_codec')
+    compressed_response = base64.b64encode(
+        zlib.compress(response.SerializeToString()))
     api.easy.set_properties_step(compressed_uprev_response=compressed_response)
     for ebuild in response.modified_ebuilds:
       # TODO(b/192099206): When recipes moves to python3 clean this up with
@@ -477,7 +483,7 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
 
 def _make_gitiles_commit(_api, repo_url, ref, commit_id):
   """Create a GitilesCommit for the given |repo_url|, |ref|, and |commit_id|."""
-  url = urlparse.urlparse(repo_url)
+  url = urllib.parse.urlparse(repo_url)
   return GitilesCommit(
       host=url.hostname,
       project=url.path[1:], # strip leading /
@@ -548,17 +554,18 @@ def GenTests(api):
       'no-snapshot-identifier',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest', stdout=api.raw_io.output(
+          'generate internal manifest', stdout=api.raw_io.output_text(
               '<manifest visibility="internal">'
               '<project name="NAME" remote="cros-internal" revision="TO_REV"/>'
               '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" remote="cros-internal" '
               'revision="FROM_REV"/></manifest>')),
       api.git_footers.step_data(
@@ -571,17 +578,18 @@ def GenTests(api):
       'snapshot-manifest-has-manifest-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -602,17 +610,18 @@ def GenTests(api):
                       ])
               ])),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -639,17 +648,18 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='main', publish_uprevs=True,
                               dry_run=False)), api.git.diff_check(True),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -662,17 +672,18 @@ def GenTests(api):
       'no-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="FROM_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="FROM_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="FROM_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="FROM_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.post_check(post_process.DoesNotRun, 'record new gerrit changes'),
@@ -684,17 +695,18 @@ def GenTests(api):
       'no-gerrit-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -709,17 +721,18 @@ def GenTests(api):
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=True)),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -733,27 +746,29 @@ def GenTests(api):
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
-      api.step_data(('push uprevs.push to src/private-overlay.git push '
-                     'src/private-overlay'), retcode=1,
-                    stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
-                                             '-main	[rejected] (fetch first)')),
+      api.step_data(
+          ('push uprevs.push to src/private-overlay.git push '
+           'src/private-overlay'), retcode=1,
+          stdout=api.raw_io.output_text('!	HEAD:refs/heads/staging-infra'
+                                        '-main	[rejected] (fetch first)')),
       api.step_data(
           'push uprevs.push to src/overlay.git push src/overlay', retcode=1,
-          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra'
-                                   '-main	[rejected] (fetch first)')),
+          stdout=api.raw_io.output_text('!	HEAD:refs/heads/staging-infra'
+                                        '-main	[rejected] (fetch first)')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
@@ -771,28 +786,29 @@ def GenTests(api):
       api.properties(
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data(
           ('push uprevs.push to src/private-overlay.git push '
            'src/private-overlay'), retcode=1,
-          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra-main	'
-                                   '[rejected] (non-fast-forward)')),
+          stdout=api.raw_io.output_text('!	HEAD:refs/heads/staging-infra-main	'
+                                        '[rejected] (non-fast-forward)')),
       api.step_data(
           'push uprevs.push to src/overlay.git push src/overlay', retcode=1,
-          stdout=api.raw_io.output('!	HEAD:refs/heads/staging-infra-main	'
-                                   '[rejected] (non-fast-forward)')),
+          stdout=api.raw_io.output_text('!	HEAD:refs/heads/staging-infra-main	'
+                                        '[rejected] (non-fast-forward)')),
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(
@@ -811,7 +827,7 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='snapshot', dry_run=False)),
       api.step_data(
           ('push uprevs.push to src/private-overlay.git push '
-           'src/private-overlay'), retcode=1, stdout=api.raw_io.output(
+           'src/private-overlay'), retcode=1, stdout=api.raw_io.output_text(
                ' ! [remote rejected]   HEAD -> main (no new changes)')),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
                      'src/overlay'),
@@ -824,7 +840,7 @@ def GenTests(api):
                               publish_uprevs=True)),
       api.step_data(('push uprevs.push to src/private-overlay.git push '
                      'src/private-overlay'), retcode=1,
-                    stdout=api.raw_io.output(
+                    stdout=api.raw_io.output_text(
                         ('!	HEAD:refs/heads/staging-'
                          'infra-main	[rejected] (fetch first)'))),
       api.step_data(
@@ -889,17 +905,18 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -928,17 +945,18 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -951,19 +969,20 @@ def GenTests(api):
       'only-ignored-gerrit-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest', stdout=api.raw_io.output(
+          'generate internal manifest', stdout=api.raw_io.output_text(
               '<manifest visibility="internal">'
               '<project name="NAME" revision="TO_REV"/>'
               '<project name="SNAP" revision="TO_REV"><annotation '
               'name="snapshot-mode" value="ignore-diff"/></project>'
               '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="TO_REV" />'
               '<project name="SNAP" revision="FROM_REV"><annotation '
               'name="snapshot-mode" value="ignore-diff"/></project>'
@@ -978,17 +997,18 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='snapshot',
                               disable_gerrit_commits_in_commit_message=True)),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -1009,17 +1029,18 @@ def GenTests(api):
       'downrev',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data('check reachability.git merge-base', retcode=1),
@@ -1036,17 +1057,18 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='staging-snapshot', dry_run=True,
                               publish_uprevs=False)),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.git_footers.step_data(
@@ -1062,17 +1084,18 @@ def GenTests(api):
           AnnealingProperties(manifest_ref='snapshot',
                               ignore_downrev_paths=['NAME'])),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data('check reachability.git merge-base', retcode=1),
@@ -1087,17 +1110,18 @@ def GenTests(api):
       'cq-deps-failure',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
-          'generate external manifest',
-          stdout=api.raw_io.output('<manifest visibility="external">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'generate internal manifest',
-          stdout=api.raw_io.output('<manifest visibility="internal">'
-                                   '<project name="NAME" revision="TO_REV"/>'
-                                   '</manifest>')),
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
       api.step_data(
-          'diff remote and local manifest.git show', stdout=api.raw_io.output(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data('ensure manifest cq-depend fulfilled.git log', retcode=3),
