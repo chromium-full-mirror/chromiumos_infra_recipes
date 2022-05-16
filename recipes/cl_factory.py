@@ -54,6 +54,8 @@ DEPS = [
     'workspace_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 _CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
 _CHANGE_ID_REGEX = re.compile(r'^Change-Id: ', re.MULTILINE)
 
@@ -204,7 +206,7 @@ def _make_cl(api, info, properties, gerrit_changes):
   api.git.add([project_path])
   test_stdout = '- before text\n+ after text'
   diff = api.easy.stdout_step('grab a diff', ['git', 'diff', '--cached'],
-                              test_stdout=test_stdout)
+                              test_stdout=test_stdout).decode('utf-8')
   api.git.commit(commit_message)
   cl = api.gerrit.create_change(
       project=project_path,
@@ -268,7 +270,7 @@ def _determine_sync_projects(api, gc_infos, cl_infos, properties):
   projects.add(_CHROMIOUS_CONFIG_PROJECT)
   program_infos = api.repo.project_infos(regexes=['chromeos/program'])
   projects.update(set([i.name for i in program_infos]))
-  return list(projects)
+  return sorted(list(projects))
 
 
 def _replace_strings(api, properties):
@@ -284,7 +286,7 @@ def _replace_strings(api, properties):
                                           api.context.cwd, rs.file_glob,
                                           test_data=['file.txt', 'file.star']):
         filedata = api.file.read_raw('read {}'.format(filename), filename,
-                                     test_data='hello world')
+                                     test_data='hello world').decode('utf-8')
         filedata = filedata.replace(rs.before, rs.after)
         api.file.write_raw('write {}'.format(filename), filename, str(filedata))
 

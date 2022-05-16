@@ -2447,8 +2447,8 @@
       "chromeos/program/galaxy",
       "chromiumos/config",
       "project-a",
-      "project-c",
-      "project-b"
+      "project-b",
+      "project-c"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

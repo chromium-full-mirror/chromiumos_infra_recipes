@@ -2293,10 +2293,10 @@
       "sync",
       "--current-branch",
       "--verbose",
+      "chromiumos/config",
       "project-a",
-      "project-c",
       "project-b",
-      "chromiumos/config"
+      "project-c"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

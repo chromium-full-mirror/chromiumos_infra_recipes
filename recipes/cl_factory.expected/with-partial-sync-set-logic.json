@@ -2443,11 +2443,11 @@
       "--current-branch",
       "--verbose",
       "a",
-      "c",
       "b",
-      "e",
+      "c",
+      "chromiumos/config",
       "d",
-      "chromiumos/config"
+      "e"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
