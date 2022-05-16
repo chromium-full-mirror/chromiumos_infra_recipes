@@ -105,13 +105,16 @@ class TastExecApi(RecipeApi):
           'untar tast',
           ['tar', 'xjf', sp_tar_file, '--directory', test_artifacts_dir])
 
-  def download_vm(self, build_payload, vm_dir):
+  def download_vm(self, build_payload, vm_dir, modify_image=None):
     """Downloads the VM image from specified build artifacts.
 
     Args:
       build_payload (BuildPayload): Describes where the artifact is on GS.
       vm_dir (Path): The directory to which files should be
         downloaded.
+      modify_image (func): Function that takes one argument, the VM
+        image path. It will be called prior to converting the raw image
+        to the qcow2 format. (optional).
 
     Returns:
       qcow_image_path (Path): The location of the qcow image. This will be
@@ -132,6 +135,9 @@ class TastExecApi(RecipeApi):
       self.m.archive.extract('unzip image bundle', test_image_zip,
                              test_image_dir,
                              include_files=[VM_IMAGE_NAME, PRIVATE_KEY_NAME])
+
+      if modify_image:
+        modify_image(vm_image_path)
 
       self.m.step('convert image to qcow format', [
           'qemu-img', \

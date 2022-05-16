@@ -7748,7 +7748,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#454)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#460)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7767,7 +7767,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#376)(self, qcow_image_path, private_key_path):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#382)(self, qcow_image_path, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -7791,7 +7791,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#108)(self, build_payload, vm_dir):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#108)(self, build_payload, vm_dir, modify_image=None):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -7799,6 +7799,9 @@ Args:
   build_payload (BuildPayload): Describes where the artifact is on GS.
   vm_dir (Path): The directory to which files should be
     downloaded.
+  modify_image (func): Function that takes one argument, the VM
+    image path. It will be called prior to converting the raw image
+    to the qcow2 format. (optional).
 
 Returns:
   qcow_image_path (Path): The location of the qcow image. This will be
@@ -7806,7 +7809,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#237)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#243)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -7819,7 +7822,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#200)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#206)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -7833,7 +7836,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#147)(self, suite_name, vm_context, tast_inputs):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#153)(self, suite_name, vm_context, tast_inputs):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
@@ -11243,11 +11246,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#23)(api, properties):**
 ### *recipes* / [tast\_exec:examples/run](/recipe_modules/tast_exec/examples/run.py)
 
-[DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#21)(api):**
 ### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

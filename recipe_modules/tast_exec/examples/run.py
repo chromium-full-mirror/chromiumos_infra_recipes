@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
@@ -25,11 +26,22 @@ def RunSteps(api):
           artifacts_gs_path='path',
       ), test_artifacts)
   vm_dir = api.path.mkdtemp(prefix='temp')
+
+  # Use a dict rather than a bool so that it can be modified within the
+  # nested scope.
+  image_modified = {}
+
+  def modify_image(image_path):
+    image_modified[image_path] = True
+
   qcow_image, private_key_path = api.tast_exec.download_vm(
       BuildPayload(
           artifacts_gs_bucket='bucket',
           artifacts_gs_path='path',
-      ), vm_dir)
+      ), vm_dir, modify_image=modify_image)
+
+  api.assertions.assertTrue(image_modified)
+
   vm_context = api.tast_exec.create_qemu_vm_context(qcow_image,
                                                     private_key_path)
 
