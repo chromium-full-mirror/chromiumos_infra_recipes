@@ -340,7 +340,6 @@
   * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures) (Python3 ✅)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures) (Python3 ✅)
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
-  * [forge_commit](#recipes-forge_commit) (Python3 ✅) &mdash; Recipe for forcing forge commit failure.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
@@ -10207,19 +10206,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 Recipe that schedules child builders and watches for failures.
 
 &mdash; **def [RunSteps](/recipes/firmware_cq_orchestrator.py#27)(api):**
-### *recipes* / [forge\_commit](/recipes/forge_commit.py)
-
-[DEPS](/recipes/forge_commit.py#13): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-Recipe for forcing forge commit failure.
-
-Recipe used to force a forge commit failure so the failure response
-can be analyzed to determine what user is being used for the invocation.
-See https://crbug.com/1068743.
-
-&mdash; **def [RunSteps](/recipes/forge_commit.py#28)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
