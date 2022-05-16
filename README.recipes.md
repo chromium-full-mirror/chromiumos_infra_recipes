@@ -7748,7 +7748,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#473)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#490)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7809,6 +7809,16 @@ Returns:
     a location inside image_archive_dir.
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
+
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#463)(self, kvm_pid_file):**
+
+Check if the specified PID is still running.
+
+Args:
+  kvm_pid_file (Path): File containing the PID of a QEMU process.
+
+Returns:
+  bool: Whether the VM process is still running.
 
 &mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#243)(self, dut_name, tast_inputs, test_results_dir):**
 
@@ -11247,11 +11257,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/sysroot_util/tests/update_artifact_for_build.py#23)(api, properties):**
 ### *recipes* / [tast\_exec:examples/run](/recipe_modules/tast_exec/examples/run.py)
 
-[DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#22)(api):**
 ### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

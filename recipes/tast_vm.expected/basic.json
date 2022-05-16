@@ -377,6 +377,18 @@
   },
   {
     "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.first tast iteration.check if VM running",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "pkill",
       "-F",
       "[CLEANUP]/kvm-pid_tmp_1"

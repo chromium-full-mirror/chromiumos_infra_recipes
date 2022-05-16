@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'tast_exec',
 ]
 
@@ -73,6 +74,11 @@ def RunSteps(api):
                                ), private_key_path,
                                run_args=['-var=myVar=myVal']))
 
+  # Just run the VM context in isolation to test VM kill.
+  with api.step.nest('run VM context'):
+    with vm_context():
+      pass
+
   # Run with GCE VM
   vm_context = api.tast_exec.create_gce_vm_context('image', 'project',
                                                    'machine', 'zone', 'network',
@@ -99,4 +105,19 @@ def GenTests(api):
       api.properties(**{'$chromeos/tast_exec': {
           'public_builder': True
       }}),
+  )
+
+  # Test killing the VM: if the VM has not exited when the VM context
+  # ends it should be killed, otherwise not.
+  yield api.test(
+      'normal VM exit',
+      api.step_data('run VM context.check if VM running', retcode=0),
+      api.post_check(post_process.MustRun, 'run VM context.kill vm'),
+      api.post_process(post_process.DropExpectation),
+  )
+  yield api.test(
+      'run VM context',
+      api.step_data('run VM context.check if VM running', retcode=1),
+      api.post_check(post_process.DoesNotRun, 'run VM context.kill vm'),
+      api.post_process(post_process.DropExpectation),
   )

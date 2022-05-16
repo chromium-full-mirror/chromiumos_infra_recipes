@@ -567,6 +567,30 @@
   },
   {
     "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.check if VM running",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "pkill",
       "-F",
       "[CLEANUP]/kvm-pid_tmp_1"
@@ -1386,6 +1410,27 @@
   },
   {
     "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check if VM running"
+  },
+  {
+    "cmd": [
       "pkill",
       "-F",
       "[CLEANUP]/kvm-pid_tmp_2"
@@ -1831,6 +1876,27 @@
   },
   {
     "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_3"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check if VM running (2)"
+  },
+  {
+    "cmd": [
       "pkill",
       "-F",
       "[CLEANUP]/kvm-pid_tmp_3"
@@ -1917,6 +1983,227 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@kvm-monitor-serial_tmp_3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run VM context"
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_4",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_4",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_4",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none",
+      "-device",
+      "scsi-hd,drive=hd2",
+      "-drive",
+      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_4"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.check if VM running",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_4"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run VM context.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_4",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_4",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_4@@@"
     ]
   },
   {

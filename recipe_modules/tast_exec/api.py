@@ -460,8 +460,25 @@ class TastExecApi(RecipeApi):
       self._kill_vm(kvm_pid_file)
       raise
 
+  def is_vm_running(self, kvm_pid_file):
+    """Check if the specified PID is still running.
+
+    Args:
+      kvm_pid_file (Path): File containing the PID of a QEMU process.
+
+    Returns:
+      bool: Whether the VM process is still running.
+    """
+    # Exits zero if the PID is still running, exits one if not. (Any
+    # other return code indicates an unexpected error).
+    result = self.m.step('check if VM running', ['pgrep', '-F', kvm_pid_file],
+                         infra_step=True, ok_ret=(0, 1))
+    return result.retcode == 0
+
   def _kill_vm(self, kvm_pid_file):
-    self.m.step('kill vm', ['pkill', '-F', kvm_pid_file])
+    # Don't try to kill the VM if it has already exited.
+    if self.is_vm_running(kvm_pid_file):
+      self.m.step('kill vm', ['pkill', '-F', kvm_pid_file])
 
   def _record_qemu_logs(self, kvm_monitor_file, kvm_monitor_serial_file):
     with self.m.step.nest('qemu logs') as presentation:
