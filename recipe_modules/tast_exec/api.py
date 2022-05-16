@@ -379,12 +379,14 @@ class TastExecApi(RecipeApi):
         [dut_name] + \
         list(tast_inputs.expressions), ok_ret='any', timeout=self._exec_timeout)
 
-  def create_qemu_vm_context(self, qcow_image_path, private_key_path):
+  def create_qemu_vm_context(self, qcow_image_path, private_key_path,
+                             second_image_path=None):
     """Creates a context manager which performs setup/teardown of a QEMU VM.
 
     Args:
       qcow_image_path (Path): Path to image in qcow format.
       private_key_path (Path): Path to private key.
+      second_image_path (Path): Path to a second qcow disk image (optional).
 
     Returns:
       A context manager that
@@ -400,7 +402,8 @@ class TastExecApi(RecipeApi):
       kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
 
       self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                      kvm_monitor_serial_file, private_key_path)
+                      kvm_monitor_serial_file, private_key_path,
+                      second_image_path)
       try:
         yield TastExecApi.VmInfo(QEMU_VM_HOST, QEMU_VM_PORT, kvm_pid_file)
       finally:
@@ -414,8 +417,8 @@ class TastExecApi(RecipeApi):
 
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                 kvm_monitor_serial_file, private_key_path):
-    self.m.step('launch image as vm', [
+                 kvm_monitor_serial_file, private_key_path, second_image_path):
+    qemu_args = [
         '/usr/bin/qemu-system-x86_64', \
         '-m', '8G', \
         '-smp', '8', \
@@ -440,7 +443,17 @@ class TastExecApi(RecipeApi):
             QEMU_VM_PORT), \
         '-enable-kvm', \
         '-display', 'none'
-    ], infra_step=True)
+    ]
+    if second_image_path is not None:
+      # The second device is attached the same way as the first, but
+      # with the default caching mode instead of "unsafe" to ensure that
+      # writes make it out to the image.
+      qemu_args += [
+          '-device', 'scsi-hd,drive=hd2', '-drive',
+          'if=none,id=hd2,file={},format=qcow2'.format(second_image_path)
+      ]
+
+    self.m.step('launch image as vm', qemu_args, infra_step=True)
     try:
       self._test_ssh_conn(QEMU_VM_HOST, QEMU_VM_PORT, private_key_path)
     except StepFailure:  # pragma: nocover
