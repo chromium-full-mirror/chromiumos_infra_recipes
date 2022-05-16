@@ -19,3 +19,5 @@ DEPS = [
     'goma',
     'workspace_util',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
