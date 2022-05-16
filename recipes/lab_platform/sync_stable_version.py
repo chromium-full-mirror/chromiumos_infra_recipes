@@ -15,6 +15,8 @@ DEPS = [
     'stable_version',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = SyncStableVersionProperties
 
 
@@ -50,5 +52,5 @@ def GenTests(api):
   yield api.test(
       'end-to-end-test-for-updating-stable-version',
       api.step_data('fetch and commit.call stable_version2.update-with-omaha',
-                    stdout=api.raw_io.output_text('http://CL/123')),
+                    stdout=api.raw_io.output('http://CL/123')),
   )

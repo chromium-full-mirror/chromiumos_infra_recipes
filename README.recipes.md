@@ -392,7 +392,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs) (Python3 ✅)
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kernel_checkconfig](#recipes-kernel_checkconfig) &mdash; Recipe for testing the kernel splitconfig normalization.
-  * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
+  * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) (Python3 ✅) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
@@ -10598,20 +10598,20 @@ and go/mini-splitconfigs.
 
 [DEPS](/recipes/lab_platform/sync_stable_version.py#11): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for sync stable vesrion for ChromeOS build targets & models.
 
-&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#40)(api, properties):**
+&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#42)(api, properties):**
 
-&mdash; **def [fetch\_and\_commit](/recipes/lab_platform/sync_stable_version.py#21)(api):**
+&mdash; **def [fetch\_and\_commit](/recipes/lab_platform/sync_stable_version.py#23)(api):**
 
 Fetch the newest stable version and commit it to config file on git.
 
 Returns:
   A string gerrit CL link.
 
-&mdash; **def [validate\_stable\_version](/recipes/lab_platform/sync_stable_version.py#31)(api):**
+&mdash; **def [validate\_stable\_version](/recipes/lab_platform/sync_stable_version.py#33)(api):**
 
 Validate the remote stable version config file.
 
