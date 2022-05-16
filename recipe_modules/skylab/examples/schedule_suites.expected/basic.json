@@ -272,7 +272,7 @@
     "name": "schedule skylab tests v2.create test requests.configure test-board-release-main (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@(Executing via container)@@@",
+      "@@@STEP_SUMMARY_TEXT@(Executing via CFT)@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"params\":{@@@",
       "@@@STEP_LOG_LINE@request@    \"decorations\":{@@@",
@@ -347,7 +347,7 @@
     "name": "schedule skylab tests v2.create test requests.configure test-board-release-main (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@(Executing via container)@@@",
+      "@@@STEP_SUMMARY_TEXT@(Executing via CFT)@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"params\":{@@@",
       "@@@STEP_LOG_LINE@request@    \"decorations\":{@@@",

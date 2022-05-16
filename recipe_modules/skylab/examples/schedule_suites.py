@@ -99,7 +99,6 @@ def GenTests(api):
               '$chromeos/skylab':
                   SkylabProperties(
                       enable_retries=True,
-                      enable_container_support=True,
                   )
           }))
 

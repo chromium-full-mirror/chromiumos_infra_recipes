@@ -33,7 +33,6 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
-    self._enable_container_support = properties.enable_container_support
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -164,11 +163,6 @@ class SkylabApi(recipe_api.RecipeApi):
 
     ####
     # Start of main body
-
-    # Unless we're specifically opted-in to container support, ignore container
-    # metadata.
-    if not self._enable_container_support:
-      container_metadata = None
     have_container_metadata = container_metadata is not None
 
     name = name or 'schedule skylab tests v2'
@@ -192,13 +186,10 @@ class SkylabApi(recipe_api.RecipeApi):
           with self.m.step.nest(step_name) as configure_step:
             request = create_test_request(uht)
 
-            # If container execution support is enabled, then we can handle
-            # requests to opt-in test execution via containers.
-            #
             # If a test config has run_via_cft set, then check that we have
-            # container metadata for the build target we're testing, and pass it
-            # through via the Request's execution parameters.
-            if self._enable_container_support and uht.hw_test.run_via_cft:
+            # container metadata for the build target we're testing, and set run_via_cft
+            # in the Request's execution parameters.
+            if uht.hw_test.run_via_cft:
               build_target = uht.unit.common.build_target.name
 
               if (not have_container_metadata or
@@ -210,7 +201,7 @@ class SkylabApi(recipe_api.RecipeApi):
                 continue
               else:
                 request.params.run_via_cft = True
-                configure_step.step_summary_text = "(Executing via container)"
+                configure_step.step_summary_text = "(Executing via CFT)"
 
             # TODO (b/217973414): Replace with MessageToJson once we don't need
             # to fix the separator spacing between py2 and py3 MessageToJson.
