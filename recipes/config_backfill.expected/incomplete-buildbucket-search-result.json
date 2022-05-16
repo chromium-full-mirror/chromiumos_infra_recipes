@@ -1747,7 +1747,7 @@
     "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@No search results available from BuildBucket.search@@@"
+      "@@@STEP_TEXT@Unable to create download payload for config.yaml@@@"
     ]
   },
   {
@@ -1782,7 +1782,9 @@
     "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"mybuilder-postsubmit\"}, \"id\": \"1234\", \"output\": {\"properties\": {\"artifacts\": {\"files_by_artifact\": {\"CHROMEOS_CONFIG\": [\"config.yaml\"], \"EBUILD_LOGS\": [\"ebuild_logs.tar.gz\"]}, \"gs_path\": \"custom/image-path-123\"}}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {

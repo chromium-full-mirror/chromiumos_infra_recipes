@@ -20,9 +20,14 @@ import urlparse
 from recipe_engine import post_process
 
 # import protos
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
+from PB.testplans.generate_test_plan import BuildPayload
 
 # Recipe dependencies
 DEPS = [
@@ -34,6 +39,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_artifacts',
     'cros_infra_config',
     'cros_source',
     'easy',
@@ -171,6 +177,61 @@ def create_portage_workaround(api):
     )
 
 
+def create_download_payload(build):
+  """Build a download payload.
+
+  Args:
+    build: a Build message with output properties
+
+  Return:
+    A BuildPayload if the Build message contains all the necessary
+    information, otherwise None
+  """
+  if 'artifacts' not in build.output.properties:
+    return None
+  artifacts = build.output.properties['artifacts']
+  if ('gs_bucket' not in artifacts or 'gs_path' not in artifacts or
+      'files_by_artifact' not in artifacts):
+    return None
+  return BuildPayload(artifacts_gs_bucket=artifacts['gs_bucket'],
+                      artifacts_gs_path=artifacts['gs_path'],
+                      files_by_artifact=artifacts['files_by_artifact'])
+
+
+def download_latest_config_yaml(api, builder_name):
+  """Download latest project config.yaml from GS.
+
+  Args:
+    api: Reference to recipes API
+    builder_name: the full name of the builder to search for
+
+  Return:
+    List containing the path where the downloaded config.yaml file resides,
+    or empty list if no GS path was found for the builder.
+  """
+
+  with api.step.nest('download latest config yaml') as presentation:
+    fields = frozenset({'output.properties'})
+    predicate = builds_service_pb2.BuildPredicate(
+        builder=builder_pb2.BuilderID(project='chromeos', bucket='postsubmit',
+                                      builder=builder_name),
+        tags=api.buildbucket.tags(relevance='relevant'), status='SUCCESS')
+    rsp = api.buildbucket.search(predicate, limit=1, fields=fields)
+    if len(rsp) == 0:
+      presentation.step_text = 'No search results available from BuildBucket.search'
+      return []
+    payload = create_download_payload(rsp[0])
+    if not payload:
+      presentation.step_text = 'Unable to create download payload for config.yaml'
+      return []
+    try:
+      return api.cros_artifacts.download_artifact(
+          payload, BuilderConfig.Artifacts.CHROMEOS_CONFIG)
+    except ValueError:
+      presentation.step_text = 'Unable to download config.yaml'
+      return []
+
+
 def config_merger(api, config, path_cros_repo, step_pres):
   """Create a closure to merge configs.
 
@@ -194,6 +255,12 @@ def config_merger(api, config, path_cros_repo, step_pres):
         config.program_name.lower(),
         config.project_name.lower(),
     ))
+
+    path_config_yaml = None
+    download_dirs = download_latest_config_yaml(
+        api, "{}-postsubmit".format(config.program_name.lower()))
+    if len(download_dirs) > 0:
+      path_config_yaml = download_dirs[0]
 
     path_imported = path_project_repo.join('imported')
     path_generated = path_project_repo.join('generated')
@@ -273,10 +340,15 @@ def config_merger(api, config, path_cros_repo, step_pres):
       cmd += ['--project-name', config.project_name]
       cmd += ['--program-name', config.program_name]
 
-      if path_public_yaml:
-        cmd += ['--public-model', path_public_yaml]
-      if path_private_yaml:
-        cmd += ['--private-model', path_private_yaml]
+      if path_config_yaml:
+        if path_public_yaml:
+          cmd += ['--public-model', path_config_yaml]
+      else:
+        if path_public_yaml:
+          cmd += ['--public-model', path_public_yaml]
+        if path_private_yaml:
+          cmd += ['--private-model', path_private_yaml]
+
       if path_hwid:
         cmd += ['--hwid', path_hwid]
 
@@ -508,6 +580,34 @@ def GenTests(api):
   def mock_workspace_path(path):
     return api.path.exists(api.src_state.workspace_path.join(path))
 
+  def generate_mock_build(include_artifacts=True, include_config_yaml=True,
+                          include_gs_bucket=True):
+    """Generate a mock BuildBucket search build result.
+
+    Use the arguments to generate different result corner cases.
+
+    Args:
+      include_artifacts: boolean
+      include_config_yaml: boolean
+      include_gs_bucket: boolean
+    """
+    files = {'EBUILD_LOGS': ['ebuild_logs.tar.gz']}
+    if include_config_yaml:
+      files['CHROMEOS_CONFIG'] = ['config.yaml']
+    artifacts = {'gs_path': 'custom/image-path-123', 'files_by_artifact': files}
+    if include_gs_bucket:
+      artifacts['gs_bucket'] = 'chromeos-image-archive'
+    properties = {}
+    if include_artifacts:
+      properties = {'artifacts': artifacts}
+    output = build_pb2.Build.Output()
+    output.properties.update(properties)
+    r = []
+    r.append(
+        build_pb2.Build(id=1234, builder={'builder': 'mybuilder-postsubmit'},
+                        status=common_pb2.SUCCESS, output=output))
+    return r
+
   def StepSummaryEquals(check, step_odict, step, expected):
     """Check that the step's step_summary_text equals given value.
 
@@ -585,6 +685,117 @@ def GenTests(api):
           '.Generate imported configuration', retcode=1),
       mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(post_process.StatusFailure),
+  )
+
+  yield api.test(
+      'buildbucket-search-result',
+      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.properties(
+          **{
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
+          }),
+      mock_workspace_path('src/project/test_program/test_project'),
+      api.buildbucket.simulated_search_results(
+          generate_mock_build(include_config_yaml=True),
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.download latest config yaml.buildbucket.search'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.download latest config yaml'
+          '.download CHROMEOS_CONFIG.gsutil download',
+          [
+              'cp',
+              'gs://chromeos-image-archive/custom/image-path-123/config.yaml'
+          ],
+      ),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'no-buildbucket-search-result',
+      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.properties(
+          **{
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
+          }),
+      mock_workspace_path('src/project/test_program/test_project'),
+      api.buildbucket.simulated_search_results(
+          generate_mock_build(include_config_yaml=False),
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.download latest config yaml.buildbucket.search'),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'incomplete-buildbucket-search-result',
+      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.properties(
+          **{
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
+          }),
+      mock_workspace_path('src/project/test_program/test_project'),
+      api.buildbucket.simulated_search_results(
+          generate_mock_build(include_gs_bucket=False),
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.download latest config yaml.buildbucket.search'),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'no-buildbucket-artifacts-search-result',
+      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.properties(
+          **{
+              'configs': [{
+                  'public_yaml_path': 'some/model.yaml',
+                  'private_yaml': {
+                      'repo': CROS_INTERNAL + '/private/',
+                      'path': 'some/model.yaml'
+                  },
+                  'hwid_key': 'some_key',
+                  'project_name': 'test_project',
+                  'program_name': 'test_program',
+              }]
+          }),
+      mock_workspace_path('src/project/test_program/test_project'),
+      api.buildbucket.simulated_search_results(
+          generate_mock_build(include_artifacts=False),
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.download latest config yaml.buildbucket.search'),
+      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(

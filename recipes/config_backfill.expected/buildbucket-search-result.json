@@ -1746,8 +1746,7 @@
     "cmd": [],
     "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@No search results available from BuildBucket.search@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1782,7 +1781,47 @@
     "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"mybuilder-postsubmit\"}, \"id\": \"1234\", \"output\": {\"properties\": {\"artifacts\": {\"files_by_artifact\": {\"CHROMEOS_CONFIG\": [\"config.yaml\"], \"EBUILD_LOGS\": [\"ebuild_logs.tar.gz\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"custom/image-path-123\"}}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml.download CHROMEOS_CONFIG",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/custom/image-path-123/config.yaml",
+      "[CLEANUP]/CHROMEOS_CONFIG-_tmp_1/config.yaml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml.download CHROMEOS_CONFIG.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -2023,9 +2062,7 @@
       "--program-name",
       "test_program",
       "--public-model",
-      "[CLEANUP]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "--private-model",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "[CLEANUP]/CHROMEOS_CONFIG-_tmp_1/config.yaml",
       "--hwid",
       "[CLEANUP]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
       "--config-bundle",
@@ -2094,9 +2131,7 @@
       "--program-name",
       "test_program",
       "--public-model",
-      "[CLEANUP]/chromiumos_workspace/src/overlays/some/model.yaml",
-      "--private-model",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlays/some/model.yaml",
+      "[CLEANUP]/CHROMEOS_CONFIG-_tmp_1/config.yaml",
       "--hwid",
       "[CLEANUP]/chromiumos_workspace/src/platform/chromeos-hwid/v3/some_key",
       "--config-bundle",

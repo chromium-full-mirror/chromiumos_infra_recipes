@@ -1204,6 +1204,37 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@No search results available from BuildBucket.search@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "output.properties",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"test_program-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
+    "infra_step": true,
+    "name": "processing test_program/test_project.update ref.git transaction.download latest config yaml.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython",
       "-u",

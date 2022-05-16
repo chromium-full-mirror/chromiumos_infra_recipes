@@ -8929,15 +8929,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py#18)(api):**
 ### *recipes* / [config\_backfill](/recipes/config_backfill.py)
 
-[DEPS](/recipes/config_backfill.py#28): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/config_backfill.py#33): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#452)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#524)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#336)(api, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#408)(api, config):**
 
 Backfill an individual project.
 
@@ -8950,7 +8950,7 @@ Return:
   BackfillStatus with results of backfill.  commit hash if empty if no commit
   is made.
 
-&mdash; **def [config\_merger](/recipes/config_backfill.py#174)(api, config, path_cros_repo, step_pres):**
+&mdash; **def [config\_merger](/recipes/config_backfill.py#235)(api, config, path_cros_repo, step_pres):**
 
 Create a closure to merge configs.
 
@@ -8966,14 +8966,37 @@ Args:
 Return:
   closure to execute merge operation
 
-&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#91)(api):**
+&mdash; **def [create\_download\_payload](/recipes/config_backfill.py#180)(build):**
+
+Build a download payload.
+
+Args:
+  build: a Build message with output properties
+
+Return:
+  A BuildPayload if the Build message contains all the necessary
+  information, otherwise None
+
+&mdash; **def [create\_portage\_workaround](/recipes/config_backfill.py#97)(api):**
 
 Hack around needing a full portage environment for reef/fizz.
 
 Reef/fizz require their baseboard overlay to include common files.  We can
 work around this by using symlinks to simulate the overlay.
 
-&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#395)(commits, errors, nmissing):**
+&mdash; **def [download\_latest\_config\_yaml](/recipes/config_backfill.py#201)(api, builder_name):**
+
+Download latest project config.yaml from GS.
+
+Args:
+  api: Reference to recipes API
+  builder_name: the full name of the builder to search for
+
+Return:
+  List containing the path where the downloaded config.yaml file resides,
+  or empty list if no GS path was found for the builder.
+
+&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#467)(commits, errors, nmissing):**
 
 Generate markdown to be shown for the build status.
 
@@ -8985,11 +9008,11 @@ Args:
 Return:
   Formatted markdown string suitable to return via RawResult proto.
 
-&mdash; **def [require](/recipes/config_backfill.py#75)(cond, message):**
+&mdash; **def [require](/recipes/config_backfill.py#81)(cond, message):**
 
 Require a given condition be true or throw a ValueError.
 
-&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#81)(api, repo):**
+&mdash; **def [split\_overlay\_project](/recipes/config_backfill.py#87)(api, repo):**
 
 Take a private overlay URL and parse out project name.
 ### *recipes* / [config\_postsubmit](/recipes/config_postsubmit.py)
