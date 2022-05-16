@@ -408,7 +408,6 @@
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title) (Python3 ✅)
   * [naming:tests/build_url_title](#recipes-naming_tests_build_url_title) (Python3 ✅)
   * [naming:tests/get_generation_request_title](#recipes-naming_tests_get_generation_request_title) (Python3 ✅)
-  * [non_manifest_project_presubmit](#recipes-non_manifest_project_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full)
@@ -10739,40 +10738,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/naming/tests/get_generation_request_title.py#32)(api, serialized_paygen_request, expected_url_title):**
-### *recipes* / [non\_manifest\_project\_presubmit](/recipes/non_manifest_project_presubmit.py)
-
-[DEPS](/recipes/non_manifest_project_presubmit.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2
-
-Recipe for running presubmit on CLs for projects not in the manifest.
-
-&mdash; **def [RunSteps](/recipes/non_manifest_project_presubmit.py#34)(api, properties):**
-
-&mdash; **def [apply\_changes\_and\_run\_presubmits](/recipes/non_manifest_project_presubmit.py#83)(api, project, patch_sets):**
-
-For a given project, clone the repo, apply changes and run presubmits.
-
-Args:
-  api (RecipeApi): See RunSteps documentation.
-  project (str): The name of the Gerrit project.
-  patch_sets (list[PatchSet]): List of changes to apply for the given project.
-
-&mdash; **def [categorize\_changes](/recipes/non_manifest_project_presubmit.py#42)(api, properties, gerrit_changes):**
-
-Group changes by Gerrit project.
-
-Groups changes by Gerrit project and discards any changes to Gerrit projects
-not support by the builder as specified in the "projects" input property.
-
-Args:
-  properties (PresubmitTestProperties): Build input properties.
-  gerrit_changes (list[GerritChange]): The Gerrit changes passed in to the
-      build from CQ.
-
-Returns:
-  project_to_patchest_map (dict{str:list[PatchSet]}): Dict mapping the name of
-      the Gerrit project to a list of relevant PatchSets.
 ### *recipes* / [non\_manifest\_projects\_presubmit](/recipes/non_manifest_projects_presubmit.py)
 
 [DEPS](/recipes/non_manifest_projects_presubmit.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
