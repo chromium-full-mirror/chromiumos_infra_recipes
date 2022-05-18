@@ -47,7 +47,7 @@
   * [cros_test_plan_v2](#recipe_modules-cros_test_plan_v2) (Python3 ✅)
   * [cros_test_platform](#recipe_modules-cros_test_platform) (Python3 ✅)
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess) (Python3 ✅)
-  * [cros_test_proctor](#recipe_modules-cros_test_proctor)
+  * [cros_test_proctor](#recipe_modules-cros_test_proctor) (Python3 ✅)
   * [cros_test_runner](#recipe_modules-cros_test_runner) (Python3 ✅)
   * [cros_tool_runner](#recipe_modules-cros_tool_runner) (Python3 ✅)
   * [cros_version](#recipe_modules-cros_version) (Python3 ✅) &mdash; API for working with CrOS version numbers.
@@ -299,9 +299,9 @@
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full) (Python3 ✅)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full) (Python3 ✅)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full) (Python3 ✅)
-  * [cros_test_proctor:examples/ctp2](#recipes-cros_test_proctor_examples_ctp2)
-  * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
-  * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests)
+  * [cros_test_proctor:examples/ctp2](#recipes-cros_test_proctor_examples_ctp2) (Python3 ✅)
+  * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full) (Python3 ✅)
+  * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests) (Python3 ✅)
   * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full) (Python3 ✅)
   * [cros_tool_runner:examples/full](#recipes-cros_tool_runner_examples_full) (Python3 ✅)
   * [cros_version:examples/bump_version](#recipes-cros_version_examples_bump_version) (Python3 ✅)
@@ -3030,11 +3030,11 @@ Return:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#377)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#386)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3048,7 +3048,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#432)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#441)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -3059,7 +3059,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#406)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#415)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -3075,7 +3075,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#71)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
+&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#74)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -3096,7 +3096,7 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#496)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#505)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -3113,11 +3113,11 @@ Args:
 Returns:
   (List[str]): A list of package dependencies for the build target.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#41)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#44)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#175)(self, gerrit_changes, gitiles_commit, dep_graph, config, force_relevant=False, test_value=None):**
+&mdash; **def [is\_build\_pointless](/recipe_modules/cros_relevance/api.py#184)(self, gerrit_changes, gitiles_commit, dep_graph, config, force_relevant=False, test_value=None):**
 
 Determines if build(s) can be terminated early.
 
@@ -3140,7 +3140,7 @@ Args:
 Returns:
   bool: Whether the build can be terminated early.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#352)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#361)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3157,7 +3157,7 @@ Args:
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 
-&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#229)(self, gitiles_commit, dep_graph):**
+&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#238)(self, gitiles_commit, dep_graph):**
 
 Determines if postsubmit builder is relevant for given snapshot.
 
@@ -3171,7 +3171,7 @@ Returns:
   bool: Whether any packages that target depends on have been upreved
   in the latest snapshot or the build was forced relevant.
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#63)(self):**
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#66)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
@@ -4163,7 +4163,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#220)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#224)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -4181,20 +4181,20 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#57)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#58)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#53)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#54)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#247)(self, starlark_packages, generate_test_plan_request=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#253)(self, starlark_packages, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4211,9 +4211,9 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#30)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#31)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#134)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#135)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -4291,11 +4291,11 @@ Returns:
 
 [DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#441)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#454)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4304,7 +4304,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#139)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#146)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4332,14 +4332,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#115)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#117)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#363)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#373)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4364,7 +4364,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#51)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#53)(self, test_summary):**
 
 Set the test_summary for this build.
 
@@ -7396,7 +7396,7 @@ Returns:
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
 Args:
-* tests (list[UnitHwTest]): Hardware test suites to execute
+* unit_hw_tests (list[UnitHwTest]): Hardware test suites to execute
 * timeout (Duration): Timeout in timestamp_pb2.Duration.
 * name (str): The step name. Defaults to 'schedule skylab tests v2'
 * async_suite_run (bool): If set, indicates that caller does not intend to wait for
@@ -7413,7 +7413,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#290)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#293)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -9929,23 +9929,23 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_test_proctor/examples/ctp2.py#6): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/ctp2.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/ctp2.py#17)(api):**
 ### *recipes* / [cros\_test\_proctor:examples/full](/recipe_modules/cros_test_proctor/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_proctor/examples/full.py#23): [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#54)(api, need_tests_builds_serialized, run_async, use_test_plan_v2):**
 ### *recipes* / [cros\_test\_proctor:tests/schedule\_tests](/recipe_modules/cros_test_proctor/tests/schedule_tests.py)
 
 [DEPS](/recipe_modules/cros_test_proctor/tests/schedule_tests.py#12): [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/tests/schedule_tests.py#27)(api, passed_tests, is_retry, expected_tests_run_count):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/tests/schedule_tests.py#29)(api, passed_tests, is_retry, expected_tests_run_count):**
 ### *recipes* / [cros\_test\_runner:examples/full](/recipe_modules/cros_test_runner/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_runner/examples/full.py#6): [cros\_test\_runner](#recipe_modules-cros_test_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

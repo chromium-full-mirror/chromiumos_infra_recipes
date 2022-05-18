@@ -5,7 +5,10 @@
 # found in the LICENSE file.
 
 from collections import namedtuple
+import json
 import six
+
+from google.protobuf import json_format
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
@@ -104,7 +107,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='build-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
-      presentation.logs['planner_input'] = [str(request)]
+      # TODO(b/217973414): Replace with a simple str(request) once we no longer
+      # need to ensure parity between PY2 and PY3 expectation files.
+      presentation.logs['planner_input'] = [
+          json.dumps(
+              json_format.MessageToDict(request), separators=(',', ':'),
+              sort_keys=True, indent=2)
+      ]
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request.SerializeToString())
 

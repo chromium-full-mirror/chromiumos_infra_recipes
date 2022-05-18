@@ -9,6 +9,8 @@ DEPS = [
     'cros_test_proctor',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 

@@ -91,7 +91,9 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   @staticmethod
   def base64_compress_proto(proto):
     """Serialize a proto to binary, compress it into zlib, and b64-encode it."""
-    wire_format = proto.SerializeToString()
+    # TODO(b/217973414): No need to ensure deterministic ordering once we no
+    # longer need to ensure parity between PY2 and PY3.
+    wire_format = proto.SerializeToString(deterministic=True)
     return base64.b64encode(zlib.compress(wire_format))
 
   def test_with_multi_response(

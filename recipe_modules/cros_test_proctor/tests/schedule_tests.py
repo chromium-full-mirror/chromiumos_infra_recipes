@@ -17,6 +17,8 @@ DEPS = [
     'cros_test_plan',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = {
     'passed_tests': Property(default=[]),
     'is_retry': Property(default=False),
@@ -30,7 +32,8 @@ def RunSteps(api, passed_tests, is_retry, expected_tests_run_count):
                                       ref='refs/heads/snapshot', id='deadbeef')
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
 
-  tasks = api.cros_test_proctor.schedule_tests(test_plan, set(passed_tests),
+  tasks = api.cros_test_proctor.schedule_tests(test_plan,
+                                               list(set(passed_tests)),
                                                api.cros_test_proctor.timeout,
                                                {}, snapshot, is_retry=is_retry)
   tests_run_count = len(tasks.skylab) + len(tasks.autotest_vm) + len(

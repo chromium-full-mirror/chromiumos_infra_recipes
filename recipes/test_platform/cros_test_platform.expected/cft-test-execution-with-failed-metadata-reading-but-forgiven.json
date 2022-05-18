@@ -517,7 +517,7 @@
       "@@@STEP_LOG_LINE@output@}@@@",
       "@@@STEP_LOG_END@output@@@",
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzNT80KgkAQfpc5K9rVm/gDgpGoBREiq7sb0uqKuwUl++6NFOS9Dh1m+GaG+X5maLm2KePkKjR4MyhNNFuA6DgL7q3AAdIkjurgGKTYd9ssjcooBAtubKJdi29wiPIwCco69pMUT8ZYsOJs5aCk6Cgy05wp3CrwTjMQrVk/vgchz/tJIBcC5TlOQyasB8oMpF9McCntkSjFKO6+s5n5RbHYtEATdXnJIv1H1Wk2rgumMtVvpdbp/zOweQJ7UKoi\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTambkYk9JTUsszSkRquAyExJKy8+30tdPSiwC4ir9JEMDAykWjgIBRiUuoIxuQWJxcWqKFl9OfnoxQpkQWIWUBdn6Rbm4k9NKdGEOYQMbyAQAFBIqJQ==\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuXiTk4r0U1JTUsszSkRYhNi4SgQYBJqZuRih4lVcJkJCaXl51vp6yclFgFxlX6SoYGBFEgloxIXUEa3ILG4ODVFiy8nP70YoQxsFqOUBbn6AYTeKiU=\"@@@",
       "@@@SET_BUILD_PROPERTY@response@{\"consolidatedResults\": [{\"attempts\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}], \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskResults\": [{\"logUrl\": \"logs://bar/baz\", \"name\": \"foo-passed\", \"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}, \"taskUrl\": \"foo://bar/baz/b100\"}]}@@@"
     ]
   },

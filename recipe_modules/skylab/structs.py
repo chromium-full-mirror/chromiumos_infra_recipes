@@ -6,6 +6,9 @@
 """Define Skylab structs."""
 
 from collections import namedtuple
+import json
+
+from google.protobuf import json_format
 
 # Describes a skylab task.
 # Fields:
@@ -26,3 +29,44 @@ SkylabResult = namedtuple('SkylabResult', ['task', 'status', 'child_results'])
 #   unit (HwTestUnit)
 #   hw_test (HwTest)
 UnitHwTest = namedtuple('UnitHwTest', ['unit', 'hw_test'])
+
+
+# TODO(b/217973414): Once we don't need to ensure parity between PY2/PY3
+# expectation files, remove this function and replace with a vanilla str().
+def skylab_task_to_str(st):
+  """Cast a SkylabTask to a string in a deterministic way."""
+  test = json.dumps(
+      json_format.MessageToDict(st.test), separators=(',', ':'), sort_keys=True,
+      indent=2)
+  unit = json.dumps(
+      json_format.MessageToDict(st.unit), separators=(',', ':'), sort_keys=True,
+      indent=2)
+  return 'SkylabTask(id=%s, test=%s, unit=%s)' % (st.id, test, unit)
+
+
+# TODO(b/217973414): Once we don't need to ensure parity between PY2/PY3
+# expectation files, remove this function and replace with a vanilla str().
+def skylab_result_to_str(sr):
+  """Cast a SkylabResult to a string in a deterministic way."""
+  task = skylab_task_to_str(sr.task)
+  status = sr.status
+  child_results = [
+      json.dumps(
+          json_format.MessageToDict(cr), separators=(',', ':'), sort_keys=True,
+          indent=2) for cr in sr.child_results
+  ]
+  return 'SkylabResult(task=%s, status=%s, child_results=%s)' % (task, status,
+                                                                 child_results)
+
+
+# TODO(b/217973414): Once we don't need to ensure parity between PY2/PY3
+# expectation files, remove this function and replace with a vanilla str().
+def unit_hw_test_to_str(uhwt):
+  """Cast a UnitHwTest to a string in a deterministic way."""
+  unit = json.dumps(
+      json_format.MessageToDict(uhwt.unit), separators=(',', ':'),
+      sort_keys=True, indent=2)
+  hw_test = json.dumps(
+      json_format.MessageToDict(uhwt.hw_test), separators=(',', ':'),
+      sort_keys=True, indent=2)
+  return 'UnitHwTest(unit=%s, hw_test=%s)' % (unit, hw_test)

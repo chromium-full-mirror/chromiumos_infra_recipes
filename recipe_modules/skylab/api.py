@@ -95,7 +95,7 @@ class SkylabApi(recipe_api.RecipeApi):
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
-    * tests (list[UnitHwTest]): Hardware test suites to execute
+    * unit_hw_tests (list[UnitHwTest]): Hardware test suites to execute
     * timeout (Duration): Timeout in timestamp_pb2.Duration.
     * name (str): The step name. Defaults to 'schedule skylab tests v2'
     * async_suite_run (bool): If set, indicates that caller does not intend to wait for
@@ -178,6 +178,9 @@ class SkylabApi(recipe_api.RecipeApi):
       # str -> (Request dict)
       reqs = {}
       with self.m.step.nest('create test requests'):
+        # TODO(b/217973414): No need to sort once we don't need to ensure parity
+        # between PY2 and PY3 expectation files.
+        unit_hw_tests.sort(key=structs.unit_hw_test_to_str)
         for uht in unit_hw_tests:
           step_name = 'configure {}'.format(uht.unit.common.builder_name)
           skylab_board = uht.hw_test.skylab_board
@@ -322,7 +325,9 @@ class SkylabApi(recipe_api.RecipeApi):
         results.append(self._translate_result(result, t))
 
       self.m.greenness.update_hwtest_info(results)
-      presentation.logs['return value'] = [str(r) for r in results]
+      presentation.logs['return value'] = [
+          structs.skylab_result_to_str(r) for r in results
+      ]
       return results
 
   def _get_multi_response_binary(self, build):

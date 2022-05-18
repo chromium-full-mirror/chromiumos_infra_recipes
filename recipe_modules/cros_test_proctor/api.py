@@ -4,13 +4,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import defaultdict
+import json
+
 from google.protobuf import json_format
 from google.protobuf import duration_pb2
 
 from recipe_engine import recipe_api
 
 from . import structs
-from collections import defaultdict
 
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import HwTestUnit
@@ -128,8 +130,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           hw_test_plans = self.m.cros_test_plan_v2.generate_hw_test_plans(
               starlark_files)
 
+          # TODO(b/217973414): Replace with MessageToJson once we don't need to
+          # fix the separator spacing between py2 and py3 MessageToJson.
           pres.logs['hw_test_plans'] = '\n'.join(
-              json_format.MessageToJson(p) for p in hw_test_plans)
+              json.dumps(
+                  json_format.MessageToDict(p), separators=(
+                      ',', ':'), sort_keys=True, indent=2)
+              for p in hw_test_plans)
         else:
           pres.step_text = 'No starlark files found.'
 
@@ -264,8 +271,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       starlark_files = self._fetch_starlark_files(relevant_plans)
 
+      # TODO(b/217973414): No need to ensure deterministic ordering once we no
+      # longer need to ensure parity between PY2 and PY3.
       req = GenerateTestPlanRequest(buildbucket_protos=[
-          ProtoBytes(serialized_proto=build.SerializeToString())
+          ProtoBytes(
+              serialized_proto=build.SerializeToString(deterministic=True))
           for build in builds
       ])
       return self.m.cros_test_plan_v2.generate_hw_test_plans(
@@ -426,13 +436,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       MetaTestTuple of lists of tests collected.
     """
     hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
-    tast_vm_results = self.m.buildbucket.collect_builds(
-        [vt.id for vt in test_tasks.tast_vm], step_name='collect tast vm tests',
-        timeout=int(timeout.seconds)).values()
-    tast_gce_results = self.m.buildbucket.collect_builds(
-        [vt.id for vt in test_tasks.tast_gce],
-        step_name='collect tast GCE tests',
-        timeout=int(timeout.seconds)).values()
+    tast_vm_results = list(
+        self.m.buildbucket.collect_builds([vt.id for vt in test_tasks.tast_vm],
+                                          step_name='collect tast vm tests',
+                                          timeout=int(
+                                              timeout.seconds)).values())
+    tast_gce_results = list(
+        self.m.buildbucket.collect_builds([vt.id for vt in test_tasks.tast_gce],
+                                          step_name='collect tast GCE tests',
+                                          timeout=int(
+                                              timeout.seconds)).values())
 
     return self.MetaTestTuple(skylab=hw_results, autotest_vm=[],
                               tast_vm=tast_vm_results or [],
@@ -502,7 +515,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # If we aren't scheduling per build_target, flatten into one invocation.
         if not task_per_build_target:
           tests_to_run = {_ALL_BUILD_TARGETS: sum(tests_to_run.values(), [])}  #pylint: disable=redefined-variable-type
-        for test_build_target, bt_tests_to_run in tests_to_run.items():
+        for test_build_target, bt_tests_to_run in sorted(tests_to_run.items()):
           skylab_tasks.extend(
               self.m.skylab.schedule_suites(
                   bt_tests_to_run,

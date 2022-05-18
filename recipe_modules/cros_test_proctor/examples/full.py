@@ -37,7 +37,7 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = {
     'need_tests_builds_serialized':
@@ -100,7 +100,11 @@ def GenTests(api):
             build_target=BuildTarget(name=build_target))).message.input
 
   def serialize_builds(builds):
-    return [build_pb2.Build.SerializeToString(b) for b in builds]
+    # TODO(b/217973414): No need to ensure deterministic ordering once we no
+    # longer need to ensure parity between PY2 and PY3.
+    return [
+        build_pb2.Build.SerializeToString(b, deterministic=True) for b in builds
+    ]
 
   cros_test_platforms = [
       build_pb2.Build(id=1234, builder={'builder': 'cros_test_platform'},
@@ -152,7 +156,6 @@ def GenTests(api):
 
   yield api.test(
       'tests-with-history',
-      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       cq_orchestrator_build_with_gerrit_change(),
       api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
