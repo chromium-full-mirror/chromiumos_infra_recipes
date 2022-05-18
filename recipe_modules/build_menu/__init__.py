@@ -32,6 +32,8 @@ DEPS = [
     'workspace_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 
 PROPERTIES = BuildMenuProperties

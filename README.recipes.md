@@ -8,7 +8,7 @@
   * [bot_cost](#recipe_modules-bot_cost) (Python3 ✅)
   * [bot_scaling](#recipe_modules-bot_scaling) (Python3 ✅)
   * [breakpad](#recipe_modules-breakpad) (Python3 ✅)
-  * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
+  * [build_menu](#recipe_modules-build_menu) (Python3 ✅) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan) (Python3 ✅)
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats) (Python3 ✅)
@@ -129,10 +129,10 @@
   * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_legacy_fw](#recipes-build_legacy_fw) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
   * [build_linters](#recipes-build_linters) &mdash; Recipe for linting CLs with Cargo Clippy.
-  * [build_menu:examples/full](#recipes-build_menu_examples_full)
-  * [build_menu:tests/is_cq_build_relevant](#recipes-build_menu_tests_is_cq_build_relevant)
-  * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
-  * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
+  * [build_menu:examples/full](#recipes-build_menu_examples_full) (Python3 ✅)
+  * [build_menu:tests/is_cq_build_relevant](#recipes-build_menu_tests_is_cq_build_relevant) (Python3 ✅)
+  * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging) (Python3 ✅)
+  * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph) (Python3 ✅)
   * [build_parallels_image](#recipes-build_parallels_image) &mdash; Recipe for building a Parallels image for testing.
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan) (Python3 ✅)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan) (Python3 ✅)
@@ -846,7 +846,7 @@ Returns:
 
 [DEPS](/recipe_modules/build_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API providing a menu for build steps
 
@@ -8467,32 +8467,32 @@ Recipe for linting CLs with Cargo Clippy.
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#42)(api, properties):**
+&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#44)(api, properties):**
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#33)(api, properties):**
 ### *recipes* / [build\_menu:tests/is\_cq\_build\_relevant](/recipe_modules/build_menu/tests/is_cq_build_relevant.py)
 
 [DEPS](/recipe_modules/build_menu/tests/is_cq_build_relevant.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [git\_footers](#recipe_modules-git_footers), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_cq_build_relevant.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_cq_build_relevant.py#22)(api):**
 ### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
 
 [DEPS](/recipe_modules/build_menu/tests/is_staging.py#6): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_staging.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_staging.py#23)(api, properties):**
 ### *recipes* / [build\_menu:tests/no\_dep\_graph](/recipe_modules/build_menu/tests/no_dep_graph.py)
 
 [DEPS](/recipe_modules/build_menu/tests/no_dep_graph.py#6): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no_dep_graph.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/no_dep_graph.py#18)(api):**
 ### *recipes* / [build\_parallels\_image](/recipes/build_parallels_image.py)
 
 [DEPS](/recipes/build_parallels_image.py#26): [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

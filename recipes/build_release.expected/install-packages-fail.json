@@ -4984,13 +4984,13 @@
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
-      "@@@STEP_LINK@gs publish dir: EBUILD_LOGS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
-      "@@@STEP_LINK@gs publish dir: IMAGE_ZIP@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: AUTOTEST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: DEBUG_SYMBOLS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
-      "@@@STEP_LINK@gs publish dir: TEST_UPDATE_PAYLOAD@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
+      "@@@STEP_LINK@gs publish dir: EBUILD_LOGS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
+      "@@@STEP_LINK@gs publish dir: IMAGE_ZIP@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: PINNED_GUEST_IMAGES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
-      "@@@STEP_LINK@gs publish dir: TAST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@"
+      "@@@STEP_LINK@gs publish dir: TAST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
+      "@@@STEP_LINK@gs publish dir: TEST_UPDATE_PAYLOAD@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@"
     ]
   },
   {

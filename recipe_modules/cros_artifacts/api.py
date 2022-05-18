@@ -698,7 +698,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       links = self._publish_artifacts(builder_name, sysroot.build_target, kind,
                                       artifacts_info, upload_uri,
                                       files_by_artifact)
-      for k, v in links.items():
+      for k, v in sorted(links.items()):
         presentation.links[k] = v
     return uploaded_artifacts
 
