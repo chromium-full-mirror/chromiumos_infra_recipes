@@ -53,17 +53,17 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
-      'non-cq-does-not-upload-anything',
+      'non-cq-uploads-absolute',
       api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (firmware lcov).upload incremental coverage to gerrit'
       ),
       api.post_check(
-          post_process.DoesNotRun,
+          post_process.MustRun,
           'upload code coverage data (firmware lcov).upload absolute coverage to Code Search'
       ),
       api.post_check(
-          post_process.DoesNotRun,
+          post_process.MustRun,
           'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'
       ),
       cq=False,

@@ -86,8 +86,14 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
     """
-    self.process_coverage_data(tarfile, 'LCOV', step_name,
-                               CoverageFileSettings(False, False, True))
+    self.process_coverage_data(
+        tarfile,
+        'LCOV',
+        step_name,
+        incremental_settings=CoverageFileSettings(True, True, False),
+        absolute_cs_settings=CoverageFileSettings(True, False, True),
+        absolute_chromium_settings=CoverageFileSettings(False, False, True),
+    )
 
   def upload_code_coverage_llvm_json(
       self, tarfile,
