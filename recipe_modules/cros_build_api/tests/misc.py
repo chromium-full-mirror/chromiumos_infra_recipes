@@ -162,7 +162,6 @@ def RunSteps(api):
           'DebugInfoTest': empty_pb2.Empty,
           'RulesCrosUnitTest': empty_pb2.Empty,
           'VmTest': empty_pb2.Empty,
-          'MoblabVmTest': empty_pb2.Empty,
       },
       'ToolchainService': {
           'PrepareForBuild': toolchain.PrepareForToolchainBuildResponse,
