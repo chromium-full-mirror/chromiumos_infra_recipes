@@ -90,7 +90,7 @@
   * [support](#recipe_modules-support) (Python3 ✅) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli) (Python3 ✅)
   * [sysroot_util](#recipe_modules-sysroot_util) (Python3 ✅) &mdash; API for various support functions for building.
-  * [tast_exec](#recipe_modules-tast_exec)
+  * [tast_exec](#recipe_modules-tast_exec) (Python3 ✅)
   * [tast_results](#recipe_modules-tast_results) (Python3 ✅)
   * [test_util](#recipe_modules-test_util) (Python3 ✅) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) (Python3 ✅) &mdash; API for creating task URLs out of complex data structures.
@@ -133,7 +133,7 @@
   * [build_menu:tests/is_cq_build_relevant](#recipes-build_menu_tests_is_cq_build_relevant) (Python3 ✅)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging) (Python3 ✅)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph) (Python3 ✅)
-  * [build_parallels_image](#recipes-build_parallels_image) &mdash; Recipe for building a Parallels image for testing.
+  * [build_parallels_image](#recipes-build_parallels_image) (Python3 ✅) &mdash; Recipe for building a Parallels image for testing.
   * [build_plan:examples/bisect_build_plan](#recipes-build_plan_examples_bisect_build_plan) (Python3 ✅)
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan) (Python3 ✅)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds) (Python3 ✅)
@@ -342,7 +342,7 @@
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
-  * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
+  * [gce_test](#recipes-gce_test) (Python3 ✅) &mdash; An experimental recipe for running GCE tests.
   * [gcloud:examples/full](#recipes-gcloud_examples_full) (Python3 ✅)
   * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks) (Python3 ✅)
   * [gcloud:examples/lookup_device_id](#recipes-gcloud_examples_lookup_device_id) (Python3 ✅)
@@ -465,12 +465,12 @@
   * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full) (Python3 ✅)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build) (Python3 ✅)
   * [sysroot_util:tests/update_artifact_for_build](#recipes-sysroot_util_tests_update_artifact_for_build) (Python3 ✅)
-  * [tast_exec:examples/run](#recipes-tast_exec_examples_run)
+  * [tast_exec:examples/run](#recipes-tast_exec_examples_run) (Python3 ✅)
   * [tast_results:examples/archive_dir](#recipes-tast_results_examples_archive_dir) (Python3 ✅)
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult) (Python3 ✅)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results) (Python3 ✅)
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs) (Python3 ✅)
-  * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
+  * [tast_vm](#recipes-tast_vm) (Python3 ✅) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_plan_filtering](#recipes-test_plan_filtering) &mdash; Updates test plan rules to reflect new risk-based rules.
@@ -7737,7 +7737,7 @@ Returns:
 
 [DEPS](/recipe_modules/tast_exec/__init__.py#6): [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [tast\_results](#recipe_modules-tast_results), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [TastExecApi](/recipe_modules/tast_exec/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
@@ -8497,7 +8497,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/build_parallels_image.py#26): [easy](#recipe_modules-easy), [phosphorus](#recipe_modules-phosphorus), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building a Parallels image for testing.
 
@@ -8511,9 +8511,9 @@ for more details.
 
 This recipe is invoked as part of uprev_parallels_pin.
 
-&mdash; **def [RunSteps](/recipes/build_parallels_image.py#57)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_parallels_image.py#59)(api, properties):**
 
-&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#88)(api, properties):**
+&mdash; **def [build\_vm\_image](/recipes/build_parallels_image.py#90)(api, properties):**
 
 Builds a new VM image for testing.
 
@@ -8522,7 +8522,7 @@ Returns:
   image_size(int): The size of the generated image, in bytes.
   image_hash(str): The base64-encoded SHA256 hash of the generated image.
 
-&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#180)(api, test_artifacts_dir, build_payload, dest_path):**
+&mdash; **def [invoke\_tast](/recipes/build_parallels_image.py#182)(api, test_artifacts_dir, build_payload, dest_path):**
 
 Runs tast to build the new VM image.
 
@@ -10224,11 +10224,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/gce_test.py#10): [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An experimental recipe for running GCE tests.
 
-&mdash; **def [RunSteps](/recipes/gce_test.py#32)(api, properties):**
+&mdash; **def [RunSteps](/recipes/gce_test.py#34)(api, properties):**
 ### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
 
 [DEPS](/recipe_modules/gcloud/examples/full.py#8): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -11208,9 +11208,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/tast_exec/examples/run.py#7): [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/tast_exec/examples/run.py#20)(api):**
 ### *recipes* / [tast\_results:examples/archive\_dir](/recipe_modules/tast_results/examples/archive_dir.py)
 
 [DEPS](/recipe_modules/tast_results/examples/archive_dir.py#7): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11243,13 +11243,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/tast_vm.py#13): [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#27)(api, properties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)

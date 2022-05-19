@@ -11,6 +11,8 @@ DEPS = [
     'tast_exec',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 from PB.testplans.generate_test_plan import BuildPayload
 

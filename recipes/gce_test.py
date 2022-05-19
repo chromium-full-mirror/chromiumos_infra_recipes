@@ -20,6 +20,8 @@ DEPS = [
     'tast_results',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = GceTestProperties
 
 _TEST_IMAGE_GCE_TAR = 'chromiumos_test_image_gce.tar.gz'

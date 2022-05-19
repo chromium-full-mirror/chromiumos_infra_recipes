@@ -41,6 +41,8 @@ DEPS = [
 from PB.recipes.chromeos.build_parallels_image import \
     BuildParallelsImageProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildParallelsImageProperties
 
 _GS_BROWSER_PREFIX = 'https://console.cloud.google.com/storage/browser'
@@ -157,8 +159,8 @@ def build_vm_image(api, properties):
   with api.step.nest('compute image size and sha256') as presentation:
     sha256 = api.easy.stdout_step(
         'get file sha256 hash', ['sha256sum', image_path],
-        test_stdout='fedbca09876543211234567890abcdef /path/to/file').split(
-            ' ', 1)[0]
+        test_stdout=b'fedbca09876543211234567890abcdef /path/to/file').split(
+            b' ', 1)[0].decode('utf-8')
     size = int(
         api.easy.stdout_step('get file length',
                              ['stat', '--printf=%s', image_path],

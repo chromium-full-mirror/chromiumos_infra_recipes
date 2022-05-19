@@ -17,4 +17,6 @@ DEPS = [
 
 from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TastExecProperties
