@@ -122,13 +122,13 @@
   * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
   * [breakpad:examples/full](#recipes-breakpad_examples_full) (Python3 ✅)
   * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols) (Python3 ✅)
-  * [build_android_uprev](#recipes-build_android_uprev) &mdash; Recipe for building a BuildTarget image for Android uprev.
+  * [build_android_uprev](#recipes-build_android_uprev) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Android uprev.
   * [build_borealis_rootfs](#recipes-build_borealis_rootfs) &mdash; Recipe for building a Borealis rootfs image.
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
-  * [build_firmware](#recipes-build_firmware) &mdash; Recipe that builds and tests firmware.
-  * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
+  * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
+  * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_legacy_fw](#recipes-build_legacy_fw) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
-  * [build_linters](#recipes-build_linters) &mdash; Recipe for linting CLs with Cargo Clippy.
+  * [build_linters](#recipes-build_linters) (Python3 ✅) &mdash; Recipe for linting CLs with Cargo Clippy.
   * [build_menu:examples/full](#recipes-build_menu_examples_full) (Python3 ✅)
   * [build_menu:tests/is_cq_build_relevant](#recipes-build_menu_tests_is_cq_build_relevant) (Python3 ✅)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging) (Python3 ✅)
@@ -140,7 +140,7 @@
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan) (Python3 ✅)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds) (Python3 ✅)
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds) (Python3 ✅)
-  * [build_postsubmit](#recipes-build_postsubmit) &mdash; Recipe for building a BuildTarget image for Postsubmit.
+  * [build_postsubmit](#recipes-build_postsubmit) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Postsubmit.
   * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
   * [build_reporting:examples/contexts_1](#recipes-build_reporting_examples_contexts_1)
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2)
@@ -8383,7 +8383,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/build_android_uprev.py#17): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building a BuildTarget image for Android uprev.
 
@@ -8395,9 +8395,9 @@ for example:
   "android_version": "7444938"
 }
 
-&mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#36)(api, properties, config):**
+&mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#38)(api, properties, config):**
 
-&mdash; **def [RunSteps](/recipes/build_android_uprev.py#30)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_android_uprev.py#32)(api, properties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
 [DEPS](/recipes/build_borealis_rootfs.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8424,25 +8424,25 @@ Recipe for building a BuildTarget image for CQ.
 
 [DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that builds and tests firmware.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/build_firmware.py#36)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_firmware.py#38)(api, properties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#11): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for generating artifacts for Informational builders.
 
 This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles.
 
-&mdash; **def [RunSteps](/recipes/build_informational.py#17)(api):**
+&mdash; **def [RunSteps](/recipes/build_informational.py#19)(api):**
 ### *recipes* / [build\_legacy\_fw](/recipes/build_legacy_fw.py)
 
 [DEPS](/recipes/build_legacy_fw.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [metadata\_json](#recipe_modules-metadata_json), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8456,13 +8456,13 @@ Recipe that builds chromeos-firmware on a firmware branch.
 
 [DEPS](/recipes/build_linters.py#20): [build\_menu](#recipe_modules-build_menu), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for linting CLs with Cargo Clippy.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#146)(api, config, relevant_patchsets, _properties):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#149)(api, config, relevant_patchsets, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_linters.py#134)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_linters.py#137)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -8578,13 +8578,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/build_postsubmit.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building a BuildTarget image for Postsubmit.
 
-&mdash; **def [DoRunSteps](/recipes/build_postsubmit.py#27)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_postsubmit.py#29)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_postsubmit.py#21)(api):**
+&mdash; **def [RunSteps](/recipes/build_postsubmit.py#23)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
 [DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

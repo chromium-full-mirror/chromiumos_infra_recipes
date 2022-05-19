@@ -17,6 +17,8 @@ from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.build_menu.configure_builder() as config, \

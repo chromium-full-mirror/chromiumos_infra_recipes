@@ -5270,7 +5270,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"findings\": [{\"message\": \"test message\", \"linter\": 2, \"locations\": [{\"line_end\": 1, \"line_start\": 1, \"filepath\": \"path/file.rs\"}]}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"findings\": [{\"linter\": 2, \"locations\": [{\"filepath\": \"path/file.rs\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

@@ -30,6 +30,8 @@ from PB.chromite.api.firmware import (BuildAllFirmwareRequest,
                                       TestAllFirmwareRequest)
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildFirmwareProperties
 
 

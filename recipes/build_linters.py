@@ -29,6 +29,8 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildLintersProperties
 
 
@@ -92,17 +94,18 @@ def _GetAffectedPackages(api, relevant_patchsets):
 def _GetLints(api, affected_packages):
   """Emerges affected packages and retrieves generated lints."""
   with api.step.nest('linting packages'):
-    test_data = json.dumps({
-        'findings': [{
-            'message': 'test message',
-            'locations': [{
-                'filepath': 'path/file.rs',
-                'line_start': 1,
-                'line_end': 1
-            }],
-            'linter': LinterFinding.Linters.CARGO_CLIPPY
-        }]
-    })
+    test_data = json.dumps(
+        {
+            'findings': [{
+                'message': 'test message',
+                'locations': [{
+                    'filepath': 'path/file.rs',
+                    'line_start': 1,
+                    'line_end': 1
+                }],
+                'linter': LinterFinding.Linters.CARGO_CLIPPY
+            }]
+        }, sort_keys=True)
     return api.cros_build_api.ToolchainService.EmergeWithLinting(
         LinterRequest(packages=affected_packages,
                       sysroot=api.build_menu.sysroot,
