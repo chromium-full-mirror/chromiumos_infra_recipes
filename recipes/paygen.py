@@ -19,6 +19,7 @@ DEPS = [
     'cros_source',
     'cros_storage',
     'easy',
+    'git',
     'gitiles',
     'naming',
     'src_state',
@@ -93,11 +94,24 @@ def RunSteps(api, properties):
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
     with api.step.nest('initialization'):
 
-      # Sync chromite and config-internal only.
+      # Sync the paygen manifest group.
       api.cros_source.ensure_synced_cache(
-          projects=['chromeos/config-internal', 'chromiumos/chromite'],
+          init_opts={'groups': ['paygen']},
           cache_path_override=api.src_state.workspace_path,
       )
+
+      config_path = api.cros_source.workspace_path.join('src/config-internal')
+
+      # Repo leaves directories around... See: project.py "DeleteWorktree".
+      api.step('remove repo cruft', ['rm', '-rf', config_path])
+
+      # Pull config-internal seperately. This repo has a huge history that we
+      # can't delete (as it would break manifests). Therefore we want to clone
+      # alone at depth=1.
+      api.git.clone(
+          'https://chrome-internal.googlesource.com/chromeos/config-internal',
+          branch=api.cros_source.manifest_branch, target_path=config_path,
+          depth=1)
 
       # Create chroot.
       api.cros_sdk.create_chroot(version=None, use_image=False,
