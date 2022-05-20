@@ -17,6 +17,8 @@ DEPS = [
 
 from PB.chromite.api.test import RulesCrosUnitTestRequest
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.build_menu.configure_builder(), \

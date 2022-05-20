@@ -482,9 +482,9 @@
   * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader) (Python3 ✅)
   * [test_platform/result_flow](#recipes-test_platform_result_flow) (Python3 ✅)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
-  * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
-  * [test_rules_cros](#recipes-test_rules_cros) &mdash; Recipe that runs bazel rules_cros unit tests.
-  * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
+  * [test_recipes](#recipes-test_recipes) (Python3 ✅) &mdash; Tests a recipe CL by running ChromeOS builders.
+  * [test_rules_cros](#recipes-test_rules_cros) (Python3 ✅) &mdash; Recipe that runs bazel rules_cros unit tests.
+  * [test_sdk](#recipes-test_sdk) (Python3 ✅) &mdash; Recipe that runs SDK package unit tests.
   * [test_uefi_shim](#recipes-test_uefi_shim) (Python3 ✅) &mdash; Recipe to test the UEFI shim for the reven board.
   * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
@@ -11562,33 +11562,33 @@ Raises:
 
 [DEPS](/recipes/test_recipes.py#8): [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [recipe\_analyze](#recipe_modules-recipe_analyze), [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Tests a recipe CL by running ChromeOS builders.
 
-&mdash; **def [RunSteps](/recipes/test_recipes.py#403)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_recipes.py#409)(api, properties):**
 ### *recipes* / [test\_rules\_cros](/recipes/test_rules_cros.py)
 
 [DEPS](/recipes/test_rules_cros.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that runs bazel rules_cros unit tests.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_rules_cros.py#21)(api):**
+&mdash; **def [RunSteps](/recipes/test_rules_cros.py#23)(api):**
 ### *recipes* / [test\_sdk](/recipes/test_sdk.py)
 
 [DEPS](/recipes/test_sdk.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that runs SDK package unit tests.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_sdk.py#32)(api):**
+&mdash; **def [RunSteps](/recipes/test_sdk.py#34)(api):**
 ### *recipes* / [test\_uefi\_shim](/recipes/test_uefi_shim.py)
 
 [DEPS](/recipes/test_uefi_shim.py#12): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

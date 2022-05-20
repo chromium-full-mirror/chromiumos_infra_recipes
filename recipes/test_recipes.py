@@ -27,6 +27,7 @@ DEPS = [
 
 from collections import OrderedDict
 import contextlib
+import six
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -38,6 +39,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.led.job import job as job_pb2
 
 from PB.recipes.chromeos.test_recipes import TestRecipesProperties
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = TestRecipesProperties
 
@@ -143,9 +146,10 @@ def _apply_gerrit_changes(api):
     * api (object): See RunSteps documentation.
   """
   with api.step.nest('apply gerrit changes'):
-    patch_sets = api.gerrit.fetch_patch_sets(
+    patch_sets = api.gerrit.fetch_patch_sets([
         x for x in api.buildbucket.build.input.gerrit_changes
-        if x.project == RECIPE_REPO_PROJECT)
+        if x.project == RECIPE_REPO_PROJECT
+    ])
 
     for patch_set in patch_sets:
       commit_id = api.git.fetch_ref(patch_set.git_fetch_url,
@@ -357,7 +361,9 @@ def _update_skipped_verifiers(api, verifiers):
 
       verifiers[skip_builder].skipped = True
 
-    builders = [v.name for v in verifiers.values() if not v.skipped]
+    builders = [
+        six.ensure_str(v.name) for v in verifiers.values() if not v.skipped
+    ]
     presentation.step_text = 'Non-skipped builders: {}'.format(builders)
     presentation.logs['Skipped builders'] = skip_builders
 

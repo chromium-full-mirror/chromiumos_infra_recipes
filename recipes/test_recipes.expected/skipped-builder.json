@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Non-skipped builders: [u'staging-chromite-postsubmit', u'staging-release-triggerer']@@@",
+      "@@@STEP_TEXT@Non-skipped builders: ['staging-chromite-postsubmit', 'staging-release-triggerer']@@@",
       "@@@STEP_LOG_LINE@Skipped builders@staging-Annealing@@@",
       "@@@STEP_LOG_END@Skipped builders@@@"
     ]
@@ -489,7 +489,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/infra/recipes\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
@@ -504,7 +504,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromiumos/infra/recipes\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -526,7 +526,7 @@
     "cmd": [
       "git",
       "fetch",
-      "https://chromium.googlesource.com/chromium/src",
+      "https://chromium.googlesource.com/chromiumos/infra/recipes",
       "refs/changes/56/123456/7:"
     ],
     "cwd": "[CLEANUP]/recipes/src",

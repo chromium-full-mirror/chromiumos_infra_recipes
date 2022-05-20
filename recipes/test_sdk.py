@@ -28,6 +28,8 @@ from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   with api.build_menu.configure_builder(), \
