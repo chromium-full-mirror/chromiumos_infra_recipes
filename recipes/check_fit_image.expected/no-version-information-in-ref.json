@@ -1906,13 +1906,13 @@
       "@@@STEP_LOG_LINE@fitimage-ref.txt@@@@",
       "@@@STEP_LOG_LINE@fitimage-ref.txt@Program terminated.@@@",
       "@@@STEP_LOG_LINE@fitimage-ref.txt@-------------------@@@",
-      "@@@STEP_LOG_LINE@fitimage-ref.txt@aea20cd7543c5be16bd85d2922b83ab0596f89e3649827bf98a56ac5dc3abace  pchc.bin@@@",
       "@@@STEP_LOG_LINE@fitimage-ref.txt@b729d22e7107f13a043f23bded067027438d02abbc084705a73158e3eba9a1d9  fit@@@",
-      "@@@STEP_LOG_LINE@fitimage-ref.txt@09dfa9ee3f4ab4fcc8b86f71d5a10b1ac7118127a2f4f55695add1d631a80315  vsccommn.bin@@@",
+      "@@@STEP_LOG_LINE@fitimage-ref.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
       "@@@STEP_LOG_LINE@fitimage-ref.txt@83bf2329475611ae67016f17a3970434f416a4c5e512df0040616718ba982c41  meu@@@",
       "@@@STEP_LOG_LINE@fitimage-ref.txt@fe8a9636055dc5b6eba9bcac99092d6bacc8e38e4338ff64635ec07630711014  oem_km.bin@@@",
+      "@@@STEP_LOG_LINE@fitimage-ref.txt@aea20cd7543c5be16bd85d2922b83ab0596f89e3649827bf98a56ac5dc3abace  pchc.bin@@@",
       "@@@STEP_LOG_LINE@fitimage-ref.txt@266a4a9b993cc503ceccf959b2061a5603ab7131fb3509f363e5d22e83e4aa87  pmc.bin@@@",
-      "@@@STEP_LOG_LINE@fitimage-ref.txt@2a8c638dcda84fb63fa25e50014dc904d1d4a9a3687c39aefc9fcc9628db67b1  me.bin@@@",
+      "@@@STEP_LOG_LINE@fitimage-ref.txt@09dfa9ee3f4ab4fcc8b86f71d5a10b1ac7118127a2f4f55695add1d631a80315  vsccommn.bin@@@",
       "@@@STEP_LOG_END@fitimage-ref.txt@@@"
     ]
   },

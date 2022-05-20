@@ -14,8 +14,8 @@
 # Any resulting changes are then committed to the configured destination.
 
 import collections
+from six.moves.urllib import parse as urlparse
 import textwrap
-import urlparse
 
 from recipe_engine import post_process
 
@@ -49,7 +49,7 @@ DEPS = [
     'src_state',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = ConfigBackfillProperties
 
@@ -896,7 +896,7 @@ def GenTests(api):
           'processing test_program/test_project'
           '.update ref.git transaction'
           '.diffing repo to find changes.git diff',
-          stdout=api.raw_io.output('')),
+          stdout=api.raw_io.output_text('')),
   )
 
   yield api.test(
@@ -919,10 +919,10 @@ def GenTests(api):
           'processing test_program/test_project'
           '.update ref.git transaction'
           '.diffing repo to find changes.git diff',
-          stdout=api.raw_io.output('dfdsaf')),
+          stdout=api.raw_io.output_text('dfdsaf')),
       api.step_data(
           'processing test_program/test_project.update ref.git transaction'
-          '.git push', stdout=api.raw_io.output(
+          '.git push', stdout=api.raw_io.output_text(
               ('remote:   https://example.com/c/some/project/repo/+/123 '
                'config_backfill: test'))),
   )

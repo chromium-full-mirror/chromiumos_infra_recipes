@@ -22,6 +22,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 EXTERNAL_REVIEW_HOST = 'chromium-review.googlesource.com'
 INTERNAL_REVIEW_HOST = 'chrome-internal-review.googlesource.com'
 
@@ -35,7 +37,7 @@ def RunSteps(api, properties):
   with api.bot_cost.build_cost_context():
     project_to_patches_map = categorize_changes(
         api, properties, api.buildbucket.build.input.gerrit_changes)
-    for project, patch_sets in project_to_patches_map.items():
+    for project, patch_sets in sorted(project_to_patches_map.items()):
       apply_changes_and_run_presubmits(api, project, patch_sets)
 
 

@@ -26,6 +26,8 @@ from recipe_engine import post_process
 from PB.recipes.chromeos.test_manifest import TestManifestProperties
 from PB.chromiumos.branch import Branch
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = TestManifestProperties
 
 

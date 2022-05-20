@@ -26,6 +26,8 @@ DEPS = [
     'repo',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildBorealisRootfsProperties
 
 _PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'

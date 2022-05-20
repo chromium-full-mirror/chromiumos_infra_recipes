@@ -54,6 +54,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def parse_versions_file(step_name, api, path):
   """Parse a file containing SHA-256 hashes and binary names into a map.
@@ -121,7 +123,7 @@ def RunSteps(api, properties):
     Return:
       map of name => path indicating where each project is synced"""
 
-    projects = list(set([gc.project for gc in gerrit_changes]))
+    projects = sorted(list(set([gc.project for gc in gerrit_changes])))
 
     verbose = dict(verbose=True)
     api.cros_source.ensure_synced_cache(
@@ -305,7 +307,7 @@ def mock_version_file(version="14.0.40.1206", hashes=None, delete=None):
     for key in delete:
       del file_hashes[key]
 
-  for fname, sha256 in file_hashes.items():
+  for fname, sha256 in sorted(file_hashes.items()):
     contents += "%s  %s\n" % (sha256, fname)
   return contents
 
@@ -409,7 +411,7 @@ def GenTests(api):
       "no-project-info",
       setup_build(basic_config),
       api.step_data(
-          "repo forall", stdout=api.raw_io.output(
+          "repo forall", stdout=api.raw_io.output_text(
               "some/project|project|project|refs/heads/main|")),
       api.post_process(post_process.ResultReasonRE,
                        "not found in project info"),

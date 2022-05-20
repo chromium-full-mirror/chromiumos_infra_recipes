@@ -123,7 +123,7 @@
   * [breakpad:examples/full](#recipes-breakpad_examples_full) (Python3 ✅)
   * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols) (Python3 ✅)
   * [build_android_uprev](#recipes-build_android_uprev) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Android uprev.
-  * [build_borealis_rootfs](#recipes-build_borealis_rootfs) &mdash; Recipe for building a Borealis rootfs image.
+  * [build_borealis_rootfs](#recipes-build_borealis_rootfs) (Python3 ✅) &mdash; Recipe for building a Borealis rootfs image.
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
@@ -154,8 +154,8 @@
   * [builder_metadata:tests/get_models](#recipes-builder_metadata_tests_get_models) &mdash; Tests to verify builder_metadata.
   * [builder_metadata:tests/lookup_is_cached](#recipes-builder_metadata_tests_lookup_is_cached) &mdash; Tests to verify that builder_metadata is properly cached between invocations.
   * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
-  * [check_fit_image](#recipes-check_fit_image) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
-  * [check_project_config](#recipes-check_project_config) &mdash; Checks a project conforms to its program's constraints.
+  * [check_fit_image](#recipes-check_fit_image) (Python3 ✅) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
+  * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
   * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
   * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry) (Python3 ✅)
@@ -172,7 +172,7 @@
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full) (Python3 ✅)
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json) (Python3 ✅)
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov) (Python3 ✅)
-  * [config_backfill](#recipes-config_backfill) &mdash; Copy legacy configuration and generate backfilled configuration.
+  * [config_backfill](#recipes-config_backfill) (Python3 ✅) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
   * [cq_looks:examples/full](#recipes-cq_looks_examples_full) (Python3 ✅)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json) (Python3 ✅)
@@ -377,7 +377,7 @@
   * [git_txn:tests/gerrit_transaction](#recipes-git_txn_tests_gerrit_transaction) (Python3 ✅)
   * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction) (Python3 ✅)
   * [gitiles:examples/full](#recipes-gitiles_examples_full) (Python3 ✅)
-  * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
+  * [gitiles_triggerer](#recipes-gitiles_triggerer) (Python3 ✅) &mdash; Recipe that schedules jobs based on its triggers.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload) (Python3 ✅)
   * [goma:examples/full](#recipes-goma_examples_full) (Python3 ✅)
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma) (Python3 ✅)
@@ -391,10 +391,10 @@
   * [ipc:examples/full](#recipes-ipc_examples_full) (Python3 ✅)
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs) (Python3 ✅)
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
-  * [kernel_checkconfig](#recipes-kernel_checkconfig) &mdash; Recipe for testing the kernel splitconfig normalization.
+  * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) (Python3 ✅) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
-  * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
+  * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [metadata:examples/full](#recipes-metadata_examples_full) (Python3 ✅)
@@ -407,7 +407,7 @@
   * [naming:examples/get_test_title](#recipes-naming_examples_get_test_title) (Python3 ✅)
   * [naming:tests/build_url_title](#recipes-naming_tests_build_url_title) (Python3 ✅)
   * [naming:tests/get_generation_request_title](#recipes-naming_tests_get_generation_request_title) (Python3 ✅)
-  * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
+  * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) (Python3 ✅) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full)
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
@@ -472,7 +472,7 @@
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs) (Python3 ✅)
   * [tast_vm](#recipes-tast_vm) (Python3 ✅) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
-  * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
+  * [test_manifest](#recipes-test_manifest) (Python3 ✅) &mdash; Verifies a repo manifest.
   * [test_plan_filtering](#recipes-test_plan_filtering) &mdash; Updates test plan rules to reflect new risk-based rules.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
@@ -8402,13 +8402,13 @@ for example:
 
 [DEPS](/recipes/build_borealis_rootfs.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building a Borealis rootfs image.
 
-&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#59)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#61)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#39)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#41)(api, properties):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
 [DEPS](/recipes/build_cq.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8696,13 +8696,13 @@ Test to verify install_packages is called prior to look_up_builder_metadata.
 
 [DEPS](/recipes/check_fit_image.py#43): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Check that any binary blobs in a commit come from a valid FIT version
 
-&mdash; **def [RunSteps](/recipes/check_fit_image.py#104)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_fit_image.py#106)(api, properties):**
 
-&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#247)(version):**
+&mdash; **def [mock\_fit\_header](/recipes/check_fit_image.py#249)(version):**
 
 Mock the header from the FIT tool with given version
 
@@ -8712,7 +8712,7 @@ Args:
 Return:
   version file contents as string
 
-&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#273)(version='14.0.40.1206', hashes=None, delete=None):**
+&mdash; **def [mock\_version\_file](/recipes/check_fit_image.py#275)(version='14.0.40.1206', hashes=None, delete=None):**
 
 Mock version file contents
 
@@ -8724,7 +8724,7 @@ Args:
 Return:
   version file contents as string
 
-&mdash; **def [parse\_versions\_file](/recipes/check_fit_image.py#58)(step_name, api, path):**
+&mdash; **def [parse\_versions\_file](/recipes/check_fit_image.py#60)(step_name, api, path):**
 
 Parse a file containing SHA-256 hashes and binary names into a map.
 
@@ -8741,11 +8741,11 @@ Return:
 
 [DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Checks a project conforms to its program's constraints.
 
-&mdash; **def [RunSteps](/recipes/check_project_config.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/check_project_config.py#35)(api, properties):**
 ### *recipes* / [chrome:examples/cache\_sync](/recipe_modules/chrome/examples/cache_sync.py)
 
 [DEPS](/recipe_modules/chrome/examples/cache_sync.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8931,7 +8931,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/config_backfill.py#33): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Copy legacy configuration and generate backfilled configuration.
 
@@ -10508,11 +10508,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/gitiles_triggerer.py#8): [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that schedules jobs based on its triggers.
 
-&mdash; **def [RunSteps](/recipes/gitiles_triggerer.py#38)(api, properties):**
+&mdash; **def [RunSteps](/recipes/gitiles_triggerer.py#40)(api, properties):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#6): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -10608,7 +10608,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/kernel_checkconfig.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for testing the kernel splitconfig normalization.
 
@@ -10652,11 +10652,11 @@ Recipe for updating libchrome upstream branch
 
 [DEPS](/recipes/local_manifest_presubmit.py#18): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Runs the presubmit for a project with checkout per local manifest.
 
-&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#38)(api, properties):**
+&mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#40)(api, properties):**
 ### *recipes* / [lvfs\_mirror](/recipes/lvfs_mirror.py)
 
 [DEPS](/recipes/lvfs_mirror.py#10): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)
@@ -10751,13 +10751,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/non_manifest_projects_presubmit.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for running presubmit on CLs for projects not in the manifest.
 
-&mdash; **def [RunSteps](/recipes/non_manifest_projects_presubmit.py#34)(api, properties):**
+&mdash; **def [RunSteps](/recipes/non_manifest_projects_presubmit.py#36)(api, properties):**
 
-&mdash; **def [apply\_changes\_and\_run\_presubmits](/recipes/non_manifest_projects_presubmit.py#83)(api, project, patch_sets):**
+&mdash; **def [apply\_changes\_and\_run\_presubmits](/recipes/non_manifest_projects_presubmit.py#85)(api, project, patch_sets):**
 
 For a given project, clone the repo, apply changes and run presubmits.
 
@@ -10766,7 +10766,7 @@ Args:
   project (str): The name of the Gerrit project.
   patch_sets (list[PatchSet]): List of changes to apply for the given project.
 
-&mdash; **def [categorize\_changes](/recipes/non_manifest_projects_presubmit.py#42)(api, properties, gerrit_changes):**
+&mdash; **def [categorize\_changes](/recipes/non_manifest_projects_presubmit.py#44)(api, properties, gerrit_changes):**
 
 Group changes by Gerrit project.
 
@@ -11288,11 +11288,11 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 [DEPS](/recipes/test_manifest.py#8): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Verifies a repo manifest.
 
-&mdash; **def [RunSteps](/recipes/test_manifest.py#32)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_manifest.py#34)(api, properties):**
 ### *recipes* / [test\_plan\_filtering](/recipes/test_plan_filtering.py)
 
 [DEPS](/recipes/test_plan_filtering.py#36): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

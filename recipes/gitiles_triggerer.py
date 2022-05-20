@@ -21,6 +21,8 @@ from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
 from PB.recipes.chromeos.gitiles_triggerer import GitilesTriggererProperties
 from recipe_engine import post_process
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = GitilesTriggererProperties
 
 
@@ -32,7 +34,7 @@ def _make_key(trigger):
 
 def _expand(item, key):
   """Expand item based on the trigger."""
-  return item.encode('utf-8').format(**key._asdict())
+  return item.format(**key._asdict())
 
 
 def RunSteps(api, properties):
