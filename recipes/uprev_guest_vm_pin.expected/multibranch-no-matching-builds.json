@@ -1689,7 +1689,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "unable to find common build on branch release-R89-12345.B for all boards"
+      "humanReason": "unable to find common build on branch release-R88-12345.B for all boards"
     },
     "name": "$result"
   }

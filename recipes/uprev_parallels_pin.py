@@ -32,6 +32,8 @@ from PB.recipes.chromeos.build_parallels_image import (
 from PB.recipes.chromeos.uprev_parallels_pin import UprevParallelsPinProperties
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
@@ -248,7 +250,9 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
         'sha256sum':
             output.image_sha256,
     }
-    presentation.logs['image metadata'] = json.dumps(image_details, indent=2)
+    presentation.logs['image metadata'] = json.dumps(image_details,
+                                                     separators=(',', ':'),
+                                                     sort_keys=True, indent=2)
     return image_details
 
 
@@ -316,12 +320,12 @@ def get_upstream_version(api, properties):
             'gs://chromeos-binaries/path/parallels-desktop-1.0.1.1098.tbz2\n'
             'gs://chromeos-binaries/path/parallels-desktop-1.0.1.100.tbz2\n'))
     versions = []
-    for filepath in files.stdout.splitlines():
+    for filepath in files.stdout.decode('utf-8').splitlines():
       match = re.match(r'.*-([0-9]+(\.[0-9]+)+)\.tbz2', filepath)
       if match is None:
         continue
       # parse version into list[int]
-      version_parts = map(int, match.group(1).split('.'))
+      version_parts = list(map(int, match.group(1).split('.')))
       versions.append(version_parts)
 
     if not versions:
@@ -389,8 +393,8 @@ def is_version_after(version, previous_version):
     version (str): The version to compare.
     previous_version (str): The previous version to compare with.
   """
-  parts = map(int, version.split('.'))
-  previous_parts = map(int, previous_version.split('.'))
+  parts = list(map(int, version.split('.')))
+  previous_parts = list(map(int, previous_version.split('.')))
   # list comparison performs lexicographic comparison.
   return parts > previous_parts
 

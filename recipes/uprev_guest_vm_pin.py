@@ -27,6 +27,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
 from PB.recipes.chromeos.uprev_guest_vm_pin import \
   (UprevGuestVmPinProperties, VmBoardImage)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 DEPS = [
     'recipe_engine/archive',
     'recipe_engine/buildbucket',
@@ -61,20 +63,9 @@ def _version_comparator(a, b):
 
   |a| and |b| are expected to be strings of numbers separated by |.|
   """
-  a_parts = a.split('.')
-  b_parts = b.split('.')
-
-  min_length = min(len(a_parts), len(b_parts))
-
-  for i in range(min_length):
-    if int(a_parts[i]) > int(b_parts[i]):
-      return True
-
-    if int(a_parts[i]) < int(b_parts[i]):
-      return False
-
-  # If everything else is equal but |a| has more subversions, |a| is greater.
-  return len(a_parts) > len(b_parts)
+  a_parts = [int(part) for part in a.split('.')]
+  b_parts = [int(part) for part in b.split('.')]
+  return a_parts > b_parts
 
 
 def _sanitize_version_number(version):
@@ -246,11 +237,11 @@ def RunSteps(api, properties):
 
       # Find the highest common version for all the VMs on each branch.
       version_map = {}
-      for branch, rest in version_build_map.items():
+      for branch, rest in sorted(version_build_map.items()):
         build_index = '0'
         sanitized_common_version = '0'
 
-        for version, board_builds in rest.items():
+        for version, board_builds in sorted(rest.items()):
           sanitized_version = _sanitize_version_number(version)
           if board_builds.keys(
           ) == vm_property_map.keys() and _version_comparator(
@@ -265,7 +256,7 @@ def RunSteps(api, properties):
 
         version_map[branch] = (build_index, sanitized_common_version)
 
-    for branch, (version, sanitized_version) in version_map.items():
+    for branch, (version, sanitized_version) in sorted(version_map.items()):
       with api.step.nest('upreving pin for branch {}'.format(branch)):
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
                                         branch, sync_opts={'detach': True})
@@ -659,8 +650,8 @@ def _generate_postsubmit_build_set(ids, board):
 def _generate_legacy_release_build_set(board, ids_by_branch):
   builds = []
   idx = 1
-  for branch in ids_by_branch.keys():
-    for build_id in ids_by_branch[branch]:
+  for (branch, build_ids) in sorted(ids_by_branch.items()):
+    for build_id in build_ids:
       properties = Struct()
       properties['cbb_branch'] = 'release-R{}-12345.B'.format(branch)
       properties['full_version'] = 'R{}-1.2.{}'.format(branch, build_id)

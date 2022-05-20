@@ -6750,9 +6750,9 @@
     "name": "build VM image",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@image metadata@{@@@",
-      "@@@STEP_LOG_LINE@image metadata@  \"url\": \"gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20201127.zip\", @@@",
-      "@@@STEP_LOG_LINE@image metadata@  \"sha256sum\": \"aabbccddeeff0011223344556677889900\", @@@",
-      "@@@STEP_LOG_LINE@image metadata@  \"size\": 9876543210@@@",
+      "@@@STEP_LOG_LINE@image metadata@  \"sha256sum\":\"aabbccddeeff0011223344556677889900\",@@@",
+      "@@@STEP_LOG_LINE@image metadata@  \"size\":9876543210,@@@",
+      "@@@STEP_LOG_LINE@image metadata@  \"url\":\"gs://chromeos-test-assets-private/tast/pita/pita/pre_pluginvm_image_1.2.3.4_20201127.zip\"@@@",
       "@@@STEP_LOG_LINE@image metadata@}@@@",
       "@@@STEP_LOG_END@image metadata@@@",
       "@@@STEP_LINK@destination directory@https://pantheon.corp.google.com/storage/browser/chromeos-test-assets-private/tast/pita/pita@@@",
