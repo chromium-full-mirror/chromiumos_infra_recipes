@@ -75,6 +75,13 @@
   },
   {
     "cmd": [],
+    "name": "link to parent (2)",
+    "~followup_annotations": [
+      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/1234@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "publish build ID"
   },
   {
@@ -826,13 +833,6 @@
       "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:42\"@@@",
       "@@@STEP_LOG_LINE@json.input@}@@@",
       "@@@STEP_LOG_END@json.input@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "link to parent (2)",
-    "~followup_annotations": [
-      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {

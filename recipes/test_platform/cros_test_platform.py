@@ -331,6 +331,7 @@ def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
   link_to_parent(api)
+  _top_level_export_to_bigquery(api)
 
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
@@ -356,7 +357,6 @@ def RunSteps(api, properties):
                            should_poll_for_completion=True)
     postprocess(api, requests, tagged_responses)
   summarize(api, enumerations, tagged_responses, error_in_requests)
-  _top_level_export_to_bigquery(api)
 
 
 def _append_error_responses(error_in_requests, responses):
