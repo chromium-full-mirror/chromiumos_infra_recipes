@@ -16,4 +16,6 @@ DEPS = [
 from PB.recipe_modules.chromeos.build_reporting.build_reporting \
     import BuildReportingProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildReportingProperties

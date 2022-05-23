@@ -20,9 +20,12 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 the unfiltered top-level topic for all builds.
 """
 
+import base64
 import contextlib
+import json
+import six
 
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict
 
 from . import build_report_proto_helpers as helpers
 
@@ -193,13 +196,18 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._build_report.MergeFrom(build_report)
 
     with self.m.step.nest('build status pubsub update') as pres:
-      pres.logs['message'] = MessageToJson(self._build_report)
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
+      pres.logs['message'] = json.dumps(
+          MessageToDict(self._build_report), separators=(',', ':'), indent=2,
+          sort_keys=True)
       self.m.cloud_pubsub.publish_message(
           self.pubsub_project,
           self.pubsub_topic,
           # The publish-message binary requires that messages be base64 encoded to
           # avoid issues with binary data and strings.
-          self._build_report.SerializeToString().encode('base64'),
+          six.ensure_str(
+              base64.b64encode(self._build_report.SerializeToString())),
           ordering_key=str(self.m.buildbucket.build.id or 'led-launch'),
           endpoint=PUBSUB_ENDPOINT,
           raise_on_failed_publish=raise_on_failed_publish,

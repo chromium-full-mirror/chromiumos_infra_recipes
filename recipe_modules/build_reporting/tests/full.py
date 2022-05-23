@@ -20,6 +20,8 @@ from PB.chromiumos.common import Channel
 from PB.chromite.api.packages import GetBuilderMetadataResponse
 from recipe_engine.recipe_api import StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 BuildStatus = BuildReport.BuildStatus
 
 

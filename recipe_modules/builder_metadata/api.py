@@ -3,7 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf.json_format import MessageToJson
+import json
+
+from google.protobuf.json_format import MessageToDict
 
 from recipe_engine import recipe_api
 
@@ -40,8 +42,11 @@ class BuilderMetadataApi(recipe_api.RecipeApi):
             GetBuilderMetadataRequest(
                 build_target=self.m.build_menu.build_target,
                 chroot=self.m.cros_sdk.chroot))
-      presentation.logs["builder_metadata"] = MessageToJson(
-          self._cached_metadata)
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
+      presentation.logs["builder_metadata"] = json.dumps(
+          MessageToDict(self._cached_metadata), indent=2, sort_keys=True,
+          separators=(',', ':'))
 
       return self._cached_metadata
 

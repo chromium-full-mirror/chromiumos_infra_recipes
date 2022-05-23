@@ -10,3 +10,5 @@ DEPS = [
     'cros_sdk',
     'recipe_engine/raw_io',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

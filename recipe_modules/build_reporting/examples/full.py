@@ -15,6 +15,8 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 BuildStatus = BuildReport.BuildStatus
 StepDetails = BuildReport.StepDetails
 

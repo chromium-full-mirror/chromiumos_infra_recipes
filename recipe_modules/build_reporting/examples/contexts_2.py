@@ -13,6 +13,8 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 BuildStatus = BuildReport.BuildStatus
 StepDetails = BuildReport.StepDetails
 

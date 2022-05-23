@@ -10,9 +10,9 @@
   * [breakpad](#recipe_modules-breakpad) (Python3 ✅)
   * [build_menu](#recipe_modules-build_menu) (Python3 ✅) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan) (Python3 ✅)
-  * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
+  * [build_reporting](#recipe_modules-build_reporting) (Python3 ✅) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats) (Python3 ✅)
-  * [builder_metadata](#recipe_modules-builder_metadata)
+  * [builder_metadata](#recipe_modules-builder_metadata) (Python3 ✅)
   * [chrome](#recipe_modules-chrome) (Python3 ✅)
   * [chromite](#recipe_modules-chromite) (Python3 ✅)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
@@ -142,18 +142,18 @@
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds) (Python3 ✅)
   * [build_postsubmit](#recipes-build_postsubmit) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Postsubmit.
   * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
-  * [build_reporting:examples/contexts_1](#recipes-build_reporting_examples_contexts_1)
-  * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2)
-  * [build_reporting:examples/full](#recipes-build_reporting_examples_full)
-  * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
+  * [build_reporting:examples/contexts_1](#recipes-build_reporting_examples_contexts_1) (Python3 ✅)
+  * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2) (Python3 ✅)
+  * [build_reporting:examples/full](#recipes-build_reporting_examples_full) (Python3 ✅)
+  * [build_reporting:tests/full](#recipes-build_reporting_tests_full) (Python3 ✅)
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand) (Python3 ✅)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status) (Python3 ✅)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count) (Python3 ✅)
-  * [builder_metadata:tests/get_models](#recipes-builder_metadata_tests_get_models) &mdash; Tests to verify builder_metadata.
-  * [builder_metadata:tests/lookup_is_cached](#recipes-builder_metadata_tests_lookup_is_cached) &mdash; Tests to verify that builder_metadata is properly cached between invocations.
-  * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
+  * [builder_metadata:tests/get_models](#recipes-builder_metadata_tests_get_models) (Python3 ✅) &mdash; Tests to verify builder_metadata.
+  * [builder_metadata:tests/lookup_is_cached](#recipes-builder_metadata_tests_lookup_is_cached) (Python3 ✅) &mdash; Tests to verify that builder_metadata is properly cached between invocations.
+  * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) (Python3 ✅) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
   * [check_fit_image](#recipes-check_fit_image) (Python3 ✅) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
@@ -1195,7 +1195,7 @@ Returns: A list of build_pb2.Build objects, deduped and prioritized.
 
 [DEPS](/recipe_modules/build_reporting/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_signing](#recipe_modules-cros_signing), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Contains functions for building and sending build status to a pub/sub topic.
 
@@ -1212,22 +1212,22 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#99)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#102)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#113)(build_config, kind, value):**
+&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#116)(build_config, kind, value):**
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#128)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#131)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#210)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#218)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#290)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#298)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1242,9 +1242,9 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#132)(self):**
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#135)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#157)(self, build_report, raise_on_failed_publish=False):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#160)(self, build_report, raise_on_failed_publish=False):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1259,7 +1259,7 @@ Args:
 Return:
   Reference to BuildReport input message.
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#254)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#262)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
@@ -1275,7 +1275,7 @@ Raises:
 Return:
   None
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#389)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#397)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1284,18 +1284,18 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#409)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#417)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#222)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#230)(self, status):**
 
 Publish and merge build status.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#230)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#238)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1305,19 +1305,19 @@ Args:
 Return:
   Nothing
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#120)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#123)(self):**
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#124)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#127)(self):**
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#136)(self, build_type):**
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#139)(self, build_type):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#108)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#111)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#329)(self, step_name, raise_on_failed_publish=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#337)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 
@@ -1385,20 +1385,20 @@ Returns:
 
 [DEPS](/recipe_modules/builder_metadata/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [BuilderMetadataApi](/recipe_modules/builder_metadata/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuilderMetadataApi](/recipe_modules/builder_metadata/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get builder metadata.
 
-&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#48)(self):**
+&mdash; **def [get\_models](/recipe_modules/builder_metadata/api.py#53)(self):**
 
 Finds all model names associated with the active build_target.
 
 Returns:
   List[str]: The names of all models used by this build target.
 
-&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#20)(self):**
+&mdash; **def [look\_up\_builder\_metadata](/recipe_modules/builder_metadata/api.py#22)(self):**
 
 Looks up builder metadata for the provided build_target.
 
@@ -8600,30 +8600,30 @@ Recipe for building images for release.
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#20)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_2](/recipe_modules/build_reporting/examples/contexts_2.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_2.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_2.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_2.py#22)(api):**
 ### *recipes* / [build\_reporting:examples/full](/recipe_modules/build_reporting/examples/full.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/full.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#26)(api):**
 ### *recipes* / [build\_reporting:tests/full](/recipe_modules/build_reporting/tests/full.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/full.py#8): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#41)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#43)(api):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8669,29 +8669,29 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/builder_metadata/tests/get_models.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Tests to verify builder_metadata.get_models.
 
-&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/get_models.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/get_models.py#20)(api):**
 ### *recipes* / [builder\_metadata:tests/lookup\_is\_cached](/recipe_modules/builder_metadata/tests/lookup_is_cached.py)
 
 [DEPS](/recipe_modules/builder_metadata/tests/lookup_is_cached.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Tests to verify that builder_metadata is properly cached between invocations.
 
-&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/lookup_is_cached.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/lookup_is_cached.py#20)(api):**
 ### *recipes* / [builder\_metadata:tests/no\_install\_packages](/recipe_modules/builder_metadata/tests/no_install_packages.py)
 
 [DEPS](/recipe_modules/builder_metadata/tests/no_install_packages.py#8): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Test to verify install_packages is called prior to look_up_builder_metadata.
 
-&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/no_install_packages.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/builder_metadata/tests/no_install_packages.py#18)(api):**
 ### *recipes* / [check\_fit\_image](/recipes/check_fit_image.py)
 
 [DEPS](/recipes/check_fit_image.py#43): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
