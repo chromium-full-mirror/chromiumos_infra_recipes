@@ -5,7 +5,7 @@
 
 """Recipe for orchestrating ChromeOS payloads (AU deltas etc)."""
 
-from google.protobuf.json_format import MessageToDict, MessageToJson
+from google.protobuf.json_format import MessageToDict
 import itertools
 import json
 from os import path
@@ -33,6 +33,8 @@ DEPS = [
     'easy',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = PaygenOrchestratorProperties
 
 
@@ -50,6 +52,13 @@ def _summarize_failed_builds(failures):
       summary_markdown += '\n...'
       break
   return summary_markdown
+
+
+def py2_MessageToJson(obj):
+  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
+  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
+  return json.dumps(
+      MessageToDict(obj), separators=(',', ': '), indent=2, sort_keys=True)
 
 
 def RunSteps(api, properties):
@@ -76,7 +85,8 @@ def RunSteps(api, properties):
       configured_payloads.extend(cfgs)
 
     pres.logs['%s configured sources' % len(configured_payloads)] = (
-        json.dumps(configured_payloads, indent=2))
+        json.dumps(configured_payloads, sort_keys=True, separators=(',', ':'),
+                   indent=2))
 
     # If no payloads are configured return (that was easy!).
     if not configured_payloads:
@@ -117,8 +127,12 @@ def RunSteps(api, properties):
 
   # Match configuration with discovered artifacts.
   with api.step.nest('discovered artifacts') as pres:
-    pres.logs['target_artifacts'] = [MessageToJson(x) for x in target_artifacts]
-    pres.logs['source_artifacts'] = [MessageToJson(x) for x in source_artifacts]
+    pres.logs['target_artifacts'] = [
+        py2_MessageToJson(x) for x in target_artifacts
+    ]
+    pres.logs['source_artifacts'] = [
+        py2_MessageToJson(x) for x in source_artifacts
+    ]
 
   # Aka: "GenerationRequests".
   gen_reqs = []
@@ -140,15 +154,17 @@ def RunSteps(api, properties):
           payload_cfg, source_artifacts, target_artifacts,
           properties.dest_bucket, True, properties.dryrun)
       gen_reqs.extend(delta_gen_reqs)
-    pres.logs['%s deltas' %
-              len(delta_gen_reqs)] = [MessageToJson(x) for x in delta_gen_reqs]
+    pres.logs['%s deltas' % len(delta_gen_reqs)] = [
+        py2_MessageToJson(x) for x in delta_gen_reqs
+    ]
 
     # Do full payloads.
     full_gen_reqs = api.cros_paygen.get_full_requests(target_artifacts,
                                                       properties.dest_bucket,
                                                       True, properties.dryrun)
-    pres.logs['%s full' %
-              len(full_gen_reqs)] = [MessageToJson(x) for x in full_gen_reqs]
+    pres.logs['%s full' % len(full_gen_reqs)] = [
+        py2_MessageToJson(x) for x in full_gen_reqs
+    ]
     gen_reqs.extend(full_gen_reqs)
 
     if not gen_reqs:
@@ -179,7 +195,7 @@ def RunSteps(api, properties):
 
     with api.step.nest('set `payloads` output property'):
       payloads = api.cros_paygen.create_paygen_build_report(res)
-      payloads_json = [MessageToJson(payload) for payload in payloads]
+      payloads_json = [py2_MessageToJson(payload) for payload in payloads]
       api.easy.set_properties_step(payloads=payloads_json)
 
   if fail:
