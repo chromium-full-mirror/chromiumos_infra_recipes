@@ -26,14 +26,15 @@ PROPERTIES = ArtifactsGsPathProperties
 def RunSteps(api, properties):
   upload_path = api.cros_artifacts.artifacts_gs_path(
       properties.builder_name, target=BuildTarget(name=properties.target_name),
-      kind=properties.builder_type)
+      kind=properties.builder_type, template=properties.template)
   api.assertions.assertEqual(upload_path, properties.expected_upload_path)
 
 
 def GenTests(api):
 
   yield api.test(
-      'release-prod', api.buildbucket.build(
+      'release-prod',
+      api.buildbucket.build(
           build_pb2.Build(
               id=1234,
           ),
@@ -43,8 +44,9 @@ def GenTests(api):
               builder_name='atlas-kernelnext-release-main',
               target_name='atlas-kernelnext',
               builder_type=BuilderConfig.Id.RELEASE,
-              expected_upload_path='atlas-kernelnext-release/R99-1234.56.0-101')
-      ))
+              expected_upload_path='atlas-kernelnext-release/R99-1234.56.0-101',
+              template='{builder_name}-release/{version}')),
+  )
 
   yield api.test(
       'release-staging',

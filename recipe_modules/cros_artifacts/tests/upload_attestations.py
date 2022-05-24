@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -77,7 +77,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'base_images length != 1',
+      'base_images-length-neq-1',
       api.post_process(post_process.DoesNotRun, 'upload artifacts.report_gcs'),
       api.post_process(post_process.LogEquals, 'upload artifacts',
                        'base_image_length', 'the base_image length is 0'),

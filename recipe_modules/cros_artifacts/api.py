@@ -74,6 +74,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         props.max_concurrent_bundling_requests or
         _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
 
+    self._gs_upload_path = props.gs_upload_path
+
   def initialize(self):
     # TODO(b/216849056): Remove once go/cros-build-target-builder-parallelization
     # is fully rolled out.
@@ -83,6 +85,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         self.m.cros_infra_config.experiments):
       self._max_concurrent_bundling_requests = (
           _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
+
+  @property
+  def gs_upload_path(self):
+    """Return the gs upload path, if one was set in properties."""
+    return self._gs_upload_path or None
 
   def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -460,19 +467,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     if kind:
       ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
       ret['label'] = ret['kind']
-    # Ensure formatting expected by prod release pipeline (b/228878300).
-    if is_release and not self.m.cros_infra_config.is_staging:
-      ret['gs_path'] = '{builder}-release/{version}'.format(
-          builder=ret['builder_name'], version=ret['version'])
-    else:
-      ret['gs_path'] = '{builder}/{version}-{bid}'.format(
-          builder=ret['builder_name'], version=ret['version'],
-          bid=ret['build_id'])
+    ret['gs_path'] = '{builder}/{version}-{bid}'.format(
+        builder=ret['builder_name'], version=ret['version'],
+        bid=ret['build_id'])
     return ret
 
   def artifacts_gs_path(self, builder_name, target,
-                        kind=BuilderConfig.Id.TYPE_UNSPECIFIED,
-                        template='{gs_path}'):
+                        kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template=None):
     """Returns the GS path for artifacts of the given kind for the given target.
 
     The resulting path will NOT include the GS bucket.
@@ -483,12 +484,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
           e.g. POSTSUBMIT. May be used as a descriptor in formatting paths.
           Required if '{label}' or '{kind}' are present in |template|.
-      template (str): The string to format.
+      template (str): The string to format, or None. If set to None, the
+          default '{gs_path}' will be used.
 
     Returns:
       The formatted template.  Default: The GS path at which artifacts should
           be uploaded.
     """
+    template = template or '{gs_path}'
     return template.format(
         **self._artifacts_gs_path_dict(builder_name, target, kind))
 
@@ -655,7 +658,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         return uploaded_artifacts
 
       # Upload all of the artifacts to the archive bucket/path.
-      gs_path = self.artifacts_gs_path(builder_name, sysroot.build_target, kind)
+      gs_path = self.artifacts_gs_path(builder_name, sysroot.build_target, kind,
+                                       template=self._gs_upload_path)
       presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s/%s' %
           (gs_bucket, gs_path))

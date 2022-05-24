@@ -154,7 +154,8 @@ class MetadataJsonApi(RecipeApi):
       gs_bucket = config.artifacts.artifacts_gs_bucket
       try:
         gs_path = self.m.cros_artifacts.artifacts_gs_path(
-            config.id.name, targets[0], config.id.type)
+            config.id.name, targets[0], config.id.type,
+            template=self.m.cros_artifacts.gs_upload_path)
       except Exception as ex:  # pragma: nocover # pylint: disable=broad-except
         presentation.step_text = 'could not get GS path: {}'.format(ex)
         return

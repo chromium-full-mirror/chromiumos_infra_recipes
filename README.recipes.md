@@ -859,7 +859,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#811)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#805)(self):**
 
 Add child build ids to output property of current build.
 
@@ -874,7 +874,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#546)(self, config=None, include_version=False, builder_path_template=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#546)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -884,8 +884,6 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   include_version (bool): Whether or not to pass the workspace version
     to sysroot_util.build.
-  builder_path_template (str): Template to use for the builder_path. If not
-    set, uses the cros_artifacts.artifacts_gs_path default.
 Returns:
   (bool): Whether to continue with the build.
 
@@ -926,7 +924,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#673)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#667)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1013,7 +1011,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#140)(self):**
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#599)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#593)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1084,7 +1082,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#648)(self, config=None, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#642)(self, config=None, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -1099,7 +1097,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#775)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#769)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1730,7 +1728,7 @@ API for uploading CrOS build artifacts to Google Storage.
 
 A module for bundling and uploading build artifacts.
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#473)(self, builder_name, target, kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template='{gs_path}'):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/cros_artifacts/api.py#475)(self, builder_name, target, kind=BuilderConfig.Id.TYPE_UNSPECIFIED, template=None):**
 
 Returns the GS path for artifacts of the given kind for the given target.
 
@@ -1742,13 +1740,14 @@ Args:
   kind (BuilderConfig.Id.Type): The kind of artifacts being uploaded,
       e.g. POSTSUBMIT. May be used as a descriptor in formatting paths.
       Required if '{label}' or '{kind}' are present in |template|.
-  template (str): The string to format.
+  template (str): The string to format, or None. If set to None, the
+      default '{gs_path}' will be used.
 
 Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#791)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#795)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1763,7 +1762,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#825)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#829)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1778,7 +1777,11 @@ Returns:
 Raises:
   ValueError: If any artifact is not found in the build payload.
 
-&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#588)(self, artifacts_info):**
+&emsp; **@property**<br>&mdash; **def [gs\_upload\_path](/recipe_modules/cros_artifacts/api.py#89)(self):**
+
+Return the gs upload path, if one was set in properties.
+
+&mdash; **def [has\_output\_artifacts](/recipe_modules/cros_artifacts/api.py#591)(self, artifacts_info):**
 
 Return whether there are output artifacts.
 
@@ -1788,16 +1791,16 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [initialize](/recipe_modules/cros_artifacts/api.py#77)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_artifacts/api.py#79)(self):**
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#768)(self, properties):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#772)(self, properties):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#845)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#849)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1818,7 +1821,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#963)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#967)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1836,7 +1839,7 @@ Args:
 Returns:
   PushImageResponse
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#605)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None, report_to_spike=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#608)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None, report_to_spike=False):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -1869,7 +1872,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#724)(self, name, builder_name, target, gs_bucket, filename, message):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#728)(self, name, builder_name, target, gs_bucket, filename, message):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -6477,7 +6480,7 @@ Add elements to metadata.
 Args:
   kwargs (dict): dictionary of key-values to update.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#193)(self):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#194)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
@@ -6488,7 +6491,7 @@ Update metadata with version info.
 Args:
   version_dict (dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#244)(self, config, targets=()):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#245)(self, config, targets=()):**
 
 Returns a context that upload final metadata.json to GS.
 
@@ -6496,7 +6499,7 @@ Args:
   config (BuilderConfig): builder config of this builder.
   targets (list[BuildTarget]): The build targets of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#221)(self, config, targets, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#222)(self, config, targets, success):**
 
 Finish the build stats and upload metadata.json.
 
@@ -8613,9 +8616,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#73)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#75)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#44)(api):**
+&mdash; **def [RunSteps](/recipes/build_release.py#46)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

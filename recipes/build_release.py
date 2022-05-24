@@ -33,6 +33,8 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine.result import RawResult
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import (
+    CrosArtifactsProperties)
 from PB.recipe_modules.chromeos.cros_signing.cros_signing import \
   CrosSigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
@@ -95,9 +97,7 @@ def DoRunSteps(api, config):
         api.build_reporting.publish_build_target_and_model_metadata(
             api.cros_source.manifest_branch, builder_metadata)
       with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
-        api.build_menu.build_and_test_images(
-            config, include_version=True,
-            builder_path_template='{target}-release/{version}')
+        api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of
@@ -167,6 +167,9 @@ def GenTests(api):
       'release-build',
       api.properties(
           **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -200,6 +203,9 @@ def GenTests(api):
       'release-no-instructions',
       api.properties(
           **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -242,6 +248,12 @@ def GenTests(api):
   # Release build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
+          }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -258,6 +270,12 @@ def GenTests(api):
   # Release build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
+          }),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -270,6 +288,12 @@ def GenTests(api):
   # Release build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
+          }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -287,6 +311,9 @@ def GenTests(api):
       'paygen-failure',
       api.properties(
           **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -335,6 +362,9 @@ def GenTests(api):
                   'container_version_format':
                       "{staging?}{build-target}-release.{cros-version}",
               },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{builder_name}-release/{version}'),
           }),
       api.cros_signing.setup_mocks(),
       api.buildbucket.simulated_collect_output(

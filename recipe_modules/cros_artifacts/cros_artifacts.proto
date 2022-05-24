@@ -9,4 +9,8 @@ package recipe_modules.chromeos.cros_artifacts;
 message CrosArtifactsProperties {
   // The maximum number of Build API calls to make when bundling artifacts.
   int32 max_concurrent_bundling_requests = 1;
+
+  // Path to upload artifacts. If not set, defaults to whatever is set in code,
+  // i.e. {builder}/{version}-{bid}.
+  string gs_upload_path = 2;
 }

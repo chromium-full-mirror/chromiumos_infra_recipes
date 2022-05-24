@@ -20,4 +20,7 @@ message ArtifactsGsPathProperties {
 
   // Expected GS artifact upload path.
   string expected_upload_path = 4;
+
+  // Expected path template, if any.
+  string template = 5;
 }

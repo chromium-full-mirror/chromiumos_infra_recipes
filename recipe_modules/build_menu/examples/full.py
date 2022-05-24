@@ -58,9 +58,7 @@ def DoRunSteps(api, properties):
       api.build_menu.bootstrap_sysroot()
       api.build_menu.install_packages()
       api.build_menu.build_and_test_images()
-      api.build_menu.build_and_test_images(
-          include_version=True,
-          builder_path_template='{target}-release/{version}')
+      api.build_menu.build_and_test_images(include_version=True)
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       api.build_menu.upload_artifacts()
@@ -162,7 +160,10 @@ def GenTests(api):
       'release-build',
       api.properties(**api.test_util.build_menu_properties(
           build_target_name='cloudready-release-R90-13816.B')),
-      build_target='cloudready-release-R90-13816.B', bucket='release')
+      input_properties={
+          '$chromeos/cros_artifacts':
+              dict(gs_upload_path='{builder_name}-release/{version}')
+      }, build_target='cloudready-release-R90-13816.B', bucket='release')
 
   # Run the other tests that we only run in the module.
   yield api.build_menu.test(
