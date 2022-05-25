@@ -155,10 +155,6 @@ def GenTests(api):
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
                                builder='main-release-orchestrator'),
-      api.repo.project_infos_step_data('generate test plan', [{
-          'project': 'chromeos/config-internal',
-          'path': 'src/config-internal'
-      }]),
       api.step_data('generate target test requirements.generate_test_config',
                     stdout=api.raw_io.output(generate_test_config_output)),
       api.post_check(post_process.StepCommandContains,
@@ -193,10 +189,6 @@ def GenTests(api):
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
                                builder='eve-main-release'),
-      api.repo.project_infos_step_data('generate test plan', [{
-          'project': 'chromeos/config-internal',
-          'path': 'src/config-internal'
-      }]),
       api.step_data('generate target test requirements.generate_test_config',
                     stdout=api.raw_io.output(generate_test_config_output)),
       api.post_check(

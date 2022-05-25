@@ -55,35 +55,10 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "generate target test requirements.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
       "./board_config/generate_test_config",
       "zork-release-main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "generate target test requirements.generate_test_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -123,35 +98,10 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/config-internal",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "generate target test requirements (2).repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromeos/config-internal|src/chromeos/config-internal|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
       "./board_config/generate_test_config",
       "zork-release-main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/config-internal",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "name": "generate target test requirements (2).generate_test_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

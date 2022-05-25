@@ -4126,7 +4126,7 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans.
 
@@ -4144,10 +4144,11 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#75)(self, builders=None, paygen=False):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#76)(self, builders=None, paygen=False):**
 
 Generate target test requirements config in config-internal using
-  ./board_config/generate_test_config.
+  ./board_config/generate_test_config. Assumes config-internal is
+  checked out at `src_state.workspace_path/CONFIG_INTERNAL_CHECKOUT`.
 
 Args:
   builders (list[str]): optional list of builder names to generate config for,
@@ -4160,7 +4161,7 @@ Args:
 Returns:
   JSON structure of target test requirements or None.
 
-&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#40)(self, builders=None):**
+&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#41)(self, builders=None):**
 
 Fetch target test requirements config.
 
@@ -4172,7 +4173,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#224)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#223)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -4183,7 +4184,7 @@ Returns:
   test_to_crit_map (dict{string: bool}): Map of test display name to
     criticality.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#29)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#30)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

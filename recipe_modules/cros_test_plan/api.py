@@ -17,6 +17,7 @@ from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 
+CONFIG_INTERNAL_CHECKOUT = 'src/config-internal'
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
 
 class CrosTestPlanApi(recipe_api.RecipeApi):
@@ -75,7 +76,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
   def generate_target_test_requirements_config(self, builders=None,
                                                paygen=False):
     """Generate target test requirements config in config-internal using
-      ./board_config/generate_test_config.
+      ./board_config/generate_test_config. Assumes config-internal is
+      checked out at `src_state.workspace_path/CONFIG_INTERNAL_CHECKOUT`.
 
     Args:
       builders (list[str]): optional list of builder names to generate config for,
@@ -90,8 +92,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('generate target test requirements'):
       with self.m.context(cwd=self.m.src_state.workspace_path):
-        project_info = self.m.repo.project_info('chromeos/config-internal')
-
         if not builders:
           builder_name = self.m.buildbucket.build.builder.builder
           if 'orchestrator' in builder_name:
@@ -105,7 +105,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
             # Otherwise, assume we want config for the invoking builder.
             builders = [builder_name]
         with self.m.context(
-            cwd=self.m.src_state.workspace_path.join(project_info.path)):
+            cwd=self.m.src_state.workspace_path.join(CONFIG_INTERNAL_CHECKOUT)):
           cmd = ['./board_config/generate_test_config', ','.join(builders)]
           if paygen:
             cmd.append('--paygen')
@@ -192,9 +192,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         ])
       if self._properties.generate_target_test_requirements_from_source:
         with self.m.context(cwd=self.m.src_state.workspace_path):
-          project_info = self.m.repo.project_info('chromeos/config-internal')
           config_internal_path = self.m.src_state.workspace_path.join(
-              project_info.path)
+              CONFIG_INTERNAL_CHECKOUT)
           cmd.extend(['--target_test_requirements_repo', config_internal_path])
 
       self.m.step('call test_planner', cmd, infra_step=True)
