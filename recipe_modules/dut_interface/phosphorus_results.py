@@ -5,6 +5,9 @@
 
 """Phosphorus Result objects for phosphorus_interface."""
 
+import base64
+import zlib
+
 from . import dut_results
 
 from PB.test_platform import phosphorus
@@ -125,8 +128,7 @@ class PhosphorusResult(dut_results.DUTResult):  # pragma: no cover
     return self.data.state_update.dut_state
 
   def serialize(self):
-    return self.data.SerializeToString().encode('zlib_codec').encode(
-        'base64_codec')
+    return base64.b64encode(zlib.compress(self.data.SerializeToString()))
 
   def add_prejob_response(self, response):
     self.prejob_response = response

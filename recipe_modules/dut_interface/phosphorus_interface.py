@@ -375,7 +375,8 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns:
       google.protobuf.Timestamp instance.
     """
-    now_seconds = self._api.time.ms_since_epoch() / self._MILLISECONDS_IN_SECOND
+    now_seconds = int(self._api.time.ms_since_epoch() /
+                      self._MILLISECONDS_IN_SECOND)
     return Timestamp(seconds=now_seconds + seconds_from_now)
 
   @staticmethod

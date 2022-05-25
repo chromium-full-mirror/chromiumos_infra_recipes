@@ -6,7 +6,9 @@
 """Recipe for the ChromeOS Skylab Test Runner."""
 import base64
 import datetime
+import json
 import os
+import six
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
@@ -38,8 +40,6 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
-
 TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 
 DEPS = [
@@ -65,6 +65,8 @@ DEPS = [
     'phosphorus',
     'result_flow',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = TestRunnerProperties
 _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
@@ -221,7 +223,7 @@ def set_output_properties(api, result):
     """
   with api.context(infra_steps=True):
     with api.step.nest('set output properties') as step:
-      step.properties['compressed_result'] = result.serialize()
+      step.properties['compressed_result'] = six.ensure_str(result.serialize())
 
 
 def _collect_tests_for_phosphorus(request):
@@ -256,10 +258,10 @@ def _populate_timestamps_for_results(result, autotest_keyval_file):
     for test_case in autotest_result.test_cases:
       test_case.start_time.CopyFrom(
           timestamp_pb2.Timestamp(
-              seconds=long(autotest_keyval_file['job_started'])))
+              seconds=int(autotest_keyval_file['job_started'])))
       test_case.end_time.CopyFrom(
           timestamp_pb2.Timestamp(
-              seconds=long(autotest_keyval_file['job_finished'])))
+              seconds=int(autotest_keyval_file['job_finished'])))
 
   return result
 
@@ -571,7 +573,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
           artifact_directory,
   }
 
-  api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
+  api.cros_resultdb.upload(
+      config, six.ensure_binary(str(result.get_stainless_log_url())))
   _upload_missing_tast_results(api, config.get('base_variant'),
                                autotest_keyval_file)
   api.cros_resultdb.apply_exonerations(
@@ -711,8 +714,18 @@ def execution_steps_with_phosphorus(api, properties):
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
-    s_log(step, 'request', json_format.MessageToJson(properties.request))
-    s_log(step, 'config', json_format.MessageToJson(properties.config))
+    # TODO(b/217973414): Replace with MessageToJson once we don't need to
+    # fix the separator spacing between py2 and py3 MessageToJson.
+    s_log(
+        step, 'request',
+        json.dumps(
+            json_format.MessageToDict(properties.request),
+            separators=(',', ':'), indent=2, sort_keys=True))
+    s_log(
+        step, 'config',
+        json.dumps(
+            json_format.MessageToDict(properties.config), separators=(',', ':'),
+            indent=2, sort_keys=True))
     # Use parent_build_id rather than the related parent_buildbucket_id tag,
     # since that doesn't seem to work here. https://crbug.com/1171511
     if properties.request.parent_build_id:
@@ -733,7 +746,7 @@ def execution_steps_with_phosphorus(api, properties):
                                           test_metadata)
 
         dut_state = _DUT_STATE_NEEDS_REPAIR
-        max_duration_sec = (
+        max_duration_sec = int(
             properties.config.harness.prejob_deadline_seconds or _24_HOURS)
 
         if interface.is_within_deadline():
@@ -783,8 +796,13 @@ def execution_steps_with_ctr(api, properties):
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
-    s_log(step, 'cft_test_request',
-          json_format.MessageToJson(properties.cft_test_request))
+    # TODO(b/217973414): Replace with MessageToJson once we don't need to
+    # fix the separator spacing between py2 and py3 MessageToJson.
+    s_log(
+        step, 'cft_test_request',
+        json.dumps(
+            json_format.MessageToDict(properties.cft_test_request),
+            separators=(',', ':'), indent=2, sort_keys=True))
     if properties.cft_test_request.parent_build_id:
       s_link(
           step=step, name='parent CTP', link=api.buildbucket.build_url(
@@ -957,7 +975,13 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
                  ]), autotest_result=autotest_result,
         autotest_results={"original_test": autotest_result},
         state_update=Result.StateUpdate(dut_state=dut_state), log_data=log_data)
-    s_log(step, 'skylab_result', json_format.MessageToJson(skylab_result))
+    # TODO(b/217973414): Replace with MessageToJson once we don't need to
+    # fix the separator spacing between py2 and py3 MessageToJson.
+    s_log(
+        step, 'skylab_result',
+        json.dumps(
+            json_format.MessageToDict(skylab_result), separators=(',', ':'),
+            indent=2, sort_keys=True))
     return skylab_result
 
 
@@ -2091,8 +2115,9 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
       'chromium-test-upload-result-to-rdb',
       _set_build(bid=42),
       _misc_properties(),
-      _request_properties_rdb('resultdb_settings=%s' %
-                              base64.b64encode(rdb_settings)),
+      _request_properties_rdb(
+          'resultdb_settings=%s' %
+          six.ensure_str(base64.b64encode(six.ensure_binary(rdb_settings)))),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
@@ -2121,8 +2146,9 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
       'chromium-test-upload-result-to-rdb-failure',
       _set_build(bid=42),
       _misc_properties(),
-      _request_properties_rdb('resultdb_settings=%s' %
-                              base64.b64encode(rdb_settings)),
+      _request_properties_rdb(
+          'resultdb_settings=%s' %
+          six.ensure_str(base64.b64encode(six.ensure_binary(rdb_settings)))),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),

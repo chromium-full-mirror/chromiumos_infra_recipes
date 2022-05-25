@@ -93,8 +93,12 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                                                 test_output=response_type(),
                                                 parse_before_str=b'\x00',
                                                 ok_ret=(0,))
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['response'] = [
-          json_format.MessageToJson(response, sort_keys=True)
+          json.dumps(
+              json_format.MessageToDict(response), separators=(',', ':'),
+              indent=2, sort_keys=True)
       ]
       return response
 
@@ -161,8 +165,12 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       ]
       result = self.m.easy.stdout_jsonpb_step('parse', cmd, Result,
                                               test_output=Result())
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['response'] = [
-          json_format.MessageToJson(result, sort_keys=True)
+          json.dumps(
+              json_format.MessageToDict(result), separators=(',', ':'),
+              indent=2, sort_keys=True)
       ]
       return result
 

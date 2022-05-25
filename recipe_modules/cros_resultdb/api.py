@@ -383,6 +383,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
     req = recorder_pb2.BatchCreateTestResultsRequest(
         invocation=self.m.resultdb.current_invocation, requests=reqs)
 
+    # TODO(b/217973414): Remove custom sorting of results after py2 testing
+    # is disabled.
     step_test_data = self.m.json.dumps({
         'testResults': [{
             'name':
@@ -395,7 +397,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
                 'SKIP',
             'testId':
                 test,
-        } for test in test_names]
+        } for test in sorted(test_names)]
     })
     # ResultDB step failures should not fail the build.
     # TODO(b/206989022): Consider refactoring this to use the exponential
@@ -406,9 +408,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
         # TODO(mwarton): move this method implementation to the resultdb API class
         # (in chromium src) once it is tested and verified to be working. pylint
         # disable is here to enable upload of WIP CL.
+        # TODO(b/217973414): Remove custom sorting of results after py2 testing
+        # is disabled.
+        normalized_req = MessageToDict(req)
+        normalized_req['requests'].sort(key=lambda x: x['testResult']['testId'])
         self.m.resultdb._rpc(  # pylint: disable=protected-access
             'upload missing test cases', 'luci.resultdb.v1.Recorder',
-            'BatchCreateTestResults', req=MessageToDict(req),
+            'BatchCreateTestResults', req=normalized_req,
             include_update_token=True, step_test_data=lambda: self.m.raw_io.
             test_api.stream_output_text(step_test_data))
         break

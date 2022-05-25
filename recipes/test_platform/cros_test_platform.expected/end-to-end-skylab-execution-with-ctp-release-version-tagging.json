@@ -220,7 +220,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\", \n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\":{\n    \"default\":{\n      \"metadata\":{\n        \"containerMetadataUrl\":\"gs://foo-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\":\"gs://foo-metadata-url\",\n        \"testMetadataUrl\":\"gs://foo-metadata-url\"\n      },\n      \"testPlan\":{\n        \"suite\":[\n          {\n            \"name\":\"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

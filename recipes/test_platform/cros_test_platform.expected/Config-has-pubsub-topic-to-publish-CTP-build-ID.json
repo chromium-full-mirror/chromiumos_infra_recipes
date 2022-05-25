@@ -92,7 +92,7 @@
       "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\":\"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -348,7 +348,7 @@
       }
     },
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"default-suite\"\n          }\n        ]\n      }, \n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://default-metadata-url\", \n        \"containerMetadataUrl\": \"gs://default-container-metadata-url\", \n        \"debugSymbolsArchiveUrl\": \"gs://default-metadata-url\"\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\":{\n    \"default\":{\n      \"metadata\":{\n        \"containerMetadataUrl\":\"gs://default-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\":\"gs://default-metadata-url\",\n        \"testMetadataUrl\":\"gs://default-metadata-url\"\n      },\n      \"testPlan\":{\n        \"suite\":[\n          {\n            \"name\":\"default-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -69,7 +69,13 @@ class ResultFlowCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
-      presentation.logs['response'] = [json_format.MessageToJson(response)]
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the separator spacing between py2 and py3 MessageToJson.
+      presentation.logs['response'] = [
+          json.dumps(
+              json_format.MessageToDict(response), separators=(',', ':'),
+              indent=2, sort_keys=True)
+      ]
       return response
 
   def publish(self, project_id, topic_id, build_type,

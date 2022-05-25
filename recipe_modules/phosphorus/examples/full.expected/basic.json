@@ -206,7 +206,7 @@
       "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"placeholder-dut-id\",\"dutName\":\"placeholder\",\"runId\":\"placeholder-task-id\",\"testId\":\"test-id\"}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"placeholder-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"resultsDir\":\"placeholder-results-dir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]

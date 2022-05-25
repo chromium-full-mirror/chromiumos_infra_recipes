@@ -5,6 +5,8 @@
 
 """Result objects for dut_interface."""
 
+import json
+
 from abc import ABCMeta, abstractmethod
 
 from google.protobuf import json_format
@@ -257,4 +259,8 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: dict
     """
-    return json_format.MessageToJson(self.data)
+    # TODO(b/217973414): Delete once we don't need to fix the separator spacing
+    # between py2 and py3 MessageToJson and replace usages with MessageToJson.
+    return json.dumps(
+        json_format.MessageToDict(self.data), separators=(',', ':'), indent=2,
+        sort_keys=True)

@@ -5,6 +5,9 @@
 
 """CrosToolRunner Result objects for crostoolrunner_interface."""
 
+import base64
+import zlib
+
 from . import dut_results
 
 from PB.chromiumos.test.api.cros_provision_cli import CrosProvisionResponse
@@ -196,8 +199,7 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
 
     Returns: str
     """
-    return self.data.SerializeToString().encode('zlib_codec').encode(
-        'base64_codec')
+    return base64.b64encode(zlib.compress(self.data.SerializeToString()))
 
   def add_prejob_response(self, response):
     """Adds a prejob response to this result (overwrites existing).

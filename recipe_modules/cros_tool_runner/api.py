@@ -62,7 +62,13 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `cros-tool-runner`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      presentation.logs['request'] = [json_format.MessageToJson(request)]
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
+      # the separator spacing between py2 and py3 MessageToJson.
+      presentation.logs['request'] = [
+          json.dumps(
+              json_format.MessageToDict(request), separators=(',', ':'),
+              indent=2, sort_keys=True)
+      ]
       self.ensure_cros_tool_runner()
       cmd = [
           "sudo",
@@ -76,7 +82,12 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           '-input',
           '/dev/stdin',
       ]
-      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
+      # the separator spacing between py2 and py3 MessageToJson.
+      stdin = self.m.raw_io.input_text(
+          json.dumps(
+              json_format.MessageToDict(request), separators=(',', ':'),
+              indent=2, sort_keys=True))
       if not send_response:  # pragma: nocover
         self.m.easy.step(subcommand, cmd, stdin=stdin)
         return
@@ -88,7 +99,13 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
-      presentation.logs['response'] = [json_format.MessageToJson(response)]
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
+      # the separator spacing between py2 and py3 MessageToJson.
+      presentation.logs['response'] = [
+          json.dumps(
+              json_format.MessageToDict(response), separators=(',', ':'),
+              indent=2, sort_keys=True)
+      ]
       return response
 
   def provision(self, request):

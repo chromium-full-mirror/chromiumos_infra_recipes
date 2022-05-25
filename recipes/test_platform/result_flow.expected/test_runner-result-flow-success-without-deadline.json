@@ -11,7 +11,7 @@
       "@@@STEP_LOG_LINE@request@{\"testCase\":{\"bq\":{\"dataset\":\"foo-dataset\",\"project\":\"foo-project\",\"table\":\"foo-table-test-case\"}},\"testRun\":{\"bq\":{\"dataset\":\"foo-dataset\",\"project\":\"foo-project\",\"table\":\"foo-table-test-run\"}},\"testRunner\":{\"bb\":{\"bucket\":\"test_runner\",\"builder\":\"test_runner\",\"host\":\"cr-buildbucket.appspot.com\",\"project\":\"chromeos\"},\"fields\":[\"id\",\"status\",\"input.properties\",\"output.properties\",\"create_time\",\"start_time\",\"end_time\"],\"pubsub\":{\"maxReceivingMessages\":50,\"project\":\"foo-project\",\"subscription\":\"foo-subscription\",\"topic\":\"foo-topic\"}}}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\":\"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]

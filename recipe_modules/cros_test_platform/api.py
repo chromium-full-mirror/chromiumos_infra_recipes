@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
@@ -64,11 +66,16 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         ds.logs['cmd'] = [' '.join([str(c) for c in cmd])]
         ds.logs['request'] = [json_format.MessageToJson(request)]
 
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
+      # the separator spacing between py2 and py3 MessageToJson.
       response = self.m.easy.stdout_jsonpb_step(
           subcommand,
           cmd,
           response_type,
-          stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)),
+          stdin=self.m.raw_io.input_text(
+              json.dumps(
+                  json_format.MessageToDict(request), separators=(',', ':'),
+                  indent=2, sort_keys=True)),
           test_output=response_type(),
           # TODO(crbug.com/1008921): Surface non-zero return codes as a step
           # warning.
