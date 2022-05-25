@@ -42,7 +42,7 @@ _OVERLAY_PATH = 'src/private-overlays/project-cheets-private'
 
 
 def RunSteps(api, properties):
-  with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
+  with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api, properties)
     return api.orch_menu.create_recipe_result()

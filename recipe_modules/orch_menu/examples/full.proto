@@ -10,31 +10,28 @@ import "go.chromium.org/luci/buildbucket/proto/build.proto";
 import "recipe_engine/result.proto";
 
 message FullProperties {
-  // Value for setup_orchestrator(missing_ok) parameter.
-  bool missing_ok = 1;
-
   // Whether to expect a missing config.
-  bool expect_missing_config = 2;
+  bool expect_missing_config = 1;
 
   // Test footers to pass to git_footers.  This is a newline separated string of
   // footer values.
-  string test_footers = 3;
+  string test_footers = 2;
 
   // The expected value for completed_builds.
-  repeated buildbucket.v2.Build expected_completed_builds = 4;
+  repeated buildbucket.v2.Build expected_completed_builds = 3;
 
   // The expected value for enable_history.
-  bool expected_enable_history = 5;
+  bool expected_enable_history = 4;
 
   // The expected build result.
-  recipe_engine.RawResult expected_recipe_result = 6;
+  recipe_engine.RawResult expected_recipe_result = 5;
 
   // The name of any process_child builder to run.
-  string process_child = 7;
+  string process_child = 6;
 
   // Whether or not the test is for a release orchestrator.
-  bool is_release_orchestrator = 8;
+  bool is_release_orchestrator = 7;
 
   // Whether or not to include extra_props.
-  bool use_extra_props = 9;
+  bool use_extra_props = 8;
 }

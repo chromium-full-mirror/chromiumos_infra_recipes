@@ -27,7 +27,7 @@ from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevan
 
 
 def RunSteps(api):
-  with api.orch_menu.setup_orchestrator(missing_ok=True) as config:
+  with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api)
     return api.orch_menu.create_recipe_result(

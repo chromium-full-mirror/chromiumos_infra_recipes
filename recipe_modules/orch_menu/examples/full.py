@@ -40,7 +40,6 @@ PROPERTIES = FullProperties
 def RunSteps(api, properties):
   build = api.buildbucket.build
   with api.orch_menu.setup_orchestrator(
-      missing_ok=properties.missing_ok,
       test_footers=properties.test_footers) as config:
     api.assertions.assertEqual(config, api.orch_menu.config)
     if not config:
@@ -314,28 +313,19 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess))
 
   yield api.orch_menu.test(
-      'bad-ref',
-      api.properties(
-          FullProperties(missing_ok=True, expect_missing_config=True)),
+      'bad-ref', api.properties(FullProperties(expect_missing_config=True)),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(start='missing-ref-heads')))
 
   yield api.orch_menu.test(
       'bad-failure-ratio',
-      api.properties(
-          FullProperties(missing_ok=True, expect_missing_config=True)),
+      api.properties(FullProperties(expect_missing_config=True)),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(max_build_failure_ratio=1.1)))
 
   yield api.orch_menu.test(
       'required-missing-config',
       api.properties(FullProperties(expect_missing_config=True)),
-      builder='no-config', with_manifest_refs=True)
-
-  yield api.orch_menu.test(
-      'forgiven-missing-config',
-      api.properties(
-          FullProperties(missing_ok=True, expect_missing_config=True)),
       builder='no-config', with_manifest_refs=True)
 
   yield api.orch_menu.test(

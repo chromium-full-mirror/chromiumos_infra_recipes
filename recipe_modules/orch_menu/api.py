@@ -197,7 +197,7 @@ class OrchMenuApi(RecipeApi):
     return _manifest_info(manifest.relpath, commit, manifest.path, manifest.url)
 
   @contextlib.contextmanager
-  def setup_orchestrator(self, missing_ok=False, test_footers=None):
+  def setup_orchestrator(self, test_footers=None):
     """Initial setup steps for the orchestrator.
 
     This context manager returns with all of the contexts that the orchestrator
@@ -206,14 +206,11 @@ class OrchMenuApi(RecipeApi):
     If appropriate, any inflight orchestrator has finished before we return.
 
     Args:
-      missing_ok (bool): Whether it is OK if no config is found.  This can be
-        used by the caller to have a builder with no config report FAILURE
-        (False), or SUCCESS (True).
       test_footers (str): test Cr-External-Snapshot footer data(values separated
           by newlines), or None.
 
     Raises:
-      StepFailure if no config is found and |missing_ok| is False.
+      StepFailure if no config is found.
 
     Returns:
       BuilderConfig or None, with an active context.
@@ -238,10 +235,6 @@ class OrchMenuApi(RecipeApi):
 
         # We cannot push manifest refs to unpinned branches.
         self._update_manifest_refs &= (external_commit.id != '')
-
-        if not config and not missing_ok:
-          raise StepFailure('Missing configuration for {}'.format(
-              self.m.buildbucket.builder_name))
 
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:

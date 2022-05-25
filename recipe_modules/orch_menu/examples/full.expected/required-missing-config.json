@@ -602,8 +602,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@"
     ]
   },
   {
@@ -1888,10 +1887,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Missing configuration for no-config"
-    },
     "name": "$result"
   }
 ]
