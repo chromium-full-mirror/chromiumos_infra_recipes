@@ -26,6 +26,8 @@ DEPS = [
     'src_state',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine.recipe_api import StepFailure
 
 from PB.recipe_engine import result as result_pb2

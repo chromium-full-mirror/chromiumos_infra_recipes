@@ -15,6 +15,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromite.api.test import ChromitePytestRequest, ChromiteUnitTestRequest
 
 

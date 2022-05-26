@@ -99,7 +99,7 @@
 
 **[Recipes](#Recipes)**
   * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
-  * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
+  * [afdo_process](#recipes-afdo_process) (Python3 ✅) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full) (Python3 ✅)
   * [android:examples/full](#recipes-android_examples_full) (Python3 ✅)
   * [android:examples/misc](#recipes-android_examples_misc) (Python3 ✅)
@@ -428,7 +428,7 @@
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry) (Python3 ✅)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen) (Python3 ✅)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
-  * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
+  * [regen_build_cache](#recipes-regen_build_cache) (Python3 ✅) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full) (Python3 ✅)
   * [repo:examples/annealing](#recipes-repo_examples_annealing) (Python3 ✅)
   * [repo:examples/branching](#recipes-repo_examples_branching) (Python3 ✅)
@@ -451,7 +451,7 @@
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites) (Python3 ✅)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg) (Python3 ✅)
   * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target) (Python3 ✅)
-  * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
+  * [source_cache_builder](#recipes-source_cache_builder) (Python3 ✅) &mdash; Recipe for generating ChromeOS source cache snapshots.
   * [src_state:examples/build_manifest](#recipes-src_state_examples_build_manifest) (Python3 ✅)
   * [src_state:examples/external_manifest](#recipes-src_state_examples_external_manifest) (Python3 ✅)
   * [src_state:examples/gerrit_changes](#recipes-src_state_examples_gerrit_changes) (Python3 ✅)
@@ -474,7 +474,7 @@
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results) (Python3 ✅)
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs) (Python3 ✅)
   * [tast_vm](#recipes-tast_vm) (Python3 ✅) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
-  * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
+  * [test_chromite](#recipes-test_chromite) (Python3 ✅) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) (Python3 ✅) &mdash; Verifies a repo manifest.
   * [test_plan_filtering](#recipes-test_plan_filtering) &mdash; Updates test plan rules to reflect new risk-based rules.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
@@ -8214,13 +8214,13 @@ All builders run against the same source tree.
 
 [DEPS](/recipes/afdo_process.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building an AFDO benchmark profile.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_process.py#30)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#32)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/afdo_process.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_process.py#25)(api, properties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#6): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11020,11 +11020,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/regen_build_cache.py#13): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [util](#recipe_modules-util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
-&mdash; **def [RunSteps](/recipes/regen_build_cache.py#27)(api):**
+&mdash; **def [RunSteps](/recipes/regen_build_cache.py#29)(api):**
 ### *recipes* / [remoteexec:tests/full](/recipe_modules/remoteexec/tests/full.py)
 
 [DEPS](/recipe_modules/remoteexec/tests/full.py#6): [remoteexec](#recipe_modules-remoteexec), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11201,11 +11201,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/source_cache_builder.py#8): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for generating ChromeOS source cache snapshots.
 
-&mdash; **def [RunSteps](/recipes/source_cache_builder.py#39)(api, properties):**
+&mdash; **def [RunSteps](/recipes/source_cache_builder.py#41)(api, properties):**
 ### *recipes* / [src\_state:examples/build\_manifest](/recipe_modules/src_state/examples/build_manifest.py)
 
 [DEPS](/recipe_modules/src_state/examples/build_manifest.py#6): [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -11373,13 +11373,13 @@ use tast executable from build_artifacts.
 
 [DEPS](/recipes/test_chromite.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that tests chromite.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_chromite.py#21)(api):**
+&mdash; **def [RunSteps](/recipes/test_chromite.py#23)(api):**
 ### *recipes* / [test\_manifest](/recipes/test_manifest.py)
 
 [DEPS](/recipes/test_manifest.py#8): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
