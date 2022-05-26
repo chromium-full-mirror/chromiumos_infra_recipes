@@ -31,7 +31,7 @@
   * [cros_paygen](#recipe_modules-cros_paygen) (Python3 ✅) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) (Python3 ✅) &mdash; API for uploading CrOS prebuilts to Google Storage.
   * [cros_provenance](#recipe_modules-cros_provenance) (Python3 ✅) &mdash; API for adding provenenace to generated artifacts.
-  * [cros_release](#recipe_modules-cros_release) &mdash; An API for providing release related operations (e.
+  * [cros_release](#recipe_modules-cros_release) (Python3 ✅) &mdash; An API for providing release related operations (e.
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
   * [cros_release_util](#recipe_modules-cros_release_util) (Python3 ✅) &mdash; An API for providing release related utility functions.
   * [cros_relevance](#recipe_modules-cros_relevance) (Python3 ✅)
@@ -248,9 +248,9 @@
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info) (Python3 ✅)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq) (Python3 ✅)
   * [cros_provenance:examples/full](#recipes-cros_provenance_examples_full) (Python3 ✅)
-  * [cros_release:examples/full](#recipes-cros_release_examples_full)
-  * [cros_release:tests/get_au_testing_models](#recipes-cros_release_tests_get_au_testing_models)
-  * [cros_release:tests/util](#recipes-cros_release_tests_util)
+  * [cros_release:examples/full](#recipes-cros_release_examples_full) (Python3 ✅)
+  * [cros_release:tests/get_au_testing_models](#recipes-cros_release_tests_get_au_testing_models) (Python3 ✅)
+  * [cros_release:tests/util](#recipes-cros_release_tests_util) (Python3 ✅)
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
   * [cros_release_util:examples/full](#recipes-cros_release_util_examples_full) (Python3 ✅)
   * [cros_release_util:examples/match_channels](#recipes-cros_release_util_examples_match_channels) (Python3 ✅)
@@ -2885,13 +2885,13 @@ Returns:
 
 [DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#67)(self, specs_dir='buildspecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#68)(self, specs_dir='buildspecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2907,7 +2907,7 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#226)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#227)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -2920,11 +2920,11 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_versions\_url](/recipe_modules/cros_release/api.py#27)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_versions\_url](/recipe_modules/cros_release/api.py#28)(self):**
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#264)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#265)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2943,11 +2943,11 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#63)(self):**
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#164)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#165)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -2962,7 +2962,7 @@ Args:
 Returns:
   The int build id for the launched orchestrator.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#47)(self, sign_types):**
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#48)(self, sign_types):**
 
 Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure.
 ### *recipe_modules* / [cros\_release\_config](/recipe_modules/cros_release_config)
@@ -9590,23 +9590,23 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#30)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#32)(api):**
 ### *recipes* / [cros\_release:tests/get\_au\_testing\_models](/recipe_modules/cros_release/tests/get_au_testing_models.py)
 
 [DEPS](/recipe_modules/cros_release/tests/get_au_testing_models.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/get_au_testing_models.py#34)(api, fsi, expected_models):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/get_au_testing_models.py#36)(api, fsi, expected_models):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
 [DEPS](/recipe_modules/cros_release/tests/util.py#6): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#18)(api):**
 ### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

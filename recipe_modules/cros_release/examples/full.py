@@ -14,6 +14,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from google.protobuf.json_format import MessageToJson
 
 from recipe_engine import post_process

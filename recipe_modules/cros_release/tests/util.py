@@ -9,6 +9,8 @@ DEPS = [
     'cros_release',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos.common import (IMAGE_TYPE_BASE, IMAGE_TYPE_TEST_GUEST_VM,
                                   IMAGE_TYPE_FIRMWARE)
 

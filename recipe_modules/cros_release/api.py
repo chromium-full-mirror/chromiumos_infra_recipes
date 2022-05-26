@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 """An API for providing release related operations (e.g. paygen, signing)."""
+import json
 
 from google.protobuf import json_format
 
@@ -244,7 +245,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       builder = self.m.buildbucket.build.builder.builder
       if builder not in config:
         raise StepFailure('Builder %s not found in paygen test config: %s' %
-                          (builder, config))
+                          (builder, json.dumps(config)))
       model_config = config[builder]
       if fsi:
         return sorted(list(model_config.keys()))

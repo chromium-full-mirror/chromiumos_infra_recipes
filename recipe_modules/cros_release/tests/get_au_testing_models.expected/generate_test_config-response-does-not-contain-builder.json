@@ -50,7 +50,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Builder octopus-release-main not found in paygen test config: {u'other_builder': {u'foo': [u'au']}}"
+      "humanReason": "Builder octopus-release-main not found in paygen test config: {\"other_builder\": {\"foo\": [\"au\"]}}"
     },
     "name": "$result"
   }
