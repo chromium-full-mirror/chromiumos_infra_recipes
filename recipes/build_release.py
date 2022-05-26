@@ -6,6 +6,7 @@
 """Recipe for building images for release."""
 
 DEPS = [
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
@@ -48,6 +49,23 @@ PROPERTIES = BuildReleaseProperties
 StepDetails = BuildReport.StepDetails
 
 
+def snoopy_report(api, report):
+  """Report a step to snoopy.
+
+  Args:
+    api (recipe_api.RecipeApi): the RecipeApi object, used for step display.
+    report (str): The build stage (e.g. start, compile) to report to snoopy.
+  """
+  # TODO(crbug/1274931) once snoopy is deemed "stable"
+  # ensure the exception is properly handled
+  with api.step.nest('snoopy: %s' % report) as step:
+    try:
+      api.bcid_reporter.report_stage(report)
+    except StepFailure as e:
+      step.status = api.step.FAILURE
+      step.step_text = 'failed to report %s to snoopy: %s' % (report, e)
+
+
 def RunSteps(api, properties):
   api.easy.log_parent_step()
 
@@ -56,6 +74,7 @@ def RunSteps(api, properties):
 
   try:
     api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+    snoopy_report(api, 'start')
 
     #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
     with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
@@ -81,8 +100,10 @@ def DoRunSteps(api, config, properties):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   # After the sysroot is setup we have the package versions determined.
   api.build_reporting.publish_versions(api.build_menu.target_versions)
+  snoopy_report(api, 'fetch')
 
   failing_build_exception = None
+
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
@@ -101,6 +122,9 @@ def DoRunSteps(api, config, properties):
         # Then fire off a pub/sub call with that builder meta.
         api.build_reporting.publish_build_target_and_model_metadata(
             api.cros_source.manifest_branch, builder_metadata)
+
+        snoopy_report(api, 'compile')
+
       with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
         api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
@@ -108,6 +132,8 @@ def DoRunSteps(api, config, properties):
     # still occur (there is value in uploading the artifact even in cases of
     # build failure for debug purposes).
     failing_build_exception = sf
+
+  snoopy_report(api, 'upload')
 
   try:
     api.build_menu.upload_artifacts(config)
@@ -117,6 +143,8 @@ def DoRunSteps(api, config, properties):
     # surface *that* exception for accuracy in reporting the build (and it's
     # likely that upload artifacts failed as a result of those previous issues).
     raise failing_build_exception or sf
+
+  snoopy_report(api, 'upload-complete')
 
   # Finally, if there was an exception caught above in building the image, but
   # the upload succeeded, raise that exception.
@@ -394,4 +422,38 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       bucket='release',
       build_target='kukui-main',
+  )
+
+  yield api.build_menu.test(
+      'snoopy-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/cros_signing':
+                  MessageToDict(CrosSigningProperties(timeout=5))
+          }),
+      api.cros_signing.setup_mocks(),
+      api.step_data('snoopy: start.report_stage', retcode=1),
+      api.post_check(
+          post_process.StepTextContains,
+          'snoopy: start',
+          ['failed to report start to snoopy'],
+      ),
+      api.post_check(post_process.StepFailure, 'snoopy: start'),
+      api.post_check(post_process.StatusSuccess),
+      build_target='kukui-main',
+      bucket='release',
   )

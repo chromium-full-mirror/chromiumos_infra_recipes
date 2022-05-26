@@ -8655,15 +8655,23 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#23)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#80)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#99)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#51)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#69)(api, properties):**
+
+&mdash; **def [snoopy\_report](/recipes/build_release.py#52)(api, report):**
+
+Report a step to snoopy.
+
+Args:
+  api (recipe_api.RecipeApi): the RecipeApi object, used for step display.
+  report (str): The build stage (e.g. start, compile) to report to snoopy.
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
