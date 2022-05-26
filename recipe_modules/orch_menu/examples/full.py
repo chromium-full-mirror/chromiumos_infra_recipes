@@ -171,7 +171,7 @@ def GenTests(api):
   summary = ('Full version: R99-1234.56.0'
              '\n\n3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
-             '\n\n- ttarget.hw.some-other-suite:')
+             '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
       'release-orchestrator-with-failure',
       data.ctp_failure,
@@ -233,7 +233,7 @@ def GenTests(api):
 
   summary = ('3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
-             '\n\n- ttarget.hw.some-other-suite:')
+             '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
       'test-failure', data.ctp_failure,
       api.properties(
@@ -251,7 +251,7 @@ def GenTests(api):
   variant_2 = api.json.dumps({'def': {'test_config': 'htarget.hw.bvt-inline'}})
   variant_3 = api.json.dumps(
       {'def': {
-          'test_config': 'ttarget.hw.some-other-suite'
+          'test_config': 'htarget.hw.some-other-suite'
       }})
 
   inv_bundle = {
@@ -271,7 +271,7 @@ def GenTests(api):
                                             resultdb_common_pb2.Variant())),
           ]),
   }
-  summary = ('1 hw test failed\n\n- ttarget.hw.some-other-suite:')
+  summary = ('1 hw test failed\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
       'non-crit-test-check-updates-some', data.ctp_failure,
       api.step_data(
@@ -547,7 +547,7 @@ def GenTests(api):
 
   summary = ('3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
-             '\n\n- ttarget.hw.some-other-suite:')
+             '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
       'ctp2-enabled-generate-ctpv1-format-test-failure',
       api.properties(

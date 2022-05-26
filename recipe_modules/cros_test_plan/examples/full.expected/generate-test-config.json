@@ -1494,7 +1494,7 @@
       "@@@STEP_LOG_LINE@planner_output@      suite: \"some-other-suite\"@@@",
       "@@@STEP_LOG_LINE@planner_output@      skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@planner_output@      common {@@@",
-      "@@@STEP_LOG_LINE@planner_output@        display_name: \"ttarget.hw.some-other-suite\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@        display_name: \"htarget.hw.some-other-suite\"@@@",
       "@@@STEP_LOG_LINE@planner_output@        critical {@@@",
       "@@@STEP_LOG_LINE@planner_output@          value: true@@@",
       "@@@STEP_LOG_LINE@planner_output@        }@@@",

@@ -4820,7 +4820,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#466)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#469)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -4973,7 +4973,7 @@ Returns:
 
 &mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#427)(self, failures, test_plan_summary, presentation=None):**
 
-If tests are now non-critical or removed, failures are non-fatal.
+If tests are now non-critical, failures are non-fatal.
 
 Args:
   failures (list[Failure]): All failures encountered during execution.

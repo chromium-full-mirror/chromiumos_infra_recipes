@@ -84,7 +84,7 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
             hw_test=[
                 HwTestCfg.HwTest(
                     common=TestSuiteCommon(
-                        display_name='ttarget.hw.some-other-suite',
+                        display_name='htarget.hw.some-other-suite',
                         critical={'value': True}),
                     suite='some-other-suite',
                     skylab_board='target',
@@ -95,16 +95,16 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         ),
     )
 
-  @property
-  def non_critical_hw_test_unit(self):
+  def non_critical_hw_test_unit(self, suite_name='some-suite'):
     return HwTestUnit(
         common=self.test_unit_common(),
         hw_test_cfg=HwTestCfg(
             hw_test=[
                 HwTestCfg.HwTest(
-                    common=TestSuiteCommon(display_name='htarget.hw.some-suite',
-                                           critical={'value': False}),
-                    suite='some-suite',
+                    common=TestSuiteCommon(
+                        display_name='htarget.hw.' + suite_name,
+                        critical={'value': False}),
+                    suite=suite_name,
                     skylab_board='target',
                     pool='my skylab pool',
                     hw_test_suite_type=HwTestCfg.TAST,
@@ -204,7 +204,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     return GenerateTestPlanResponse(
         hw_test_units=[
             self.hw_test_unit, self.another_hw_test_unit,
-            self.some_other_hw_test_unit, self.non_critical_hw_test_unit
+            self.some_other_hw_test_unit,
+            self.non_critical_hw_test_unit()
         ],
         direct_tast_vm_test_units=[
             self.direct_tast_vm_test_unit, self.tast_vm_informational_test_unit
@@ -218,7 +219,11 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   @property
   def all_non_critical_generate_test_plan_response(self):
     return GenerateTestPlanResponse(
-        hw_test_units=[self.non_critical_hw_test_unit],
+        hw_test_units=[
+            self.non_critical_hw_test_unit('bvt-cq'),
+            self.non_critical_hw_test_unit('bvt-inline'),
+            self.non_critical_hw_test_unit('some-other-suite'),
+        ],
         direct_tast_vm_test_units=[self.tast_vm_informational_test_unit],
         tast_gce_test_units=[self.tast_gce_informational_test_unit],
     )
@@ -227,7 +232,8 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
   def reduced_criticality_generate_test_plan_response(self):
     return GenerateTestPlanResponse(
         hw_test_units=[
-            self.non_critical_hw_test_unit, self.some_other_hw_test_unit
+            self.non_critical_hw_test_unit('bvt-cq'),
+            self.non_critical_hw_test_unit('bvt-inline'),
         ],
         direct_tast_vm_test_units=[self.tast_vm_informational_test_unit],
     )

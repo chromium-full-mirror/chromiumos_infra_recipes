@@ -426,7 +426,7 @@ class FailuresApi(RecipeApi):
 
   def update_non_critical_test_failures(self, failures, test_plan_summary,
                                         presentation=None):
-    """If tests are now non-critical or removed, failures are non-fatal.
+    """If tests are now non-critical, failures are non-fatal.
 
     Args:
       failures (list[Failure]): All failures encountered during execution.
@@ -448,8 +448,11 @@ class FailuresApi(RecipeApi):
         updated_failures.append(f)
         continue
 
-      # Deleted tests are considered non_critical.
-      critical = test_plan_summary.get(f.id, False)
+      # Deleted tests are considered critical. The planner may have different
+      # options, and choose one test in the first plan, a second test in the
+      # second plan; to err on the side of caution, assume that if a test is not
+      # explicitly marked non-critical, it is still critical.
+      critical = test_plan_summary.get(f.id, True)
       if not critical:
         new_non_critical_tests.append(f.id)
         updated_failures.append(

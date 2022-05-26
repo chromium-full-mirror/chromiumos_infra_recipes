@@ -42,7 +42,7 @@ def RunSteps(api):
   ]
   expected_failures = [
       api.failures.Failure(kind='test', title='deleted-test', link_map={},
-                           fatal=False, id='deleted-test'),
+                           fatal=True, id='deleted-test'),
       api.failures.Failure(kind='test', title='newly-non-critical-test',
                            link_map={}, fatal=False,
                            id='newly-non-critical-test'),

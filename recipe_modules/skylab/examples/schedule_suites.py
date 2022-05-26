@@ -37,7 +37,8 @@ def RunSteps(api):
   another_unit_hw_test = api.skylab.UnitHwTest(unit=another_hw_test_unit,
                                                hw_test=another_hw_test)
 
-  non_crit_hw_test_unit = api.cros_test_plan.test_api.non_critical_hw_test_unit
+  non_crit_hw_test_unit = api.cros_test_plan.test_api.non_critical_hw_test_unit(
+  )
   non_crit_hw_test_unit.common.builder_name = builder_name
   non_crit_hw_test = non_crit_hw_test_unit.hw_test_cfg.hw_test[0]
   non_crit_hw_test.common.display_name = 'my_third_little_hwtest'

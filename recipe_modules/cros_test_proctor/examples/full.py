@@ -123,7 +123,7 @@ def GenTests(api):
               'htarget.hw.bvt-cq',
               'htarget.hw.bvt-inline',
               'htarget.hw.some-suite',
-              'ttarget.hw.some-other-suite',
+              'htarget.hw.some-other-suite',
           ]),
   ]
 
@@ -198,7 +198,7 @@ def GenTests(api):
       api.skylab.test_with_multi_response(
           bid=1234, names=[
               'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
-              'htarget.hw.some-suite', 'ttarget.hw.some-other-suite'
+              'htarget.hw.some-suite', 'htarget.hw.some-other-suite'
           ]),
   ]
 
@@ -223,7 +223,7 @@ def GenTests(api):
           bid=4321, names=[
               'htarget.hw.bvt-cq',
               'htarget.hw.bvt-inline',
-              'ttarget.hw.some-other-suite',
+              'htarget.hw.some-other-suite',
           ], task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
@@ -232,7 +232,7 @@ def GenTests(api):
       api.skylab.test_with_multi_response(
           bid=1234, names=[
               'htarget.hw.bvt-cq',
-              'ttarget.hw.some-other-suite',
+              'htarget.hw.some-other-suite',
           ], task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
