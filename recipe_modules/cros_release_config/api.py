@@ -9,6 +9,8 @@ from collections import namedtuple
 from datetime import datetime
 import re
 
+import six
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
@@ -274,8 +276,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       legacy_path = project_path[self.LEGACY_CONFIG_PROJECT]
       with self.m.context(cwd=legacy_path):
         file_path = legacy_path.join(LEGACY_CONFIG)
-        contents = self.m.file.read_raw('read {}'.format(LEGACY_CONFIG),
-                                        file_path)
+        contents = six.ensure_str(
+            self.m.file.read_raw('read {}'.format(LEGACY_CONFIG), file_path))
 
         p = re.compile(r'RELEASES = \[\n')
         contents = p.sub(

@@ -18,6 +18,8 @@ DEPS = [
     'repo',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import (
     CrosReleaseConfigProperties)
 

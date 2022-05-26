@@ -9,6 +9,9 @@ DEPS = [
     'cros_release_config',
     'repo',
 ]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 
 
