@@ -21,8 +21,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
-  config = BuilderConfig()
-
   artifacts_info = common.ArtifactsByService(
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(artifact_types=[
@@ -53,8 +51,8 @@ def RunSteps(api):
   )
 
   api.cros_artifacts.upload_artifacts(
-      'builder', BuilderConfig.Id.Type.RELEASE,
-      config.artifacts.artifacts_gs_bucket, artifacts_info=artifacts_info,
+      'builder', BuilderConfig.Id.Type.RELEASE, 'test-bucket',
+      artifacts_info=artifacts_info,
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
       report_to_spike=True)

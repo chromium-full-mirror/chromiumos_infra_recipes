@@ -45,7 +45,7 @@ def GenTests(api):
               target_name='atlas-kernelnext',
               builder_type=BuilderConfig.Id.RELEASE,
               expected_upload_path='atlas-kernelnext-release/R99-1234.56.0-101',
-              template='{builder_name}-release/{version}')),
+              template='{target}-release/{version}')),
   )
 
   yield api.test(

@@ -162,7 +162,7 @@ def GenTests(api):
           build_target_name='cloudready-release-R90-13816.B')),
       input_properties={
           '$chromeos/cros_artifacts':
-              dict(gs_upload_path='{builder_name}-release/{version}')
+              dict(gs_upload_path='{target}-release/{version}')
       }, build_target='cloudready-release-R90-13816.B', bucket='release')
 
   # Run the other tests that we only run in the module.

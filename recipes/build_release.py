@@ -169,7 +169,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -205,7 +205,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -252,7 +252,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -274,7 +274,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
           }),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
@@ -292,7 +292,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -313,7 +313,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -364,7 +364,7 @@ def GenTests(api):
               },
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
-                      gs_upload_path='{builder_name}-release/{version}'),
+                      gs_upload_path='{target}-release/{version}'),
           }),
       api.cros_signing.setup_mocks(),
       api.buildbucket.simulated_collect_output(

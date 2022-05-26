@@ -5,8 +5,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@base_image_length@the base_image length is 0@@@",
       "@@@STEP_LOG_END@base_image_length@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser//target/R99-1234.56.0-101-@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/target/R99-1234.56.0-101-@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test-bucket/builder/R99-1234.56.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@"
     ]
   },
   {
@@ -681,7 +681,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs:///target/R99-1234.56.0-101-"
+      "gs://test-bucket/builder/R99-1234.56.0-101-"
     ],
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync",
@@ -695,7 +695,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"IMAGE_ARCHIVES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"\", \"gs_path\": \"target/R99-1234.56.0-101-\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"IMAGE_ARCHIVES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\"}@@@"
     ]
   },
   {
@@ -703,7 +703,7 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/target/R99-1234.56.0-101-@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_LLVM_ORDERFILE@https://console.cloud.google.com/storage/browser/pub2/builder/R99-1234.56.0-101-@@@"
     ]
   },
   {
@@ -719,7 +719,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs:///target/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
       "gs://publish_gs_location/"
     ],
     "infra_step": true,
@@ -742,8 +742,8 @@
       "-r",
       "-a",
       "public-read",
-      "gs:///target/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
-      "gs://pub2/target/R99-1234.56.0-101-/"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
+      "gs://pub2/builder/R99-1234.56.0-101-/"
     ],
     "infra_step": true,
     "name": "upload artifacts.publish artifacts.gsutil cp (2)",
@@ -757,7 +757,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"pub2/target/R99-1234.56.0-101-\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-\"}]}@@@"
     ]
   },
   {

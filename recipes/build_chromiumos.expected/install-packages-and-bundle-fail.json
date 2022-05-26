@@ -3242,7 +3242,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/partial-metadata.json@@@"
     ]
   },
   {
@@ -3312,7 +3312,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6331,7 +6331,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -6427,7 +6427,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {

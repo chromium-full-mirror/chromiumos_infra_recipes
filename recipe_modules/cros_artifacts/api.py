@@ -454,9 +454,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # If there is a branch name in the builder_name, then we need to preserve
     # the builder name.
     version = self.m.cros_version.version
-    is_release = bool(kind == BuilderConfig.Id.RELEASE)
-    if is_release and not self.m.cros_infra_config.is_staging:
-      builder_name = target.name
     ret = {
         'version': str(version),
         'legacy_version': version.legacy_version,

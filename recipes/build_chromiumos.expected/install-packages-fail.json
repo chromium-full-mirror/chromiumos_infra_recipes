@@ -3242,7 +3242,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/partial-metadata.json@@@"
     ]
   },
   {
@@ -3312,7 +3312,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4564,7 +4564,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184@@@",
       "@@@STEP_LINK@gs publish dir: AUTOTEST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: DEBUG_SYMBOLS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: EBUILD_LOGS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
@@ -6259,7 +6259,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6286,7 +6286,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"DEBUG_SYMBOLS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"kukui-main/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"DEBUG_SYMBOLS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"kukui-main-release/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -6314,7 +6314,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6348,7 +6348,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6382,7 +6382,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6416,7 +6416,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6450,7 +6450,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/log.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6484,7 +6484,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6518,7 +6518,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/tmp/artifact.tar.gz",
       "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6656,7 +6656,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -6752,7 +6752,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-releases-test/kukui-main/R99-1234.56.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
