@@ -42,6 +42,8 @@ def RunSteps(api, properties):
   except api.step.StepFailure:
     pass
 
+  _ = api.cros_source.sync_to_manifest
+
   with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=True)

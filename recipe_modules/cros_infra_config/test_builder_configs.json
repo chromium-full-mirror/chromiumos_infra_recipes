@@ -1824,6 +1824,113 @@
     },
     {
       "id": {
+        "name": "main-public-orchestrator",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": [
+          {
+            "name": "eve-main-public",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "eve-main-public",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "-chrome_internal"
+          }
+        ],
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
+                ],
+                "gsLocations": []
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
         "name": "cq-orchestrator",
         "type": "CQ"
       },

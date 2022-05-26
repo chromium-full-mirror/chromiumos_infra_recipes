@@ -140,6 +140,20 @@ class CrosSourceApi(RecipeApi):
     return ret
 
   @property
+  def sync_to_manifest(self):
+    """Returns the manifest being synced to as specified in properties, or None.
+
+      Uses the `sync_to_manifest` property.
+
+      Returns: ManifestLocation, or None.
+    """
+    if self._sync_to_manifest is None or (
+        not self._sync_to_manifest.manifest_repo_url and
+        not self._sync_to_manifest.manifest_gs_path):
+      return None
+    return self._sync_to_manifest
+
+  @property
   def is_source_dirty(self):
     """Returns whether the source is dirty.
 

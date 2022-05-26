@@ -12,9 +12,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2'
 
 DEPS = [
     'cros_release',
+    'cros_source',
     'cros_tags',
     'orch_menu',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
 ]
 
 from google.protobuf.json_format import MessageToDict
@@ -23,6 +25,7 @@ import json
 
 from recipe_engine import post_process
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 
 
@@ -38,11 +41,18 @@ def DoRunSteps(api):
 
   # Run the child builders.
   extra_child_props = {}
+
+  # If the orchestrator was given a manifest to sync to, pass it on to the
+  # children.
+  if api.cros_source.sync_to_manifest:
+    extra_child_props['$chromeos/cros_source'] = MessageToDict(
+        CrosSourceProperties(sync_to_manifest=api.cros_source.sync_to_manifest))
   # If a release builder, need to pass information about the pinned manifest.
-  if api.orch_menu.is_release_orchestrator:
+  elif api.orch_menu.is_release_orchestrator:
     extra_child_props['$chromeos/cros_source'] = MessageToDict(
         CrosSourceProperties(sync_to_manifest=api.cros_release.releasespec))
-  elif api.orch_menu.is_postsubmit_orchestrator:
+
+  if api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['commit_overlay_binhost'] = True
     extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
         CrosRelevanceProperties(force_postsubmit_relevance=True))
@@ -83,6 +93,18 @@ def GenTests(api):
                            builder='main-release-orchestrator',
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True, bot_size='medium')
+
+  yield api.orch_menu.test(
+      'public-orchestrator', data.ctp_normal,
+      api.properties(
+          **{
+              "$chromeos/cros_source":
+                  CrosSourceProperties(
+                      sync_to_manifest=ManifestLocation(
+                          manifest_gs_path='gs://foo/bar.xml'))
+          }), api.post_check(post_process.StatusSuccess),
+      builder='main-public-orchestrator', with_history=True,
+      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test('bisecting-orchestrator', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
