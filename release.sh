@@ -25,6 +25,9 @@ fi
 
 function usage() {
   echo "Usage: $0 [-i instanceid] [-f]" >&2
+  echo "-i pass in instanceid tied to a commit to release up that commit" >&2
+  echo "   instanceids are found at https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/" >&2
+  echo "   click into an instance to see the commit attached to it" >&2
   echo "-f bypasses the prompt" >&2
   echo "-s skips staging checks" >&2
   echo "-v prints all pending changes, including trivial recipe rolls" >&2
