@@ -11,6 +11,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.orch_menu.tests.collect import CollectProperties
 

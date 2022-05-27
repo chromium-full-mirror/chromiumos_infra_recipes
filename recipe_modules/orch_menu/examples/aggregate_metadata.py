@@ -12,6 +12,8 @@ DEPS = [
     'orch_menu',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 import functools
 import json
 
@@ -88,17 +90,18 @@ def GenTests(api):
           '.processing {target}'
           '.gsutil reading payload for {target}'.format(target=target),
           stdout=api.raw_io.output(
-              json.dumps({
-                  'containers': {
-                      target: {
-                          'images': {
-                              'some-service': {
-                                  'digest': '123abc',
+              json.dumps(
+                  {
+                      'containers': {
+                          target: {
+                              'images': {
+                                  'some-service': {
+                                      'digest': '123abc',
+                                  },
                               },
-                          },
+                          }
                       }
-                  }
-              }),
+                  }, separators=(',', ': '), indent=2, sort_keys=True),
           ))
       data.append(step_data)
 
@@ -227,6 +230,7 @@ def GenTests(api):
       'failed-decoding',
       step_failed('aggregating metadata'),
       step_failed('aggregating metadata.container metadata'),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.orch_menu.test(

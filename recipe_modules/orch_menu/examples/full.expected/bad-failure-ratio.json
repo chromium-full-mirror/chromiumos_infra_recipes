@@ -708,7 +708,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "max_build_failure_ratio is out of range [0.0, 1.0] at 1.10000002384"
+      "humanReason": "max_build_failure_ratio is out of range [0.0, 1.0] at 1.100000023841858"
     },
     "name": "$result"
   }

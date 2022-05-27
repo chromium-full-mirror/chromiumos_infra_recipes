@@ -7,6 +7,7 @@
 
 from __future__ import division
 
+import json
 from collections import defaultdict, namedtuple
 import contextlib
 
@@ -23,6 +24,14 @@ _manifest_info = namedtuple('_manifest_info',
 
 # GS path for internal buildspecs.
 DEFAULT_BUILDSPEC_GS_PATH = 'gs://chromeos-manifest-versions/rubik/'
+
+
+def py2_MessageToJson(obj):
+  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
+  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
+  return json.dumps(
+      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
+      sort_keys=True)
 
 
 class BuildsStatus(object):
@@ -321,8 +330,8 @@ class OrchMenuApi(RecipeApi):
     for field, value in self._properties.update_manifest_refs.ListFields():
       if field.name == 'max_build_failure_ratio':
         if value < 0.0 or value > 1.0:
-          raise StepFailure('%s is out of range [0.0, 1.0] at %s' %
-                            (field.name, value))
+          raise StepFailure('{} is out of range [0.0, 1.0] at {!r}'.format(
+              field.name, value))
       else:
         if not value.startswith('refs/heads/'):
           raise StepFailure('%s ref %s is missing refs/heads/' %
@@ -722,15 +731,16 @@ class OrchMenuApi(RecipeApi):
       if await_completion:
         fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
         try:
-          builds = self.m.buildbucket.collect_builds([build.id],
-                                                     timeout=timeout_sec,
-                                                     step_name='collect',
-                                                     url_title_fn=title_fn,
-                                                     fields=fields).values()
-        except StepFailure:
-          builds = self.m.buildbucket.get_multi([build.id], step_name='get',
+          builds = list(
+              self.m.buildbucket.collect_builds([build.id], timeout=timeout_sec,
+                                                step_name='collect',
                                                 url_title_fn=title_fn,
-                                                fields=fields).values()
+                                                fields=fields).values())
+        except StepFailure:
+          builds = list(
+              self.m.buildbucket.get_multi([build.id], step_name='get',
+                                           url_title_fn=title_fn,
+                                           fields=fields).values())
 
         failures = (
             self.m.failures.get_build_failures(builds)
@@ -960,6 +970,6 @@ class OrchMenuApi(RecipeApi):
             ))
 
         aggregate_step.logs['{} metadata (log)'.format(metadata_info.name)] = \
-          json_format.MessageToJson(aggregated)
+          py2_MessageToJson(aggregated)
 
     return aggregated
