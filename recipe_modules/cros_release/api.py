@@ -288,7 +288,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       # pushimage. Currently images are uploaded using the legacy artifacts
       # service so we'll pull from that. b/204435742 for context.
       gs_image_dir_template = 'gs://{gs_bucket}/{gs_path}'
-      publish_template = '{gs_path}'
+      publish_template = self.m.cros_artifacts.gs_upload_path or '{gs_path}'
       output_artifacts = config.artifacts.artifacts_info.legacy.output_artifacts
       if output_artifacts and output_artifacts[0].gs_locations:
         publish_template = output_artifacts[0].gs_locations[0]
