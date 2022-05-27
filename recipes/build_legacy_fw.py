@@ -44,6 +44,8 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BuildLegacyFwProperties
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'
 _FIRMWARE_METADATA_NAME = 'firmware_metadata.jsonpb'
@@ -294,7 +296,7 @@ class FirmwareBuilder(object):
 
       versions = {}
       # For completeness grab all of the defines.
-      for line in result.stdout.splitlines():
+      for line in result.stdout.decode('utf-8').splitlines():
         match = re.match(r'#define\s+(?P<key>[\w]+)\s+"(?P<value>[^"]+)"', line)
         if match:
           versions[match.groupdict()['key']] = match.groupdict()['value']
