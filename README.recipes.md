@@ -2891,7 +2891,7 @@ An API for providing release related operations (e.g. paygen, signing).
 
 #### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#68)(self, specs_dir='buildspecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='buildspecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions/releasespecs.
 
@@ -2907,7 +2907,7 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#227)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#228)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -2924,7 +2924,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#265)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#266)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2943,11 +2943,11 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#63)(self):**
+&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#64)(self):**
 
 Return the releasespec as created by this module, or None.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#165)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#166)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 

@@ -53,6 +53,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   def __init__(self, properties, **kwargs):
     super(CrosReleaseApi, self).__init__(**kwargs)
     self._release_bucket = properties.release_bucket
+    self._src_paygen_bucket = properties.src_paygen_bucket
     self._channels = properties.channels
     self._sign_types = properties.sign_types
     self._dryrun = properties.dryrun
@@ -189,7 +190,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'channels': [Channel.Name(x) for x in self._channels],
           'au_testing_models': self.get_au_testing_models(),
           'au_fsi_testing_models': self.get_au_testing_models(fsi=True),
-          'src_bucket': self._release_bucket,
+          'src_bucket': self._src_paygen_bucket or self._release_bucket,
           'dest_bucket': self._release_bucket,
           'dryrun': self._paygen_dryrun,
           'delta_payload_test_override': 'RESPECT_CONFIG',

@@ -105,7 +105,8 @@ def GenTests(api):
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
               '$chromeos/cros_release':
-                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA]),
+                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA],
+                                        src_paygen_bucket='chromeos-releases'),
           }),
       api.post_check(
           post_process.LogContains,

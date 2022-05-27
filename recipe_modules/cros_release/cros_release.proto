@@ -13,19 +13,22 @@ message CrosReleaseProperties {
   // The bucket where should push images to (e.g. 'chromeos-releases').
   string release_bucket = 1;
 
+  // The bucket where we should source paygen images from, defaults to release_bucket.
+  string src_paygen_bucket = 2;
+
   // The channels to consider when pushing and signing the image.
-  repeated chromiumos.Channel channels = 2;
+  repeated chromiumos.Channel channels = 3;
 
   // The types of images to sign for.
-  repeated chromiumos.ImageType sign_types = 3;
+  repeated chromiumos.ImageType sign_types = 4;
 
   // This also ignores paygen_dryrun, as the step is never reached.
-  bool dryrun = 4;
+  bool dryrun = 5;
 
   // Only dryrun creation of playloads, don't place.
-  bool paygen_dryrun = 5;
+  bool paygen_dryrun = 6;
 
   // If set, don't upload releasespecs to manifest-versions.
   // The releasespec still may be uploaded to GS, depending on the situation.
-  bool dont_upload_to_manifest_versions = 6;
+  bool dont_upload_to_manifest_versions = 7;
 }
