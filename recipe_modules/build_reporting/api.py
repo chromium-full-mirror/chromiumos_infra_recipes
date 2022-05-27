@@ -207,7 +207,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
           # The publish-message binary requires that messages be base64 encoded to
           # avoid issues with binary data and strings.
           six.ensure_str(
-              base64.b64encode(self._build_report.SerializeToString())),
+              base64.b64encode(
+                  self._build_report.SerializeToString(deterministic=True))),
           ordering_key=str(self.m.buildbucket.build.id or 'led-launch'),
           endpoint=PUBSUB_ENDPOINT,
           raise_on_failed_publish=raise_on_failed_publish,

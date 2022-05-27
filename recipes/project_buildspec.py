@@ -19,6 +19,8 @@ DEPS = [
 
 from PB.recipes.chromeos.project_buildspec import ProjectBuildspecProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ProjectBuildspecProperties
 
 # See go/per-project-buildspecs for more context.
@@ -26,12 +28,12 @@ PROPERTIES = ProjectBuildspecProperties
 
 def ensure_manifest_doctor(api, properties):
   manifest_doctor_cipd_package = (
-      properties.manifest_doctor_cipd_package.encode('utf-8') or
+      properties.manifest_doctor_cipd_package or
       "chromiumos/infra/manifest_doctor/${platform}")
 
   default_ref = "staging" if api.cros_infra_config.is_staging else "prod"
   manifest_doctor_cipd_ref = (
-      properties.manifest_doctor_cipd_ref.encode('utf-8') or default_ref)
+      properties.manifest_doctor_cipd_ref or default_ref)
 
   with api.step.nest('ensure manifest_doctor'):
     with api.context(infra_steps=True):

@@ -39,7 +39,7 @@ class CrosSigningApi(recipe_api.RecipeApi):
     timeout has elapsed.
 
     Args:
-      instructions_list (array): List of GS locations for instructions files.
+      instructions_list (list[str]): List of GS URIs for instructions files.
 
     Returns
       A dict of instruction file location -> instruction metadata for all
@@ -51,7 +51,7 @@ class CrosSigningApi(recipe_api.RecipeApi):
     start_time = self.m.time.utcnow()
     with self.m.step.nest('wait for signing to complete'):
       # Place each instructions location in the dict.
-      for instructions in instructions_list:
+      for instructions in sorted(instructions_list):
         # Fail fast if the instuctions file doesn't match the expected pattern.
         if not INSTRUCTIONS_PATTERN.match(instructions):
           raise recipe_api.StepFailure(
@@ -122,7 +122,8 @@ class CrosSigningApi(recipe_api.RecipeApi):
           'wait_for_signing must be called before get_signed_build_metadata')
     with self.m.step.nest('parse metadata') as presentation:
       presentation.logs['signed build metadata'] = json.dumps(
-          instructions_metadata, indent=2)
+          instructions_metadata, indent=2, sort_keys=True,
+          separators=(',', ':'))
 
     return list(instructions_metadata.values())
 

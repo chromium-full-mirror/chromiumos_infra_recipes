@@ -40,6 +40,8 @@ from PB.recipe_modules.chromeos.cros_signing.cros_signing import \
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
     CrosSourceProperties, ManifestLocation)
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 StepDetails = BuildReport.StepDetails
 
 
