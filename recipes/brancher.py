@@ -22,6 +22,8 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.brancher import BrancherProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = BrancherProperties
 
 
@@ -66,7 +68,7 @@ def GenTests(api):
       api.step_data(
           'create branch.'
           'create branch from buildspec manifest 89/13729.0.0.xml',
-          stdout=api.raw_io.output(TEST_STDOUT)),
+          stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.RELEASE))),
@@ -81,7 +83,7 @@ def GenTests(api):
       api.step_data(
           'create branch'
           '.create branch from buildspec manifest 89/13729.0.0.xml',
-          stdout=api.raw_io.output(TEST_STDOUT)),
+          stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.properties(
           BrancherProperties(
               source_version='R89-13729.0.0',

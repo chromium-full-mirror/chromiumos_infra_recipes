@@ -119,7 +119,7 @@
   * [bot_scaling:examples/get_swarming_stats](#recipes-bot_scaling_examples_get_swarming_stats) (Python3 ✅)
   * [bot_scaling:examples/update_bot_policy_config](#recipes-bot_scaling_examples_update_bot_policy_config) (Python3 ✅)
   * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs) (Python3 ✅)
-  * [brancher](#recipes-brancher) &mdash; Recipe for creating a new ChromeOS branch.
+  * [brancher](#recipes-brancher) (Python3 ✅) &mdash; Recipe for creating a new ChromeOS branch.
   * [breakpad:examples/full](#recipes-breakpad_examples_full) (Python3 ✅)
   * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols) (Python3 ✅)
   * [build_android_uprev](#recipes-build_android_uprev) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Android uprev.
@@ -8390,11 +8390,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/brancher.py#8): [cros\_branch](#recipe_modules-cros_branch), [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for creating a new ChromeOS branch.
 
-&mdash; **def [RunSteps](/recipes/brancher.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipes/brancher.py#30)(api, properties):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#5): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
