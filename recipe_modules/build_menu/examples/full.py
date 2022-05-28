@@ -22,6 +22,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 from recipe_engine import post_process
 
 from PB.chromiumos import common
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
     CrosBisectProperties)
@@ -38,10 +39,10 @@ def RunSteps(api, properties):
       api.assertions.assertTrue(properties.expect_missing_config)
       api.assertions.assertIsNotNone(api.build_menu.config_or_default)
       return
-    return DoRunSteps(api, properties)
+    return DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api, config, properties):
   cherry_pick_changes = not properties.dont_cherry_pick_changes
   with api.build_menu.setup_workspace_and_chroot(
       cherry_pick_changes=cherry_pick_changes):
@@ -69,6 +70,9 @@ def DoRunSteps(api, properties):
     # list.  Cast them.
     api.assertions.assertEqual(
         list(env_info.packages), list(properties.expected_packages))
+
+    if config and config.id.type == BuilderConfig.Id.Type.RELEASE:
+      api.build_menu.publish_latest_files('bucket', '{gs_path}')
 
 
 def GenTests(api):

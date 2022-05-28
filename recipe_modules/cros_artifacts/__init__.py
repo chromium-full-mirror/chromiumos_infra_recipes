@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/futures',
     'recipe_engine/led',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'code_coverage',
     'cros_build_api',

@@ -35,6 +35,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import (
     CrosArtifactsProperties)
+from PB.recipes.chromeos.build_release import BuildReleaseProperties
 from PB.recipe_modules.chromeos.cros_signing.cros_signing import \
   CrosSigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import (
@@ -42,10 +43,12 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import (
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
+PROPERTIES = BuildReleaseProperties
+
 StepDetails = BuildReport.StepDetails
 
 
-def RunSteps(api):
+def RunSteps(api, properties):
   api.easy.log_parent_step()
 
   if api.cros_infra_config.is_staging:
@@ -60,7 +63,7 @@ def RunSteps(api):
                                               raise_on_failed_publish=True):
         with api.build_menu.configure_builder() as config, \
             api.build_menu.setup_workspace_and_chroot():
-          return DoRunSteps(api, config)
+          return DoRunSteps(api, config, properties)
   finally:
     # If the parent build is cancelled, by default the child build will have an
     # INFRA_FAILURE status. Check if this build was cancelled because its
@@ -74,7 +77,7 @@ def RunSteps(api):
               api.buildbucket.build_url(build_id=parent[0])))
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api, config, properties):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   # After the sysroot is setup we have the package versions determined.
   api.build_reporting.publish_versions(api.build_menu.target_versions)
@@ -152,6 +155,10 @@ def DoRunSteps(api, config):
 
   api.cros_release.schedule_payload_generation()
 
+  if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
+    api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,
+                                        properties.latest_files_gs_path)
+
 
 def GenTests(api):
   manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
@@ -169,6 +176,10 @@ def GenTests(api):
       'release-build',
       api.properties(
           **{
+              'latest_files_gs_bucket':
+                  'chromeos-image-archive',
+              'latest_files_gs_path':
+                  '{target}-release',
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),

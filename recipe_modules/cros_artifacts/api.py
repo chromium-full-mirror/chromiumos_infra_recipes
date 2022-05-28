@@ -11,6 +11,7 @@ import six
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api import artifacts
 from PB.chromite.api import firmware
@@ -992,3 +993,65 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         is_staging=self.m.cros_infra_config.is_staging,
     )
     return self.m.cros_build_api.ImageService.PushImage(request)
+
+  def publish_latest_files(self, gs_bucket, gs_path):
+    """Write LATEST-... files to GS.
+
+    Writes version information to the LATEST-{version} and LATEST-{branch} files
+    in the specified GS dir. Will only write LATEST-{branch} if the version is
+    more recent than the existing contents.
+
+    Args:
+      gs_bucket (str): GS bucket to write to.
+      gs_path (str): GS path to write to (relative to the bucket),
+        e.g. eve-release.
+    """
+    with self.m.step.nest('write LATEST files'):
+      # e.g. R100-12345.0.0.
+      version = self.m.cros_version.version
+
+      tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
+      tmp_file = tmp_dir.join('LATEST')
+      contents = str(version)
+      self.m.file.write_raw('write "{}" to tmp LATEST file'.format(contents),
+                            tmp_file, contents)
+
+      partial_cmd = ['cp', tmp_file]
+
+      gs_template = 'gs://{gs_bucket}/{gs_path}/'
+      gs_base_path = gs_template.format(gs_bucket=gs_bucket, gs_path=gs_path)
+
+      # Write version LATEST file, e.g. LATEST-12345.0.0.
+      version_file = 'LATEST-%s' % version.platform_version
+      with self.m.step.nest('write {}'.format(version_file)):
+        version_file_path = gs_base_path + version_file
+        self.m.gsutil(cmd=partial_cmd + [version_file_path],
+                      name='write %s' % version_file_path,
+                      use_retry_wrapper=True)
+
+      config = self.m.cros_infra_config.config
+      if not config:
+        raise StepFailure(
+            'could not find builder config, needed to determine branch')
+      branch = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
+
+      # Write branch LATEST file, e.g. LATEST-main.
+      branch_file = 'LATEST-{}'.format(branch)
+      with self.m.step.nest('write {}'.format(branch_file)) as presentation:
+        branch_file_path = gs_base_path + branch_file
+
+        # Read branch LATEST file to see if the version listed is more recent.
+        ret = self.m.gsutil.cat(branch_file_path,
+                                stdout=self.m.raw_io.output_text(),
+                                ok_ret=(0, 1), use_retry_wrapper=True)
+
+        if ret.stdout:
+          current_latest_version = self.m.cros_version.Version.from_string(
+              ret.stdout.strip())
+          if current_latest_version > version:
+            presentation.step_text = '{} has more recent version, skipping'.format(
+                branch_file_path)
+            return
+        self.m.gsutil(cmd=partial_cmd + [branch_file_path],
+                      name='write %s' % branch_file_path,
+                      use_retry_wrapper=True)

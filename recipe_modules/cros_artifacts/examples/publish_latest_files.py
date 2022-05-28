@@ -1,0 +1,60 @@
+# -*- coding: utf-8 -*-
+# Copyright 2022 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
+    'cros_artifacts',
+    'cros_infra_config',
+    'test_util',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+from recipe_engine import post_process
+
+
+def RunSteps(api):
+  api.cros_infra_config.configure_builder()
+
+  api.cros_artifacts.publish_latest_files('chromeos-image-archive',
+                                          'eve-release')
+
+
+def GenTests(api):
+  yield api.test(
+      'basic',
+      api.test_util.test_child_build('eve-main', bucket='release').build,
+      api.properties(
+          **{'$chromeos/cros_version': {
+              "remove_snapshot_from_version": True,
+          }}),
+      api.post_process(
+          post_process.StepCommandContains,
+          'write LATEST files.write "R99-1234.56.0" to tmp LATEST file',
+          ['R99-1234.56.0']),
+      api.step_data('write LATEST files.write LATEST-main.gsutil cat',
+                    stdout=api.raw_io.output_text('R99-1234.55.0')))
+
+  yield api.test(
+      'newer-version',
+      api.test_util.test_child_build('eve-main', bucket='release').build,
+      api.properties(
+          **{'$chromeos/cros_version': {
+              "remove_snapshot_from_version": True,
+          }}),
+      api.post_process(
+          post_process.StepCommandContains,
+          'write LATEST files.write "R99-1234.56.0" to tmp LATEST file',
+          ['R99-1234.56.0']),
+      api.step_data('write LATEST files.write LATEST-main.gsutil cat',
+                    stdout=api.raw_io.output_text('R99-1234.57.0')),
+      api.post_check(
+          post_process.DoesNotRun,
+          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/eve-release/LATEST-main'
+      ))
+
+  yield api.test('no-builder-config',
+                 api.post_check(post_process.StepFailure, 'write LATEST files'))

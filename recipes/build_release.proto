@@ -19,4 +19,10 @@ message DebugSymbolUploadProperties{
 
 message BuildReleaseProperties {
   DebugSymbolUploadProperties debug_symbols = 1;
+
+  // GS bucket to upload LATEST files to, e.g. chromeos-image-archive
+  string latest_files_gs_bucket = 2;
+
+  // GS path (or template) to upload LATEST files to, e.g. {target}-release
+  string latest_files_gs_path = 3;
 }

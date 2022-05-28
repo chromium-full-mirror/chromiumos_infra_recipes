@@ -819,3 +819,23 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if child_builds:
       child_build_ids = [str(b.id) for b in child_builds]
       self.m.easy.set_properties_step(child_builds=child_build_ids)
+
+  def publish_latest_files(self, gs_bucket, gs_path):
+    """Write LATEST-... files to GS.
+
+    Writes version information to the LATEST-{version} and LATEST-{branch} files
+    in the specified GS dir. Will only write LATEST-{branch} if the version is
+    more recent than the existing contents.
+
+    Args:
+      gs_bucket (str): GS bucket to write to.
+      gs_path (str): GS path/template to write to (relative to the bucket),
+        e.g. eve-release or {target}-release.
+    """
+    config = self.config_or_default
+    gs_path = self.m.cros_artifacts.artifacts_gs_path(config.id.name,
+                                                      self.build_target,
+                                                      config.id.type,
+                                                      template=gs_path)
+
+    self.m.cros_artifacts.publish_latest_files(gs_bucket, gs_path)
