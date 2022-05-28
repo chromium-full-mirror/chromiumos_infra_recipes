@@ -33,7 +33,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = AndroidUprevProperties
 

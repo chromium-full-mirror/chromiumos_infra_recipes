@@ -15,7 +15,7 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -41,6 +41,8 @@ DEPS = [
 ]
 
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = ConfigPostsubmitProperties
 
@@ -398,13 +400,14 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 #
 # Note: Order here matters, currently:
 #         Flatten_configs must be ran before _aggregate_configs.
-_ACTIONS = {
-    PROPERTIES.REPLICATE_PUBLIC_CONFIG: _replicate_public_config,
-    PROPERTIES.FLATTEN_CONFIGS: _flatten_configs,
-    PROPERTIES.COPY_TO_INTERNAL: _aggregate_configs,
-    PROPERTIES.REGENERATE_SUITE_SCHEDULER: _regenerate_suite_scheduler_configs,
-    PROPERTIES.REGENERATE_TEST_PLAN: _regenerate_test_plan,
-}
+_ACTIONS = OrderedDict([
+    (PROPERTIES.REPLICATE_PUBLIC_CONFIG, _replicate_public_config),
+    (PROPERTIES.FLATTEN_CONFIGS, _flatten_configs),
+    (PROPERTIES.COPY_TO_INTERNAL, _aggregate_configs),
+    (PROPERTIES.REGENERATE_SUITE_SCHEDULER,
+     _regenerate_suite_scheduler_configs),
+    (PROPERTIES.REGENERATE_TEST_PLAN, _regenerate_test_plan),
+])
 
 
 def _create_cl(api, _properties, commit_info, branch_name, cl_config):
@@ -488,6 +491,7 @@ def RunSteps(api, properties):
       # Note that an action failing should stop the CL from being created
       # (i.e. a failed action might create an invalid CL), and thus
       # api.step.defer_results cannot be used.
+
       step_failures = []
       for cl_config_type, action in _ACTIONS.items():
         cl_config = properties.cl_configs[PROPERTIES.ActionTypes.Name(
@@ -519,7 +523,7 @@ def GenTests(api):
       allowed_programs = [{"repo_name": "chromeos/program/galaxy"}]
 
     aclc = PROPERTIES.ActionCLConfig(
-        reviewers='test1@google.com',
+        reviewers=['test1@google.com'],
         ccs=['test2@google.com', 'test3@google.com'], topic='test topic',
         hashtags=['ht1', 'ht2'], send_to_cq=True)
     return api.properties(
@@ -562,7 +566,7 @@ def GenTests(api):
   def config_repos_step_data(api):
     """Returns StepData for the find config repos call."""
     return api.step_data(
-        'find config repos.repo forall', stdout=api.raw_io.output(
+        'find config repos.repo forall', stdout=api.raw_io.output_text(
             '\n'.join(
                 '{}|{}|cros|refs/heads/main|refs/heads/main'.format(name, path)
                 for name, path in [

@@ -104,7 +104,7 @@
   * [android:examples/full](#recipes-android_examples_full) (Python3 ✅)
   * [android:examples/misc](#recipes-android_examples_misc) (Python3 ✅)
   * [android:examples/uprev](#recipes-android_examples_uprev) (Python3 ✅)
-  * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
+  * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) (Python3 ✅) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) (Python3 ✅) &mdash; Recipe for the Chrome OS annealing builders.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) (Python3 ✅)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost) (Python3 ✅)
@@ -174,7 +174,7 @@
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json) (Python3 ✅)
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov) (Python3 ✅)
   * [config_backfill](#recipes-config_backfill) (Python3 ✅) &mdash; Copy legacy configuration and generate backfilled configuration.
-  * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
+  * [config_postsubmit](#recipes-config_postsubmit) (Python3 ✅) &mdash; Run miscellaneous actions on project repos.
   * [cq_looks:examples/full](#recipes-cq_looks_examples_full) (Python3 ✅)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json) (Python3 ✅)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts) (Python3 ✅)
@@ -8261,7 +8261,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Orchestrator for Android uprev builders.
 
@@ -9060,7 +9060,7 @@ Take a private overlay URL and parse out project name.
 
 [DEPS](/recipes/config_postsubmit.py#24): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Run miscellaneous actions on project repos.
 
@@ -9073,7 +9073,7 @@ action to copy these public configs to a public repo.
 Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 
-&mdash; **def [RunSteps](/recipes/config_postsubmit.py#447)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_postsubmit.py#450)(api, properties):**
 ### *recipes* / [cq\_looks:examples/full](/recipe_modules/cq_looks/examples/full.py)
 
 [DEPS](/recipe_modules/cq_looks/examples/full.py#12): [cq\_looks](#recipe_modules-cq_looks), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
