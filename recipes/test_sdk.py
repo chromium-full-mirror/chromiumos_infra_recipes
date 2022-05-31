@@ -51,7 +51,6 @@ def RunSteps(api):
       request = BuildTargetUnitTestRequest(
           build_target=BuildTarget(name=None), chroot=api.cros_sdk.chroot,
           package_blocklist=[], packages=[],
-          result_path=str(api.path.mkdtemp()),
           flags=BuildTargetUnitTestRequest.Flags(
               code_coverage=False, empty_sysroot=False,
               testable_packages_optional=False, filter_only_cros_workon=False))
