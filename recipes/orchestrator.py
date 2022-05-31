@@ -8,8 +8,6 @@
 All builders run against the same source tree.
 """
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
-
 DEPS = [
     'cros_release',
     'cros_source',
@@ -27,6 +25,8 @@ from recipe_engine import post_process
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):

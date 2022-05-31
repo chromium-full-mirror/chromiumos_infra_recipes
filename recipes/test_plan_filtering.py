@@ -48,6 +48,8 @@ DEPS = [
     'git_txn',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 # Scripts
 FIND_TESTS_PATH = \
     'infra/config/scripts/device_usage/get_test_plans_to_be_filtered.py'
@@ -221,7 +223,7 @@ def _find_test_plan_files(api):
   ]
 
   step_result = api.step("find test plans", ['vpython3'] + find_command,
-                         stdout=api.raw_io.output())
+                         stdout=api.raw_io.output_text())
 
   return step_result.stdout.strip().splitlines()
 
@@ -285,7 +287,7 @@ def GenTests(api):
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',
-          stdout=api.raw_io.output("\n".join([
+          stdout=api.raw_io.output_text("\n".join([
               '[START_DIR]/base1/file1.jsonproto',
               '[START_DIR]/base2/file2.jsonproto',
               '[START_DIR]/base3/file3.jsonproto'
@@ -293,7 +295,7 @@ def GenTests(api):
       # Mocking git diff step to show differences so transaction is called
       api.step_data(
           'update ref.gerrit transaction.diffing to find changes.git diff',
-          stdout=api.raw_io.output('changes')),
+          stdout=api.raw_io.output_text('changes')),
       api.post_check(post_process.MustRun, 'update ref.gerrit transaction.'
                      'git push'),
   )
@@ -303,7 +305,7 @@ def GenTests(api):
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',
-          stdout=api.raw_io.output("\n".join([
+          stdout=api.raw_io.output_text("\n".join([
               '[START_DIR]/base1/file1.jsonproto',
               '[START_DIR]/base2/file2.jsonproto',
               '[START_DIR]/base3/file3.jsonproto'
@@ -311,7 +313,7 @@ def GenTests(api):
       # Mocking git diff step to show no differences so transaction cancelled
       api.step_data(
           'update ref.gerrit transaction.diffing to find changes.git diff',
-          stdout=api.raw_io.output('')),
+          stdout=api.raw_io.output_text('')),
       api.post_check(post_process.DoesNotRun, 'update ref.gerrit transaction.'
                      'git push'),
   )

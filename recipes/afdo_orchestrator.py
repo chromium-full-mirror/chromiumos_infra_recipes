@@ -19,7 +19,7 @@ from recipe_engine import post_process
 from PB.chromiumos.common import ArtifactsByService
 from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = AfdoOrchestratorProperties
 

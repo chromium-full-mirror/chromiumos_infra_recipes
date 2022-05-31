@@ -98,7 +98,7 @@
   * [workspace_util](#recipe_modules-workspace_util) (Python3 ✅) &mdash; API for various support functions for building.
 
 **[Recipes](#Recipes)**
-  * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
+  * [afdo_orchestrator](#recipes-afdo_orchestrator) (Python3 ✅) &mdash; Recipe that generates artifacts using HW Test results.
   * [afdo_process](#recipes-afdo_process) (Python3 ✅) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full) (Python3 ✅)
   * [android:examples/full](#recipes-android_examples_full) (Python3 ✅)
@@ -414,7 +414,7 @@
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full) (Python3 ✅)
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect) (Python3 ✅)
-  * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
+  * [orchestrator](#recipes-orchestrator) (Python3 ✅) &mdash; Recipe that schedules child builders and watches for failures.
   * [os_install_vm](#recipes-os_install_vm) (Python3 ✅) &mdash; Test reven (aka ChromeOS Flex) installation.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full) (Python3 ✅)
   * [paygen](#recipes-paygen) (Python3 ✅) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
@@ -476,7 +476,7 @@
   * [tast_vm](#recipes-tast_vm) (Python3 ✅) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) (Python3 ✅) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) (Python3 ✅) &mdash; Verifies a repo manifest.
-  * [test_plan_filtering](#recipes-test_plan_filtering) &mdash; Updates test plan rules to reflect new risk-based rules.
+  * [test_plan_filtering](#recipes-test_plan_filtering) (Python3 ✅) &mdash; Updates test plan rules to reflect new risk-based rules.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
@@ -8209,7 +8209,7 @@ Whether there are toolchain CLs applied to the source tree.
 
 [DEPS](/recipes/afdo_orchestrator.py#11): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that generates artifacts using HW Test results.
 
@@ -10859,9 +10859,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#22)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#13): [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/orchestrator.py#11): [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that schedules child builders and watches for failures.
 
@@ -11401,11 +11401,11 @@ Verifies a repo manifest.
 
 [DEPS](/recipes/test_plan_filtering.py#36): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Updates test plan rules to reflect new risk-based rules
 
-&mdash; **def [RunSteps](/recipes/test_plan_filtering.py#230)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_plan_filtering.py#232)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
 [DEPS](/recipes/test_platform/cros_test_platform.py#40): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
