@@ -20,6 +20,7 @@ DEPS = [
     'cros_bisect',
     'cros_history',
     'cros_infra_config',
+    'cros_lkgm',
     'cros_release',
     'cros_resultdb',
     'cros_source',

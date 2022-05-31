@@ -259,6 +259,7 @@ class OrchMenuApi(RecipeApi):
                 dry_run=is_staging,
                 gs_location=self._properties.buildspec_gs_path or
                 DEFAULT_BUILDSPEC_GS_PATH, **kwargs)
+            self.m.cros_lkgm.schedule_public_build()
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):

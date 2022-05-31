@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+# Copyright 2022 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/raw_io',
+    'build_menu',
+    'cros_lkgm',
+    'cros_infra_config',
+    'cros_release',
+    'test_util',
+]
+
+from recipe_engine import post_process
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+
+def RunSteps(api):
+  api.cros_infra_config.configure_builder()
+
+  api.cros_release.create_releasespec(
+      gs_location='gs://chromeos-manifest-versions/buildspecs/')
+  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+
+  build = api.cros_lkgm.schedule_public_build()
+  is_staging = api.cros_infra_config.is_staging
+  if is_staging:
+    api.assertions.assertEqual(build.builder.builder,
+                               'staging-public-main-orchestrator')
+  else:
+    api.assertions.assertEqual(build.builder.builder,
+                               'public-main-orchestrator')
+
+
+def GenTests(api):
+  yield api.test(
+      'release-orchestrator',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='main-release-orchestrator').build,
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'staging-release-orchestrator',
+      api.test_util.test_orchestrator(
+          bucket='staging', builder='staging-main-release-orchestrator').build,
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'no-builder-config',
+      api.post_check(post_process.StepFailure, 'schedule public build'))
