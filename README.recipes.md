@@ -87,7 +87,6 @@
   * [service_version](#recipe_modules-service_version) (Python3 ✅)
   * [skylab](#recipe_modules-skylab) (Python3 ✅)
   * [src_state](#recipe_modules-src_state) (Python3 ✅) &mdash; API providing frequently needed values, that we sometimes override.
-  * [stable_version](#recipe_modules-stable_version) (Python3 ✅)
   * [support](#recipe_modules-support) (Python3 ✅) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli) (Python3 ✅)
   * [sysroot_util](#recipe_modules-sysroot_util) (Python3 ✅) &mdash; API for various support functions for building.
@@ -396,7 +395,6 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs) (Python3 ✅)
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
-  * [lab_platform/sync_stable_version](#recipes-lab_platform_sync_stable_version) (Python3 ✅) &mdash; Recipe for sync stable vesrion for ChromeOS build targets & models.
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
@@ -463,7 +461,6 @@
   * [src_state:examples/workspace_path](#recipes-src_state_examples_workspace_path) (Python3 ✅)
   * [src_state:tests/hash](#recipes-src_state_tests_hash) (Python3 ✅)
   * [src_state:tests/test_api](#recipes-src_state_tests_test_api) (Python3 ✅)
-  * [stable_version:examples/full](#recipes-stable_version_examples_full) (Python3 ✅)
   * [star_doctor](#recipes-star_doctor) (Python3 ✅) &mdash; Recipe for the Star Doctor.
   * [support:examples/full](#recipes-support_examples_full) (Python3 ✅)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full) (Python3 ✅)
@@ -7599,27 +7596,6 @@ The "workspace" checkout path.
 The cros_source module checks out the Chrome OS source in this directory.
 It will contain the base checkout and any modifications made by the build,
 and is discarded after the build.
-### *recipe_modules* / [stable\_version](/recipe_modules/stable_version)
-
-[DEPS](/recipe_modules/stable_version/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-#### **class [StableVersionApi](/recipe_modules/stable_version/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-Module for issuing stable_version commands
-
-&mdash; **def [fetch\_and\_commit](/recipe_modules/stable_version/api.py#35)(self):**
-
-Fetch up-to-date stable version and commit them.
-
-Returns: response: raw string as the stdout data.
-
-&mdash; **def [initialize](/recipe_modules/stable_version/api.py#14)(self):**
-
-&mdash; **def [validate\_stable\_version](/recipe_modules/stable_version/api.py#18)(self):**
-
-Validate the remote stable version config file.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
 [DEPS](/recipe_modules/support/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10736,28 +10712,6 @@ https://www.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-configur
 and go/mini-splitconfigs.
 
 &mdash; **def [RunSteps](/recipes/kernel_checkconfig.py#31)(api, properties):**
-### *recipes* / [lab\_platform/sync\_stable\_version](/recipes/lab_platform/sync_stable_version.py)
-
-[DEPS](/recipes/lab_platform/sync_stable_version.py#11): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-Recipe for sync stable vesrion for ChromeOS build targets & models.
-
-&mdash; **def [RunSteps](/recipes/lab_platform/sync_stable_version.py#42)(api, properties):**
-
-&mdash; **def [fetch\_and\_commit](/recipes/lab_platform/sync_stable_version.py#23)(api):**
-
-Fetch the newest stable version and commit it to config file on git.
-
-Returns:
-  A string gerrit CL link.
-
-&mdash; **def [validate\_stable\_version](/recipes/lab_platform/sync_stable_version.py#33)(api):**
-
-Validate the remote stable version config file.
-
-Returns: JSON response with validation result
 ### *recipes* / [libchrome\_upstream](/recipes/libchrome_upstream.py)
 
 [DEPS](/recipes/libchrome_upstream.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11344,13 +11298,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/src_state/tests/test_api.py#14)(api):**
-### *recipes* / [stable\_version:examples/full](/recipe_modules/stable_version/examples/full.py)
-
-[DEPS](/recipe_modules/stable_version/examples/full.py#6): [stable\_version](#recipe_modules-stable_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-&mdash; **def [RunSteps](/recipe_modules/stable_version/examples/full.py#14)(api):**
 ### *recipes* / [star\_doctor](/recipes/star_doctor.py)
 
 [DEPS](/recipes/star_doctor.py#25): [cros\_schedule](#recipe_modules-cros_schedule), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
