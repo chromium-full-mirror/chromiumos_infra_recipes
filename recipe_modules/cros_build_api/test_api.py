@@ -396,7 +396,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     """Generate responses for TestService."""
     responses = {}
     responses['BuildTargetUnitTest'] = jsonify(
-        tarball_path='tarball/path',
         failed_packages=[],
     )
     responses['BuildTestServiceContainers'] = jsonify(
