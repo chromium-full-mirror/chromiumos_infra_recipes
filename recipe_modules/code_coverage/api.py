@@ -90,7 +90,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile,
         'LCOV',
         step_name,
-        incremental_settings=CoverageFileSettings(True, True, False),
+        # Filtering only works for llvm json files.
+        incremental_settings=CoverageFileSettings(True, False, False),
         absolute_cs_settings=CoverageFileSettings(True, False, True),
         absolute_chromium_settings=CoverageFileSettings(False, False, True),
     )

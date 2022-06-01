@@ -1684,7 +1684,7 @@ A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#117)(self, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#118)(self, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -1696,7 +1696,7 @@ Args:
   absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
   absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
 
-&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#98)(self, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
+&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#99)(self, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
 
 Uploads code coverage llvm json.
 
