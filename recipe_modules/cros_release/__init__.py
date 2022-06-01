@@ -20,6 +20,7 @@ DEPS = [
     'cros_version',
     'gerrit',
     'git',
+    'manifest_doctor',
     'repo',
     'src_state',
 ]

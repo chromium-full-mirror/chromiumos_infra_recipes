@@ -69,7 +69,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   def create_releasespec(self, specs_dir='buildspecs', branch='release',
                          step_name='create releasespec', dry_run=False,
                          gs_location=None):
-    """Create a pinned manifest and upload to manifest-versions/releasespecs.
+    """Create a pinned manifest and upload to manifest-versions and/or GS.
+
+    If the buildspec is uploaded to GS, this function also creates a public
+    buildspec using Manifest Doctor.
 
     Args:
       specs_dir (str): Relative path in manifest-versions in which to place the
@@ -158,6 +161,13 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               gs_path = self.m.path.join(gs_path, version.buildspec_filename)
             self.m.gsutil.upload(manifest_path, gs_bucket, gs_path)
             manifest_gs_path = 'gs://{}/{}'.format(gs_bucket, gs_path)
+
+          # Create the public buildspec immediately so it can be used by the
+          # public builder.
+          self.m.manifest_doctor([
+              'public-buildspec', '--paths', manifest_file, '--push'
+          ], step_name='create external buildspec gs://chromiumos-manifest-versions/{}'
+                                 .format(manifest_file))
 
       self._releasespec = ManifestLocation(
           manifest_repo_url=self.manifest_versions_url, branch=branch,

@@ -1825,7 +1825,7 @@
     {
       "id": {
         "name": "main-public-orchestrator",
-        "type": "RELEASE"
+        "type": "PUBLIC"
       },
       "general": {
         "critical": true,
@@ -1848,7 +1848,7 @@
     {
       "id": {
         "name": "eve-main-public",
-        "type": "RELEASE"
+        "type": "PUBLIC"
       },
       "general": {
         "critical": true,
