@@ -71,6 +71,7 @@
   * [gs_step_logging](#recipe_modules-gs_step_logging) (Python3 ✅) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
   * [iterutils](#recipe_modules-iterutils) (Python3 ✅)
+  * [manifest_doctor](#recipe_modules-manifest_doctor) (Python3 ✅) &mdash; API wrapping the manifest_doctor tool.
   * [metadata](#recipe_modules-metadata) (Python3 ✅) &mdash; API to support metadata generation and wrangling.
   * [metadata_json](#recipe_modules-metadata_json) (Python3 ✅)
   * [naming](#recipe_modules-naming) (Python3 ✅) &mdash; API featuring shared helpers for naming things.
@@ -400,6 +401,7 @@
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
+  * [manifest_doctor:examples/full](#recipes-manifest_doctor_examples_full) (Python3 ✅)
   * [metadata:examples/full](#recipes-metadata_examples_full) (Python3 ✅)
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results) (Python3 ✅)
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries) (Python3 ✅)
@@ -6464,6 +6466,30 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
+### *recipe_modules* / [manifest\_doctor](/recipe_modules/manifest_doctor)
+
+[DEPS](/recipe_modules/manifest_doctor/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+API wrapping the manifest_doctor tool.
+
+#### **class [ManifestDoctorApi](/recipe_modules/manifest_doctor/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for calling manifest_doctor.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/manifest_doctor/api.py#33)(self, cmd, step_name=None, \*\*kwargs):**
+
+Call manifest_doctor with the given args.
+
+Args:
+  cmd: Command to be run with manifest_doctor.
+  step_name (str): Message to use for step. Optional.
+  kwargs: Keyword arguments for recipe_engine/step.
+
+&mdash; **def [initialize](/recipe_modules/manifest_doctor/api.py#20)(self):**
+
+Initializes the module.
 ### *recipe_modules* / [metadata](/recipe_modules/metadata)
 
 [DEPS](/recipe_modules/metadata/__init__.py#9): [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -10758,15 +10784,20 @@ Recipe for syncing to our local cache LVFS files (https://fwupd.org/).
 &mdash; **def [RunSteps](/recipes/lvfs_mirror.py#15)(api):**
 ### *recipes* / [manifest\_doctor](/recipes/manifest_doctor.py)
 
-[DEPS](/recipes/manifest_doctor.py#11): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/manifest_doctor.py#11): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [manifest\_doctor](#recipe_modules-manifest_doctor), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2
 
 Recipe for performing various manipulations on ChromeOS manifests.
 
-&mdash; **def [RunSteps](/recipes/manifest_doctor.py#51)(api, properties):**
+&mdash; **def [RunSteps](/recipes/manifest_doctor.py#32)(api, properties):**
+### *recipes* / [manifest\_doctor:examples/full](/recipe_modules/manifest_doctor/examples/full.py)
 
-&mdash; **def [ensure\_manifest\_doctor](/recipes/manifest_doctor.py#31)(api, properties):**
+[DEPS](/recipe_modules/manifest_doctor/examples/full.py#8): [manifest\_doctor](#recipe_modules-manifest_doctor), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/manifest_doctor/examples/full.py#16)(api):**
 ### *recipes* / [metadata:examples/full](/recipe_modules/metadata/examples/full.py)
 
 [DEPS](/recipe_modules/metadata/examples/full.py#7): [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -11034,15 +11065,13 @@ Recipe for running presubmit on multiple CLs.
 &mdash; **def [RunSteps](/recipes/presubmit_tests.py#33)(api, properties):**
 ### *recipes* / [project\_buildspec](/recipes/project_buildspec.py)
 
-[DEPS](/recipes/project_buildspec.py#10): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/project_buildspec.py#10): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [manifest\_doctor](#recipe_modules-manifest_doctor), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for invoking the per project buildspec tool.
 
-&mdash; **def [RunSteps](/recipes/project_buildspec.py#49)(api, properties):**
-
-&mdash; **def [ensure\_manifest\_doctor](/recipes/project_buildspec.py#29)(api, properties):**
+&mdash; **def [RunSteps](/recipes/project_buildspec.py#30)(api, properties):**
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#6): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

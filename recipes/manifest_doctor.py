@@ -19,6 +19,7 @@ DEPS = [
     'bot_cost',
     'cros_infra_config',
     'cros_source',
+    'manifest_doctor',
     'repo',
     'workspace_util',
 ]
@@ -26,26 +27,6 @@ DEPS = [
 from PB.recipes.chromeos.manifest_doctor import ManifestDoctorProperties
 
 PROPERTIES = ManifestDoctorProperties
-
-
-def ensure_manifest_doctor(api, properties):
-  manifest_doctor_cipd_package = (
-      properties.manifest_doctor_cipd_package.encode('utf-8') or
-      "chromiumos/infra/manifest_doctor/${platform}")
-
-  default_ref = "staging" if api.cros_infra_config.is_staging else "prod"
-  manifest_doctor_cipd_ref = (
-      properties.manifest_doctor_cipd_ref.encode('utf-8') or default_ref)
-
-  with api.step.nest('ensure manifest_doctor'):
-    with api.context(infra_steps=True):
-      cipd_dir = api.path['start_dir'].join('cipd')
-
-      pkgs = api.cipd.EnsureFile()
-      pkgs.add_package(manifest_doctor_cipd_package, manifest_doctor_cipd_ref)
-      api.cipd.ensure(cipd_dir, pkgs)
-
-      return cipd_dir.join('manifest_doctor')
 
 
 def RunSteps(api, properties):
@@ -56,10 +37,9 @@ def RunSteps(api, properties):
           'internal_buildspecs_bucket and external_buildspecs_bucket '
           'props must be used together')
 
-  manifest_doctor_path = ensure_manifest_doctor(api, properties)
   if len(properties.buildspec_watch_paths) > 0:
     with api.step.nest("create external buildspecs"):
-      cmd = [manifest_doctor_path, "public-buildspec"]
+      cmd = ["public-buildspec"]
       cmd += ["--paths", ",".join(properties.buildspec_watch_paths)]
       if properties.push:
         cmd += ["--push"]
@@ -68,11 +48,11 @@ def RunSteps(api, properties):
       if properties.external_buildspecs_bucket:
         cmd += ["--external-bucket", properties.external_buildspecs_bucket]
 
-      api.step("run manifest_doctor", cmd)
+      api.manifest_doctor(cmd)
 
   if len(properties.buildspec_watch_paths_legacy) > 0:
     with api.step.nest("create external buildspecs (legacy)"):
-      cmd = [manifest_doctor_path, "public-buildspec"]
+      cmd = ["public-buildspec"]
       cmd += ["--paths", ",".join(properties.buildspec_watch_paths_legacy)]
       cmd += ["--legacy"]
       if properties.push:
@@ -82,12 +62,12 @@ def RunSteps(api, properties):
       if properties.external_buildspecs_bucket:
         cmd += ["--external-bucket", properties.external_buildspecs_bucket]
 
-      api.step("run manifest_doctor", cmd)
+      api.manifest_doctor(cmd)
 
   if len(properties.project_buildspec_watch_paths
         ) > 0 and properties.project_buildspec_min_milestone > 0:
     with api.step.nest("create partner buildspecs"):
-      cmd = [manifest_doctor_path, "project-buildspec"]
+      cmd = ["project-buildspec"]
       cmd += ["--paths", ",".join(properties.project_buildspec_watch_paths)]
       cmd += ["--min_milestone", properties.project_buildspec_min_milestone]
       cmd += ["--projects", ",".join(properties.project_buildspecs)]
@@ -99,7 +79,7 @@ def RunSteps(api, properties):
       if properties.push:
         cmd += ["--push"]
 
-      api.step("run manifest_doctor", cmd)
+      api.manifest_doctor(cmd)
 
   if properties.local_manifest_branching_min_milestone:
     with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace(
@@ -123,7 +103,7 @@ def RunSteps(api, properties):
               step_test_data=lambda: api.raw_io.test_api.stream_output(
                   '8\n')).stdout.strip()
 
-          cmd = [manifest_doctor_path, "branch-local-manifest"]
+          cmd = ["branch-local-manifest"]
           cmd += ["--chromeos_checkout", api.workspace_util.workspace_path]
           cmd += [
               "--min_milestone",
@@ -136,7 +116,7 @@ def RunSteps(api, properties):
 
           if properties.push:
             cmd += ["--push"]
-          api.step("run manifest_doctor", cmd)
+          api.manifest_doctor(cmd)
 
 
 def GenTests(api):
@@ -255,14 +235,16 @@ def GenTests(api):
       'with-ref',
       api.properties(
           **{
-              "local_manifest_branching_min_milestone":
-                  90,
-              "manifest_doctor_cipd_package":
-                  "chromiumos/infra/manifest_doctor_foo",
-              "manifest_doctor_cipd_ref":
-                  "bar"
+              "local_manifest_branching_min_milestone": 90,
+              "$chromeos/manifest_doctor": {
+                  "manifest_doctor_cipd_package":
+                      "chromiumos/infra/manifest_doctor_foo",
+                  "manifest_doctor_cipd_ref":
+                      "bar"
+              }
           }),
-      api.post_check(post_process.StepCommandContains,
-                     'ensure manifest_doctor.ensure_installed',
-                     ['chromiumos/infra/manifest_doctor_foo bar']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'branch local manifests.ensure manifest_doctor.ensure_installed',
+          ['chromiumos/infra/manifest_doctor_foo bar']),
   )

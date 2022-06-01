@@ -15,6 +15,7 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'cros_infra_config',
+    'manifest_doctor',
 ]
 
 from PB.recipes.chromeos.project_buildspec import ProjectBuildspecProperties
@@ -26,37 +27,16 @@ PROPERTIES = ProjectBuildspecProperties
 # See go/per-project-buildspecs for more context.
 
 
-def ensure_manifest_doctor(api, properties):
-  manifest_doctor_cipd_package = (
-      properties.manifest_doctor_cipd_package or
-      "chromiumos/infra/manifest_doctor/${platform}")
-
-  default_ref = "staging" if api.cros_infra_config.is_staging else "prod"
-  manifest_doctor_cipd_ref = (
-      properties.manifest_doctor_cipd_ref or default_ref)
-
-  with api.step.nest('ensure manifest_doctor'):
-    with api.context(infra_steps=True):
-      cipd_dir = api.path['start_dir'].join('cipd')
-
-      pkgs = api.cipd.EnsureFile()
-      pkgs.add_package(manifest_doctor_cipd_package, manifest_doctor_cipd_ref)
-      api.cipd.ensure(cipd_dir, pkgs)
-
-      return cipd_dir.join('manifest_doctor')
-
-
 def RunSteps(api, properties):
   with api.bot_cost.build_cost_context():
-    manifest_doctor_path = ensure_manifest_doctor(api, properties)
     with api.step.nest("create program/project buildspec(s)"):
-      cmd = [manifest_doctor_path, "project-buildspec"]
+      cmd = ["project-buildspec"]
       cmd += ["--buildspec", properties.buildspec]
       cmd += ["--projects", ",".join(properties.projects)]
       if not properties.dry_run:
         cmd += ["--push"]
 
-      api.step("run manifest_doctor", cmd)
+      api.manifest_doctor(cmd)
 
 
 def GenTests(api):
@@ -73,19 +53,4 @@ def GenTests(api):
                          '--projects',
                          'galaxy/milkyway,foo/*',
                          '--push',
-                     ]),
-  )
-
-  yield api.test(
-      'with-ref',
-      api.properties(
-          **{
-              "manifest_doctor_cipd_package":
-                  "chromiumos/infra/manifest_doctor_foo",
-              "manifest_doctor_cipd_ref":
-                  "bar"
-          }),
-      api.post_check(post_process.StepCommandContains,
-                     'ensure manifest_doctor.ensure_installed',
-                     ['chromiumos/infra/manifest_doctor_foo bar']),
-  )
+                     ]), api.post_process(post_process.DropExpectation))
