@@ -8,8 +8,6 @@
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.binhost import RegenBuildCacheRequest
 
-from RECIPE_MODULES.chromeos.util import util
-
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
@@ -18,6 +16,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'git',
+    'git_txn',
     'repo',
     'util',
     'workspace_util',
@@ -27,6 +26,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
+
+  def _add_and_commit():
+    api.git.add(['.'])
+    api.git.commit('Update Metadata Cache')
+
   with api.workspace_util.setup_workspace(
       default_main=True), api.cros_sdk.cleanup_context():
 
@@ -42,18 +46,12 @@ def RunSteps(api):
                                  chroot=api.cros_sdk.chroot)).modified_overlays
       if overlays:
         overlay_dirs = [overlay.path for overlay in overlays]
-        with api.step.nest('commit metadata'):
-          for overlay_dir in overlay_dirs:
-            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
-              api.git.add(['.'])
-              api.git.commit('Update Metadata Cache')
-        with api.step.nest('push metadata'):
-          push = util.exponential_retry(retries=3)(api.git.push)
+        with api.step.nest('commit and push metadata'):
           for overlay_dir in overlay_dirs:
             with api.context(cwd=api.path.abs_to_path(overlay_dir)):
               project = api.repo.project_infos(projects=[overlay_dir])[0]
-              push(project.remote,
-                   'HEAD:refs/for/' + project.branch + '%notify=NONE,submit')
+              api.git_txn.update_ref(project.remote, _add_and_commit,
+                                     ref=project.branch, automerge=True)
 
 
 def GenTests(api):
