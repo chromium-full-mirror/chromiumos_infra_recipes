@@ -29,6 +29,23 @@ def is_valid_llvm_coverage_json_file(data):
     return False
 
 
+def is_valid_lcov_coverage_file(data):
+  """Determines if the provided data is in the lcov coverage info format.
+
+  Args:
+    data (str): The data to check.
+
+  Returns:
+    True if the data is in the lcov coverage format otherwise False.
+  """
+  # If the file has at least one line starting with SF: (a filename), then
+  # assume it is lcov
+  for line in data.splitlines():
+    if line.startswith('SF:'):
+      return True
+  return False
+
+
 def clean_file_name(file_path, path_mappings):
   """Cleans a file name based on the provided mappings.
 
@@ -127,3 +144,45 @@ def clean_file_names_in_llvm_coverage_json(llvm_coverage_json, path_mappings,
 
   return create_llvm_coverage_json(coverage_data, coverage_type,
                                    coverage_version)
+
+
+def clean_file_names_in_lcov_coverage(lcov, path_mappings,
+                                      to_absolute_path=True):
+  """Cleans an lcov coverage file's file names.
+
+  Takes a valid lcov coverage file, and runs all the file names through
+  the clean_file_name function. Only keeps file names that are successfully
+  cleaned. The result is a new lcov function that has all the file names
+  cleaned.
+
+  Args:
+    lcov (str): The content from the lcov coverage file.
+    path_mappings (str): Path matching rules for relative and absolute path.
+    to_absolute_path (bool): Clean file path to absolute path or relative path,
+      the former is used for absolute coverage data, and the latter is used
+      for incremental coverage data.
+
+  Returns:
+    A string in the coverage lcov format with file names that
+    have been successfully cleaned.
+  """
+  coverage_data = ''
+
+  for line in lcov.splitlines():
+    if line.startswith('SF:'):
+      filename = line[3:]
+      coverage_data += 'SF:'
+      cleaned_file_name = clean_file_name(filename, path_mappings)
+      if cleaned_file_name is None:
+        coverage_data += '/tmp/unknown_file'
+      else:
+        if to_absolute_path:
+          coverage_data += cleaned_file_name[0]
+        else:
+          coverage_data += cleaned_file_name[1]
+      coverage_data += '\n'
+    else:
+      coverage_data += line
+      coverage_data += '\n'
+
+  return coverage_data

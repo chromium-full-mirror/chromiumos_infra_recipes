@@ -10,6 +10,7 @@ import logging
 import os
 import sys
 import shutil
+
 import code_coverage_util
 
 
@@ -30,19 +31,29 @@ def clean_file_paths(coverage_file, path_mapping_file, output_file,
                                             'r') as config_file:
     coverage_file_data = coverage_file_obj.read()
 
-    # Write the data as is if it can't be cleaned.
-    if not code_coverage_util.is_valid_llvm_coverage_json_file(
-        coverage_file_data):
+    if code_coverage_util.is_valid_llvm_coverage_json_file(coverage_file_data):
+      logging.info('Cleaning llvm json file %s to_absolute_path=%s',
+                   coverage_file, to_absolute_path)
+      data = json.loads(coverage_file_data)
+      path_mappings = json.load(config_file)
+      results = code_coverage_util.clean_file_names_in_llvm_coverage_json(
+          data, path_mappings, to_absolute_path)
+
+      with open(output_file, 'w') as out_file:
+        json.dump(results, out_file)
+    elif code_coverage_util.is_valid_lcov_coverage_file(coverage_file_data):
+      logging.info('Cleaning lcov file %s to_absolute_path=%s', coverage_file,
+                   to_absolute_path)
+      path_mappings = json.load(config_file)
+      results = code_coverage_util.clean_file_names_in_lcov_coverage(
+          coverage_file_data, path_mappings, to_absolute_path)
+      with open(output_file, 'w') as out_file:
+        out_file.write(results)
+    else:
+      logging.info('Copying unknown file %s', coverage_file)
+      # Write the data as is if it can't be cleaned.
       shutil.copyfile(coverage_file, output_file)
       return
-
-    data = json.loads(coverage_file_data)
-    path_mappings = json.load(config_file)
-    results = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-        data, path_mappings, to_absolute_path)
-
-    with open(output_file, 'w') as out_file:
-      json.dump(results, out_file)
 
 
 def _parse_args(args):
@@ -62,7 +73,8 @@ def _parse_args(args):
       '--output-file', required=True, type=str,
       help='absolute path to where the cleaned file should be placed.')
 
-  parser.add_argument('--to_absolute_path', required=True, type=bool,
+  parser.add_argument('--to_absolute_path', required=True,
+                      type=lambda x: x.lower() == "true",
                       help='clean file paths as absolute or relative path')
 
   return parser.parse_args(args=args)
@@ -87,5 +99,5 @@ def main():
 
 if __name__ == '__main__':
   logging.basicConfig(format='[%(asctime)s %(levelname)s] %(message)s',
-                      level=logging.INFO)
+                      level=logging.DEBUG)
   sys.exit(main())
