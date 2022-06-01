@@ -17,6 +17,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto import common

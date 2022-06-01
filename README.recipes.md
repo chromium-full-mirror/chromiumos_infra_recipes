@@ -125,7 +125,7 @@
   * [build_android_uprev](#recipes-build_android_uprev) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Android uprev.
   * [build_borealis_rootfs](#recipes-build_borealis_rootfs) (Python3 ✅) &mdash; Recipe for building a Borealis rootfs image.
   * [build_chromiumos](#recipes-build_chromiumos) &mdash; Recipe for building public ChromiumOS images.
-  * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
+  * [build_cq](#recipes-build_cq) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_legacy_fw](#recipes-build_legacy_fw) (Python3 ✅) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
@@ -147,8 +147,8 @@
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2) (Python3 ✅)
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full) (Python3 ✅)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full) (Python3 ✅)
-  * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
-  * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
+  * [build_slim_cq](#recipes-build_slim_cq) (Python3 ✅) &mdash; Recipe for building and testing a BuildTarget's packages.
+  * [build_toolchain](#recipes-build_toolchain) (Python3 ✅) &mdash; Builds and uploads the Chromium OS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand) (Python3 ✅)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status) (Python3 ✅)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count) (Python3 ✅)
@@ -8481,13 +8481,13 @@ Recipe for building public ChromiumOS images.
 
 [DEPS](/recipes/build_cq.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#55)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#57)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#28)(api):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#30)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8696,22 +8696,22 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/build_slim_cq.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building and testing a BuildTarget's packages.
 
-&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#48)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#50)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_slim_cq.py#26)(api):**
+&mdash; **def [RunSteps](/recipes/build_slim_cq.py#28)(api):**
 ### *recipes* / [build\_toolchain](/recipes/build_toolchain.py)
 
 [DEPS](/recipes/build_toolchain.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Builds and uploads the Chromium OS toolchain.
 
-&mdash; **def [RunSteps](/recipes/build_toolchain.py#21)(api):**
+&mdash; **def [RunSteps](/recipes/build_toolchain.py#23)(api):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#7): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
