@@ -25,9 +25,10 @@ def clean_file_paths(coverage_file, path_mapping_file, output_file,
         as relative path(the part showing up on gerrit frontend, which is
         decided by repo settings).
   """
-  with open(coverage_file, 'r') as coverage_file, open(path_mapping_file,
-                                                       'r') as config_file:
-    coverage_file_data = coverage_file.read()
+  with open(coverage_file,
+            'r') as coverage_file_obj, open(path_mapping_file,
+                                            'r') as config_file:
+    coverage_file_data = coverage_file_obj.read()
 
     # Write the data as is if it can't be cleaned.
     if not code_coverage_util.is_valid_llvm_coverage_json_file(
