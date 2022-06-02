@@ -125,7 +125,7 @@
   * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols) (Python3 ✅)
   * [build_android_uprev](#recipes-build_android_uprev) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Android uprev.
   * [build_borealis_rootfs](#recipes-build_borealis_rootfs) (Python3 ✅) &mdash; Recipe for building a Borealis rootfs image.
-  * [build_chromiumos](#recipes-build_chromiumos) &mdash; Recipe for building public ChromiumOS images.
+  * [build_chromiumos](#recipes-build_chromiumos) (Python3 ✅) &mdash; Recipe for building public ChromiumOS images.
   * [build_cq](#recipes-build_cq) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
@@ -8496,13 +8496,13 @@ Recipe for building a Borealis rootfs image.
 
 [DEPS](/recipes/build_chromiumos.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building public ChromiumOS images.
 
-&mdash; **def [DoRunSteps](/recipes/build_chromiumos.py#37)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_chromiumos.py#41)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_chromiumos.py#29)(api):**
+&mdash; **def [RunSteps](/recipes/build_chromiumos.py#33)(api, properties):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
 [DEPS](/recipes/build_cq.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

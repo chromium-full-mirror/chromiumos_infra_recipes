@@ -235,6 +235,14 @@ def GenTests(api):
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-main-release/LATEST-1234.56.0'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-main-release/LATEST-main'
+      ),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui-main',
       bucket='release',
