@@ -33,7 +33,9 @@
       "@@@STEP_LOG_LINE@config@    \"topic\":\"foo-topic\"@@@",
       "@@@STEP_LOG_LINE@config@  }@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
-      "@@@STEP_LOG_END@config@@@"
+      "@@@STEP_LOG_END@config@@@",
+      "@@@STEP_LOG_LINE@common_config@{}@@@",
+      "@@@STEP_LOG_END@common_config@@@"
     ]
   },
   {

@@ -726,6 +726,11 @@ def execution_steps_with_phosphorus(api, properties):
         json.dumps(
             json_format.MessageToDict(properties.config), separators=(',', ':'),
             indent=2, sort_keys=True))
+    s_log(
+        step, 'common_config',
+        json.dumps(
+            json_format.MessageToDict(properties.common_config),
+            separators=(',', ':'), indent=2, sort_keys=True))
     # Use parent_build_id rather than the related parent_buildbucket_id tag,
     # since that doesn't seem to work here. https://crbug.com/1171511
     if properties.request.parent_build_id:
@@ -2247,6 +2252,52 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
                   'output': {
                       'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
                   },
+              })),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'cros_firmware_update_config-allow_list',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      api.properties(
+          TestRunnerProperties(
+              common_config={
+                  'cros_firmware_update_config': {
+                      'enabled': True,
+                      'allow_list': {
+                          'boards': [],
+                          'models': []
+                      }
+                  }
+              })),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'cros_firmware_update_config-block_list',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      api.properties(
+          TestRunnerProperties(
+              common_config={
+                  'cros_firmware_update_config': {
+                      'enabled': True,
+                      'block_list': {
+                          'boards': [],
+                          'models': []
+                      }
+                  }
               })),
       _mock_load_step(),
       _successful_prejob_step(),

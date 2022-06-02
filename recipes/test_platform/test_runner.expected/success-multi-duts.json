@@ -71,6 +71,8 @@
       "@@@STEP_LOG_LINE@config@  }@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@",
+      "@@@STEP_LOG_LINE@common_config@{}@@@",
+      "@@@STEP_LOG_END@common_config@@@",
       "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
     ]
   },

@@ -154,7 +154,8 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
         continue
       t = phosphorus.prejob.PrejobRequest.ProvisionTarget(
           dut_hostname=target.hostname,
-          software_dependencies=target.software_dependencies)
+          software_dependencies=target.software_dependencies,
+          update_firmware=self.should_update_os_bundled_firmware(target))
       addtional_targets.append(t)
 
     with self._api.step.nest('Phosphorus: run prejob'):
@@ -166,7 +167,8 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
             existing_provisionable_labels=metadata.load_response
             .provisionable_labels,
             software_dependencies=prejob_properties.software_dependencies,
-            use_tls=prejob_properties.use_tls,
+            update_firmware=self.should_update_os_bundled_firmware(
+                metadata.primary_dut), use_tls=prejob_properties.use_tls,
             addtional_targets=addtional_targets)
         prejob_request.deadline.MergeFrom(
             self.get_deadline(max_duration_seconds))
@@ -330,6 +332,33 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     suite_allowlisted = test.autotest.keyvals['suite'] in suite_allowlist
 
     return flag_enabled or test_allowlisted or suite_allowlisted
+
+  def should_update_os_bundled_firmware(self, dut):
+    """Determine if update OS bundled firmware during ChromeOS provision.
+
+    Args:
+    * dut (DeviceUnderTest): a DeviceUnderTest namedtuple.
+
+    Returns:
+      A boolean to indicate if update OS bundled firmware should happens.
+    """
+    fw_config = self._properties.common_config.cros_firmware_update_config
+    if not fw_config.enabled:
+      return False
+    # If there is specific firmware requested, then we should skip update
+    # os bundled firmware as the DUT's firmware will be updated to the
+    # specified version during firmware provisioning.
+    for swd in dut.software_dependencies:
+      if swd.rw_firmware_build or swd.ro_firmware_build:
+        return False
+    # There will be only one of list(allow/block) at a given time, so the order
+    # of below blocks doesn't matters.
+    if fw_config.HasField("allow_list"):
+      return dut.board in fw_config.allow_list.boards or dut.model in fw_config.allow_list.models
+    if fw_config.HasField("block_list"):
+      return dut.board not in fw_config.block_list.boards and dut.model not in fw_config.block_list.models
+    # We shouldn't hit here ever, but for safe we return False if it happens.
+    return False
 
   def remove_autotest_results_dir(self):
     with self._api.step.nest('Phosphorus: remove autotest results dir'):
