@@ -8,10 +8,12 @@
     "name": "inputs",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"defaultTestExecutionBehavior\":\"NON_CRITICAL\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"parentBuildId\":\"12345\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"parentRequestUid\":\"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",@@@",
       "@@@STEP_LOG_LINE@request@  \"prejob\":{@@@",
       "@@@STEP_LOG_LINE@request@    \"provisionableLabels\":{@@@",
-      "@@@STEP_LOG_LINE@request@      \"label1\":\"value1\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"label2\":\"value2\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"label1\":\"value1\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"softwareAttributes\":{@@@",
       "@@@STEP_LOG_LINE@request@      \"buildTarget\":{@@@",
@@ -24,25 +26,15 @@
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"tests\":{@@@",
-      "@@@STEP_LOG_LINE@request@    \"multi_test_2\":{@@@",
-      "@@@STEP_LOG_LINE@request@      \"autotest\":{@@@",
-      "@@@STEP_LOG_LINE@request@        \"displayName\":\"multi_test_2\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"isClientTest\":true,@@@",
-      "@@@STEP_LOG_LINE@request@        \"keyvals\":{@@@",
-      "@@@STEP_LOG_LINE@request@          \"branch\":\"main\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"build\":\"bob-release/R102-14637.0.0\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"build_config\":\"bob-release\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"cidb_build_id\":\"5141110\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"datastore_parent_key\":\"('Build', 5141110)\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"master_build_config\":\"master-release\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"parent_job_id\":\"59dfe8555444e811\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"suite\":\"bvt-tast-informational\"@@@",
-      "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\":\"dummy_name\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"testArgs\":\"foo=bar\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@  \"test\":{@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotest\":{@@@",
+      "@@@STEP_LOG_LINE@request@      \"displayName\":\"fancy_name\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"isClientTest\":true,@@@",
+      "@@@STEP_LOG_LINE@request@      \"keyvals\":{@@@",
+      "@@@STEP_LOG_LINE@request@        \"key1\":\"value1\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\":\"dummy_name\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testArgs\":\"foo=bar\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -67,7 +59,8 @@
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@",
       "@@@STEP_LOG_LINE@common_config@{}@@@",
-      "@@@STEP_LOG_END@common_config@@@"
+      "@@@STEP_LOG_END@common_config@@@",
+      "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
     ]
   },
   {
@@ -86,7 +79,7 @@
     "name": "execution steps.publish build ID.call `result_flow`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"parentUid\":\"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -164,38 +157,38 @@
       }
     },
     "name": "execution steps.publish build ID.call `result_flow`.publish",
-    "stdin": "{\"buildId\":\"42\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "stdin": "{\"buildId\":\"42\",\"parentUid\":\"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2",
+    "name": "execution steps.original_test",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.validate request",
+    "name": "execution steps.original_test.validate request",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: load skylab local state",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: load skylab local state.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\",\"testId\":\"multi_test_2\"}@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\"}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\":[@@@",
@@ -212,7 +205,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -246,7 +239,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -287,22 +280,22 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: load skylab local state.call `phosphorus`.load",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\",\"testId\":\"multi_test_2\"}",
+    "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: mark local DUT state: needs_repair",
+    "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\"}@@@",
@@ -329,7 +322,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
+    "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
     "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -337,24 +330,24 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.DUTInterface: check request deadline",
+    "name": "execution steps.original_test.DUTInterface: check request deadline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: run prejob",
+    "name": "execution steps.original_test.Phosphorus: run prejob",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: run prejob.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:23Z\",\"desiredProvisionableLabels\":{\"label1\":\"value1\",\"label2\":\"value2\"},\"dutHostname\":\"fake_host\",\"softwareDependencies\":[{\"chromeosBuild\":\"fake_build\"}]}@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:23Z\",\"desiredProvisionableLabels\":{\"label1\":\"value1\"},\"dutHostname\":\"fake_host\",\"softwareDependencies\":[{\"chromeosBuild\":\"fake_build\"}]}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"state\":\"SUCCEEDED\"@@@",
@@ -384,25 +377,25 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: run prejob.call `phosphorus`.prejob",
-    "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:23Z\",\"desiredProvisionableLabels\":{\"label1\":\"value1\",\"label2\":\"value2\"},\"dutHostname\":\"fake_host\",\"softwareDependencies\":[{\"chromeosBuild\":\"fake_build\"}]}",
+    "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
+    "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:23Z\",\"desiredProvisionableLabels\":{\"label1\":\"value1\"},\"dutHostname\":\"fake_host\",\"softwareDependencies\":[{\"chromeosBuild\":\"fake_build\"}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: run test",
+    "name": "execution steps.original_test.Phosphorus: run test",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: run test.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"autotest\":{\"displayName\":\"multi_test_2\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:26Z\",\"dutHostnames\":[\"fake_host\"]}@@@",
+      "@@@STEP_LOG_LINE@request@{\"autotest\":{\"displayName\":\"fancy_name\",\"isClientTest\":true,\"keyvals\":{\"key1\":\"value1\",\"suite\":\"\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:26Z\",\"dutHostnames\":[\"fake_host\"]}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\":\"dummy-results-dir/subdir\",@@@",
@@ -432,22 +425,22 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\"autotest\":{\"displayName\":\"multi_test_2\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:26Z\",\"dutHostnames\":[\"fake_host\"]}",
+    "name": "execution steps.original_test.Phosphorus: run test.call `phosphorus`.run-test",
+    "stdin": "{\"autotest\":{\"displayName\":\"fancy_name\",\"isClientTest\":true,\"keyvals\":{\"key1\":\"value1\",\"suite\":\"\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:26Z\",\"dutHostnames\":[\"fake_host\"]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: fetch crashes",
+    "name": "execution steps.original_test.Phosphorus: fetch crashes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: fetch crashes.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: fetch crashes.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostname\":\"fake_host\"}@@@",
@@ -479,7 +472,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: fetch crashes.call `phosphorus`.fetch-crashes",
+    "name": "execution steps.original_test.Phosphorus: fetch crashes.call `phosphorus`.fetch-crashes",
     "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostname\":\"fake_host\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -487,21 +480,21 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.ensure all crashes were fetched",
+    "name": "execution steps.original_test.ensure all crashes were fetched",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: upload to TKO",
+    "name": "execution steps.original_test.Phosphorus: upload to TKO",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: upload to TKO.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: upload to TKO.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir/subdir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}}}@@@",
@@ -528,7 +521,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: upload to TKO.call `phosphorus`.upload-to-tko",
+    "name": "execution steps.original_test.Phosphorus: upload to TKO.call `phosphorus`.upload-to-tko",
     "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir/subdir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -536,14 +529,14 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: get test results",
+    "name": "execution steps.original_test.Phosphorus: get test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: get test results.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: get test results.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -569,7 +562,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: get test results.call `phosphorus`.parse",
+    "name": "execution steps.original_test.Phosphorus: get test results.call `phosphorus`.parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -598,29 +591,50 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.read autotest keyval file",
+    "name": "execution steps.original_test.read autotest keyval file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@keyval@@@@",
+      "@@@STEP_LOG_LINE@keyval@parent_job_id=58067d9ab42aca11@@@",
+      "@@@STEP_LOG_LINE@keyval@build=board-cq/R00-0.0.0@@@",
+      "@@@STEP_LOG_LINE@keyval@suite=sweet-cq@@@",
+      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_stainless_url=https://path/to/stainless@@@",
+      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_url=gs://path/to/test/logs@@@",
+      "@@@STEP_LOG_LINE@keyval@branch=main@@@",
+      "@@@STEP_LOG_LINE@keyval@label=board-cq/R00-0.0.0/sweet-cq/test-case@@@",
+      "@@@STEP_LOG_LINE@keyval@build_config=eve-release@@@",
+      "@@@STEP_LOG_LINE@keyval@master_build_config=master-release@@@",
+      "@@@STEP_LOG_LINE@keyval@drone=skylab-drone-xyz@@@",
+      "@@@STEP_LOG_LINE@keyval@hostname=chromeos0-row0-rack0-host0@@@",
+      "@@@STEP_LOG_LINE@keyval@job_started=1651467359@@@",
+      "@@@STEP_LOG_LINE@keyval@status_version=0@@@",
+      "@@@STEP_LOG_LINE@keyval@user=test-user@@@",
+      "@@@STEP_LOG_LINE@keyval@job_finished=1651468010@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.0=foo.SomeTest@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.1=foo.SomeOtherTest@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.2=bar.DifferentTest@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.3=bar.YetAnotherTest@@@",
+      "@@@STEP_LOG_LINE@keyval@    @@@",
       "@@@STEP_LOG_END@keyval@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.archive all test logs to Google Storage",
+    "name": "execution steps.original_test.archive all test logs to Google Storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.archive all test logs to Google Storage.Phosphorus: upload to GS",
+    "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`",
+    "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"gsDirectory\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"localDirectory\":\"dummy-results-dir\"}@@@",
@@ -653,46 +667,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
+    "name": "execution steps.original_test.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
     "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"gsDirectory\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"localDirectory\":\"dummy-results-dir\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  }\n}",
-      "[CLEANUP]/tmp_tmp_1/test_runner_result.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.multi_test_2.write skylab_test_runner result",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@{@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"log_data\": {@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  }@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@}@@@",
-      "@@@STEP_LOG_END@test_runner_result.json@@@"
     ]
   },
   {
@@ -719,19 +697,33 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.read crossystem keyval file",
+    "name": "execution steps.original_test.read crossystem keyval file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@crossystem@@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_prev_result          = success                        # [RO/str] Firmware result of previous boot@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_result               = success                        # [RW/str] Firmware result this boot@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_tried                = B                              # [RO/str] Firmware tried this boot (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_try_count            = 0                              # [RW/int] Number of times to try fw_try_next@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_try_next             = B                              # [RW/str] Firmware to try next (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_vboot2               = 1                              # [RO/int] 1 if firmware was selected by vboot2 or 0 otherwise@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwb_tries               = 0                              # [RW/int] Try firmware B count@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)@@@",
+      "@@@STEP_LOG_LINE@crossystem@hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@    @@@",
       "@@@STEP_LOG_END@crossystem@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.upload test results to rdb",
+    "name": "execution steps.original_test.upload test results to rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
-      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/autoserv_test\", @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
@@ -754,31 +746,35 @@
       "@@@STEP_LOG_LINE@config@            \"https://cr-buildbucket.appspot.com/build/42\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"ancestor_buildbucket_ids\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"123,456\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
       "@@@STEP_LOG_LINE@config@            \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"branch\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"main\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"ro_fwid\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"Google_Voema.13672.224.0\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"main_builder_name\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"master-release\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"rw_fwid\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"Google_Voema.13672.224.0\"@@@",
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ], @@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
       "@@@STEP_LOG_LINE@config@        \"build_target\": \"fake_board\", @@@",
-      "@@@STEP_LOG_LINE@config@        \"builder_name\": \"bob-release\"@@@",
+      "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.upload test results to rdb.ensure result_adapter",
+    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -809,7 +805,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.upload test results to rdb.ensure result_adapter.ensure_installed",
+    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -846,7 +842,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.upload test results to rdb.upload_invocation_artifacts",
+    "name": "execution steps.original_test.upload test results to rdb.upload_invocation_artifacts",
     "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"stainless_logs\", \"contents\": \"aHR0cHM6Ly9zdGFpbmxlc3MuY29ycC5nb29nbGUuY29tL2Jyb3dzZS9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi8yMDEyLTA1LTE0LzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMTMzNw==\"}, \"parent\": \"invocations/build:42\"}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -873,17 +869,19 @@
       "-var",
       "build_target:fake_board",
       "-var",
-      "builder_name:bob-release",
+      "test_config:fake_board-cq.hw.bvt-tast-cq",
       "-tag",
-      "branch:main",
+      "ancestor_buildbucket_ids:123,456",
       "-tag",
       "job_name:bb-42-chromeos/test_runner/test_runner",
       "-tag",
       "logs_url:gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
       "-tag",
-      "main_builder_name:master-release",
-      "-tag",
       "queued_time:2018-05-25 23:50:17",
+      "-tag",
+      "ro_fwid:Google_Voema.13672.224.0",
+      "-tag",
+      "rw_fwid:Google_Voema.13672.224.0",
       "-tag",
       "suite_task_id:parent-task-id",
       "-tag",
@@ -894,9 +892,11 @@
       "-exonerate-unexpected-pass",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
-      "skylab-test-runner",
+      "tast",
       "-result-file",
-      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
+      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
+      "-artifact-directory",
+      "dummy-results-dir/autoserv_test",
       "--",
       "echo"
     ],
@@ -912,21 +912,170 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.upload test results to rdb.run rdb",
+    "name": "execution steps.original_test.upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.upload missing test cases",
+    "stdin": "{\"invocation\": \"invocations/build:42\", \"requests\": [{\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"bar.DifferentTest\", \"variant\": {\"def\": {\"build_target\": \"fake_board\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"bar.YetAnotherTest\", \"variant\": {\"def\": {\"build_target\": \"fake_board\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"foo.SomeOtherTest\", \"variant\": {\"def\": {\"build_target\": \"fake_board\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"foo.SomeTest\", \"variant\": {\"def\": {\"build_target\": \"fake_board\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/bar.DifferentTest/results/42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"bar.DifferentTest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/bar.YetAnotherTest/results/42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"bar.YetAnotherTest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/foo.SomeOtherTest/results/42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"foo.SomeOtherTest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/foo.SomeTest/results/42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"foo.SomeTest\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"bar.DifferentTest\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"build_target\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }, @@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"bar.YetAnotherTest\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"build_target\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }, @@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"foo.SomeOtherTest\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"build_target\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }, @@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"foo.SomeTest\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"build_target\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "execution steps.multi_test_2.exonerate ResultDB results",
+    "name": "execution steps.original_test.exonerate ResultDB results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
+    "cmd": [
+      "rdb",
+      "query",
+      "-json",
+      "-n",
+      "1000",
+      "-u",
+      "-tr-fields",
+      "variant,testId,status,expected",
+      "build:42"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.exonerate ResultDB results.rdb query",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Archive CTS results",
+    "name": "execution steps.original_test.Archive CTS results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json_input@{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\"}@@@",
@@ -957,7 +1106,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Archive CTS results.prepare uploads",
+    "name": "execution steps.original_test.Archive CTS results.prepare uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -974,7 +1123,7 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Archive CTS results.Upload prepared results",
+    "name": "execution steps.original_test.Archive CTS results.Upload prepared results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
@@ -1007,21 +1156,21 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Archive CTS results.Upload prepared results.gsutil cp",
+    "name": "execution steps.original_test.Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: save local DUT state",
+    "name": "execution steps.original_test.Phosphorus: save local DUT state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.Phosphorus: save local DUT state.call `phosphorus`",
+    "name": "execution steps.original_test.Phosphorus: save local DUT state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}@@@",
@@ -1048,7 +1197,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.Phosphorus: save local DUT state.call `phosphorus`.save",
+    "name": "execution steps.original_test.Phosphorus: save local DUT state.call `phosphorus`.save",
     "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -1056,17 +1205,17 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.publish build ID",
+    "name": "execution steps.original_test.publish build ID",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.publish build ID.call `result_flow`",
+    "name": "execution steps.original_test.publish build ID.call `result_flow`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"parentUid\":\"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -1094,15 +1243,15 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.publish build ID.call `result_flow`.publish",
-    "stdin": "{\"buildId\":\"42\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "name": "execution steps.original_test.publish build ID.call `result_flow`.publish",
+    "stdin": "{\"buildId\":\"42\",\"parentUid\":\"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.multi_test_2.set output properties",
+    "name": "execution steps.original_test.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyTOsPIFZRebKWvn5xRlJ+bml+sW5JaXKKbk59erJ+cn5ubn6ebmlemb2RgaKRrYKpraKJvAAW6WAgQMDQ2NhcqyygpKQAZW1ySmJmXk1pcrJecX1Sgl56fn56TCmTn6icV5ZcXp1LXXgA/azuV\"@@@"

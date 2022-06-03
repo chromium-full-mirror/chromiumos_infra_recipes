@@ -356,6 +356,10 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         e.g. Google_Voema.13672.224.0
     * rw_fwid: Read-write firmware version,
         e.g. Google_Voema.13672.224.0
+    * task_url: Build task url,
+        e.g. https://ci.chromium.org/b/8818602441278078689
+    * ancestor_buildbucket_ids: All the ancestor buildbucket ids,
+        e.g. "8814950840874708945, 8814951792758733697"
 
 
     Args:
@@ -405,13 +409,21 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
 
   base_tags.append(('task_id', api.swarming.task_id))
 
-  # Fetches the following information from buildbucket.build.builder.
+  # Fetches the following information from buildbucket.build.
   builder_object = api.buildbucket.build.builder
-  job_name = 'bb-{}-{}/{}/{}'.format(api.buildbucket.build.id,
-                                     builder_object.project,
+  build_id = str(api.buildbucket.build.id)
+  job_name = 'bb-{}-{}/{}/{}'.format(build_id, builder_object.project,
                                      builder_object.bucket,
                                      builder_object.builder)
   base_tags.append(('job_name', job_name))
+
+  task_url = api.buildbucket.build_url(build_id=build_id)
+  base_tags.append(('task_url', task_url))
+
+  ancestor_buildbucket_ids = ','.join(
+      str(id) for id in api.buildbucket.build.ancestor_ids)
+  if ancestor_buildbucket_ids:
+    base_tags.append(('ancestor_buildbucket_ids', ancestor_buildbucket_ids))
 
   # Fetches the following information from test_metadata.
   logs_url = test_metadata.gs_url
@@ -1058,7 +1070,8 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def _set_build(bid, tags=None, experiments=None, swarming_tags=None):
+  def _set_build(bid, tags=None, experiments=None, swarming_tags=None,
+                 ancestor_buildbucket_ids=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
     build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
@@ -1070,6 +1083,9 @@ def GenTests(api):
       build_msg.infra.swarming.bot_dimensions.extend(
           api.cros_tags.tags(**swarming_tags))
     build_msg.infra.swarming.parent_run_id = 'parent-task-id'
+
+    if ancestor_buildbucket_ids:
+      build_msg.ancestor_ids.extend(ancestor_buildbucket_ids)
     return api.buildbucket.build(build_msg)
 
   def _build_with_execution_timeout(timeout_s):
@@ -1867,6 +1883,22 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
                               ])
                       },
                   )))),
+  )
+
+  yield api.test(
+      'success-with-ancestor-ids-for-resultdb',
+      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
   )
 
   yield api.test(
