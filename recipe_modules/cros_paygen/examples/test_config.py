@@ -84,10 +84,10 @@ def RunSteps(api, properties):
         tgt_payload=delta_dlc_payload, delta_type=DeltaType.Value('OMAHA'))
 
   api.assertions.assertEqual(
-      full_test_config._get_test_runner_tags()['label-pool'],
+      full_test_config.get_test_runner_tags()['label-pool'],
       properties.expected_quota_scheduler_label_pool or 'quota')
   api.assertions.assertEqual(
-      full_test_config._get_test_runner_tags()['quota_account'],
+      full_test_config.get_test_runner_tags()['quota_account'],
       properties.expected_quota_scheduler_account or 'legacypool-bvt')
 
 

@@ -286,13 +286,13 @@ class PaygenTestConfig(object):
 
     params.decorations.autotest_keyvals['build'] = self._chromeos_build_name
     params.decorations.autotest_keyvals['suite'] = self._suite_name
-    tags = self._get_test_runner_tags(model)
+    tags = self.get_test_runner_tags(model)
     request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
     params.decorations.tags.extend(request_tags)
 
     return params
 
-  def _get_test_runner_tags(self, model=None):
+  def get_test_runner_tags(self, model=None):
     """Generates test_runner build tags for the given model.
 
     Args:
@@ -1153,14 +1153,19 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       The scheduled buildbucket build.
     """
     tagged_requests = {}
-    for ptc in paygen_test_configs:
-      tagged_requests.update(
-          ptc.to_ctp_tagged_requests(self._test_request_opts))
-    if not tagged_requests:
-      return
 
     # Schedule with parent id tag.
     parent_buildbucket_id = str(self.m.buildbucket.build.id)
-    return self.m.skylab.schedule_ctp_requests(
-        tagged_requests,
-        bb_tags={'parent_buildbucket_id': parent_buildbucket_id})
+    bb_tags = {'parent_buildbucket_id': parent_buildbucket_id}
+
+    # Fill out requests and update the bb_tags which will be applied to the
+    # ctp runs overall. They should be identical, but the last update of bb_tags
+    # wins.
+    for ptc in paygen_test_configs:
+      tagged_requests.update(
+          ptc.to_ctp_tagged_requests(self._test_request_opts))
+      bb_tags.update(ptc.get_test_runner_tags())
+    if not tagged_requests:
+      return
+
+    return self.m.skylab.schedule_ctp_requests(tagged_requests, bb_tags=bb_tags)
