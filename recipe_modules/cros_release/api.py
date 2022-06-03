@@ -150,24 +150,24 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         if gs_location:
           if gs_location.startswith('gs://'):
             gs_location = gs_location[len('gs://'):]
-          with self.m.step.nest('upload {} to gs://{}'.format(
-              manifest_file, gs_location)):
-            # Split bucket off, and then append buildspec to the rest of the path (if any).
-            # If a filename is not supplied in gs_location, we use the buildspec_filename.
-            gs_toks = self.m.path.dirname(gs_location).split("/", 1)
-            gs_bucket = gs_toks[0]
-            gs_path = gs_toks[1]
-            if self.m.path.basename(gs_location) == "":
-              gs_path = self.m.path.join(gs_path, version.buildspec_filename)
+          # Split bucket off, and then append buildspec to the rest of the path (if any).
+          # If a filename is not supplied in gs_location, we use the buildspec_filename.
+          gs_toks = self.m.path.dirname(gs_location).split("/", 1)
+          gs_bucket = gs_toks[0]
+          gs_path = self.m.path.join(
+              gs_toks[1],
+              self.m.path.basename(gs_location) or version.buildspec_filename)
+          manifest_gs_path = 'gs://{}/{}'.format(gs_bucket, gs_path)
+          with self.m.step.nest('upload {} to {}'.format(
+              manifest_file, manifest_gs_path)):
             self.m.gsutil.upload(manifest_path, gs_bucket, gs_path)
-            manifest_gs_path = 'gs://{}/{}'.format(gs_bucket, gs_path)
 
           # Create the public buildspec immediately so it can be used by the
           # public builder.
           self.m.manifest_doctor([
-              'public-buildspec', '--paths', manifest_file, '--push'
+              'public-buildspec', '--paths', gs_path, '--push'
           ], step_name='create external buildspec gs://chromiumos-manifest-versions/{}'
-                                 .format(manifest_file))
+                                 .format(gs_path))
 
       self._releasespec = ManifestLocation(
           manifest_repo_url=self.manifest_versions_url, branch=branch,

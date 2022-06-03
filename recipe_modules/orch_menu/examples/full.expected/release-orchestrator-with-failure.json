@@ -3718,7 +3718,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/",
+    "name": "set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3749,7 +3749,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/.gsutil upload",
+    "name": "set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/buildspecbucket/buildspecs/99/1234.56.0.xml@@@"

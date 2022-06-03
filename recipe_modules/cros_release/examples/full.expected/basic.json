@@ -1289,7 +1289,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/",
+    "name": "create releasespec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1320,7 +1320,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/.gsutil upload",
+    "name": "create releasespec (2).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@"
@@ -1381,7 +1381,7 @@
       "[START_DIR]/cipd/manifest_doctor",
       "public-buildspec",
       "--paths",
-      "buildspecs/99/1234.56.0.xml",
+      "foo/99/1234.56.0.xml",
       "--push"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
@@ -1397,7 +1397,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (2).create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create releasespec (2).create external buildspec gs://chromiumos-manifest-versions/foo/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2012,7 +2012,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/",
+    "name": "create releasespec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2043,7 +2043,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/.gsutil upload",
+    "name": "create releasespec (3).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/99/1234.56.0.xml@@@"
@@ -2054,7 +2054,7 @@
       "[START_DIR]/cipd/manifest_doctor",
       "public-buildspec",
       "--paths",
-      "buildspecs/99/1234.56.0.xml",
+      "foo/99/1234.56.0.xml",
       "--push"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
@@ -2070,7 +2070,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (3).create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create releasespec (3).create external buildspec gs://chromiumos-manifest-versions/foo/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2700,7 +2700,7 @@
       "----",
       "cp",
       "[CLEANUP]/manifest-versions_tmp_4/buildspecs/99/1234.56.0.xml",
-      "gs://bucket/foo"
+      "gs://bucket/foo/bar.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -2719,7 +2719,7 @@
     "name": "create releasespec (4).upload buildspecs/99/1234.56.0.xml to gs://bucket/foo/bar.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/bucket/foo/bar.xml@@@"
     ]
   },
   {
@@ -2727,7 +2727,7 @@
       "[START_DIR]/cipd/manifest_doctor",
       "public-buildspec",
       "--paths",
-      "buildspecs/99/1234.56.0.xml",
+      "foo/bar.xml",
       "--push"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
@@ -2743,7 +2743,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create releasespec (4).create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create releasespec (4).create external buildspec gs://chromiumos-manifest-versions/foo/bar.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

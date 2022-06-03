@@ -22,9 +22,6 @@ from PB.test_platform.request import Request
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
-# GS path for internal buildspecs.
-DEFAULT_BUILDSPEC_GS_PATH = 'gs://chromeos-manifest-versions/rubik/'
-
 
 def py2_MessageToJson(obj):
   # TODO(b/217973414): Delete once we don't need to fix the separator spacing
@@ -257,8 +254,7 @@ class OrchMenuApi(RecipeApi):
               kwargs['branch'] = self._properties.manifest_versions_branch
             self.m.cros_release.create_releasespec(
                 dry_run=is_staging,
-                gs_location=self._properties.buildspec_gs_path or
-                DEFAULT_BUILDSPEC_GS_PATH, **kwargs)
+                gs_location=self._properties.buildspec_gs_path, **kwargs)
             self.m.cros_lkgm.schedule_public_build()
 
         if self.m.buildbucket.build.builder.builder.endswith(
