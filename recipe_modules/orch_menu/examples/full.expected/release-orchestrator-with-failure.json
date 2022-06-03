@@ -3509,7 +3509,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec",
+    "name": "set up orchestrator.create buildspec",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -3542,7 +3542,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.create pinned manifest",
+    "name": "set up orchestrator.create buildspec.create pinned manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -3551,7 +3551,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.clone manifest-versions",
+    "name": "set up orchestrator.create buildspec.clone manifest-versions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3582,7 +3582,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.clone manifest-versions.git clone",
+    "name": "set up orchestrator.create buildspec.clone manifest-versions.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3613,7 +3613,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.ensure [CLEANUP]/manifest-versions_tmp_1/buildspecs/99 exists",
+    "name": "set up orchestrator.create buildspec.ensure [CLEANUP]/manifest-versions_tmp_1/buildspecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3643,14 +3643,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.write buildspecs/99/1234.56.0.xml",
+    "name": "set up orchestrator.create buildspec.write buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.commit buildspec",
+    "name": "set up orchestrator.create buildspec.commit buildspec",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@no change since last commit@@@"
@@ -3658,7 +3658,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.commit buildspec.diff check",
+    "name": "set up orchestrator.create buildspec.commit buildspec.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3684,7 +3684,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.commit buildspec.diff check.git ls-files",
+    "name": "set up orchestrator.create buildspec.commit buildspec.diff check.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3711,14 +3711,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.commit buildspec.diff check.git diff",
+    "name": "set up orchestrator.create buildspec.commit buildspec.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml",
+    "name": "set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3749,7 +3749,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml.gsutil upload",
+    "name": "set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/buildspecbucket/buildspecs/99/1234.56.0.xml@@@"
@@ -3757,7 +3757,7 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.create releasespec.ensure manifest_doctor",
+    "name": "set up orchestrator.create buildspec.ensure manifest_doctor",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3789,7 +3789,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.ensure manifest_doctor.ensure_installed",
+    "name": "set up orchestrator.create buildspec.ensure manifest_doctor.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3826,7 +3826,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create releasespec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "set up orchestrator.create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

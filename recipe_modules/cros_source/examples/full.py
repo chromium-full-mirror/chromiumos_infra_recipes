@@ -300,7 +300,7 @@ def GenTests(api):
           sync_to_manifest=ManifestLocation(
               manifest_repo_url=manifest_internal_url,
               branch='release',
-              manifest_file='releasespecs/91/13818.0.0.xml',
+              manifest_file='buildspecs/91/13818.0.0.xml',
           ),
       ))
 
@@ -311,7 +311,7 @@ def GenTests(api):
           sync_to_manifest=ManifestLocation(
               manifest_repo_url='https://non-existent.com/not-authorized',
               branch='release',
-              manifest_file='releasespecs/91/13818.0.0.xml',
+              manifest_file='buildspecs/91/13818.0.0.xml',
           ),
       ))
 
@@ -321,7 +321,7 @@ def GenTests(api):
       cros_source_properties=CrosSourceProperties(
           sync_to_manifest=ManifestLocation(
               manifest_repo_url='https://non-existent.com/not-authorized',
-              manifest_file='releasespecs/91/13818.0.0.xml',
+              manifest_file='buildspecs/91/13818.0.0.xml',
           ),
       ))
 

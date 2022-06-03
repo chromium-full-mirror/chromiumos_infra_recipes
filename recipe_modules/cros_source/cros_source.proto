@@ -16,7 +16,7 @@ message ManifestLocation {
   string branch = 2;
 
   // Path (relative to repository root) of manifest file, e.g.
-  // releasespecs/90/....xml.
+  // buildspecs/90/....xml.
   string manifest_file = 3;
 
   // GS path of the manifest to sync to, e.g.

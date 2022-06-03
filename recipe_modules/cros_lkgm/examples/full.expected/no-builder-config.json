@@ -175,7 +175,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec"
+    "name": "create buildspec"
   },
   {
     "cmd": [
@@ -193,7 +193,7 @@
       ]
     },
     "infra_step": true,
-    "name": "create releasespec.create pinned manifest",
+    "name": "create buildspec.create pinned manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -202,7 +202,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec.clone manifest-versions",
+    "name": "create buildspec.clone manifest-versions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -221,14 +221,14 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.clone manifest-versions.git clone",
+    "name": "create buildspec.clone manifest-versions.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create releasespec.read chromeos version",
+    "name": "create buildspec.read chromeos version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
@@ -247,14 +247,14 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.read chromeos version.read chromeos_version.sh",
+    "name": "create buildspec.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create releasespec.read chromeos version.read snapshot",
+    "name": "create buildspec.read chromeos version.read snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -268,7 +268,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "create releasespec.read chromeos version.read snapshot.git fetch",
+    "name": "create buildspec.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -281,7 +281,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "create releasespec.read chromeos version.read snapshot.git rev-parse",
+    "name": "create buildspec.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -295,7 +295,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "create releasespec.read chromeos version.read snapshot.read git footers",
+    "name": "create buildspec.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -314,7 +314,7 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.ensure [CLEANUP]/manifest-versions_tmp_1/buildspecs/99 exists",
+    "name": "create buildspec.ensure [CLEANUP]/manifest-versions_tmp_1/buildspecs/99 exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -332,14 +332,14 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.write buildspecs/99/1234.56.0.xml",
+    "name": "create buildspec.write buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create releasespec.commit buildspec",
+    "name": "create buildspec.commit buildspec",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no change since last commit@@@"
@@ -347,7 +347,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec.commit buildspec.diff check",
+    "name": "create buildspec.commit buildspec.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -361,7 +361,7 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.commit buildspec.diff check.git ls-files",
+    "name": "create buildspec.commit buildspec.diff check.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -376,14 +376,14 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.commit buildspec.diff check.git diff",
+    "name": "create buildspec.commit buildspec.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create releasespec.upload buildspecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create buildspec.upload buildspecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -402,7 +402,7 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.upload buildspecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml.gsutil upload",
+    "name": "create buildspec.upload buildspecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/buildspecs/99/1234.56.0.xml@@@"
@@ -410,7 +410,7 @@
   },
   {
     "cmd": [],
-    "name": "create releasespec.ensure manifest_doctor",
+    "name": "create buildspec.ensure manifest_doctor",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -430,7 +430,7 @@
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
-    "name": "create releasespec.ensure manifest_doctor.ensure_installed",
+    "name": "create buildspec.ensure manifest_doctor.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -455,7 +455,7 @@
       "--push"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
-    "name": "create releasespec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

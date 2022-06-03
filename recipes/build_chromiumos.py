@@ -88,7 +88,7 @@ def GenTests(api):
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),

@@ -31,17 +31,17 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 def RunSteps(api):
 
-  api.cros_release.create_releasespec()
-  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+  api.cros_release.create_buildspec()
+  api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
-  api.cros_release.create_releasespec(gs_location='bucket/foo/')
-  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+  api.cros_release.create_buildspec(gs_location='bucket/foo/')
+  api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
-  api.cros_release.create_releasespec(gs_location='gs://bucket/foo/')
-  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+  api.cros_release.create_buildspec(gs_location='gs://bucket/foo/')
+  api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
-  api.cros_release.create_releasespec(gs_location='bucket/foo/bar.xml')
-  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+  api.cros_release.create_buildspec(gs_location='bucket/foo/bar.xml')
+  api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
   # Manufacture the minimal builder config.
   config = BuilderConfig(

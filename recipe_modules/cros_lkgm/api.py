@@ -37,7 +37,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       public_orch_name = '{}public-{}-orchestrator'.format(
           staging_prefix, branch)
 
-      buildspec_location = self.m.cros_release.releasespec.manifest_gs_path
+      buildspec_location = self.m.cros_release.buildspec.manifest_gs_path
       # We want to pass the public buildspec to the public builder.
       buildspec_location = buildspec_location.replace(
           'chromeos-manifest-versions', 'chromiumos-manifest-versions')

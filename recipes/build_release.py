@@ -216,7 +216,7 @@ def GenTests(api):
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
               '$chromeos/debug_symbols': {
                   'worker_count': 200,
                   'retry_quota': 1000,
@@ -260,7 +260,7 @@ def GenTests(api):
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
               '$chromeos/debug_symbols': {
                   'worker_count': 200,
                   'retry_quota': 1000,
@@ -368,7 +368,7 @@ def GenTests(api):
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
       api.cros_signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
@@ -447,7 +447,7 @@ def GenTests(api):
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
                               manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='releasespecs/91/13818.0.0.xml'))),
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
               '$chromeos/debug_symbols': {
                   'worker_count': 200,
                   'retry_quota': 1000,

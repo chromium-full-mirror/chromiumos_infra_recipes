@@ -28,7 +28,7 @@ message CrosReleaseProperties {
   // Only dryrun creation of playloads, don't place.
   bool paygen_dryrun = 6;
 
-  // If set, don't upload releasespecs to manifest-versions.
-  // The releasespec still may be uploaded to GS, depending on the situation.
+  // If set, don't upload buildspecs to manifest-versions.
+  // The buildspec still may be uploaded to GS, depending on the situation.
   bool dont_upload_to_manifest_versions = 7;
 }

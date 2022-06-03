@@ -1261,9 +1261,9 @@ class CrosSourceApi(RecipeApi):
       manifest_url (string): URL of the project the manifest is in, e.g.
         https://chrome-internal.googlesource.com/chromeos/manifest-versions
       manifest_branch (string): Branch of repository to get manifest from,
-        e.g. 'main' or 'releasespecs'.
+        e.g. 'main'.
       manifest_path (string): Path (relative to repository root) of manifest
-        file, e.g. releasespecs/91/13818.0.0.xml.
+        file, e.g. buildspecs/91/13818.0.0.xml.
       manifest_gs_path (string): GS Path of manifest, e.g.
         gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
         Takes precendence over manifest_url/branch/path.

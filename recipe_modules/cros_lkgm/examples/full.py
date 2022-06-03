@@ -22,9 +22,9 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 def RunSteps(api):
   api.cros_infra_config.configure_builder()
 
-  api.cros_release.create_releasespec(
+  api.cros_release.create_buildspec(
       gs_location='gs://chromeos-manifest-versions/buildspecs/')
-  api.assertions.assertIsNotNone(api.cros_release.releasespec)
+  api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
   build = api.cros_lkgm.schedule_public_build()
   is_staging = api.cros_infra_config.is_staging

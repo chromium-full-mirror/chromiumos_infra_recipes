@@ -190,9 +190,9 @@ class FirmwareBuilder(object):
         return
 
     # Use 'rubik-staging' if we are on staging.  manifest-versions has
-    # not migrated to main yet, so we pass create_releasespec
+    # not migrated to main yet, so we pass create_buildspec
     # branch=None to use the default branch, whatever it is.
-    self.m.cros_release.create_releasespec(
+    self.m.cros_release.create_buildspec(
         branch='rubik-staging' if self._is_staging else None,
         step_name='create buildspec', dry_run=dry_run)
     # Only these builds are valid for suite_scheduling to find.

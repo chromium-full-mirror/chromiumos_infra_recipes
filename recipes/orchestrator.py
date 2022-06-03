@@ -50,7 +50,7 @@ def DoRunSteps(api):
   # If a release builder, need to pass information about the pinned manifest.
   elif api.orch_menu.is_release_orchestrator:
     extra_child_props['$chromeos/cros_source'] = MessageToDict(
-        CrosSourceProperties(sync_to_manifest=api.cros_release.releasespec))
+        CrosSourceProperties(sync_to_manifest=api.cros_release.buildspec))
 
   if api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['commit_overlay_binhost'] = True

@@ -252,7 +252,7 @@ class OrchMenuApi(RecipeApi):
             kwargs = {}
             if self._properties.manifest_versions_branch:
               kwargs['branch'] = self._properties.manifest_versions_branch
-            self.m.cros_release.create_releasespec(
+            self.m.cros_release.create_buildspec(
                 dry_run=is_staging,
                 gs_location=self._properties.buildspec_gs_path, **kwargs)
             self.m.cros_lkgm.schedule_public_build()

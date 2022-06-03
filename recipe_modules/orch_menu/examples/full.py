@@ -149,11 +149,11 @@ def GenTests(api):
                      'set up orchestrator.bump version', ''),
       api.post_check(
           post_process.MustRun,
-          'set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
+          'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
       ),
       api.post_check(
           post_process.StepCommandContains,
-          'set up orchestrator.create releasespec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml',
+          'set up orchestrator.create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml',
           [
               'public-buildspec', '--paths', 'buildspecs/99/1234.56.0.xml',
               '--push'
@@ -185,7 +185,7 @@ def GenTests(api):
                      'set up orchestrator.bump version', ''),
       api.post_check(
           post_process.MustRun,
-          'set up orchestrator.create releasespec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
+          'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
       ),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),

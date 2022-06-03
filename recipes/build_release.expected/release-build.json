@@ -1971,7 +1971,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-versions/+/release/releasespecs/91/13818.0.0.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-versions/+/release/buildspecs/91/13818.0.0.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -1993,7 +1993,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync to specified manifest.fetch release:releasespecs/91/13818.0.0.xml",
+    "name": "sync to specified manifest.fetch release:buildspecs/91/13818.0.0.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -11297,7 +11297,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_to_manifest\", \"manifest_branch\": \"release\", \"manifest_path\": \"releasespecs/91/13818.0.0.xml\", \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_to_manifest\", \"manifest_branch\": \"release\", \"manifest_path\": \"buildspecs/91/13818.0.0.xml\", \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}@@@"
     ]
   },
   {

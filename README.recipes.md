@@ -2935,7 +2935,11 @@ An API for providing release related operations (e.g. paygen, signing).
 
 #### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [create\_releasespec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='buildspecs', branch='release', step_name='create releasespec', dry_run=False, gs_location=None):**
+&emsp; **@property**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#64)(self):**
+
+Return the buildspec as created by this module, or None.
+
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='buildspecs', branch='release', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -2954,7 +2958,7 @@ Args:
 Returns:
   Full URL path to newly-uploaded manifest.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#242)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#243)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -2971,7 +2975,7 @@ Returns:
 
 Returns the git repo URL for manifest versions.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#280)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#281)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2990,11 +2994,7 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&emsp; **@property**<br>&mdash; **def [releasespec](/recipe_modules/cros_release/api.py#64)(self):**
-
-Return the releasespec as created by this module, or None.
-
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#176)(self):**
+&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#177)(self):**
 
 Schedule the generation of release payloads using the context of a build.
 
@@ -4023,9 +4023,9 @@ Args:
   manifest_url (string): URL of the project the manifest is in, e.g.
     https://chrome-internal.googlesource.com/chromeos/manifest-versions
   manifest_branch (string): Branch of repository to get manifest from,
-    e.g. 'main' or 'releasespecs'.
+    e.g. 'main'.
   manifest_path (string): Path (relative to repository root) of manifest
-    file, e.g. releasespecs/91/13818.0.0.xml.
+    file, e.g. buildspecs/91/13818.0.0.xml.
   manifest_gs_path (string): GS Path of manifest, e.g.
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
