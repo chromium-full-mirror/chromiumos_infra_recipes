@@ -8,8 +8,10 @@
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'bot_scaling',
     'build_menu',
     'cros_history',
+    'cros_infra_config',
 ]
 
 from recipe_engine import post_process
@@ -21,6 +23,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
+
+  if api.cros_infra_config.is_staging:
+    api.bot_scaling.drop_cpu_cores(min_cpus_left=4,
+                                   max_drop_ratio=.75)  # pragma: nocover
+
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
     return DoRunSteps(api, config)
