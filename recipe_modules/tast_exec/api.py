@@ -207,11 +207,10 @@ class TastExecApi(RecipeApi):
     """Run tast tests in a VM without retries or results processing.
 
     Args:
-      expressions (list[str]): Expressions describing tests to run.
       vm_context (contextlib.contextmanager): The VM context manager, created
         by create_qemu_vm_context/create_gce_vm_context.
-      tast_inputs (TastInputs): Common inputs for running tast tests.
       test_results_dir (Path): Path to store tast results.
+      tast_inputs (TastInputs): Common inputs for running tast tests.
 
     Returns:
       list[str]: The list of tests that met the specified expression(s).
@@ -332,7 +331,7 @@ class TastExecApi(RecipeApi):
       tast_help_stdout = self.m.easy.stdout_step('tast help run', [
           str(tast_dir.join('tast')), \
           'help', \
-          'run'])
+          'run']).decode('utf-8')
       self._tast_cli_supported_flags = [
           t.strip().split(' ')[0]
           for t in tast_help_stdout.splitlines()

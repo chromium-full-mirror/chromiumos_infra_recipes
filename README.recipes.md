@@ -4726,7 +4726,7 @@ Args:
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
-  str: Raw stdout data.
+  bytes: Raw stdout data.
 
 &mdash; **def [step](/recipe_modules/easy/api.py#46)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
 
@@ -7809,7 +7809,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#490)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#489)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -7828,7 +7828,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#382)(self, qcow_image_path, private_key_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#381)(self, qcow_image_path, private_key_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -7871,7 +7871,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#463)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#462)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -7881,7 +7881,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#243)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#242)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -7899,11 +7899,10 @@ Returns:
 Run tast tests in a VM without retries or results processing.
 
 Args:
-  expressions (list[str]): Expressions describing tests to run.
   vm_context (contextlib.contextmanager): The VM context manager, created
     by create_qemu_vm_context/create_gce_vm_context.
-  tast_inputs (TastInputs): Common inputs for running tast tests.
   test_results_dir (Path): Path to store tast results.
+  tast_inputs (TastInputs): Common inputs for running tast tests.
 
 Returns:
   list[str]: The list of tests that met the specified expression(s).

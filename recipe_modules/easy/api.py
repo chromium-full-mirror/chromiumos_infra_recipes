@@ -83,7 +83,7 @@ class EasyApi(recipe_api.RecipeApi):
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
-      str: Raw stdout data.
+      bytes: Raw stdout data.
     """
     assert step_test_data is None or test_stdout is None, \
       'step_test_data and test_stdout are mutually exclusive'
