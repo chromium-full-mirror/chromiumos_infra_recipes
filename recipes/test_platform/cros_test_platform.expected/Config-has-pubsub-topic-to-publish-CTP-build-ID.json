@@ -68,16 +68,9 @@
   },
   {
     "cmd": [],
-    "name": "link to parent",
+    "name": "Parent build: 1234",
     "~followup_annotations": [
-      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/1234@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "link to parent (2)",
-    "~followup_annotations": [
-      "@@@STEP_LINK@parent link@https://cr-buildbucket.appspot.com/build/1234@@@"
+      "@@@STEP_LINK@1234@https://cr-buildbucket.appspot.com/build/1234@@@"
     ]
   },
   {

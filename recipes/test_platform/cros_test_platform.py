@@ -50,6 +50,7 @@ DEPS = [
     'cros_resultdb',
     'cros_tags',
     'cros_test_platform',
+    'easy',
     'result_flow',
     'service_version',
     'skylab',
@@ -330,7 +331,7 @@ def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
 def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
-  link_to_parent(api)
+  api.easy.log_parent_step(log_if_no_parent=False)
   _top_level_export_to_bigquery(api)
 
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
@@ -469,23 +470,11 @@ def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
   return metadata
 
 
-def link_to_parent(api):
-  """Attach the parent buildbucket id(s) to the current buildbucket id if any
-  parent buildbucket(s) exists.
-
-  Returns:
-    The parent bucketbucket id list if it exists. Otherwise, returns an empty
-    list.
-  """
+def _build_has_parent(api):
+  """Determine whether the current build has a parent."""
   # TODO(zhihuixie): Replace `parent_buildbucket_id` tag with build.ancestor_ids
   # when verifying if the parent build exists.
-  build = api.buildbucket.build
-  parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
-  if parent:
-    with api.step.nest('link to parent') as presentation:
-      presentation.links['parent link'] = api.buildbucket.build_url(
-          build_id=parent[0])
-  return parent
+  return bool(api.cros_tags.get_single_value('parent_buildbucket_id'))
 
 
 def postprocess(api, requests, responses):
@@ -652,7 +641,7 @@ def _top_level_export_to_bigquery(api):
     return
 
   # Skips the BigQuery export step if the current build has any parent.
-  if link_to_parent(api):
+  if _build_has_parent(api):
     return
   with api.step.nest('configure resultdb bigquery export'):
     bigquery_export = invocation_pb2.BigQueryExport(
