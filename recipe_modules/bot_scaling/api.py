@@ -399,6 +399,8 @@ class BotScalingApi(recipe_api.RecipeApi):
           config = gce_map.get(action.prefix, None)
           if config is not None:
             config.current_amount = action.bots_requested
+            config.attributes.label[
+                'robocrop_bot_group'] = scaling_action.bot_group
             fut = self.m.futures.spawn(self.m.gce_provider.update_gce_config,
                                        bid=action.prefix, config=config)
             futures[fut] = scaling_action

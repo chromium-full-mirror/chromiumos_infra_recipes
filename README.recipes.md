@@ -789,7 +789,7 @@ Returns:
   str, scaled down config that only includes data needed
   for plx
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#409)(self, dimensions):**
+&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#411)(self, dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
