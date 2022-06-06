@@ -376,9 +376,12 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
-      api.buildbucket.simulated_collect_output(
-          [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
-          'generate payloads.running paygen orchestrator.collect'),
+      api.buildbucket.simulated_collect_output([
+          build_pb2.Build(
+              id=8922054662172514000, status='FAILURE',
+              summary_markdown='1 of 2 passed\n\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567'
+          )
+      ], 'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.StatusFailure),
       build_target='kukui-main',
       bucket='release',

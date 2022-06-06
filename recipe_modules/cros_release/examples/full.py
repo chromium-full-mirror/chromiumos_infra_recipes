@@ -96,6 +96,8 @@ def GenTests(api):
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
           ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+      api.post_check(post_process.DoesNotRun,
+                     'generate payloads.inspect failure'),
       api.test_util.test_child_build('amd64-generic').build)
 
   yield api.build_menu.test(
@@ -112,8 +114,13 @@ def GenTests(api):
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
           ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
-      api.buildbucket.simulated_collect_output(
-          [build_pb2.Build(id=8922054662172514000, status='FAILURE')],
-          'generate payloads.running paygen orchestrator.collect'),
+      api.buildbucket.simulated_collect_output([
+          build_pb2.Build(
+              id=8922054662172514000, status='FAILURE',
+              summary_markdown='1 of 2 passed\n\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567'
+          )
+      ], 'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.StepFailure, 'generate payloads'),
+      api.post_check(post_process.StepFailure,
+                     'generate payloads.inspect failure'),
       api.test_util.test_child_build('amd64-generic').build)

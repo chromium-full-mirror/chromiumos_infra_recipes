@@ -10253,7 +10253,8 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"1 of 2 passed\\n\\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -10270,6 +10271,16 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "generate payloads.inspect failure",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@1 of 2 passed<br/><br/>https://cr-buildbucket.appspot.com/build/8812345678901234567@@@",
+      "@@@STEP_LINK@https://cr-buildbucket.appspot.com/build/8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

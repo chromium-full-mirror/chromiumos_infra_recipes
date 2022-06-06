@@ -220,9 +220,13 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
       paygen_orch_build = builds[0]
       if paygen_orch_build.status != common_pb2.SUCCESS:
-        raise StepFailure('paygen orchestrator failed\n'
-                          'https://cr-buildbucket.appspot.com/build/{}'.format(
-                              paygen_orch_build.id))
+        build_url = 'https://cr-buildbucket.appspot.com/build/{}'.format(
+            paygen_orch_build.id)
+        with self.m.step.nest('inspect failure') as presentation:
+          presentation.step_text = paygen_orch_build.summary_markdown
+          presentation.links[build_url] = build_url
+          presentation.status = self.m.step.FAILURE
+        raise StepFailure('paygen orchestrator failed\n{}'.format(build_url))
 
       if 'payloads' in paygen_orch_build.output.properties:
         payload_information = paygen_orch_build.output.properties['payloads']
