@@ -2372,6 +2372,42 @@
   },
   {
     "cmd": [],
+    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.diff check (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/rule_schedule_categories.ini"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.diff check (5).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/rule_schedule_categories.ini"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.diff check (5).git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Do regenerate_test_plan and create CL"
   },
   {

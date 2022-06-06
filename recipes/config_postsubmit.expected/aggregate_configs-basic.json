@@ -2311,7 +2311,8 @@
       "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.cfg",
       "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/lab_config.cfg",
       "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/lab_config.ini",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.ini"
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.ini",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/rule_schedule_categories.ini"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,

@@ -339,6 +339,7 @@ def _regenerate_suite_scheduler_configs(api, _properties, _project_infos):
       cfg_int_ss.join('generated/lab_config.cfg'),
       cfg_int_ss.join('generated/lab_config.ini'),
       cfg_int_ss.join('generated/suite_scheduler.ini'),
+      cfg_int_ss.join('generated/rule_schedule_categories.ini'),
   ]
 
   message = '''Updating Suite Scheduler's generated rules.

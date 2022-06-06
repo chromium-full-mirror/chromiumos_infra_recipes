@@ -2243,6 +2243,13 @@
   },
   {
     "cmd": [],
+    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.diff check (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Do regenerate_test_plan and create CL"
   },
   {
