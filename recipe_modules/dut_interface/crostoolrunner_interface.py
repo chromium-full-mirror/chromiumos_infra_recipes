@@ -5,9 +5,9 @@
 
 from collections import namedtuple
 
-from .crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDUTResponse, CrosToolRunnerTestDUTResponse
+from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDUTResponse, CrosToolRunnerTestDUTResponse
 
-from . import dut_interface
+from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.test_platform import phosphorus
@@ -94,6 +94,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
       * api.test.StepFailure If prejob fails.
     """
+    del max_duration_seconds
+
     with self._api.step.nest('CrosToolRunner: run provision'):
       with self._api.context(infra_steps=True):
         provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
@@ -120,6 +122,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
       * api.test.StepFailure If test fails.
     """
+    del container_image_info
+
     with self._api.step.nest('CrosToolRunner: run test'):
       primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
           dut=metadata.primary_dut, container_metadata_key=self.cft_test_request
@@ -141,6 +145,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns:
       skylab_local_state.LoadResponse
     """
+    del test
+
     with self._api.step.nest(
         'CrosToolRunner: Phosphorus: load skylab local state'):
       with self._api.context(env={'USE_DUT_TOPO': True}):
@@ -479,6 +485,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
     * InfraFailure.
     """
+    del metadata
+
     return CrosToolRunnerResult()
 
   def logs_gs_url(self):
@@ -560,6 +568,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns:
       PrejobResponsesTuple
     """
+    del test_metadata
+
     return PrejobResponsesTuple(
         [CrosToolRunnerPrejobDUTResponse.build_aborted_response('dut')], True)
 

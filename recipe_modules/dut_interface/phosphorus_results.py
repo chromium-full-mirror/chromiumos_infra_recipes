@@ -8,7 +8,7 @@
 import base64
 import zlib
 
-from . import dut_results
+from RECIPE_MODULES.chromeos.dut_interface import dut_results
 
 from PB.test_platform import phosphorus
 from PB.test_platform.skylab_test_runner.result import Result

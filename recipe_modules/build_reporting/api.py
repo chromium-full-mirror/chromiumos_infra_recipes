@@ -27,7 +27,7 @@ import six
 
 from google.protobuf.json_format import MessageToDict
 
-from . import build_report_proto_helpers as helpers
+from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
 
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport

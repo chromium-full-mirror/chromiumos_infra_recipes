@@ -8,7 +8,7 @@
 import json
 
 from recipe_engine import recipe_test_api
-from .api import CrosBuildApiApi
+from RECIPE_MODULES.chromeos.cros_build_api.api import CrosBuildApiApi
 
 
 def jsonify(**kwargs):

@@ -8,7 +8,7 @@
 import base64
 import zlib
 
-from . import dut_results
+from RECIPE_MODULES.chromeos.dut_interface import dut_results
 
 from PB.chromiumos.test.api.cros_provision_cli import CrosProvisionResponse
 from PB.chromiumos.test.api.provision_service import InstallFailure
@@ -226,6 +226,8 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     Args:
     * result (DUTResult): Overall result to add to overall response.
     """
+    del test_id
+
     if result:
       self.data = result.data
       self.gs_url = result.gs_url

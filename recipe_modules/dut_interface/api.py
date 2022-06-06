@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
-from . import phosphorus_interface, crostoolrunner_interface
+from RECIPE_MODULES.chromeos.dut_interface import phosphorus_interface, crostoolrunner_interface
 
 
 class DUTInterface(recipe_api.RecipeApi):

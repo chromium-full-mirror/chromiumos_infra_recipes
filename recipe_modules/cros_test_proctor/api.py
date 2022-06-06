@@ -12,7 +12,7 @@ from google.protobuf import duration_pb2
 
 from recipe_engine import recipe_api
 
-from . import structs
+from RECIPE_MODULES.chromeos.cros_test_proctor import structs
 
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import HwTestUnit

@@ -5,7 +5,7 @@
 
 from recipe_engine import recipe_test_api
 
-from .api import PatchSet
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 
 class ChangesTestApi(recipe_test_api.RecipeTestApi):

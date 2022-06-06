@@ -7,7 +7,7 @@ import base64
 import json
 import six
 import zlib
-from . import structs
+from RECIPE_MODULES.chromeos.skylab import structs
 
 from recipe_engine import recipe_test_api
 

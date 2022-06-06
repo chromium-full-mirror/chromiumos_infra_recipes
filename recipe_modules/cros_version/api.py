@@ -9,7 +9,7 @@ import re
 import six
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-from .version import Version
+from RECIPE_MODULES.chromeos.cros_version.version import Version
 
 CHROMIUMOS_OVERLAY_REPO = 'src/third_party/chromiumos-overlay'
 CHROMEOS_VERSION_FILE = 'chromeos/config/chromeos_version.sh'

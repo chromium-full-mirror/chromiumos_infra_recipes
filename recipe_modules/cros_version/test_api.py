@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 import textwrap
-from .version import Version
+from RECIPE_MODULES.chromeos.cros_version.version import Version
 
 from recipe_engine import recipe_test_api
 

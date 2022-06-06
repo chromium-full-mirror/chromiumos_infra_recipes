@@ -23,7 +23,7 @@ There are two classes of properties in this module.
 
 from recipe_engine import recipe_test_api
 
-from . import common
+from RECIPE_MODULES.chromeos.src_state import common
 
 
 class SrcStateApi(recipe_test_api.RecipeTestApi):

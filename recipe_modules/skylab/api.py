@@ -11,7 +11,7 @@ from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 
-from . import structs
+from RECIPE_MODULES.chromeos.skylab import structs
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig

@@ -6,8 +6,8 @@
 import os
 from collections import namedtuple
 
-from . import dut_interface
-from .phosphorus_results import PhosphorusResult, PhosphorusPrejobDUTResponse, PhosphorusTestDUTResponse, PhosphorusFetchCrashDUTResponse
+from RECIPE_MODULES.chromeos.dut_interface import dut_interface
+from RECIPE_MODULES.chromeos.dut_interface.phosphorus_results import PhosphorusResult, PhosphorusPrejobDUTResponse, PhosphorusTestDUTResponse, PhosphorusFetchCrashDUTResponse
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from PB.test_platform import phosphorus
@@ -140,6 +140,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
 
   def __init__(self, api, properties):
     super(PhosphorusInterface, self).__init__(api, properties)
+    self._dut_hostname = None
 
   def submit_pre_job(self, metadata, max_duration_seconds):
     prejob_properties = self._properties.request.prejob
@@ -470,6 +471,8 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     return iss
 
   def build_test_metadata(self, test_id, test, autotest_keyvals=None):
+    del autotest_keyvals
+
     metadata = PhosphorusTestMetadata(self, test_id, test,
                                       self._get_image_storage_server())
     try:

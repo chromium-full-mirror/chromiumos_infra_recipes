@@ -28,7 +28,7 @@ from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine import recipe_api
-from . import common
+from RECIPE_MODULES.chromeos.src_state import common
 
 
 class SrcStateApi(recipe_api.RecipeApi):
