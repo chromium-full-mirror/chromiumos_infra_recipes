@@ -6858,6 +6858,10 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@report_to_spike@IMAGE_ARCHIVES not in files_by_artifact@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
+      "@@@STEP_LOG_LINE@base_image_length@the base_image length is 0@@@",
+      "@@@STEP_LOG_END@base_image_length@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: AUTOTEST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: DEBUG_SYMBOLS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/kukui-main-release/R99-1234.56.0-101@@@",

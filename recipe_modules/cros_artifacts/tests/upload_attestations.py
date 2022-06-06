@@ -10,9 +10,18 @@ from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
+
+PROPERTIES = {
+    'exclude_image_archives':
+        Property(
+            help='Whether to define the artifact_info with no IMAGE_ARCHIVES type.',
+            kind=bool, default=False),
+}
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
 ]
@@ -20,7 +29,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
-def RunSteps(api):
+def RunSteps(api, exclude_image_archives):
   artifacts_info = common.ArtifactsByService(
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(artifact_types=[
@@ -49,6 +58,8 @@ def RunSteps(api):
           ])
       ]),
   )
+  if exclude_image_archives:
+    artifacts_info.legacy.Clear()
 
   api.cros_artifacts.upload_artifacts(
       'builder', BuilderConfig.Id.Type.RELEASE, 'test-bucket',
@@ -79,5 +90,15 @@ def GenTests(api):
       api.post_process(post_process.DoesNotRun, 'upload artifacts.report_gcs'),
       api.post_process(post_process.LogEquals, 'upload artifacts',
                        'base_image_length', 'the base_image length is 0'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'image-archives-does-not-exist',
+      api.properties(exclude_image_archives=True),
+      api.post_process(post_process.DoesNotRun, 'upload artifacts.report_gcs'),
+      api.post_process(post_process.LogEquals, 'upload artifacts',
+                       'report_to_spike',
+                       'IMAGE_ARCHIVES not in files_by_artifact'),
       api.post_check(post_process.StatusSuccess),
   )
