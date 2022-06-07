@@ -11,12 +11,14 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
+import json
 
-from google.protobuf.json_format import MessageToDict, MessageToJson
+import six
+from google.protobuf.json_format import MessageToDict
 
 from collections import defaultdict, namedtuple
 import re
-import urlparse
+from six.moves.urllib import parse as urlparse
 
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
@@ -62,9 +64,16 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2'
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 PROPERTIES = GeneratorProperties
+
+
+def py2_MessageToJson(obj):
+  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
+  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
+  return json.dumps(
+      MessageToDict(obj), separators=(',', ': '), indent=2, sort_keys=True)
 
 
 def RunSteps(api, properties):
@@ -120,7 +129,7 @@ def RunSteps(api, properties):
           raise StepFailure('found non-gitiles trigger: %r', trigger)
 
       presentation.step_text = 'found {} good triggers'.format(len(triggers))
-      presentation.logs['list of triggers'] = map(MessageToJson, triggers)
+      presentation.logs['list of triggers'] = map(py2_MessageToJson, triggers)
 
   if properties.HasField('package_info'):
     packages = [properties.package_info]
@@ -381,8 +390,8 @@ def _get_policy(api, policies, tag):
   manifest = api.src_state.internal_manifest
   with api.context(cwd=manifest.path):
     for policy in policies:
-      if re.match(policy.pattern, tag):
-        query = re.sub(policy.pattern, policy.repl, tag)
+      if re.match(policy.pattern, six.ensure_str(tag)):
+        query = re.sub(policy.pattern, policy.repl, six.ensure_str(tag))
         if not query:
           return PolicyInfo(policy, '', None)
         refs = api.git.ls_remote([query])
@@ -536,11 +545,12 @@ def _do_uprev(api, properties, workspace_path, triggers, packages, cpvs, topic,
       # Checkout git branches via repo so they track correctly.  Create them
       # by path instead of project name, because they may be checked out
       # multiple times.
-      api.repo.start('pupr',
-                     projects=[info.path for info in ebuilds_by_pinfo.keys()])
+      api.repo.start(
+          'pupr',
+          projects=[info.path for info in sorted(ebuilds_by_pinfo.keys())])
 
     # For each repository, make the CL.
-    for info, ebuilds in ebuilds_by_pinfo.items():
+    for info, ebuilds in sorted(ebuilds_by_pinfo.items()):
       name = api.path.basename(info.path)
       root = workspace_path.join(info.path)
       versions = ', '.join(sorted(set([e.version for e in ebuilds])))
