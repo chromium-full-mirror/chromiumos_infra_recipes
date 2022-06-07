@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 """Recipe for the ChromeOS Test Frontend."""
+import six
+
 from PB.recipes.chromeos.test_platform.cros_test_platform import \
   CrosTestPlatformProperties
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
@@ -56,12 +58,23 @@ DEPS = [
     'skylab',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 # Each CIPD package instance of cros_test_platform that has been promoted to
 # staging or prod is tagged with a timestamped release version.
 CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
+
+
+def py2_MessageToJson(obj):
+  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
+  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
+  return json.dumps(
+      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
+      sort_keys=True)
+
 
 def output_ctp_release_timestamp_tag(api):
   """Get the timestamped release tag of the cros_test_platform CIPD packages in use.
@@ -111,7 +124,7 @@ def _validate_container_metadata_url(api, requests):
   """
   validation_error = False
   with api.step.nest('container metadata url') as step:
-    for t, r in requests.iteritems():
+    for t, r in requests.items():
       if r.params.run_via_cft and not r.params.metadata.container_metadata_url:
         step.presentation.logs[t] = [
             'Error in container_metadata_url: %s' %
@@ -131,11 +144,11 @@ def _validate_software_dependencies(api, requests):
   """
   validation_error = False
   with api.step.nest('software dependencies') as step:
-    for t, r in requests.iteritems():
+    for t, r in requests.items():
       errs = _invalid_software_dependencies(r.params.software_dependencies)
       if errs:
         step.presentation.logs[t] = [
-            'Errors in software_dependencies: %s' % ', '.join(errs)
+            'Errors in software_dependencies: %s' % ', '.join(sorted(errs))
         ]
         validation_error = True
   return validation_error
@@ -163,7 +176,7 @@ def _validate_timeouts(api, requests):
   with api.step.nest('validate timeouts') as step:
     max_timeout = api.buildbucket.build.execution_timeout
     max_timeout_s = max_timeout.ToTimedelta().total_seconds()
-    for t, r in requests.iteritems():
+    for t, r in requests.items():
       request_timeout = r.params.time.maximum_duration
       if request_timeout is None:
         continue  # pragma: no cover
@@ -186,7 +199,7 @@ def _validate_scheduling_params(api, requests):
   """
   validation_error = False
   with api.step.nest('validate scheduling parameters') as step:
-    for t, r in requests.iteritems():
+    for t, r in requests.items():
       error = _get_scheduling_error(r)
       if error:
         validation_error = True
@@ -236,13 +249,15 @@ def enumerate_tests(api, requests, error_in_requests):
             t: EnumerationRequest(
                 metadata=r.params.metadata,
                 test_plan=r.test_plan,
-            ) for t, r in requests.iteritems() if t not in error_in_requests
+            ) for t, r in requests.items() if t not in error_in_requests
         })
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
-    for tag, response in enum_responses.tagged_responses.iteritems():
+    for tag, response in sorted(enum_responses.tagged_responses.items()):
       _log_enumeration_errors(api, response, tag)
       name = 'autotest tests for %s' % tag
-      step.presentation.logs[name] = _enumeration_log(response)
+      step.presentation.logs[name] = json.dumps(
+          _enumeration_log(response), separators=(',', ': '), indent=2,
+          sort_keys=True)
     return enum_responses.tagged_responses
 
 
@@ -313,7 +328,7 @@ def _execute_requests(api, requests, enumerations, config, error_in_requests):
       tagged_requests={
           t: ExecuteRequest(request_params=r.params,
                             enumeration=enumerations[t], config=config)
-          for t, r in requests.iteritems()
+          for t, r in requests.items()
           if t not in error_in_requests
       },
       build=Build(id=api.buildbucket.build.id,
@@ -325,7 +340,9 @@ def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
   missing = (set(requests.keys()) - set(error_in_requests.keys())) - set(
       enumerations.keys())
   if missing:
-    raise StepFailure('No enumerations for requests tagged %s' % missing)
+    # TODO(b/217973414): stop sorting/listing/ensure_str-ing when py3.
+    raise StepFailure('No enumerations for requests tagged %s' %
+                      [six.ensure_str(x) for x in sorted(list(missing))])
 
 
 def RunSteps(api, properties):
@@ -370,7 +387,7 @@ def _append_error_responses(error_in_requests, responses):
     Updated ExecuteResponses.
   """
   responses_dict = json_format.MessageToDict(responses)
-  for t, _ in error_in_requests.iteritems():
+  for t, _ in error_in_requests.items():
     responses_dict['taggedResponses'][t] = _error_response()
   return json_format.ParseDict(responses_dict, ExecuteResponses())
 
@@ -414,7 +431,7 @@ def add_container_metadata(api, requests, error_in_requests):
           api, url, url_to_error_map)
 
   with api.step.nest('assign container metadata to requests') as step:
-    for t, r in requests.iteritems():
+    for t, r in requests.items():
       error = ""
       if r.params.run_via_cft:
         with api.step.nest(t) as step:
@@ -425,7 +442,7 @@ def add_container_metadata(api, requests, error_in_requests):
             if build_target in metadata.containers:
               r.params.execution_param.container_metadata.CopyFrom(metadata)
               step.presentation.logs['container metadata'] = [
-                  json_format.MessageToJson(metadata)
+                  py2_MessageToJson(metadata)
               ]
             else:
               error = "No container information found in container metadata for request '{}', build target '{}', container metadata url '{}'.".format(
@@ -479,7 +496,7 @@ def _build_has_parent(api):
 
 def postprocess(api, requests, responses):
   with api.step.nest('postprocess'):
-    for tag, response in responses.iteritems():
+    for tag, response in sorted(responses.items()):
       request = requests[tag]
       if not request.params.metadata.debug_symbols_archive_url:
         continue  # pragma: no cover
@@ -586,7 +603,7 @@ def summarize(api, enumerations, responses, error_in_requests):
     request_classifications[state] = 0
 
   with api.step.nest('summarize') as step:
-    for tag, response in sorted(responses.iteritems()):
+    for tag, response in sorted(responses.items()):
       with api.step.nest('%s task results' % tag):
         if tag in error_in_requests:
           _log_error_in_request(api, tag, error_in_requests[tag])
@@ -653,20 +670,22 @@ def _top_level_export_to_bigquery(api):
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
-    step.presentation.logs["output"] = json_format.MessageToJson(responses)
+    step.presentation.logs["output"] = py2_MessageToJson(responses)
     marshalled = api.skylab.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
     # request cannot handle compressed responses, see crbug.com/1086075.
     if 'default' in marshalled:
-      step.properties['response'] = marshalled['default']
+      step.properties['response'] = json.dumps(marshalled['default'],
+                                               separators=(',', ': '), indent=2,
+                                               sort_keys=True)
 
     step.properties[
         'compressed_responses'] = api.skylab.test_api.base64_compress_proto(
-            responses)
+            responses).decode('utf-8')
     step.properties[
         'compressed_json_responses'] = api.skylab.test_api.base64_compress_dict(
-            marshalled)
+            marshalled).decode('utf-8')
 
 
 def _log_enumeration_errors(api, enum, tag):
@@ -1253,7 +1272,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              json_format.MessageToJson(
+              py2_MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
@@ -1271,7 +1290,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              json_format.MessageToJson(
+              py2_MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api),
@@ -1298,7 +1317,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              json_format.MessageToJson(
+              py2_MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api),

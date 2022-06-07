@@ -479,7 +479,7 @@
   * [test_chromite](#recipes-test_chromite) (Python3 ✅) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) (Python3 ✅) &mdash; Verifies a repo manifest.
   * [test_plan_filtering](#recipes-test_plan_filtering) (Python3 ✅) &mdash; Updates test plan rules to reflect new risk-based rules.
-  * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) &mdash; Recipe for the ChromeOS Test Frontend.
+  * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) (Python3 ✅) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess) (Python3 ✅)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) (Python3 ✅) &mdash; Recipe that triggers cros_test_platform runs.
   * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser) (Python3 ✅)
@@ -4297,15 +4297,15 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#182)(self):**
+&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#187)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#86)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#91)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -4314,7 +4314,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#108)(self, request):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#113)(self, request):**
 
 Execute work via `luciexe` binary for cros_test_platform
 
@@ -4327,7 +4327,7 @@ Args:
 
 Returns: ExecuteResponses.
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#97)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#102)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -11457,15 +11457,15 @@ Updates test plan rules to reflect new risk-based rules
 &mdash; **def [RunSteps](/recipes/test_plan_filtering.py#232)(api, properties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#40): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [easy](#recipe_modules-easy), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/cros_test_platform.py#42): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [easy](#recipe_modules-easy), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#331)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#348)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#387)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#404)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -11474,7 +11474,7 @@ Args:
   * requests: ExecuteRequests.tagged_requests.
   * error_in_requests: {tag: error(str)} dict.
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#223)(api, requests, error_in_requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#236)(api, requests, error_in_requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -11485,21 +11485,21 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#290)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#305)(api, requests):**
 
 Execute request in the correct backend.
 
 Args:
   requests: ExecutionRequests payload.
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#66)(api):**
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#79)(api):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#480)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#497)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#267)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#282)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -11508,15 +11508,17 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#653)(api, responses):**
+&mdash; **def [py2\_MessageToJson](/recipes/test_platform/cros_test_platform.py#71)(obj):**
+
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#670)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#740)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#759)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#579)(api, enumerations, responses, error_in_requests):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#596)(api, enumerations, responses, error_in_requests):**
 
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#85)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#98)(api, properties):**
 
 Get and validate requests from input properties.
 

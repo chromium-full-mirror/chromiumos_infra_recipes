@@ -119,7 +119,9 @@
     "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@[@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@  \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@]@@@",
       "@@@STEP_LOG_END@autotest tests for default@@@"
     ]
   },
@@ -191,17 +193,17 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -220,7 +222,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\":{\n    \"default\":{\n      \"metadata\":{\n        \"containerMetadataUrl\":\"gs://foo-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\":\"gs://foo-metadata-url\",\n        \"testMetadataUrl\":\"gs://foo-metadata-url\"\n      },\n      \"testPlan\":{\n        \"suite\":[\n          {\n            \"name\":\"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"testMetadataUrl\": \"gs://foo-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -238,8 +240,8 @@
       "@@@STEP_LOG_LINE@responses@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@responses@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@responses@      \"state\": {@@@",
-      "@@@STEP_LOG_LINE@responses@        \"verdict\": \"VERDICT_PASSED\", @@@",
-      "@@@STEP_LOG_LINE@responses@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@responses@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@responses@        \"verdict\": \"VERDICT_PASSED\"@@@",
       "@@@STEP_LOG_LINE@responses@      }@@@",
       "@@@STEP_LOG_LINE@responses@    }@@@",
       "@@@STEP_LOG_LINE@responses@  }@@@",
@@ -382,8 +384,8 @@
       "@@@STEP_LOG_LINE@output@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@output@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@output@      \"state\": {@@@",
-      "@@@STEP_LOG_LINE@output@        \"verdict\": \"VERDICT_PASSED\", @@@",
-      "@@@STEP_LOG_LINE@output@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\"@@@",
+      "@@@STEP_LOG_LINE@output@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@output@        \"verdict\": \"VERDICT_PASSED\"@@@",
       "@@@STEP_LOG_LINE@output@      }@@@",
       "@@@STEP_LOG_LINE@output@    }@@@",
       "@@@STEP_LOG_LINE@output@  }@@@",
@@ -391,7 +393,7 @@
       "@@@STEP_LOG_END@output@@@",
       "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRsqpWKi5JLEkFMXIy01KdK5NzgBwlH08313jnSGcfIOnvG+DjGuLqoqSjVJZalJKZDNSmFOYa5OLpHBIf4BgcDJSqra0FAK9sGzc=\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgBAAo7wPR\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@{\"state\": {\"lifeCycle\": \"LIFE_CYCLE_COMPLETED\", \"verdict\": \"VERDICT_PASSED\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@response@\"{\\n  \\\"state\\\": {\\n    \\\"lifeCycle\\\": \\\"LIFE_CYCLE_COMPLETED\\\",\\n    \\\"verdict\\\": \\\"VERDICT_PASSED\\\"\\n  }\\n}\"@@@"
     ]
   },
   {

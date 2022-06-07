@@ -19,6 +19,14 @@ from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
 _RETCODE_PARTIAL_RESPONSE = 2
 
 
+def py2_MessageToJson(obj):
+  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
+  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
+  return json.dumps(
+      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
+      sort_keys=True)
+
+
 class CrosTestPlatformCommand(recipe_api.RecipeApi):
   """Module for issuing cros_test_platform commands"""
 
@@ -64,7 +72,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       # failure during the command execution (e.g., due to a timeout).
       with self.m.step.nest('pre-execution debug data') as ds:
         ds.logs['cmd'] = [' '.join([str(c) for c in cmd])]
-        ds.logs['request'] = [json_format.MessageToJson(request)]
+        ds.logs['request'] = [py2_MessageToJson(request)]
 
       # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
       # the separator spacing between py2 and py3 MessageToJson.
@@ -72,15 +80,12 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           subcommand,
           cmd,
           response_type,
-          stdin=self.m.raw_io.input_text(
-              json.dumps(
-                  json_format.MessageToDict(request), separators=(',', ':'),
-                  indent=2, sort_keys=True)),
+          stdin=self.m.raw_io.input_text(py2_MessageToJson(request)),
           test_output=response_type(),
           # TODO(crbug.com/1008921): Surface non-zero return codes as a step
           # warning.
           ok_ret=(0, _RETCODE_PARTIAL_RESPONSE))
-      s.logs['response'] = [json_format.MessageToJson(response)]
+      s.logs['response'] = [py2_MessageToJson(response)]
       return response
 
   def enumerate(self, request):
@@ -159,7 +164,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           ExecuteResponses,
           'JSONPB',
       )
-      s.logs['responses'] = [json_format.MessageToJson(responses)]
+      s.logs['responses'] = [py2_MessageToJson(responses)]
       return responses
 
   def _ensure_cros_test_platform(self):

@@ -111,7 +111,9 @@
     "cmd": [],
     "name": "enumerate tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@autotest tests for default@foo-test@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@[@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@  \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@]@@@",
       "@@@STEP_LOG_END@autotest tests for default@@@"
     ]
   },
@@ -183,17 +185,17 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }, @@@",
-      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -212,7 +214,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\":{\n    \"default\":{\n      \"metadata\":{\n        \"containerMetadataUrl\":\"gs://foo-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\":\"gs://foo-metadata-url\",\n        \"testMetadataUrl\":\"gs://foo-metadata-url\"\n      },\n      \"testPlan\":{\n        \"suite\":[\n          {\n            \"name\":\"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"testMetadataUrl\": \"gs://foo-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
