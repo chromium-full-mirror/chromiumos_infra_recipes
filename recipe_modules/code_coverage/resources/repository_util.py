@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Lint as: python2, python3
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -65,7 +66,7 @@ def _retrieve_revision_from_git(root_dir, path):
 
     return path, parts[0], int(parts[1])
   except (subprocess.CalledProcessError, AssertionError):
-    print 'Failed to retrieve revision for: %r' % (path)
+    print('Failed to retrieve revision for: %r' % (path))  #pylint: disable=superfluous-parens
     return None
 
 
