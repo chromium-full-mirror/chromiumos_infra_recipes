@@ -20,6 +20,8 @@ DEPS = [
     'test_util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from recipe_engine.post_process import (PropertyEquals, StatusSuccess,
                                         StatusFailure)
 

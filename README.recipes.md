@@ -344,7 +344,7 @@
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures) (Python3 ✅)
   * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures) (Python3 ✅)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures) (Python3 ✅)
-  * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
+  * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) (Python3 ✅) &mdash; Recipe that schedules child builders and watches for failures.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) (Python3 ✅) &mdash; An experimental recipe for running GCE tests.
@@ -10345,11 +10345,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/firmware_cq_orchestrator.py#9): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that schedules child builders and watches for failures.
 
-&mdash; **def [RunSteps](/recipes/firmware_cq_orchestrator.py#27)(api):**
+&mdash; **def [RunSteps](/recipes/firmware_cq_orchestrator.py#29)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#6): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
