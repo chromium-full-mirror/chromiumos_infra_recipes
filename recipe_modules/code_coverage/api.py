@@ -93,7 +93,6 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         # Filtering only works for llvm json files.
         incremental_settings=CoverageFileSettings(True, False, False),
         absolute_cs_settings=CoverageFileSettings(True, False, True),
-        absolute_chromium_settings=CoverageFileSettings(False, False, True),
     )
 
   def upload_code_coverage_llvm_json(

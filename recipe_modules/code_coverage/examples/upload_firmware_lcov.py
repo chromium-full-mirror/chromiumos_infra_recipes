@@ -63,7 +63,7 @@ def GenTests(api):
           'upload code coverage data (firmware lcov).upload absolute coverage to Code Search'
       ),
       api.post_check(
-          post_process.MustRun,
+          post_process.DoesNotRun,
           'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'
       ),
       cq=False,
