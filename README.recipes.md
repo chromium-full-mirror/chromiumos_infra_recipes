@@ -31,7 +31,6 @@
   * [cros_lvfs_mirror](#recipe_modules-cros_lvfs_mirror) (Python3 ✅) &mdash; API for LvfsMirror script.
   * [cros_paygen](#recipe_modules-cros_paygen) (Python3 ✅) &mdash; API for working with Paygen and its config.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) (Python3 ✅) &mdash; API for uploading CrOS prebuilts to Google Storage.
-  * [cros_provenance](#recipe_modules-cros_provenance) (Python3 ✅) &mdash; API for adding provenenace to generated artifacts.
   * [cros_release](#recipe_modules-cros_release) (Python3 ✅) &mdash; An API for providing release related operations (e.
   * [cros_release_config](#recipe_modules-cros_release_config) (Python3 ✅) &mdash; An API for managing release config.
   * [cros_release_util](#recipe_modules-cros_release_util) (Python3 ✅) &mdash; An API for providing release related utility functions.
@@ -250,7 +249,6 @@
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full) (Python3 ✅)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info) (Python3 ✅)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq) (Python3 ✅)
-  * [cros_provenance:examples/full](#recipes-cros_provenance_examples_full) (Python3 ✅)
   * [cros_release:examples/full](#recipes-cros_release_examples_full) (Python3 ✅)
   * [cros_release:tests/get_au_testing_models](#recipes-cros_release_tests_get_au_testing_models) (Python3 ✅)
   * [cros_release:tests/util](#recipes-cros_release_tests_util) (Python3 ✅)
@@ -2904,29 +2902,6 @@ Args:
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
   gs_bucket (str): Google storage bucket to upload prebuilts to.
   private (bool): Whether or not the target prebuilts are private.
-### *recipe_modules* / [cros\_provenance](/recipe_modules/cros_provenance)
-
-[DEPS](/recipe_modules/cros_provenance/__init__.py#9): [infra/cloudkms][infra/recipe_modules/cloudkms], [infra/provenance][infra/recipe_modules/provenance], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-API for adding provenenace to generated artifacts.
-
-#### **class [ProvenanceApi](/recipe_modules/cros_provenance/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-Apis for generating a signed provenance for created artifacts.
-
-&mdash; **def [generate\_provenance](/recipe_modules/cros_provenance/api.py#18)(self, file_paths, recipe):**
-
-Generate BCID provenances for a list of artifacts.
-
-Args:
-  file_paths (List[str]): the location of artifacts to generate an
-      attestation for.
-  recipe (str): the name of the recipe that this build is running.
-
-Returns:
-  (List[str]): the location of the attestations on disk.
 ### *recipe_modules* / [cros\_release](/recipe_modules/cros_release)
 
 [DEPS](/recipe_modules/cros_release/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [manifest\_doctor](#recipe_modules-manifest_doctor), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9657,13 +9632,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#20)(api):**
-### *recipes* / [cros\_provenance:examples/full](/recipe_modules/cros_provenance/examples/full.py)
-
-[DEPS](/recipe_modules/cros_provenance/examples/full.py#6): [cros\_provenance](#recipe_modules-cros_provenance), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-&mdash; **def [RunSteps](/recipe_modules/cros_provenance/examples/full.py#14)(api):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11957,9 +11925,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/f5d3b1b68b6dc0eb8531fb274754ae5c3cfcbd2b/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/f5d3b1b68b6dc0eb8531fb274754ae5c3cfcbd2b/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/f5d3b1b68b6dc0eb8531fb274754ae5c3cfcbd2b/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/cloudkms]: https://chromium.googlesource.com/infra/infra.git/+/47daf578244637d4ceea842f48cdcf2c3180dc02/recipes/README.recipes.md#recipe_modules-cloudkms
 [infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/47daf578244637d4ceea842f48cdcf2c3180dc02/recipes/README.recipes.md#recipe_modules-docker
-[infra/recipe_modules/provenance]: https://chromium.googlesource.com/infra/infra.git/+/47daf578244637d4ceea842f48cdcf2c3180dc02/recipes/README.recipes.md#recipe_modules-provenance
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/51b3aed56d1ba5b0e8ac65f94c20b15513a5f87c/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/51b3aed56d1ba5b0e8ac65f94c20b15513a5f87c/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/51b3aed56d1ba5b0e8ac65f94c20b15513a5f87c/README.recipes.md#recipe_modules-bcid_reporter
