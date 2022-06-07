@@ -26,6 +26,8 @@ DEPS = [
 
 from PB.recipes.chromeos.manifest_doctor import ManifestDoctorProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = ManifestDoctorProperties
 
 
@@ -100,7 +102,7 @@ def RunSteps(api, properties):
 
           nproc = api.step(
               "nproc", ["nproc"], stdout=api.raw_io.output_text(),
-              step_test_data=lambda: api.raw_io.test_api.stream_output(
+              step_test_data=lambda: api.raw_io.test_api.stream_output_text(
                   '8\n')).stdout.strip()
 
           cmd = ["branch-local-manifest"]

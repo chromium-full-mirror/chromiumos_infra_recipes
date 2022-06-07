@@ -3,7 +3,12 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 from collections import namedtuple
+import decimal
+import itertools
+import math
+import six
 
 from PB.chromiumos.bot_scaling import (ApplicationUtilization, BotPolicy,
                                        ReducedBotPolicyCfg, ResourceUtilization,
@@ -16,10 +21,6 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 from google.protobuf import json_format as jsonpb
 from google.protobuf import timestamp_pb2
 from recipe_engine import recipe_api
-
-import decimal
-import itertools
-import math
 
 DEFAULT_HOURS_BETWEEN_BUILDS = 0.167
 TASK_STATES = ['RUNNING', 'PENDING']
@@ -265,13 +266,13 @@ class BotScalingApi(recipe_api.RecipeApi):
       # therefore we only need to count the first returned count.
       if not bot_stats_hold:
         bot_stats_hold = self._bot_swarming_stats(
-            policy.bot_group,
+            six.ensure_str(policy.bot_group),
             self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
             policy.scaling_restriction.bot_floor,
             policy.scaling_restriction.bot_ceiling)
       for state in TASK_STATES:
         task_stats_hold = self._task_swarming_stats(
-            policy.bot_group, state, task_stats_hold,
+            six.ensure_str(policy.bot_group), state, task_stats_hold,
             self.m.swarming_cli.get_task_counts(dim, state,
                                                 policy.lookback_hours,
                                                 policy.swarming_instance))

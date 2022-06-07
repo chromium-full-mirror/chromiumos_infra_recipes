@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 """Recipe for scaling bots in Chrome and Chrome OS pools."""
+import json
+
 from recipe_engine import post_process
 
 from google.protobuf import json_format as jsonpb
@@ -18,6 +20,8 @@ DEPS = [
     'easy',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = RoboCropProperties
 
 
@@ -30,7 +34,11 @@ def RunSteps(api, properties):
           application=application)
     with api.step.nest('get current GCE config') as pres:
       gce_config = api.bot_scaling.get_current_gce_config(bot_policy_config)
-      pres.logs['gce_config'] = jsonpb.MessageToJson(gce_config)
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the spacing between py2 and py3 MessageToJson.
+      pres.logs['gce_config'] = json.dumps(
+          jsonpb.MessageToDict(gce_config), sort_keys=True,
+          separators=(',', ':'), indent=2)
     with api.step.nest('update bot policies') as pres:
       updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
           bot_policy_config, gce_config)
@@ -38,7 +46,11 @@ def RunSteps(api, properties):
           updated_bot_policy)
       api.easy.set_properties_step(
           bot_policy_config=jsonpb.MessageToDict(reduced_bot_policy))
-      pres.logs['bot_policy_config'] = jsonpb.MessageToJson(updated_bot_policy)
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the spacing between py2 and py3 MessageToJson.
+      pres.logs['bot_policy_config'] = json.dumps(
+          jsonpb.MessageToDict(updated_bot_policy), sort_keys=True,
+          separators=(',', ':'), indent=2)
 
     has_swarming_fetch_error = False
     try:
@@ -62,13 +74,20 @@ def RunSteps(api, properties):
           updated_bot_policy, gce_config, swarming_stats=swarming_status)
       api.easy.set_properties_step(
           robocrop_action=jsonpb.MessageToDict(robocrop_action))
-      pres.logs['robocrop_action'] = jsonpb.MessageToJson(robocrop_action)
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the spacing between py2 and py3 MessageToJson.
+      pres.logs['robocrop_action'] = json.dumps(
+          jsonpb.MessageToDict(robocrop_action), separators=(',', ':'),
+          indent=2, sort_keys=True)
     if properties.commit_changes:
       with api.step.nest('update GCE Provider configs') as pres:
         gce_updated_configs = api.bot_scaling.update_gce_configs(
             robocrop_action, gce_config)
-        pres.logs['final_gce_config'] = jsonpb.MessageToJson(
-            gce_updated_configs)
+        # TODO(b/217973414): Replace with MessageToJson once we don't need to
+        # fix the spacing between py2 and py3 MessageToJson.
+        pres.logs['final_gce_config'] = json.dumps(
+            jsonpb.MessageToDict(gce_updated_configs), separators=(',', ':'),
+            indent=2, sort_keys=True)
 
     if has_swarming_fetch_error:
       raise swarming_fetch_error
