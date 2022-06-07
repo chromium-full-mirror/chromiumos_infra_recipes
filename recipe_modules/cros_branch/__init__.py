@@ -12,6 +12,8 @@ DEPS = [
     'cros_version',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.recipe_modules.chromeos.cros_branch.cros_branch import (
     CrosBranchProperties)
 

@@ -13,8 +13,6 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.branch import Branch
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
 BRANCH_UTIL_REGEX = r"Creating branch: (?P<branch>.*)\s*"
 
 

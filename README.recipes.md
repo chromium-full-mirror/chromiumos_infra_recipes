@@ -20,7 +20,7 @@
   * [cq_looks](#recipe_modules-cq_looks) (Python3 ✅)
   * [cros_artifacts](#recipe_modules-cros_artifacts) (Python3 ✅) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) (Python3 ✅) &mdash; API for interacting with FindIt.
-  * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
+  * [cros_branch](#recipe_modules-cros_branch) (Python3 ✅) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) (Python3 ✅) &mdash; API for working with the protobuf-based Build API.
   * [cros_cache](#recipe_modules-cros_cache) (Python3 ✅) &mdash; API for working with CrOS cache.
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) (Python3 ✅) &mdash; APIs for interacting with Cq-Depends.
@@ -1990,15 +1990,15 @@ failures.
 
 [DEPS](/recipe_modules/cros_branch/__init__.py#4): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API wrapping the cros branch tool.
 
-#### **class [CrosBranchApi](/recipe_modules/cros_branch/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBranchApi](/recipe_modules/cros_branch/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for calling cros branch.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#40)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_branch/api.py#38)(self, cmd, step_name=None, force=False, push=False, \*\*kwargs):**
 
 Call cros branch with the given args.
 
@@ -2012,7 +2012,7 @@ Args:
 Returns:
   branch_name (string): The name of the created branch, or None.
 
-&mdash; **def [create\_from\_buildspec](/recipe_modules/cros_branch/api.py#92)(self, source_version, branch, \*\*kwargs):**
+&mdash; **def [create\_from\_buildspec](/recipe_modules/cros_branch/api.py#90)(self, source_version, branch, \*\*kwargs):**
 
 Call `cros branch create`, branching from the appropriate buildspec
   manifest.
@@ -2028,7 +2028,7 @@ Args:
 Returns:
   branch_name (string): The name of the created branch, or None.
 
-&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#119)(self, manifest_file, branch, \*\*kwargs):**
+&mdash; **def [create\_from\_file](/recipe_modules/cros_branch/api.py#117)(self, manifest_file, branch, \*\*kwargs):**
 
 Call `cros branch create`, branching from the file specified in
   manifest_file.
@@ -2044,7 +2044,7 @@ Args:
 Returns:
   branch_name (string): The name of the created branch, or None.
 
-&mdash; **def [delete](/recipe_modules/cros_branch/api.py#165)(self, branch, \*\*kwargs):**
+&mdash; **def [delete](/recipe_modules/cros_branch/api.py#163)(self, branch, \*\*kwargs):**
 
 Call `cros branch delete` with the appropriate arguments.
 
@@ -2053,11 +2053,11 @@ Args:
   kwargs: Keyword arguments for cros branch/recipe_engine/step.
     Accepts the same keyword arguments as __call__.
 
-&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#28)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_branch/api.py#26)(self):**
 
 Initializes the module.
 
-&mdash; **def [rename](/recipe_modules/cros_branch/api.py#140)(self, branch, new_branch_name, \*\*kwargs):**
+&mdash; **def [rename](/recipe_modules/cros_branch/api.py#138)(self, branch, new_branch_name, \*\*kwargs):**
 
 Call `cros branch rename` with the appropriate arguments.
 
