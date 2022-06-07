@@ -21,6 +21,8 @@ DEPS = [
     'repo',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   commit = api.src_state.gitiles_commit
@@ -45,9 +47,9 @@ def RunSteps(api):
               '/usr/bin/git', 'fetch',
               'https://chromium.googlesource.com/chromium/src'
           ])
-          chromium_head = api.step('get chromium head',
-                                   ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
-                                   stdout=api.raw_io.output()).stdout.strip()
+          chromium_head = api.step(
+              'get chromium head', ['/usr/bin/git', 'rev-parse', 'FETCH_HEAD'],
+              stdout=api.raw_io.output_text()).stdout.strip()
         with api.step.nest('sync upstream branch'):
           upstream_branch_head = api.git.fetch_ref(project_info.remote,
                                                    'refs/heads/upstream')
@@ -59,7 +61,7 @@ def RunSteps(api):
               'vpython3',
               'libchrome_tools/developer-tools/uprev/update_upstream.py',
               upstream_branch_head, chromium_head, '--all'
-          ], stdout=api.raw_io.output())
+          ], stdout=api.raw_io.output_text())
           result_commit = step_data.stdout.strip()
           if not (result_commit and re.match(r'^[0-9a-f]{40}$', result_commit)):
             raise StepFailure('Got invalid commit %s' % result_commit)
@@ -77,17 +79,19 @@ def GenTests(api):
       'script-success',
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
-          stdout=api.raw_io.output(
+          stdout=api.raw_io.output_text(
               '49d1e4a4a6ca65114208c498416be3b85e10cc8e\n')),
       api.step_data(
-          'fetch latest chromium.get chromium head', stdout=api.raw_io.output(
+          'fetch latest chromium.get chromium head',
+          stdout=api.raw_io.output_text(
               'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
 
   yield api.test(
       'script-unexpected',
       api.step_data(
           'generate new upstream branch locally.generate new upstream head',
-          stdout=api.raw_io.output('Unexpected Result')),
+          stdout=api.raw_io.output_text('Unexpected Result')),
       api.step_data(
-          'fetch latest chromium.get chromium head', stdout=api.raw_io.output(
+          'fetch latest chromium.get chromium head',
+          stdout=api.raw_io.output_text(
               'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
