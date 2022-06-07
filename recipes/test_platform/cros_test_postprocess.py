@@ -18,6 +18,8 @@ DEPS = [
     'util',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = CrosTestPostprocessRequest
 
 TEST_RESULT_PATH = 'gs://chromeos-autotest-results/swarming-1234'
@@ -36,7 +38,7 @@ def _download_test_result_files(api, remote_test_results):
         # around gsutil to erroneously retry.
         files = api.gsutil.list(
             gs_path + "/**",
-            stdout=api.raw_io.output(),
+            stdout=api.raw_io.output_text(),
             ok_ret=(0, 1),
         ).stdout.strip().splitlines()
 
