@@ -425,8 +425,8 @@
   * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image) (Python3 ✅)
   * [phosphorus:examples/full](#recipes-phosphorus_examples_full) (Python3 ✅)
   * [portage:examples/full](#recipes-portage_examples_full) (Python3 ✅)
-  * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
-  * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
+  * [presubmit_cq](#recipes-presubmit_cq) (Python3 ✅) &mdash; Launches presubmit tests for CQ.
+  * [presubmit_tests](#recipes-presubmit_tests) (Python3 ✅) &mdash; Recipe for running presubmit on multiple CLs.
   * [project_buildspec](#recipes-project_buildspec) (Python3 ✅) &mdash; Recipe for invoking the per project buildspec tool.
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry) (Python3 ✅)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen) (Python3 ✅)
@@ -11034,20 +11034,20 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/presubmit_cq.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Launches presubmit tests for CQ.
 
-&mdash; **def [RunSteps](/recipes/presubmit_cq.py#29)(api, properties):**
+&mdash; **def [RunSteps](/recipes/presubmit_cq.py#31)(api, properties):**
 ### *recipes* / [presubmit\_tests](/recipes/presubmit_tests.py)
 
 [DEPS](/recipes/presubmit_tests.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for running presubmit on multiple CLs.
 
-&mdash; **def [RunSteps](/recipes/presubmit_tests.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/presubmit_tests.py#35)(api, properties):**
 ### *recipes* / [project\_buildspec](/recipes/project_buildspec.py)
 
 [DEPS](/recipes/project_buildspec.py#10): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [manifest\_doctor](#recipe_modules-manifest_doctor), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

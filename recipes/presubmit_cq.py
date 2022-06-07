@@ -23,6 +23,8 @@ from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_cq import PresubmitCqProperties
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 PROPERTIES = PresubmitCqProperties
 
 
