@@ -15,6 +15,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.common import ReleaseBuilder, ReleaseBuilders
+from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 
 LEGACY_CONFIG = "config/chromeos_config.py"
 CONFIG = "release/release_builders.textpb"
@@ -233,6 +234,11 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         'commit in {}'.format(project)), self.m.context(cwd=project_path):
       self.m.git.add([project_path])
       self.m.git.commit(commit_message)
+    if self.m.buildbucket.build.created_by:
+      parts = self.m.buildbucket.build.created_by.split(':')
+      if len(parts) == 2 and parts[1].find('@') > 0:
+        if not any(r.email == parts[1] for r in self._reviewers):
+          self._reviewers.append(Email(email=parts[1]))
     change = self.m.gerrit.create_change(
         project_path, reviewers=self._get_emails(self._reviewers),
         ccs=self._get_emails(self._ccs))

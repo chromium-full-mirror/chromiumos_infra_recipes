@@ -2995,9 +2995,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#59)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#60)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#245)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#251)(self, release_branch):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -9654,15 +9654,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#18)(api):**
 ### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release_config/examples/full.py#6): [cros\_release\_config](#recipe_modules-cros_release_config), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#176)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#177)(api, properties):**
 
-&mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#18)(\*blocks):**
+&mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#19)(\*blocks):**
 
-&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#85)(\*blocks):**
+&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#86)(\*blocks):**
 ### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_util/examples/full.py#8): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

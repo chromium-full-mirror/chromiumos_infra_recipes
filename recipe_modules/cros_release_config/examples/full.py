@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_release_config',
     'repo',
+    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -324,4 +325,36 @@ def GenTests(api):
                     api.file.read_raw(legacy_config_test_data)),
       api.post_check(post_process.StepFailure,
                      'update legacy config.prune legacy config'),
+  )
+
+  yield api.test(
+      'with-build-creator',
+      api.properties(
+          **{
+              'release_branch':
+                  branch,
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(auto_submit=True),
+          }),
+      api.step_data('update legacy config.read config/chromeos_config.py',
+                    api.file.read_raw(legacy_config_test_data)),
+      api.test_util.test_build(
+          created_by='user:fakedeveloper@chromium.org').build,
+  )
+
+  yield api.test(
+      'with-build-creator-duplicate-email',
+      api.properties(
+          **{
+              'release_branch':
+                  branch,
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email="fakedeveloper@chromium.org")],
+                      ccs=[Email(email="fakedeveloper@google.com")])
+          }),
+      api.step_data('update legacy config.read config/chromeos_config.py',
+                    api.file.read_raw(legacy_config_test_data)),
+      api.test_util.test_build(
+          created_by='user:fakedeveloper@chromium.org').build,
   )
