@@ -169,7 +169,7 @@
   * [cl_factory](#recipes-cl_factory) (Python3 ✅) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full) (Python3 ✅)
   * [cloud_pubsub:tests/raises_on_failed_publish](#recipes-cloud_pubsub_tests_raises_on_failed_publish) (Python3 ✅)
-  * [cloudready_shim](#recipes-cloudready_shim) &mdash; Recipe for building the Cloudready shim.
+  * [cloudready_shim](#recipes-cloudready_shim) (Python3 ✅) &mdash; Recipe for building the Cloudready shim.
   * [code_coverage:examples/firmware_lcov](#recipes-code_coverage_examples_firmware_lcov) (Python3 ✅)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full) (Python3 ✅)
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json) (Python3 ✅)
@@ -8994,11 +8994,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipes/cloudready_shim.py#8): [git](#recipe_modules-git), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building the Cloudready shim.
 
-&mdash; **def [RunSteps](/recipes/cloudready_shim.py#24)(api):**
+&mdash; **def [RunSteps](/recipes/cloudready_shim.py#26)(api):**
 ### *recipes* / [code\_coverage:examples/firmware\_lcov](/recipe_modules/code_coverage/examples/firmware_lcov.py)
 
 [DEPS](/recipe_modules/code_coverage/examples/firmware_lcov.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

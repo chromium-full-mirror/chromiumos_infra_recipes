@@ -20,6 +20,8 @@ DEPS = [
 REPO_URL = 'https://chromium.googlesource.com/external/github.com/neverware/shim-build/'
 CLOUDREADY_SHIM_BUCKET = 'cloudready-shim'
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 
 def RunSteps(api):
   repo_dir = api.path.mkdtemp()
@@ -45,7 +47,7 @@ def RunSteps(api):
 
   with api.step.nest('upload build logs') as presentation:
     presentation.links[link_name] = link_value
-    for f, contents in logs.items():
+    for f, contents in sorted(logs.items()):
       tmp_log_file = api.path.mkstemp(f)
       api.file.write_raw('write {}'.format(f), tmp_log_file, contents)
       gs_path = api.path.join(gs_dir, f)
@@ -55,7 +57,7 @@ def RunSteps(api):
       '32 bit binary': 'shimia32.efi',
       '64 bit binary': 'shimx64.efi',
   }
-  for label, filename in files.items():
+  for label, filename in sorted(files.items()):
     with api.step.nest('upload {}'.format(label)) as presentation:
       presentation.links[link_name] = link_value
       bin_path = api.path.abspath(
