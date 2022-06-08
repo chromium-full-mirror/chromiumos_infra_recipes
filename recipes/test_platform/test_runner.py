@@ -356,8 +356,6 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         e.g. Google_Voema.13672.224.0
     * rw_fwid: Read-write firmware version,
         e.g. Google_Voema.13672.224.0
-    * task_url: Build task url,
-        e.g. https://ci.chromium.org/b/8818602441278078689
     * ancestor_buildbucket_ids: All the ancestor buildbucket ids,
         e.g. "8814950840874708945, 8814951792758733697"
 
@@ -416,9 +414,6 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
                                      builder_object.bucket,
                                      builder_object.builder)
   base_tags.append(('job_name', job_name))
-
-  task_url = api.buildbucket.build_url(build_id=build_id)
-  base_tags.append(('task_url', task_url))
 
   ancestor_buildbucket_ids = ','.join(
       str(id) for id in api.buildbucket.build.ancestor_ids)
