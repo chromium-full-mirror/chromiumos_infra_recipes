@@ -218,8 +218,7 @@ def RunSteps(api, properties):
 
         # Then, get the diffs. We are specifically interested in what
         # gerrit changes have landed.
-        gerrit_commits, jobs = _get_gerrit_changes(api, manifest_diffs,
-                                                   properties.path_triggers)
+        gerrit_commits = _get_gerrit_changes(api, manifest_diffs)
 
       # Generate Cr-Snapshot-Identifer (b/171751551).
       with api.step.nest('fetch previous snapshot identifier'):
@@ -260,9 +259,6 @@ def RunSteps(api, properties):
         api.src_state.gitiles_commit = internal_snapshot_commit
         api.cros_tags.add_tags_to_current_build(**dict(
             published_snapshot_id=internal_snapshot_commit.id))
-
-      if jobs and not properties.dry_run:
-        _schedule_triggered_builds(api, internal_snapshot_commit, jobs)
 
 
 def _sync_manifest(api, _properties, manifest_ref, prior_internal,
@@ -362,24 +358,6 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
   return api.cros_source.push_uprev(uprev_info, dry_run, is_staging=is_staging)
 
 
-def _schedule_triggered_builds(api, commit, jobs):
-  """Schedule any triggered jobs.
-
-  Args:
-    jobs: list(PathTrigger.Job) to be launched.
-  """
-  props = api.cros_infra_config.props_for_child_build
-  requests = []
-  for job in jobs:
-    requests.append(
-        api.buildbucket.schedule_request(
-            project=job.project or api.buildbucket.build.builder.project,
-            bucket=job.bucket or api.buildbucket.build.builder.bucket,
-            builder=job.builder, gitiles_commit=commit, properties=props))
-  api.buildbucket.schedule(requests, url_title_fn=api.naming.get_build_title,
-                           step_name='schedule triggered builds')
-
-
 def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
                       snapshot_xml, gerrit_commits=None, disable_gerrit=False,
                       footers=None, dry_run=False):
@@ -426,20 +404,17 @@ def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
                                 api.git.head_commit())
 
 
-def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
+def _get_gerrit_changes(api, manifest_diffs):
   """Find all Gerrit changes that landed since the last snapshot.
 
   Args:
     * api (object): See RunSteps documentation.
     * manifest_diffs (list[ManifestDiff]): Diffs from ToT to last snapshot.
-    * path_triggers (list[PathTrigger]): Paths that trigger jobs.
 
   Returns:
     tuple(
       list[Commit]: The Gerrit-reviewed commits since the last snapshot,
-      list[PathTrigger.Job]: List of jobs to trigger when done.)
   """
-  jobs = []
   with api.step.nest('record new gerrit changes'):
     gerrit_changes = []
     gerrit_commits = []
@@ -468,17 +443,10 @@ def _get_gerrit_changes(api, manifest_diffs, path_triggers=None):
             step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
             gerrit_commits.append(commit)
-        # See if we hit any triggers.
-        for trigger in path_triggers or []:
-          if (diff.path == trigger.repo_path and
-              (not trigger.file_paths or
-               api.git.log(diff.from_rev, diff.to_rev, limit=1,
-                           paths=trigger.file_paths))):
-            jobs.extend(trigger.jobs)
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.
-    return gerrit_commits, jobs
+    return gerrit_commits
 
 
 def _make_gitiles_commit(_api, repo_url, ref, commit_id):
@@ -577,38 +545,6 @@ def GenTests(api):
   yield api.test(
       'snapshot-manifest-has-manifest-change',
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
-      api.step_data(
-          'generate external manifest', stdout=api.raw_io.output_text(
-              '<manifest visibility="external">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
-      api.step_data(
-          'generate internal manifest', stdout=api.raw_io.output_text(
-              '<manifest visibility="internal">'
-              '<project name="NAME" revision="TO_REV"/>'
-              '</manifest>')),
-      api.step_data(
-          'diff remote and local manifest.git show',
-          stdout=api.raw_io.output_text(
-              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
-          )),
-      api.git_footers.step_data(
-          'record new gerrit changes.NAME.read git footers',
-          api.gerrit.test_gerrit_change_url()),
-  )
-
-  yield api.test(
-      'snapshot-manifest-has-manifest-change-that-triggers',
-      api.properties(
-          AnnealingProperties(
-              manifest_ref='snapshot', path_triggers=[
-                  AnnealingProperties.PathTrigger(
-                      repo_path='NAME', file_paths=['dir/package/pkg*.ebuild'],
-                      jobs=[
-                          AnnealingProperties.PathTrigger.Job(
-                              builder='triggered-build')
-                      ])
-              ])),
       api.step_data(
           'generate external manifest', stdout=api.raw_io.output_text(
               '<manifest visibility="external">'

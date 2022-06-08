@@ -20,33 +20,12 @@ message AnnealingProperties {
   // message length exceeds Git limits.
   bool disable_gerrit_commits_in_commit_message = 3;
 
-  // Jobs to trigger based on gitiles commits.
-  // Once the uprev is published, if any of the regexp triggers hit, then the
-  // named job(s) will be launched with the new gitiles_commit.
-  message PathTrigger {
-    // The path of the repo, relative to workspace_path.
-    string repo_path = 1;
-
-    // Paths to pass to git log.  If empty, then trigger on any commit to the
-    // repo.
-    repeated string file_paths = 2;
-
-    // The BB task to schedule.
-    message Job {
-      string project = 1;
-      string bucket = 2;
-      string builder = 3;
-    }
-    repeated Job jobs = 3;
-  }
-  repeated PathTrigger path_triggers = 4;
-
   // If this is a dry run, do not actually push the manifest ref.
-  bool dry_run = 5;
+  bool dry_run = 4;
 
   // TODO(crbug/1148052): remove this logic.
   // Whether to disable "prior_commit" logic.
-  bool use_ref_not_id = 6;
+  bool use_ref_not_id = 5;
 
   // TODO(crbug/1169277): Remove this property once the code is fixed to allow
   // moving a pinned git repo backwards.
@@ -55,13 +34,13 @@ message AnnealingProperties {
   // reachability".  This should only be used to manually launch Annealing in
   // order to fix breakage caused by a pin-change that downrevs a pinned git
   // repository.
-  repeated string ignore_downrev_paths = 7;
+  repeated string ignore_downrev_paths = 6;
 
   // Feature flag used to signal where to uprev. b/179496445
-  bool uprev_first = 8;
+  bool uprev_first = 7;
 
   // Whether we should ignore errors from ensure_cq_dependencies_fulfilled
-  bool ignore_cq_depends_failure = 9;
+  bool ignore_cq_depends_failure = 8;
 }
 
 // Annealing determines what Gerrit changes have landed since its last run,
