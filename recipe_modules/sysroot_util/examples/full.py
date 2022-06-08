@@ -43,7 +43,10 @@ def RunSteps(api, properties):
   api.sysroot_util.install_packages(config, dep_graph,
                                     artifact_build=properties.artifact_build)
 
-  api.sysroot_util.build_images(image_types, 'builder/path', True, "big_disk",
+  api.sysroot_util.build_images(image_types, 'builder/path',
+                                disable_rootfs_verification=True,
+                                disk_layout="big_disk",
+                                base_is_recovery=properties.base_is_recovery,
                                 test_test_data=image_test_json)
 
 
@@ -179,3 +182,6 @@ def GenTests(api):
   yield api.test(
       'no-base-image', test_build(),
       api.properties(FullTestProperties(image_types=[common.IMAGE_TYPE_TEST])))
+
+  yield api.test('base-is-recovery', test_build(),
+                 api.properties(base_is_recovery=True))

@@ -23,4 +23,7 @@ message FullTestProperties {
 
   // Name of the test builder config to use.
   string builder_name = 5;
+
+  // Copy the base image to recovery_image.bin for ChromeOS Flex.
+  bool base_is_recovery = 6;
 }

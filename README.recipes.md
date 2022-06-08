@@ -860,7 +860,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#814)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#817)(self):**
 
 Add child build ids to output property of current build.
 
@@ -925,7 +925,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#676)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#679)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1012,7 +1012,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#149)(self):**
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#823)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#826)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1025,7 +1025,7 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#602)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#605)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1096,7 +1096,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#651)(self, config=None, private_bundle_func=None, sysroot=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#654)(self, config=None, private_bundle_func=None, sysroot=None):**
 
 Upload artifacts from the build.
 
@@ -1111,7 +1111,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#778)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#781)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -7703,7 +7703,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#256)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#256)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, base_is_recovery=False, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None):**
 
 Build and validate images.
 
@@ -7712,6 +7712,7 @@ Args:
   builder_path (str): Builder path in GS for artifacts.
   disable_rootfs_verification (bool): whether to disable rootfs verification.
   disk_layout (str): disk_layout to set, or empty for default.
+  base_is_recovery (bool): copy the base image to recovery_image.bin.
   version (str): version string to pass to build API, or None.
   timeout_sec (int): Step timeout (in seconds).
   build_test_data (str): test response (JSON) from the ImageService/Create
