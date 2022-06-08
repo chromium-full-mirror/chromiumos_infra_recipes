@@ -112,7 +112,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         service, name) else None)
 
   def _bundle_legacy_artifacts(self, chroot, sysroot, path, artifact_types,
-                               _artifact_profile_info, semaphore):
+                               semaphore):
     """Bundle legacy artifacts.
 
     Batch handler for legacy artifact types.
@@ -122,18 +122,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot to use.
       path (Path): Path to write bundled artifacts to.
       artifact_types (list[ArtifactTypes]): Artifact types to bundle.
-      _artifact_profile_info (ArtifactProfileInfo): profile information.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
           artifact bundling calls.
 
     Returns:
-      dict(artifact_name: list(artifact paths)).  Paths are absolute.
+      futures (list[Future]): A list of futures that call the legacy
+          ArtifactsService/Bundle Build API endpoint for each configured
+          artifact type.
     """
-    # TODO(b/216849056): This function makes multiple Build API calls. Consider
-    # spawning one future per-call in order to increase concurrency.
-    with semaphore:
+
+    def _bundle_legacy_artifact(artifact):
       files_by_artifact = {}
-      for artifact in artifact_types:
+      with semaphore:
         name = BuilderConfig.Artifacts.ArtifactTypes.Name(artifact)
         with self.m.step.nest('bundle %s for upload' % name):
           endpoint = self._get_legacy_endpoint(artifact)
@@ -146,6 +146,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
           files_by_artifact[name] = [art.path for art in response.artifacts]
       return files_by_artifact
+
+    futures = []
+    for artifact in artifact_types:
+      futures.append(self.m.futures.spawn(_bundle_legacy_artifact, artifact))
+    return futures
 
   def _bundle_infra_artifacts(self, _chroot, _sysroot, outpath, artifact_types,
                               _artifact_profile_info, semaphore):
@@ -409,34 +414,35 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       futures (list[Future]): A list of futures that call the per-artifact_type
           bundle functions.
     """
-    funcs = collections.defaultdict(list)
-    for _, service in artifacts_info.ListFields():
-      for art_info in getattr(service, 'output_artifacts', []):
-        # The individual functions only exist for Toolchain, Legacy, and Infra.
-        # FirmwareService is a special case immediately below, and the others
-        # are only handled by ArtifactsService.Get().
-        # TODO(b/231245311): Consider raising an exception if the artifact
-        # belongs to a service which the Recipe does have logic to process.
-        if service.DESCRIPTOR.name == 'Toolchain':
-          funcs[self._bundle_toolchain].extend(art_info.artifact_types)
-        elif service.DESCRIPTOR.name == 'Legacy':
-          funcs[self._bundle_legacy_artifacts].extend(art_info.artifact_types)
-        elif service.DESCRIPTOR.name == 'Infra':
-          funcs[self._bundle_infra_artifacts].extend(art_info.artifact_types)
-
     futures = []
-    # Handle BundleFirmwareArtifacts separately.
-    if artifacts_info.firmware.output_artifacts:
-      futures.append(
-          self.m.futures.spawn(self._bundle_firmware, chroot, outpath,
-                               artifacts_info.firmware, semaphore))
-
     # Sorting is done here only to give us consistency in the expected.json
     # for our tests.
-    for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
-      futures.append(
-          self.m.futures.spawn(func, chroot, sysroot, outpath, types,
-                               artifacts_info.profile_info, semaphore))
+    for _, service in sorted(artifacts_info.ListFields(),
+                             key=lambda x: x[1].DESCRIPTOR.name):
+      for art_info in getattr(service, 'output_artifacts', []):
+        # The individual functions only exist for Toolchain, Legacy, Infra, and
+        # Firmware. The others are only handled by ArtifactsService.Get().
+        # TODO(b/231245311): Consider raising an exception if the artifact
+        # belongs to a service which the Recipe does have logic to process.
+        if (service.DESCRIPTOR.name == 'Firmware' and
+            artifacts_info.firmware.output_artifacts):
+          futures.append(
+              self.m.futures.spawn(self._bundle_firmware, chroot, outpath,
+                                   artifacts_info.firmware, semaphore))
+        if service.DESCRIPTOR.name == 'Toolchain':
+          futures.append(
+              self.m.futures.spawn(self._bundle_toolchain, chroot, sysroot,
+                                   outpath, art_info.artifact_types,
+                                   artifacts_info.profile_info, semaphore))
+        elif service.DESCRIPTOR.name == 'Legacy':
+          futures.extend(
+              self._bundle_legacy_artifacts(chroot, sysroot, outpath,
+                                            art_info.artifact_types, semaphore))
+        elif service.DESCRIPTOR.name == 'Infra':
+          futures.append(
+              self.m.futures.spawn(self._bundle_infra_artifacts, chroot,
+                                   sysroot, outpath, art_info.artifact_types,
+                                   artifacts_info.profile_info, semaphore))
 
     return futures
 
