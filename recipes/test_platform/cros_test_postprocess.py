@@ -31,6 +31,8 @@ def _download_test_result_files(api, remote_test_results):
   with api.step.nest('check for .dmp files') as pres:
     for test_result in remote_test_results:
       gs_path = test_result.log_data.gs_url
+      if not gs_path:
+        continue
 
       with api.step.nest('check {}'.format(gs_path)):
         # We could just ls **.dmp but gsutil throws a CommandException if
@@ -86,9 +88,10 @@ def RunSteps(api, properties):
 def GenTests(api):
   # Test of symbolicate dumps.
   tr = TestResult(log_data=TaskLogData(gs_url=TEST_RESULT_PATH))
+  empty_tr = TestResult(log_data=TaskLogData())
   req = CrosTestPostprocessRequest(
       debug_symbols_archive_url='gs://chromeos-image-archive/foox-release/R10-11.0.0',
-      test_results=[tr],
+      test_results=[tr, empty_tr],
   )
   dl_step = ('download test results.'
              'download gs://chromeos-autotest-results/swarming-1234')
