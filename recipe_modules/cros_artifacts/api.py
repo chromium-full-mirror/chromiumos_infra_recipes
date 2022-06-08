@@ -664,12 +664,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
 
       if report_to_spike and kind == BuilderConfig.Id.Type.RELEASE:
-        images = files_by_artifact.get('IMAGE_ARCHIVES', [])
-
-        if images == []:
-          presentation.logs[
-              'report_to_spike'] = 'IMAGE_ARCHIVES not in files_by_artifact'
-
+        images = files_by_artifact['IMAGE_ARCHIVES']
         base_image = [
             i for i in images
             if self.m.path.basename(i) == 'chromiumos_base_image.tar.xz'

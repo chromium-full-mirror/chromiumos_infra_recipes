@@ -649,7 +649,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.failures.set_failed_packages(presentation, pkgs)
 
   def upload_artifacts(self, config=None, private_bundle_func=None,
-                       sysroot=None, report_to_spike=False):
+                       sysroot=None):
     """Upload artifacts from the build.
 
     Args:
@@ -659,8 +659,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
           instead of the internal bundling method.
       sysroot (Sysroot): Use this sysroot.  Defaults to the primary Sysroot for
           the build.
-      report_to_spike (bool): If True, will call bcid_reporter to report artifact
-          information and trigger spike to upload the provenance.
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
@@ -673,8 +671,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       return self.m.cros_artifacts.upload_artifacts(
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
-          sysroot=sysroot, private_bundle_func=private_bundle_func,
-          report_to_spike=report_to_spike)
+          sysroot=sysroot, private_bundle_func=private_bundle_func)
 
   def create_containers(self, builder_config=None):
     """Call the BuildTestServiceContainers endpoint to build test containers.

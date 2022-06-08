@@ -136,7 +136,7 @@ def DoRunSteps(api, config, properties):
   snoopy_report(api, 'upload')
 
   try:
-    api.build_menu.upload_artifacts(config, report_to_spike=True)
+    api.build_menu.upload_artifacts(config)
   except StepFailure as sf:
     # If uploading artifacts threw an exception, surface that exception unless
     # build_and_test_images above threw an exception, in which case we want to
