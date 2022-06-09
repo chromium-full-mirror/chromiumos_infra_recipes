@@ -1045,7 +1045,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         src_payload = payload
         break
     if not src_payload:
-      raise StepFailure('no source full test payload found')
+      raise StepFailure(
+          'no source full test payload found: {}'.format(root_uri))
     return src_payload
 
   def create_paygen_test_config(self, tgt_payload, delta_type, src_version=None,
