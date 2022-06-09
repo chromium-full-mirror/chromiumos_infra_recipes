@@ -9,6 +9,7 @@ from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateStats
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
@@ -21,6 +22,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._dry_run = properties.dry_run
     self._exoneration_configs = {}
     self._configs_loaded = False
+    self._stats = ExonerateStats(dry_run=properties.dry_run)
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
@@ -46,6 +48,10 @@ class ExonerateApi(recipe_api.RecipeApi):
           dry_run_text + '\n'.join(self._global_log_lines))
       self._global_log_lines = []
 
+  def print_stats(self):
+    """Write exoneration stats to output properties."""
+    self.m.easy.set_properties_step(exoneration_stats=self._stats)
+
   def _exonerate_hw_testcase(self, test_case, build_target):
     """Exonerates a single TestCaseResult based on configs.
 
@@ -63,14 +69,15 @@ class ExonerateApi(recipe_api.RecipeApi):
       if exoneration_decision:
         self._add_log('Exonerated {} on {},\t{} rule'.format(
             test_case.name, config['target'], config['reason']))
+        self._stats.test_count += 1
 
       if exoneration_decision and not self._dry_run:
         return ExecuteResponse.TaskResult.TestCaseResult(
             name=test_case.name, verdict=TaskState.VERDICT_PASSED,
             human_readable_summary=('Exonerated: ' +
                                     test_case.human_readable_summary))
-      else:
-        return test_case
+
+    return test_case
 
   def _exonerate_hw_test_cases(self, test_cases, build_target):
     """Exonerates [ExecuteResponse.TaskResult.TestCaseResult] based on configs.
@@ -183,10 +190,11 @@ class ExonerateApi(recipe_api.RecipeApi):
       if exoneration_decision:
         self._add_log('Exonerated {} on {},\t{} rule'.format(
             test_case['name'], config['target'], config['reason']))
+        self._stats.test_count += 1
       if exoneration_decision and not self._dry_run:
         return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
-      else:
-        return test_case
+
+    return test_case
 
   def exonerate_vm_testcases(self, all_test_cases, build_target):
     """Exonerates VM test cases based on configs.

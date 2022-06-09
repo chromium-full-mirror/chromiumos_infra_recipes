@@ -15,3 +15,14 @@ message ExonerateProperties {
   // executed but results won't be changed.
   bool dry_run = 2;
 }
+
+message ExonerateStats {
+  // Whether exoneration was run in dry_run mode.
+  bool dry_run = 1;
+
+  // Number of tests exonerated.
+  int64 test_count = 2;
+
+  // Number of test suites exonerated.
+  int64 suite_count = 3;
+}

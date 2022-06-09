@@ -49,6 +49,7 @@ def RunSteps(api):
   api.assertions.assertNotIn(
       'VERDICT_FAILED',
       str(exonerated_vm_builds[0].output.properties['all_test_cases']))
+  api.exonerate.print_stats()
 
 
 def GenTests(api):

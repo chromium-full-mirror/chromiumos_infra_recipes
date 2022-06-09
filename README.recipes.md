@@ -4721,13 +4721,13 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#133)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#140)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -4738,7 +4738,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#169)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#176)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -4749,7 +4749,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#191)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#199)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4761,7 +4761,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#218)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#226)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -4771,6 +4771,10 @@ Args:
 Returns:
   [Build] with exonerated tests modified and [str] names of
   tests that should be treated as success.
+
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#51)(self):**
+
+Write exoneration stats to output properties.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
 [DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -6708,7 +6712,7 @@ Returns:
   str: A string describing the VM test.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
 
-[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/orch_menu/__init__.py#6): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -6721,7 +6725,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#819)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#820)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6769,7 +6773,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#165)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#482)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#483)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -6783,7 +6787,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#748)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#749)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6798,11 +6802,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#676)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#677)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#682)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#683)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
