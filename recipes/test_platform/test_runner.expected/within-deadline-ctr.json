@@ -543,6 +543,24 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "execution steps.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "execution steps.CrosToolRunner: upload to rdb",
     "~followup_annotations": [

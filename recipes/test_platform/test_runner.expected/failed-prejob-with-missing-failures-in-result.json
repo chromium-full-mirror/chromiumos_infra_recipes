@@ -574,6 +574,36 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/autoserv_test/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "execution steps.original_test.upload test results to rdb",
     "~followup_annotations": [
@@ -581,10 +611,6 @@
       "@@@STEP_LOG_LINE@config@{@@@",
       "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17\"@@@",
-      "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"suite_task_id\", @@@",
       "@@@STEP_LOG_LINE@config@            \"parent-task-id\"@@@",
@@ -596,6 +622,10 @@
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
       "@@@STEP_LOG_LINE@config@            \"bb-42-chromeos/test_runner/test_runner\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",

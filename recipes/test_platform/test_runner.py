@@ -267,7 +267,7 @@ def _populate_timestamps_for_results(result, autotest_keyval_file):
 
 
 def _read_autotest_keyval_file(api, base_dir):
-  """Reads the contents of crossystem keyval file.
+  """Reads the contents of autotest keyval file.
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -321,8 +321,32 @@ def _read_crossystem_keyvals(api, crossystem_file_path):
     return {}
 
 
+def _read_kernel_version(api, kernel_log_file_path):
+  """Reads the kernel version from the kernel log file.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * kernel_log_file_path (string): The path to the kernel log file.
+  Returns:
+  * kernel_version (string): The kernel version.
+  """
+  try:
+    # Kernel log file has only 1 line, e.g. "Linux localhost
+    # 5.4.151-16902-g93699f4e73de #1 SMPPREEMPT Mon Oct 11 14:52:05 PDT 2021
+    # x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux"
+    content = api.file.read_text('read kernel log file', kernel_log_file_path,
+                                 test_data='')
+    if not content:
+      return ''
+
+    items = content.split(' ')
+    return items[2] if len(items) >= 2 else ''
+  except api.file.Error:
+    return {}
+
+
 def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
-                                 crossystem_keyvals):
+                                 crossystem_keyvals, kernel_version):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
@@ -358,6 +382,12 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         e.g. Google_Voema.13672.224.0
     * ancestor_buildbucket_ids: All the ancestor buildbucket ids,
         e.g. "8814950840874708945, 8814951792758733697"
+    * pool: Device pool,
+        e.g. "ChromeOSSkylab"
+    * wifi_chip: The wifi chip info,
+        e.g. "marvell"
+    * kernel_version:
+        e.g. "5.4.151-16902-g93699f4e73de"
 
 
     Args:
@@ -366,6 +396,7 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         to access a test.
     * autotest_keyvals (dict): The keyval labels for autotest test results.
     * crossystem_keyvals (dict): The keyval labels for crossystem.
+    * kernel_version (string): The kernel version.
 
     Returns:
     * base_tags (list[tuples]): Tags for the test results.
@@ -397,9 +428,15 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   if hostname:
     base_tags.append(('hostname', hostname[0]))
 
-  queued_time = datetime.datetime.utcfromtimestamp(
-      api.buildbucket.build.create_time.seconds)
-  base_tags.append(('queued_time', str(queued_time)))
+  pool = api.cros_tags.get_values(
+      'pool', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if pool:
+    base_tags.append(('pool', pool[0]))
+
+  wifi_chip = api.cros_tags.get_values(
+      'label-wifi_chip', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if wifi_chip:
+    base_tags.append(('wifi_chip', pool[0]))
 
   suite_task_id = api.buildbucket.build.infra.swarming.parent_run_id
   if suite_task_id:
@@ -414,6 +451,10 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
                                      builder_object.bucket,
                                      builder_object.builder)
   base_tags.append(('job_name', job_name))
+
+  queued_time = datetime.datetime.utcfromtimestamp(
+      api.buildbucket.build.create_time.seconds)
+  base_tags.append(('queued_time', str(queued_time)))
 
   ancestor_buildbucket_ids = ','.join(
       str(id) for id in api.buildbucket.build.ancestor_ids)
@@ -440,6 +481,9 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   rw_fwid = crossystem_keyvals.get('fwid')
   if rw_fwid:
     base_tags.append(('rw_fwid', rw_fwid))
+
+  if kernel_version:
+    base_tags.append(('kernel_version', kernel_version))
 
   return base_tags
 
@@ -563,6 +607,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
   crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
                                       'crossystem')
   crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
+  kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
+                                      'uname')
+  kernel_version = _read_kernel_version(api, kernel_log_file_path)
   config = {
       'result_format':
           result_format,
@@ -573,7 +620,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
               properties.request.parent_request_uid, autotest_keyvals),
       'base_tags':
           _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
-                                       crossystem_keyvals),
+                                       crossystem_keyvals, kernel_version),
       'result_file':
           result_file,
       'artifact_directory':
@@ -903,10 +950,13 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
         results_dir = ctr_test_response.result_dir_path.path
       crossystem_file_path = os.path.join(results_dir, 'sysinfo', 'crossystem')
       crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
+      kernel_log_file_path = os.path.join(results_dir, 'sysinfo', 'uname')
+      kernel_version = _read_kernel_version(api, kernel_log_file_path)
       autotest_keyvals = test_metadata.autotest_keyvals
 
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
-          api, test_metadata, autotest_keyvals, crossystem_keyvals)
+          api, test_metadata, autotest_keyvals, crossystem_keyvals,
+          kernel_version)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
           properties.cft_test_request.parent_request_uid, autotest_keyvals)
@@ -1133,6 +1183,13 @@ fwupdate_tries          = 0                              # [RW/int] Times to try
 hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
 ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
     """))
+
+  def _kernel_log_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.read kernel log file',
+        api.file.read_text("""
+Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux
+  """))
 
   # Required for initial module set up.
   def _misc_properties(cft_is_enabled=False):
@@ -1661,6 +1718,13 @@ hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
 ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
     """))
 
+  def _kernel_log_file_step_data_for_ctr():
+    return api.step_data(
+        'execution steps.read kernel log file',
+        api.file.read_text("""
+Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux
+    """))
+
   ########## Test cases #########
 
   yield api.test(
@@ -1694,6 +1758,8 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
               'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
           }),
       api.step_data('execution steps.original_test.read autotest keyval file',
                     api.file.read_text(errno_name='file does not exist')),
@@ -1719,8 +1785,37 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
               'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
           }),
       api.step_data('execution steps.original_test.read crossystem keyval file',
+                    api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'no-tast-kernel-log-file',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      api.step_data('execution steps.original_test.read kernel log file',
                     api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -1743,10 +1838,13 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
-              'dut_name': 'fakedut1-row2-rack3-host4'
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
           }),
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -1885,6 +1983,7 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
       _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -2337,6 +2436,7 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
 
   yield api.test('success-with-ctr', _set_build(bid=42), _misc_properties(True),
                  _crossystem_keyval_file_step_data_for_ctr(),
+                 _kernel_log_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _successful_run_test_step_for_ctr())

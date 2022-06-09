@@ -8,6 +8,7 @@
     "name": "inputs",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"defaultTestExecutionBehavior\":\"NON_CRITICAL\",@@@",
       "@@@STEP_LOG_LINE@request@  \"parentBuildId\":\"12345\",@@@",
       "@@@STEP_LOG_LINE@request@  \"parentRequestUid\":\"TestPlanRuns/12345/fake_board-cq.hw.bvt-tast-cq\",@@@",
       "@@@STEP_LOG_LINE@request@  \"prejob\":{@@@",
@@ -64,7 +65,10 @@
   },
   {
     "cmd": [],
-    "name": "execution steps"
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -165,7 +169,8 @@
     "cmd": [],
     "name": "execution steps.original_test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -744,7 +749,8 @@
     "name": "execution steps.original_test.read kernel log file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@uname@@@"
+      "@@@STEP_TEXT@file command encountered system error file does not exist@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -755,6 +761,38 @@
       "@@@STEP_LOG_LINE@config@{@@@",
       "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"image\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-board-cq/R11-123.45\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"build\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"R11-123.45\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"declared_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-board-cq/R11-123.45/fake-suite/fake-test\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"drone\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-drone-1234\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"drone_server\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fakeserver1-row2-drone3\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fakedut1-row2-rack3-host4\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"pool\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"ChromeOSSkylab\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"wifi_chip\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"ChromeOSSkylab\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"suite_task_id\", @@@",
       "@@@STEP_LOG_LINE@config@            \"parent-task-id\"@@@",
@@ -777,7 +815,9 @@
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ], @@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"board\": \"fake-board\", @@@",
       "@@@STEP_LOG_LINE@config@        \"build_target\": \"fake_board\", @@@",
+      "@@@STEP_LOG_LINE@config@        \"model\": \"fake-model\", @@@",
       "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
@@ -881,19 +921,39 @@
       "rdb",
       "stream",
       "-var",
+      "board:fake-board",
+      "-var",
       "build_target:fake_board",
       "-var",
+      "model:fake-model",
+      "-var",
       "test_config:fake_board-cq.hw.bvt-tast-cq",
+      "-tag",
+      "build:R11-123.45",
+      "-tag",
+      "declared_name:fake-board-cq/R11-123.45/fake-suite/fake-test",
+      "-tag",
+      "drone:fake-drone-1234",
+      "-tag",
+      "drone_server:fakeserver1-row2-drone3",
+      "-tag",
+      "hostname:fakedut1-row2-rack3-host4",
+      "-tag",
+      "image:fake-board-cq/R11-123.45",
       "-tag",
       "job_name:bb-42-chromeos/test_runner/test_runner",
       "-tag",
       "logs_url:gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
+      "-tag",
+      "pool:ChromeOSSkylab",
       "-tag",
       "queued_time:2018-05-25 23:50:17",
       "-tag",
       "suite_task_id:parent-task-id",
       "-tag",
       "task_id:dummy-task-id",
+      "-tag",
+      "wifi_chip:ChromeOSSkylab",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",
@@ -926,6 +986,37 @@
     "name": "execution steps.original_test.exonerate ResultDB results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "query",
+      "-json",
+      "-n",
+      "1000",
+      "-u",
+      "-tr-fields",
+      "variant,testId,status,expected",
+      "build:42"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.exonerate ResultDB results.rdb query",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

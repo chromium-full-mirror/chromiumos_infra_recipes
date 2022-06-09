@@ -718,6 +718,39 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/autoserv_test/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@uname@@@@",
+      "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
+      "@@@STEP_LOG_LINE@uname@  @@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "execution steps.original_test.upload test results to rdb",
     "~followup_annotations": [
@@ -750,8 +783,12 @@
       "@@@STEP_LOG_LINE@config@            \"fakedut1-row2-rack3-host4\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"pool\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"ChromeOSSkylab\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"wifi_chip\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"ChromeOSSkylab\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"suite_task_id\", @@@",
@@ -766,6 +803,10 @@
       "@@@STEP_LOG_LINE@config@            \"bb-42-chromeos/test_runner/test_runner\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
       "@@@STEP_LOG_LINE@config@            \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
@@ -776,6 +817,10 @@
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"rw_fwid\", @@@",
       "@@@STEP_LOG_LINE@config@            \"Google_Voema.13672.224.0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"kernel_version\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"5.4.190-18482-g9cffa68a11c1\"@@@",
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ], @@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
@@ -907,7 +952,11 @@
       "-tag",
       "job_name:bb-42-chromeos/test_runner/test_runner",
       "-tag",
+      "kernel_version:5.4.190-18482-g9cffa68a11c1",
+      "-tag",
       "logs_url:gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
+      "-tag",
+      "pool:ChromeOSSkylab",
       "-tag",
       "queued_time:2018-05-25 23:50:17",
       "-tag",
@@ -918,6 +967,8 @@
       "suite_task_id:parent-task-id",
       "-tag",
       "task_id:dummy-task-id",
+      "-tag",
+      "wifi_chip:ChromeOSSkylab",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",
