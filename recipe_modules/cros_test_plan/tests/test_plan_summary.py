@@ -25,6 +25,11 @@ def RunSteps(api):
       .tast_vm_test[0],
       api.cros_test_plan.test_api.tast_vm_informational_test_unit
       .tast_vm_test_cfg.tast_vm_test[0],
+      # Tast GCE tests
+      api.cros_test_plan.test_api.tast_gce_test_unit.tast_gce_test_cfg
+      .tast_gce_test[0],
+      api.cros_test_plan.test_api.tast_gce_informational_test_unit
+      .tast_gce_test_cfg.tast_gce_test[0],
   ]
 
   expected_summary = dict((test.common.display_name, test.common.critical)
