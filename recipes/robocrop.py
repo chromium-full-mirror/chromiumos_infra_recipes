@@ -72,22 +72,45 @@ def RunSteps(api, properties):
     with api.step.nest('compute scaling actions') as pres:
       robocrop_action = api.bot_scaling.get_robocrop_action(
           updated_bot_policy, gce_config, swarming_stats=swarming_status)
-      api.easy.set_properties_step(
-          robocrop_action=jsonpb.MessageToDict(robocrop_action))
+
+      # TODO(b/217973414): Remove normalization when we no longer test for py2.
+      normalized_robocrop_action = jsonpb.MessageToDict(robocrop_action)
+      normalized_robocrop_action['applResourceUtilization'].sort(
+          key=lambda x: x['application'])
+      for application in normalized_robocrop_action['applResourceUtilization']:
+        application['resourceUtilization'].sort(key=lambda x: x['region'])
+
+      api.easy.set_properties_step(robocrop_action=normalized_robocrop_action)
+
       # TODO(b/217973414): Replace with MessageToJson once we don't need to
       # fix the spacing between py2 and py3 MessageToJson.
-      pres.logs['robocrop_action'] = json.dumps(
-          jsonpb.MessageToDict(robocrop_action), separators=(',', ':'),
-          indent=2, sort_keys=True)
-    if properties.commit_changes:
-      with api.step.nest('update GCE Provider configs') as pres:
+      pres.logs['robocrop_action'] = json.dumps(normalized_robocrop_action,
+                                                separators=(',', ':'), indent=2,
+                                                sort_keys=True)
+
+    action = 'update' if properties.commit_changes else 'no change to'
+    with api.step.nest('{} GCE Provider configs'.format(action)) as pres:
+      if properties.commit_changes:
         gce_updated_configs = api.bot_scaling.update_gce_configs(
             robocrop_action, gce_config)
-        # TODO(b/217973414): Replace with MessageToJson once we don't need to
-        # fix the spacing between py2 and py3 MessageToJson.
-        pres.logs['final_gce_config'] = json.dumps(
-            jsonpb.MessageToDict(gce_updated_configs), separators=(',', ':'),
-            indent=2, sort_keys=True)
+      else:
+        gce_updated_configs = gce_config  # NO-OP
+
+      # TODO(b/217973414): Replace with MessageToJson once we don't need to
+      # fix the spacing between py2 and py3 MessageToJson.
+      pres.logs['final_gce_config'] = json.dumps(
+          jsonpb.MessageToDict(gce_updated_configs), separators=(',', ':'),
+          indent=2, sort_keys=True)
+
+      delta = {}
+      for updated in gce_updated_configs.vms:
+        for current in gce_config.vms:
+          if current.prefix == updated.prefix:
+            delta[updated.prefix] = '{before} -> {after}: {delta}'.format(
+                before=current.current_amount, after=updated.current_amount,
+                delta=updated.current_amount - current.current_amount)
+      pres.logs['delta_gce_config'] = json.dumps(delta, separators=(',', ':'),
+                                                 indent=2, sort_keys=True)
 
     if has_swarming_fetch_error:
       raise swarming_fetch_error
@@ -95,6 +118,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test('basic', api.properties(commit_changes=True))
+  yield api.test('no-commit-changes', api.properties(commit_changes=False))
   yield api.test('basic-chrome',
                  api.properties(commit_changes=True, application='Chrome'))
   yield api.test(

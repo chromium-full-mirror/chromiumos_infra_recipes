@@ -813,7 +813,11 @@
       "@@@STEP_LOG_LINE@final_gce_config@    }@@@",
       "@@@STEP_LOG_LINE@final_gce_config@  ]@@@",
       "@@@STEP_LOG_LINE@final_gce_config@}@@@",
-      "@@@STEP_LOG_END@final_gce_config@@@"
+      "@@@STEP_LOG_END@final_gce_config@@@",
+      "@@@STEP_LOG_LINE@delta_gce_config@{@@@",
+      "@@@STEP_LOG_LINE@delta_gce_config@  \"prefix-first\":\"25 -> 25: 0\"@@@",
+      "@@@STEP_LOG_LINE@delta_gce_config@}@@@",
+      "@@@STEP_LOG_END@delta_gce_config@@@"
     ]
   },
   {
