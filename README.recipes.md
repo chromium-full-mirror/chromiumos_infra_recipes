@@ -233,7 +233,9 @@
   * [cros_infra_config:tests/determine_if_staging](#recipes-cros_infra_config_tests_determine_if_staging) (Python3 ✅)
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target) (Python3 ✅)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils) (Python3 ✅)
+  * [cros_lkgm:examples/do_lkgm](#recipes-cros_lkgm_examples_do_lkgm) (Python3 ✅)
   * [cros_lkgm:examples/full](#recipes-cros_lkgm_examples_full) (Python3 ✅)
+  * [cros_lkgm:tests/collect_public_build](#recipes-cros_lkgm_tests_collect_public_build) (Python3 ✅)
   * [cros_lvfs_mirror:examples/full](#recipes-cros_lvfs_mirror_examples_full) (Python3 ✅)
   * [cros_paygen:examples/create_paygen_build_report](#recipes-cros_paygen_examples_create_paygen_build_report) (Python3 ✅)
   * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full) (Python3 ✅)
@@ -2637,20 +2639,36 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_lkgm](/recipe_modules/cros_lkgm)
 
-[DEPS](/recipe_modules/cros_lkgm/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_lkgm/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#23)(self):**
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#75)(self):**
+
+Collects results from the public build.
+
+Returns: (common_pb2.Build) The scheduled build.
+
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#92)(self, release_build_results):**
+
+Performs the LGKM process if the build is an LKGM candidate.
+
+This should only be called from a release orchestrator.
+
+Args:
+  release_build_results (list(common_pb2.Build)): list of release build
+    results as returned by api.orch_menu.plan_and_run_children.
+
+&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#34)(self):**
 
 Schedules a public build.
 
-Returns: (Build) The scheduled build.
+Returns: (common_pb2.Build) The scheduled build.
 ### *recipe_modules* / [cros\_lvfs\_mirror](/recipe_modules/cros_lvfs_mirror)
 
 [DEPS](/recipe_modules/cros_lvfs_mirror/__init__.py#5): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9525,6 +9543,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#16)(api):**
+### *recipes* / [cros\_lkgm:examples/do\_lkgm](/recipe_modules/cros_lkgm/examples/do_lkgm.py)
+
+[DEPS](/recipe_modules/cros_lkgm/examples/do_lkgm.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_lkgm/examples/do_lkgm.py#28)(api, properties):**
 ### *recipes* / [cros\_lkgm:examples/full](/recipe_modules/cros_lkgm/examples/full.py)
 
 [DEPS](/recipe_modules/cros_lkgm/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -9532,6 +9557,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_lkgm/examples/full.py#22)(api):**
+### *recipes* / [cros\_lkgm:tests/collect\_public\_build](/recipe_modules/cros_lkgm/tests/collect_public_build.py)
+
+[DEPS](/recipe_modules/cros_lkgm/tests/collect_public_build.py#6): [cros\_lkgm](#recipe_modules-cros_lkgm), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_lkgm/tests/collect_public_build.py#16)(api):**
 ### *recipes* / [cros\_lvfs\_mirror:examples/full](/recipe_modules/cros_lvfs_mirror/examples/full.py)
 
 [DEPS](/recipe_modules/cros_lvfs_mirror/examples/full.py#6): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)
@@ -10890,7 +10922,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#22)(api, properties):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/orchestrator.py#11): [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -10898,9 +10930,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#40)(api):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#41)(api):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#32)(api):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#33)(api):**
 ### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
 
 [DEPS](/recipes/os_install_vm.py#46): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

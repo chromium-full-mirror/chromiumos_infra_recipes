@@ -1,0 +1,16 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_lkgm;
+
+message CrosLkgmProperties {
+  // Whether or not to submit the LKGM CL.
+  bool full_run = 1;
+
+  // Percent of release and public builders that must be green for the build
+  // to be considered an LKGM candidate. Should be a value in [0, 100].
+  int32 builder_threshold_percentage = 2;
+}
