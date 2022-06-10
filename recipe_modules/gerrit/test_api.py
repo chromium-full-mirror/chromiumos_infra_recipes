@@ -90,13 +90,13 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     resp['branch'] = values.get('branch', self.m.src_state.default_branch)
     resp['subject'] = values.get('subject', 'Change title')
     if 'revisions' in values:
-      resp['revisions'] = values.get('revisions')
+      resp['revisions'] = values['revisions']
     if 'submitted' in values:
-      resp['submitted'] = values.get('submitted')
+      resp['submitted'] = values['submitted']
     return resp
 
-  def set_gerrit_fetch_changes_response(self, step_name, changes,
-                                        values_dict=None, iteration=1):
+  def set_gerrit_fetch_changes_response(self, step_name, changes, values_dict,
+                                        iteration=1):
     """Set the response from gerrit-fetch-changes.
 
     Args:
@@ -124,11 +124,11 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(step_name, stdout=self.m.json.output(respDict))
 
   def set_query_changes_response(self, step_name, changes, host_url,
-                                 values_dict=None, iteration=1):
-    """Set the response from query_changes.
+                                 values_dict, iteration=1):
+    """Set the response from the depot_tools API's get_changes().
 
     Args:
-      step_name (str): name of the step calling gerrit.fetch_patch_sets.
+      step_name (str): name of the step calling gerrit.query_changes.
       changes (list[GerritChange]): The list of changes which will be found.
       host_url (str): URL for the Gerrit host.
       values_dict (dict): Dictionary of {change_number: values} to provide field
