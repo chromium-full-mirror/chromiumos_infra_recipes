@@ -5,6 +5,7 @@
 
 """APIs for managing Gerrit changes."""
 
+import collections
 from datetime import timedelta
 import enum
 import json
@@ -185,11 +186,56 @@ class Label(enum.Enum):
   @property
   def key(self):
     # FOO_BAR must be Foo-Bar when set via Gerrit.
-    return '-'.join([
-        word[0].upper() + word[1:].lower()
-        for word in self.name.split('_')
-        if word.strip()
-    ])
+    return '-'.join(
+        [word.title() for word in self.name.split('_') if word.strip()])
+
+
+class LabelConstraintType(enum.Enum):
+  """When querying changes, types of constraint one can apply to a label."""
+  APPROVED = 1
+  UNAPPROVED = 2
+
+
+# LabelConstraints enable recipes to specify constraints when querying Gerrit
+# regarding the status of votes on labels: for example, requiring that a label
+# be approved or unapproved.
+# Args:
+#   label: Label
+#   type: LabelConstraintType
+LabelConstraint = collections.namedtuple('LabelConstraint', ('label', 'type'))
+
+
+def _change_labels_satisfy_constraints(change_json, constraints):
+  """Determine whether the Gerrit change JSON meet the label constraints.
+
+  Args:
+    change_json (dict): JSON representing a Gerrit change, as returned by
+      api.depot_tools_gerrit.get_changes(o_params=['LABELS']).
+    constraints (list[LabelConstraint]): The constraints to compare against the
+      change.
+  """
+  try:
+    change_labels = change_json['labels']
+  except KeyError:
+    raise StepFailure(
+        'Gerrit change JSON does not contain key `labels`. Maybe '
+        'get_changes() was called without o_params=["LABELS"]?\n\n%s' %
+        change_json)
+  for constraint in constraints:
+    try:
+      label = change_labels[constraint.label.key]
+    except KeyError:
+      raise StepFailure('Gerrit change labels do not contain key %s: %s' %
+                        (constraint.label.key, change_labels))
+    if constraint.type == LabelConstraintType.APPROVED:
+      if 'approved' not in label:
+        return False
+    elif constraint.type == LabelConstraintType.UNAPPROVED:
+      if 'approved' in label:
+        return False
+    else:
+      raise StepFailure('Unexpected LabelConstraintType: %d' % constraint.type)
+  return True
 
 
 class GerritApi(RecipeApi):
@@ -197,6 +243,8 @@ class GerritApi(RecipeApi):
 
   PatchSet = PatchSet
   Label = Label
+  LabelConstraintType = LabelConstraintType
+  LabelConstraint = LabelConstraint
 
   def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
@@ -738,7 +786,7 @@ class GerritApi(RecipeApi):
             if attempt == retries:
               raise ex
 
-  def query_changes(self, host, query_params):
+  def query_changes(self, host, query_params, label_constraints=None):
     """Query gerrit for the given changes.
 
     Args:
@@ -746,13 +794,22 @@ class GerritApi(RecipeApi):
       query_params (list[(str, str)]): Query parameters as list of (key, value)
           tuples to form a query as documented here:
           https://gerrit-review.googlesource.com/Documentation/user-search.html#search-operators
+      label_constraints (list[LabelConstraint]): Constraints on the changes'
+          labels, to be used as a filter before returning.
 
     Returns:
       list[GerritChange]: Changes that match the query.
     """
     with self.m.step.nest('query %s' % host) as presentation:
-      results = self.m.depot_tools_gerrit.get_changes(host, query_params)
+      o_params = ['LABELS'] if label_constraints else None
+      results = self.m.depot_tools_gerrit.get_changes(host, query_params,
+                                                      o_params=o_params)
       prefix = 'https://'
+      if label_constraints:
+        results = [
+            r for r in results
+            if _change_labels_satisfy_constraints(r, label_constraints)
+        ]
       changes = [
           GerritChange(
               host=host[len(prefix):] if host.startswith(prefix) else host,
