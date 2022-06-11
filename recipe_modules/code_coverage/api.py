@@ -37,7 +37,7 @@ ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:362552734'
 ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
 
 # Number of file coverage entries per chunk
-FILE_ENTRIES_PER_CHUNK = 5000
+FILE_ENTRIES_PER_CHUNK = 3000
 
 
 class CodeCoverageApi(recipe_api.RecipeApi):

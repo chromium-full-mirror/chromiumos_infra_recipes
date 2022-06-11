@@ -5427,7 +5427,7 @@
       "--coverage-type",
       "LCOV",
       "--file-entries-per-chunk",
-      "5000",
+      "3000",
       "--chunk-dest-dir",
       "[CLEANUP]/chunked_tmp_1"
     ],
