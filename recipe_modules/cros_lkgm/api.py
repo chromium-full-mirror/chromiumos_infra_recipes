@@ -27,6 +27,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     self._full_run = properties.full_run
     self._builder_threshold_percentage = properties.builder_threshold_percentage
+    self._presubmit_trybots = properties.presubmit_trybots
     self._public_build = None
     self._public_build_results = None
     super(CrosLkgmApi, self).__init__(*args, **kwargs)
@@ -161,7 +162,10 @@ class CrosLkgmApi(recipe_api.RecipeApi):
             '',
             'Uploaded by {}'.format(self.m.buildbucket.build_url()),
             '',
-            # TODO(b/232822787): Include `CQ_INCLUDE_TRYBOTS` footers.
+        ] + [
+            'CQ_INCLUDE_TRYBOTS=luci.chrome.try:{}'.format(trybot)
+            for trybot in self._presubmit_trybots
+        ] + [
             '',
             'Cr-Automation-Id: cros_lkgm',
         ]

@@ -90,6 +90,8 @@ def GenTests(api):
                         kwargs.pop('builder_threshold', 50),
                     'full_run':
                         kwargs.pop('full_run', False),
+                    'presubmit_trybots':
+                        kwargs.pop('presubmit_trybots', []),
                 },
             }), *args, **kwargs)
 
@@ -110,13 +112,17 @@ def GenTests(api):
           step_command_has_substr,
           'create LKGM CL.commit in chromium/src.write commit message',
           '1234.56.0'),
+      api.post_check(
+          step_command_has_substr,
+          'create LKGM CL.commit in chromium/src.write commit message',
+          'CQ_INCLUDE_TRYBOTS=luci.chrome.try:chromeos-eve-chrome'),
       api.post_check(step_command_has_substr,
                      'create LKGM CL.create CL.set labels on CL 1.git push',
                      'Commit-Queue+2'),
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
-      full_run=True)
+      full_run=True, presubmit_trybots=['chromeos-eve-chrome'])
 
   yield lgkm_test(
       'lkgm-candidate-dry-run',

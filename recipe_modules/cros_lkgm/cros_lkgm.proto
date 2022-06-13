@@ -13,4 +13,17 @@ message CrosLkgmProperties {
   // Percent of release and public builders that must be green for the build
   // to be considered an LKGM candidate. Should be a value in [0, 100].
   int32 builder_threshold_percentage = 2;
+
+  // The list of trybots we require LKGM updates to run and pass on before
+  // landing. Since they're internal trybots, the CQ won't automatically trigger
+  // them, so we have to explicitly tell it to.
+  // e.g. [
+  //    'chromeos-betty-pi-arc-chrome',
+  //    'chromeos-eve-chrome',
+  //    'chromeos-kevin-chrome',
+  //    'chromeos-octopus-chrome',
+  //    'chromeos-reven-chrome',
+  //    'lacros-amd64-generic-chrome',
+  // ]
+  repeated string presubmit_trybots = 3;
 }
