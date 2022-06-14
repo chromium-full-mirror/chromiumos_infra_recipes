@@ -306,7 +306,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
   config_to_ufs_datastore = cwd.join(
       'src/config/payload_utils/config_to_datastore.py')
-  ufs_env = "prod"
+  ufs_env = properties.ufs_env or "prod"
 
   # only need to upload for not flattened configs; need to determine condition
   with api.context(config_internal),\

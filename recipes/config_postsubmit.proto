@@ -6,7 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.config_postsubmit;
 
-// NEXT ID: 2
+// NEXT ID: 5
 message ConfigPostsubmitProperties {
 
     enum ActionTypes {
@@ -58,4 +58,8 @@ message ConfigPostsubmitProperties {
 
   // Same with programs for program config joining
   repeated AllowedRepo allowed_programs = 3;
+
+  // UFS environment to upload configs to, passed to the --env arg on the
+  // config_to_datastore.py script. Default is "prod".
+  string ufs_env = 4;
 }
