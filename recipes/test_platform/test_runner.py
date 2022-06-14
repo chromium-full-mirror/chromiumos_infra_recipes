@@ -363,7 +363,7 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
     * host_name:
         e.g. chromeos15-row4-rack5-host1
     * queued_time:
-        e.g. 2018-05-25 23:50:17.
+        e.g. "2022-06-03 00:15:34.000000 UTC".
     * suite_task_id: The parent's swarming task ID,
         e.g. 59ef5e9532bbd611
     * task_id: The swarming task ID.
@@ -454,7 +454,8 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
 
   queued_time = datetime.datetime.utcfromtimestamp(
       api.buildbucket.build.create_time.seconds)
-  base_tags.append(('queued_time', str(queued_time)))
+  base_tags.append(
+      ('queued_time', queued_time.strftime('%Y-%m-%d %H:%M:%S.%f UTC')))
 
   ancestor_buildbucket_ids = ','.join(
       str(id) for id in api.buildbucket.build.ancestor_ids)
