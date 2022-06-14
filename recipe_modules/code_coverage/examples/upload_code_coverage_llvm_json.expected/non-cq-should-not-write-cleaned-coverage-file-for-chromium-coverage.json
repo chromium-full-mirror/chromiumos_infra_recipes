@@ -5497,7 +5497,7 @@
       "--commit_id",
       "abcd1234",
       "--ref",
-      "refs/heads/master",
+      "refs/heads/main",
       "--uploader_name",
       "amd64-generic-postsubmit",
       "--uploader_id",

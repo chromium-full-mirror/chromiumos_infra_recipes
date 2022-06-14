@@ -309,8 +309,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                 codesearch_commit_id,
                 '--ref',
                 # self._branch,
-                # TODO(b/189193947): must be master for code search integration.
-                'refs/heads/master',
+                # TODO(b/189193947): must be main for code search integration.
+                'refs/heads/main',
                 '--uploader_name',
                 build.builder.builder,
                 '--uploader_id',
