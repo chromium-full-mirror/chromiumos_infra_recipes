@@ -13,4 +13,8 @@ message RepoProperties {
     // Whether to disable verification of repo.  This allows testing of repo
     // changes before they are tagged.
     bool disable_repo_verify = 3;
+
+    // Repo url to use when not provided by the caller.  Defaults to the URL
+    // internal to the repo launcher being used.
+    string default_repo_url = 4;
 }

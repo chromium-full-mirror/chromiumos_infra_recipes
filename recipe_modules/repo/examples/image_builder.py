@@ -205,3 +205,17 @@ def GenTests(api):
   yield WithretryTest(api, 'recovery', RepoState.STATE_RECOVERY, local_manifest)
 
   yield WithNonePruneTest(api, 'unspecified', RepoState.STATE_UNSPECIFIED)
+
+  default_override = 'http://my-default/repo-url'
+  yield api.test(
+      'with-default-repo-url',
+      api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED),
+      api.properties(
+          **{'$chromeos/repo': dict(default_repo_url=default_override)}),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure synced checkout.repo init',
+                     ['--repo-url=%s' % default_override]),
+      api.post_check(post_process.StepCommandContains,
+                     'sync to snapshot.repo init',
+                     ['--repo-url=%s' % default_override]),
+  )

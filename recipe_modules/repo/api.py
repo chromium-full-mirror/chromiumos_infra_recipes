@@ -57,6 +57,7 @@ class RepoApi(recipe_api.RecipeApi):
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._remove_manifests_git = properties.remove_manifests_git
     self._disable_repo_verify = properties.disable_repo_verify
+    self._default_repo_url = properties.default_repo_url
     self._binary_updated = False
     self._repo_url = None
     self._repo_rev = None
@@ -189,12 +190,12 @@ class RepoApi(recipe_api.RecipeApi):
     # If any caller in the recipe has specified repo_url or repo_branch, they
     # should be used for any subsequent call that does not explicitly specify
     # them.
-    self._repo_url = repo_url or self._repo_url
+    self._repo_url = repo_url or self._repo_url or self._default_repo_url
     self._repo_rev = repo_branch or self._repo_rev
     if not self._repo_rev and not self.m.cros_infra_config.is_staging:
       self._repo_rev = 'stable'
 
-    if self._repo_url is not None:
+    if self._repo_url:
       cmd += ['--repo-url=%s' % self._repo_url]
     if self._repo_rev:
       cmd += ['--repo-rev=%s' % self._repo_rev]
