@@ -477,9 +477,7 @@
       "all",
       "--manifest-branch",
       "release-R87-13505.B",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1261,7 +1259,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1821,7 +1819,7 @@
       "all",
       "--manifest-branch",
       "release-R87-13505.B",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2173,7 +2171,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

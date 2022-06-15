@@ -990,9 +990,7 @@
       "all",
       "--manifest-branch",
       "staging-snapshot",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1615,7 +1613,7 @@
       "all",
       "--manifest-branch",
       "staging-snapshot",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

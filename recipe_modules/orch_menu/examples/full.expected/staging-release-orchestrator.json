@@ -1147,9 +1147,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1924,9 +1922,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -2500,6 +2496,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

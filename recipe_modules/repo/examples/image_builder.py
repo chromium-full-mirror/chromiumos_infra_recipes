@@ -12,6 +12,8 @@ DEPS = [
     'repo',
 ]
 
+from recipe_engine import post_process
+
 from google.protobuf.json_format import MessageToDict
 from PB.recipe_modules.chromeos.repo.examples import common
 from PB.chromiumos.repo_cache_state import RepoState
@@ -165,6 +167,20 @@ def GenTests(api):
 
   yield api.test('basic-manifest-mismatch',
                  api.repo.repo_manifest_branch('mismatch'))
+
+  yield api.test(
+      'with-disable-repo-verify',
+      api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED),
+      api.properties(**{'$chromeos/repo': dict(disable_repo_verify=True)}),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure synced checkout.repo init', ['--no-repo-verify']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'ensure synced checkout.repo binary update.repo selfupdate',
+          ['--no-repo-verify']),
+      api.post_check(post_process.StepCommandContains,
+                     'sync to snapshot.repo init', ['--no-repo-verify']),
+  )
 
   local_manifest = common.LocalManifest(
       repo='https://chrome-internal.googlesource.com/testproject1',

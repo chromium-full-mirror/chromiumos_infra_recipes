@@ -970,9 +970,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1748,7 +1746,8 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "main"
+      "main",
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {

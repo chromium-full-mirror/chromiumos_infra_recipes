@@ -118,11 +118,8 @@
       "group1,group2",
       "--depth",
       "10",
-      "--repo-url",
-      "http://repo_url",
-      "--repo-branch",
-      "next",
-      "--no-repo-verify",
+      "--repo-url=http://repo_url",
+      "--repo-rev=next",
       "--manifest-name",
       "../../snapshot.xml",
       "--verbose"
@@ -537,7 +534,8 @@
       "http://manifest_url",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-url=http://repo_url",
+      "--repo-rev=next",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

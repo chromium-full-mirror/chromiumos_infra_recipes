@@ -56,7 +56,10 @@ class RepoApi(recipe_api.RecipeApi):
     super(RepoApi, self).__init__(*args, **kwargs)
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._remove_manifests_git = properties.remove_manifests_git
+    self._disable_repo_verify = properties.disable_repo_verify
     self._binary_updated = False
+    self._repo_url = None
+    self._repo_rev = None
 
     # Running stats variables for repo.
     # A list of dicts, key parameters from a repo sync operation log.
@@ -171,6 +174,7 @@ class RepoApi(recipe_api.RecipeApi):
     """
     assert _kwonly == (), 'init accepts only 1 positional arg'
     _ = projects
+    verify_repo = not self._disable_repo_verify
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
     if manifest_branch:
       cmd += ['--manifest-branch', manifest_branch]
@@ -181,19 +185,27 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--groups', ','.join(groups)]
     if depth is not None:
       cmd += ['--depth', '%d' % depth]
-    if repo_url is not None:
-      cmd += ['--repo-url', repo_url]
-    if repo_branch is not None:
-      cmd += ['--repo-branch', repo_branch, '--no-repo-verify']
-    elif not self.m.cros_infra_config.is_staging:
-      # Enforce stable if branch not specified and not in staging.
-      cmd += ['--repo-rev=stable']
+
+    # If any caller in the recipe has specified repo_url or repo_branch, they
+    # should be used for any subsequent call that does not explicitly specify
+    # them.
+    self._repo_url = repo_url or self._repo_url
+    self._repo_rev = repo_branch or self._repo_rev
+    if not self._repo_rev and not self.m.cros_infra_config.is_staging:
+      self._repo_rev = 'stable'
+
+    if self._repo_url is not None:
+      cmd += ['--repo-url=%s' % self._repo_url]
+    if self._repo_rev:
+      cmd += ['--repo-rev=%s' % self._repo_rev]
+    if not verify_repo:
+      cmd += ['--no-repo-verify']
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
     if verbose:
       cmd += ['--verbose']
     self._step(cmd, timeout=15 * 60)
-    self._binary_selfupdate(self.m.context.cwd)
+    self._binary_selfupdate(self.m.context.cwd, verify_repo)
     if not clean:
       self._clear_git_locks()
 
@@ -970,11 +982,12 @@ class RepoApi(recipe_api.RecipeApi):
       # repository in the cwd's ancestor directories.
       assert self.m.path.exists(root_path.join('.repo')), '.repo not created!'
 
-  def _binary_selfupdate(self, root_path):
+  def _binary_selfupdate(self, root_path, verify_repo):
     """Issues a repo selfupdate to update the binary.
 
     Args"
       root_path (Path): Path to the repo root.
+      verify_repo (bool): Whether to verify the signature on repo.
     """
     if self._binary_updated:
       return
@@ -982,6 +995,8 @@ class RepoApi(recipe_api.RecipeApi):
       self.version()
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']
+        if not verify_repo:
+          cmd.append('--no-repo-verify')
         try:
           self._step(cmd, ok_ret={0})
         except recipe_api.StepFailure:

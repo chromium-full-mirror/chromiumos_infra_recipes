@@ -1318,9 +1318,7 @@
       "all",
       "--manifest-branch",
       "staging-snapshot",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1872,6 +1870,7 @@
       "https://chromium.googlesource.com/chromiumos/manifest",
       "--groups",
       "all",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

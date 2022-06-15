@@ -78,30 +78,6 @@
   },
   {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "RECIPE_REPO[depot_tools]/.cipd_bin",
-      "-ensure-file",
-      "RECIPE_REPO[depot_tools]/cipd_manifest.txt",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.ensure depot_tools/.cipd_bin",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
@@ -110,16 +86,8 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--reference",
-      "/preload/chromeos",
-      "--groups",
-      "group1,group2",
-      "--depth",
-      "10",
-      "--repo-url=http://repo_url",
-      "--repo-rev=next",
-      "--manifest-name",
-      "../../snapshot.xml",
+      "--repo-rev=stable",
+      "--no-repo-verify",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
@@ -168,7 +136,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
+      "selfupdate",
+      "--no-repo-verify"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -256,62 +225,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/ensure/.repo/local_manifests"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.ensure local manifest dir",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/testproject1/+/snapshot/local_manifest.xml",
-      "--format",
-      "text"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.fetch snapshot:local_manifest.xml",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "\n<manifest>\n  <remote name=\"cros-internal\"\n          fetch=\"https://chrome-internal.googlesource.com\"\n          review=\"https://chrome-internal-review.googlesource.com\" />\n  <project name=\"chromeos/private-repo1\"\n     path=\"src/private-repo1\"\n     remote=\"cros-internal\" />\n</manifest>\n    ",
-      "[CLEANUP]/ensure/.repo/local_manifests/local_manifest.xml"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.write local manifest",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "ensure synced checkout.ensure clean checkout",
     "~followup_annotations": [
@@ -322,8 +235,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy",
       "--ignore-missing",
       "-j",
       "32",
@@ -352,8 +263,6 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy",
       "--ignore-missing",
       "-j",
       "32",
@@ -385,25 +294,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "--event-log=[CLEANUP]/event_log__tmp_1",
       "sync",
-      "--force-sync",
-      "--detach",
-      "--current-branch",
-      "--jobs",
-      "99",
-      "--manifest-name",
-      "../../snapshot.xml",
-      "--no-tags",
-      "--optimized-fetch",
-      "--cache-dir",
-      "/tmp/cache",
-      "--retry-fetches",
-      "8",
-      "--verbose",
-      "--no-manifest-update",
-      "--force-remove-dirty",
-      "--prune",
-      "chromiumos/config",
-      "chromeos/project/puff/duffy"
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -532,8 +423,8 @@
       "http://manifest_url",
       "--groups",
       "all",
-      "--repo-url=http://repo_url",
-      "--repo-rev=next",
+      "--repo-rev=stable",
+      "--no-repo-verify",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

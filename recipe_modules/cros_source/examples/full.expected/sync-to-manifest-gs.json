@@ -619,9 +619,7 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1403,7 +1401,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -2054,7 +2052,7 @@
       "",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"
@@ -2702,7 +2700,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3395,7 +3393,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--manifest-name",
       "../../manifest-internal/default.xml",
       "--verbose"

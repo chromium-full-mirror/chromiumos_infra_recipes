@@ -9,4 +9,8 @@ message RepoProperties {
 
     // Anti-feature flag: rm .repo/manifests and .repo/manifests.git.
     bool remove_manifests_git = 2;
+
+    // Whether to disable verification of repo.  This allows testing of repo
+    // changes before they are tagged.
+    bool disable_repo_verify = 3;
 }
