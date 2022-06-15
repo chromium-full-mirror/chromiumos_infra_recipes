@@ -58,14 +58,11 @@ def RunSteps(api):
   # applied.  Legacy and Toolchain artifacts get us coverage of both paths in
   # the API 1.0.0 case.
   uploaded = api.cros_artifacts.upload_artifacts(
-      'target-toolchain',
-      BuilderConfig.Id.TOOLCHAIN,
-      'artifacts_gs_bucket',
+      'target-toolchain', BuilderConfig.Id.TOOLCHAIN, 'artifacts_gs_bucket',
       artifacts_info=artifacts_info,
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
-                              build_target=target),
-  )
+                              build_target=target))
 
   api.cros_artifacts.upload_metadata(
       'test',
@@ -116,3 +113,18 @@ def GenTests(api):
       api.cros_build_api.set_api_return(parent_step_name='upload artifacts',
                                         endpoint='ArtifactsService/Get',
                                         retcode=1))
+  yield api.test(
+      'use-gcloud-storage',
+      api.buildbucket.try_build(
+          experiments=['cros_artifacts.use_gcloud_storage']))
+
+  yield api.test(
+      'use-gcloud-storage-exception',
+      api.buildbucket.try_build(
+          experiments=['cros_artifacts.use_gcloud_storage']),
+      api.step_data(
+          'upload artifacts.gcloud storage experiment.gcloud storage cp',
+          retcode=1),
+      api.post_check(post_process.StepTextEquals,
+                     'upload artifacts.gcloud storage experiment',
+                     'failed to upload artifacts using gcloud storage'))
