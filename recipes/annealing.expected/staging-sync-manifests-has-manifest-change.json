@@ -1590,12 +1590,31 @@
       "@@@STEP_LOG_END@prior versions@@@",
       "@@@STEP_LOG_LINE@diffs@{@@@",
       "@@@STEP_LOG_LINE@diffs@  \"[CLEANUP]/chromiumos_workspace/manifest\":[@@@",
+      "@@@STEP_LOG_LINE@diffs@    \"[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml\",@@@",
       "@@@STEP_LOG_LINE@diffs@    \"[CLEANUP]/chromiumos_workspace/manifest/full.xml\",@@@",
       "@@@STEP_LOG_LINE@diffs@    \"[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml\",@@@",
       "@@@STEP_LOG_LINE@diffs@    \"[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml\"@@@",
       "@@@STEP_LOG_LINE@diffs@  ]@@@",
       "@@@STEP_LOG_LINE@diffs@}@@@",
       "@@@STEP_LOG_END@diffs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/codesearch-chromiumos.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.Copy manifest-internal/codesearch-chromiumos.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1682,6 +1701,13 @@
   {
     "cmd": [],
     "name": "sync manifests.diff check (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.diff check (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2001,6 +2027,19 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "name": "push uprevs.retrieve project information.repo for manifest/codesearch-chromiumos.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
     "name": "push uprevs.retrieve project information.repo for manifest/full.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2044,6 +2083,7 @@
     "name": "push uprevs.commit uprevs.commit uprev changes in manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml@@@",
       "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/manifest/full.xml@@@",
       "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml@@@",
       "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml@@@",
@@ -2054,6 +2094,7 @@
     "cmd": [
       "git",
       "add",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/full.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
@@ -2095,6 +2136,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1",
       "--",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/full.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
@@ -2241,9 +2283,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@repo@[CLEANUP]/chromiumos_workspace/manifest@@@",
       "@@@STEP_LOG_END@repo@@@",
-      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/full.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/full.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
+      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/full.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/full.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
       "@@@STEP_LOG_END@projects@@@",
-      "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/full.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/full.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
+      "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml', path='src/[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
       "@@@STEP_LOG_END@project chosen@@@"
     ]
   },
@@ -2251,6 +2293,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/full.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml",
@@ -2270,6 +2313,7 @@
     "name": "push uprevs.push to manifest.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml|src/[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/manifest/full.xml|src/[CLEANUP]/chromiumos_workspace/manifest/full.xml|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml|src/[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml|src/[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml|cros|refs/heads/main|refs/heads/main@@@",

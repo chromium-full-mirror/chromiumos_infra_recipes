@@ -107,6 +107,8 @@ class CrosSourceApi(RecipeApi):
 
     MirroredManifestFile = namedtuple('MirroredManifestFile', 'src dest')
     return [
+        MirroredManifestFile('codesearch-chromiumos.xml',
+                             'codesearch-chromiumos.xml'),
         MirroredManifestFile('full.xml', 'full.xml'),
         MirroredManifestFile('external_full.xml', 'full.xml'),
         MirroredManifestFile('_kernel_upstream.xml', '_kernel_upstream.xml'),

@@ -2355,6 +2355,36 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/codesearch-chromiumos.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync manifests.Copy manifest-internal/codesearch-chromiumos.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "[CLEANUP]/chromiumos_workspace/manifest-internal/full.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
@@ -2474,7 +2504,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2501,7 +2531,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2534,7 +2564,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2561,7 +2591,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2594,7 +2624,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2621,7 +2651,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+      "[CLEANUP]/chromiumos_workspace/manifest/_kernel_upstream.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2638,6 +2668,66 @@
       }
     },
     "name": "sync manifests.diff check (3).git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.diff check (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync manifests.diff check (4).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[CLEANUP]/chromiumos_workspace/manifest/_remotes.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync manifests.diff check (4).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

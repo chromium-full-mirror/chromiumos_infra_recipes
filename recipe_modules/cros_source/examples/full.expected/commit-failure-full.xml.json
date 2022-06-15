@@ -3119,6 +3119,60 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/codesearch-chromiumos.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "patch manifest.copy codesearch-chromiumos.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[CLEANUP]/chromiumos_workspace/manifest/codesearch-chromiumos.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "patch manifest.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "[CLEANUP]/chromiumos_workspace/manifest-internal/full.xml",
       "[CLEANUP]/chromiumos_workspace/manifest/full.xml"
     ],
@@ -3160,7 +3214,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "patch manifest.git add",
+    "name": "patch manifest.git add (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -3214,7 +3268,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "patch manifest.git add (2)",
+    "name": "patch manifest.git add (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -3268,7 +3322,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "patch manifest.git add (3)",
+    "name": "patch manifest.git add (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
