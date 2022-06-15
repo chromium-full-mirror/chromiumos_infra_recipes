@@ -76,7 +76,7 @@ def DoRunSteps(api):
   # Run any HW tests.
   api.orch_menu.plan_and_run_tests(container_metadata=metadata)
 
-  if api.orch_menu.is_release_orchestrator:
+  if api.orch_menu.is_release_orchestrator and api.cros_source.manifest_branch == 'main':
     api.cros_lkgm.collect_public_build()
     api.cros_lkgm.do_lkgm(builds_status.completed_builds)
 
