@@ -88,11 +88,6 @@ def RunSteps(api, properties):
         json.dumps(configured_payloads, sort_keys=True, separators=(',', ':'),
                    indent=2))
 
-    # If no payloads are configured return (that was easy!).
-    if not configured_payloads:
-      pres.step_text = 'no configurations matched in payload.json'
-      return
-
   # Get all the artifacts in the source(s) and target locations.
   target_artifacts, source_artifacts = [], []
   for channel in properties.channels:
@@ -149,11 +144,15 @@ def RunSteps(api, properties):
                                          properties.dryrun))
 
     # Do configured delta payloads.
+    delta_gen_reqs = []
     for payload_cfg in configured_payloads:
-      delta_gen_reqs = api.cros_paygen.get_delta_requests(
-          payload_cfg, source_artifacts, target_artifacts,
-          properties.dest_bucket, True, properties.dryrun)
+      delta_gen_reqs.extend(
+          api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
+                                             target_artifacts,
+                                             properties.dest_bucket, True,
+                                             properties.dryrun))
       gen_reqs.extend(delta_gen_reqs)
+
     pres.logs['%s deltas' % len(delta_gen_reqs)] = [
         py2_MessageToJson(x) for x in delta_gen_reqs
     ]
@@ -270,11 +269,11 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
       api.buildbucket.simulated_collect_output(
-          [paygen_child_data(x) for x in range(15)],
+          [paygen_child_data(x) for x in range(23)],
           'running children.collect'),
       *repeated_step_data(
           'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
-          api.raw_io.output(payload_json_data), 13))
+          api.raw_io.output(payload_json_data), 21))
 
   yield api.test(
       'some-failures', get_props(), good_paygen_cfg,
@@ -288,7 +287,7 @@ def GenTests(api):
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(id=8922054662172514000 + x, status='FAILURE')
-          for x in range(16)
+          for x in range(21)
       ], 'running children.collect'),
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
@@ -316,3 +315,19 @@ def GenTests(api):
   summary = _summarize_failed_builds(
       [build_pb2.Build(id=8922054662172514000, status='FAILURE')] * 70)
   assert len(summary) < 4000
+
+  yield api.test(
+      'no-deltas', get_props(), good_paygen_cfg,
+      api.cros_paygen.test_paygen(
+          'discovering payload configuration.get paygen json.gsutil cat',
+          api.cros_paygen.NO_DELTA_PAYGEN_JSON),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.post_check(post_process.StatusSuccess),
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data(x) for x in range(5)], 'running children.collect'),
+      *repeated_step_data(
+          'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
+          api.raw_io.output(payload_json_data), 5))

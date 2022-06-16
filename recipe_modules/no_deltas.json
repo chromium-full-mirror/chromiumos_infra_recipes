@@ -1,0 +1,15 @@
+{
+  "delta": [
+    {
+      "board": {
+        "public_codename": "coral",
+        "is_active": true,
+        "builder_name": "coral"
+      },
+      "delta_type": "NO_DELTA",
+      "generate_delta": false,
+      "delta_payload_tests": false,
+      "full_payload_tests": false
+    }
+  ]
+}
