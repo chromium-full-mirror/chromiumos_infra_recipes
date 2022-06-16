@@ -489,9 +489,12 @@ def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
 
 def _build_has_parent(api):
   """Determine whether the current build has a parent."""
-  # TODO(zhihuixie): Replace `parent_buildbucket_id` tag with build.ancestor_ids
-  # when verifying if the parent build exists.
-  return bool(api.cros_tags.get_single_value('parent_buildbucket_id'))
+  # Uses both ancestor build ids and the tag to check together because ancestor
+  # build ids might not be supported across all ChromeOS builds while some
+  # builds (e.g. browser CI build) don't create the tag parent_buildbucket_id
+  # in their bb request.
+  return bool(api.buildbucket.build.ancestor_ids) or bool(
+      api.cros_tags.get_single_value('parent_buildbucket_id'))
 
 
 def postprocess(api, requests, responses):
