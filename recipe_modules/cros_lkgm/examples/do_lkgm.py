@@ -134,6 +134,8 @@ def GenTests(api):
       api.post_check(step_command_has_substr,
                      'create LKGM CL.create CL.set labels on CL 1.git push',
                      'Commit-Queue+2'),
+      api.post_check(post_process.MustRun,
+                     'abandon old LKGM CLs.abandon CL 91827'),
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
@@ -155,6 +157,7 @@ def GenTests(api):
       api.post_check(step_command_has_substr,
                      'create LKGM CL.create CL.set labels on CL 1.git push',
                      'Commit-Queue+1'),
+      api.post_check(post_process.DoesNotRun, 'abandon old LKGM CLs'),
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID))

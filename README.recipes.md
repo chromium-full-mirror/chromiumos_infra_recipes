@@ -2643,18 +2643,18 @@ bisection using the configuration of another builder.
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#77)(self):**
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#79)(self):**
 
 Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#94)(self, release_build_results):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#96)(self, release_build_results):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 
@@ -2664,7 +2664,7 @@ Args:
   release_build_results (list(common_pb2.Build)): list of release build
     results as returned by api.orch_menu.plan_and_run_children.
 
-&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#36)(self):**
+&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#38)(self):**
 
 Schedules a public build.
 

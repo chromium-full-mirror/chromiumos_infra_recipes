@@ -18,6 +18,8 @@ CHROMIUM_SRC_URL = 'https://chromium.googlesource.com/{}'.format(
     CHROMIUM_SRC_PROJECT)
 LKGM_PATH = 'chromeos/CHROMEOS_LKGM'
 LKGM_CL_REVIEWERS = ['chrome-os-gardeners-reviews@google.com']
+CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
+LKGM_HASHTAG = 'chrome-lkgm'
 
 
 class CrosLkgmApi(recipe_api.RecipeApi):
@@ -110,6 +112,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         presentation.step_text = 'LKGM candidate'
 
     self._update_lkgm()
+    if self._full_run:
+      self._abandon_old_lkgms()
 
   def _is_lkgm_candidate(self, release_build_results):
     """Determines if the build is an LKGM candidate based on child build results.
@@ -184,7 +188,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           change = self.m.gerrit.create_change(
               CHROMIUM_SRC_PROJECT,
               reviewers=LKGM_CL_REVIEWERS,
-              hashtags=['chrome-lkgm'],
+              hashtags=[LKGM_HASHTAG],
               project_path=chromium_src_dir,
           )
           # Then set labels.
@@ -199,3 +203,23 @@ class CrosLkgmApi(recipe_api.RecipeApi):
               },
           }.get(self._full_run)
           self.m.gerrit.set_change_labels(change, labels)
+
+  def _abandon_old_lkgms(self):
+    with self.m.step.nest('abandon old LKGM CLs'):
+      query_params = [
+          ('project', CHROMIUM_SRC_PROJECT),
+          ('branch', 'main'),
+          ('file', LKGM_PATH),
+          ('age', '2d'),
+          ('status', 'open'),
+          # Use 'owner' rather than 'uploader' or 'author' since those last two
+          # can be overwritten when the gardener resolves a merge-conflict and
+          # uploads a new patchset.
+          ('owner', CI_PROD_SERVICE_ACCOUNT),
+          ('hashtag', LKGM_HASHTAG)
+      ]
+      changes = self.m.gerrit.query_changes(CHROMIUM_SRC_URL, query_params)
+      abandon_message = 'Superceded by LKGM {}'.format(
+          self.m.cros_version.version.platform_version)
+      for change in changes:
+        self.m.gerrit.abandon_change(change, abandon_message)
