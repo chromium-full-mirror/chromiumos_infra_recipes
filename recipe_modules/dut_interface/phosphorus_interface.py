@@ -407,7 +407,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     now_seconds = int(self._api.time.ms_since_epoch() /
                       self._MILLISECONDS_IN_SECOND)
-    return Timestamp(seconds=now_seconds + seconds_from_now)
+    return Timestamp(seconds=int(now_seconds + seconds_from_now))
 
   @staticmethod
   def _min_timestamp(timestamps_list):
