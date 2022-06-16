@@ -3666,3 +3666,5 @@
 /build/nami/usr/include/libchrome/mojo/public/interfaces/bindings/native_struct.mojom-shared-internal.h,src/aosp/external/libchrome/mojo/public/interfaces/bindings/native_struct.mojom-shared-internal.h,mojo/public/interfaces/bindings/native_struct.mojom-shared-internal.h
 src/platform/cr50/test/rsa2048-3.h,src/platform/cr50/test/rsa2048-3.h,test/rsa2048-3.h
 src/platform/btsocket/src/btsocket.c,src/platform/btsocket/src/btsocket.c,src/btsocket.c
+/mnt/host/source/src/platform/ec/zephyr/app/ec/ec_app_main.c,src/platform/ec/zephyr/app/ec/ec_app_main.c,zephyr/app/ec/ec_app_main.c
+/build/brya/tmp/portage/chromeos-base/chromeos-ec-0.0.2-r13076/work/chromeos-ec-0.0.2/platform/ec/zephyr/app/ec/ec_app_main.c,src/platform/ec/zephyr/app/ec/ec_app_main.c,zephyr/app/ec/ec_app_main.c

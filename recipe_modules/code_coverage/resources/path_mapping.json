@@ -800,7 +800,7 @@
     "relative_path": ""
   },
   {
-    "path_pattern": ".*/ec/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
+    "path_pattern": ".*/platform/ec/(.*[a-zA-Z0-9-_]+\\.[a-zA-Z0-9-_]+)",
     "absolute_path": "src/platform/ec",
     "relative_path": ""
   },
