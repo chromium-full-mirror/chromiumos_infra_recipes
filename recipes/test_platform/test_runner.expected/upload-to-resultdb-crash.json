@@ -64,7 +64,10 @@
   },
   {
     "cmd": [],
-    "name": "execution steps"
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_WARNINGS@@@"
+    ]
   },
   {
     "cmd": [],
@@ -165,7 +168,8 @@
     "cmd": [],
     "name": "execution steps.original_test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -538,27 +542,7 @@
     "name": "execution steps.original_test.Phosphorus: get test results.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"autotestResult\":{@@@",
-      "@@@STEP_LOG_LINE@response@    \"incomplete\":true,@@@",
-      "@@@STEP_LOG_LINE@response@    \"testCases\":[@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"humanReadableSummary\":\"failing test case\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\":\"failing_test_case\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"verdict\":\"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    ]@@@",
-      "@@@STEP_LOG_LINE@response@  },@@@",
-      "@@@STEP_LOG_LINE@response@  \"prejob\":{@@@",
-      "@@@STEP_LOG_LINE@response@    \"step\":[@@@",
-      "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"humanReadableSummary\":\"failed prejob\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"name\":\"failing_prejob_step\",@@@",
-      "@@@STEP_LOG_LINE@response@        \"verdict\":\"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
-      "@@@STEP_LOG_LINE@response@    ]@@@",
-      "@@@STEP_LOG_LINE@response@  }@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -624,7 +608,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"autotest_result\": {\n    \"incomplete\": true,\n    \"test_cases\": [\n      {\n        \"human_readable_summary\": \"failing test case\",\n        \"name\": \"failing_test_case\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  },\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {\n    \"step\": [\n      {\n        \"human_readable_summary\": \"failed prejob\",\n        \"name\": \"failing_prejob_step\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  }\n}",
+      "{\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  }\n}",
       "[CLEANUP]/tmp_tmp_1/test_runner_result.json"
     ],
     "infra_step": true,
@@ -644,28 +628,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@{@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"autotest_result\": {@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"incomplete\": true,@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"test_cases\": [@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      {@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@        \"human_readable_summary\": \"failing test case\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@        \"name\": \"failing_test_case\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@        \"verdict\": \"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      }@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    ]@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"log_data\": {@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"prejob\": {@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"step\": [@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      {@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@        \"human_readable_summary\": \"failed prejob\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@        \"name\": \"failing_prejob_step\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@        \"verdict\": \"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      }@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    ]@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  }@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@}@@@",
       "@@@STEP_LOG_END@test_runner_result.json@@@"
@@ -767,7 +732,8 @@
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
       "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
-      "@@@STEP_LOG_END@config@@@"
+      "@@@STEP_LOG_END@config@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -902,7 +868,8 @@
     },
     "name": "execution steps.original_test.upload test results to rdb.run rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_WARNINGS@@@"
     ]
   },
   {
@@ -1148,7 +1115,7 @@
     "name": "execution steps.original_test.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytjU0KwjAUhNFlQNC666or6cI0/VEEj+EFShufaSXJC32hXtJD2ajduXQWw/AxzLA9S9nm1vS6t6r2QL6WDcF6Gc8wCTB5w0WUsh3bzm03wB3bmjy4qb8KGK7Jh8bPBbsoOgshuwENIPGwwzUqEhKNQcvBjqLMi5LnR14cRP4V/2FBRVWdorHz3oVZ8k1vNRBlEgeXKUSlYcpGtAM+CP77+wJqbldt\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyTOsPIFZRebKWvn5xRlJ+bml+sW5JaXKKbk59erJ+cn5ubn6ebmlemb2RgaKRrYKpraKJvAAW6WAgQMDQ2NhcqyygpKQAZW1ySmJmXk1pcrJecX1Sgl56fn56TCmTn6icV5ZcXp1LXXgA/azuV\"@@@"
     ]
   },
   {
@@ -1198,97 +1165,16 @@
     "name": "test results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@JSON output@{@@@",
-      "@@@STEP_LOG_LINE@JSON output@  \"autotestResult\":{@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"incomplete\":true,@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"testCases\":[@@@",
-      "@@@STEP_LOG_LINE@JSON output@      {@@@",
-      "@@@STEP_LOG_LINE@JSON output@        \"humanReadableSummary\":\"failing test case\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@        \"name\":\"failing_test_case\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@        \"verdict\":\"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@JSON output@      }@@@",
-      "@@@STEP_LOG_LINE@JSON output@    ]@@@",
-      "@@@STEP_LOG_LINE@JSON output@  },@@@",
-      "@@@STEP_LOG_LINE@JSON output@  \"autotestResults\":{@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"original_test\":{@@@",
-      "@@@STEP_LOG_LINE@JSON output@      \"incomplete\":true,@@@",
-      "@@@STEP_LOG_LINE@JSON output@      \"testCases\":[@@@",
-      "@@@STEP_LOG_LINE@JSON output@        {@@@",
-      "@@@STEP_LOG_LINE@JSON output@          \"humanReadableSummary\":\"failing test case\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@          \"name\":\"failing_test_case\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@          \"verdict\":\"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@JSON output@        }@@@",
-      "@@@STEP_LOG_LINE@JSON output@      ]@@@",
-      "@@@STEP_LOG_LINE@JSON output@    }@@@",
-      "@@@STEP_LOG_LINE@JSON output@  },@@@",
       "@@@STEP_LOG_LINE@JSON output@  \"logData\":{@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@JSON output@  },@@@",
-      "@@@STEP_LOG_LINE@JSON output@  \"prejob\":{@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"step\":[@@@",
-      "@@@STEP_LOG_LINE@JSON output@      {@@@",
-      "@@@STEP_LOG_LINE@JSON output@        \"humanReadableSummary\":\"failed prejob\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@        \"name\":\"failing_prejob_step\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@        \"verdict\":\"VERDICT_FAIL\"@@@",
-      "@@@STEP_LOG_LINE@JSON output@      }@@@",
-      "@@@STEP_LOG_LINE@JSON output@    ]@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
-      "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "test results.failing_prejob_step",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@failed prejob@@@",
-      "@@@STEP_LOG_END@summary@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "test results.original_test",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "test results.original_test.failing_test_case",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@summary@failing test case@@@",
-      "@@@STEP_LOG_END@summary@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "test results.autoserv",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@autoserv crashed. The test list is likely incomplete. Consult autoserv.ERROR for more details.@@@",
-      "@@@STEP_LOG_END@summary@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build status",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "prejob or test failed"
-    },
     "name": "$result"
   }
 ]

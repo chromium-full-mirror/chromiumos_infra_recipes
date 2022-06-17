@@ -695,17 +695,26 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
     result.add_test_response(run_test_response)
     autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
     result = _populate_timestamps_for_results(result, autotest_keyval_file)
+
+    # Updates GCS log urls to test result before executing the actual GCS
+    # upload step because the test result itself is independent to the GCS
+    # upload step.
+    result.update_log_urls(test_metadata)
+
     if not prejob_response.is_failure():
       dut_state = result.get_dut_state()
   finally:
+    # Upload test results to resultdb as soon as possible in order to avoid
+    # being blocked by failures of other steps. In addition, the resultdb upload
+    # failure won't block the rest of steps below.
+    _upload_to_resultdb(api, result, properties, interface, test_metadata,
+                        autotest_keyval_file)
+
     # Must complete synchronous logs upload before sealing the results
     # directory. Once the results directory is sealed, gs_offloader may delete
     # the result files.
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
-
-    _upload_to_resultdb(api, result, properties, interface, test_metadata,
-                        autotest_keyval_file)
 
     api.cts_results_archive.archive(
         interface.get_results_directory(test_metadata))
@@ -2029,6 +2038,22 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.step_data(
           'execution steps.original_test.Phosphorus: upload to TKO.call '
           '`phosphorus`.upload-to-tko', retcode=1),
+  )
+
+  yield api.test(
+      'upload-to-resultdb-crash',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      api.step_data(
+          'execution steps.original_test.upload test results to rdb.run rdb',
+          retcode=1),
+      # The resultdb upload failure above won't block the following steps.
+      _successful_logs_archive_step(),
   )
 
   yield api.test(
