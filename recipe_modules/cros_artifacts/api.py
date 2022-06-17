@@ -21,6 +21,9 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb
 from PB.chromiumos.common import ArtifactsByService
 
+# The base image tar, used for generating provenance.
+BASE_IMAGE_TAR = 'chromiumos_base_image.tar.xz'
+
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
 # the appropriate services.
 
@@ -670,18 +673,30 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
 
       if report_to_spike and kind == BuilderConfig.Id.Type.RELEASE:
-        images = files_by_artifact['IMAGE_ARCHIVES']
-        base_image = [
-            i for i in images
-            if self.m.path.basename(i) == 'chromiumos_base_image.tar.xz'
-        ]
-        if len(base_image) == 1:
-          file_hash = self.m.file.file_hash(base_image[0], test_data='deadbeef')
-          self.m.bcid_reporter.report_gcs(file_hash, upload_uri)
+        images = files_by_artifact.get('IMAGE_ARCHIVES', [])
+
+        artifact_basenames = []
+        if images:
+          artifact_basenames = [self.m.path.basename(i) for i in images]
         else:
           presentation.logs[
-              'base_image_length'] = 'the base_image length is %d' % len(
-                  base_image)
+              'report_to_spike'] = 'IMAGE_ARCHIVES not in files_by_artifact'
+
+        # The artifact to generate provenance for.
+        # This list will be expanded as more artifacts are enrolled in
+        # provenance generation.
+        artifacts_to_report = [BASE_IMAGE_TAR]
+
+        paths_to_hash = {
+            self.m.path.join(outpath, i): i
+            for i in artifact_basenames
+            if i in artifacts_to_report
+        }
+
+        for abspath, basepath in paths_to_hash.items():
+          file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
+          self.m.bcid_reporter.report_gcs(
+              file_hash, '{uri}/{item}'.format(uri=upload_uri, item=basepath))
 
       for retries in range(3):
         try:

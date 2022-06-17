@@ -696,7 +696,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "../../chromiumos_base_image.tar.xz"
+      "[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz"
     ],
     "infra_step": true,
     "name": "upload artifacts.Compute file hash",
@@ -741,7 +741,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://test-bucket/builder/R99-1234.56.0-101-"
+      "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
     ],
     "name": "upload artifacts.report_gcs",
     "~followup_annotations": [
