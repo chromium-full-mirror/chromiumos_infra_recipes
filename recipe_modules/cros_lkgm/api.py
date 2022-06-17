@@ -25,6 +25,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     Release & Public builders."""
 
   def __init__(self, properties, *args, **kwargs):
+    self._enable_lkgm = properties.enable_lkgm
     self._full_run = properties.full_run
     self._builder_threshold_percentage = properties.builder_threshold_percentage
     self._presubmit_trybots = properties.presubmit_trybots
@@ -99,6 +100,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       release_build_results (list(common_pb2.Build)): list of release build
         results as returned by api.orch_menu.plan_and_run_children.
     """
+    if not self._enable_lkgm:
+      return
     with self.m.step.nest('assess LKGM readiness') as presentation:
       if not self._is_lkgm_candidate(release_build_results):
         presentation.step_text = 'not an LKGM candidate'
@@ -156,7 +159,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
       with self.m.context(cwd=chromium_src_dir):
         platform_version = self.m.cros_version.version.platform_version
-        self.m.file.write_text('update LKGM file', LKGM_PATH, platform_version)
+        lkgm_filepath = self.m.path.join(chromium_src_dir, LKGM_PATH)
+        self.m.file.write_text('update LKGM file', lkgm_filepath,
+                               platform_version)
         commit_lines = [
             'Automated Commit: LKGM {} for chromeos.'.format(platform_version),
             '',

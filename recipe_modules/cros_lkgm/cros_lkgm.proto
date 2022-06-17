@@ -7,12 +7,15 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_lkgm;
 
 message CrosLkgmProperties {
+  // Feature flag for LKGM.
+  bool enable_lkgm = 1;
+
   // Whether or not to submit the LKGM CL.
-  bool full_run = 1;
+  bool full_run = 2;
 
   // Percent of release and public builders that must be green for the build
   // to be considered an LKGM candidate. Should be a value in [0, 100].
-  int32 builder_threshold_percentage = 2;
+  int32 builder_threshold_percentage = 3;
 
   // The list of trybots we require LKGM updates to run and pass on before
   // landing. Since they're internal trybots, the CQ won't automatically trigger
@@ -25,5 +28,5 @@ message CrosLkgmProperties {
   //    'chromeos-reven-chrome',
   //    'lacros-amd64-generic-chrome',
   // ]
-  repeated string presubmit_trybots = 3;
+  repeated string presubmit_trybots = 4;
 }

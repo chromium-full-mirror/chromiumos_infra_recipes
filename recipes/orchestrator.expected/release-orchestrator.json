@@ -10882,29 +10882,6 @@
   },
   {
     "cmd": [],
-    "name": "assess LKGM readiness",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@not an LKGM candidate@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "assess LKGM readiness.assess release build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@release builds have 66.67% percent success rate, threshold is 0%@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "assess LKGM readiness.assess public build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@public builds have 0.00% percent success rate, threshold is 0%@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up orchestrator"
   },
   {

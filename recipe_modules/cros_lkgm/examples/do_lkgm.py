@@ -86,6 +86,8 @@ def GenTests(api):
         api.properties(
             **{
                 '$chromeos/cros_lkgm': {
+                    'enable_lkgm':
+                        True,
                     'builder_threshold_percentage':
                         kwargs.pop('builder_threshold', 50),
                     'full_run':
@@ -94,6 +96,19 @@ def GenTests(api):
                         kwargs.pop('presubmit_trybots', []),
                 },
             }), *args, **kwargs)
+
+  yield api.test(
+      'disable-lkgm',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='main-release-orchestrator').build,
+      api.properties(**{
+          '$chromeos/cros_lkgm': {
+              'enable_lkgm': False,
+          },
+      }),
+      api.post_check(post_process.DoesNotRun, 'assess LKGM readiness'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield lgkm_test(
       'lkgm-candidate',
