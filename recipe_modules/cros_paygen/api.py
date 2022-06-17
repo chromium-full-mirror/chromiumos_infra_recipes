@@ -742,7 +742,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     for cfg in matching_cfgs:
       if cfg['delta_payload_tests'] or force_tests:
         applicable_models = self._filter_applicable_models(
-            cfg.get('applicable_models'), fsi=cfg.get('delta_type') == 'FSI')
+            cfg.get('applicable_models', []),
+            fsi=cfg.get('delta_type') == 'FSI')
         test_configs.append(
             AutoupdateTestConfig(
                 delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
