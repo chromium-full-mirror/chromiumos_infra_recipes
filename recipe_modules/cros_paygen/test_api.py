@@ -99,7 +99,7 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
 
   TEST_TARGET_TEST_REQUIREMENTS_DATA = TEST_TARGET_TEST_REQUIREMENTS_DATA
   EXAMPLE_PAYGEN_JSON = _read_test_file('test_paygen.json')
-  NO_DELTA_PAYGEN_JSON = _read_test_file('test_paygen.json')
+  NO_DELTA_PAYGEN_JSON = _read_test_file('test_no_deltas.json')
 
   EXAMPLE_EMPTY_JSON = "{}"
   EXAMPLE_NOT_EVEN_JSON = "dawiojdoiawjdioawjdow"
