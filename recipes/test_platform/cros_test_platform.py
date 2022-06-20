@@ -487,14 +487,9 @@ def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
   return metadata
 
 
-def _build_has_parent(api):
-  """Determine whether the current build has a parent."""
-  # Uses both ancestor build ids and the tag to check together because ancestor
-  # build ids might not be supported across all ChromeOS builds while some
-  # builds (e.g. browser CI build) don't create the tag parent_buildbucket_id
-  # in their bb request.
-  return bool(api.buildbucket.build.ancestor_ids) or bool(
-      api.cros_tags.get_single_value('parent_buildbucket_id'))
+def _build_has_ancestor(api):
+  """Determine whether the current build has any ancestor."""
+  return bool(api.buildbucket.build.ancestor_ids)
 
 
 def postprocess(api, requests, responses):
@@ -660,8 +655,8 @@ def _top_level_export_to_bigquery(api):
   if not api.resultdb.enabled:
     return
 
-  # Skips the BigQuery export step if the current build has any parent.
-  if _build_has_parent(api):
+  # Skips the BigQuery export step if the current build has any ancestor.
+  if _build_has_ancestor(api):
     return
   with api.step.nest('configure resultdb bigquery export'):
     bigquery_export = invocation_pb2.BigQueryExport(
@@ -1128,14 +1123,18 @@ def _generic_passing_execute_response(api):
 
 def GenTests(api):
 
-  def _set_build(bid=None, tags=None, experiments=None):
+  def _set_build(bid=None, tags=None, experiments=None,
+                 ancestor_buildbucket_ids=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
-    return api.buildbucket.ci_build(build_id=bid, tags=bb_tags,
-                                    experiments=experiments, project='chromeos',
-                                    bucket='testplatform',
-                                    builder='cros_test_platform')
-
+    build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
+                                                 experiments=experiments,
+                                                 project='chromeos',
+                                                 bucket='testplatform',
+                                                 builder='cros_test_platform')
+    if ancestor_buildbucket_ids:
+      build_msg.ancestor_ids.extend(ancestor_buildbucket_ids)
+    return api.buildbucket.build(build_msg)
 
   # Missing request and requests should cause a recipe crash
   yield api.test('no-requests')
@@ -1306,11 +1305,11 @@ def GenTests(api):
       ),
   )
 
-  # Recipe running on the child build with parent build ID. ResultDB BigQuery
+  # Recipe running on the child build with ancestor build ids. ResultDB BigQuery
   # export is skipped.
   yield api.test(
-      'Recipe-runs-on-child-build-with-parent-build-id',
-      _set_build(bid=42, tags={'parent_buildbucket_id': '1234'}),
+      'Recipe-runs-on-child-build-with-ancestor-ids',
+      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
       api.properties(
           CrosTestPlatformProperties(
               requests={'default': _test_request('default')},

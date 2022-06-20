@@ -11504,7 +11504,7 @@ Args:
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#500)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#495)(api, requests, responses):**
 
 &mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#282)(api, config, should_poll_for_completion=False):**
 
@@ -11517,13 +11517,13 @@ Args:
 
 &mdash; **def [py2\_MessageToJson](/recipes/test_platform/cros_test_platform.py#71)(obj):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#673)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#668)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#762)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#757)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#599)(api, enumerations, responses, error_in_requests):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#594)(api, enumerations, responses, error_in_requests):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#98)(api, properties):**
 
