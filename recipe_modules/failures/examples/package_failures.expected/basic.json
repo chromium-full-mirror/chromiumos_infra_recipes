@@ -1,19 +1,23 @@
 [
   {
     "cmd": [],
-    "name": "test1",
+    "name": "no failures"
+  },
+  {
+    "cmd": [],
+    "name": "one failure",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install /package@@@",
-      "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
+      "@@@STEP_TEXT@failed to install category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
-      "@@@STEP_LOG_LINE@&#x2f;package log@test@@@",
-      "@@@STEP_LOG_END@&#x2f;package log@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test2",
+    "name": "multiple failures",
     "~followup_annotations": [
       "@@@STEP_TEXT@failed to install 2 packages@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package1@@@",

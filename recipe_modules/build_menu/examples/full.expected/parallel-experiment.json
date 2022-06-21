@@ -5820,7 +5820,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "failed to install foo/bar-1.0-r1"
+      "humanReason": "failed to install [foo/bar-1.0-r1](https:///logs///+/u/run_ebuild_tests/foo_bar_log)"
     },
     "name": "$result"
   }

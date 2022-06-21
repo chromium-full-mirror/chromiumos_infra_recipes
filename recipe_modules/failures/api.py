@@ -34,6 +34,10 @@ class FailuresApi(RecipeApi):
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
 
+  _LOGDOG_URL_TEMPLATE = (
+      'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
+      '+/u/%(step_name)s/%(package_category)s_%(package_name)s_log')
+
   def __init__(self, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
 
@@ -132,17 +136,12 @@ class FailuresApi(RecipeApi):
     Raises:
       StepFailure: If failed_packages is not empty.
     """
+    # Return early if there were no failed packages.
     if not packages:
       return
 
-    if len(packages) == 1:
-      long_message = 'failed to install {}'.format(
-          self.m.naming.get_package_title(packages[0][0]))
-    else:
-      long_message = 'failed to install {} packages'.format(len(packages))
-
-    enclosing_step.presentation.step_text = long_message
-    enclosing_step.presentation.status = self.m.step.FAILURE
+    # Create top-level links to the list of failed packages as well as to the
+    # Portage logs for the failed packages.
     enclosing_step.presentation.logs['list of failed packages'] = map(
         self.m.naming.get_package_title, [p[0] for p in packages])
     for p in packages:
@@ -150,7 +149,38 @@ class FailuresApi(RecipeApi):
         continue
       enclosing_step.presentation.logs['%s/%s log' % (p[0].category,
                                                       p[0].package_name)] = p[1]
-    raise StepFailure(long_message)
+
+    if len(packages) == 1:
+      step_text = 'failed to install {}'.format(
+          self.m.naming.get_package_title(packages[0][0]))
+      failure_message = step_text
+
+      # If the failed package produced a log, link it in the summary markdown.
+      if packages[0][1]:
+        log_url = self._LOGDOG_URL_TEMPLATE % {
+            'logdog_hostname':
+                self.m.buildbucket.build.infra.logdog.hostname,
+            'logdog_project':
+                self.m.buildbucket.build.infra.logdog.project,
+            'logdog_prefix':
+                self.m.buildbucket.build.infra.logdog.prefix,
+            'step_name':
+                self.m.step.active_result.name_tokens[0].replace(" ", "_"),
+            'package_category':
+                packages[0][0].category,
+            'package_name':
+                packages[0][0].package_name,
+        }
+        failure_message = 'failed to install [{}]({})'.format(
+            self.m.naming.get_package_title(packages[0][0]), log_url)
+
+    else:
+      step_text = 'failed to install {} packages'.format(len(packages))
+      failure_message = step_text
+
+    enclosing_step.presentation.status = self.m.step.FAILURE
+    enclosing_step.presentation.step_text = step_text
+    raise StepFailure(failure_message)
 
   def raise_failed_image_tests(self, failed_images):
     """Display failed image tests and raise a failure.

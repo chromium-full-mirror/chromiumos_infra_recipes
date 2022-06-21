@@ -142,10 +142,12 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusFailure),
-      api.build_menu.set_build_api_return('install packages',
-                                          'SysrootService/InstallPackages',
-                                          retcode=1), build_target='coral',
-      cq=True)
+      api.build_menu.set_build_api_return(
+          'install packages', endpoint='SysrootService/InstallPackages',
+          retcode=2,
+          data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
+      ), build_target='coral', cq=True)
+
 
   # CQ build with artifact bundling failure.
   yield api.build_menu.test(
