@@ -55,12 +55,13 @@ PROPERTIES = ConfigPostsubmitProperties
 CommitInfo = namedtuple('CommitInfo', ['project_path', 'message', 'files'])
 
 
-def _replicate_public_config(api, _properties, project_infos):
+def _replicate_public_config(api, _properties, project_infos, dry_run):
   """Replicates any public configs in project repos into a public repo.
 
   Args:
     See notes on _ACTIONS.
   """
+  del dry_run
   public_repo_path = api.context.cwd.join('src', 'project_public')
 
   automation_id = 'config_postsubmit/replicate_public'
@@ -95,7 +96,9 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return [CommitInfo(public_repo_path, message, [])]
 
 
-def _flatten_configs(api, properties, project_infos):
+def _flatten_configs(api, properties, project_infos, dry_run):
+  del dry_run
+
   flatten_script = api.context.cwd.join(
       'src/config/payload_utils/flatten_config_payload.py')
 
@@ -225,7 +228,7 @@ def _flatten_configs(api, properties, project_infos):
     return []
 
 
-def _aggregate_configs(api, properties, repo_project_infos):
+def _aggregate_configs(api, properties, repo_project_infos, dry_run):
   """Aggregate ConfigBundle messages and copy them to multiple locations.
 
   1. config-internal - This provides a single centralized location from which
@@ -302,7 +305,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
        api.step.nest("aggregating configs"):
 
     api.git_txn.update_ref(config_project_info.remote, _merge_configs,
-                           ref=config_project_info.branch)
+                           ref=config_project_info.branch, dry_run=dry_run)
 
   config_to_ufs_datastore = cwd.join(
       'src/config/payload_utils/config_to_datastore.py')
@@ -322,7 +325,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return []
 
 
-def _regenerate_suite_scheduler_configs(api, _properties, _project_infos):
+def _regenerate_suite_scheduler_configs(api, _properties, _project_infos,
+                                        dry_run):
   """Run Suite Scheduler configuration's ./generate and commit the results.
 
   This action runs the generate function in src/config-internal/test and commits
@@ -331,6 +335,8 @@ def _regenerate_suite_scheduler_configs(api, _properties, _project_infos):
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
+  del dry_run
+
   config_internal = api.context.cwd.join('src/config-internal')
   cfg_int_ss = config_internal.join('test/suite_scheduler')
 
@@ -363,7 +369,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
     return [CommitInfo(config_internal, message, regenerated_files)]
 
 
-def _regenerate_test_plan(api, _properties, _project_infos):
+def _regenerate_test_plan(api, _properties, _project_infos, dry_run):
   """Run test configurations ./generate and ./generate_test_plan_summary.
 
   This action runs the generate function in src/config-internal/test and commits
@@ -372,6 +378,8 @@ def _regenerate_test_plan(api, _properties, _project_infos):
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
+  del dry_run
+
   config_internal = api.context.cwd.join("src/config-internal")
   config_internal_test = config_internal.join('test')
   config_internal_test_plans = config_internal_test.join('plans')
@@ -397,7 +405,9 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 # A map of CL configurations -> their functions which run on config repos.
 #
 # Each action should take a RecipesApi and list of ProjectInfos as args and
-# optionally return a list of CommitInfos.
+# optionally return a list of CommitInfos. In addition, each action should take
+# a dry_run arg, to control interaction with external services, e.g. committing
+# directly to git instead of returning a CommitInfo.
 #
 # Note: Order here matters, currently:
 #         Flatten_configs must be ran before _aggregate_configs.
@@ -501,7 +511,8 @@ def RunSteps(api, properties):
         action_name = action.__name__.strip('_')
         with api.step.nest('Do {} and create CL'.format(action_name)):
           try:
-            commit_infos = action(api, properties, config_projects)
+            commit_infos = action(api, properties, config_projects,
+                                  dry_run=not cl_config.send_to_cq)
             for commit_info in commit_infos:
               _create_cl(api, properties, commit_info, action_name, cl_config)
           except StepFailure as e:
