@@ -26,7 +26,7 @@ class CrosSigningApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super(CrosSigningApi, self).__init__(*args, **kwargs)
-    self._timeout = properties.timeout or 2 * 60 * 60
+    self._timeout = properties.timeout or 4 * 60 * 60
     self._sleep_duration = properties.sleep_duration or 5 * 60
 
   def wait_for_signing(self, instructions_list):
