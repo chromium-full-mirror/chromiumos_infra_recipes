@@ -721,17 +721,17 @@
     "cmd": [],
     "name": "install packages",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install 3 packages@@@",
+      "@@@STEP_TEXT@failed to install 3 packages: edge-base/shortpackagename-0.0.1-r197, chromeos-base/thislongpackagenameomg-0.0.1-r199, safari-base/thisotherexceedinglylongpackage-0.0.1-r129@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@edge-base/shortpackagename-0.0.1-r197@@@",
       "@@@STEP_LOG_LINE@list of failed packages@chromeos-base/thislongpackagenameomg-0.0.1-r199@@@",
       "@@@STEP_LOG_LINE@list of failed packages@safari-base/thisotherexceedinglylongpackage-0.0.1-r129@@@",
-      "@@@STEP_LOG_LINE@list of failed packages@edge-base/shortpackagename-0.0.1-r197@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@edge-base&#x2f;shortpackagename log@test data for edge-base/shortpackagename log file@@@",
+      "@@@STEP_LOG_END@edge-base&#x2f;shortpackagename log@@@",
       "@@@STEP_LOG_LINE@chromeos-base&#x2f;thislongpackagenameomg log@test data for chromeos-base/thislongpackagenameomg log file@@@",
       "@@@STEP_LOG_END@chromeos-base&#x2f;thislongpackagenameomg log@@@",
       "@@@STEP_LOG_LINE@safari-base&#x2f;thisotherexceedinglylongpackage log@test data for safari-base/thisotherexceedinglylongpackage log file@@@",
       "@@@STEP_LOG_END@safari-base&#x2f;thisotherexceedinglylongpackage log@@@",
-      "@@@STEP_LOG_LINE@edge-base&#x2f;shortpackagename log@test data for edge-base/shortpackagename log file@@@",
-      "@@@STEP_LOG_END@edge-base&#x2f;shortpackagename log@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1850,7 +1850,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "failed to install 3 packages"
+      "humanReason": "failed to install 3 packages\n\n- [edge-base/shortpackagename-0.0.1-r197](https:///logs///+/u/install_packages/edge-base_shortpackagename_log)\n\n- [chromeos-base/thislongpackagenameomg-0.0.1-r199](https:///logs///+/u/install_packages/chromeos-base_thislongpackagenameomg_log)\n\n- [safari-base/thisotherexceedinglylongpackage-0.0.1-r129](https:///logs///+/u/install_packages/safari-base_thisotherexceedinglylongpackage_log)"
     },
     "name": "$result"
   }

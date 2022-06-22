@@ -19,7 +19,7 @@
     "cmd": [],
     "name": "multiple failures",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install 2 packages@@@",
+      "@@@STEP_TEXT@failed to install 2 packages: /package1, /package2@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package1@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package2@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",

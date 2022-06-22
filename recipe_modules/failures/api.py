@@ -36,7 +36,7 @@ class FailuresApi(RecipeApi):
 
   _LOGDOG_URL_TEMPLATE = (
       'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
-      '+/u/%(step_name)s/%(package_category)s_%(package_name)s_log')
+      '+/u/%(step_name)s/%(log_name)s')
 
   def __init__(self, *args, **kwargs):
     super(FailuresApi, self).__init__(*args, **kwargs)
@@ -136,10 +136,36 @@ class FailuresApi(RecipeApi):
     Raises:
       StepFailure: If failed_packages is not empty.
     """
+
+    def _concat_package_markdown_link(package_info, log_text):
+      # If the package did not produce a log, just return the name.
+      if not log_text:
+        return self.m.naming.get_package_title(package_info)
+
+      log_name = '%s_%s_log' % (package_info.category,
+                                package_info.package_name)
+      log_url = self._LOGDOG_URL_TEMPLATE % {
+          'logdog_hostname':
+              self.m.buildbucket.build.infra.logdog.hostname,
+          'logdog_project':
+              self.m.buildbucket.build.infra.logdog.project,
+          'logdog_prefix':
+              self.m.buildbucket.build.infra.logdog.prefix,
+          'step_name':
+              self.m.step.active_result.name_tokens[0].replace(" ", "_"),
+          'log_name':
+              log_name,
+      }
+      markdown_link = '[%s](%s)' % (
+          self.m.naming.get_package_title(package_info), log_url)
+
+      return markdown_link
+
     # Return early if there were no failed packages.
     if not packages:
       return
 
+    packages.sort(key=lambda p: p[0].package_name)
     # Create top-level links to the list of failed packages as well as to the
     # Portage logs for the failed packages.
     enclosing_step.presentation.logs['list of failed packages'] = map(
@@ -150,33 +176,24 @@ class FailuresApi(RecipeApi):
       enclosing_step.presentation.logs['%s/%s log' % (p[0].category,
                                                       p[0].package_name)] = p[1]
 
-    if len(packages) == 1:
-      step_text = 'failed to install {}'.format(
-          self.m.naming.get_package_title(packages[0][0]))
-      failure_message = step_text
+    failed_package_names = [
+        self.m.naming.get_package_title(p[0]) for p in packages
+    ]
+    failed_packages_links = [
+        _concat_package_markdown_link(p[0], p[1]) for p in packages
+    ]
 
-      # If the failed package produced a log, link it in the summary markdown.
-      if packages[0][1]:
-        log_url = self._LOGDOG_URL_TEMPLATE % {
-            'logdog_hostname':
-                self.m.buildbucket.build.infra.logdog.hostname,
-            'logdog_project':
-                self.m.buildbucket.build.infra.logdog.project,
-            'logdog_prefix':
-                self.m.buildbucket.build.infra.logdog.prefix,
-            'step_name':
-                self.m.step.active_result.name_tokens[0].replace(" ", "_"),
-            'package_category':
-                packages[0][0].category,
-            'package_name':
-                packages[0][0].package_name,
-        }
-        failure_message = 'failed to install [{}]({})'.format(
-            self.m.naming.get_package_title(packages[0][0]), log_url)
+    if len(packages) == 1:
+      step_text = 'failed to install %s' % failed_package_names[0]
+      failure_message = 'failed to install %s' % failed_packages_links[0]
 
     else:
-      step_text = 'failed to install {} packages'.format(len(packages))
-      failure_message = step_text
+      step_text = 'failed to install {} packages: {}'.format(
+          len(packages), ', '.join(failed_package_names))
+      summary_lines = ['failed to install {} packages'.format(len(packages))]
+      for p in failed_packages_links:
+        summary_lines.append('- {}'.format(p))
+      failure_message = self._format_summary_markdown(summary_lines)
 
     enclosing_step.presentation.status = self.m.step.FAILURE
     enclosing_step.presentation.step_text = step_text
@@ -258,6 +275,24 @@ class FailuresApi(RecipeApi):
         lines.append('- ...and {} others'.format(count - truncate_max))
       summary_lines.extend(lines)
 
+    summary_markdown = self._format_summary_markdown(summary_lines)
+    return result_pb2.RawResult(status=common_pb2.FAILURE,
+                                summary_markdown=summary_markdown)
+
+  def _format_summary_markdown(self, summary_lines):
+    """Aggregate individual failure summary lines.
+
+    There is a 4000 byte limit on the summary_markdown field in buildbucket.
+    This function ensures that we do not go over that limit when summarizing the
+    failures which occurred in the build.
+
+    Args:
+      summary_lines (list[str]): Text lines to add to the summary markdown.
+
+    Returns:
+      summary_markdown (str): A markdown text that can be used to set the result
+      of the step or build.
+    """
     # Truncate the list of failures per section to keep the summary under
     # Buildbucket's 4000 byte limit on the summary_markdown field.
     summary_markdown = ''
@@ -270,8 +305,7 @@ class FailuresApi(RecipeApi):
         break
 
     summary_markdown = summary_markdown.strip()
-    return result_pb2.RawResult(status=common_pb2.FAILURE,
-                                summary_markdown=summary_markdown)
+    return summary_markdown
 
   def get_build_failures(self, builds, refresh_configs=False):
     """Verify all builds completed successfully.
