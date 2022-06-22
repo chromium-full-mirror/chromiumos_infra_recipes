@@ -8499,7 +8499,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building public ChromiumOS images.
 
-&mdash; **def [DoRunSteps](/recipes/build_chromiumos.py#41)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_chromiumos.py#50)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_chromiumos.py#33)(api, properties):**
 ### *recipes* / [build\_compilation\_database](/recipes/build_compilation_database.py)

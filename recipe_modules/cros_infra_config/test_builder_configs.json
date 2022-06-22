@@ -1787,6 +1787,24 @@
     },
     {
       "id": {
+        "name": "staging-eve-main-release",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      }
+    },
+    {
+      "id": {
         "name": "staging-cq-orchestrator",
         "type": "CQ"
       },

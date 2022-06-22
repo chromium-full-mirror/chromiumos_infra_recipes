@@ -33,6 +33,15 @@ StepDetails = BuildReport.StepDetails
 def RunSteps(api, properties):
   api.easy.log_parent_step()
 
+  with api.step.nest('check buildspec property'):
+    sync_to_manifest = api.cros_source.sync_to_manifest
+    if (not sync_to_manifest or
+        not sync_to_manifest.manifest_gs_path.startswith(
+            'gs://chromiumos-manifest-versions')):
+      raise StepFailure(
+          'public builder must be supplied a public buildspec in $chromeos/cros_source.syncToManifest'
+      )
+
   with api.build_menu.configure_builder() as config, \
         api.build_menu.setup_workspace_and_chroot():
     return DoRunSteps(api, config, properties)
@@ -72,8 +81,6 @@ def DoRunSteps(api, config, properties):
 
 
 def GenTests(api):
-  manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
-
   # Normal public build.
   yield api.build_menu.test(
       'public-build',
@@ -87,8 +94,8 @@ def GenTests(api):
                   MessageToDict(
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+                              manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
           }),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
@@ -108,14 +115,64 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'no-buildspec',
+      api.post_check(post_process.StepFailure, 'check buildspec property'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'wrong-buildspec',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_gs_path='gs://chromeos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
+          }),
+      api.post_check(post_process.StepFailure, 'check buildspec property'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
       'public-build-staging',
-      build_target='staging-eve',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
+          }),
+      api.post_check(post_process.StatusSuccess),
+      build_target='staging-eve-main',
       bucket='release',
   )
 
   # Public build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
+          }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -132,6 +189,15 @@ def GenTests(api):
   # Public build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
+          }),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -144,6 +210,15 @@ def GenTests(api):
   # Public build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
+          }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
