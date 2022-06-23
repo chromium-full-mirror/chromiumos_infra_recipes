@@ -1094,9 +1094,7 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-branch",
-      "main",
-      "--no-repo-verify"
+      "--repo-rev=main"
     ],
     "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
@@ -1845,6 +1843,7 @@
       "",
       "--groups",
       "all",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--verbose"

@@ -33,7 +33,7 @@ def RunSteps(api):
                                         commit=commit):
     with api.build_menu.setup_workspace():
       project_dir = api.cros_source.workspace_path.join(
-          'src/aosp/external/libchrome')
+          'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
         with api.step.nest('fetch latest chromium'):

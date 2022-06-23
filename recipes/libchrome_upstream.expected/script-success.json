@@ -1350,11 +1350,11 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+      "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1366,7 +1366,7 @@
     "infra_step": true,
     "name": "repo forall",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome|src/[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/libchrome|src/[CLEANUP]/chromiumos_workspace/src/platform/libchrome|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -1384,9 +1384,9 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info"
+      "[CLEANUP]/chromiumos_workspace/src/platform/libchrome/.git/objects/info"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "fetch latest chromium.ensure .git/objects/info",
     "~followup_annotations": [
@@ -1402,9 +1402,9 @@
       "/path/to/tmp/json",
       "copy",
       "/preload/chrome/src/.git/objects",
-      "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome/.git/objects/info/alternates"
+      "[CLEANUP]/chromiumos_workspace/src/platform/libchrome/.git/objects/info/alternates"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "fetch latest chromium.create chrome git reference",
     "~followup_annotations": [
@@ -1419,7 +1419,7 @@
       "fetch",
       "https://chromium.googlesource.com/chromium/src"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "fetch latest chromium.git fetch chromium",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1431,7 +1431,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "fetch latest chromium.get chromium head",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1448,7 +1448,7 @@
       "cros",
       "refs/heads/upstream:"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "sync upstream branch.git fetch",
     "~followup_annotations": [
@@ -1461,7 +1461,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "sync upstream branch.git rev-parse",
     "~followup_annotations": [
@@ -1478,7 +1478,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "generate new upstream branch locally.git rev-parse",
     "~followup_annotations": [
@@ -1495,7 +1495,7 @@
       "cb10da20a312790d1d2421ae2f8dc2ea831cffa3",
       "--all"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "generate new upstream branch locally.generate new upstream head",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1508,7 +1508,7 @@
       "--pretty=%H%x1F%B%x00",
       "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef...49d1e4a4a6ca65114208c498416be3b85e10cc8e"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "generate new upstream branch locally.git log",
     "~followup_annotations": [
@@ -1524,7 +1524,7 @@
       "cros",
       "49d1e4a4a6ca65114208c498416be3b85e10cc8e:refs/heads/upstream"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/external/libchrome",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
     "name": "git push"
   },
