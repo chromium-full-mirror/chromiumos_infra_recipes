@@ -130,7 +130,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       success_percent = self._success_percent(release_build_results)
       presentation.step_text = 'release builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
           success_percent, self._builder_threshold_percentage)
-      if success_percent <= self._builder_threshold_percentage:
+      if success_percent < self._builder_threshold_percentage:
         return False
 
     with self.m.step.nest('assess public build results') as presentation:
@@ -150,7 +150,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         success_percent = self._success_percent(child_builds)
         presentation.step_text = 'public builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
             success_percent, self._builder_threshold_percentage)
-        if success_percent <= self._builder_threshold_percentage:
+        if success_percent < self._builder_threshold_percentage:
           return False
     return True
 
