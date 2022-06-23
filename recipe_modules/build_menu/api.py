@@ -577,28 +577,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       extra_kwargs = {'version': str(version.platform_version)}
 
-    if ('chromeos.cros_infra_config.image_builder_parallelization' in
-        self.m.cros_infra_config.experiments):
-      futures = [
-          self.m.futures.spawn(self.m.sysroot_util.build_images,
-                               build_images.image_types, builder_path,
-                               build_images.disable_rootfs_verification,
-                               build_images.disk_layout,
-                               build_images.base_is_recovery, **extra_kwargs),
-          self.m.futures.spawn(self.run_unittests, config)
-      ]
-      for f in self.m.futures.iwait(futures):
-        ex = f.exception()
-        if ex:
-          raise ex
-
-    else:
-      self.m.sysroot_util.build_images(build_images.image_types, builder_path,
-                                       build_images.disable_rootfs_verification,
-                                       build_images.disk_layout,
-                                       build_images.base_is_recovery,
-                                       **extra_kwargs)
-      self.run_unittests(config)
+    self.m.sysroot_util.build_images(build_images.image_types, builder_path,
+                                     build_images.disable_rootfs_verification,
+                                     build_images.disk_layout,
+                                     build_images.base_is_recovery,
+                                     **extra_kwargs)
+    self.run_unittests(config)
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
