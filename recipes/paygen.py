@@ -5,7 +5,10 @@
 
 """Recipe for generating ChromeOS payloads (AU deltas etc)."""
 
+import datetime
 import json
+
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
@@ -113,9 +116,14 @@ def RunSteps(api, properties):
           branch=api.cros_source.manifest_branch, target_path=config_path,
           depth=1)
 
-      # Create chroot.
-      api.cros_sdk.create_chroot(version=None, use_image=False,
-                                 timeout_sec=None)
+      # Create chroot, with retries!
+      @exponential_retry(retries=3, delay=datetime.timedelta(seconds=300))
+      def _retry_chroot_init_wrapper():
+        api.cros_sdk.create_chroot(version=None, use_image=False,
+                                   timeout_sec=None)
+
+      _retry_chroot_init_wrapper()
+
 
     # Set up holder objects.
     paygen_test_configs, paygen_uris = [], []
