@@ -484,8 +484,6 @@
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess) (Python3 ✅)
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) (Python3 ✅) &mdash; Recipe that triggers cros_test_platform runs.
   * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser) (Python3 ✅)
-  * [test_platform/multi_bot/follower](#recipes-test_platform_multi_bot_follower) (Python3 ✅)
-  * [test_platform/multi_bot/leader](#recipes-test_platform_multi_bot_leader) (Python3 ✅)
   * [test_platform/result_flow](#recipes-test_platform_result_flow) (Python3 ✅)
   * [test_platform/test_runner](#recipes-test_platform_test_runner) (Python3 ✅) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) (Python3 ✅) &mdash; Tests a recipe CL by running ChromeOS builders.
@@ -11561,20 +11559,6 @@ Recipe that triggers cros_test_platform runs.
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipes/test_platform/dut_leaser.py#33)(api, properties):**
-### *recipes* / [test\_platform/multi\_bot/follower](/recipes/test_platform/multi_bot/follower.py)
-
-[DEPS](/recipes/test_platform/multi_bot/follower.py#8): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-&mdash; **def [RunSteps](/recipes/test_platform/multi_bot/follower.py#20)(api, properties):**
-### *recipes* / [test\_platform/multi\_bot/leader](/recipes/test_platform/multi_bot/leader.py)
-
-[DEPS](/recipes/test_platform/multi_bot/leader.py#8): [ipc](#recipe_modules-ipc), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-&mdash; **def [RunSteps](/recipes/test_platform/multi_bot/leader.py#20)(api, properties):**
 ### *recipes* / [test\_platform/result\_flow](/recipes/test_platform/result_flow.py)
 
 [DEPS](/recipes/test_platform/result_flow.py#12): [result\_flow](#recipe_modules-result_flow), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
