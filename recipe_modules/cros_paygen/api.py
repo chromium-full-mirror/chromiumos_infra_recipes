@@ -17,6 +17,7 @@ from collections import namedtuple
 from copy import deepcopy
 from datetime import timedelta
 import json
+import math
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 from os import path
@@ -640,11 +641,33 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         self._create_bb_schedule_request(batch) for batch in batches
     ]
 
+    # Define a function to split requests into chunks.
+    def _split_large_requests(schedule_requests, max_elements=200):
+      """Split large requests into chunks, bb's max is 200 per schedule."""
+      split_reqs = []
+
+      min_chunks = math.ceil(len(schedule_requests) / float(max_elements))
+      # Very defensively split into [1, max_elements] sized chunks.
+      chunk_len = max(
+          1,
+          min(
+              math.ceil(len(schedule_requests) / float(min_chunks)),
+              max_elements))
+
+      while schedule_requests:
+        split_reqs.append(schedule_requests[0:chunk_len])
+        schedule_requests = schedule_requests[chunk_len:]
+      return split_reqs
+
     # Run the buildbucket requests and return the build results.
+    split_reqs = _split_large_requests(schedule_requests)
     with self.m.step.nest('running children'):
-      builds = self.m.buildbucket.schedule(schedule_requests,
-                                           step_name='schedule')
+      builds = []
+      for req_chunk in split_reqs:
+        builds.extend(
+            self.m.buildbucket.schedule(req_chunk, step_name='schedule'))
       self._present_paygen_request_urls(batches, builds)
+
       build_dict = self.m.buildbucket.collect_builds(
           [b.id for b in builds], timeout=self.paygen_children_timeout_sec,
           step_name='collect', url_title_fn=lambda b: None)

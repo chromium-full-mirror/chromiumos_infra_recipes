@@ -85,6 +85,23 @@ def GenTests(api):
           ]])), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
+      'chunked-schedule-requests',
+      api.properties(
+          paygen_requests=tuple([
+              r.SerializeToString() for r in [
+                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              ] * 300
+          ])),
+      api.properties(
+          expected_batches=tuple([[
+              r.SerializeToString() for r in [
+                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              ] * 300
+          ]])), api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
       'max-batch-size-1', api.properties(max_batch_size=1),
       api.properties(
           paygen_requests=tuple([

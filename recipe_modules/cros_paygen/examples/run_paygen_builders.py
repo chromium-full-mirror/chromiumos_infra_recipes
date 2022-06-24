@@ -17,7 +17,8 @@ from PB.recipes.chromeos.paygen import PaygenProperties
 
 
 def RunSteps(api):
-  gen_requests = api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS
+  # Test 201 gen requests (higher than bb.schedule's chunk size max of 200).
+  gen_requests = api.cros_paygen.test_api.EXAMPLE_GEN_REQUESTS * 201
 
   paygen_requests = [
       PaygenProperties.PaygenRequest(generation_request=gen_request)
@@ -28,4 +29,5 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield api.test('basic', api.post_check(post_process.StatusSuccess))
+  yield api.test('basic', api.post_check(post_process.StatusSuccess),
+                 api.post_process(post_process.DropExpectation))
