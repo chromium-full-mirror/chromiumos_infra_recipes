@@ -448,6 +448,7 @@
     "name": "pairing artifacts",
     "~followup_annotations": [
       "@@@STEP_TEXT@No payload pairs (src->tgt) found.@@@",
+      "@@@STEP_LOG_END@0 n2n@@@",
       "@@@STEP_LOG_END@0 deltas@@@",
       "@@@STEP_LOG_END@0 full@@@"
     ]

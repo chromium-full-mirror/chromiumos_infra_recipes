@@ -138,10 +138,12 @@ def RunSteps(api, properties):
   with api.step.nest('pairing artifacts') as pres:
 
     # Do N2N testing payloads.
-    gen_reqs.extend(
-        api.cros_paygen.get_n2n_requests(target_artifacts,
-                                         properties.dest_bucket, True,
-                                         properties.dryrun))
+    n2n_gen_reqs = api.cros_paygen.get_n2n_requests(target_artifacts,
+                                                    properties.dest_bucket,
+                                                    True, properties.dryrun)
+    pres.logs['%s n2n' %
+              len(n2n_gen_reqs)] = [py2_MessageToJson(x) for x in n2n_gen_reqs]
+    gen_reqs.extend(n2n_gen_reqs)
 
     # Do configured delta payloads.
     delta_gen_reqs = []
