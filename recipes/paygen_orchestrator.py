@@ -153,7 +153,7 @@ def RunSteps(api, properties):
                                              target_artifacts,
                                              properties.dest_bucket, True,
                                              properties.dryrun))
-      gen_reqs.extend(delta_gen_reqs)
+    gen_reqs.extend(delta_gen_reqs)
 
     pres.logs['%s deltas' % len(delta_gen_reqs)] = [
         py2_MessageToJson(x) for x in delta_gen_reqs
@@ -275,7 +275,7 @@ def GenTests(api):
           'running children.collect'),
       *repeated_step_data(
           'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
-          api.raw_io.output(payload_json_data), 21))
+          api.raw_io.output(payload_json_data), 13))
 
   yield api.test(
       'some-failures', get_props(), good_paygen_cfg,
