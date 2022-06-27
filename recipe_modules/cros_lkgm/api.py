@@ -202,7 +202,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                   self.m.gerrit.Label.COMMIT_QUEUE: 1,
               },
           }.get(self._full_run)
-          self.m.gerrit.set_change_labels(change, labels)
+          self.m.gerrit.set_change_labels_remote(change, labels)
 
   def _abandon_old_lkgms(self):
     with self.m.step.nest('abandon old LKGM CLs'):
