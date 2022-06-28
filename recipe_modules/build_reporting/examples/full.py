@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/time',
     'build_reporting',
+    'cros_sdk',
 ]
 
 from PB.chromite.api.packages import GetTargetVersionsResponse
@@ -68,6 +69,17 @@ def RunSteps(api):
       platform_version='12438.0.0')
   api.build_reporting.publish_versions(vers)
 
+  # Publish SDK/toolchain metadata.
+  sdk_version = '2022.06.26.170938'
+  toolchain_url = '2022/06/%(target)s-2022.06.26.170938.tar.xz'
+  toolchains = ['x86_64-cros-linux-gnu', 'i686-cros-linux-gnu']
+  api.build_reporting.publish_toolchain_info(
+      api.cros_sdk.ToolchainInfo(
+          sdk_version,
+          toolchain_url,
+          toolchains,
+      ))
+
   # ...
 
   # finalize build status
@@ -85,6 +97,9 @@ def RunSteps(api):
   api.assertions.assertTrue(build_report.HasField("steps"))
   api.assertions.assertEqual(len(build_report.steps.info), 1)
   api.assertions.assertEqual(build_report.parent.buildbucket_id, PARENT_ID)
+  api.assertions.assertEqual(build_report.sdk_version, sdk_version)
+  api.assertions.assertEqual(build_report.toolchain_url, toolchain_url)
+  api.assertions.assertEqual(build_report.toolchains, toolchains)
 
 
 def GenTests(api):

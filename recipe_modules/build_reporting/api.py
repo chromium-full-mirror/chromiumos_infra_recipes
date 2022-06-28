@@ -465,3 +465,17 @@ class BuildReportingApi(recipe_api.RecipeApi):
       presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s' %
           removeprefix(gs_path, 'gs://'))
+
+  def publish_toolchain_info(self, toolchain_info):
+    """Publish metadata about SDK/toolchain usage.
+
+    Args:
+      toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
+        usage.
+    """
+    build_report = BuildReport()
+    build_report.sdk_version = getattr(toolchain_info, 'sdk_version')
+    build_report.toolchain_url = getattr(toolchain_info, 'toolchain_url')
+    build_report.toolchains.extend(getattr(toolchain_info, 'toolchains'))
+
+    self.publish(build_report)

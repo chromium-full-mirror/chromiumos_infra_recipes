@@ -19,6 +19,7 @@ DEPS = [
     'cros_build_api',
     'cros_infra_config',
     'cros_release',
+    'cros_sdk',
     'cros_signing',
     'cros_source',
     'cros_tags',
@@ -146,6 +147,11 @@ def DoRunSteps(api, config, properties):
     raise failing_build_exception or sf
 
   snoopy_report(api, 'upload-complete')
+
+  with api.step.nest("publish toolchain metadata"):
+    toolchain_info = api.cros_sdk.get_toolchain_info(
+        api.build_menu.build_target.name)
+    api.build_reporting.publish_toolchain_info(toolchain_info)
 
   # Finally, if there was an exception caught above in building the image, but
   # the upload succeeded, raise that exception.

@@ -5,12 +5,14 @@
 
 """API for interacting with cros_sdk, the interface to the CrOS SDK."""
 
+from collections import namedtuple
 import contextlib
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
 from PB.chromiumos.sdk_cache_state import SdkCacheState
+from PB.chromite.api import toolchain
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
@@ -25,6 +27,9 @@ from PB.chromite.api.sdk import RestoreSnapshotRequest
 _DEFAULT_SDK_CACHE_VERSION = 1
 _PRELOAD_PATH = '/preload'
 _PRELOAD_CACHE_PATH = '/preload/chromeos-sdk'
+
+_SDK_VERSION_PROJECT_PATH = 'src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf'
+_SDK_VERSION_CONF_TEST_DATA = 'SDK_LATEST_VERSION="foo"\nTC_PATH="bar"\n'
 
 
 class CrosSdkApi(RecipeApi):
@@ -688,3 +693,52 @@ class CrosSdkApi(RecipeApi):
           UprevPackagesRequest(build_targets=build_targets,
                                overlay_type=OVERLAYTYPE_BOTH),
           timeout=timeout_sec)
+
+  def _parse_sdk_version(self):
+    """Parse information from the sdk_version.conf file.
+
+    Returns:
+      (dict) mapping between fields and values found in the file.
+    """
+    filepath = self.m.cros_source.workspace_path.join(_SDK_VERSION_PROJECT_PATH)
+    lines = self.m.file.read_text(
+        'read sdk_version.conf', filepath,
+        test_data=_SDK_VERSION_CONF_TEST_DATA).strip().split('\n')
+
+    vals = {}
+    for line in lines:
+      if line.strip().startswith('#') or not line.strip():
+        continue
+      if '=' in line:
+        toks = line.strip().split('=')
+        vals[toks[0]] = toks[1].strip('"')
+    return vals
+
+  ToolchainInfo = namedtuple('ToolchainInfo',
+                             ['sdk_version', 'toolchain_url', 'toolchains'])
+
+  def get_toolchain_info(self, build_target):
+    """Retrieve metadata about SDK/toolchain usage.
+
+    Args:
+      build_target (str): Name of the build target.
+
+    Returns:
+      (ToolchainInfo) information about sdk/toolchain usage.
+    """
+    with self.m.step.nest('get toolchain info'):
+
+      sdk_info = self._parse_sdk_version()
+      sdk_version = sdk_info.get('SDK_LATEST_VERSION', None)
+      toolchain_url = sdk_info.get('TC_PATH', None)
+
+      if sdk_version is None or toolchain_url is None:
+        raise StepFailure('misformatted sdk_version.conf file')
+
+      req = toolchain.ToolchainsRequest(board=build_target)
+      resp = self.m.cros_build_api.ToolchainService.GetToolchainsForBoard(
+          req, infra_step=True, test_output_data='{}')
+      toolchains = (
+          list(resp.default_toolchains) + list(resp.nondefault_toolchains))
+
+      return self.ToolchainInfo(sdk_version, toolchain_url, toolchains)
