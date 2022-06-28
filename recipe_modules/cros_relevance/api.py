@@ -13,7 +13,6 @@ from google.protobuf import json_format
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.chromite.api.depgraph import ListRequest
-from PB.chromite.api.depgraph import SourcePath
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
@@ -488,7 +487,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         to the build, if any.
 
     Returns:
-      List[Path]: The union of all paths in the patchsets.
+      List[str]: The union of all paths in the patchsets.
     """
     with self.m.step.nest('get affected paths'):
       affected_paths = []
@@ -497,8 +496,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
             patch_set.project, patch_set.branch)
         for src_path in src_paths:
           for path in patch_set.file_infos.keys():
-            affected_path = SourcePath()
-            affected_path.path = '%s/%s' % (src_path, path)
+            affected_path = '%s/%s' % (src_path, path)
             affected_paths.append(affected_path)
       return affected_paths
 
@@ -520,10 +518,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       (List[str]): A list of package dependencies for the build target.
     """
     with self.m.step.nest('get package dependencies'):
+      req = ListRequest(sysroot=sysroot, chroot=chroot, packages=packages,
+                        include_rev_deps=include_rev_deps)
       affected_paths = self._get_affected_paths(patch_sets)
-      resp = self.m.cros_build_api.DependencyService.List(
-          ListRequest(sysroot=sysroot, chroot=chroot, src_paths=affected_paths,
-                      packages=packages, include_rev_deps=include_rev_deps))
+      for path in affected_paths:
+        src_path = req.src_paths.add()
+        src_path.path = path
+      resp = self.m.cros_build_api.DependencyService.List(req)
       return resp.package_deps
 
   def _ensure_binaries(self):
