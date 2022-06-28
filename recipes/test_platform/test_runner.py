@@ -77,6 +77,13 @@ _24_HOURS = 24 * 60 * 60
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 
 
+# TODO(b/217973414): remove this py2 compatibility workaround.
+try:
+  FileNotFoundError
+except NameError:
+  FileNotFoundError = IOError
+
+
 # API STEP HELPERS
 def s_log(step, name, log):
   """Add a `log` to a `step`'s log under `name` is it exists.
@@ -289,7 +296,7 @@ def _read_autotest_keyval_file(api, base_dir):
         continue
       autotest_keyval_file[items[0]] = items[1]
     return autotest_keyval_file
-  except api.file.Error:
+  except (api.file.Error, FileNotFoundError):
     return {}
 
 
@@ -317,7 +324,7 @@ def _read_crossystem_keyvals(api, crossystem_file_path):
       crossystem_keyvals[items[0]] = items[1]
 
     return crossystem_keyvals
-  except api.file.Error:
+  except (api.file.Error, FileNotFoundError):
     return {}
 
 
@@ -341,7 +348,7 @@ def _read_kernel_version(api, kernel_log_file_path):
 
     items = content.split(' ')
     return items[2] if len(items) >= 2 else ''
-  except api.file.Error:
+  except (api.file.Error, FileNotFoundError):
     return {}
 
 

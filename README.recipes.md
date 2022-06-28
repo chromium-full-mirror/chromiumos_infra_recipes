@@ -11578,9 +11578,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1102)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1109)(api, properties):**
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#156)(api, interface, test_metadata, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#163)(api, interface, test_metadata, result):**
 
 Archive all test logs to Google Storage, updating result in the process.
 
@@ -11594,7 +11594,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#999)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1006)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -11606,7 +11606,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#849)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#856)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -11622,7 +11622,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#761)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#768)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -11638,7 +11638,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#732)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#739)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -11649,7 +11649,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#93)(step, name, link):**
+&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#100)(step, name, link):**
 
 Add a link `link` named `link_name` to the `step` if it exists.
 
@@ -11658,7 +11658,7 @@ Args:
 * name (str): Link name.
 * link (str): Like URI to add.
 
-&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#81)(step, name, log):**
+&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#88)(step, name, log):**
 
 Add a `log` to a `step`'s log under `name` is it exists.
 
@@ -11667,7 +11667,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#217)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#224)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -11675,7 +11675,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1060)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1067)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -11683,7 +11683,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [summarize\_results\_from\_phosphorus\_results](/recipes/test_platform/test_runner.py#176)(api, result):**
+&mdash; **def [summarize\_results\_from\_phosphorus\_results](/recipes/test_platform/test_runner.py#183)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -11691,7 +11691,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#141)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#148)(api, test):**
 
 Validate the TestRunnerProperties.
 
