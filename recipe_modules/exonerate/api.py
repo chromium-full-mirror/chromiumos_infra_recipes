@@ -90,6 +90,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: list of TestCaseResult changed based on the decision, new overall
       verdict of the tests.
     """
+    if not test_cases:
+      # If test_cases are empty, assume tests didn't run and return a fail verdict.
+      return [], TaskState.VERDICT_FAILED
+
     new_test_cases = []
     for test_case in test_cases:
       if test_case.verdict == TaskState.VERDICT_PASSED:
@@ -117,6 +121,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: list of WaitTaskResult.Task changed based on the decision, new
       overall status of the results.
     """
+    if not results:
+      # If input is empty, assume tests didn't run and return a fail result.
+      return [], common_pb2.FAILURE
     filtered_results = []
     for result in results:
       if result.state.verdict == TaskState.VERDICT_PASSED:

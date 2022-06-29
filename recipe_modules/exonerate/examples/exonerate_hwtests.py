@@ -80,6 +80,28 @@ def RunSteps(api):
   api.assertions.assertTrue(
       common_pb2.FAILURE in [f.status for f in hw_test_failures])
   api.assertions.assertEqual(exonerated_test_names, [])
+
+  # Testing the case of empty child_results and empty test_cases.
+  hw_test_failures = [
+      api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
+                                        status=common_pb2.FAILURE,
+                                        child_results=[])
+  ]
+  hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
+      hw_test_failures)
+  api.assertions.assertEqual(exonerated_test_names, [])
+  child_results_with_empty_test_cases = [
+      ExecuteResponse.TaskResult(name='suite1', state=fail_state, test_cases=[])
+  ]
+  hw_test_failures = [
+      api.skylab.test_api.skylab_result(
+          task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
+          child_results=child_results_with_empty_test_cases)
+  ]
+  hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
+      hw_test_failures)
+  api.assertions.assertEqual(exonerated_test_names, [])
+
   api.exonerate.print_stats()
 
 
