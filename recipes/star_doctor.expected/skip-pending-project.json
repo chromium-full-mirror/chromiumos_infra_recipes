@@ -2326,28 +2326,6 @@
       "cipd",
       "ensure",
       "-root",
-      "RECIPE_REPO[depot_tools]/.cipd_bin",
-      "-ensure-file",
-      "RECIPE_REPO[depot_tools]/cipd_manifest.txt",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "name": "generate binary config.ensure depot_tools/.cipd_bin",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
       "[CLEANUP]/tmp_tmp_4",
       "-ensure-file",
       "infra/tools/protoc/linux-amd64 protobuf_version:v3.11.4",

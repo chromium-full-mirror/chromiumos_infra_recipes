@@ -10,29 +10,6 @@
   },
   {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "RECIPE_REPO[depot_tools]/.cipd_bin",
-      "-ensure-file",
-      "RECIPE_REPO[depot_tools]/cipd_manifest.txt",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "set labels on CL 12345678.ensure depot_tools/.cipd_bin",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "project",
