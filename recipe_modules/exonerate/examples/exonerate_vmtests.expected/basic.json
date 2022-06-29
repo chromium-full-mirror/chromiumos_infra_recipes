@@ -9,6 +9,14 @@
   },
   {
     "cmd": [],
+    "name": "exonerate vm tests (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set exoneration_stats",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"testCount\": \"1\"}@@@"

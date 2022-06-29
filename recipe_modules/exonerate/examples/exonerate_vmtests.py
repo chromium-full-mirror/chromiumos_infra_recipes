@@ -49,6 +49,22 @@ def RunSteps(api):
   api.assertions.assertNotIn(
       'VERDICT_FAILED',
       str(exonerated_vm_builds[0].output.properties['all_test_cases']))
+
+  # Test empty all_test_cases.
+  build = build_pb2.Build(
+      id=123, builder=builder_pb2.BuilderID(builder='something-direct-vm'),
+      status='FAILURE')
+  build.output.properties.update({'all_test_cases': []})
+  build.input.properties.update(
+      {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
+  suite_name = 'betty.tast_vm.tast_vm_default'
+  build.input.properties.update({'name': suite_name})
+  vm_builds = [build]
+  exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
+      vm_builds)
+  api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
+
   api.exonerate.print_stats()
 
 

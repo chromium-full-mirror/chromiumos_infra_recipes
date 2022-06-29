@@ -214,6 +214,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: list of test cases modified based on configs and the new
       overall status(common_pb2.status).
     """
+    if not all_test_cases:
+      # If there are no test_cases, assume failure and exit.
+      return [], common_pb2.FAILURE
     new_test_cases = []
     for test_case in all_test_cases:
       if (test_case['verdict'] == 'VERDICT_PASSED' or
