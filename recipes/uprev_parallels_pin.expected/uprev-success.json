@@ -4684,7 +4684,6 @@
       "sync",
       "--verbose",
       "--nohooks",
-      "-j4",
       "--reset",
       "--force",
       "--upstream",
@@ -4721,7 +4720,7 @@
       }
     },
     "name": "build chromiumos with upreved Parallels.install packages.check chrome source needed.sync chrome.gclient sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

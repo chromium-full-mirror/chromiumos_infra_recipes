@@ -4402,7 +4402,6 @@
       "sync",
       "--verbose",
       "--nohooks",
-      "-j4",
       "--reset",
       "--force",
       "--upstream",
@@ -4439,7 +4438,7 @@
       }
     },
     "name": "install packages.check chrome source needed.sync chrome.gclient sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

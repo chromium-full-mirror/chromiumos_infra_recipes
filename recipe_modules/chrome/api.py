@@ -4,10 +4,13 @@
 # found in the LICENSE file.
 
 import json
+import datetime
 import re
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 from PB.chromite.api.packages import BuildsChromeRequest
 from PB.chromite.api.packages import GetChromeVersionRequest
@@ -20,6 +23,8 @@ from PB.chromiumos.common import PackageInfo
 
 CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 CHROMIUM_GIT_URL = 'https://chromium.googlesource.com/chromium/src.git'
+
+DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS = 10800  # 3 hrs.
 
 GCLIENT_CACHE_CONFIG = [
     {
@@ -54,22 +59,19 @@ CHROME_FOLLOWER_PACKAGES = [
 
 class ChromeApi(recipe_api.RecipeApi):
 
+  @property
+  def gclient_sync_timeout_seconds(self):
+    return self._gclient_sync_timeout_seconds
+
   def __init__(self, properties, *args, **kwargs):
     super(ChromeApi, self).__init__(*args, **kwargs)
-    self._parallel_sync_jobs = 4
-    if properties.parallel_sync_jobs > 0:
-      self._parallel_sync_jobs = properties.parallel_sync_jobs
     self._deps_cas = (
         properties.deps_cas if properties.HasField('deps_cas') else None)
     self._version = properties.version
-    self._no_call_needs_chrome_source = properties.no_call_needs_chrome_source
 
-  def initialize(self):
-    """Initialization that follows all module loading."""
-    # TODO(crbug/1086714): remove once working.
-    self._no_call_needs_chrome_source |= (
-        'chromeos.chrome.no_call_needs_chrome_source' in
-        self.m.cros_infra_config.experiments)
+    self._gclient_sync_timeout_seconds = (
+        properties.gclient_sync_timeout_seconds or
+        DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS)
 
   def _get_local_version(self, chroot, build_target):
     """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
@@ -122,7 +124,8 @@ class ChromeApi(recipe_api.RecipeApi):
         self.m.step(
             'gclient sync',
             ['python', self.m.depot_tools.root.join('gclient.py')] +
-            gclient_sync_cmd, infra_step=True, timeout=60 * 60)
+            gclient_sync_cmd, infra_step=True,
+            timeout=self.gclient_sync_timeout_seconds)
 
   def sync(self, chrome_root, chroot, build_target, internal):
     """Sync Chrome source code.
@@ -173,7 +176,6 @@ class ChromeApi(recipe_api.RecipeApi):
             'sync',
             '--verbose',
             '--nohooks',
-            '-j%d' % self._parallel_sync_jobs,
             '--reset',
             '--force',
             '--upstream',
@@ -186,9 +188,12 @@ class ChromeApi(recipe_api.RecipeApi):
         if version:
           sync_cmd.extend(['--revision', 'src@%s' % version])
 
-        for retries in range(self.test_api.gclient_sync_max_retries):
-          try:
-            with self.m.depot_tools.on_path():
+        with self.m.depot_tools.on_path():
+          # Define the step call with exp retry attached, pass self to help tests
+          # see the context (inside of util) and elide the sleep.
+          @exponential_retry(retries=2, delay=datetime.timedelta(seconds=120))
+          def _call_chrome_sync(self):
+            try:
               # Writes out the .gclient file.
               self.m.step(
                   'gclient config',
@@ -208,17 +213,13 @@ class ChromeApi(recipe_api.RecipeApi):
                   'gclient sync',
                   ['python',
                    self.m.depot_tools.root.join('gclient.py')] + sync_cmd,
-                  infra_step=True,
-                  timeout=self.test_api.gclient_sync_timeout_seconds)
-              break
-          except StepFailure as ex:
-            if (ex.had_timeout and
-                retries < self.test_api.gclient_sync_max_retries - 1):
+                  infra_step=True, timeout=self.gclient_sync_timeout_seconds)
+            except StepFailure:
               self.m.file.rmcontents('clean up root path and retry',
                                      chrome_root)
-              self.m.time.sleep(self.test_api.gclient_sync_sleep_seconds)
-            else:
               raise
+
+          _call_chrome_sync(self)
 
   def diffed_files_requires_rebuild(self, patch_sets=None):
     """Returns a bool if patch_sets includes files that require rebuilding.
@@ -401,7 +402,7 @@ class ChromeApi(recipe_api.RecipeApi):
     patch_sets = patch_sets or self.m.workspace_util.patch_sets
 
     # If there is a NeedChromeSource endpoint, use that.
-    if not self._no_call_needs_chrome_source and self.m.cros_build_api.has_endpoint(
+    if self.m.cros_build_api.has_endpoint(
         self.m.cros_build_api.PackageService,
         'NeedsChromeSource'):  #pragma: nocover
       try:

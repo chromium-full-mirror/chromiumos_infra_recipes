@@ -160,8 +160,8 @@
   * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
   * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
-  * [chrome:examples/gclient_retry](#recipes-chrome_examples_gclient_retry) (Python3 ✅)
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
+  * [chrome:tests/gclient_retry](#recipes-chrome_tests_gclient_retry) (Python3 ✅)
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot) (Python3 ✅)
   * [chromeos_chrome_uprev](#recipes-chromeos_chrome_uprev) (Python3 ✅) &mdash; Recipe for the Chrome uprev builder.
   * [chromite:examples/full](#recipes-chromite_examples_full) (Python3 ✅)
@@ -1430,16 +1430,16 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#60)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#80)(self, cache_path):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#82)(self, cache_path):**
 
 Sync Chrome cache using existing cached repositories.
 
 Args:
   cache_path (Path): Path to mount of cache.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#223)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#224)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1452,7 +1452,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#276)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#277)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1468,13 +1468,11 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#249)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#62)(self):**
 
-&mdash; **def [initialize](/recipe_modules/chrome/api.py#67)(self):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#250)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-Initialization that follows all module loading.
-
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#316)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#317)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1486,7 +1484,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#257)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#258)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1502,7 +1500,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#387)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#388)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1516,7 +1514,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#127)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#130)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -8870,13 +8868,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [jsonify](/recipe_modules/chrome/examples/full.py#37)(\*\*kwargs):**
 
 Return the kwargs as a json string.
-### *recipes* / [chrome:examples/gclient\_retry](/recipe_modules/chrome/examples/gclient_retry.py)
-
-[DEPS](/recipe_modules/chrome/examples/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/gclient_retry.py#19)(api):**
 ### *recipes* / [chrome:tests/follower\_needs\_chrome\_no\_has\_prebuilt](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py)
 
 [DEPS](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#6): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file]
@@ -8884,6 +8875,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py#20)(api):**
+### *recipes* / [chrome:tests/gclient\_retry](/recipe_modules/chrome/tests/gclient_retry.py)
+
+[DEPS](/recipe_modules/chrome/tests/gclient_retry.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/chrome/tests/gclient_retry.py#23)(api):**
 ### *recipes* / [chromeos\_cbuildbot](/recipes/chromeos_cbuildbot.py)
 
 [DEPS](/recipes/chromeos_cbuildbot.py#14): [bot\_cost](#recipe_modules-bot_cost), [chromite](#recipe_modules-chromite), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

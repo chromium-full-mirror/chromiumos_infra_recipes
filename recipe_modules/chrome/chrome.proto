@@ -8,22 +8,17 @@ package recipe_modules.chromeos.chrome;
 
 message ChromeProperties {
 
-  // Specifies how many SCM commands can run in parallel. Corresponds to
-  // the -j## argument of gclient sync. Defaults to 72 if not set.
-  int64 parallel_sync_jobs = 1;
-
   message DepsCas {
     string digest = 1;
   }
 
   // Used to specify a custom DEPS file to gclient sync to as a
   // DEPS file residing in the isolate.
-  DepsCas deps_cas = 2;
+  DepsCas deps_cas = 1;
 
   // Custom version to build, if any, used in gclient sync.
-  string version = 4;
+  string version = 2;
 
-  // TODO(crbug/1086714): remove feature flag when fixed.
-  // Disable NeedsChromeSource, since it causes errors.
-  bool no_call_needs_chrome_source = 6;
+  // Gclient sync timeout. Default: 5400 seconds (1.5 hours).
+  int64 gclient_sync_timeout_seconds = 3;
 }

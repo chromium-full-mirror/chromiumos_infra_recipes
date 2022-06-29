@@ -1,0 +1,710 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "/preload/chromeos-sdk"
+    ],
+    "infra_step": true,
+    "name": "configure chroot path.create preload path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout passes retry"
+  },
+  {
+    "cmd": [],
+    "name": "checkout passes retry.sync chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@gclient configuration@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {},\n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/GetChromeVersion"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@published event@{\"getChromeVersionRequest\":{\"buildTarget\":{},\"chroot\":{}},\"getChromeVersionResponse\":{\"version\":\"version\"},\"requestTime\":\"2012-05-14T12:53:23Z\",\"responseTime\":\"2012-05-14T12:53:24.500Z\",\"stepName\":\"checkout passes retry|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\"}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCaWNoZWNrb3V0IHBhc3NlcyByZXRyeXxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3ZlcnNpb24=',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdoCaWNoZWNrb3V0IHBhc3NlcyByZXRyeXxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDBAoAEgCKAwkKB3ZlcnNpb24=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': False}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.gclient contents",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--verbose",
+      "--nohooks",
+      "--reset",
+      "--force",
+      "--upstream",
+      "--no-nag-max",
+      "--with_branch_heads",
+      "--with_tags",
+      "--delete_unversioned_trees",
+      "--revision",
+      "src@version"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout passes retry.sync chrome.gclient sync",
+    "timeout": 1,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout fails retry",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout fails retry.sync chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@gclient configuration@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {},\n  \"chroot\": {}\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/GetChromeVersion"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@published event@{\"getChromeVersionRequest\":{\"buildTarget\":{},\"chroot\":{}},\"getChromeVersionResponse\":{\"version\":\"version\"},\"requestTime\":\"2012-05-14T12:53:26Z\",\"responseTime\":\"2012-05-14T12:53:27.500Z\",\"stepName\":\"checkout fails retry|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\"}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCaGNoZWNrb3V0IGZhaWxzIHJldHJ5fHN5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lvbg==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAdoCaGNoZWNrb3V0IGZhaWxzIHJldHJ5fHN5bmMgY2hyb21lfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL0dldENocm9tZVZlcnNpb258Y2FsbCBidWlsZCBBUEkgc2NyaXB0ggMECgASAIoDCQoHdmVyc2lvbg==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.gclient contents",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--verbose",
+      "--nohooks",
+      "--reset",
+      "--force",
+      "--upstream",
+      "--no-nag-max",
+      "--with_branch_heads",
+      "--with_tags",
+      "--delete_unversioned_trees",
+      "--revision",
+      "src@version"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.gclient sync",
+    "timeout": 1,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmcontents",
+      "[START_DIR]/chrome"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.clean up root path and retry",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.gclient config (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.gclient contents (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--verbose",
+      "--nohooks",
+      "--reset",
+      "--force",
+      "--upstream",
+      "--no-nag-max",
+      "--with_branch_heads",
+      "--with_tags",
+      "--delete_unversioned_trees",
+      "--revision",
+      "src@version"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.gclient sync (2)",
+    "timeout": 1,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmcontents",
+      "[START_DIR]/chrome"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "checkout fails retry.sync chrome.clean up root path and retry (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

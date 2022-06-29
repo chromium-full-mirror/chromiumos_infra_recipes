@@ -1259,7 +1259,7 @@
     },
     "infra_step": true,
     "name": "source cache update.sync mounted cache directories (2).sync chrome.gclient sync",
-    "timeout": 3600,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

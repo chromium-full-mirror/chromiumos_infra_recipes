@@ -734,7 +734,6 @@
       "sync",
       "--verbose",
       "--nohooks",
-      "-j4",
       "--reset",
       "--force",
       "--upstream",
@@ -756,7 +755,7 @@
     },
     "infra_step": true,
     "name": "sync chrome.gclient sync",
-    "timeout": 5400,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

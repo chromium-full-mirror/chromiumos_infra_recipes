@@ -181,13 +181,6 @@ def GenTests(api):
                 expected_builds_from=False),
   )
 
-  yield api.test(
-      'with-properties',
-      test_data(),
-      api.properties(
-          **{'$chromeos/chrome': ChromeProperties(parallel_sync_jobs=42)}),
-  )
-
   chrome_cas = ChromeProperties(version='deadbeef',
                                 deps_cas=ChromeProperties.DepsCas(digest='aaa'))
 
