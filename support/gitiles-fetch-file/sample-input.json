@@ -1,0 +1,8 @@
+{
+  "file": {
+    "host": "chromium",
+    "project": "chromiumos/third_party/kernel",
+    "ref": "e15019685f6b1d890d430040c39808de5f91a0fc",
+    "path": ".cop/build.yaml"
+  }
+}
