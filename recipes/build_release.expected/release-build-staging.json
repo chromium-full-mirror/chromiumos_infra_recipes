@@ -410,29 +410,9 @@
   },
   {
     "cmd": [],
-    "name": "configure builder"
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config",
+    "name": "build status pubsub update.read builder configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@config not found, assuming deleted@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config.set recipes_git_revision",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -463,10 +443,238 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "name": "build status pubsub update.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update.upload build report to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser//staging-eve-release/R99-1234.56.0-101-8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\"{\\n  \\\"buildbucketId\\\":\\\"8945511751514863184\\\",\\n  \\\"count\\\":\\\"1\\\",\\n  \\\"steps\\\":{\\n    \\\"info\\\":{\\n      \\\"STEP_OVERALL\\\":{\\n        \\\"order\\\":1,\\n        \\\"runtime\\\":{\\n          \\\"begin\\\":\\\"2012-05-14T12:53:23Z\\\"\\n        },\\n        \\\"status\\\":\\\"STATUS_RUNNING\\\"\\n      }\\n    }\\n  },\\n  \\\"type\\\":\\\"BUILD_TYPE_RELEASE\\\"\\n}\"",
+      "[CLEANUP]/build_report_tmp_1"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.upload build report to GS.write buildreport json to tmp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@\"{\\n  \\\"buildbucketId\\\":\\\"8945511751514863184\\\",\\n  \\\"count\\\":\\\"1\\\",\\n  \\\"steps\\\":{\\n    \\\"info\\\":{\\n      \\\"STEP_OVERALL\\\":{\\n        \\\"order\\\":1,\\n        \\\"runtime\\\":{\\n          \\\"begin\\\":\\\"2012-05-14T12:53:23Z\\\"\\n        },\\n        \\\"status\\\":\\\"STATUS_RUNNING\\\"\\n      }\\n    }\\n  },\\n  \\\"type\\\":\\\"BUILD_TYPE_RELEASE\\\"\\n}\"@@@",
+      "@@@STEP_LOG_END@build_report_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/build_report_tmp_1",
+      "gs:///staging-eve-release/R99-1234.56.0-101-8945511751514863184/build_report.json"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.upload build report to GS.gsutil write build_report.json to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder"
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.cros_infra_config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@config not found, assuming deleted@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.cros_infra_config.set recipes_git_revision",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
     ]
   },
   {
@@ -640,6 +848,81 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update (2).upload build report to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser//staging-eve-release/R99-1234.56.0-101-8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "\"{\\n  \\\"buildbucketId\\\":\\\"8945511751514863184\\\",\\n  \\\"count\\\":\\\"2\\\",\\n  \\\"steps\\\":{\\n    \\\"info\\\":{\\n      \\\"STEP_OVERALL\\\":{\\n        \\\"order\\\":1,\\n        \\\"runtime\\\":{\\n          \\\"begin\\\":\\\"2012-05-14T12:53:23Z\\\",\\n          \\\"end\\\":\\\"2012-05-14T12:53:26Z\\\"\\n        },\\n        \\\"status\\\":\\\"STATUS_FAILURE\\\"\\n      }\\n    }\\n  },\\n  \\\"type\\\":\\\"BUILD_TYPE_RELEASE\\\"\\n}\"",
+      "[CLEANUP]/build_report_tmp_2"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update (2).upload build report to GS.write buildreport json to tmp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_2@\"{\\n  \\\"buildbucketId\\\":\\\"8945511751514863184\\\",\\n  \\\"count\\\":\\\"2\\\",\\n  \\\"steps\\\":{\\n    \\\"info\\\":{\\n      \\\"STEP_OVERALL\\\":{\\n        \\\"order\\\":1,\\n        \\\"runtime\\\":{\\n          \\\"begin\\\":\\\"2012-05-14T12:53:23Z\\\",\\n          \\\"end\\\":\\\"2012-05-14T12:53:26Z\\\"\\n        },\\n        \\\"status\\\":\\\"STATUS_FAILURE\\\"\\n      }\\n    }\\n  },\\n  \\\"type\\\":\\\"BUILD_TYPE_RELEASE\\\"\\n}\"@@@",
+      "@@@STEP_LOG_END@build_report_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/build_report_tmp_2",
+      "gs:///staging-eve-release/R99-1234.56.0-101-8945511751514863184/build_report.json"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update (2).upload build report to GS.gsutil write build_report.json to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

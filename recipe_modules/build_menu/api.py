@@ -663,6 +663,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
           sysroot=sysroot, private_bundle_func=private_bundle_func,
           report_to_spike=report_to_spike)
 
+  def artifacts_gs_path(self):
+    """Get the standard artifacts GS path for the builder (including bucket)."""
+    config = self.config_or_default
+    gs_bucket = config.artifacts.artifacts_gs_bucket
+    gs_path = self.m.cros_artifacts.artifacts_gs_path(
+        config.id.name, self._build_target, config.id.type,
+        template=self.m.cros_artifacts.gs_upload_path)
+    return 'gs://{gs_bucket}/{gs_path}'.format(gs_bucket=gs_bucket,
+                                               gs_path=gs_path)
+
   def create_containers(self, builder_config=None):
     """Call the BuildTestServiceContainers endpoint to build test containers.
 

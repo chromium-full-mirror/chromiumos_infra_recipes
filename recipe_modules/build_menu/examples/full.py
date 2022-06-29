@@ -62,6 +62,7 @@ def DoRunSteps(api, config, properties):
       api.build_menu.build_and_test_images(include_version=True)
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
+      _ = api.build_menu.artifacts_gs_path()
       api.build_menu.upload_artifacts()
       api.build_menu.create_containers()
       api.build_menu.add_child_build_ids_to_output_property()

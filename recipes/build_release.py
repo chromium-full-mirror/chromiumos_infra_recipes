@@ -243,6 +243,13 @@ def GenTests(api):
           post_process.MustRun,
           'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-main-release/LATEST-main'
       ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'build status pubsub update (7).upload build report to GS.gsutil write build_report.json to GS',
+          [
+              'gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/build_report.json'
+          ],
+      ),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui-main',
       bucket='release',

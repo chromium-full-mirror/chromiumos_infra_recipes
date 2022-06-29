@@ -157,6 +157,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._step_order = make_oneup()
     self._msg_counter = make_oneup()
 
+  def py_MessageToJson(self, build_report):
+    return json.dumps(
+        MessageToDict(build_report), separators=(',', ':'), indent=2,
+        sort_keys=True)
+
   def publish(self, build_report, raise_on_failed_publish=False):
     """Send a BuildReport to the pubsub topic.
 
@@ -198,9 +203,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
     with self.m.step.nest('build status pubsub update') as pres:
       # TODO(b/217973414): Replace with MessageToJson once we don't need to
       # fix the separator spacing between py2 and py3 MessageToJson.
-      pres.logs['message'] = json.dumps(
-          MessageToDict(self._build_report), separators=(',', ':'), indent=2,
-          sort_keys=True)
+      build_report_json = self.py_MessageToJson(self._build_report)
+      pres.logs['message'] = build_report_json
       self.m.cloud_pubsub.publish_message(
           self.pubsub_project,
           self.pubsub_topic,
@@ -213,6 +217,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
           endpoint=PUBSUB_ENDPOINT,
           raise_on_failed_publish=raise_on_failed_publish,
       )
+      self._upload_to_gs(build_report_json,
+                         self.m.build_menu.artifacts_gs_path())
 
     return build_report
 
@@ -435,3 +441,27 @@ class BuildReportingApi(recipe_api.RecipeApi):
           helpers.create_signed_build(signed_build_metadata, status))
 
     self.publish(build_report)
+
+  def _upload_to_gs(self, build_report_json, gs_path):
+    """Serialize the build report and upload it to GS.
+
+    Args:
+      build_report_json (str): JSON dump of the build report.
+      gs_path (str): Path to the directory to upload the build report to.
+    """
+    with self.m.step.nest('upload build report to GS') as presentation:
+      tmp_file = self.m.path.mkstemp(prefix='build_report')
+      self.m.file.write_json('write buildreport json to tmp file', tmp_file,
+                             build_report_json)
+      self.m.gsutil(cmd=['cp', tmp_file, gs_path + '/build_report.json'],
+                    name='write build_report.json to GS',
+                    use_retry_wrapper=True)
+
+      # TODO(b/217973414): Replace with native removeprefix call when we
+      # don't have to support Python 2.
+      def removeprefix(s, prefix):
+        return s[len(prefix):] if s.startswith(prefix) else s
+
+      presentation.links['gs upload dir'] = (
+          'https://console.cloud.google.com/storage/browser/%s' %
+          removeprefix(gs_path, 'gs://'))
