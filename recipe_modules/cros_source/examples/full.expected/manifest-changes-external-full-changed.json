@@ -2782,7 +2782,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Changes must be made in manifest-internal: _kernel_upstream.xml, _remotes.xml, codesearch-chromiumos.xml, full.xml"
+      "humanReason": "Changes must be made in manifest-internal: README.md, _kernel_upstream.xml, _remotes.xml, codesearch-chromiumos.xml, full.xml"
     },
     "name": "$result"
   }
