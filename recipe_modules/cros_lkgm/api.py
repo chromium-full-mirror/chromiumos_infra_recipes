@@ -191,18 +191,18 @@ class CrosLkgmApi(recipe_api.RecipeApi):
               hashtags=[LKGM_HASHTAG],
               project_path=chromium_src_dir,
           )
-          # Then set labels.
-          labels = {
-              True: {
-                  self.m.gerrit.Label.BOT_COMMIT: 1,
-                  self.m.gerrit.Label.COMMIT_QUEUE: 2,
-              },
-              False: {
-                  self.m.gerrit.Label.BOT_COMMIT: 1,
-                  self.m.gerrit.Label.COMMIT_QUEUE: 1,
-              },
-          }.get(self._full_run)
-          self.m.gerrit.set_change_labels_remote(change, labels)
+          # Then set labels, or abandon if dry run.
+          if self._full_run:
+            self.m.gerrit.set_change_labels_remote(
+                change, {
+                    self.m.gerrit.Label.BOT_COMMIT: 1,
+                    self.m.gerrit.Label.COMMIT_QUEUE: 2,
+                })
+          else:
+            self.m.gerrit.abandon_change(
+                change,
+                'this LKGM CL was produced by a builder running in dry run mode'
+            )
 
   def _abandon_old_lkgms(self):
     with self.m.step.nest('abandon old LKGM CLs'):

@@ -155,10 +155,8 @@ def GenTests(api):
                      ['70.00%', '50%']),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'LKGM candidate'),
-      api.post_check(
-          step_command_has_substr,
-          'create LKGM CL.create CL.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review',
-          ' \"Commit-Queue\": 1'),
+      api.post_check(post_process.MustRun,
+                     'create LKGM CL.create CL.abandon CL 1'),
       api.post_check(post_process.DoesNotRun, 'abandon old LKGM CLs'),
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
