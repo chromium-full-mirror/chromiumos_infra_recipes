@@ -411,8 +411,8 @@
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
-      "--image=initial-chromiumos-source-snapshot",
       "--quiet",
+      "--image=initial-chromiumos-source-snapshot",
       "--type=pd-standard"
     ],
     "env": {

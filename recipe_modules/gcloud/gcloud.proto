@@ -1,0 +1,29 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.gcloud;
+
+// What type of action to take regarding mounting the source cache.
+enum SourceCacheAction {
+  // Mount the latest cache image (i.e. the one in the pin file).
+  MOUNT_LATEST_CACHE_IMAGE = 0;
+  // Mount the recovery image (i.e. the initial-snapshot one).
+  MOUNT_RECOVERY_IMAGE = 1;
+  // Mount a specific image.
+  MOUNT_SPECIFIC_IMAGE = 2;
+  // Don't mount any cache at all (i.e. do a full checkout from scratch).
+  DONT_MOUNT_ANY_CACHE = 3;
+}
+
+message GcloudProperties {
+  // The type of action to take regarding source caches. Defaults to
+  // MOUNT_LATEST_CACHE_IMAGE.
+  SourceCacheAction source_cache_action = 1;
+
+  // If provided, this will replace the default recovery image. Must be used
+  // in conjunction with MOUNT_SPECIFIC_IMAGE or it will throw an error.
+  string specific_image_to_mount = 2;
+}

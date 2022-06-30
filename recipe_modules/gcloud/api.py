@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.gcloud.gcloud import (SourceCacheAction)
+
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 import contextlib
@@ -10,6 +12,8 @@ import datetime
 import json
 import os
 import re
+
+from recipe_engine.recipe_api import StepFailure
 
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
@@ -36,7 +40,7 @@ _RE_DISK_EXISTS = re.compile('The resource .+ already exists')
 class GcloudApi(recipe_api.RecipeApi):
   """A module to interact with Google Cloud."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, properties, *args, **kwargs):
     """Initialize GcloudApi."""
     super(GcloudApi, self).__init__(*args, **kwargs)
     self._attached_disks = {}
@@ -52,6 +56,12 @@ class GcloudApi(recipe_api.RecipeApi):
     self._version_file = None
     self._zone = None
     self._short_name = None
+
+    # Cache properties.
+    self._cache_action = (
+        properties.source_cache_action or
+        SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE)
+    self._specific_image_to_mount = properties.specific_image_to_mount
 
   def initialize(self):
     self._infra_host = (
@@ -131,7 +141,7 @@ class GcloudApi(recipe_api.RecipeApi):
   def _scrub_special_characters(self, branch):
     """Removes special characters from branch names.
     Args:
-      branch(str): Branch name to scrub for characters.
+      branch (str): Branch name to scrub for characters.
 
     Returns:
       String containing scrubbed branch name.
@@ -141,7 +151,7 @@ class GcloudApi(recipe_api.RecipeApi):
   def set_gce_project(self, project):
     """Set the default project for gcloud command.
     Args:
-      project(str): Google Cloud project name.
+      project (str): Google Cloud project name.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('set gcloud project',
@@ -151,7 +161,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """Print out the auth creds currently on the bot.
 
     Args:
-      step_name(str): Name of the step.
+      step_name (str): Name of the step.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step(step_name or 'gcloud auth', ['gcloud', 'auth', 'list'])
@@ -160,10 +170,10 @@ class GcloudApi(recipe_api.RecipeApi):
     """Creates an image in the GCE project.
 
     Args:
-      image_name(str): Name of the image.
-      source_uri(str, optional): Sets the `--source-uri` flag if the image
+      image_name (str): Name of the image.
+      source_uri (str, optional): Sets the `--source-uri` flag if the image
         source is a tarball. See gcloud docs for detail.
-      licenses(list[str], optional): List of image licenses to apply.
+      licenses (list[str], optional): List of image licenses to apply.
     """
     # source_uri is made optional to leave room for other image sources in the
     # future (--source-disk, --source-image, etc.), although it's currently the
@@ -199,12 +209,12 @@ class GcloudApi(recipe_api.RecipeApi):
     """Create an instance in the GCE project.
 
     Args:
-      image(str): GCE image to use for the instance.
-      project(str): Google Cloud project name.
-      machine(str): GCE machine type
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
-      network(str): Network name to use.
-      subnet(str): Network subnet on which to create instance.
+      image (str): GCE image to use for the instance.
+      project (str): Google Cloud project name.
+      machine (str): GCE machine type
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
+      network (str): Network name to use.
+      subnet (str): Network subnet on which to create instance.
 
     Returns:
       Tuple[str, str]: (name, ip_addr) of the instance.
@@ -239,9 +249,9 @@ class GcloudApi(recipe_api.RecipeApi):
     """Delete a GCE instance.
 
     Args:
-      instance(str): GCE instance to be deleted.
-      project(str): Google Cloud project name.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      instance (str): GCE instance to be deleted.
+      project (str): Google Cloud project name.
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete instance', [
@@ -310,9 +320,9 @@ class GcloudApi(recipe_api.RecipeApi):
 
     Args:
       name (str): An alphanumeric name for the mount, used for display.
-      instance(str): GCE instance on which disk will be attached.
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      instance (str): GCE instance on which disk will be attached.
+      disk (str): Google Cloud disk name.
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       # To ensure that the bot doesn't end in a weird state, detach
@@ -356,9 +366,9 @@ class GcloudApi(recipe_api.RecipeApi):
     that is used by the context manager to detach as the task ends.
 
     Args:
-      instance(str): GCE instance disk is attached.
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      instance (str): GCE instance disk is attached.
+      disk (str): Google Cloud disk name.
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('detach disk', [
@@ -367,30 +377,38 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
 
-  def create_disk_from_image(self, disk, zone, image, disk_type=None):
-    """Create a GCE disk from supplied image.
+  def create_disk(self, disk, zone, image=None, disk_type=None, size=None):
+    """Create a GCE disk.
 
-    Create a GCE disk from a provided snapshot name.
+    Create a GCE disk using the provided options.
 
     Args:
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create disk (e.g. us-central1-b).
-      image(str): Image version use to create the disk.
-      disk_type(str): Type of GCE disk to create.
+      disk (str): Google Cloud disk name.
+      zone (str): GCE zone to create disk (e.g. us-central1-b).
+      image (str): Image version use to create the disk. If none, will create a
+                  blank disk.
+      disk_type (str): Type of GCE disk to create.
+      size (str): Size of disk in gcloud format (e.g. 100GB).
 
     Returns:
       The stdout of the gcloud command.
     """
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--image-project={}'.format(GCE_BUILD_PROJECT),
-        '--image={}'.format(image), '--quiet'
+        '--image-project={}'.format(GCE_BUILD_PROJECT), '--quiet'
     ]
+
+    step_name = 'create empty disk'
+    if image:
+      cmd.extend(['--image={}'.format(image)])
+      step_name = 'create disk from image'
     if disk_type:
       cmd.extend(['--type={}'.format(disk_type)])
+    if size:
+      cmd.extend(['--size={}'.format(size)])
+
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      return self.m.easy.stdout_step('create disk from image', cmd,
-                                     infra_step=True)
+      return self.m.easy.stdout_step(step_name, cmd, infra_step=True)
 
   def delete_disk(self, disk, zone):
     """Delete a GCE disk.
@@ -398,8 +416,8 @@ class GcloudApi(recipe_api.RecipeApi):
     Permanently delete a GCE disk from the project.
 
     Args:
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      disk (str): Google Cloud disk name.
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete disk', [
@@ -407,7 +425,7 @@ class GcloudApi(recipe_api.RecipeApi):
           '--zone={}'.format(zone), '--quiet'
       ], infra_step=True)
 
-  def mount_disk(self, name, mount_path, recipe_mount=False):
+  def mount_disk(self, name, mount_path, recipe_mount=False, chown=False):
     """Mount an attached disk to host.
 
     As a disk is mounted, the disk is then added to the stack
@@ -415,9 +433,11 @@ class GcloudApi(recipe_api.RecipeApi):
 
     Args:
       name (str): An alphanumeric name for the mount, used for display.
-      mount_path(str): Directory to mount the disk.
-      recipe_mount(bool): Whether mount needs to be in the path to use within
+      mount_path (str): Directory to mount the disk.
+      recipe_mount (bool): Whether mount needs to be in the path to use within
                         a recipe.
+      chown (bool): Whether or not to chown the disk after mounting. This is
+                    needed for newly created disks.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       if recipe_mount:
@@ -440,6 +460,13 @@ class GcloudApi(recipe_api.RecipeApi):
           'sudo', 'mount', '-o', 'discard,defaults', self._attached_disks[name],
           recipe_mount_path
       ], infra_step=True)
+      if chown:
+        # Since the disk was created and formatted with root, we need to make
+        # certain chrome-bot has ownership over the disk.
+        chown_cmd = [
+            'sudo', 'chown', '-R', 'chrome-bot:chrome-bot', recipe_mount_path
+        ]
+        self.m.easy.stdout_step('chown the disk', chown_cmd, infra_step=True)
       self._add_cleanup_mounted_disk(name, recipe_mount_path)
 
   def unmount_disk(self, name, mount_path):
@@ -450,7 +477,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
     Args:
       name (str): An alphanumeric name for the mount, used for display.
-      mount_path(str): Directory to mount the disk.
+      mount_path (str): Directory to mount the disk.
     """
     unmount_script = self.repo_resource('recipe_scripts/umount_path.sh')
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
@@ -465,7 +492,7 @@ class GcloudApi(recipe_api.RecipeApi):
     that is used by the context manager to unmount as the task ends.
 
     Args:
-      mount_path(str): Directory to mount the disk.
+      mount_path (str): Directory to mount the disk.
       name (str): An alphanumeric name for the mount, used for display.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
@@ -492,9 +519,9 @@ class GcloudApi(recipe_api.RecipeApi):
     to ensure the disks are deleted when the instance is removed.
 
     Args:
-      instance(str): GCE instance on which disk is attached.
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      instance (str): GCE instance on which disk is attached.
+      disk (str): Google Cloud disk name.
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('set disk to autodelete', [
@@ -513,7 +540,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """Check whether a image exists.
 
     Args:
-      image(str): Name of the snapshot to check.
+      image (str): Name of the snapshot to check.
 
     Returns:
       Bool of whether the snapshot exists or not.
@@ -535,8 +562,8 @@ class GcloudApi(recipe_api.RecipeApi):
     """Check whether a disk exists.
 
     Args:
-      disk(str): Name of the disk to check.
-      zone(str): GCE zone in which the disk exists.
+      disk (str): Name of the disk to check.
+      zone (str): GCE zone in which the disk exists.
 
     Returns:
       Bool of whether the disk exists or not.
@@ -586,7 +613,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """Check whether a disk is attached to an instance.
 
     Args:
-      disk_name(str): Disk name to match for device id.
+      disk_name (str): Disk name to match for device id.
 
     Returns:
       Bool of whether the disk is attached or not.
@@ -599,9 +626,9 @@ class GcloudApi(recipe_api.RecipeApi):
     """Resize the GCE disk above the default of 200GB.
 
     Args:
-      disk(str): Google Cloud disk name.
-      zone(str): GCE zone which the disk is located.
-      size(str): New size of the disk in GB.
+      disk (str): Google Cloud disk name.
+      zone (str): GCE zone which the disk is located.
+      size (str): New size of the disk in GB.
     """
 
     def _is_set_size(gcloud_str):
@@ -634,9 +661,9 @@ class GcloudApi(recipe_api.RecipeApi):
     """Create an image from specified disk.
 
     Args:
-      disk(str): Google Cloud disk name.
-      image_name(str): The name to give the image.
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
+      disk (str): Google Cloud disk name.
+      image_name (str): The name to give the image.
+      zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('create image from disk', [
@@ -649,9 +676,9 @@ class GcloudApi(recipe_api.RecipeApi):
     """Calculate the list of images that have expired.
 
     Args:
-      retention_days(int): Number of days to retain.
-      prefixes(list|str): List of prefixes to filter.
-      protected_images(list|str): List of images to preserve.
+      retention_days (int): Number of days to retain.
+      prefixes (list|str): List of prefixes to filter.
+      protected_images (list|str): List of images to preserve.
     """
     lookback_date = (
         self.m.time.utcnow() -
@@ -683,7 +710,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """Delete the list of provided images from GCE.
 
     Args:
-      images(list|str): A list of image names.
+      images (list|str): A list of image names.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       for image in images:
@@ -695,8 +722,8 @@ class GcloudApi(recipe_api.RecipeApi):
     """Determines the list of orphaned disks to delete.
 
     Args:
-      disks(dict): List of all GCE disks and zone
-      instances(list|str): List of all GCE instances.
+      disks (dict): List of all GCE disks and zone
+      instances (list|str): List of all GCE instances.
 
     Returns:
       Dictionary containing disk name and zone to delete.
@@ -715,8 +742,8 @@ class GcloudApi(recipe_api.RecipeApi):
     """Determine the name of the disk to create.
 
     Args:
-      cache(str): Name of the cache disk to create.
-      branch(str): Git branch.
+      cache (str): Name of the cache disk to create.
+      branch (str): Git branch.
     Returns:
       A string formatted disk suffix.
     """
@@ -759,30 +786,21 @@ class GcloudApi(recipe_api.RecipeApi):
           'failed to get zone from swarming host: {}'.format(self.infra_host))
     self._zone = m.group('zone')
 
-  def _create_new_cache_disk(self, cache_name, disk_type, recipe_mount):
-    """Create a new cache disk.
-
-    New cache disk is based on snapshot image stored in Google Storage, or
-    recovery snapshot.
+  def _get_image_version(self, recovery_snapshot):
+    """Based on the requested cache action, return the image version.
 
     Args:
-      cache_name(str): Name of the cache file to use.
-      disk_type(str): Type of GCE disk to create, defaults to standard
-        persistent disk.
-      recipe_mount(bool): Whether mount needs to be in the path to use within
-        a recipe.
+      recovery_snapshot (str): Recovery image to fall back on.
 
     Returns:
-      Str containing the name of the snapshot.
+      String of the image file to use, or None.
     """
-    with self.m.step.nest('setup source cache disk'):
-      self._disk = '{}-{}'.format(self.infra_host, self._short_name)
-      self._disk = self._disk[:self.gce_name_limit] if len(
-          self._disk) > self.gce_name_limit else self._disk
-      recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
+    # If cache action is latest cache image, look that image up from the
+    # version file.
+    if self._cache_action is SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE:
       with self.m.step.nest('retrieve image version from storage'):
         try:
-          remote_version = self.m.gsutil.cat(
+          return self.m.gsutil.cat(
               'gs://{}/{}'.format(GCE_CACHE_BUCKET,
                                   self._version_file), infra_step=True,
               stdout=self.m.raw_io.output_text()).stdout.strip()
@@ -793,40 +811,127 @@ class GcloudApi(recipe_api.RecipeApi):
             # This is intended behavior if a new cache builder is added.
             # Rather than fail, default to an initial snapshot.
             pres.logs['version file not found'] = self._version_file
-            remote_version = recovery_snapshot
-      with self.m.step.nest('create disk from snapshot image'):
-        snapshot = remote_version
-        if not self.image_exists(image=snapshot):
-          snapshot = recovery_snapshot
-        self.m.easy.set_properties_step(snapshot_version=snapshot)
-        disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
-        if disk_exists and recipe_mount:
-          if self.disk_attached(disk_name=self._short_name):
-            self.detach_disk(instance=self.infra_host, disk=self._disk,
-                             zone=self._zone)
-          self.delete_disk(disk=self._disk, zone=self._zone)
-          disk_exists = False
+            return recovery_snapshot
+    # If cache action is recovery image, use the provided snapshot image.
+    elif self._cache_action is SourceCacheAction.MOUNT_RECOVERY_IMAGE:
+      with self.m.step.nest(
+          'retrieve initial snapshot image from storage') as pres:
+        pres.logs['snapshot_image'] = recovery_snapshot
+        return recovery_snapshot
+    # If a specific image is provided, use that.
+    elif self._cache_action is SourceCacheAction.MOUNT_SPECIFIC_IMAGE:
+      with self.m.step.nest('retrieve specific image from storage') as pres:
+        pres.logs['snapshot_image'] = self._specific_image_to_mount
+        return self._specific_image_to_mount
 
-        if not disk_exists:
-          # Create the disk but in the event of a stockout of SSD, catch the
-          # exception and create a standard spinning disk. Also catch if the
-          # disk is perhaps already in existance (false 404 from earlier check).
-          try:
-            self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                        image=snapshot, disk_type=disk_type)
-          except self.m.step.StepFailure as e:
-            if not e.result.stdout or not _RE_DISK_EXISTS.search(
-                e.result.stdout.decode('utf-8')):
-              self.create_disk_from_image(disk=self._disk, zone=self._zone,
-                                          image=snapshot,
-                                          disk_type='pd-standard')
-        return snapshot
+    # Otherwise this is a no-cache flow, and thus the image doesn't matter.
+    return None
+
+  def _setup_empty_cache_disk(self, disk_type):
+    """Set up a brand new disk for use as a cache disk.
+
+    In contrast to _create_new_cache_disk below which uses the previous image
+    (or the recovery image) as the basis for its checkout, this creates an empty
+    disk and sets it up for a fresh sync from scratch. Note that this step does
+    *not* do a repo init on the new disk, because the disk is not yet mounted.
+
+    Args:
+      disk_type (str): Type of GCE disk to create, defaults to standard
+        persistent disk.
+    """
+    # Check to see if a disk exists, and if so delete it.
+    disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
+    if disk_exists:
+      if self.disk_attached(disk_name=self._short_name):
+        self.detach_disk(instance=self.infra_host, disk=self._disk,
+                         zone=self._zone)
+      self.delete_disk(disk=self._disk, zone=self._zone)
+    # Create an empty disk.
+    try:
+      # The cache image disks are of size 200GB. Gcloud defaults to 100GB
+      # for SSDs, so specify a size of 200GB to match the cache disk.
+      self.create_disk(disk=self._disk, zone=self._zone, disk_type=disk_type,
+                       size='200GB')
+    except self.m.step.StepFailure as e:
+      if not e.result.stdout or not _RE_DISK_EXISTS.search(
+          e.result.stdout.decode('utf-8')):
+        self.create_disk(disk=self._disk, zone=self._zone,
+                         disk_type='pd-standard', size='200GB')
+    # Attach disk.
+    self.attach_disk(name=self._short_name, instance=self.infra_host,
+                     disk=self._disk, zone=self._zone)
+
+    # Format it.
+    disk = '/dev/{}'.format(self.lookup_device_id(self._short_name))
+    format_cmd = [
+        'sudo', 'mkfs.ext4', '-m', '0', '-E',
+        'lazy_itable_init=0,lazy_journal_init=0,discard', disk
+    ]
+    self.m.easy.stdout_step('format empty disk', format_cmd, infra_step=True)
+
+  def _create_new_cache_disk(self, cache_name, disk_type, recipe_mount):
+    """Create a new cache disk.
+
+    New cache disk is based on snapshot image stored in Google Storage, or
+    recovery snapshot.
+
+    Args:
+      cache_name (str): Name of the cache file to use.
+      disk_type (str): Type of GCE disk to create, defaults to standard
+        persistent disk.
+      recipe_mount (bool): Whether mount needs to be in the path to use within
+        a recipe.
+
+    Returns:
+      Str containing the name of the snapshot.
+    """
+    with self.m.step.nest('setup source cache disk'):
+      self._disk = '{}-{}'.format(self.infra_host, self._short_name)
+      self._disk = self._disk[:self.gce_name_limit] if len(
+          self._disk) > self.gce_name_limit else self._disk
+      recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
+      remote_version = self._get_image_version(recovery_snapshot)
+
+      if self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
+        with self.m.step.nest('create disk with empty checkout'):
+          self._setup_empty_cache_disk(disk_type)
+
+      else:
+        with self.m.step.nest('create disk from snapshot image'):
+          snapshot = remote_version
+          # Notice here that we check for image existence (even in cases where
+          # the config requests the latest image or a specific image) and if
+          # said image does not exist, we fall back on the snapshot image.
+          if not self.image_exists(image=snapshot):
+            snapshot = recovery_snapshot
+          self.m.easy.set_properties_step(snapshot_version=snapshot)
+          disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
+          if disk_exists and recipe_mount:
+            if self.disk_attached(disk_name=self._short_name):
+              self.detach_disk(instance=self.infra_host, disk=self._disk,
+                               zone=self._zone)
+            self.delete_disk(disk=self._disk, zone=self._zone)
+            disk_exists = False
+
+          if not disk_exists:
+            # Create the disk but in the event of a stockout of SSD, catch the
+            # exception and create a standard spinning disk. Also catch if the
+            # disk is perhaps already in existance (false 404 from earlier check).
+            try:
+              self.create_disk(disk=self._disk, zone=self._zone, image=snapshot,
+                               disk_type=disk_type)
+            except self.m.step.StepFailure as e:
+              if not e.result.stdout or not _RE_DISK_EXISTS.search(
+                  e.result.stdout.decode('utf-8')):
+                self.create_disk(disk=self._disk, zone=self._zone,
+                                 image=snapshot, disk_type='pd-standard')
+        return snapshot or None
 
   def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
     """Perform cache setup when mount is allowed to be outside the path.
 
     Args:
-      recipe_mount_path(path): Location (in recipes) to mount the attached disk.
+      recipe_mount_path (path): Location (in recipes) to mount attached disk.
     """
     self.update_fstab(mount_path=recipe_mount_path, name=self._short_name)
     self.m.file.write_text(
@@ -844,7 +949,7 @@ class GcloudApi(recipe_api.RecipeApi):
     from branch to branch.
 
     Args:
-      cache_name(str): Name of the cache file to use.
+      cache_name (str): Name of the cache file to use.
     """
     with self.m.step.nest('determine whether to reset overlayfs directories'):
       overlayfs_branch = 'main'
@@ -862,6 +967,16 @@ class GcloudApi(recipe_api.RecipeApi):
       if overlayfs_branch != self._branch:
         self.m.overlayfs.cleanup_overlay_directories(cache_name=cache_name)
 
+  def _verify_cache_config(self):
+    """Verifies that the config props for source cache are valid combos."""
+    if (self._specific_image_to_mount and
+        self._cache_action is not SourceCacheAction.MOUNT_SPECIFIC_IMAGE) or (
+            self._cache_action is SourceCacheAction.MOUNT_SPECIFIC_IMAGE and
+            not self._specific_image_to_mount):
+      raise StepFailure(
+          'specific_image_to_mount must be provided with cache action MOUNT_SPECIFIC_IMAGE'
+      )
+
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
                        disk_size=None, recipe_mount=False,
                        disallow_previously_mounted=False, mount_existing=False):
@@ -871,18 +986,20 @@ class GcloudApi(recipe_api.RecipeApi):
     attach, and mount the source disk.
 
     Args:
-      cache_name(str): Name of the cache file to use.
-      branch(str): Git branch.
-      disk_type(str): Type of GCE disk to create, defaults to standard
+      cache_name (str): Name of the cache file to use.
+      branch (str): Git branch.
+      disk_type (str): Type of GCE disk to create, defaults to standard
         persistent disk.
-      disk_size(str): Size of the disk to create in GB, defaults to image size.
-      recipe_mount(bool): Whether mount needs to be in the path to use within
+      disk_size (str): Size of the disk to create in GB, defaults to image size.
+      recipe_mount (bool): Whether mount needs to be in the path to use within
         a recipe.
-      disallow_previously_mounted(bool): If set, this step will fail if the cache
-        is already mounted.
-      mount_existing(bool): If we find an existing cache, mount it immediately
+      disallow_previously_mounted (bool): If set, this step will fail if the
+        cache is already mounted.
+      mount_existing (bool): If we find an existing cache, mount it immediately
         instead of relying on subsequent step.
     """
+    # Verify source cache config.
+    self._verify_cache_config()
     # Set properties we need for cache disk setup.
     if not self._zone or not self.infra_host:
       self._swarming_information()
@@ -925,18 +1042,35 @@ class GcloudApi(recipe_api.RecipeApi):
                          disk=self._disk, zone=self._zone)
 
       if (not self._cache_mounted) or mount_existing:
-        self.mount_disk(name=self._short_name, mount_path=mount_path,
-                        recipe_mount=recipe_mount)
+        self.mount_disk(
+            name=self._short_name,
+            mount_path=mount_path,
+            recipe_mount=recipe_mount,
+            # If the cache action is to not mount any cache, the disk will have
+            # been newly created and formatted by root. In that case, we will
+            # need to chown the mount point to ensure the bot user has proper
+            # permissions to repo init later on.
+            chown=self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE)
         if not recipe_mount:
           self._setup_new_cache_mount_outside_path(recipe_mount_path)
 
       if not self._cache_mounted:
         if disk_size:
           self.resize_disk(disk=self._disk, zone=self._zone, size=disk_size)
+        if snapshot:
+          self.m.file.write_text('write version file', local_version_path,
+                                 snapshot)
 
-        self.m.file.write_text('write version file', local_version_path,
-                               snapshot)
-
+      # Special case for when there is no cache mounted, we need to make sure
+      # we repo init that disk.
+      if self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
+        # Make sure we repo init in the correct directory.
+        with self.m.context(
+            cwd=self.m.path.abs_to_path(
+                self.snapshot_builder_mount_path.join(mount_path))):
+          self.m.repo.init(
+              'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
+          )
       if not recipe_mount:
         self._reset_overlayfs_if_needed(cache_name)
       return recipe_mount_path

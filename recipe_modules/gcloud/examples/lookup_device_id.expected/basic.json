@@ -8,8 +8,8 @@
       "chromiumos",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
-      "--image=test-chromeos-snapshot",
       "--quiet",
+      "--image=test-chromeos-snapshot",
       "--type=pd-ssd"
     ],
     "env": {
@@ -39,8 +39,8 @@
       "foo",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
-      "--image=test-chromeos-snapshot",
       "--quiet",
+      "--image=test-chromeos-snapshot",
       "--type=pd-ssd"
     ],
     "env": {

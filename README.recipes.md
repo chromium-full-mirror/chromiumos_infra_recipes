@@ -350,6 +350,7 @@
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) (Python3 ✅) &mdash; An experimental recipe for running GCE tests.
+  * [gcloud:examples/cache_properties](#recipes-gcloud_examples_cache_properties) (Python3 ✅)
   * [gcloud:examples/full](#recipes-gcloud_examples_full) (Python3 ✅)
   * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks) (Python3 ✅)
   * [gcloud:examples/lookup_device_id](#recipes-gcloud_examples_lookup_device_id) (Python3 ✅)
@@ -1445,16 +1446,16 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#60)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#63)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#82)(self, cache_path):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#85)(self, cache_path):**
 
 Sync Chrome cache using existing cached repositories.
 
 Args:
   cache_path (Path): Path to mount of cache.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#224)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#227)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1467,7 +1468,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#277)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#280)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1483,11 +1484,11 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#62)(self):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#65)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#250)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#253)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#317)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#320)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1499,7 +1500,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#258)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#261)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1515,7 +1516,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#388)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#391)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1529,7 +1530,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#130)(self, chrome_root, chroot, build_target, internal):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#133)(self, chrome_root, chroot, build_target, internal):**
 
 Sync Chrome source code.
 
@@ -5037,19 +5038,19 @@ Returns:
   Config, GCE Provider Config defintion with updated values.
 ### *recipe_modules* / [gcloud](/recipe_modules/gcloud)
 
-[DEPS](/recipe_modules/gcloud/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [overlayfs](#recipe_modules-overlayfs), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/gcloud/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [GcloudApi](/recipe_modules/gcloud/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GcloudApi](/recipe_modules/gcloud/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to interact with Google Cloud.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gcloud/api.py#39)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gcloud/api.py#43)(self, properties, \*args, \*\*kwargs):**
 
 Initialize GcloudApi.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#304)(self, name, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#314)(self, name, instance, disk, zone):**
 
 Attach a disk to a GCE instance.
 
@@ -5058,20 +5059,20 @@ that is used by the context manager to detach as the task ends.
 
 Args:
   name (str): An alphanumeric name for the mount, used for display.
-  instance(str): GCE instance on which disk will be attached.
-  disk(str): Google Cloud disk name.
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
+  instance (str): GCE instance on which disk will be attached.
+  disk (str): Google Cloud disk name.
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#150)(self, step_name=None):**
+&mdash; **def [auth\_list](/recipe_modules/gcloud/api.py#160)(self, step_name=None):**
 
 Print out the auth creds currently on the bot.
 
 Args:
-  step_name(str): Name of the step.
+  step_name (str): Name of the step.
 
-&emsp; **@property**<br>&mdash; **def [branch](/recipe_modules/gcloud/api.py#103)(self):**
+&emsp; **@property**<br>&mdash; **def [branch](/recipe_modules/gcloud/api.py#113)(self):**
 
-&mdash; **def [check\_for\_disk\_mount](/recipe_modules/gcloud/api.py#736)(self, mount_path):**
+&mdash; **def [check\_for\_disk\_mount](/recipe_modules/gcloud/api.py#763)(self, mount_path):**
 
 Check whether there is a disk mounted on given path.
 
@@ -5081,98 +5082,100 @@ Args:
 Returns:
   Bool indicating whether there is a disk mounted on the path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#944)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#1078)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#988)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#1122)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_disk\_from\_image](/recipe_modules/gcloud/api.py#370)(self, disk, zone, image, disk_type=None):**
+&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#380)(self, disk, zone, image=None, disk_type=None, size=None):**
 
-Create a GCE disk from supplied image.
+Create a GCE disk.
 
-Create a GCE disk from a provided snapshot name.
+Create a GCE disk using the provided options.
 
 Args:
-  disk(str): Google Cloud disk name.
-  zone(str): GCE zone to create disk (e.g. us-central1-b).
-  image(str): Image version use to create the disk.
-  disk_type(str): Type of GCE disk to create.
+  disk (str): Google Cloud disk name.
+  zone (str): GCE zone to create disk (e.g. us-central1-b).
+  image (str): Image version use to create the disk. If none, will create a
+              blank disk.
+  disk_type (str): Type of GCE disk to create.
+  size (str): Size of disk in gcloud format (e.g. 100GB).
 
 Returns:
   The stdout of the gcloud command.
 
-&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#159)(self, image_name, source_uri=None, licenses=None):**
+&mdash; **def [create\_image](/recipe_modules/gcloud/api.py#169)(self, image_name, source_uri=None, licenses=None):**
 
 Creates an image in the GCE project.
 
 Args:
-  image_name(str): Name of the image.
-  source_uri(str, optional): Sets the `--source-uri` flag if the image
+  image_name (str): Name of the image.
+  source_uri (str, optional): Sets the `--source-uri` flag if the image
     source is a tarball. See gcloud docs for detail.
-  licenses(list[str], optional): List of image licenses to apply.
+  licenses (list[str], optional): List of image licenses to apply.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#632)(self, disk, image_name, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#659)(self, disk, image_name, zone):**
 
 Create an image from specified disk.
 
 Args:
-  disk(str): Google Cloud disk name.
-  image_name(str): The name to give the image.
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
+  disk (str): Google Cloud disk name.
+  image_name (str): The name to give the image.
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#197)(self, image, project, machine, zone, network=None, subnet=None):**
+&mdash; **def [create\_instance](/recipe_modules/gcloud/api.py#207)(self, image, project, machine, zone, network=None, subnet=None):**
 
 Create an instance in the GCE project.
 
 Args:
-  image(str): GCE image to use for the instance.
-  project(str): Google Cloud project name.
-  machine(str): GCE machine type
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
-  network(str): Network name to use.
-  subnet(str): Network subnet on which to create instance.
+  image (str): GCE image to use for the instance.
+  project (str): Google Cloud project name.
+  machine (str): GCE machine type
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
+  network (str): Network name to use.
+  subnet (str): Network subnet on which to create instance.
 
 Returns:
   Tuple[str, str]: (name, ip_addr) of the instance.
 
-&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#395)(self, disk, zone):**
+&mdash; **def [delete\_disk](/recipe_modules/gcloud/api.py#413)(self, disk, zone):**
 
 Delete a GCE disk.
 
 Permanently delete a GCE disk from the project.
 
 Args:
-  disk(str): Google Cloud disk name.
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
+  disk (str): Google Cloud disk name.
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#186)(self, image_name):**
+&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#196)(self, image_name):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#681)(self, images):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#708)(self, images):**
 
 Delete the list of provided images from GCE.
 
 Args:
-  images(list|str): A list of image names.
+  images (list|str): A list of image names.
 
-&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#238)(self, instance, project, zone):**
+&mdash; **def [delete\_instance](/recipe_modules/gcloud/api.py#248)(self, instance, project, zone):**
 
 Delete a GCE instance.
 
 Args:
-  instance(str): GCE instance to be deleted.
-  project(str): Google Cloud project name.
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
+  instance (str): GCE instance to be deleted.
+  project (str): Google Cloud project name.
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#351)(self, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#361)(self, instance, disk, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -5180,89 +5183,89 @@ As a disk is detached, the disk is then removed from the stack
 that is used by the context manager to detach as the task ends.
 
 Args:
-  instance(str): GCE instance disk is attached.
-  disk(str): Google Cloud disk name.
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
+  instance (str): GCE instance disk is attached.
+  disk (str): Google Cloud disk name.
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [determine\_disks\_to\_delete](/recipe_modules/gcloud/api.py#694)(self, disks, instances):**
+&mdash; **def [determine\_disks\_to\_delete](/recipe_modules/gcloud/api.py#721)(self, disks, instances):**
 
 Determines the list of orphaned disks to delete.
 
 Args:
-  disks(dict): List of all GCE disks and zone
-  instances(list|str): List of all GCE instances.
+  disks (dict): List of all GCE disks and zone
+  instances (list|str): List of all GCE instances.
 
 Returns:
   Dictionary containing disk name and zone to delete.
 
-&mdash; **def [disk\_attached](/recipe_modules/gcloud/api.py#585)(self, disk_name):**
+&mdash; **def [disk\_attached](/recipe_modules/gcloud/api.py#612)(self, disk_name):**
 
 Check whether a disk is attached to an instance.
 
 Args:
-  disk_name(str): Disk name to match for device id.
+  disk_name (str): Disk name to match for device id.
 
 Returns:
   Bool of whether the disk is attached or not.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#533)(self, disk, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#560)(self, disk, zone):**
 
 Check whether a disk exists.
 
 Args:
-  disk(str): Name of the disk to check.
-  zone(str): GCE zone in which the disk exists.
+  disk (str): Name of the disk to check.
+  zone (str): GCE zone in which the disk exists.
 
 Returns:
   Bool of whether the disk exists or not.
 
-&emsp; **@property**<br>&mdash; **def [disk\_short\_name](/recipe_modules/gcloud/api.py#111)(self):**
+&emsp; **@property**<br>&mdash; **def [disk\_short\_name](/recipe_modules/gcloud/api.py#121)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gce\_disk](/recipe_modules/gcloud/api.py#97)(self):**
+&emsp; **@property**<br>&mdash; **def [gce\_disk](/recipe_modules/gcloud/api.py#107)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gce\_disk\_blkid](/recipe_modules/gcloud/api.py#119)(self):**
+&emsp; **@property**<br>&mdash; **def [gce\_disk\_blkid](/recipe_modules/gcloud/api.py#129)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gce\_name\_limit](/recipe_modules/gcloud/api.py#115)(self):**
+&emsp; **@property**<br>&mdash; **def [gce\_name\_limit](/recipe_modules/gcloud/api.py#125)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#647)(self, retention_days, prefixes, protected_images=None):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#674)(self, retention_days, prefixes, protected_images=None):**
 
 Calculate the list of images that have expired.
 
 Args:
-  retention_days(int): Number of days to retain.
-  prefixes(list|str): List of prefixes to filter.
-  protected_images(list|str): List of images to preserve.
+  retention_days (int): Number of days to retain.
+  prefixes (list|str): List of prefixes to filter.
+  protected_images (list|str): List of images to preserve.
 
-&mdash; **def [get\_instance\_serial\_output](/recipe_modules/gcloud/api.py#1032)(self, instance, project, zone):**
+&mdash; **def [get\_instance\_serial\_output](/recipe_modules/gcloud/api.py#1166)(self, instance, project, zone):**
 
-&emsp; **@property**<br>&mdash; **def [host\_zone](/recipe_modules/gcloud/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [host\_zone](/recipe_modules/gcloud/api.py#103)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [image\_exists](/recipe_modules/gcloud/api.py#511)(self, image):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [image\_exists](/recipe_modules/gcloud/api.py#538)(self, image):**
 
 Check whether a image exists.
 
 Args:
-  image(str): Name of the snapshot to check.
+  image (str): Name of the snapshot to check.
 
 Returns:
   Bool of whether the snapshot exists or not.
 
-&emsp; **@property**<br>&mdash; **def [infra\_host](/recipe_modules/gcloud/api.py#61)(self):**
+&emsp; **@property**<br>&mdash; **def [infra\_host](/recipe_modules/gcloud/api.py#71)(self):**
 
-&mdash; **def [initialize](/recipe_modules/gcloud/api.py#56)(self):**
+&mdash; **def [initialize](/recipe_modules/gcloud/api.py#66)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [list\_all\_disks](/recipe_modules/gcloud/api.py#560)(self):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [list\_all\_disks](/recipe_modules/gcloud/api.py#587)(self):**
 
 Pulls a list of all disks that exist.
 
 Returns:
   A dictionary containing disk name and zone.
 
-&mdash; **def [list\_all\_instances](/recipe_modules/gcloud/api.py#252)(self):**
+&mdash; **def [list\_all\_instances](/recipe_modules/gcloud/api.py#262)(self):**
 
 Pulls a list of all instances that exist.
 
-&mdash; **def [lookup\_device\_id](/recipe_modules/gcloud/api.py#267)(self, disk_name):**
+&mdash; **def [lookup\_device\_id](/recipe_modules/gcloud/api.py#277)(self, disk_name):**
 
 Look up the device id in /dev/disk/by-id by name.
 
@@ -5272,7 +5275,7 @@ Returns:
   Returns the device id of the provided disk name, defaulting to None if no
   disk can be found.
 
-&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#410)(self, name, mount_path, recipe_mount=False):**
+&mdash; **def [mount\_disk](/recipe_modules/gcloud/api.py#428)(self, name, mount_path, recipe_mount=False, chown=False):**
 
 Mount an attached disk to host.
 
@@ -5281,20 +5284,22 @@ that is used by the context manager to unmount as the task ends.
 
 Args:
   name (str): An alphanumeric name for the mount, used for display.
-  mount_path(str): Directory to mount the disk.
-  recipe_mount(bool): Whether mount needs to be in the path to use within
+  mount_path (str): Directory to mount the disk.
+  recipe_mount (bool): Whether mount needs to be in the path to use within
                     a recipe.
+  chown (bool): Whether or not to chown the disk after mounting. This is
+                needed for newly created disks.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [resize\_disk](/recipe_modules/gcloud/api.py#597)(self, disk, zone, size):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [resize\_disk](/recipe_modules/gcloud/api.py#624)(self, disk, zone, size):**
 
 Resize the GCE disk above the default of 200GB.
 
 Args:
-  disk(str): Google Cloud disk name.
-  zone(str): GCE zone which the disk is located.
-  size(str): New size of the disk in GB.
+  disk (str): Google Cloud disk name.
+  zone (str): GCE zone which the disk is located.
+  size (str): New size of the disk in GB.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#486)(self, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#513)(self, instance, disk, zone):**
 
 Set a disk to autodelete when a GCE instance is deleted.
 
@@ -5303,17 +5308,17 @@ deleted, thus to ensure cleanup we can flip the metadata
 to ensure the disks are deleted when the instance is removed.
 
 Args:
-  instance(str): GCE instance on which disk is attached.
-  disk(str): Google Cloud disk name.
-  zone(str): GCE zone to create instance (e.g. us-central1-b).
+  instance (str): GCE instance on which disk is attached.
+  disk (str): Google Cloud disk name.
+  zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#141)(self, project):**
+&mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#151)(self, project):**
 
 Set the default project for gcloud command.
 Args:
-  project(str): Google Cloud project name.
+  project (str): Google Cloud project name.
 
-&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#865)(self, cache_name, branch='main', disk_type='pd-standard', disk_size=None, recipe_mount=False, disallow_previously_mounted=False, mount_existing=False):**
+&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#980)(self, cache_name, branch='main', disk_type='pd-standard', disk_size=None, recipe_mount=False, disallow_previously_mounted=False, mount_existing=False):**
 
 Create disk from snapshot, reuse if still attached.
 
@@ -5321,47 +5326,47 @@ Check if disk is attached, otherwise grab the matching snapshot, create,
 attach, and mount the source disk.
 
 Args:
-  cache_name(str): Name of the cache file to use.
-  branch(str): Git branch.
-  disk_type(str): Type of GCE disk to create, defaults to standard
+  cache_name (str): Name of the cache file to use.
+  branch (str): Git branch.
+  disk_type (str): Type of GCE disk to create, defaults to standard
     persistent disk.
-  disk_size(str): Size of the disk to create in GB, defaults to image size.
-  recipe_mount(bool): Whether mount needs to be in the path to use within
+  disk_size (str): Size of the disk to create in GB, defaults to image size.
+  recipe_mount (bool): Whether mount needs to be in the path to use within
     a recipe.
-  disallow_previously_mounted(bool): If set, this step will fail if the cache
-    is already mounted.
-  mount_existing(bool): If we find an existing cache, mount it immediately
+  disallow_previously_mounted (bool): If set, this step will fail if the
+    cache is already mounted.
+  mount_existing (bool): If we find an existing cache, mount it immediately
     instead of relying on subsequent step.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_builder\_mount\_path](/recipe_modules/gcloud/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_builder\_mount\_path](/recipe_modules/gcloud/api.py#77)(self):**
 
 Returns a Path to the base mount directory for cache builder.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_mount\_path](/recipe_modules/gcloud/api.py#72)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_mount\_path](/recipe_modules/gcloud/api.py#82)(self):**
 
 The path to mount the snapshot disks.
 
 This is the path that the disks created from image will be mounted.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_suffix](/recipe_modules/gcloud/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_suffix](/recipe_modules/gcloud/api.py#99)(self):**
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_version\_file](/recipe_modules/gcloud/api.py#107)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_version\_file](/recipe_modules/gcloud/api.py#117)(self):**
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_version\_path](/recipe_modules/gcloud/api.py#80)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_version\_path](/recipe_modules/gcloud/api.py#90)(self):**
 
 The path to the local version file.
 
 This is the path to the local version file that contains the image
 version that was used to create the local named cache.
 
-&mdash; **def [sync\_disk\_cache](/recipe_modules/gcloud/api.py#337)(self, name):**
+&mdash; **def [sync\_disk\_cache](/recipe_modules/gcloud/api.py#347)(self, name):**
 
 Force a local disk cache sync before snapshotting.
 
 Args:
   name (str): Disk name to use to lookup the mount location.
 
-&mdash; **def [unmount\_disk](/recipe_modules/gcloud/api.py#445)(self, name, mount_path):**
+&mdash; **def [unmount\_disk](/recipe_modules/gcloud/api.py#472)(self, name, mount_path):**
 
 Unmount an attached disk to host.
 
@@ -5370,9 +5375,9 @@ that is used by the context manager to unmount as the task ends.
 
 Args:
   name (str): An alphanumeric name for the mount, used for display.
-  mount_path(str): Directory to mount the disk.
+  mount_path (str): Directory to mount the disk.
 
-&mdash; **def [update\_fstab](/recipe_modules/gcloud/api.py#461)(self, mount_path, name):**
+&mdash; **def [update\_fstab](/recipe_modules/gcloud/api.py#488)(self, mount_path, name):**
 
 Mount an attached disk to host.
 
@@ -5380,7 +5385,7 @@ As a disk is mounted, the disk is then added to the stack
 that is used by the context manager to unmount as the task ends.
 
 Args:
-  mount_path(str): Directory to mount the disk.
+  mount_path (str): Directory to mount the disk.
   name (str): An alphanumeric name for the mount, used for display.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
@@ -10409,6 +10414,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 An experimental recipe for running GCE tests.
 
 &mdash; **def [RunSteps](/recipes/gce_test.py#34)(api, properties):**
+### *recipes* / [gcloud:examples/cache\_properties](/recipe_modules/gcloud/examples/cache_properties.py)
+
+[DEPS](/recipe_modules/gcloud/examples/cache_properties.py#7): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/cache_properties.py#22)(api):**
 ### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
 
 [DEPS](/recipe_modules/gcloud/examples/full.py#8): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -3,7 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
 import datetime
 import re
 
@@ -26,17 +25,21 @@ CHROMIUM_GIT_URL = 'https://chromium.googlesource.com/chromium/src.git'
 
 DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS = 10800  # 3 hrs.
 
-GCLIENT_CACHE_CONFIG = [
+# This cache config is a slightly strange json format in that it needs the
+# python preference for capitalized bools. Instead of json.dumps, just
+# explicitly format this as needed. (See legacy build step SyncChrome.)
+GCLIENT_CACHE_CONFIG = """[
     {
-        "url": CHROMIUM_GIT_URL,
-        "managed": False,
-        "name": "src",
-        "custom_deps": {},
-        "custom_vars": {
-            "checkout_src_internal": True,
-        },
-    },
-]
+        'url': '%s',
+        'managed': False,
+        'name': 'src',
+        'custom_deps': {},
+        'custom_vars': {
+            'checkout_src_internal': True,
+            'checkout_google_internal': True
+        }
+    }
+]""" % CHROMIUM_GIT_URL  # Intentionally not using .format so custom_deps works.
 
 # The following project->regexes should trigger a chrome rebuild.
 CHROMIUM_REBUILD_REGEXES = {
@@ -97,7 +100,7 @@ class ChromeApi(recipe_api.RecipeApi):
           gclient_config_cmd = [
               'config', '--spec',
               "solutions = {}\ncache_dir = '../chrome_cache'".format(
-                  json.dumps(GCLIENT_CACHE_CONFIG, sort_keys=True))
+                  GCLIENT_CACHE_CONFIG)
           ]
           self.m.step(
               'gclient config',

@@ -26,7 +26,7 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  if properties.is_mount:
+  if properties.should_fail:
     with api.assertions.assertRaises(StepFailure):
       api.gcloud.setup_cache_disk(cache_name='chromiumos', disk_size='600GB',
                                   disallow_previously_mounted=True)
@@ -79,18 +79,47 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
       'is-mount',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.gcloud.is_mount(True),
-      api.properties(is_mount=True),
+      api.properties(should_fail=True),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'bad-config-no-specific-image',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(should_fail=True),
+      api.properties(**{
+          '$chromeos/gcloud': {
+              'source_cache_action': 'MOUNT_SPECIFIC_IMAGE',
+          }
+      }),
+      api.post_check(post_process.StatusFailure),
+  )
+
+  yield api.test(
+      'bad-config-image-but-wrong-action',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.properties(should_fail=True),
+      api.properties(
+          **{
+              '$chromeos/gcloud': {
+                  'source_cache_action': 'MOUNT_RECOVERY_IMAGE',
+                  'specific_image_to_mount': 'image-1234',
+              }
+          }),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
       'failed-to-get-zone-from-host',
       api.gcloud.infra_host('chromeos-ci-infra-x16-0-nvcj'),
+      api.post_check(post_process.StatusFailure),
   )
   yield api.test(
       'create-disk-step-failure',
@@ -102,6 +131,7 @@ def GenTests(api):
       api.step_data(
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           retcode=3),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -117,6 +147,7 @@ def GenTests(api):
               'Some non-sequitur message to the disk size.\n'
               'New disk size \'10\' GiB must be larger '
               'than existing size \'10\' GiB.\n'), retcode=1),
+      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'create-disk-fails-as-exists-but-404-before',
@@ -131,6 +162,7 @@ def GenTests(api):
           post_process.DoesNotRun,
           'source cache (5).setup source cache disk.create disk from snapshot image.create disk from image (2)'
       ),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -138,6 +170,7 @@ def GenTests(api):
       api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
                                     bucket='staging'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'release-staging-execution',
@@ -145,6 +178,7 @@ def GenTests(api):
                                     bucket='staging'),
       api.gcloud.infra_host(
           'chromeos-release-staging-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'missing-version-file-in-storage',
@@ -152,11 +186,13 @@ def GenTests(api):
       api.step_data((
           'source cache.setup source cache disk.retrieve image version from storage.gsutil cat'
       ), retcode=3),
+      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'upperdir-with-no-local-version',
       mock_directory('chromiumos'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'overlayfs-branch-not-set',
@@ -165,6 +201,7 @@ def GenTests(api):
       api.step_data((
           'source cache.determine whether to reset overlayfs directories.read overlayfs branch'
       ), retcode=3),
+      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'nothing-returned-on-disk-exists',
