@@ -181,7 +181,7 @@ def DoRunSteps(api, config, properties):
       pres.step_text = 'no signing instructions generated'
       pres.status = api.m.step.FAILURE
 
-  api.cros_release.schedule_payload_generation()
+  api.cros_release.run_payload_generation()
 
   if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,

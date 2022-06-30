@@ -70,7 +70,7 @@ def RunSteps(api):
   )
 
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
-  api.cros_release.schedule_payload_generation()
+  api.cros_release.run_payload_generation()
 
 
 def GenTests(api):

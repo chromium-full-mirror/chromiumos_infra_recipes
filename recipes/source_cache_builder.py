@@ -87,7 +87,7 @@ def RunSteps(api, properties):
                   api.file.rmtree(
                       'Removing previous directory {}'.format(manifest_path),
                       manifest_path)
-                api.git.clone(repo_url=api.cros_release.manifest_versions_url,
+                api.git.clone(repo_url=api.cros_release.MANIFEST_VERSIONS_URL,
                               target_path=manifest_dir)
           if cache.command == 'gclient':
             # Chrome cache consists of a local repo cache and src,

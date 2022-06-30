@@ -24,11 +24,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
 class CrosReleaseApi(recipe_api.RecipeApi):
-
-  @property
-  def manifest_versions_url(self):
-    """Returns the git repo URL for manifest versions."""
-    return 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
+  MANIFEST_VERSIONS_URL = \
+      'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
   @property
   def _supported_sign_types(self):
@@ -82,9 +79,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       step_name (str): The step name to use.
       dry_run (bool): Whether the git push is --dry-run.
       gs_location (string): If set, will also upload the pinned manifest to GS.
-
-    Returns:
-      Full URL path to newly-uploaded manifest.
     """
     with self.m.step.nest(step_name):
       with self.m.context(cwd=self.m.src_state.workspace_path):
@@ -96,7 +90,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       with self.m.context(cwd=manifest_versions_checkout):
         # Clone manifest-versions repo to current path.
         with self.m.step.nest('clone manifest-versions'):
-          self.m.git.clone(self.manifest_versions_url, branch=branch,
+          self.m.git.clone(self.MANIFEST_VERSIONS_URL, branch=branch,
                            single_branch=True, depth=1)
           branch = branch or self.m.git.current_branch()
 
@@ -171,22 +165,15 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                                  .format(gs_path))
 
       self._buildspec = ManifestLocation(
-          manifest_repo_url=self.manifest_versions_url, branch=branch,
+          manifest_repo_url=self.MANIFEST_VERSIONS_URL, branch=branch,
           manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
 
-  def schedule_payload_generation(self):
-    """Schedule the generation of release payloads using the context of a build.
+  def run_payload_generation(self):
+    """Run the generation of release payloads using the context of a build.
 
-    This is nonblocking, will launch and return the id for the paygen
-    orchestrator. It assumes its being ran after a local build has been made.
-
-    Args:
-      build_target_name (str): The builder target name.
-      target_chromeos_version (str): The target chromeos version (e.g. '13337.0.1').
-      milestone (int): The milestone number.
-
-    Returns:
-      The int build id for the launched orchestrator.
+    This is blocking: it will launch the paygen orchestrator, and wait for it to
+    finish. This function assumes that it is run after a new release image has
+    been built.
     """
     pg_orch_builder = ('staging-paygen-orchestrator' if
                        self.m.build_menu.is_staging else 'paygen-orchestrator')
@@ -237,8 +224,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         ]
         self.m.build_reporting.publish(
             BuildReport(payloads=payload_information))
-
-      return builds
 
   def get_au_testing_models(self, fsi=False):
     """Determine which models are configured to run autoupdate tests.

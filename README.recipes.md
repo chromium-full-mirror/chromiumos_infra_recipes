@@ -2933,11 +2933,11 @@ An API for providing release related operations (e.g. paygen, signing).
 
 #### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#64)(self):**
+&emsp; **@property**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#61)(self):**
 
 Return the buildspec as created by this module, or None.
 
-&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#69)(self, specs_dir='buildspecs', branch='release', step_name='create buildspec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#66)(self, specs_dir='buildspecs', branch='release', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -2953,10 +2953,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-Returns:
-  Full URL path to newly-uploaded manifest.
-
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#243)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#228)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -2969,11 +2966,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_versions\_url](/recipe_modules/cros_release/api.py#28)(self):**
-
-Returns the git repo URL for manifest versions.
-
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#281)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#266)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2992,22 +2985,15 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&mdash; **def [schedule\_payload\_generation](/recipe_modules/cros_release/api.py#177)(self):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#171)(self):**
 
-Schedule the generation of release payloads using the context of a build.
+Run the generation of release payloads using the context of a build.
 
-This is nonblocking, will launch and return the id for the paygen
-orchestrator. It assumes its being ran after a local build has been made.
+This is blocking: it will launch the paygen orchestrator, and wait for it to
+finish. This function assumes that it is run after a new release image has
+been built.
 
-Args:
-  build_target_name (str): The builder target name.
-  target_chromeos_version (str): The target chromeos version (e.g. '13337.0.1').
-  milestone (int): The milestone number.
-
-Returns:
-  The int build id for the launched orchestrator.
-
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#48)(self, sign_types):**
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#45)(self, sign_types):**
 
 Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure.
 ### *recipe_modules* / [cros\_release\_config](/recipe_modules/cros_release_config)
