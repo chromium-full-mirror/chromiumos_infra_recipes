@@ -68,6 +68,7 @@ def snoopy_report(api, report):
 
 def RunSteps(api, properties):
   api.easy.log_parent_step()
+  api.cros_release.set_output_properties()
 
   if api.cros_infra_config.is_staging:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)

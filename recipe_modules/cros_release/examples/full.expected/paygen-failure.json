@@ -1379,6 +1379,13 @@
   },
   {
     "cmd": [],
+    "name": "set release output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@channels@[\"beta\"]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate payloads",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"

@@ -2922,6 +2922,13 @@
   },
   {
     "cmd": [],
+    "name": "set release output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@channels@[]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate payloads"
   },
   {

@@ -39,6 +39,13 @@
   },
   {
     "cmd": [],
+    "name": "set release output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@channels@[]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "snoopy: start",
     "~followup_annotations": [
       "@@@STEP_TEXT@failed to report start to snoopy: Step('snoopy: start.report_stage') (retcode: 1)@@@",

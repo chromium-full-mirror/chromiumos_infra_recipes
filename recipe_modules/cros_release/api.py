@@ -330,3 +330,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       ]
 
       return (gs_image_dir, instructions_uris)
+
+  def set_output_properties(self):
+    """Set release-related output properties for the build."""
+    self.m.easy.set_properties_step(
+        'set release output properties', channels=[
+            self.m.cros_release_util.channel_strip_prefix(c)
+            for c in self._channels
+        ])

@@ -18,6 +18,7 @@ DEPS = [
     'cros_release_util',
     'cros_test_plan',
     'cros_version',
+    'easy',
     'gerrit',
     'git',
     'manifest_doctor',
