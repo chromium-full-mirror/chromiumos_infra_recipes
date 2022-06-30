@@ -16,6 +16,7 @@ from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_USBPD,
+                                  IMAGE_TYPE_HPS_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_GSC_FIRMWARE)
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
@@ -23,28 +24,27 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 
+# Supported image types for signing.
+# These are kept in sync with _SUPPORTED_IMAGE_TYPES in
+# chromite/scripts/pushimage.py.
+SUPPORTED_SIGN_TYPES = set([
+    IMAGE_TYPE_RECOVERY, IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
+    IMAGE_TYPE_ACCESSORY_USBPD, IMAGE_TYPE_HPS_FIRMWARE,
+    IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE, IMAGE_TYPE_GSC_FIRMWARE
+])
+
+
 class CrosReleaseApi(recipe_api.RecipeApi):
   MANIFEST_VERSIONS_URL = \
       'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
-  @property
-  def _supported_sign_types(self):
-    """Supported image types for signing.
-
-    These are kept in sync with chromite/scripts/pushimage.py.
-
-    Returns:
-      A set of image type enum values.
-    """
-    return set([
-        IMAGE_TYPE_RECOVERY, IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
-        IMAGE_TYPE_ACCESSORY_USBPD, IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
-        IMAGE_TYPE_GSC_FIRMWARE
-    ])
-
   def validate_sign_types(self, sign_types):
-    """Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure."""
-    if not set(sign_types).issubset(self._supported_sign_types):
+    """Checks whether an array of IMAGE_TYPE enums is valid for signing.
+
+    Raises:
+      StepFailure: If any of the given image types is not supported for signing.
+    """
+    if not set(sign_types).issubset(SUPPORTED_SIGN_TYPES):
       raise StepFailure('attempting to sign type not in supported sign types')
 
   def __init__(self, properties, **kwargs):

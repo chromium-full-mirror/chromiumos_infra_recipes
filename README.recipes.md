@@ -2931,7 +2931,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#37)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 &emsp; **@property**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#61)(self):**
 
@@ -2993,9 +2993,12 @@ This is blocking: it will launch the paygen orchestrator, and wait for it to
 finish. This function assumes that it is run after a new release image has
 been built.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#45)(self, sign_types):**
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#41)(self, sign_types):**
 
-Takes an array of IMAGE_TYPE enums and validates them or raises StepFailure.
+Checks whether an array of IMAGE_TYPE enums is valid for signing.
+
+Raises:
+  StepFailure: If any of the given image types is not supported for signing.
 ### *recipe_modules* / [cros\_release\_config](/recipe_modules/cros_release_config)
 
 [DEPS](/recipe_modules/cros_release_config/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_paygen](#recipe_modules-cros_paygen), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
