@@ -8525,15 +8525,15 @@ Recipe for building a Borealis rootfs image.
 &mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#41)(api, properties):**
 ### *recipes* / [build\_chromiumos](/recipes/build_chromiumos.py)
 
-[DEPS](/recipes/build_chromiumos.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_chromiumos.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building public ChromiumOS images.
 
-&mdash; **def [DoRunSteps](/recipes/build_chromiumos.py#50)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_chromiumos.py#57)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_chromiumos.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_chromiumos.py#36)(api, properties):**
 ### *recipes* / [build\_compilation\_database](/recipes/build_compilation_database.py)
 
 [DEPS](/recipes/build_compilation_database.py#8): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/step][recipe_engine/recipe_modules/step]
