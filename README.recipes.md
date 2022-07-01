@@ -205,6 +205,7 @@
   * [conductor:tests/not_enabled](#recipes-conductor_tests_not_enabled) (Python3 ✅)
   * [config_backfill](#recipes-config_backfill) (Python3 ✅) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) (Python3 ✅) &mdash; Run miscellaneous actions on project repos.
+  * [cop](#recipes-cop) (Python3 ✅) &mdash; Recipe for CoP: A CL validator based on Google Cloud Build.
   * [copybot](#recipes-copybot) (Python3 ✅) &mdash; Recipe for Copybot.
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json) (Python3 ✅)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts) (Python3 ✅)
@@ -10381,6 +10382,15 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 
 &mdash; **def [RunSteps](/recipes/config_postsubmit.py#464)(api, properties):**
+### *recipes* / [cop](/recipes/cop.py)
+
+[DEPS](/recipes/cop.py#16): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for CoP: A CL validator based on Google Cloud Build. go/cros-cop
+
+&mdash; **def [RunSteps](/recipes/cop.py#114)(api: RecipeApi, properties: CopProperties):**
 ### *recipes* / [copybot](/recipes/copybot.py)
 
 [DEPS](/recipes/copybot.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
