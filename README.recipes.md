@@ -863,7 +863,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#814)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#818)(self):**
 
 Add child build ids to output property of current build.
 
@@ -872,6 +872,9 @@ Add child build ids to output property of current build.
 &mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#666)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
+
+This method will only work if the checkout has already been initialized,
+as we rely on the CrOS version (and thus the version file).
 
 &mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#498)(self, config=None):**
 
@@ -932,7 +935,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#676)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#680)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1019,7 +1022,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#149)(self):**
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#823)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#827)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1120,7 +1123,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#778)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#782)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1243,14 +1246,14 @@ API implemention for build reporting.
 
 &emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#131)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#225)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#223)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#305)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#303)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1282,7 +1285,7 @@ Args:
 Return:
   Reference to BuildReport input message.
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#269)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#267)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
@@ -1298,7 +1301,7 @@ Raises:
 Return:
   None
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#404)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#422)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1307,18 +1310,28 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#424)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#442)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#237)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#235)(self, status):**
 
 Publish and merge build status.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#469)(self, toolchain_info):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#402)(self, gs_path=None):**
+
+Create a context manager to automatically publish to gs.
+
+Args:
+  gs_path (str): Path to the directory to upload the build report to.
+    Defaults to build.menu.artifacts_gs_path().
+Return:
+  Handle which is used to publish to GS.
+
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#487)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -1326,7 +1339,7 @@ Args:
   toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
     usage.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#245)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#243)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1350,7 +1363,7 @@ Set the type for the build, must be set once and only once.
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#344)(self, step_name, raise_on_failed_publish=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#342)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 
@@ -8712,7 +8725,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#101)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#102)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#70)(api, properties):**
 
@@ -8729,7 +8742,7 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_1.py#22)(api):**
 ### *recipes* / [build\_reporting:examples/contexts\_2](/recipe_modules/build_reporting/examples/contexts_2.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_2.py#6): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

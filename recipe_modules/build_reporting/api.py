@@ -217,8 +217,6 @@ class BuildReportingApi(recipe_api.RecipeApi):
           endpoint=PUBSUB_ENDPOINT,
           raise_on_failed_publish=raise_on_failed_publish,
       )
-      self._upload_to_gs(build_report_json,
-                         self.m.build_menu.artifacts_gs_path())
 
     return build_report
 
@@ -401,6 +399,26 @@ class BuildReportingApi(recipe_api.RecipeApi):
       step_info.status = Handle.status
       step_info.publish()
 
+  @contextlib.contextmanager
+  def publish_to_gs(self, gs_path=None):
+    """Create a context manager to automatically publish to gs.
+
+    Args:
+      gs_path (str): Path to the directory to upload the build report to.
+        Defaults to build.menu.artifacts_gs_path().
+    Return:
+      Handle which is used to publish to GS.
+    """
+
+    class Handle(object):
+      pass
+
+    try:
+      yield Handle
+    finally:
+      # Publish the final step time.
+      self._upload_to_gs(gs_path or self.m.build_menu.artifacts_gs_path())
+
   def publish_build_target_and_model_metadata(self, branch, builder_metadata):
     """Publish and merge info about the build target and models of a build.
 
@@ -442,15 +460,15 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     self.publish(build_report)
 
-  def _upload_to_gs(self, build_report_json, gs_path):
+  def _upload_to_gs(self, gs_path):
     """Serialize the build report and upload it to GS.
 
     Args:
-      build_report_json (str): JSON dump of the build report.
       gs_path (str): Path to the directory to upload the build report to.
     """
     with self.m.step.nest('upload build report to GS') as presentation:
       tmp_file = self.m.path.mkstemp(prefix='build_report')
+      build_report_json = self.py_MessageToJson(self._build_report)
       self.m.file.write_json('write buildreport json to tmp file', tmp_file,
                              build_report_json)
       self.m.gsutil(cmd=['cp', tmp_file, gs_path + '/build_report.json'],

@@ -80,11 +80,12 @@ def RunSteps(api, properties):
 
     #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
     with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
-      with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
-                                              raise_on_failed_publish=True):
-        with api.build_menu.configure_builder() as config, \
-            api.build_menu.setup_workspace_and_chroot():
-          return DoRunSteps(api, config, properties)
+      with api.build_reporting.publish_to_gs():
+        with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
+                                                raise_on_failed_publish=True):
+          with api.build_menu.configure_builder() as config, \
+              api.build_menu.setup_workspace_and_chroot():
+            return DoRunSteps(api, config, properties)
   finally:
     # If the parent build is cancelled, by default the child build will have an
     # INFRA_FAILURE status. Check if this build was cancelled because its
@@ -252,7 +253,7 @@ def GenTests(api):
       ),
       api.post_check(
           post_process.StepCommandContains,
-          'build status pubsub update (7).upload build report to GS.gsutil write build_report.json to GS',
+          'upload build report to GS.gsutil write build_report.json to GS',
           [
               'gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/build_report.json'
           ],

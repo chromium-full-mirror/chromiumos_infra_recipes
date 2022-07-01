@@ -664,7 +664,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
           report_to_spike=report_to_spike)
 
   def artifacts_gs_path(self):
-    """Get the standard artifacts GS path for the builder (including bucket)."""
+    """Get the standard artifacts GS path for the builder (including bucket).
+
+    This method will only work if the checkout has already been initialized,
+    as we rely on the CrOS version (and thus the version file).
+    """
     config = self.config_or_default
     gs_bucket = config.artifacts.artifacts_gs_bucket
     gs_path = self.m.cros_artifacts.artifacts_gs_path(

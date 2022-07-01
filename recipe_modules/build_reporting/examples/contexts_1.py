@@ -8,6 +8,8 @@ DEPS = [
     'build_reporting',
 ]
 
+from recipe_engine import post_process
+
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 
@@ -21,15 +23,23 @@ def RunSteps(api):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
 
   for failure in [None, "failure", "infra_failure"]:
-    with api.build_reporting.step_reporting(StepDetails.STEP_SYNC) \
-         as step_report:
-      # sync the tree
-      if failure == "failure":
-        step_report.fail()
+    with api.build_reporting.publish_to_gs(gs_path='gs://foo/bar'):
+      with api.build_reporting.step_reporting(StepDetails.STEP_SYNC) \
+          as step_report:
+        # sync the tree
+        if failure == "failure":
+          step_report.fail()
 
-      if failure == "infra_failure":
-        step_report.infra_fail()
+        if failure == "infra_failure":
+          step_report.infra_fail()
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload build report to GS.gsutil write build_report.json to GS',
+          ['gs://foo/bar/build_report.json'],
+      ),
+  )
