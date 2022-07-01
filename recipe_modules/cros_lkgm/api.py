@@ -99,7 +99,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
             "collect_public_build called but no public build exists")
 
       self._public_build_results = self.m.buildbucket.collect_build(
-          self._public_build.id, step_name='collect')
+          self._public_build.id, step_name='collect', timeout=60 * 60 * 8)
 
   def _success_percent(self, builds):
     successful_builds = sum([b.status == common_pb2.SUCCESS for b in builds])

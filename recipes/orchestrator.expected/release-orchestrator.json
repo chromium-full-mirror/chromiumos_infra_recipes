@@ -11102,7 +11102,7 @@
       }
     },
     "name": "collect public orchestrator.collect.wait",
-    "timeout": 3600,
+    "timeout": 28800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
