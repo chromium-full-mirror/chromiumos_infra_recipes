@@ -332,33 +332,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_1",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:try"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply changes and run presubmits for p1.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
-      "@@@STEP_LOG_END@HEAD@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "apply changes and run presubmits for p1.run presubmit checks",
     "~followup_annotations": [
@@ -643,33 +616,6 @@
   {
     "cmd": [
       "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:try"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply changes and run presubmits for p2.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
-      "@@@STEP_LOG_END@HEAD@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "fetch",
       "https://chrome-internal.googlesource.com/p2",
       "refs/changes/41/2341/0:"
@@ -713,7 +659,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "apply changes and run presubmits for p2.git rev-parse (3)",
+    "name": "apply changes and run presubmits for p2.git rev-parse (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -742,33 +688,6 @@
     "name": "apply changes and run presubmits for p2.git merge (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:try"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply changes and run presubmits for p2.git rev-parse (4)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
-      "@@@STEP_LOG_END@HEAD@@@"
     ]
   },
   {

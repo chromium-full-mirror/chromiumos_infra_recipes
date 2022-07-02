@@ -51,10 +51,10 @@ def RunSteps(api, properties):
   with _setup():
     gerrit_changes = api.src_state.gerrit_changes
 
-    commits = []
+    patch_sets = []
     if gerrit_changes:
       with api.step.nest('cherry-pick gerrit changes'):
-        commits = api.cros_source.apply_gerrit_changes(gerrit_changes)
+        patch_sets = api.cros_source.apply_gerrit_changes(gerrit_changes)
 
     # If we get this far, we were successful in syncing to the manifest that was
     # provided by buildbucket (generally emtpy for CQ), or builder-config (if
@@ -67,7 +67,7 @@ def RunSteps(api, properties):
     # running with the patched manifest.  It may be sufficient to run
     # chromite-cq, and/or run a recipe where the configuration specifies the
     # external manifest.
-    projects = sorted(set(x.patch_set.project for x in commits))
+    projects = sorted(set(patch_set.project for patch_set in patch_sets))
     if projects:
       project_infos = api.repo.project_infos(projects=projects)
       for project_info in project_infos:

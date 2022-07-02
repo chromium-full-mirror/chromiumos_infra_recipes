@@ -2328,33 +2328,6 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos/manifest-internal:try"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "cherry-pick gerrit changes.patch manifest.chromeos/manifest-internal: apply gerrit patch sets.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
-      "@@@STEP_LOG_END@HEAD@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "cherry-pick gerrit changes.patch manifest.push manifest",
     "~followup_annotations": [

@@ -149,7 +149,7 @@ def RunSteps(api, properties):
 
     with api.context(cwd=api.cros_source.workspace_path):
       # patch projects
-      commits = api.cros_source.apply_gerrit_changes(
+      patch_sets = api.cros_source.apply_gerrit_changes(
           gerrit_changes,
           include_files=True,
       )
@@ -159,8 +159,8 @@ def RunSteps(api, properties):
           config.repo: config.ref_path for config in properties.configs
       }
 
-      for cnt, commit in enumerate(commits):
-        project = commit.patch_set.project
+      for cnt, patch_set in enumerate(patch_sets):
+        project = patch_set.project
 
         if project in configured_repos:
           if not project in project_paths:
@@ -173,7 +173,7 @@ def RunSteps(api, properties):
             # -versions.txt, we better have made a change to the associated binary
             txt_files = set()
             bin_files = set()
-            for fname in commit.patch_set.file_infos:
+            for fname in patch_set.file_infos:
               if fnmatch.fnmatch(
                   api.path.basename(fname), "fitimage-*-versions.txt"):
                 txt_files.add(fname)

@@ -18,8 +18,6 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 
-ProjectCommit = namedtuple('ProjectCommit', ['path', 'commit_id', 'patch_set'])
-
 # Default sync options for syncing the named cache.
 DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
                                force_sync=True, jobs=8, no_tags=True,
@@ -824,7 +822,7 @@ class CrosSourceApi(RecipeApi):
       test_output_data (dict): Test output for gerrit-fetch-changes.
 
     Returns:
-      List[ProjectCommit]: A list of commits from cherry-picked patch sets.
+      List[PatchSet]: A list of commits from cherry-picked patch sets.
     """
     # We need files_info for the changes, so that we can make manifest changes
     # active.
@@ -1167,7 +1165,8 @@ class CrosSourceApi(RecipeApi):
       name (str): The name for the step, or None.
 
     Returns:
-      List[ProjectCommit]: A list of commits from cherry-picked patch sets.
+      List[PatchSet]: The list of cherry-picked patch sets. Not all patch sets
+          may be applied if ignore_missing_projects is true.
     """
     with self.m.step.nest(name or 'apply gerrit patch sets') as pres:
       if ignore_missing_projects:
@@ -1184,15 +1183,13 @@ class CrosSourceApi(RecipeApi):
           pres.step_text = 'Discarded changes: {}'.format(', '.join(
               p.display_id for p in discard))
 
-      new_commits = []
       for patch in patch_sets:
         if patch.display_id not in self._applied_patches:
           project_paths = ([project_path] if project_path else
                            self.find_project_paths(patch.project, patch.branch))
           for path in project_paths:
             self.apply_patch_set(patch, path)
-        new_commits.extend(self._applied_patches[patch.display_id])
-      return new_commits
+      return patch_sets
 
   def apply_patch_set(self, patch, project_path, is_abs_path=False):
     """Apply a PatchSet to the git repo in ${CWD}.
@@ -1203,9 +1200,6 @@ class CrosSourceApi(RecipeApi):
       is_abs_path (bool): Whether the project path is an absolute path. The
           default is False meaning the project_path is relative to the
           workspace.
-
-    Returns:
-      (ProjectCommit) commit for the applied patch.
     """
     path = project_path if is_abs_path else self.workspace_path.join(
         project_path)
@@ -1224,9 +1218,7 @@ class CrosSourceApi(RecipeApi):
         presentation.step_text = 'merge failed. will try cherry-pick instead'
         self.m.git.cherry_pick(commit, infra_step=False)
 
-      new_commit = ProjectCommit(project_path, self.m.git.head_commit(), patch)
-      self._applied_patches[patch.display_id].append(new_commit)
-      return new_commit
+      self._applied_patches[patch.display_id].append(patch)
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)
 

@@ -18,7 +18,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     self._keep_all_changes = properties.keep_all_changes
 
   def initialize(self):
-    self._commits = []
+    self._patch_sets = []
     # Changes applied in apply_changes().
     self._applied_changes = []
     # Changes that have been checked for toolchain effects.
@@ -26,11 +26,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
   @property
   def patch_sets(self):
-    return [x.patch_set for x in self._commits]
-
-  @property
-  def commits(self):
-    return self._commits
+    """The patch sets (with commit and file info) applied to the build."""
+    return self._patch_sets
 
   @property
   def toolchain_cls_applied(self):
@@ -113,12 +110,12 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       return
 
     with self.m.step.nest(name):
-      commits = self.m.cros_source.apply_gerrit_changes(
+      patch_sets = self.m.cros_source.apply_gerrit_changes(
           changes, include_files=True,
           ignore_missing_projects=ignore_missing_projects)
-      self._commits.extend(commits)
       self._applied_changes.extend(
-          c.patch_set.to_gerrit_change_proto() for c in commits)
+          patch_set.to_gerrit_change_proto() for patch_set in patch_sets)
+      self._patch_sets.extend(patch_sets)
       if not self._keep_all_changes:
         self.m.src_state.gerrit_changes = self._applied_changes
 
