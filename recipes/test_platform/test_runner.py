@@ -443,7 +443,7 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   wifi_chip = api.cros_tags.get_values(
       'label-wifi_chip', api.buildbucket.build.infra.swarming.bot_dimensions)
   if wifi_chip:
-    base_tags.append(('wifi_chip', pool[0]))
+    base_tags.append(('wifi_chip', wifi_chip[0]))
 
   suite_task_id = api.buildbucket.build.infra.swarming.parent_run_id
   if suite_task_id:
