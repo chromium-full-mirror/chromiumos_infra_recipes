@@ -705,36 +705,33 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
     autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
     result = _populate_timestamps_for_results(result, autotest_keyval_file)
 
-    # Updates GCS log urls to test result before executing the actual GCS
-    # upload step because the test result itself is independent to the GCS
-    # upload step.
-    result.update_log_urls(test_metadata)
-
     if not prejob_response.is_failure():
       dut_state = result.get_dut_state()
   finally:
-    # Upload test results to resultdb as soon as possible in order to avoid
-    # being blocked by failures of other steps. In addition, the resultdb upload
-    # failure won't block the rest of steps below.
-    _upload_to_resultdb(api, result, properties, interface, test_metadata,
-                        autotest_keyval_file)
+    try:
+      # Must complete synchronous logs upload before sealing the results
+      # directory. Once the results directory is sealed, gs_offloader may delete
+      # the result files.
+      archive_all_logs(api, interface=interface, test_metadata=test_metadata,
+                       result=result)
 
-    # Must complete synchronous logs upload before sealing the results
-    # directory. Once the results directory is sealed, gs_offloader may delete
-    # the result files.
-    archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                     result=result)
+      api.cts_results_archive.archive(
+          interface.get_results_directory(test_metadata))
 
-    api.cts_results_archive.archive(
-        interface.get_results_directory(test_metadata))
+      interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
-    interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+      publish_to_result_flow(api, properties.config,
+                             properties.request.parent_request_uid,
+                             should_poll_for_completion=True)
+    finally:
+      # We'd want to prioritize CTS artifact upload as much as possible since
+      # it would be fairly expensive to rerun CTS tests if it fails only on
+      # the upload step. Even though the GCS artifact upload fails, the
+      # ResultDB upload will still be executed.
+      _upload_to_resultdb(api, result, properties, interface, test_metadata,
+                          autotest_keyval_file)
 
-    publish_to_result_flow(api, properties.config,
-                           properties.request.parent_request_uid,
-                           should_poll_for_completion=True)
   set_output_properties(api, result=result)
-
   return result
 
 
@@ -2058,11 +2055,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_prejob_step(),
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
       api.step_data(
           'execution steps.original_test.upload test results to rdb.run rdb',
           retcode=1),
       # The resultdb upload failure above won't block the following steps.
-      _successful_logs_archive_step(),
+      api.post_process(
+          post_process.MustRun,
+          'execution steps.Phosphorus: remove autotest results dir'),
   )
 
   yield api.test(
