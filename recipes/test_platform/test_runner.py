@@ -601,6 +601,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
     result_file = api.cros_resultdb.get_drone_result_file(base_dir, 'tast')
     artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
         base_dir, result_format)
+    api.file.write_proto('write skylab_test_runner result for tast',
+                         result_file, result.data, 'JSONPB')
   else:
     # Write the result to a file which can be read by result_adapter.
     temp_dir = api.path.mkdtemp()
