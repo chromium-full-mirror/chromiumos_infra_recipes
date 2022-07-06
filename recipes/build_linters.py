@@ -37,7 +37,7 @@ PROPERTIES = BuildLintersProperties
 def _GetRelevantPatchsets(api, properties):
   """Returns a map of files with relevant extensions grouped by patchset."""
   with api.step.nest('get relevant patches') as presentation:
-    relevant_extensions = ['rs']
+    relevant_extensions = ['rs', 'go']
     patch_sets = [
         patchset for patchset in (
             api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
@@ -104,6 +104,14 @@ def _GetLints(api, affected_packages):
                     'line_end': 1
                 }],
                 'linter': LinterFinding.Linters.CARGO_CLIPPY
+            }, {
+                'message': 'test message',
+                'locations': [{
+                    'filepath': 'path/file.go',
+                    'line_start': 1,
+                    'line_end': 1
+                }],
+                'linter': LinterFinding.Linters.GO_LINT
             }]
         }, sort_keys=True)
     return api.cros_build_api.ToolchainService.EmergeWithLinting(
@@ -121,6 +129,7 @@ def _WriteComments(api, findings):
         LinterFinding.Linters.LINTER_UNSPECIFIED: 'BuildLinters',
         LinterFinding.Linters.CLANG_TIDY: 'ClangTidy',
         LinterFinding.Linters.CARGO_CLIPPY: 'CargoClippy',
+        LinterFinding.Linters.GO_LINT: 'Golint',
     }
     for finding in findings:
       for location in finding.locations:
@@ -186,7 +195,9 @@ def GenTests(api):
               'ref': 'refs/change/foo',
               'files': {
                   'foo.rs': {},
-                  'bar.rs': {}
+                  'bar.rs': {},
+                  'foo.go': {},
+                  'bar.go': {}
               }
           }
       },
@@ -199,10 +210,12 @@ def GenTests(api):
               'ref': 'refs/change/foo',
               'files': {
                   'foo.rs': {},
-                  'bar2.rs': {}
+                  'bar2.rs': {},
+                  'foo.go': {},
+                  'bar2.go': {}
               }
           }
-      }
+      },
   })
 
   project_info = [

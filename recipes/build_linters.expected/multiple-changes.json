@@ -159,7 +159,9 @@
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bar.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar.rs\": {}, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"foo.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.rs\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
@@ -216,7 +218,9 @@
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 2, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bar2.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar2.rs\": {}, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"foo.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.rs\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
@@ -231,9 +235,12 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 3 modified relevant files@@@",
+      "@@@STEP_TEXT@found 6 modified relevant files@@@",
+      "@@@STEP_LOG_LINE@output@bar.go@@@",
       "@@@STEP_LOG_LINE@output@bar.rs@@@",
+      "@@@STEP_LOG_LINE@output@bar2.go@@@",
       "@@@STEP_LOG_LINE@output@bar2.rs@@@",
+      "@@@STEP_LOG_LINE@output@foo.go@@@",
       "@@@STEP_LOG_LINE@output@foo.rs@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
@@ -4875,10 +4882,22 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"srcPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.go\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.rs\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar2.go\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar2.rs\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.go\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.go\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.rs\"@@@",
@@ -4907,7 +4926,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.rs\"\n    },\n    {\n      \"path\": \"src/foo/bar2.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.go\"\n    },\n    {\n      \"path\": \"src/foo/bar.rs\"\n    },\n    {\n      \"path\": \"src/foo/bar2.go\"\n    },\n    {\n      \"path\": \"src/foo/bar2.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.go\"\n    },\n    {\n      \"path\": \"src/foo/foo.go\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5582,7 +5601,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"findings\": [{\"linter\": 2, \"locations\": [{\"filepath\": \"path/file.rs\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"findings\": [{\"linter\": 2, \"locations\": [{\"filepath\": \"path/file.rs\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}, {\"linter\": 3, \"locations\": [{\"filepath\": \"path/file.go\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -5698,14 +5717,14 @@
     "cmd": [],
     "name": "write comments for linter findings",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Wrote 1 @@@"
+      "@@@STEP_TEXT@Wrote 2 @@@"
     ]
   },
   {
     "cmd": [],
     "name": "write results",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@tricium@\"{\\n\\\"comments\\\": [\\n{\\n\\\"category\\\": \\\"CargoClippy\\\",\\n\\\"endLine\\\": 2,\\n\\\"message\\\": \\\"test message\\\",\\n\\\"path\\\": \\\"path/file.rs\\\",\\n\\\"startLine\\\": 1\\n}\\n]\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@tricium@\"{\\n\\\"comments\\\": [\\n{\\n\\\"category\\\": \\\"CargoClippy\\\",\\n\\\"endLine\\\": 2,\\n\\\"message\\\": \\\"test message\\\",\\n\\\"path\\\": \\\"path/file.rs\\\",\\n\\\"startLine\\\": 1\\n},\\n{\\n\\\"category\\\": \\\"Golint\\\",\\n\\\"endLine\\\": 2,\\n\\\"message\\\": \\\"test message\\\",\\n\\\"path\\\": \\\"path/file.go\\\",\\n\\\"startLine\\\": 1\\n}\\n]\\n}\"@@@"
     ]
   },
   {
