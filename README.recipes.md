@@ -8583,7 +8583,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe that builds chromeos-firmware on a firmware branch.
 
-&mdash; **def [RunSteps](/recipes/build_legacy_fw.py#499)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_legacy_fw.py#498)(api, properties):**
 ### *recipes* / [build\_linters](/recipes/build_linters.py)
 
 [DEPS](/recipes/build_linters.py#20): [build\_menu](#recipe_modules-build_menu), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]

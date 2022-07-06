@@ -189,12 +189,11 @@ class FirmwareBuilder(object):
       with self.m.step.nest('CQ run: not pushing buildspec'):
         return
 
-    # Use 'rubik-staging' if we are on staging.  manifest-versions has
-    # not migrated to main yet, so we pass create_buildspec
-    # branch=None to use the default branch, whatever it is.
-    self.m.cros_release.create_buildspec(
-        branch='rubik-staging' if self._is_staging else None,
-        step_name='create buildspec', dry_run=dry_run)
+    # manifest-versions has not migrated to main yet, so we pass
+    # create_buildspec branch=None to use the default branch, whatever it is.
+    self.m.cros_release.create_buildspec(branch=None,
+                                         step_name='create buildspec',
+                                         dry_run=dry_run)
     # Only these builds are valid for suite_scheduling to find.
     self._suite_scheduling = (
         self.properties.set_suite_scheduling and not dry_run)
