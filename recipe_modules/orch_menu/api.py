@@ -130,6 +130,7 @@ class OrchMenuApi(RecipeApi):
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
     self._is_release_orchestrator = False
+    self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
     self._is_bisecting_orchestrator = False
     self._chromium_src_ref_cl_tag = None
@@ -165,6 +166,10 @@ class OrchMenuApi(RecipeApi):
   @property
   def is_release_orchestrator(self):
     return self._is_release_orchestrator
+
+  @property
+  def is_public_orchestrator(self):
+    return self._is_public_orchestrator
 
   @property
   def is_postsubmit_orchestrator(self):
@@ -256,6 +261,10 @@ class OrchMenuApi(RecipeApi):
                 dry_run=is_staging,
                 gs_location=self._properties.buildspec_gs_path, **kwargs)
             self.m.cros_lkgm.schedule_public_build()
+
+        if config:
+          self._is_public_orchestrator = (
+              config.id.type == BuilderConfig.Id.PUBLIC)
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):

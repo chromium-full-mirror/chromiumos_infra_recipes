@@ -35,7 +35,8 @@ def RunSteps(api):
     if config:
       DoRunSteps(api)
     return api.orch_menu.create_recipe_result(
-        include_build_details=api.orch_menu.is_release_orchestrator)
+        include_build_details=api.orch_menu.is_release_orchestrator or
+        api.orch_menu.is_public_orchestrator)
 
 
 def DoRunSteps(api):
