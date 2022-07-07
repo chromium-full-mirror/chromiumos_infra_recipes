@@ -796,7 +796,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\"{\\n  \\\"buildbucketId\\\":\\\"8945511751514863184\\\",\\n  \\\"count\\\":\\\"2\\\",\\n  \\\"steps\\\":{\\n    \\\"info\\\":{\\n      \\\"STEP_OVERALL\\\":{\\n        \\\"order\\\":1,\\n        \\\"runtime\\\":{\\n          \\\"begin\\\":\\\"2012-05-14T12:53:23Z\\\",\\n          \\\"end\\\":\\\"2012-05-14T12:53:26Z\\\"\\n        },\\n        \\\"status\\\":\\\"STATUS_FAILURE\\\"\\n      }\\n    }\\n  },\\n  \\\"type\\\":\\\"BUILD_TYPE_RELEASE\\\"\\n}\"",
+      "{\n  \"buildbucketId\":\"8945511751514863184\",\n  \"count\":\"2\",\n  \"steps\":{\n    \"info\":{\n      \"STEP_OVERALL\":{\n        \"order\":1,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:53:23Z\",\n          \"end\":\"2012-05-14T12:53:26Z\"\n        },\n        \"status\":\"STATUS_FAILURE\"\n      }\n    }\n  },\n  \"type\":\"BUILD_TYPE_RELEASE\"\n}",
       "[CLEANUP]/build_report_tmp_1"
     ],
     "env": {
@@ -818,7 +818,23 @@
     "name": "upload build report to GS.write buildreport json to tmp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@build_report_tmp_1@\"{\\n  \\\"buildbucketId\\\":\\\"8945511751514863184\\\",\\n  \\\"count\\\":\\\"2\\\",\\n  \\\"steps\\\":{\\n    \\\"info\\\":{\\n      \\\"STEP_OVERALL\\\":{\\n        \\\"order\\\":1,\\n        \\\"runtime\\\":{\\n          \\\"begin\\\":\\\"2012-05-14T12:53:23Z\\\",\\n          \\\"end\\\":\\\"2012-05-14T12:53:26Z\\\"\\n        },\\n        \\\"status\\\":\\\"STATUS_FAILURE\\\"\\n      }\\n    }\\n  },\\n  \\\"type\\\":\\\"BUILD_TYPE_RELEASE\\\"\\n}\"@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@{@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@  \"buildbucketId\":\"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@  \"count\":\"2\",@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@  \"steps\":{@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@    \"info\":{@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@      \"STEP_OVERALL\":{@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@        \"order\":1,@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@        \"runtime\":{@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@          \"begin\":\"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@          \"end\":\"2012-05-14T12:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@        },@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@        \"status\":\"STATUS_FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@      }@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@    }@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@  },@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@  \"type\":\"BUILD_TYPE_RELEASE\"@@@",
+      "@@@STEP_LOG_LINE@build_report_tmp_1@}@@@",
       "@@@STEP_LOG_END@build_report_tmp_1@@@"
     ]
   },

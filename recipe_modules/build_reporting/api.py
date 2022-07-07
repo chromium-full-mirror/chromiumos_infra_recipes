@@ -469,7 +469,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     with self.m.step.nest('upload build report to GS') as presentation:
       tmp_file = self.m.path.mkstemp(prefix='build_report')
       build_report_json = self.py_MessageToJson(self._build_report)
-      self.m.file.write_json('write buildreport json to tmp file', tmp_file,
+      self.m.file.write_text('write buildreport json to tmp file', tmp_file,
                              build_report_json)
       self.m.gsutil(cmd=['cp', tmp_file, gs_path + '/build_report.json'],
                     name='write build_report.json to GS',
