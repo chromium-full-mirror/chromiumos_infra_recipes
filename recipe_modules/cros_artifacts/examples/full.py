@@ -45,6 +45,7 @@ def RunSteps(api):
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL,
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL_INFO,
                   common.ArtifactsByService.Firmware.FIRMWARE_LCOV,
+                  common.ArtifactsByService.Firmware.CODE_COVERAGE_HTML,
               ], acl_name='public-read')
       ]),
       infra=common.ArtifactsByService.Infra(output_artifacts=[
@@ -103,6 +104,9 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
                 '"paths": [{"path":"[START_DIR]/coverage.tbz2","location":2}],'
+                '"location": "PLATFORM_EC"},'
+                '{"artifact_type":"CODE_COVERAGE_HTML",'
+                '"paths": [{"path":"[START_DIR]/html.tbz2","location":2}],'
                 '"location": "PLATFORM_EC"}]}}')))
 
   yield api.test('no-ArtifactsService/Get',

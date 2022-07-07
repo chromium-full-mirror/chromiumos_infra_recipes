@@ -50,6 +50,7 @@ def RunSteps(api, exclude_image_archives):
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL,
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL_INFO,
                   common.ArtifactsByService.Firmware.FIRMWARE_LCOV,
+                  common.ArtifactsByService.Firmware.CODE_COVERAGE_HTML,
               ], acl_name='public-read')
       ]),
       infra=common.ArtifactsByService.Infra(output_artifacts=[
