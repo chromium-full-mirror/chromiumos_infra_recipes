@@ -96,7 +96,7 @@ def GenTests(api):
 
   yield api.orch_menu.test('release-orchestrator', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess),
-                           builder='main-release-orchestrator',
+                           builder='release-main-orchestrator',
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True, bot_size='medium')
 

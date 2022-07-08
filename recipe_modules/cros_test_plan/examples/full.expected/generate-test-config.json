@@ -45,7 +45,7 @@
   {
     "cmd": [
       "./board_config/generate_test_config",
-      "eve-main-release,kukui-main-release"
+      "eve-release-main,kukui-release-main"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {
@@ -72,7 +72,7 @@
   {
     "cmd": [
       "./board_config/generate_test_config",
-      "eve-main-release,kukui-main-release",
+      "eve-release-main,kukui-release-main",
       "--paygen"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",

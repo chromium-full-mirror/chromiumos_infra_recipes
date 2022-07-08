@@ -26,7 +26,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.test_util.test_child_build('eve-main', bucket='release').build,
+      api.test_util.test_child_build('eve', builder='eve-release-main',
+                                     bucket='release').build,
       api.properties(
           **{'$chromeos/cros_version': {
               "remove_snapshot_from_version": True,
@@ -40,7 +41,8 @@ def GenTests(api):
 
   yield api.test(
       'newer-version',
-      api.test_util.test_child_build('eve-main', bucket='release').build,
+      api.test_util.test_child_build('eve', builder='eve-release-main',
+                                     bucket='release').build,
       api.properties(
           **{'$chromeos/cros_version': {
               "remove_snapshot_from_version": True,

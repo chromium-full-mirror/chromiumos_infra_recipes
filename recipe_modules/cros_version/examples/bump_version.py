@@ -33,7 +33,7 @@ def GenTests(api):
 
   def orchestrator(**kwargs):
     kwargs.setdefault('bucket', 'release')
-    kwargs.setdefault('builder', 'main-release-orchestrator')
+    kwargs.setdefault('builder', 'release-main-orchestrator')
     kwargs.setdefault('git_ref', 'refs/heads/main')
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_orchestrator(**kwargs).build
@@ -64,7 +64,7 @@ def GenTests(api):
 
   yield api.test(
       'staging',
-      orchestrator(builder='staging-main-release-orchestrator'),
+      orchestrator(builder='staging-release-main-orchestrator'),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
                      ['chromiumos/infra/version_bumper/${platform} staging']),

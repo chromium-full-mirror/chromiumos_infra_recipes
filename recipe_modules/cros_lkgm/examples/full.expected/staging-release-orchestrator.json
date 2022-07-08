@@ -38,7 +38,7 @@
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"staging-main-release-orchestrator\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"staging-release-main-orchestrator\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: RELEASE@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",

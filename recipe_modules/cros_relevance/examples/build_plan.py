@@ -64,7 +64,7 @@ def GenTests(api):
       api.buildbucket.ci_build(
           project='chromeos',
           bucket='release',
-          builder='staging-main-release-orchestrator',
+          builder='staging-release-main-orchestrator',
       ),
       api.post_check(
           post_process.StepCommandContains,

@@ -1560,33 +1560,6 @@
     },
     {
       "id": {
-        "name": "main-release-orchestrator",
-        "type": "RELEASE"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
-        "child_specs": [
-          {
-            "name": "eve-main-release",
-            "collectHandling": "COLLECT"
-          },
-          {
-            "name": "kukui-main-release",
-            "collectHandling": "COLLECT"
-          }
-        ]
-      }
-    },
-    {
-      "id": {
         "name": "release-main-orchestrator",
         "type": "RELEASE"
       },
@@ -1614,7 +1587,7 @@
     },
     {
       "id": {
-        "name": "eve-main-release",
+        "name": "eve-release-main",
         "type": "RELEASE"
       },
       "general": {
@@ -1632,7 +1605,7 @@
     },
     {
       "id": {
-        "name": "kukui-main-release",
+        "name": "kukui-release-main",
         "type": "RELEASE"
       },
       "general": {
@@ -1795,25 +1768,6 @@
     },
     {
       "id": {
-        "name": "staging-main-release-orchestrator",
-        "type": "RELEASE"
-      },
-      "general": {
-        "critical": true,
-        "environment": "STAGING",
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
-        "child_specs": []
-      }
-    },
-    {
-      "id": {
         "name": "staging-release-main-orchestrator",
         "type": "RELEASE"
       },
@@ -1833,7 +1787,7 @@
     },
     {
       "id": {
-        "name": "staging-eve-main-release",
+        "name": "staging-eve-release-main",
         "type": "RELEASE"
       },
       "general": {
@@ -2559,6 +2513,114 @@
         },
         "prebuiltsGsBucket": "chromeos-prebuilt",
         "artifactsGsBucket": "chromeos-image-archive"
+      }
+    },
+    {
+      "id": {
+        "name": "kukui-public-main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          }
+        ],
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-releases-test",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
+        "name": "staging-eve-public-main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
       }
     }
   ]

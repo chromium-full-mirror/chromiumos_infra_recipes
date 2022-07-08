@@ -4,7 +4,7 @@
     "name": "configure builder",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"eve-main-release\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"eve-release-main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: RELEASE@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",

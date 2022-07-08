@@ -100,7 +100,7 @@ def GenTests(api):
   yield api.test(
       'disable-lkgm',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.properties(**{
           '$chromeos/cros_lkgm': {
               'enable_lkgm': False,
@@ -113,7 +113,7 @@ def GenTests(api):
   yield lgkm_test(
       'lkgm-candidate',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
@@ -145,7 +145,7 @@ def GenTests(api):
   yield lgkm_test(
       'lkgm-candidate-dry-run',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
@@ -165,7 +165,7 @@ def GenTests(api):
   yield lgkm_test(
       'not-lkgm-candidate-release-threshold',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
@@ -180,7 +180,7 @@ def GenTests(api):
   yield lgkm_test(
       'not-lkgm-candidate-release-no-builds',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextEquals,
                      'assess LKGM readiness.assess release build results',
@@ -195,7 +195,7 @@ def GenTests(api):
   yield lgkm_test(
       'not-lkgm-candidate-public-threshold',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
@@ -212,7 +212,7 @@ def GenTests(api):
   yield lgkm_test(
       'not-lkgm-candidate-public-no-builds',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',

@@ -40,13 +40,13 @@ def GenTests(api):
   yield api.test(
       'release-orchestrator',
       api.test_util.test_orchestrator(
-          bucket='release', builder='main-release-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'staging-release-orchestrator',
       api.test_util.test_orchestrator(
-          bucket='staging', builder='staging-main-release-orchestrator').build,
+          bucket='staging', builder='staging-release-main-orchestrator').build,
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(

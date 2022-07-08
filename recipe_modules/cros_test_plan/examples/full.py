@@ -93,7 +93,7 @@ def GenTests(api):
               }
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
-                               builder='staging-main-release-orchestrator'),
+                               builder='staging-release-main-orchestrator'),
       api.post_check(
           post_process.StepCommandContains,
           'generate test plan.call test_planner', [
@@ -154,13 +154,13 @@ def GenTests(api):
               }
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
-                               builder='main-release-orchestrator'),
+                               builder='release-main-orchestrator'),
       api.step_data('generate target test requirements.generate_test_config',
                     stdout=api.raw_io.output(generate_test_config_output)),
       api.post_check(post_process.StepCommandContains,
                      'generate target test requirements.generate_test_config', [
                          './board_config/generate_test_config',
-                         'eve-main-release,kukui-main-release'
+                         'eve-release-main,kukui-release-main'
                      ]),
       api.post_check(post_process.StepCommandContains,
                      'generate test plan.call test_planner', [
@@ -188,20 +188,20 @@ def GenTests(api):
               }
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
-                               builder='eve-main-release'),
+                               builder='eve-release-main'),
       api.step_data('generate target test requirements.generate_test_config',
                     stdout=api.raw_io.output(generate_test_config_output)),
       api.post_check(
           post_process.StepCommandContains,
           'generate target test requirements.generate_test_config',
-          ['./board_config/generate_test_config', 'eve-main-release']))
+          ['./board_config/generate_test_config', 'eve-release-main']))
 
   yield api.test(
       'staging',
       api.buildbucket.ci_build(
           project='chromeos',
           bucket='release',
-          builder='staging-main-release-orchestrator',
+          builder='staging-release-main-orchestrator',
       ),
       api.post_check(
           post_process.StepCommandContains,

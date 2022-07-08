@@ -245,21 +245,22 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(
           post_process.MustRun,
-          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-main-release/LATEST-1234.56.0'
+          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'
       ),
       api.post_check(
           post_process.MustRun,
-          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-main-release/LATEST-main'
+          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-main'
       ),
       api.post_check(
           post_process.StepCommandContains,
           'upload build report to GS.gsutil write build_report.json to GS',
           [
-              'gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101/build_report.json'
+              'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json'
           ],
       ),
       api.post_check(post_process.StatusSuccess),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-release-main',
       bucket='release',
   )
 
@@ -299,13 +300,15 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
       api.post_check(post_process.MustRun, 'wait for signing'),
       api.post_check(post_process.StatusSuccess),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-release-main',
       bucket='release',
   )
 
   yield api.build_menu.test(
       'release-build-staging',
       build_target='staging-eve',
+      builder='staging-eve-release-main',
       bucket='release',
   )
 
@@ -328,7 +331,8 @@ def GenTests(api):
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-release-main',
+      build_target='kukui',
   )
 
   # Release build with artifact bundling failure.
@@ -346,7 +350,8 @@ def GenTests(api):
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-release-main',
+      build_target='kukui',
   )
 
   # Release build with failures in install packages and bundle artifacts.
@@ -368,7 +373,8 @@ def GenTests(api):
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-release-main',
+      build_target='kukui',
   )
 
   yield api.build_menu.test(
@@ -398,7 +404,8 @@ def GenTests(api):
           )
       ], 'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.StatusFailure),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-release-main',
       bucket='release',
   )
 
@@ -414,7 +421,8 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       tags=api.cros_tags.tags(parent_buildbucket_id='123'),
       cq=True,
-      build_target='kukui-main',
+      builder='kukui-cq',
+      build_target='kukui',
   )
 
   # Release build with container creation failure.
@@ -424,7 +432,7 @@ def GenTests(api):
           **{
               '$chromeos/build_menu': {
                   'build_target': {
-                      'name': 'kukui-main',
+                      'name': 'kukui',
                   },
                   'container_version_format':
                       "{staging?}{build-target}-release.{cros-version}",
@@ -447,7 +455,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-release-main',
+      build_target='kukui',
   )
 
   yield api.build_menu.test(
@@ -480,6 +489,7 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepFailure, 'snoopy: start'),
       api.post_check(post_process.StatusSuccess),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-release-main',
       bucket='release',
   )

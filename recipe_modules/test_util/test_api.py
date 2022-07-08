@@ -23,8 +23,8 @@ from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 class TestUtilApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing Chrome OS Recipes."""
 
-  def test_child_build(self, build_target_name, input_properties=None,
-                       **kwargs):
+  def test_child_build(self, build_target_name, builder_name=None,
+                       input_properties=None, **kwargs):
     """Return buildbucket step_data for a typical child builder.
 
     The build will be created with input properties that have
@@ -34,6 +34,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     Args:
       build_target_name (str): Name of the build_target, or None for no
           build_target.
+      builder_name (str): Name of the builder, or None to use {build_target-name}-{bucket}.
       input_properties (BuildMenuProperties or dict): input properties, or
           None.
       kwargs (dict): see test_build()
@@ -56,8 +57,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       # TODO(crbug/1099259: build_target is moving to $chromeos/build_menu
       # properties.  Drop this when no longer needed.
       input_dict['build_target'] = build_target
-      kwargs.setdefault('builder',
-                        '%s-%s' % (build_target_name, kwargs['bucket']))
+      builder_name = builder_name or '%s-%s' % (build_target_name,
+                                                kwargs['bucket'])
+      kwargs.setdefault('builder', builder_name)
 
     return self.test_build(input_properties=input_dict, **kwargs)
 

@@ -125,21 +125,22 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(
           post_process.MustRun,
-          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromiumos-image-archive/kukui-main-public/LATEST-1234.56.0'
+          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromiumos-image-archive/kukui-public/LATEST-1234.56.0'
       ),
       api.post_check(
           post_process.MustRun,
-          'write LATEST files.write LATEST-main.gsutil write gs://chromiumos-image-archive/kukui-main-public/LATEST-main'
+          'write LATEST files.write LATEST-main.gsutil write gs://chromiumos-image-archive/kukui-public/LATEST-main'
       ),
       api.post_check(
           post_process.StepCommandContains,
           'upload build report to GS.gsutil write build_report.json to GS',
           [
-              'gs://chromeos-releases-test/kukui-main-release/R99-1234.56.0-101-8945511751514863184/build_report.json'
+              'gs://chromeos-releases-test/kukui-public-main/R99-1234.56.0-101-8945511751514863184/build_report.json'
           ],
       ),
       api.post_check(post_process.StatusSuccess),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-public-main',
       bucket='release',
   )
 
@@ -150,7 +151,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-public-main',
       bucket='release',
   )
 
@@ -170,7 +172,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
-      build_target='kukui-main',
+      build_target='kukui',
+      builder='kukui-public-main',
       bucket='release',
   )
 
@@ -186,7 +189,8 @@ def GenTests(api):
                           ))),
           }),
       api.post_check(post_process.StatusSuccess),
-      build_target='staging-eve-main',
+      build_target='staging-eve',
+      builder='staging-eve-public-main',
       bucket='release',
   )
 
@@ -212,7 +216,8 @@ def GenTests(api):
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-public-main',
+      build_target='kukui',
   )
 
   # Public build with artifact bundling failure.
@@ -233,7 +238,8 @@ def GenTests(api):
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-public-main',
+      build_target='kukui',
   )
 
   # Public build with failures in install packages and bundle artifacts.
@@ -258,5 +264,6 @@ def GenTests(api):
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       bucket='release',
-      build_target='kukui-main',
+      builder='kukui-public-main',
+      build_target='kukui',
   )

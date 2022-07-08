@@ -94,18 +94,15 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'basic', api.buildbucket.ci_build(builder='main-release-orchestrator'),
+      'basic', api.buildbucket.ci_build(builder='release-main-orchestrator'),
       api.properties(
-          **{
-              '$chromeos/skylab':
-                  SkylabProperties(
-                      enable_retries=True,
-                  )
-          }))
+          **{'$chromeos/skylab': SkylabProperties(
+              enable_retries=True,
+          )}))
 
   yield api.test(
       'exclude-sub-invs',
-      api.buildbucket.ci_build(builder='main-release-orchestrator'),
+      api.buildbucket.ci_build(builder='release-main-orchestrator'),
       api.properties(
           **{
               '$chromeos/skylab':
