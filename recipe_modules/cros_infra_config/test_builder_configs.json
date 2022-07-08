@@ -1587,6 +1587,33 @@
     },
     {
       "id": {
+        "name": "release-main-orchestrator",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": [
+          {
+            "name": "eve-release-main",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "kukui-release-main",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
         "name": "eve-main-release",
         "type": "RELEASE"
       },
@@ -1769,6 +1796,25 @@
     {
       "id": {
         "name": "staging-main-release-orchestrator",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": true,
+        "environment": "STAGING",
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      }
+    },
+    {
+      "id": {
+        "name": "staging-release-main-orchestrator",
         "type": "RELEASE"
       },
       "general": {

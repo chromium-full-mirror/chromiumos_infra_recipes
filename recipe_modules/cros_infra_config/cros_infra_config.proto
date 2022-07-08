@@ -31,4 +31,7 @@ message CrosInfraConfigProperties {
   // Feature flag: whether to honor gitiles_commit.ref when forcing host
   // and project to the manifest.
   bool honor_gitiles_commit_ref = 4;
+
+  // Feature flag: build ToT release builds from the snapshot manifest.
+  bool release_tot_builds_snapshot = 5;
 }

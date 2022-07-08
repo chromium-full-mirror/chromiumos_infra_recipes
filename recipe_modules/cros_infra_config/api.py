@@ -78,6 +78,10 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
         self.experiments)
 
+    self._properties.release_tot_builds_snapshot |= (
+        'chromeos.cros_infra_config.release_tot_builds_snapshot' in
+        self.experiments)
+
     # Hold off on the other fields until they are used, to avoid unnecessary
     # clutter in the expectations files.
 
@@ -101,7 +105,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   def experiments(self):
     """Return the list of experiments active for this build."""
     return [
-        x.encode('utf-8') for x in self.m.buildbucket.build.input.experiments
+        six.ensure_str(x.encode('utf-8'))
+        for x in self.m.buildbucket.build.input.experiments
     ]
 
   @property
@@ -242,6 +247,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
         name_to_builder_config[config.id.name] = config
+      # Override the ref from generated builder_config for (staging-)
+      # release-main-orchestrator if experiment is enabled.
+      if self._properties.release_tot_builds_snapshot:
+        builder_name = six.ensure_str('{}release-main-orchestrator'.format(
+            'staging-' if self._is_staging else ''))
+        name_to_builder_config[
+            builder_name].orchestrator.gitiles_commit.ref = 'refs/heads/snapshot'
       self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config
 
