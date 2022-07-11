@@ -261,7 +261,11 @@ class ResultDBCommand(recipe_api.RecipeApi):
     Args:
       stainless_url (string): Link to the Stainless logs for the test run.
     """
-    artifact = {'stainless_logs': {'contents': stainless_url}}
+    artifact = {
+        'stainless_logs': {
+            'contents': six.ensure_binary(stainless_url)
+        }
+    }
     self.m.resultdb.upload_invocation_artifacts(artifact)
 
   def apply_exonerations(self, invocation_ids, default_behavior=Request.Params
