@@ -86,7 +86,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # If the parallelization experiment is not enabled on the builder, then
     # artifact bundling should be set to the default value (1).
     if ('chromeos.cros_infra_config.image_builder_parallelization' not in
-        self.m.cros_infra_config.experiments):
+        self.m.buildbucket.build.input.experiments):
       self._max_concurrent_bundling_requests = (
           _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
 
