@@ -197,13 +197,15 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
   def fetch_crashes(self, metadata,
                     max_duration_seconds=_SECONDS_IN_30_MINUTES):
     crash_response = self._fetch_crashes(metadata, max_duration_seconds)
-    try:
-      with self._api.step.nest('ensure all crashes were fetched'):
+    with self._api.step.nest('ensure all crashes were fetched') as presentation:
+      try:
         if len(crash_response.crashes_rtd_only) != 0:
           raise self._api.step.StepFailure("Missing %d crashes" %
                                            len(crash_response.crashes_rtd_only))
-    except self._api.step.StepFailure:  # pragma: no cover
-      pass
+      except self._api.step.StepFailure:  # pragma: no cover
+        presentation.step_text = \
+            'some crashes in RTD not in TLS; has no impact on test results'
+        presentation.status = self._api.step.WARNING
 
     return PhosphorusFetchCrashDUTResponse(test_id=metadata.test_id,
                                            data=crash_response)
