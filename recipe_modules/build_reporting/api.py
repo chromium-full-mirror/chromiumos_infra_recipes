@@ -467,7 +467,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
       gs_path (str): Path to the directory to upload the build report to.
     """
     with self.m.step.nest('upload build report to GS') as presentation:
-      tmp_file = self.m.path.mkstemp(prefix='build_report')
+      tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
+      tmp_file = tmp_dir.join('build_report.json')
       build_report_json = self.py_MessageToJson(self._build_report)
       self.m.file.write_text('write buildreport json to tmp file', tmp_file,
                              build_report_json)
