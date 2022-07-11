@@ -714,7 +714,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       #   If the gcloud storage experiment is enabled, perform a duplicate
       #   upload of the artifacts to our throw away bucket to capture data
       #   about the performance of the upload.
-      if 'cros_artifacts.use_gcloud_storage' in self.m.buildbucket.build.input.experiments:
+      if 'chromeos.cros_artifacts.use_gcloud_storage' in self.m.buildbucket.build.input.experiments:
         exec_cmd = [
             'gcloud', 'alpha', 'storage', 'cp', '-r', outpath,
             'gs://chromeos-throw-away-bucket/gcloud-storage-tests/'
