@@ -232,6 +232,7 @@
   * [cros_infra_config:examples/specify_branch](#recipes-cros_infra_config_examples_specify_branch) (Python3 ✅)
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder) (Python3 ✅)
   * [cros_infra_config:tests/determine_if_staging](#recipes-cros_infra_config_tests_determine_if_staging) (Python3 ✅)
+  * [cros_infra_config:tests/experiments](#recipes-cros_infra_config_tests_experiments) (Python3 ✅)
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target) (Python3 ✅)
   * [cros_infra_config:tests/release_tot_builds_snapshot](#recipes-cros_infra_config_tests_release_tot_builds_snapshot) (Python3 ✅)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils) (Python3 ✅)
@@ -9572,6 +9573,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#21)(api, properties):**
+### *recipes* / [cros\_infra\_config:tests/experiments](/recipe_modules/cros_infra_config/tests/experiments.py)
+
+[DEPS](/recipe_modules/cros_infra_config/tests/experiments.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/experiments.py#17)(api):**
 ### *recipes* / [cros\_infra\_config:tests/get\_build\_target](/recipe_modules/cros_infra_config/tests/get_build_target.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/get_build_target.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
