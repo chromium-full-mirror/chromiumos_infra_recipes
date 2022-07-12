@@ -297,6 +297,7 @@ def _read_autotest_keyval_file(api, base_dir):
       autotest_keyval_file[items[0]] = items[1]
     return autotest_keyval_file
   except (api.file.Error, FileNotFoundError):
+    api.step.active_result.presentation.status = api.step.WARNING
     return {}
 
 
@@ -325,6 +326,7 @@ def _read_crossystem_keyvals(api, crossystem_file_path):
 
     return crossystem_keyvals
   except (api.file.Error, FileNotFoundError):
+    api.step.active_result.presentation.status = api.step.WARNING
     return {}
 
 
@@ -349,6 +351,7 @@ def _read_kernel_version(api, kernel_log_file_path):
     items = content.split(' ')
     return items[2] if len(items) >= 2 else ''
   except (api.file.Error, FileNotFoundError):
+    api.step.active_result.presentation.status = api.step.WARNING
     return {}
 
 
