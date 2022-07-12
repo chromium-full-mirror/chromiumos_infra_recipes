@@ -11421,7 +11421,7 @@ Recipe for the Star Doctor.
 Automatically updates binary config files and updates Goldeneye config
 json files.
 
-&mdash; **def [RunSteps](/recipes/star_doctor.py#70)(api, properties):**
+&mdash; **def [RunSteps](/recipes/star_doctor.py#72)(api, properties):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
 [DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

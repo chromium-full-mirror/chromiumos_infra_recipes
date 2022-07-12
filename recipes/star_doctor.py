@@ -54,11 +54,13 @@ EXTERNAL_REVIEW_HOST = 'https://chromium-review.googlesource.com'
 INFRA_CONFIG_PROJECT = 'chromeos/infra/config'
 CONFIG_INTERNAL_PROJECT = 'chromeos/config-internal'
 SUITE_SCHEDULER_PROJECT = 'chromiumos/infra/suite_scheduler'
+PUBLIC_CONFIG_PROJECT = 'chromiumos/config'
 STARDOCTOR_TOPIC = 'StarDoctor'
 CONFIG_UPDATE_HASHTAG = 'config-update'
 INFRA_CONFIG_URL = '{}/{}'.format(INTERNAL_HOST, INFRA_CONFIG_PROJECT)
 CONFIG_INTERNAL_URL = '{}/{}'.format(INTERNAL_HOST, CONFIG_INTERNAL_PROJECT)
 SUITE_SCHEDULER_URL = '{}/{}'.format(EXTERNAL_HOST, SUITE_SCHEDULER_PROJECT)
+PUBLIC_CONFIG_URL = '{}/{}'.format(EXTERNAL_HOST, PUBLIC_CONFIG_PROJECT)
 TIMELINE_FILENAME = 'release/timeline_configuration.json'
 
 PROPERTIES = StarDoctorProperties
@@ -101,6 +103,12 @@ def _clone_repos(api):
   # will need to be regenerated here at some point.
   # Clone shallowly to avoid running out of storage: see crbug/1154700.
   config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL, depth=1)
+  # We need the config dir to exist in the `config` directory next to
+  # config-internal for the symlinks in config-internal to work.
+  config_dir = api.path.abspath(
+      api.path.dirname(config_internal_dir).join('config/'))
+  api.step('create {}'.format(config_dir), ['mkdir', config_dir])
+  _get_clone(api, PUBLIC_CONFIG_URL, repo_dir=config_dir)
   return RepoDirs(
       infra_config=infra_config_dir,
       suite_scheduler=ss_dir,
@@ -108,18 +116,19 @@ def _clone_repos(api):
   )
 
 
-def _get_clone(api, repo_url, **kwargs):
+def _get_clone(api, repo_url, repo_dir=None, **kwargs):
   """Create a Git clone in a temporary directory.
 
   Args:
     api: The recipe modules API.
     repo_url: Full path to the Git repo to clone.
+    repo_dir: If set, the directory to clone into.
     kwargs: Any other keyword arguments to pass to api.get.clone.
 
   Returns:
     The path to the newly cloned Git checkout.
   """
-  repo_dir = api.path.mkdtemp()
+  repo_dir = repo_dir or api.path.mkdtemp()
   api.git.clone(repo_url, target_path=repo_dir, **kwargs)
   return repo_dir
 
@@ -242,6 +251,10 @@ def _regenerate_configs(api, repo_dirs):
       with api.context(cwd=repo_dirs.config_internal):
         api.step('regenerate test configs', ['./board_config/generate', '-b'],
                  timeout=3 * 60)
+        api.step('regenerate suite scheduler configs', [
+            '/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b',
+            '--gen-rubik'
+        ], timeout=3 * 60)
 
 
 def _ensure_cipd_packages(api):

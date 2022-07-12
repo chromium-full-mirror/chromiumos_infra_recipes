@@ -52,6 +52,29 @@
     ]
   },
   {
+    "cmd": [
+      "mkdir",
+      "[CLEANUP]/config"
+    ],
+    "name": "set up.create [CLEANUP]/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/config",
+      "[CLEANUP]/config"
+    ],
+    "infra_step": true,
+    "name": "set up.git clone (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "generate binary config"
   },
@@ -2378,6 +2401,29 @@
       ]
     },
     "name": "generate binary config.regenerate test configs",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/bin/bash",
+      "test/suite_scheduler/regenerate_configs.sh",
+      "-b",
+      "--gen-rubik"
+    ],
+    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]",
+        "[CLEANUP]/tmp_tmp_4"
+      ]
+    },
+    "name": "generate binary config.regenerate suite scheduler configs",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
