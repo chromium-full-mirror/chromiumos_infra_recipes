@@ -108,9 +108,10 @@ def GenTests(api):
       api.properties(
           rdb_config=rdb_config_json,
           missing_test_names=['missing-test', 'another-missing-test']),
-      api.step_data('upload missing test cases',
+      api.step_data('upload missing test cases (count: 2)',
                     api.raw_io.stream_output_text('{}'), retcode=1),
-      api.post_process(post_process.MustRun, 'upload missing test cases (2)'),
+      api.post_process(post_process.MustRun,
+                       'upload missing test cases (count: 2) (2)'),
   )
 
   yield api.test(

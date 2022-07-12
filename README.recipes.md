@@ -3253,11 +3253,11 @@ Whether there are toolchain CLs applied to the source tree.
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#37)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#271)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#274)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3276,11 +3276,11 @@ Args:
   variant_filter (dict): Attributes which must all be present in the test
       result variant definition in order to exonerate.
 
-&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#47)(self):**
 
 Return the current invocation's id.
 
-&mdash; **def [export\_invocation\_to\_bigquery](/recipe_modules/cros_resultdb/api.py#54)(self, bigquery_exports=None):**
+&mdash; **def [export\_invocation\_to\_bigquery](/recipe_modules/cros_resultdb/api.py#57)(self, bigquery_exports=None):**
 
 Modifies the current invocation to be exported to BigQuery (along with
 its children) once it is finalized.
@@ -3297,7 +3297,7 @@ Args:
   bigquery_exports (list(resultdb.BigQueryExport)): The BigQuery export
   configurations of tables and predicates of what to export.
 
-&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#86)(self, test_args):**
+&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#89)(self, test_args):**
 
 Extract resultdb settings from test_args for chromium test results.
 
@@ -3319,7 +3319,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#148)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#151)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -3338,7 +3338,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#124)(self, base_dir, result_format):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#127)(self, base_dir, result_format):**
 
 Get the path to the test results file on the drone.
 
@@ -3353,16 +3353,16 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#361)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#364)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB.
 
 Args:
-  test_names (str): The names of the tests that should have run but did not.
+  test_names (str[]): The names of the tests that should have run but did not.
   base_variant (dict): Variant key-value pairs to attach to the test
       results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#172)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#175)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 

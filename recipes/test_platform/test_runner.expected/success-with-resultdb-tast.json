@@ -1231,7 +1231,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload missing test cases",
+    "name": "execution steps.original_test.upload missing test cases (count: 4)",
     "stdin": "{\"invocation\": \"invocations/build:42\", \"requests\": [{\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"bar.DifferentTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"fake_board\", \"model\": \"fake-model\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"bar.YetAnotherTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"fake_board\", \"model\": \"fake-model\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"foo.SomeOtherTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"fake_board\", \"model\": \"fake-model\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"foo.SomeTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"fake_board\", \"model\": \"fake-model\", \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

@@ -33,6 +33,9 @@ RESULT_ADAPTER_FORMATS = [
     'gtest', 'json', 'single', 'tast', 'skylab-test-runner'
 ]
 
+# Max size allowed is 500. Keeping it 490 to be safer.
+RPC_BATCH_SIZE = 490
+
 
 class ResultDBCommand(recipe_api.RecipeApi):
   """Module for chromium tests on skylab to upload result to Result DB."""
@@ -362,7 +365,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     """Upload test results for missing test cases to ResultDB.
 
     Args:
-      test_names (str): The names of the tests that should have run but did not.
+      test_names (str[]): The names of the tests that should have run but did not.
       base_variant (dict): Variant key-value pairs to attach to the test
           results.
     """
@@ -375,7 +378,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     variant = ParseDict({'def': base_variant},
                         common_pb2.Variant()) if base_variant else None
-    reqs = []
+    reqs_list = []
     for test in test_names:
       test_result = test_result_pb2.TestResult(
           test_id=test, result_id=str(self.m.buildbucket.build.id),
@@ -383,9 +386,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       test_result_req = recorder_pb2.CreateTestResultRequest(
           invocation=self.m.resultdb.current_invocation,
           test_result=test_result)
-      reqs.append(test_result_req)
-    req = recorder_pb2.BatchCreateTestResultsRequest(
-        invocation=self.m.resultdb.current_invocation, requests=reqs)
+      reqs_list.append(test_result_req)
 
     # TODO(b/217973414): Remove custom sorting of results after py2 testing
     # is disabled.
@@ -403,25 +404,36 @@ class ResultDBCommand(recipe_api.RecipeApi):
                 test,
         } for test in sorted(test_names)]
     })
-    # ResultDB step failures should not fail the build.
-    # TODO(b/206989022): Consider refactoring this to use the exponential
-    # retries decorator.
-    upload_status = 'SUCCESS'
-    for _ in range(2):
-      try:
-        # TODO(mwarton): move this method implementation to the resultdb API class
-        # (in chromium src) once it is tested and verified to be working. pylint
-        # disable is here to enable upload of WIP CL.
-        # TODO(b/217973414): Remove custom sorting of results after py2 testing
-        # is disabled.
-        normalized_req = MessageToDict(req)
-        normalized_req['requests'].sort(key=lambda x: x['testResult']['testId'])
-        self.m.resultdb._rpc(  # pylint: disable=protected-access
-            'upload missing test cases', 'luci.resultdb.v1.Recorder',
-            'BatchCreateTestResults', req=normalized_req,
-            include_update_token=True, step_test_data=lambda: self.m.raw_io.
-            test_api.stream_output_text(step_test_data))
-        break
-      except self.m.step.StepFailure:
-        upload_status = 'WARNING'
-    self.m.step.active_result.presentation.status = upload_status
+
+    batched_reqs = [
+        reqs_list[i:i + RPC_BATCH_SIZE]
+        for i in range(0, len(reqs_list), RPC_BATCH_SIZE)
+    ]
+    for reqs in batched_reqs:
+      req = recorder_pb2.BatchCreateTestResultsRequest(
+          invocation=self.m.resultdb.current_invocation, requests=reqs)
+
+      # ResultDB step failures should not fail the build.
+      # TODO(b/206989022): Consider refactoring this to use the exponential
+      # retries decorator.
+      upload_status = 'SUCCESS'
+      for _ in range(2):
+        try:
+          # TODO(mwarton): move this method implementation to the resultdb API class
+          # (in chromium src) once it is tested and verified to be working. pylint
+          # disable is here to enable upload of WIP CL.
+          # TODO(b/217973414): Remove custom sorting of results after py2 testing
+          # is disabled.
+          normalized_req = MessageToDict(req)
+          normalized_req['requests'].sort(
+              key=lambda x: x['testResult']['testId'])
+          self.m.resultdb._rpc(  # pylint: disable=protected-access
+              'upload missing test cases (count: {})'.format(len(reqs)),
+              'luci.resultdb.v1.Recorder', 'BatchCreateTestResults',
+              req=normalized_req, include_update_token=True,
+              step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+                  step_test_data))
+          break
+        except self.m.step.StepFailure:
+          upload_status = 'WARNING'
+      self.m.step.active_result.presentation.status = upload_status

@@ -476,7 +476,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output (2).upload missing test cases",
+    "name": "process tast output (2).upload missing test cases (count: 3)",
     "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"arc.StartStop\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\", \"test_config\": \"fancy-suite\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.OtherTest\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\", \"test_config\": \"fancy-suite\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.Test\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\", \"test_config\": \"fancy-suite\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
