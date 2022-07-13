@@ -925,7 +925,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "dummy-results-dir/autoserv_test/sysinfo/crossystem",
+      "dummy-results-dir/autoserv_test/original_test/sysinfo/crossystem",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -955,7 +955,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "dummy-results-dir/autoserv_test/sysinfo/uname",
+      "dummy-results-dir/autoserv_test/original_test/sysinfo/uname",
       "/path/to/tmp/"
     ],
     "infra_step": true,

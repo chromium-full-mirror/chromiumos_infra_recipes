@@ -597,6 +597,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
     return api.cros_resultdb.upload(
         config, step_name='upload chromium test results to rdb')
 
+  first_test_case_name = ''
   tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
   if os.path.exists(tast_results_dir) or api.properties.get(
       'result_format') == 'tast':
@@ -616,13 +617,23 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
     result_file = test_runner_result_file
     artifact_directory = None
 
+    for test_id, _ in result.get_test_results():
+      first_test_case_name = test_id
+      break
+
+  # Fetches rich information from log artifacts.
   autotest_keyvals = test_metadata.test.autotest.keyvals
-  crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
+  # For Tauto, read files from the first test case dir because some of them
+  # might be missing in the parent result dir.
+  # For Tast, read files from the parent result dir.
+  crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
+                                      first_test_case_name, 'sysinfo',
                                       'crossystem')
   crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-  kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
-                                      'uname')
+  kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
+                                      first_test_case_name, 'sysinfo', 'uname')
   kernel_version = _read_kernel_version(api, kernel_log_file_path)
+
   config = {
       'result_format':
           result_format,
