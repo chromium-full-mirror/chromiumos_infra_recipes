@@ -24,6 +24,7 @@ from PB.chromite.api import firmware
 from PB.chromite.api import image
 from PB.chromite.api import packages
 from PB.chromite.api import payload
+from PB.chromite.api import portage_explorer
 from PB.chromite.api import sdk
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
@@ -137,6 +138,9 @@ def RunSteps(api):
       },
       'PayloadService': {
           'GeneratePayload': payload.GenerationResponse,
+      },
+      'PortageExplorerService': {
+          'RunSpiders': portage_explorer.RunSpidersResponse,
       },
       'SdkService': {
           'Clean': sdk.CleanResponse,

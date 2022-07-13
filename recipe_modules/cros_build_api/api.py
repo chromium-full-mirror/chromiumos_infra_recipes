@@ -109,6 +109,10 @@ class PayloadService(Stub):
   """Stub for PayloadService."""
 
 
+class PortageExplorerService(Stub):
+  """Stub for PortageExplorerService."""
+
+
 class FirmwareService(Stub):
   """Stub for FirmwareService."""
 
