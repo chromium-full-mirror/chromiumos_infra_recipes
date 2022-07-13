@@ -9744,7 +9744,8 @@
     },
     "name": "upload debug symbols.uploading.call upload go binary",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
     ]
   },
   {

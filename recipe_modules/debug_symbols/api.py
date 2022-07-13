@@ -94,5 +94,7 @@ class DebugSymbols(recipe_api.RecipeApi):
         ]))
 
     with self.m.step.nest('uploading') as pres:
-      pres.logs['upload logs'] = self.m.easy.stdout_step(
-          'call upload go binary', cmd)
+      step_data = self.m.step(
+          'call upload go binary', cmd,
+          stdout=self.m.raw_io.output_text(name='stdout', add_output_log=True))
+      pres.logs['upload logs'] = step_data.stdout
