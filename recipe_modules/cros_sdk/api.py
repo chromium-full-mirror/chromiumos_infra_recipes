@@ -438,14 +438,13 @@ class CrosSdkApi(RecipeApi):
         no_replace = self._check_sdk_cache_state(version) and not sdk_version
         # SdkService/Create will create a chroot if one does not already exist
         # or no_replace is False.
-        req = CreateSdkRequest(
-            flags=CreateSdkRequest.Flags(no_replace=no_replace,
-                                         no_use_image=not use_image,
-                                         bootstrap=bootstrap),
-            chroot=self.chroot, sdk_version=sdk_version,
-            skip_chroot_upgrade=bool(sdk_version))
         response = self.m.cros_build_api.SdkService.Create(
-            req, timeout=timeout_sec, test_output_data=test_data)
+            CreateSdkRequest(
+                flags=CreateSdkRequest.Flags(no_replace=no_replace,
+                                             no_use_image=not use_image,
+                                             bootstrap=bootstrap),
+                chroot=self.chroot, sdk_version=sdk_version),
+            timeout=timeout_sec, test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         self._chroot_initialized = True
         self._write_sdk_cache_state(version)
