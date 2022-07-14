@@ -18,4 +18,10 @@ message SkylabProperties {
   // TODO(b/209497087): Experiment flag to enable passing container information
   // to CTP, remove once support is stabilized.
   bool enable_container_support = 9;
+
+  // Set to true if the ResultDB invocations for scheduled CTP builds should NOT
+  // be included in the ResultDB invocation for the current build. Defaults to
+  // false (i.e. defaults to including scheduled CTP builds in the current
+  // build's ResultRB invocation).
+  bool exclude_sub_invs = 10;
 }

@@ -33,6 +33,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._enable_retries = properties.enable_retries
+    self._exclude_sub_invs = properties.exclude_sub_invs
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -69,12 +70,16 @@ class SkylabApi(recipe_api.RecipeApi):
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
 
+    props = {'requests': tagged_requests}
+    if self._exclude_sub_invs:
+      # If the CTP build we are scheduling is not going to become an included
+      # invocation of the current build, it should mark itself for ResultDB
+      # export.
+      props['force_export'] = True
     bb_request = self.m.buildbucket.schedule_request(
         self._ctp_builder,
         bucket='testplatform',
-        properties={
-            'requests': tagged_requests,
-        },
+        properties=props,
         tags=bb_tags if bb_tags else [],
         experiments=exps,
         # TODO(b/186217519,b/186218358): Pass in gerrit_changes and
@@ -87,7 +92,8 @@ class SkylabApi(recipe_api.RecipeApi):
         # Disable inheriting the version from the parent builder.
         exe_cipd_version='',
         **kwargs)
-    return self.m.buildbucket.schedule([bb_request])[0]
+    return self.m.buildbucket.schedule(
+        [bb_request], include_sub_invs=not self._exclude_sub_invs)[0]
 
   def schedule_suites(self, unit_hw_tests, timeout, name=None,
                       async_suite_run=False, container_metadata=None,

@@ -349,7 +349,7 @@ def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
-  _top_level_export_to_bigquery(api)
+  _top_level_export_to_bigquery(api, properties.force_export)
 
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
@@ -651,12 +651,13 @@ def _get_requests_from_properties(api, properties):
   return properties.requests
 
 
-def _top_level_export_to_bigquery(api):
+def _top_level_export_to_bigquery(api, force_export):
   if not api.resultdb.enabled:
     return
 
-  # Skips the BigQuery export step if the current build has any ancestor.
-  if _build_has_ancestor(api):
+  # Skips the BigQuery export step if the current build has any ancestor (unless
+  # force_export is set to true, in which case we export anyways).
+  if not force_export and _build_has_ancestor(api):
     return
   with api.step.nest('configure resultdb bigquery export'):
     bigquery_export = invocation_pb2.BigQueryExport(
@@ -1342,6 +1343,28 @@ def GenTests(api):
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.post_process(post_process.DoesNotRun,
+                       'configure resultdb bigquery export'),
+  )
+
+  yield api.test(
+      'Recipe-runs-on-child-build-with-ancestor-ids-force-export',
+      _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={'default': _test_request('default')},
+              config=Config(
+                  pubsub=Config.PubSub(project='foo-proj', topic='foo-topic')),
+              force_export=True,
+          )),
+      api.step_data(
+          'publish build ID.call `result_flow`.publish',
+          stdout=api.raw_io.output(
+              py2_MessageToJson(
+                  result_flow_pb2.publish.PublishResponse(
+                      state=result_flow_pb2.common.SUCCEEDED)))),
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_process(post_process.MustRun,
                        'configure resultdb bigquery export'),
   )
 

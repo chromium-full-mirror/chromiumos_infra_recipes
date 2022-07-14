@@ -103,6 +103,15 @@ def GenTests(api):
                   )
           }))
 
+  yield api.test(
+      'exclude-sub-invs',
+      api.buildbucket.ci_build(builder='main-release-orchestrator'),
+      api.properties(
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(enable_retries=True, exclude_sub_invs=True)
+          }))
+
   build = api.buildbucket.try_build_message(project='chromeos',
                                             bucket='chromeos',
                                             builder='cq-orchestrator',

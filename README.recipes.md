@@ -7497,7 +7497,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Module for issuing commands to Skylab
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#45)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#46)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -7514,7 +7514,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#92)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#98)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -7532,11 +7532,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#41)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#42)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#293)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#299)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -11594,11 +11594,11 @@ Args:
 
 &mdash; **def [py2\_MessageToJson](/recipes/test_platform/cros_test_platform.py#71)(obj):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#668)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#669)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#757)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#758)(task_results):**
 
 &mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#594)(api, enumerations, responses, error_in_requests):**
 
