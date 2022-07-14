@@ -10,17 +10,19 @@ json files.
 """
 
 import base64
-from collections import namedtuple
 import functools
 import json
-from google.protobuf.text_format import MessageToString
-import six
 
+from google.protobuf.text_format import MessageToString
+from PB.recipes.chromeos.star_doctor import RemoteConfigFile
+from PB.recipes.chromeos.star_doctor import StarDoctorProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraint
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintType
+import six
 
-from PB.recipes.chromeos.star_doctor import (StarDoctorProperties,
-                                             RemoteConfigFile)
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -47,90 +49,227 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
 INTERNAL_HOST_DOMAIN = 'chrome-internal.googlesource.com'
 EXTERNAL_HOST_DOMAIN = 'chromium.googlesource.com'
-INTERNAL_HOST = 'https://' + INTERNAL_HOST_DOMAIN
-EXTERNAL_HOST = 'https://' + EXTERNAL_HOST_DOMAIN
 INTERNAL_REVIEW_HOST = 'https://chrome-internal-review.googlesource.com'
 EXTERNAL_REVIEW_HOST = 'https://chromium-review.googlesource.com'
-INFRA_CONFIG_PROJECT = 'chromeos/infra/config'
-CONFIG_INTERNAL_PROJECT = 'chromeos/config-internal'
-SUITE_SCHEDULER_PROJECT = 'chromiumos/infra/suite_scheduler'
-PUBLIC_CONFIG_PROJECT = 'chromiumos/config'
 STARDOCTOR_TOPIC = 'StarDoctor'
 CONFIG_UPDATE_HASHTAG = 'config-update'
-INFRA_CONFIG_URL = '{}/{}'.format(INTERNAL_HOST, INFRA_CONFIG_PROJECT)
-CONFIG_INTERNAL_URL = '{}/{}'.format(INTERNAL_HOST, CONFIG_INTERNAL_PROJECT)
-SUITE_SCHEDULER_URL = '{}/{}'.format(EXTERNAL_HOST, SUITE_SCHEDULER_PROJECT)
-PUBLIC_CONFIG_URL = '{}/{}'.format(EXTERNAL_HOST, PUBLIC_CONFIG_PROJECT)
 TIMELINE_FILENAME = 'release/timeline_configuration.json'
 
 PROPERTIES = StarDoctorProperties
 
-RepoDirs = namedtuple('RepoDirs',
-                      ('infra_config', 'suite_scheduler', 'config_internal'))
+
+class RepoProject(object):
+  """A repo project that lives on one of ChromeOS's Gerrit instances.
+
+  Attributes:
+    name: str, the name of the project, as one might see in a manifest file:
+        for example, 'chromeos/infra/config'.
+    labels_for_upload: dict[Label, int], the Gerrit labels/values that should
+        be attached to any CL on this project at upload-time for the CL to be
+        submitted.
+    checkout_path: Option[Path], where on the local filesystem this project has
+        been checked out. None if not yet cloned.
+  """
+
+  def __init__(self, name, is_internal, has_verified_label):
+    """A repo project that lives on one of ChromeOS's Gerrit instances.
+
+    Args:
+      name: str, the name of the project, as one might see in a manifest file:
+          for example, 'chromeos/infra/config'.
+      is_internal: bool, true if the project exists on CrOS's internal gerrit
+          server, and not on the public gerrit server.
+      has_verified_label: bool, true if the project is configured on Gerrit to
+          require a VERIFIED label for CL submission.
+    """
+    self.name = name
+    self._is_internal = is_internal
+    self.labels_for_upload = {
+        Label.BOT_COMMIT: 1,
+        Label.COMMIT_QUEUE: 2,
+    }
+    if has_verified_label:
+      self.labels_for_upload[Label.VERIFIED] = 1
+    self.checkout_path = None
+
+  @property
+  def host_domain(self):
+    """The domain on which this project is hosted, without https:// prefix."""
+    return INTERNAL_HOST_DOMAIN if self._is_internal else EXTERNAL_HOST_DOMAIN
+
+  @property
+  def host(self):
+    """The URL on which this project is hosted."""
+    return 'https://{}'.format(self.host_domain)
+
+  @property
+  def review_host(self):
+    """The URL on which this project is reviewed."""
+    return INTERNAL_REVIEW_HOST if self._is_internal else EXTERNAL_REVIEW_HOST
+
+  @property
+  def url(self):
+    """The full URL to this project."""
+    return '{}/{}'.format(self.host, self.name)
+
+  def clone(self, api, checkout_path=None, **kwargs):
+    """Checkout this project in a temporary directory.
+
+    Args:
+      api: The recipe modules API.
+      checkout_path: If set, the directory to clone into.
+      kwargs: Any other keyword arguments to pass into api.git.clone.
+    """
+    self.checkout_path = checkout_path or api.path.mkdtemp()
+    api.git.clone(self.url, target_path=self.checkout_path, **kwargs)
+
+  def upload_changes(self, api, irrelevant_files=None):
+    """Commit and push changed files in this project.
+
+    Args:
+      api: The recipe modules API.
+      irrelevant_files(set(files)): Files that alone, shouldn't trigger a commit.
+    """
+    self._abandon_stale_changes(api)
+
+    pending_cls = self._get_pending_stardoctor_cls(api)
+    if pending_cls:
+      api.step.empty(
+          'Not committing changes to %s due to pending StarDoctor CLs' %
+          self.name, log_text=[
+              api.gerrit.parse_gerrit_change_url(chg) for chg in pending_cls
+          ])
+      return
+
+    irrelevant_files = irrelevant_files or set()
+    commit_lines = [
+        'Automatic config update',
+        'Generated by StarDoctor, see {} for the recipe.'.format(
+            api.buildbucket.build_url()),
+        'BUG=None\nTEST=regenerated configs',
+    ]
+    commit_msg = '\n\n'.join(commit_lines)
+    step_name = 'committing to {}'.format(self.name)
+
+    with api.step.nest(step_name) as presentation:
+      with api.context(cwd=self.checkout_path):
+        branch = six.ensure_str(api.git.current_branch())
+        changed_files = api.git.get_working_dir_diff_files()
+
+        # If there aren't leftover files when we subtract the irrelevant ones.
+        if not set(changed_files) - irrelevant_files:
+          presentation.step_text = 'no relevant files changed'
+          return
+
+        api.git.add(changed_files)
+        api.git.commit(commit_msg)
+        # Upload using git cl so that we can add topic and hashtags.
+        # These are used to abandon unlanded changes later.
+        change = api.gerrit.create_change(self.name, topic=STARDOCTOR_TOPIC,
+                                          hashtags=[CONFIG_UPDATE_HASHTAG],
+                                          ref=api.git.get_branch_ref(branch),
+                                          project_path=self.checkout_path)
+        api.gerrit.set_change_labels_remote(change, self.labels_for_upload)
+        gerrit_change_url = api.git_cl.status(
+            field='url', fast=True,
+            step_test_data=functools.partial(api.raw_io.test_api.stream_output,
+                                             'https://crrev.com/i/somenumber'))
+        presentation.links['change uploaded'] = six.ensure_str(
+            gerrit_change_url)
+
+  def _abandon_stale_changes(self, api):
+    """Abandon older changes that never landed.
+
+    These are changes created by previous iterations of StarDoctor, which did not
+    merge for some reason.
+
+    Args:
+      api: The recipe modules API.
+    """
+    cq_unapproved_constraint = LabelConstraint(
+        label=Label.COMMIT_QUEUE, type=LabelConstraintType.UNAPPROVED)
+    changes = self._get_stardoctor_cls(
+        api, label_constraints=[cq_unapproved_constraint])
+    for change in changes:
+      api.gerrit.abandon_change(change)
+
+  def _get_pending_stardoctor_cls(self, api):
+    """Find any StarDoctor changes in the project still pending CQ verification.
+
+    Args:
+      api: The recipe modules API.
+
+    Returns:
+      list[api.gerrit.GerritChange]: Open StarDoctor CLs currently CQ-approved.
+    """
+    cq_approved_constraint = LabelConstraint(label=Label.COMMIT_QUEUE,
+                                             type=LabelConstraintType.APPROVED)
+    return self._get_stardoctor_cls(api,
+                                    label_constraints=[cq_approved_constraint])
+
+  def _get_stardoctor_cls(self, api, label_constraints=None):
+    """Find open StarDoctor CLs for this project matching certain constraints.
+
+    Args:
+      api: The recipe modules API.
+      label_constraints (list[LabelConstraint]): Constraints to apply
+        to the query regarding Gerrit labels.
+
+    Returns:
+      list[api.gerrit.GerritChange]: Open StarDoctor CLs meeting the constraints.
+    """
+    return api.gerrit.query_changes(self.review_host, [
+        ('project', self.name),
+        ('owner', CI_PROD_SERVICE_ACCOUNT),
+        ('topic', STARDOCTOR_TOPIC),
+        ('hashtag', CONFIG_UPDATE_HASHTAG),
+        ('status', 'open'),
+    ], label_constraints=label_constraints)
+
+
+INFRA_CONFIG = RepoProject('chromeos/infra/config', True, False)
+CONFIG_INTERNAL = RepoProject('chromeos/config-internal', True, True)
+SUITE_SCHEDULER = RepoProject('chromiumos/infra/suite_scheduler', False, True)
+PUBLIC_CONFIG = RepoProject('chromiumos/config', False, True)
 
 
 def RunSteps(api, properties):
   with api.step.nest('set up'):
     _validate_properties(api, properties)
-    repo_dirs = _clone_repos(api)
+    _clone_repos(api)
   remote_config_files = _get_remote_config_files(properties)
 
   with api.step.nest('generate binary config'):
-    _copy_remote_configs(api, repo_dirs, remote_config_files)
-    _fetch_and_write_chromiumos_schedule(api, repo_dirs)
-    _fetch_and_write_keyset_config(api, repo_dirs)
-    _update_release_time(api, repo_dirs)
-    _regenerate_configs(api, repo_dirs)
-    _copy_ini_configs(api, repo_dirs)
+    _copy_remote_configs(api, remote_config_files)
+    _fetch_and_write_chromiumos_schedule(api)
+    _fetch_and_write_keyset_config(api)
+    _update_release_time(api)
+    _regenerate_configs(api)
+    _copy_ini_configs(api)
 
   irrelevant_files = set()
   irrelevant_files.add(TIMELINE_FILENAME)
-  _commit_all_changes(api, properties, repo_dirs, irrelevant_files)
+  _upload_all_changes(api, properties, irrelevant_files)
 
 
 def _clone_repos(api):
-  """Clone any necessary repos.
+  """Clone any necessary repo projects.
 
   Args:
     api: The recipe modules API.
-
-  Returns:
-    A namedtuple (RepoDirs) of the local checkout locations.
   """
-  infra_config_dir = _get_clone(api, INFRA_CONFIG_URL)
-  ss_dir = _get_clone(api, SUITE_SCHEDULER_URL)
+  INFRA_CONFIG.clone(api)
+  SUITE_SCHEDULER.clone(api)
   # We don't really need the full clone yet. But, it is assumed that configs
   # will need to be regenerated here at some point.
   # Clone shallowly to avoid running out of storage: see crbug/1154700.
-  config_internal_dir = _get_clone(api, CONFIG_INTERNAL_URL, depth=1)
+  CONFIG_INTERNAL.clone(api, depth=1)
   # We need the config dir to exist in the `config` directory next to
   # config-internal for the symlinks in config-internal to work.
   config_dir = api.path.abspath(
-      api.path.dirname(config_internal_dir).join('config/'))
+      api.path.dirname(CONFIG_INTERNAL.checkout_path).join('config/'))
   api.step('create {}'.format(config_dir), ['mkdir', config_dir])
-  _get_clone(api, PUBLIC_CONFIG_URL, repo_dir=config_dir)
-  return RepoDirs(
-      infra_config=infra_config_dir,
-      suite_scheduler=ss_dir,
-      config_internal=config_internal_dir,
-  )
-
-
-def _get_clone(api, repo_url, repo_dir=None, **kwargs):
-  """Create a Git clone in a temporary directory.
-
-  Args:
-    api: The recipe modules API.
-    repo_url: Full path to the Git repo to clone.
-    repo_dir: If set, the directory to clone into.
-    kwargs: Any other keyword arguments to pass to api.get.clone.
-
-  Returns:
-    The path to the newly cloned Git checkout.
-  """
-  repo_dir = repo_dir or api.path.mkdtemp()
-  api.git.clone(repo_url, target_path=repo_dir, **kwargs)
-  return repo_dir
+  PUBLIC_CONFIG.clone(api, checkout_path=config_dir)
 
 
 def _validate_properties(api, props):
@@ -175,31 +314,31 @@ def _get_remote_config_files(properties):
   return remote_config_files
 
 
-def _copy_remote_configs(api, repo_dirs, remote_config_files):
+def _copy_remote_configs(api, remote_config_files):
   """Download the specified files from gsutil.
 
   Args:
     api: The recipe modules API.
-    repo_dirs: A namedtuple (RepoDirs) containing local checkout locations.
     remote_config_files: List[RemoteConfigFile] representing config files to
       download from Google Storage.
   """
   with api.step.nest('copy remote configs'):
     for remote_config_file in remote_config_files:
+      dest_path = api.path.join(INFRA_CONFIG.checkout_path,
+                                remote_config_file.dest_path)
       api.gsutil.download(
           remote_config_file.bucket_name, remote_config_file.object_name,
-          api.path.join(repo_dirs.infra_config, remote_config_file.dest_path),
-          name='download {}/{}'.format(
+          dest_path, name='download {}/{}'.format(
               remote_config_file.bucket_name,
               remote_config_file.object_name,
           ))
 
 
-def _fetch_and_write_chromiumos_schedule(api, repo_dirs):
+def _fetch_and_write_chromiumos_schedule(api):
   """Read the release schedule from Cr-, and write it to infra/config."""
   with api.step.nest('fetch chromiumos schedule'):
     # Stay 10 milestones ahead.
-    schedule_fname = api.path.join(repo_dirs.infra_config,
+    schedule_fname = api.path.join(INFRA_CONFIG.checkout_path,
                                    'release/schedule/schedule.textproto')
     last_mstone = api.cros_schedule.get_last_branched_mstone_n()
     fetch_n = last_mstone - 70 + 10
@@ -210,7 +349,7 @@ def _fetch_and_write_chromiumos_schedule(api, repo_dirs):
                         MessageToString(mstones))
 
 
-def _fetch_and_write_keyset_config(api, repo_dirs):
+def _fetch_and_write_keyset_config(api):
   """Read release keys from platform, and write it to infra/config."""
   with api.step.nest('fetch and write keyset configuration'):
     keyset_json = api.gitiles.get_file(
@@ -220,14 +359,14 @@ def _fetch_and_write_keyset_config(api, repo_dirs):
     # Ensure it's json after all, then write.
     validated_keys = json.dumps(
         json.loads(keyset_json), sort_keys=True, indent=2)
-    keyset_fname = api.path.join(repo_dirs.infra_config,
+    keyset_fname = api.path.join(INFRA_CONFIG.checkout_path,
                                  'release/signing/keyset.json')
     api.file.write_text('write keyset json', keyset_fname, validated_keys)
 
 
-def _update_release_time(api, repo_dirs):
+def _update_release_time(api):
   """Update the infra/config/releases/timeline_configuration.json time field."""
-  tl_cfg_fpath = api.path.join(repo_dirs.infra_config, TIMELINE_FILENAME)
+  tl_cfg_fpath = api.path.join(INFRA_CONFIG.checkout_path, TIMELINE_FILENAME)
   with api.step.nest("update configured release time"):
     step_result = api.json.read(
         'read json', tl_cfg_fpath, step_test_data=lambda: api.json.test_api.
@@ -238,17 +377,17 @@ def _update_release_time(api, repo_dirs):
                         tl_cfg_fpath, json.dumps(tl_cfg, indent=2))
 
 
-def _regenerate_configs(api, repo_dirs):
+def _regenerate_configs(api):
   """Runs the generate scripts in infra/config and src/config-internal."""
   # We need lucicfg from depot_tools.
   with api.depot_tools.on_path():
     # We need protoc from cipd.
     cipd_dir = _ensure_cipd_packages(api)
     with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
-      with api.context(cwd=repo_dirs.infra_config):
+      with api.context(cwd=INFRA_CONFIG.checkout_path):
         api.step('regenerate configs',
                  ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=3 * 60)
-      with api.context(cwd=repo_dirs.config_internal):
+      with api.context(cwd=CONFIG_INTERNAL.checkout_path):
         api.step('regenerate test configs', ['./board_config/generate', '-b'],
                  timeout=3 * 60)
         api.step('regenerate suite scheduler configs', [
@@ -273,17 +412,16 @@ def _ensure_cipd_packages(api):
   return cipd_dir
 
 
-def _copy_ini_configs(api, repo_dirs):
+def _copy_ini_configs(api):
   """Copy .ini files from internal config to the suite_scheduler repo.
 
   Args:
     api: The recipe modules API.
-    repo_dirs: A namedtuple (RepoDirs) containing local checkout locations.
   """
   with api.step.nest('copy INI configs'):
-    orig_dir = api.path.join(repo_dirs.config_internal, 'test',
+    orig_dir = api.path.join(CONFIG_INTERNAL.checkout_path, 'test',
                              'suite_scheduler', 'generated')
-    dest_dir = api.path.join(repo_dirs.suite_scheduler, 'generated_configs')
+    dest_dir = api.path.join(SUITE_SCHEDULER.checkout_path, 'generated_configs')
     api.file.copy('lab_config.ini', api.path.join(orig_dir, 'lab_config.ini'),
                   dest_dir)
     api.file.copy('suite_scheduler.ini',
@@ -292,13 +430,12 @@ def _copy_ini_configs(api, repo_dirs):
                   api.path.join(orig_dir, 'rubik_config.ini'), dest_dir)
 
 
-def _commit_all_changes(api, properties, repo_dirs, irrelevant_files=None):
-  """Commit and push changed files in all repos.
+def _upload_all_changes(api, properties, irrelevant_files=None):
+  """Commit and push changed files in all projects.
 
   Args:
     api: The recipe modules API.
     properties: StarDoctorProperties, a proto containing input properties.
-    repo_dirs: A namedtuple (RepoDirs) containing local checkout locations.
     irrelevant_files(set(files)): Files that alone, shouldn't trigger a commit.
   """
   with api.step.nest('commit changes') as presentation:
@@ -306,145 +443,9 @@ def _commit_all_changes(api, properties, repo_dirs, irrelevant_files=None):
       presentation.step_text = 'not configured to commit changes'
       return
 
-    infra_config_labels = {
-        api.gerrit.Label.BOT_COMMIT: 1,
-        api.gerrit.Label.COMMIT_QUEUE: 2
-    }
-    ss_labels = {
-        api.gerrit.Label.BOT_COMMIT: 1,
-        api.gerrit.Label.COMMIT_QUEUE: 2,
-        api.gerrit.Label.VERIFIED: 1,
-    }
-    config_internal_labels = ss_labels
-    with api.step.nest(INFRA_CONFIG_PROJECT):
-      _commit_repo_changes(api, repo_dirs.infra_config, INFRA_CONFIG_PROJECT,
-                           infra_config_labels,
-                           irrelevant_files=irrelevant_files)
-    with api.step.nest(SUITE_SCHEDULER_PROJECT):
-      _commit_repo_changes(api, repo_dirs.suite_scheduler,
-                           SUITE_SCHEDULER_PROJECT, ss_labels,
-                           irrelevant_files=irrelevant_files)
-    with api.step.nest(CONFIG_INTERNAL_PROJECT):
-      _commit_repo_changes(api, repo_dirs.config_internal,
-                           CONFIG_INTERNAL_PROJECT, config_internal_labels,
-                           irrelevant_files=irrelevant_files)
-
-
-def _commit_repo_changes(api, repo_dir, project, labels, irrelevant_files=None):
-  """Commit and push changed files in one repo.
-
-  Args:
-    repo_dir(Path): Path to the repository to push.
-    project(str): Project name of the repo.
-    labels([str]): Submission labels for the project.
-    irrelevant_files(set(files)): Files that alone, shouldn't trigger a commit.
-  """
-  _abandon_stale_changes(api, project)
-
-  pending_stardoctor_cls = _get_pending_stardoctor_cls(api, project)
-  if pending_stardoctor_cls:
-    api.step.empty(
-        'Not committing changes to %s due to pending StarDoctor CLs' % project,
-        log_text=[
-            api.gerrit.parse_gerrit_change_url(chg)
-            for chg in pending_stardoctor_cls
-        ])
-    return
-
-  irrelevant_files = irrelevant_files or set()
-  commit_lines = [
-      'Automatic config update',
-      'Generated by StarDoctor, see {} for the recipe.'.format(
-          api.buildbucket.build_url()),
-      'BUG=None\nTEST=regenerated configs',
-  ]
-  commit_msg = '\n\n'.join(commit_lines)
-  step_name = 'committing to {}'.format(project)
-
-  with api.step.nest(step_name) as presentation:
-    with api.context(cwd=repo_dir):
-      branch = six.ensure_str(api.git.current_branch())
-      changed_files = api.git.get_working_dir_diff_files()
-
-      # If there aren't leftover files when we subtract the irrelevant ones.
-      if not set(changed_files) - irrelevant_files:
-        presentation.step_text = 'no relevant files changed'
-        return None
-
-      api.git.add(changed_files)
-      api.git.commit(commit_msg)
-      # Upload using git cl so that we can add topic and hashtags.
-      # These are used to abandon unlanded changes later.
-      change = api.gerrit.create_change(project, topic=STARDOCTOR_TOPIC,
-                                        hashtags=[CONFIG_UPDATE_HASHTAG],
-                                        ref=api.git.get_branch_ref(branch),
-                                        project_path=repo_dir)
-      api.gerrit.set_change_labels_remote(change, labels)
-      gerrit_change_url = api.git_cl.status(
-          field='url', fast=True,
-          step_test_data=functools.partial(api.raw_io.test_api.stream_output,
-                                           'https://crrev.com/i/somenumber'))
-      presentation.links['change uploaded'] = six.ensure_str(gerrit_change_url)
-
-
-def _abandon_stale_changes(api, project):
-  """Abandon older changes that never landed.
-
-  These are changes created by previous iterations of StarDoctor, which did not
-  merge for some reason.
-
-  Args:
-    api: The recipe modules API.
-    project (str): Project name of the repo.
-  """
-  cq_unapproved_constraint = api.gerrit.LabelConstraint(
-      label=api.gerrit.Label.COMMIT_QUEUE,
-      type=api.gerrit.LabelConstraintType.UNAPPROVED)
-  changes = _get_stardoctor_cls(api, project,
-                                label_constraints=[cq_unapproved_constraint])
-  for change in changes:
-    api.gerrit.abandon_change(change)
-
-
-def _get_pending_stardoctor_cls(api, project):
-  """Find any StarDoctor changes in the repo still pending CQ verification.
-
-  Args:
-    api: The recipe modules API.
-    project (str): Project name of the repo.
-
-  Returns:
-    list[api.gerrit.GerritChange]: Open StarDoctor CLs currently CQ-approved.
-  """
-  cq_approved_constraint = api.gerrit.LabelConstraint(
-      label=api.gerrit.Label.COMMIT_QUEUE,
-      type=api.gerrit.LabelConstraintType.APPROVED)
-  return _get_stardoctor_cls(api, project,
-                             label_constraints=[cq_approved_constraint])
-
-
-def _get_stardoctor_cls(api, project, label_constraints=None):
-  """Find open StarDoctor CLs for the project matching certain constraints.
-
-  Args:
-    api: The recipe modules API.
-    project (str): Project name of the repo.
-    label_constraints (list[api.gerrit.LabelConstraint]): Constraints to apply
-      to the query regarding Gerrit labels.
-
-  Returns:
-    list[api.gerrit.GerritChange]: Open StarDoctor CLs meeting the constraints.
-  """
-  host = (
-      INTERNAL_REVIEW_HOST
-      if project.startswith('chromeos') else EXTERNAL_REVIEW_HOST)
-  return api.gerrit.query_changes(host, [
-      ('project', project),
-      ('owner', CI_PROD_SERVICE_ACCOUNT),
-      ('topic', STARDOCTOR_TOPIC),
-      ('hashtag', CONFIG_UPDATE_HASHTAG),
-      ('status', 'open'),
-  ], label_constraints=label_constraints)
+    for project in (INFRA_CONFIG, SUITE_SCHEDULER, CONFIG_INTERNAL):
+      with api.step.nest(project.name):
+        project.upload_changes(api, irrelevant_files)
 
 
 def GenTests(api):
@@ -453,22 +454,17 @@ def GenTests(api):
     """Set test data for gerrit.query_changes steps, with Gerrit labels.
 
     Args:
-      projects_with_pending_changes (list[str]): Names of projects where the
-        returned changes should be listed as currently CQ-approved.
+      projects_with_pending_changes (list[RepoProject]): Names of projects where
+        the returned changes should be listed as currently CQ-approved.
     """
     if projects_with_pending_changes is None:
       projects_with_pending_changes = []
-    projects_reviewhosts = (
-        (INFRA_CONFIG_PROJECT, INTERNAL_REVIEW_HOST),
-        (CONFIG_INTERNAL_PROJECT, INTERNAL_REVIEW_HOST),
-        (SUITE_SCHEDULER_PROJECT, EXTERNAL_REVIEW_HOST),
-    )
     test_datas = []
-    for (project, reviewhost) in projects_reviewhosts:
+    for project in (INFRA_CONFIG, CONFIG_INTERNAL, SUITE_SCHEDULER):
       for iteration in (1, 2):
         changes_json = [{
             '_number': 12345,
-            'project': project,
+            'project': project.name,
             'labels': {
                 'Commit-Queue': {},
             }
@@ -482,8 +478,8 @@ def GenTests(api):
         values_dict = {12345: {}}
         test_datas.append(
             api.gerrit.set_query_changes_response(
-                '.'.join(['commit changes', project]), changes_json, reviewhost,
-                values_dict, iteration=iteration))
+                '.'.join(['commit changes', project.name]), changes_json,
+                project.review_host, values_dict, iteration=iteration))
     return sum(test_datas[1:], test_datas[0])
 
   yield api.test('dont-commit', api.time.seed(1613694623.0),
@@ -501,7 +497,7 @@ def GenTests(api):
       api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
                      branches=['R9000']),
       _set_gerrit_query_changes_responses(
-          projects_with_pending_changes=[SUITE_SCHEDULER_PROJECT]),
+          projects_with_pending_changes=[SUITE_SCHEDULER]),
       api.post_check(
           post_process.MustRun,
           'commit changes.chromiumos/infra/suite_scheduler.Not committing changes to chromiumos/infra/suite_scheduler due to pending StarDoctor CLs'
