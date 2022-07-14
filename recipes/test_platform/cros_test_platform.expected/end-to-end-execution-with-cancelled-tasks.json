@@ -481,7 +481,7 @@
     "name": "summarize.default task results.cancelled before run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@(task)  foo-cancelled (no task link)@broken-link@@@",
+      "@@@STEP_LINK@ (task)  foo-cancelled (no task link)@broken-link@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

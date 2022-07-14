@@ -1193,17 +1193,17 @@
     "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@1. (log)   foo-test attempt #1 passed on retry@logs://foo/foo1@@@",
+      "@@@STEP_LINK@1. (log)  foo-test attempt #1 passed on retry@logs://foo/foo1@@@",
       "@@@STEP_LINK@1. (task)  foo-test attempt #1 passed on retry@foo://foo/foo/1@@@",
-      "@@@STEP_LINK@2. (log)   bar-test attempt #1 passed on retry@logs://bar/bar1@@@",
+      "@@@STEP_LINK@2. (log)  bar-test attempt #1 passed on retry@logs://bar/bar1@@@",
       "@@@STEP_LINK@2. (task)  bar-test attempt #1 passed on retry@bar://bar/bar/1@@@",
-      "@@@STEP_LINK@3. (log)   baz-test attempt #1 passed on retry@logs://baz/baz1@@@",
+      "@@@STEP_LINK@3. (log)  baz-test attempt #1 passed on retry@logs://baz/baz1@@@",
       "@@@STEP_LINK@3. (task)  baz-test attempt #1 passed on retry@baz://baz/baz/1@@@",
-      "@@@STEP_LINK@4. (log)   haha-test attempt #1 passed on retry@logs://haha/haha1@@@",
+      "@@@STEP_LINK@4. (log)  haha-test attempt #1 passed on retry@logs://haha/haha1@@@",
       "@@@STEP_LINK@4. (task)  haha-test attempt #1 passed on retry@haha://haha/haha/1@@@",
-      "@@@STEP_LINK@5. (log)   lol-test attempt #1 passed on retry@logs://lol/lol1@@@",
+      "@@@STEP_LINK@5. (log)  lol-test attempt #1 passed on retry@logs://lol/lol1@@@",
       "@@@STEP_LINK@5. (task)  lol-test attempt #1 passed on retry@lol://lol/lol/1@@@",
-      "@@@STEP_LINK@6. (log)   lmao-test attempt #1 passed on retry@logs://lmao/lmao1@@@",
+      "@@@STEP_LINK@6. (log)  lmao-test attempt #1 passed on retry@logs://lmao/lmao1@@@",
       "@@@STEP_LINK@6. (task)  lmao-test attempt #1 passed on retry@lmao://lmao/lmao/1@@@"
     ]
   },
@@ -1212,14 +1212,14 @@
     "name": "summarize.default task results.flaked",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@1. (log)   foo-test@logs://foo/foo@@@",
+      "@@@STEP_LINK@1. (log)  foo-test@logs://foo/foo@@@",
       "@@@STEP_LINK@1. (task)  foo-test@foo://foo/foo/0@@@",
-      "@@@STEP_LINK@2. (log)   bar-test@logs://bar/bar@@@",
+      "@@@STEP_LINK@2. (log)  bar-test@logs://bar/bar@@@",
       "@@@STEP_LINK@2. (task)  bar-test@bar://bar/bar/0@@@",
-      "@@@STEP_LINK@(task)  baz-test@baz://baz/baz/0@@@",
-      "@@@STEP_LINK@(task)  haha-test@haha://haha/haha/0@@@",
-      "@@@STEP_LINK@(task)  lol-test@lol://lol/lol/0@@@",
-      "@@@STEP_LINK@(task)  lmao-test@lmao://lmao/lmao/0@@@"
+      "@@@STEP_LINK@ (task)  baz-test@baz://baz/baz/0@@@",
+      "@@@STEP_LINK@ (task)  haha-test@haha://haha/haha/0@@@",
+      "@@@STEP_LINK@ (task)  lol-test@lol://lol/lol/0@@@",
+      "@@@STEP_LINK@ (task)  lmao-test@lmao://lmao/lmao/0@@@"
     ]
   },
   {

@@ -635,7 +635,7 @@
     "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@1. (log)   foo-passed@logs://bar/baz@@@",
+      "@@@STEP_LINK@1. (log)  foo-passed@logs://bar/baz@@@",
       "@@@STEP_LINK@1. (task)  foo-passed@foo://bar/baz/b100@@@"
     ]
   },
@@ -644,7 +644,7 @@
     "name": "summarize.default task results.skipped",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@1. (log)   foo-skipped@logs://bar/baz1@@@",
+      "@@@STEP_LINK@1. (log)  foo-skipped@logs://bar/baz1@@@",
       "@@@STEP_LINK@1. (task)  foo-skipped@foo://bar/baz/b101@@@"
     ]
   },

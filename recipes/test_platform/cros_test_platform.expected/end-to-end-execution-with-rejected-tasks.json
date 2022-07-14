@@ -607,8 +607,8 @@
       "@@@STEP_LOG_LINE@rejected dimensions for foo@value: \"val2\"@@@",
       "@@@STEP_LOG_LINE@rejected dimensions for foo@]@@@",
       "@@@STEP_LOG_END@rejected dimensions for foo@@@",
-      "@@@STEP_LINK@(task)  foo@foo://bar/baz/b100@@@",
-      "@@@STEP_LINK@(task)  baz (no task link)@broken-link@@@",
+      "@@@STEP_LINK@ (task)  foo@foo://bar/baz/b100@@@",
+      "@@@STEP_LINK@ (task)  baz (no task link)@broken-link@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

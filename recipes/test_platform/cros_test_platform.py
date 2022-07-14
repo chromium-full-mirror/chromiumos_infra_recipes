@@ -813,18 +813,35 @@ def _emit_links(step, task_results):
         step.logs['rejected dimensions for ' + t.name] = str(
             t.rejected_dimensions)
 
-      if t.task_url:
-        step.links['(task)  ' + t.name] = t.task_url
-      else:
-        step.links['(task)  ' + t.name + ' (no task link)'] = 'broken-link'
+      _emit_link(step, "", "task", t.name, t.task_url)
+
       continue
     suffix = ''
     if t.attempt > 0:
       suffix = ' attempt #%s' % str(t.attempt)
       if t.state.verdict in _PASSED_VERDICTS:
         suffix = suffix + ' passed on retry'
-    step.links[str(i) + '. (log)   ' + t.name + suffix] = t.log_url
-    step.links[str(i) + '. (task)  ' + t.name + suffix] = t.task_url
+    _emit_link(step, '{}.'.format(str(i)), "log", '{}{}'.format(t.name, suffix),
+               t.log_url)
+    _emit_link(step, '{}.'.format(str(i)), "task",
+               '{}{}'.format(t.name, suffix), t.task_url)
+
+
+def _emit_link(step, prefix, link_name, task_name, link_url):
+  """Emit link for valid link.
+
+  Args:
+    * step:  a recipe step.
+    * prefix: prefix of the link text.
+    * link_name: name of the entity which link is being emitted. ex: log, task etc.
+    * task_name: task name. ex: name of the test.
+    * link_url: link url.
+  """
+  if link_url:
+    step.links['{} ({})  {}'.format(prefix, link_name, task_name)] = link_url
+  else:
+    step.links['{} ({})  {} (no {} link)'.format(prefix, link_name, task_name,
+                                                 link_name)] = 'broken-link'
 
 
 def _test_scheduling():
