@@ -76,17 +76,26 @@ def _set_up_test_configs(api, request, response):
     paygen_test_configs = []
 
     milestone = request.generation_request.tgt_unsigned_image.milestone
+    # Since paygen supports being given a bucket for the source image, we need
+    # need to make sure to use that same bucket for testing so we can actually
+    # download the source image and use it. (This primarily impacts staging,
+    # where we may not have older versions in the throwaway bucket so we instead
+    # use the prod bucket.)
+    src_bucket = request.generation_request.src_unsigned_image.build.bucket
     tgt_payload = (
-        api.cros_storage.FullPayload.parse_uri(response.remote_uri,
-                                               milestone) or
-        api.cros_storage.DeltaPayload.parse_uri(response.remote_uri, milestone))
+        # Notice FullPayload doesn't get a bucket. That's because a full payload
+        # source is created in cros_paygen.create_paygen_test_config().
+        api.cros_storage.FullPayload.parse_uri(response.remote_uri) or
+        api.cros_storage.DeltaPayload.parse_uri(response.remote_uri, milestone,
+                                                src_bucket))
     for test_config in request.autoupdate_test_configs:
       paygen_test_configs.append(
           api.cros_paygen.create_paygen_test_config(
               tgt_payload, src_version=test_config.src_version,
               src_channel=test_config.src_channel,
               delta_type=test_config.delta_type,
-              applicable_models=test_config.applicable_models))
+              applicable_models=test_config.applicable_models,
+              src_bucket=src_bucket))
 
     return paygen_test_configs
 

@@ -2767,7 +2767,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#1076)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#1076)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None, src_bucket=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2782,6 +2782,9 @@ Args:
     required to be None if it's a DeltaPayload.
   applicable_models (list(str)): A list of models that a paygen test should
     run against.
+  src_bucket (str): A bucket to use as src_image bucket instead of pulling
+    bucket from the tgt. This is useful in environments where the bucket
+    being written to doesn't contain older images (i.e. in staging).
 
 Returns:
   A PaygenTestConfig or None if no source payload exists or unsupported
@@ -2895,7 +2898,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1168)(self, paygen_test_configs):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1172)(self, paygen_test_configs):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -4088,11 +4091,11 @@ Much of the inspiration for this module came from:
 As long as there are two versions of the the path construction any changes
 to one of these needs to be reflected in the other.
 
-#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#645)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#649)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Apis for dealing with stored images, payloads, and artifacts.
 
-&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#675)(self, prefix_uri, parse_types=None):**
+&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#679)(self, prefix_uri, parse_types=None):**
 
 Discover and return all the GS artifacts found in a given ArtifactRoot.
 
@@ -11081,7 +11084,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen.py#94)(api, properties):**
+&mdash; **def [RunSteps](/recipes/paygen.py#103)(api, properties):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
 [DEPS](/recipes/paygen_orchestrator.py#25): [cros\_paygen](#recipe_modules-cros_paygen), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

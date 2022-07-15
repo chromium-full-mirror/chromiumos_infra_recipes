@@ -71,13 +71,17 @@ class ArtifactRoot(object):
     return self._bucket
 
   @classmethod
-  def parse_uri(cls, uri):
-    """Construct a ArtifactRoot from the passed uri string."""
+  def parse_uri(cls, uri, bucket=None):
+    """Construct a ArtifactRoot from the passed uri string.
+
+    If a bucket is provided, use that to replace the bucket parsed out of the
+    uri string.
+    """
     m = re.match(cls._ARTIFACTROOT_URI_EXP, uri)
     if not m:
       return None
     values = m.groupdict()
-    return ArtifactRoot(values['bucket'], values['channel'],
+    return ArtifactRoot(bucket or values['bucket'], values['channel'],
                         values['build_target'], values['version'])
 
   def __init__(self, bucket, channel, build_target_name, version):
@@ -445,7 +449,7 @@ class DeltaPayload(Payload):
                            r'(?P<signed_ext>(.+)?)')
 
   @classmethod
-  def parse_uri(cls, uri, milestone=None):
+  def parse_uri(cls, uri, milestone=None, src_bucket=None):
     """Construct a DeltaPayload from a provided uri, or return None."""
     tgt_ar = ArtifactRoot.parse_uri(uri)
     if not tgt_ar:
@@ -455,7 +459,7 @@ class DeltaPayload(Payload):
       return None
     values = m.groupdict()
 
-    src_ar = ArtifactRoot.parse_uri(uri)
+    src_ar = ArtifactRoot.parse_uri(uri, bucket=src_bucket)
     src_ar.version = values['src_version']
 
     if values['signed_ext'] == '.signed':

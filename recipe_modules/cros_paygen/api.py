@@ -1074,7 +1074,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     return src_payload
 
   def create_paygen_test_config(self, tgt_payload, delta_type, src_version=None,
-                                src_channel=None, applicable_models=None):
+                                src_channel=None, applicable_models=None,
+                                src_bucket=None):
     """Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
     Args:
@@ -1088,6 +1089,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         required to be None if it's a DeltaPayload.
       applicable_models (list(str)): A list of models that a paygen test should
         run against.
+      src_bucket (str): A bucket to use as src_image bucket instead of pulling
+        bucket from the tgt. This is useful in environments where the bucket
+        being written to doesn't contain older images (i.e. in staging).
 
     Returns:
       A PaygenTestConfig or None if no source payload exists or unsupported
@@ -1109,7 +1113,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         )
       is_delta_update = False
       src_artifact_root = self.m.cros_storage.ArtifactRoot(
-          bucket=tgt_image._artifact_root.bucket,
+          bucket=src_bucket or tgt_image._artifact_root.bucket,
           build_target_name=build_target_name, channel=src_channel,
           version=src_version)
       src_image = self.m.cros_storage.UnsignedImage(
