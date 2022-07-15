@@ -251,6 +251,11 @@ def enumerate_tests(api, requests, error_in_requests):
                 test_plan=r.test_plan,
             ) for t, r in requests.items() if t not in error_in_requests
         })
+
+    # Fail build if enum_requests is empty
+    if not enum_requests.tagged_requests:
+      raise api.step.StepFailure("No valid request found")
+
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
     for tag, response in sorted(enum_responses.tagged_responses.items()):
       _log_enumeration_errors(api, response, tag)
@@ -1981,4 +1986,14 @@ def GenTests(api):
               }, config=_test_config('foo'))),
       _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
       _generic_enumerate_response(api), _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusFailure))
+
+  yield api.test(
+      'cft-test-execution-with-no-valid-container-metadata-for-build-target-request-only',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'cft-default': _cft_test_request('foo', 'build_target123')
+              }, config=_test_config('foo'))),
+      _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
       api.post_check(post_process.StatusFailure))
