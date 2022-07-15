@@ -5,7 +5,8 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import timestamp_pb2
@@ -55,27 +56,32 @@ def GenTests(api):
       api.buildbucket.build(
           _build_with_changes(
               build_pb2.Build(
-                  builder=builder_pb2.BuilderID(builder='cq-orch'), tags=[{
+                  builder=builder_common_pb2.BuilderID(builder='cq-orch'),
+                  tags=[{
                       'key': 'cq_equivalent_cl_group_key',
                       'value': 'GROUP_KEY'
                   }]))),
       api.buildbucket.simulated_search_results([
           _build_with_changes(
-              build_pb2.Build(id=123, builder=builder_pb2.BuilderID(
-                  builder='betty'), status=common_pb2.SUCCESS,
-                              start_time=timestamp_pb2.Timestamp(seconds=122))),
+              build_pb2.Build(
+                  id=123, builder=builder_common_pb2.BuilderID(builder='betty'),
+                  status=common_pb2.SUCCESS,
+                  start_time=timestamp_pb2.Timestamp(seconds=122))),
           _build_with_changes(
-              build_pb2.Build(id=122, builder=builder_pb2.BuilderID(
-                  builder='betty'), status=common_pb2.SUCCESS,
-                              start_time=timestamp_pb2.Timestamp(seconds=124))),
+              build_pb2.Build(
+                  id=122, builder=builder_common_pb2.BuilderID(builder='betty'),
+                  status=common_pb2.SUCCESS,
+                  start_time=timestamp_pb2.Timestamp(seconds=124))),
           _build_with_changes(
-              build_pb2.Build(id=231, builder=builder_pb2.BuilderID(
-                  builder='reef'), status=common_pb2.SUCCESS,
-                              start_time=timestamp_pb2.Timestamp(seconds=122))),
+              build_pb2.Build(
+                  id=231, builder=builder_common_pb2.BuilderID(builder='reef'),
+                  status=common_pb2.SUCCESS,
+                  start_time=timestamp_pb2.Timestamp(seconds=122))),
           _build_with_changes(
-              build_pb2.Build(id=312, builder=builder_pb2.BuilderID(
-                  builder='cq-orch'), status=common_pb2.SUCCESS,
-                              start_time=timestamp_pb2.Timestamp(seconds=124))),
+              build_pb2.Build(
+                  id=312, builder=builder_common_pb2.BuilderID(
+                      builder='cq-orch'), status=common_pb2.SUCCESS,
+                  start_time=timestamp_pb2.Timestamp(seconds=124))),
       ], 'get change build history.buildbucket.search'),
       api.properties(
           GetPassedBuildsProperties(
@@ -84,12 +90,12 @@ def GenTests(api):
           GetPassedBuildsProperties(output_builds=[
               _build_with_changes(
                   build_pb2.Build(
-                      id=122, builder=builder_pb2.BuilderID(
+                      id=122, builder=builder_common_pb2.BuilderID(
                           builder='betty'), status=common_pb2.SUCCESS,
                       start_time=timestamp_pb2.Timestamp(seconds=124))),
               _build_with_changes(
                   build_pb2.Build(
-                      id=231, builder=builder_pb2.BuilderID(
+                      id=231, builder=builder_common_pb2.BuilderID(
                           builder='reef'), status=common_pb2.SUCCESS,
                       start_time=timestamp_pb2.Timestamp(seconds=122)))
           ])))

@@ -15,7 +15,8 @@ from google.protobuf import json_format
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -26,7 +27,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 def RunSteps(api):
   build = build_pb2.Build(
-      id=123, builder=builder_pb2.BuilderID(builder='something-direct-vm'),
+      id=123,
+      builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
       status='SUCCESS')
   passed_test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Notification', verdict=TaskState.VERDICT_PASSED)

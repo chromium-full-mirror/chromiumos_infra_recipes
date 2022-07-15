@@ -7,7 +7,8 @@
 import base64
 import zlib
 
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -92,8 +93,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       passed_builders = set([current_builder_id.builder])
       patches = build.input.gerrit_changes
       # We don't want to specify the builder, but, we should specify the bucket
-      builder_shell = builder_pb2.BuilderID(project=current_builder_id.project,
-                                            bucket=current_builder_id.bucket)
+      builder_shell = builder_common_pb2.BuilderID(
+          project=current_builder_id.project, bucket=current_builder_id.bucket)
       all_passed_builds = self._get_patch_history(patches,
                                                   builder=builder_shell,
                                                   statuses=[common_pb2.SUCCESS],
@@ -203,8 +204,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('get snapshot builds') as presentation:
       project = self.m.buildbucket.build.builder.project
-      builder_shell = builder_pb2.BuilderID(project=project,
-                                            bucket=SNAPSHOT_BUCKET)
+      builder_shell = builder_common_pb2.BuilderID(project=project,
+                                                   bucket=SNAPSHOT_BUCKET)
 
       snapshot_builds = \
           self._get_patch_history(patches=patches,

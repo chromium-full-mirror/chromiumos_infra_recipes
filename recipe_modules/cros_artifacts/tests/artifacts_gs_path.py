@@ -16,7 +16,8 @@ from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.cros_artifacts.tests.artifacts_gs_path import (
     ArtifactsGsPathProperties)
 from PB.go.chromium.org.luci.buildbucket.proto import (build as build_pb2,
-                                                       builder as builder_pb2)
+                                                       builder_common as
+                                                       builder_common_pb2)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
@@ -53,7 +54,7 @@ def GenTests(api):
       api.buildbucket.build(
           build_pb2.Build(
               id=5678,
-              builder=builder_pb2.BuilderID(bucket='staging'),
+              builder=builder_common_pb2.BuilderID(bucket='staging'),
           ),
       ),
       api.properties(

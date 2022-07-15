@@ -20,7 +20,8 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.builder_config import BuilderConfig as bc
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as bb_build
-from PB.go.chromium.org.luci.buildbucket.proto import builder as bb_builder
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as bb_builder_common
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        bb_service)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
@@ -107,7 +108,7 @@ def FindPostsubmitBuilds(api, board, version_build_map):
   # day.
   builds = api.buildbucket.search(
       predicate=bb_service.BuildPredicate(
-          builder=bb_builder.BuilderID(
+          builder=bb_builder_common.BuilderID(
               project='chromeos',
               bucket='postsubmit',
               builder='{}-postsubmit'.format(board),
@@ -132,7 +133,7 @@ def FindLegacyReleaseBuilds(api, board, version_build_map):
   # builds more recent then 3 days ago.
   builds = api.buildbucket.search(
       predicate=bb_service.BuildPredicate(
-          builder=bb_builder.BuilderID(
+          builder=bb_builder_common.BuilderID(
               project='chromeos',
               bucket='general',
               builder='LegacyRelease',

@@ -286,14 +286,6 @@ class GcloudApi(recipe_api.RecipeApi):
     with self.m.step.nest('look up device name to device id map') as pres:
       disk_dir = '/dev/disk/by-id'
       disk_device_map = {}
-      disks = os.listdir(disk_dir)
-      for disk in disks:
-        device_id = os.path.basename(
-            os.path.realpath(os.path.join(disk_dir, disk)))
-        if disk.startswith('google-'):
-          disk = disk[len(
-              'google-'):]  # pragma: nocover, not expected to match in test.
-        disk_device_map[disk] = device_id
 
       if self._test_data.enabled:
         disk_device_map['cros'] = 'sdz'
@@ -303,11 +295,17 @@ class GcloudApi(recipe_api.RecipeApi):
         disk_device_map['cache_test1'] = 'sdv'
         disk_device_map['cache_test2'] = 'sdu'
         disk_device_map['cr'] = 'sdt'
+      else:  # pragma: no cover
+        disks = os.listdir(disk_dir)
+        for disk in disks:
+          device_id = os.path.basename(
+              os.path.realpath(os.path.join(disk_dir, disk)))
+          if disk.startswith('google-'):
+            disk = disk[len('google-'):]
+          disk_device_map[disk] = device_id
 
-      # Emit the map as output.
-      if not self._test_data.enabled:
-        pres.logs['device_map'] = json.dumps(disk_device_map,
-                                             indent=2)  # pragma: nocover
+        # Emit the map as output.
+        pres.logs['device_map'] = json.dumps(disk_device_map, indent=2)
 
     return disk_device_map.get(disk_name, None)
 

@@ -6,7 +6,8 @@
 from recipe_engine import recipe_test_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from google.protobuf import timestamp_pb2
@@ -50,7 +51,8 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
         property.
     """
     build = build_pb2.Build(
-        id=build_id, builder=builder_pb2.BuilderID(builder='cq-orchestrator'),
+        id=build_id,
+        builder=builder_common_pb2.BuilderID(builder='cq-orchestrator'),
         create_time=timestamp_pb2.Timestamp(seconds=create_time),
         start_time=timestamp_pb2.Timestamp(seconds=create_time + 1),
         end_time=timestamp_pb2.Timestamp(seconds=create_time + 2),
@@ -80,7 +82,8 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
         property.
     """
     build = build_pb2.Build(
-        id=build_id, builder=builder_pb2.BuilderID(builder='cq-orchestrator'),
+        id=build_id,
+        builder=builder_common_pb2.BuilderID(builder='cq-orchestrator'),
         create_time=timestamp_pb2.Timestamp(seconds=create_time),
         start_time=timestamp_pb2.Timestamp(seconds=create_time + 1),
         end_time=timestamp_pb2.Timestamp(seconds=create_time + 2),
@@ -103,8 +106,8 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       Build: Containing the expected 'compressed_uprev_response' property.
     """
-    build = build_pb2.Build(id=123,
-                            builder=builder_pb2.BuilderID(builder='Annealing'))
+    build = build_pb2.Build(
+        id=123, builder=builder_common_pb2.BuilderID(builder='Annealing'))
     build.output.properties.update(
         {'compressed_uprev_response': COMPRESSED_UPREV_RESPONSE})
     return build

@@ -10,7 +10,8 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
@@ -24,12 +25,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 def RunSteps(api):
   build1 = build_pb2.Build(
-      builder=builder_pb2.BuilderID(project='chromeos', bucket='bucket',
-                                    builder='foo-builder'),
+      builder=builder_common_pb2.BuilderID(project='chromeos', bucket='bucket',
+                                           builder='foo-builder'),
       status=common_pb2.SUCCESS)
   build2 = build_pb2.Build(
-      builder=builder_pb2.BuilderID(project='chromeos', bucket='bucket',
-                                    builder='bar-builder'),
+      builder=builder_common_pb2.BuilderID(project='chromeos', bucket='bucket',
+                                           builder='bar-builder'),
       status=common_pb2.SUCCESS)
   # Here we set up the completed builds with the properties needed by
   # cros_bisect to do the BuildPayload fix up.

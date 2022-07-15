@@ -4,7 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -27,7 +28,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     Returns:
       The number of builds (int) in the given bucket with given status.
     """
-    builder = builder_pb2.BuilderID(
+    builder = builder_common_pb2.BuilderID(
         project=self.m.buildbucket.build.builder.project, bucket=bucket)
     build_predicate = builds_service_pb2.BuildPredicate(builder=builder,
                                                         status=status)

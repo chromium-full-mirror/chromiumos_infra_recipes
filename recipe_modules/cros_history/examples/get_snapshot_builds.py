@@ -5,7 +5,8 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 DEPS = [
@@ -35,7 +36,7 @@ def GenTests(api):
 
   def build(build_id, builder, build_target=None):
     ret = build_pb2.Build(id=build_id,
-                          builder=builder_pb2.BuilderID(builder=builder))
+                          builder=builder_common_pb2.BuilderID(builder=builder))
     if build_target:
       ret.input.properties.update(
           api.test_util.build_menu_properties(build_target_name=build_target))

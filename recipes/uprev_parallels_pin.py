@@ -23,7 +23,8 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import builder as builder_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
@@ -412,7 +413,7 @@ def get_latest_green_snapshot_commit(api, build_target):
     # first.
     builds = api.buildbucket.search(
         predicate=builds_service_pb2.BuildPredicate(
-            builder=builder_pb2.BuilderID(
+            builder=builder_common_pb2.BuilderID(
                 project=api.buildbucket.build.builder.project,
                 bucket='postsubmit',
                 builder='{}-postsubmit'.format(build_target),
@@ -646,7 +647,7 @@ def GenTests(api):
 
   # Success
   build_success = build_pb2.Build(
-      id=8922054662172514000, number=1234, builder=builder_pb2.BuilderID(
+      id=8922054662172514000, number=1234, builder=builder_common_pb2.BuilderID(
           project='chromeos',
           bucket='infra',
           builder='build-parallels-image',
@@ -678,7 +679,7 @@ def GenTests(api):
 
   # Staging success
   staging_build_success = build_pb2.Build(
-      id=8922054662172514000, number=1234, builder=builder_pb2.BuilderID(
+      id=8922054662172514000, number=1234, builder=builder_common_pb2.BuilderID(
           project='chromeos',
           bucket='staging',
           builder='staging-build-parallels-image',
