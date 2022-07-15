@@ -1371,6 +1371,7 @@ def GenTests(api):
       _generic_passing_execute_response(api),
       api.post_process(post_process.MustRun,
                        'configure resultdb bigquery export'),
+      api.post_process(post_process.DropExpectation),
   )
 
   # Recipe running outside Buildbucket should skip publishing build ID.
