@@ -68,6 +68,6 @@ def GenTests(api):
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.properties(
           SyncCacheProperties(manifest_url=api.src_state.external_manifest.url,
-                              cache_path_override='chromiumos-external')),
+                              cache_path_override='chromiumos')),
       api.post_check(verify_manifest_url, external_url),
       api.post_check(post_process.StatusSuccess))

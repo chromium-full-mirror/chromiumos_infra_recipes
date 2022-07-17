@@ -106,10 +106,13 @@ def RunSteps(api, properties):
               if cache.branch != 'main':
                 manifest_branch = cache.branch
               init_opts = dict(verbose=True, manifest_branch=manifest_branch)
-              api.repo.ensure_synced_checkout(
-                  mount_path, api.src_state.internal_manifest.url,
-                  init_opts=init_opts, sync_opts=sync_opts, final_cleanup=True,
-                  sanitize=True)
+              manifest_url = (
+                  api.src_state.external_manifest.url if cache.external_source
+                  else api.src_state.internal_manifest.url)
+              api.repo.ensure_synced_checkout(mount_path, manifest_url,
+                                              init_opts=init_opts,
+                                              sync_opts=sync_opts,
+                                              final_cleanup=True, sanitize=True)
               with api.step.nest('git clone manifest-versions'):
                 manifest_dir = 'manifest-versions-internal'
                 manifest_path = mount_path.join(manifest_dir)
@@ -228,13 +231,6 @@ def GenTests(api):
       api.properties(
           cache_definition=[
               dict(
-                  cache_name='chromiumos',
-                  command='repo',
-                  recovery_snapshot='chromeos_default_recovery_snapshot',
-                  branch='main',
-                  disk_type='pd-ssd',
-              ),
-              dict(
                   cache_name='chromeos',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
@@ -247,6 +243,14 @@ def GenTests(api):
                   recovery_snapshot='chrome_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
+              ),
+              dict(
+                  cache_name='chromiumos',
+                  command='repo',
+                  recovery_snapshot='chromiumos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+                  external_source=True,
               ),
           ],
           cache_bucket='chromeos-bot-cache',

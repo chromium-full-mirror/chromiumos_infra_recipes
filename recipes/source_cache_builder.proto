@@ -18,6 +18,8 @@ message SourceCacheDefinition {
   string branch = 5;
   // GCE disk type.
   string disk_type = 6;
+  // Whether the cache should be created from the external source.
+  bool external_source = 7;
 }
 message SourceCacheBuilderProperties {
   // The list of the buildbucket pools to monitor and scale.

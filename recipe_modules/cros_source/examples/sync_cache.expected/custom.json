@@ -873,7 +873,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"release-R90-13816.B\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos-external/.recipes_state.json"
+      "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -888,7 +888,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Write proto to [CACHE]/chromiumos-external/.recipes_state.json",
+    "name": "Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"release-R90-13816.B\",@@@",
@@ -915,7 +915,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos-external"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -948,7 +948,7 @@
       "--repo-rev=stable",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -988,7 +988,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1021,7 +1021,7 @@
       "checkout",
       "--force"
     ],
-    "cwd": "[CACHE]/chromiumos-external/.repo/repo",
+    "cwd": "[CACHE]/chromiumos/.repo/repo",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1045,7 +1045,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1077,7 +1077,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1122,7 +1122,7 @@
       "--force-remove-dirty",
       "--prune"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1177,7 +1177,7 @@
       "[CLEANUP]/event_log__tmp_1",
       "/path/to/tmp/"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1235,7 +1235,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "info"
     ],
-    "cwd": "[CACHE]/chromiumos-external",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1263,7 +1263,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"release-R90-13816.B\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos-external/.recipes_state.json"
+      "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1278,7 +1278,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Write proto to [CACHE]/chromiumos-external/.recipes_state.json (2)",
+    "name": "Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"release-R90-13816.B\",@@@",
@@ -1298,7 +1298,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromiumos-external/manifest-internal",
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1323,7 +1323,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromiumos-external/manifest",
+    "cwd": "[CACHE]/chromiumos/manifest",
     "infra_step": true,
     "luci_context": {
       "realm": {
