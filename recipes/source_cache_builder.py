@@ -50,7 +50,8 @@ def RunSteps(api, properties):
       api.gcloud.setup_cache_disk(cache_name=cache.cache_name,
                                   branch=cache.branch,
                                   disk_type=cache.disk_type, recipe_mount=True,
-                                  disallow_previously_mounted=True)
+                                  disallow_previously_mounted=True,
+                                  recovery_snapshot=cache.recovery_snapshot)
       snapshot_prefix = '{}-{}'.format(cache.cache_name, api.gcloud.branch)
       if is_staging:
         snapshot_prefix = 'staging-{}'.format(snapshot_prefix)

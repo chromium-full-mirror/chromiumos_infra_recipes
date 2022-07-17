@@ -867,7 +867,8 @@ class GcloudApi(recipe_api.RecipeApi):
     ]
     self.m.easy.stdout_step('format empty disk', format_cmd, infra_step=True)
 
-  def _create_new_cache_disk(self, cache_name, disk_type, recipe_mount):
+  def _create_new_cache_disk(self, cache_name, disk_type, recipe_mount,
+                             recovery_snapshot=None):
     """Create a new cache disk.
 
     New cache disk is based on snapshot image stored in Google Storage, or
@@ -879,6 +880,8 @@ class GcloudApi(recipe_api.RecipeApi):
         persistent disk.
       recipe_mount (bool): Whether mount needs to be in the path to use within
         a recipe.
+      recovery_snapshot (str): Recovery snapshot to fall back to, defaults to
+        `initial-{cache_name}-source-snapshot`.
 
     Returns:
       Str containing the name of the snapshot.
@@ -887,7 +890,8 @@ class GcloudApi(recipe_api.RecipeApi):
       self._disk = '{}-{}'.format(self.infra_host, self._short_name)
       self._disk = self._disk[:self.gce_name_limit] if len(
           self._disk) > self.gce_name_limit else self._disk
-      recovery_snapshot = 'initial-{}-source-snapshot'.format(cache_name)
+      recovery_snapshot = (
+          recovery_snapshot or 'initial-{}-source-snapshot'.format(cache_name))
       remote_version = self._get_image_version(recovery_snapshot)
 
       if self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
@@ -977,7 +981,8 @@ class GcloudApi(recipe_api.RecipeApi):
 
   def setup_cache_disk(self, cache_name, branch='main', disk_type='pd-standard',
                        disk_size=None, recipe_mount=False,
-                       disallow_previously_mounted=False, mount_existing=False):
+                       disallow_previously_mounted=False, mount_existing=False,
+                       recovery_snapshot=None):
     """Create disk from snapshot, reuse if still attached.
 
     Check if disk is attached, otherwise grab the matching snapshot, create,
@@ -995,6 +1000,8 @@ class GcloudApi(recipe_api.RecipeApi):
         cache is already mounted.
       mount_existing (bool): If we find an existing cache, mount it immediately
         instead of relying on subsequent step.
+      recovery_snapshot (str): Recovery snapshot to fall back to, defaults to
+        `initial-{cache_name}-source-snapshot`.
     """
     # Verify source cache config.
     self._verify_cache_config()
@@ -1033,8 +1040,9 @@ class GcloudApi(recipe_api.RecipeApi):
       # No cache case.
       if not self._cache_mounted:
         local_version_path = self.snapshot_version_path.join(self._version_file)
-        snapshot = self._create_new_cache_disk(cache_name, disk_type,
-                                               recipe_mount)
+        snapshot = self._create_new_cache_disk(
+            cache_name, disk_type, recipe_mount,
+            recovery_snapshot=recovery_snapshot)
 
         self.attach_disk(name=self._short_name, instance=self.infra_host,
                          disk=self._disk, zone=self._zone)

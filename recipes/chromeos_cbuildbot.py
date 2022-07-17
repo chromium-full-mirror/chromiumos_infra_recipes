@@ -6,6 +6,7 @@ from recipe_engine.recipe_api import (AggregatedStepFailure, InfraFailure,
                                       StepFailure)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.chromeos_cbuildbot import (ChromeosCbuildbotProperties)
 
 import json
 import re
@@ -25,12 +26,14 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
+PROPERTIES = ChromeosCbuildbotProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties):
   result = result_pb2.RawResult(status=common_pb2.SUCCESS,)
 
   try:
-    DoRunSteps(api)
+    DoRunSteps(api, properties)
   except InfraFailure as ex:  #pragma: no cover
     result.status = common_pb2.INFRA_FAILURE
     result.summary_markdown = MakeSummaryMarkdown(api, ex)
@@ -50,7 +53,7 @@ def RunSteps(api):
   return result
 
 
-def DoRunSteps(api):
+def DoRunSteps(api, properties):
   # Get parameters specified in the tryjob description.
   cbb_extra_args = api.properties.get('cbb_extra_args', [])
 
@@ -76,7 +79,8 @@ def DoRunSteps(api):
     recipe_mount_path = api.gcloud.setup_cache_disk(
         cache_name='chromiumos', branch=api.chromite.chromite_branch,
         disk_type='pd-standard', disk_size='1024GB', recipe_mount=True,
-        mount_existing=True)
+        mount_existing=True,
+        recovery_snapshot=properties.recovery_source_cache_snapshot)
     api.easy.set_properties_step(recipe_mount_path=recipe_mount_path)
     api.chromite.run()
 

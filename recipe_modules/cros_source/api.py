@@ -59,6 +59,7 @@ class CrosSourceApi(RecipeApi):
     self._is_source_dirty = bool(self._snapshot_cas)
     self._enable_custom_overlays = properties.enable_custom_overlays
     self._sync_to_manifest = properties.sync_to_manifest
+    self._recovery_snapshot = properties.recovery_source_cache_snapshot
     # The currently active branch of the manifest.  Empty unless we switched
     # branches.
     self._manifest_branch = ''
@@ -753,9 +754,9 @@ class CrosSourceApi(RecipeApi):
         lower_dir = self.preload_path
         if snapshot_mount:
           branch = self.manifest_branch or 'main'
-          lower_dir = self.m.gcloud.setup_cache_disk(cache_name='chromiumos',
-                                                     branch=branch,
-                                                     disk_type=disk_type)
+          lower_dir = self.m.gcloud.setup_cache_disk(
+              cache_name='chromiumos', branch=branch, disk_type=disk_type,
+              recovery_snapshot=self._recovery_snapshot)
           self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
         # TODO(mikenichols): Remove once source cache lands and is not reverted.
         if lower_dir == self.preload_path and len(

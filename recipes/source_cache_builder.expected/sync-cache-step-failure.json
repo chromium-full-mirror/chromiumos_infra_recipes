@@ -133,7 +133,7 @@
     "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromiumos-source-snapshot\"@@@"
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"chromeos_default_recovery_snapshot\"@@@"
     ]
   },
   {
@@ -214,7 +214,7 @@
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
       "--quiet",
-      "--image=initial-chromiumos-source-snapshot",
+      "--image=chromeos_default_recovery_snapshot",
       "--type=pd-ssd"
     ],
     "env": {
@@ -280,14 +280,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "initial-chromiumos-source-snapshot",
+      "chromeos_default_recovery_snapshot",
       "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@chromeos_default_recovery_snapshot@@@",
       "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },

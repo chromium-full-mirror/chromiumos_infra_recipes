@@ -41,4 +41,8 @@ message CrosSourceProperties {
   // fields like gitiles_commit) and downloads the manifest directly from the
   // appropriate source (gitiles, gs, etc.).
   ManifestLocation sync_to_manifest = 5;
+
+  // Recovery source cache snapshot to fall back to.
+  // If not set, `initial-chromiumos-source-snapshot` will be used.
+  string recovery_source_cache_snapshot = 6;
 }
