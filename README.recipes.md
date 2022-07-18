@@ -239,6 +239,7 @@
   * [cros_lkgm:examples/do_lkgm](#recipes-cros_lkgm_examples_do_lkgm) (Python3 ✅)
   * [cros_lkgm:examples/full](#recipes-cros_lkgm_examples_full) (Python3 ✅)
   * [cros_lkgm:tests/collect_public_build](#recipes-cros_lkgm_tests_collect_public_build) (Python3 ✅)
+  * [cros_lkgm:tests/public_build_branch](#recipes-cros_lkgm_tests_public_build_branch) (Python3 ✅)
   * [cros_lvfs_mirror:examples/full](#recipes-cros_lvfs_mirror_examples_full) (Python3 ✅)
   * [cros_paygen:examples/create_paygen_build_report](#recipes-cros_paygen_examples_create_paygen_build_report) (Python3 ✅)
   * [cros_paygen:examples/full](#recipes-cros_paygen_examples_full) (Python3 ✅)
@@ -2679,13 +2680,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#79)(self):**
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#82)(self):**
 
 Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#96)(self, release_build_results):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#99)(self, release_build_results):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 
@@ -9625,6 +9626,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_lkgm/tests/collect_public_build.py#16)(api):**
+### *recipes* / [cros\_lkgm:tests/public\_build\_branch](/recipe_modules/cros_lkgm/tests/public_build_branch.py)
+
+[DEPS](/recipe_modules/cros_lkgm/tests/public_build_branch.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_lkgm/tests/public_build_branch.py#30)(api, expected_ref, expected_builder):**
 ### *recipes* / [cros\_lvfs\_mirror:examples/full](/recipe_modules/cros_lvfs_mirror/examples/full.py)
 
 [DEPS](/recipe_modules/cros_lvfs_mirror/examples/full.py#6): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)
