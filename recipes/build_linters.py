@@ -37,7 +37,23 @@ PROPERTIES = BuildLintersProperties
 def _GetRelevantPatchsets(api, properties):
   """Returns a map of files with relevant extensions grouped by patchset."""
   with api.step.nest('get relevant patches') as presentation:
-    relevant_extensions = ['rs', 'go']
+    relevant_extensions = [
+        # Rust
+        'rs',
+        # Golang
+        'go',
+        # C/C++
+        'c',
+        'cc',
+        'cpp',
+        'cxx',
+        'c++',
+        'h',
+        'hh',
+        'hpp',
+        'hxx',
+        'h++'
+    ]
     patch_sets = [
         patchset for patchset in (
             api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
@@ -112,6 +128,14 @@ def _GetLints(api, affected_packages):
                     'line_end': 1
                 }],
                 'linter': LinterFinding.Linters.GO_LINT
+            }, {
+                'message': 'test message',
+                'locations': [{
+                    'filepath': 'path/file.cpp',
+                    'line_start': 1,
+                    'line_end': 1
+                }],
+                'linter': LinterFinding.Linters.CLANG_TIDY
             }]
         }, sort_keys=True)
     return api.cros_build_api.ToolchainService.EmergeWithLinting(
@@ -197,7 +221,9 @@ def GenTests(api):
                   'foo.rs': {},
                   'bar.rs': {},
                   'foo.go': {},
-                  'bar.go': {}
+                  'bar.go': {},
+                  'foo.c': {},
+                  'bar.h': {}
               }
           }
       },
@@ -212,7 +238,9 @@ def GenTests(api):
                   'foo.rs': {},
                   'bar2.rs': {},
                   'foo.go': {},
-                  'bar2.go': {}
+                  'bar2.go': {},
+                  'foo.c': {},
+                  'bar.h': {}
               }
           }
       },
