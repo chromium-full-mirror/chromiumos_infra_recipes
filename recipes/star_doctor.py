@@ -112,8 +112,8 @@ class RepoProject(object):
     """The full URL to this project."""
     return '{}/{}'.format(self.host, self.name)
 
-  def clone(self, api, checkout_path=None, **kwargs):
-    """Checkout this project in a temporary directory.
+  def shallow_clone(self, api, checkout_path=None, **kwargs):
+    """Shallow clone this project in a temporary directory.
 
     Args:
       api: The recipe modules API.
@@ -121,7 +121,7 @@ class RepoProject(object):
       kwargs: Any other keyword arguments to pass into api.git.clone.
     """
     self.checkout_path = checkout_path or api.path.mkdtemp()
-    api.git.clone(self.url, target_path=self.checkout_path, **kwargs)
+    api.git.clone(self.url, target_path=self.checkout_path, depth=1, **kwargs)
 
   def upload_changes(self, api, irrelevant_files=None):
     """Commit and push changed files in this project.
@@ -253,23 +253,20 @@ def RunSteps(api, properties):
 
 
 def _clone_repos(api):
-  """Clone any necessary repo projects.
+  """Shallow clone any necessary repo projects.
 
   Args:
     api: The recipe modules API.
   """
-  INFRA_CONFIG.clone(api)
-  SUITE_SCHEDULER.clone(api)
-  # We don't really need the full clone yet. But, it is assumed that configs
-  # will need to be regenerated here at some point.
-  # Clone shallowly to avoid running out of storage: see crbug/1154700.
-  CONFIG_INTERNAL.clone(api, depth=1)
+  INFRA_CONFIG.shallow_clone(api)
+  SUITE_SCHEDULER.shallow_clone(api)
+  CONFIG_INTERNAL.shallow_clone(api)
   # We need the config dir to exist in the `config` directory next to
   # config-internal for the symlinks in config-internal to work.
   config_dir = api.path.abspath(
       api.path.dirname(CONFIG_INTERNAL.checkout_path).join('config/'))
   api.step('create {}'.format(config_dir), ['mkdir', config_dir])
-  PUBLIC_CONFIG.clone(api, checkout_path=config_dir)
+  PUBLIC_CONFIG.shallow_clone(api, checkout_path=config_dir)
 
 
 def _validate_properties(api, props):
