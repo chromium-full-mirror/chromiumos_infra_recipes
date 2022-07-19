@@ -709,7 +709,7 @@ def _log_error_in_request(api, tag, error):
 # searchability. Users are most likely to search for these things after seeing
 # them in Milo, and in Milo we display them with spaces rather than underscores.
 _SUCCESSFUL_TASK_STATES = [
-    s.replace(' ', '_') for s in [
+    state_string.replace(' ', '_') for state_string in [
         'passed',
         # Flakes are failed test runs that later succeed. e.g. if we run a test
         # and it fails, but then we retry it and the retry succeeds, we call the
@@ -719,7 +719,7 @@ _SUCCESSFUL_TASK_STATES = [
     ]
 ]
 _UNSUCCESSFUL_TASK_STATES = [
-    s.replace(' ', '_') for s in [
+    state_string.replace(' ', '_') for state_string in [
         'failed all attempts',
         'bot parameters rejected',
         'timed out waiting for dut',
