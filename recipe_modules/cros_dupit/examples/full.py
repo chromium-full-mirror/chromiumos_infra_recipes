@@ -25,6 +25,10 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_process(post_process.DoesNotRun,
+                       'get list of files matching additional regex'),
+      api.post_process(post_process.DoesNotRun,
+                       'add additional regex files to distfiles list'),
+      api.post_process(post_process.DoesNotRun,
                        'copy new distfiles to gs.filtering missing symlinks'),
       api.step_data('copy new distfiles to gs.list new distfiles',
                     stdout=api.raw_io.output_text('new_distfile.tar.gz')))

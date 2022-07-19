@@ -42,6 +42,8 @@ class DupItApi(recipe_api.RecipeApi):
     self._gs_distfiles_uri = gs_distfiles_uri
     self._tmp_distfile_lists_path = self.m.path.mkdtemp('distfile_lists')
     self._tmp_distfiles_path = self.m.path.mkdtemp('distfiles')
+    self._additional_regex_matches_file = self._tmp_distfile_lists_path.join(
+        'additional_regex_matches_file.txt')
     self._ignore_missing_args = ignore_missing_args
     self._filter_missing_links = filter_missing_links
     self._regex_for_additional_file_syncs = regex_for_additional_file_syncs
@@ -160,6 +162,29 @@ class DupItApi(recipe_api.RecipeApi):
 
     return gentoo_distfile_relative_sorted_list_path
 
+  def _populate_list_of_additional_regex_matches(self, distfiles):
+    """Populate relative list of all files matching the additional regex.
+
+    Extracts the list of files matching the regex supplied by
+    'regex_for_additional_file_syncs' expression and stores it in
+    the tempfile 'self._additional_regex_matches_file'.
+
+    Args:
+      * distfiles: Path to a newline separated list of distfiles.
+    """
+    grep_cmd = [
+        'egrep',
+        # Show only lines matching the properties-provided regex
+        self._regex_for_additional_file_syncs,
+        distfiles,
+    ]
+    grep_name = 'get list of files matching additional regex'
+    grep_stdout = self.m.raw_io.output_text(
+        leak_to=self._additional_regex_matches_file, name='regex_grep',
+        add_output_log=True)
+    self.m.step(cmd=grep_cmd, infra_step=True, name=grep_name,
+                stdout=grep_stdout)
+
   def _get_rsync_cmd(self, files_from):
     cmd = [
         'rsync',
@@ -198,6 +223,37 @@ class DupItApi(recipe_api.RecipeApi):
     ])
     return cmd
 
+  def _add_regex_files_to_distfile_list(self, distfiles):
+    """Combine additional regex files with new distfiles.
+
+    Concatenates the additional regex filelist with the new distfiles list and
+    returns the path to a sorted and unique list.
+
+    Args:
+      * distfiles: Path to a newline separated list of distfiles.
+
+    Returns:
+      A string representing the path to a tempfile. The file is in the same
+      format as the 'distfiles' argument.
+    """
+    # Join and sort distfiles with regex filelist.
+    distfiles_regex_sorted = self._tmp_distfile_lists_path.join(
+        'new_regex_sorted.txt')
+    sortuniq_cmd = [
+        'sort',
+        '--unique',
+        self._additional_regex_matches_file,
+        distfiles,
+    ]
+    sortuniq_name = 'add additional regex files to distfiles list'
+    sortuniq_stdout = self.m.raw_io.output(leak_to=distfiles_regex_sorted,
+                                           name='regex_sortuniq',
+                                           add_output_log=True)
+    self.m.step(cmd=sortuniq_cmd, infra_step=True, name=sortuniq_name,
+                stdout=sortuniq_stdout)
+
+    return distfiles_regex_sorted
+
   def _rsync_new_distfiles_from_gentoo(self):
     """Rsync distfiles that are in Gentoo but not in GS to tmp dir"""
 
@@ -215,6 +271,12 @@ class DupItApi(recipe_api.RecipeApi):
     comm_stdout = self.m.raw_io.output(leak_to=new_distfiles)
     self.m.step(cmd=comm_cmd, infra_step=True, name=comm_name,
                 stdout=comm_stdout)
+
+    if self._regex_for_additional_file_syncs:
+      # Populate our list of regex matches
+      self._populate_list_of_additional_regex_matches(gentoo_distfiles)
+      # Add additional regex files to the list of distfiles to be rsync'd
+      new_distfiles = self._add_regex_files_to_distfile_list(new_distfiles)
 
     # Rsync new gentoo distfiles to tmpdir.
     rsync_cmd = self._get_rsync_cmd(new_distfiles)

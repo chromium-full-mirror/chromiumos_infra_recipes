@@ -103,6 +103,31 @@
   },
   {
     "cmd": [
+      "egrep",
+      "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
+      "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.get list of files matching additional regex",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sort",
+      "--unique",
+      "[CLEANUP]/distfile_lists_tmp_1/additional_regex_matches_file.txt",
+      "[CLEANUP]/distfile_lists_tmp_1/new.txt"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.add additional regex files to distfiles list",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "rsync",
       "--recursive",
       "--links",
@@ -116,7 +141,7 @@
       "--ignore-existing",
       "--timeout=180",
       "--bwlimit=50m",
-      "--files-from=[CLEANUP]/distfile_lists_tmp_1/new.txt",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/new_regex_sorted.txt",
       "rsync://arch.mirror.constant.com/archlinux/",
       "[CLEANUP]/distfiles_tmp_1"
     ],
