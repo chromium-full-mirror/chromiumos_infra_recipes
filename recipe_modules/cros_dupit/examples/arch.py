@@ -33,6 +33,13 @@ def GenTests(api):
                        'add additional regex files to distfiles list'),
       api.post_process(post_process.MustRun,
                        'copy new distfiles to gs.filtering missing symlinks'),
+      api.post_process(
+          post_process.MustRun,
+          'copy new distfiles to gs.prepare additional regex files for sync'),
+      api.post_process(
+          post_process.MustRun,
+          'copy new distfiles to gs.gsutil upload additional regex files to gs://stark-trek/the-ultimate-computer/distfiles/'
+      ),
       api.step_data('copy new distfiles to gs.list new distfiles',
                     stdout=api.raw_io.output_text('new_distfile.tar.gz')),
   )

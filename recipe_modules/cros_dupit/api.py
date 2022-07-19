@@ -309,6 +309,54 @@ class DupItApi(recipe_api.RecipeApi):
                     self.rsync_mirror_address)
       self.m.step(cmd=rsync_cmd, infra_step=True, name=rsync_name)
 
+  def _sync_additional_regex_matches_to_gs(self):
+    """Copy files matching the additional regex from tmpdir to gs"""
+    tmp_regexfiles_path = self.m.path.mkdtemp('regexfiles')
+    # Use rsync to create a copy of our mirror with just the
+    # files we want to force upload to Google cloud storage.
+    rsync_regex_cmd = [
+        'rsync',
+        # Avoid creating empty directory structures.
+        '--prune-empty-dirs',
+        # Make sure we copy files recursively.
+        '--recursive',
+        # Symlinks are copied as symlinks.
+        '--links',
+        # Ignore symlinks that points to files outside of the root directory.
+        '--safe-links',
+        # Preserve files permission.
+        '--perms',
+        # Preserve modification times.
+        '--times',
+        # Compress files during transfer to save bandwidth.
+        '--compress',
+        # Log out file-transfer stats for debugging.
+        '--stats',
+        # Shows progress during transfer.
+        '--progress',
+        '--human-readable',
+        '--files-from=%s' % self._additional_regex_matches_file,
+        self.tmp_distfiles_path,
+        tmp_regexfiles_path,
+    ]
+    rsync_regex_name = 'prepare additional regex files for sync'
+    self.m.step(cmd=rsync_regex_cmd, infra_step=True, name=rsync_regex_name)
+
+    # Copy the files with clobbering to force update regex files.
+    gsutil_cp_cmd = [
+        'cp',
+        # Recursively copy the files.
+        '-r',
+        # All distfiles are public-read.
+        '-a',
+        'public-read',
+        self.m.path.join(tmp_regexfiles_path, '*'),
+        self.m.path.join(self.gs_distfiles_uri, ''),
+    ]
+    gsutil_cp_name = 'upload additional regex files to %s' % self.gs_distfiles_uri
+    self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True, name=gsutil_cp_name,
+                  parallel_upload=True)
+
   def _copy_new_distfiles_to_gs(self):
     """Copy new distfiles from tmpdir to gs"""
     with self.m.step.nest('copy new distfiles to gs') as presentation:
@@ -340,6 +388,9 @@ class DupItApi(recipe_api.RecipeApi):
         gsutil_cp_name = 'upload new distfiles to %s' % self.gs_distfiles_uri
         self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True,
                       name=gsutil_cp_name, parallel_upload=True)
+
+        if self._regex_for_additional_file_syncs:
+          self._sync_additional_regex_matches_to_gs()
       else:
         presentation.step_text = 'No new distfiles to upload'
 

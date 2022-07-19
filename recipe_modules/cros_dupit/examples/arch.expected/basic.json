@@ -187,6 +187,53 @@
     ]
   },
   {
+    "cmd": [
+      "rsync",
+      "--prune-empty-dirs",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "--perms",
+      "--times",
+      "--compress",
+      "--stats",
+      "--progress",
+      "--human-readable",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/additional_regex_matches_file.txt",
+      "[CLEANUP]/distfiles_tmp_1",
+      "[CLEANUP]/regexfiles_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.prepare additional regex files for sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-a",
+      "public-read",
+      "[CLEANUP]/regexfiles_tmp_1/*",
+      "gs://stark-trek/the-ultimate-computer/distfiles/"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.gsutil upload additional regex files to gs://stark-trek/the-ultimate-computer/distfiles/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
