@@ -16,7 +16,8 @@ class DupItApi(recipe_api.RecipeApi):
 
   def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
                 gs_distfiles_uri, ignore_missing_args=False,
-                filter_missing_links=False):
+                filter_missing_links=False,
+                regex_for_additional_file_syncs=None):
     """Configure the DupIt script module.
 
     Args:
@@ -29,6 +30,8 @@ class DupItApi(recipe_api.RecipeApi):
         synchronization.
       * filter_missing_links: filter out symlinks that are missing (such
         as directories).
+      * regex_for_additional_file_syncs: if this string is non-empty,
+        sync any files from the remote mirror that match the regex.
     """
     assert (rsync_mirror_address.endswith('distfiles') or
             rsync_mirror_address.endswith('distfiles/') or
@@ -41,6 +44,7 @@ class DupItApi(recipe_api.RecipeApi):
     self._tmp_distfiles_path = self.m.path.mkdtemp('distfiles')
     self._ignore_missing_args = ignore_missing_args
     self._filter_missing_links = filter_missing_links
+    self._regex_for_additional_file_syncs = regex_for_additional_file_syncs
 
   def _get_list_of_gs_distfiles(self):
     """Get relative, sorted list of distfile paths from Google Storage bucket"""

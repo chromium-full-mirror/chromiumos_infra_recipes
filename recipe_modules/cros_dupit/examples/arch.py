@@ -18,7 +18,9 @@ def RunSteps(api):
       rsync_mirror_address='rsync://mirrors.do.not.exists/distfiles',
       rsync_mirror_rate_limit='1m',
       gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
-      ignore_missing_args=True, filter_missing_links=True)
+      ignore_missing_args=True, filter_missing_links=True,
+      regex_for_additional_file_syncs="^.+[.](db|db.tar.gz|files|files.tar.gz)$"
+  )
   api.cros_dupit.run()
 
 

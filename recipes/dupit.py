@@ -38,6 +38,8 @@ def RunSteps(api, properties):
             gs_distfiles_uri=properties.gs_uri,
             ignore_missing_args=properties.ignore_missing_args,
             filter_missing_links=properties.filter_missing_links,
+            regex_for_additional_file_syncs=properties
+            .regex_for_additional_file_syncs,
         )
         api.cros_dupit.run()
         mirror_success = True
@@ -66,6 +68,7 @@ def GenTests(api):
       'gs_uri': 'gs://chromeos-mirror/gentoo/distfiles/',
       'ignore_missing_args': False,
       'filter_missing_links': False,
+      'regex_for_additional_file_syncs': "",
   }
   arch_props = {
       'mirrors': [
@@ -78,9 +81,14 @@ def GenTests(api):
               'rate': '50m',
           },
       ],
-      'gs_uri': 'gs://chromeos-mirror/archlinux/',
-      'ignore_missing_args': False,
-      'filter_missing_links': False,
+      'gs_uri':
+          'gs://chromeos-mirror/archlinux/',
+      'ignore_missing_args':
+          False,
+      'filter_missing_links':
+          False,
+      'regex_for_additional_file_syncs':
+          "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
   }
 
   props = good_props.copy()
