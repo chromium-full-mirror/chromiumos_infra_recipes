@@ -81,7 +81,8 @@ def _set_up_test_configs(api, request, response):
     # download the source image and use it. (This primarily impacts staging,
     # where we may not have older versions in the throwaway bucket so we instead
     # use the prod bucket.)
-    src_bucket = request.generation_request.src_unsigned_image.build.bucket
+    src_bucket = request.generation_request.src_unsigned_image.build.bucket or \
+                 request.generation_request.tgt_unsigned_image.build.bucket
     tgt_payload = (
         # Notice FullPayload doesn't get a bucket. That's because a full payload
         # source is created in cros_paygen.create_paygen_test_config().
