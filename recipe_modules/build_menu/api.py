@@ -763,6 +763,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
               gs_bucket,
               self.m.metadata.CONTAINER_METADATA_INFO.filename,
               container_metadata,
+              template=self.m.cros_artifacts.gs_upload_path,
           )
 
           presentation.links['container metadata (gs)'] = (

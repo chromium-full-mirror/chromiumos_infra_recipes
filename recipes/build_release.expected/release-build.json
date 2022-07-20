@@ -5468,7 +5468,7 @@
       "@@@STEP_LOG_LINE@container metadata (log)@}@@@",
       "@@@STEP_LOG_END@container metadata (log)@@@",
       "@@@STEP_LINK@ []@https:////@sha256:@@@",
-      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb@@@"
     ]
   },
   {
@@ -5688,7 +5688,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1/containers.jsonpb",
-      "gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb"
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -5711,7 +5711,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-releases-test/kukui-release/R99-1234.56.0-101/metadata/containers.jsonpb@@@"
     ]
   },
   {

@@ -762,7 +762,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return uploaded_artifacts
 
   def upload_metadata(self, name, builder_name, target, gs_bucket, filename,
-                      message):
+                      message, template=None):
     """Materialize a protobuffer message as a jsonpb artifact in GCS.
 
     Convert the message to a jsonpb file and upload it to the appropriate
@@ -775,6 +775,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       gs_bucket (str): Google storage bucket to upload artifacts to.
       filename (str): Filename for the metadata.
       message (Message): Protobuffer message to serialize and upload.
+      template (str): The string to format for artifacts_gs_path, or None. If
+          set to None, the default artifacts_gs_path template will be used.
 
     Returns:
       GS path inside bucket to uploaded file
@@ -792,7 +794,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       filename = ''.join([path, ext])
 
       gs_path = self.m.path.join(
-          self.artifacts_gs_path(builder_name, target),
+          self.artifacts_gs_path(builder_name, target, template=template),
           self.m.metadata.METADATA_GSDIR,
           filename,
       )
