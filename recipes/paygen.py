@@ -13,10 +13,13 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/futures',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'bot_scaling',
     'cros_build_api',
+    'cros_infra_config',
     'cros_paygen',
     'cros_sdk',
     'cros_source',
@@ -43,6 +46,7 @@ from PB.recipes.chromeos.paygen import PaygenProperties
 
 PROPERTIES = PaygenProperties
 
+# Number of total tries on individual paygen jobs to attempt.
 _PAYGEN_TRY_COUNT = 2
 
 
@@ -103,6 +107,9 @@ def _set_up_test_configs(api, request, response):
 
 def RunSteps(api, properties):
   api.easy.log_parent_step()
+
+  if api.cros_infra_config.is_staging:
+    api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.75)
 
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
     with api.step.nest('initialization'):
@@ -270,6 +277,7 @@ def GenTests(api):
 
   yield api.test(
       'dryrun',
+      api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
       api.properties(
           PaygenProperties(requests=[
               dict(
