@@ -216,6 +216,13 @@ def GenTests(api):
                   'chromeos-image-archive',
               'latest_files_gs_path':
                   '{target}-release',
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-release.{cros-version}",
+              },
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
