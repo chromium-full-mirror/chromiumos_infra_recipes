@@ -11,4 +11,7 @@ import "go.chromium.org/luci/buildbucket/proto/build.proto";
 message DoLkgmProperties {
   // The release builds to pass to do_lkgm.
   repeated buildbucket.v2.Build release_builds = 1;
+
+  // Whether to pass `use_branch` to do_lkgm.
+  bool use_branch = 2;
 }

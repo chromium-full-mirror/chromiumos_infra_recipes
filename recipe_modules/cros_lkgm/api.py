@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from google.protobuf.json_format import MessageToDict
+import re
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -21,6 +22,15 @@ LKGM_CL_REVIEWERS = ['chrome-os-gardeners-reviews@google.com']
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
 LKGM_HASHTAG = 'chrome-lkgm'
 
+CHROMIUMOS_OVERLAY_PATH = 'src/third_party/chromiumos-overlay'
+
+CHROME_VERSION_REGEXP = r'chromeos-base/chromeos-chrome/chromeos-chrome-\d+\.\d+\.(?P<branch>\d+)\.\d+_.*\.ebuild'
+
+CHROME_EBUILD_TEST_DATA = """
+chromeos-base/chromeos-chrome/chromeos-chrome-106.0.5204.0_rc-r1.ebuild
+chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild
+"""
+
 
 class CrosLkgmApi(recipe_api.RecipeApi):
   """A module to handle the LGKM process and other interactions between the
@@ -30,7 +40,6 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     self._enable_lkgm = properties.enable_lkgm
     self._full_run = properties.full_run
     self._builder_threshold_percentage = properties.builder_threshold_percentage
-    self._presubmit_trybots = properties.presubmit_trybots
     self._public_build = None
     self._public_build_results = None
     super(CrosLkgmApi, self).__init__(*args, **kwargs)
@@ -96,7 +105,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     successful_builds = sum([b.status == common_pb2.SUCCESS for b in builds])
     return successful_builds / float(len(builds)) * 100. if len(builds) else 0
 
-  def do_lkgm(self, release_build_results):
+  def do_lkgm(self, release_build_results, use_branch=False):
     """Performs the LGKM process if the build is an LKGM candidate.
 
     This should only be called from a release orchestrator.
@@ -104,6 +113,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     Args:
       release_build_results (list(common_pb2.Build)): list of release build
         results as returned by api.orch_menu.plan_and_run_children.
+      use_branch (bool): if set, upload the LKGM CL to the Chrome branch
+        (e.g. refs/branch-heads/5204) instead of ToT.
     """
     if not self._enable_lkgm:
       return
@@ -113,10 +124,24 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         return
       else:
         presentation.step_text = 'LKGM candidate'
+    branch = None
+    if use_branch:
+      branch = self._get_chrome_branch()
 
-    self._update_lkgm()
-    if self._full_run:
-      self._abandon_old_lkgms()
+    script_path = self.m.cros_source.workspace_path.join(
+        'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
+    cmd = [
+        script_path,
+        '--lkgm',
+        self.m.cros_version.version.platform_version,
+        '--buildbucket-id',
+        self.m.buildbucket.build.id,
+    ]
+    if branch:
+      cmd.extend(['--branch', 'refs/branch-heads/{}'.format(branch)])
+    if not self._full_run:
+      cmd.append('--dryrun')
+    self.m.step('call chrome_chromeos_lkgm', cmd)
 
   def _is_lkgm_candidate(self, release_build_results):
     """Determines if the build is an LKGM candidate based on child build results.
@@ -157,72 +182,22 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           return False
     return True
 
-  def _update_lkgm(self):
-    """Creates, uploads, and submits an LKGM CL."""
-    with self.m.step.nest('create LKGM CL'):
-      chromium_src_dir = self.m.path.mkdtemp()
-      self.m.git.clone(CHROMIUM_SRC_URL, single_branch=True, depth=1,
-                       target_path=chromium_src_dir)
-
-      with self.m.context(cwd=chromium_src_dir):
-        platform_version = self.m.cros_version.version.platform_version
-        lkgm_filepath = self.m.path.join(chromium_src_dir, LKGM_PATH)
-        self.m.file.write_text('update LKGM file', lkgm_filepath,
-                               platform_version)
-        commit_lines = [
-            'Automated Commit: LKGM {} for chromeos.'.format(platform_version),
-            '',
-            'Uploaded by {}'.format(self.m.buildbucket.build_url()),
-            '',
-        ] + [
-            'CQ_INCLUDE_TRYBOTS=luci.chrome.try:{}'.format(trybot)
-            for trybot in self._presubmit_trybots
-        ] + [
-            '',
-            'Cr-Automation-Id: cros_lkgm',
-        ]
-        commit_message = '\n'.join(commit_lines)
-
-        with self.m.step.nest('commit in {}'.format(CHROMIUM_SRC_PROJECT)):
-          self.m.git.add([LKGM_PATH])
-          self.m.git.commit(commit_message)
-
-        with self.m.step.nest('create CL'):
-          change = self.m.gerrit.create_change(
-              CHROMIUM_SRC_PROJECT,
-              reviewers=LKGM_CL_REVIEWERS,
-              hashtags=[LKGM_HASHTAG],
-              project_path=chromium_src_dir,
-          )
-          # Then set labels, or abandon if dry run.
-          if self._full_run:
-            self.m.gerrit.set_change_labels_remote(
-                change, {
-                    self.m.gerrit.Label.BOT_COMMIT: 1,
-                    self.m.gerrit.Label.COMMIT_QUEUE: 2,
-                })
-          else:
-            self.m.gerrit.abandon_change(
-                change,
-                'this LKGM CL was produced by a builder running in dry run mode'
-            )
-
-  def _abandon_old_lkgms(self):
-    with self.m.step.nest('abandon old LKGM CLs'):
-      query_params = [
-          ('project', CHROMIUM_SRC_PROJECT),
-          ('branch', 'main'),
-          ('file', LKGM_PATH),
-          ('age', '2d'),
-          ('status', 'open'),
-          # Use 'owner' rather than 'uploader' or 'author' since those last two
-          # can be overwritten when the gardener resolves a merge-conflict and
-          # uploads a new patchset.
-          ('owner', CI_PROD_SERVICE_ACCOUNT),
-          ('hashtag', LKGM_HASHTAG)
-      ]
-      changes = self.m.gerrit.query_changes(CHROMIUM_SRC_URL, query_params)
-      abandon_message = 'Superceded by LKGM {}'.format(
-          self.m.cros_version.version.platform_version)
-      for change in changes:
-        self.m.gerrit.abandon_change(change, abandon_message)
+  def _get_chrome_branch(self):
+    """Get the Chrome branch number from the current checkout."""
+    with self.m.step.nest('get chrome branch') as presentation:
+      with self.m.context(
+          self.m.cros_source.workspace_path.join(CHROMIUMOS_OVERLAY_PATH)):
+        files = self.m.step(
+            'list chrome ebuild files', [
+                'stat', '-c', '%n',
+                'chromeos-base/chromeos-chrome/chromeos-chrome-*'
+            ], stdout=self.m.raw_io.output_text(),
+            step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+                CHROME_EBUILD_TEST_DATA)).stdout.strip().split()
+      for f in files:
+        match = re.match(CHROME_VERSION_REGEXP, f)
+        if match:
+          branch = match.groupdict()['branch']
+          presentation.step_text = branch
+          return branch
+      raise StepFailure('could not get chrome branch number')

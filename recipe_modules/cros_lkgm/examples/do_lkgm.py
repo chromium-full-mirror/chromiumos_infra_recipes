@@ -6,6 +6,7 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/raw_io',
     'recipe_engine/properties',
     'build_menu',
     'cros_lkgm',
@@ -34,15 +35,11 @@ def RunSteps(api, properties):
 
   api.cros_lkgm.schedule_public_build()
   api.cros_lkgm.collect_public_build()
-  api.cros_lkgm.do_lkgm(properties.release_builds)
+  api.cros_lkgm.do_lkgm(properties.release_builds,
+                        use_branch=properties.use_branch)
 
 
 def GenTests(api):
-
-  def step_command_has_substr(check, step_odict, step, substring):
-    check('command line for step %s contained %s' % (step, substring),
-          any([substring in token for token in step_odict[step].cmd]))
-
   PUBLIC_BUILDER_START_ID = 8922054662172514001
 
   def create_builds(num_success, num_failure, start_id=1):
@@ -59,6 +56,7 @@ def GenTests(api):
   def lgkm_test(name, *args, **kwargs):
     release_builds = kwargs.pop('release_builds', [])
     public_builds = kwargs.pop('public_builds', None)
+    use_branch = kwargs.pop('use_branch', False)
 
     output = build_pb2.Build.Output()
     if public_builds is not None:
@@ -82,7 +80,10 @@ def GenTests(api):
           ))
 
     return api.test(
-        name, api.properties(DoLkgmProperties(release_builds=release_builds)),
+        name,
+        api.properties(
+            DoLkgmProperties(release_builds=release_builds,
+                             use_branch=use_branch)),
         api.properties(
             **{
                 '$chromeos/cros_lkgm': {
@@ -92,8 +93,6 @@ def GenTests(api):
                         kwargs.pop('builder_threshold', 50),
                     'full_run':
                         kwargs.pop('full_run', False),
-                    'presubmit_trybots':
-                        kwargs.pop('presubmit_trybots', []),
                 },
             }), *args, **kwargs)
 
@@ -123,24 +122,59 @@ def GenTests(api):
                      ['70.00%', '50%']),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'LKGM candidate'),
+      api.post_check(post_process.StepCommandContains,
+                     'call chrome_chromeos_lkgm', [
+                         '--lkgm',
+                         '1234.56.0',
+                         '--buildbucket-id',
+                         '8945511751514863184',
+                     ]), api.post_process(post_process.DropExpectation),
+      release_builds=create_builds(6, 4),
+      public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
+      full_run=True)
+
+  yield lgkm_test(
+      'lkgm-candidate-branch',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='release-main-orchestrator').build,
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.StepTextContains,
+                     'assess LKGM readiness.assess release build results',
+                     ['60.00%', '50%']),
+      api.post_check(post_process.StepTextContains,
+                     'assess LKGM readiness.assess public build results',
+                     ['70.00%', '50%']),
+      api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
+                     'LKGM candidate'),
       api.post_check(
-          step_command_has_substr,
-          'create LKGM CL.commit in chromium/src.write commit message',
-          '1234.56.0'),
-      api.post_check(
-          step_command_has_substr,
-          'create LKGM CL.commit in chromium/src.write commit message',
-          'CQ_INCLUDE_TRYBOTS=luci.chrome.try:chromeos-eve-chrome'),
-      api.post_check(
-          step_command_has_substr,
-          'create LKGM CL.create CL.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review',
-          ' \"Commit-Queue\": 2'),
-      api.post_check(post_process.MustRun,
-                     'abandon old LKGM CLs.abandon CL 91827'),
+          post_process.StepCommandContains, 'call chrome_chromeos_lkgm', [
+              '--lkgm', '1234.56.0', '--buildbucket-id', '8945511751514863184',
+              '--branch', 'refs/branch-heads/5204'
+          ]), api.post_process(post_process.DropExpectation),
+      release_builds=create_builds(6, 4),
+      public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
+      full_run=True, use_branch=True)
+
+  yield lgkm_test(
+      'lkgm-candidate-branch-failure',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='release-main-orchestrator').build,
+      api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.StepTextContains,
+                     'assess LKGM readiness.assess release build results',
+                     ['60.00%', '50%']),
+      api.post_check(post_process.StepTextContains,
+                     'assess LKGM readiness.assess public build results',
+                     ['70.00%', '50%']),
+      api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
+                     'LKGM candidate'),
+      api.step_data('get chrome branch.list chrome ebuild files',
+                    stdout=api.raw_io.output_text('foo\n')),
+      api.post_check(post_process.StepFailure, 'get chrome branch'),
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
-      full_run=True, presubmit_trybots=['chromeos-eve-chrome'])
+      full_run=True, use_branch=True)
 
   yield lgkm_test(
       'lkgm-candidate-dry-run',
@@ -155,10 +189,11 @@ def GenTests(api):
                      ['70.00%', '50%']),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'LKGM candidate'),
-      api.post_check(post_process.MustRun,
-                     'create LKGM CL.create CL.abandon CL 1'),
-      api.post_check(post_process.DoesNotRun, 'abandon old LKGM CLs'),
-      api.post_process(post_process.DropExpectation),
+      api.post_check(post_process.StepCommandContains,
+                     'call chrome_chromeos_lkgm', [
+                         '--lkgm', '1234.56.0', '--buildbucket-id',
+                         '8945511751514863184', '--dryrun'
+                     ]), api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID))
 
