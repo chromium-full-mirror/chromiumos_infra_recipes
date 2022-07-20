@@ -327,7 +327,7 @@ def _read_crossystem_keyvals(api, crossystem_file_path):
     return crossystem_keyvals
   except (api.file.Error, FileNotFoundError):
     api.step.active_result.presentation.status = api.step.WARNING
-    return {}
+    return None
 
 
 def _read_kernel_version(api, kernel_log_file_path):
@@ -352,7 +352,7 @@ def _read_kernel_version(api, kernel_log_file_path):
     return items[2] if len(items) >= 2 else ''
   except (api.file.Error, FileNotFoundError):
     api.step.active_result.presentation.status = api.step.WARNING
-    return {}
+    return None
 
 
 def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
@@ -486,12 +486,13 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
     base_tags.append(('main_builder_name', main_builder_name))
 
   # Fetches the following information from crossystem keyvals.
-  ro_fwid = crossystem_keyvals.get('ro_fwid')
-  if ro_fwid:
-    base_tags.append(('ro_fwid', ro_fwid))
-  rw_fwid = crossystem_keyvals.get('fwid')
-  if rw_fwid:
-    base_tags.append(('rw_fwid', rw_fwid))
+  if crossystem_keyvals is not None:
+    ro_fwid = crossystem_keyvals.get('ro_fwid')
+    if ro_fwid:
+      base_tags.append(('ro_fwid', ro_fwid))
+    rw_fwid = crossystem_keyvals.get('fwid')
+    if rw_fwid:
+      base_tags.append(('rw_fwid', rw_fwid))
 
   if kernel_version:
     base_tags.append(('kernel_version', kernel_version))
@@ -623,16 +624,27 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
 
   # Fetches rich information from log artifacts.
   autotest_keyvals = test_metadata.test.autotest.keyvals
-  # For Tauto, read files from the first test case dir because some of them
-  # might be missing in the parent result dir.
-  # For Tast, read files from the parent result dir.
-  crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
-                                      first_test_case_name, 'sysinfo',
+  # For Tauto, read files from the parent result dir and then the first test
+  # case dir if files don't exist because some files might be missing in the
+  # parent result dir or in the first test case dir. Thus, we will need to read
+  # both places for the worst case.
+  # For Tast, read files from the parent result dir only.
+  crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
                                       'crossystem')
   crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-  kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
-                                      first_test_case_name, 'sysinfo', 'uname')
+  if crossystem_keyvals is None:
+    crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
+                                        first_test_case_name, 'sysinfo',
+                                        'crossystem')
+    crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
+  kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
+                                      'uname')
   kernel_version = _read_kernel_version(api, kernel_log_file_path)
+  if kernel_version is None:
+    kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
+                                        first_test_case_name, 'sysinfo',
+                                        'uname')
+    kernel_version = _read_kernel_version(api, kernel_log_file_path)
 
   config = {
       'result_format':
@@ -1804,7 +1816,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
-      'no-tast-crossystem-keyval-file',
+      'no-parent-crossystem-keyval-file-for-tauto',
       _set_build(
           bid=42, tags={
               'label-board': 'fake-board',
@@ -1831,7 +1843,37 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
-      'no-tast-kernel-log-file',
+      'no-parent-and-child-crossystem-keyval-files-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      api.step_data('execution steps.original_test.read crossystem keyval file',
+                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.read crossystem keyval file (2)',
+          api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'no-parent-kernel-log-file-for-tauto',
       _set_build(
           bid=42, tags={
               'label-board': 'fake-board',
@@ -1846,6 +1888,35 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-wifi_chip': 'marvell',
           }),
       api.step_data('execution steps.original_test.read kernel log file',
+                    api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'no-parent-and-child-kernel-log-file-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      api.step_data('execution steps.original_test.read kernel log file',
+                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data('execution steps.original_test.read kernel log file (2)',
                     api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
