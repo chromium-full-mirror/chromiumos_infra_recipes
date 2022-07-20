@@ -17,7 +17,6 @@
   * [chromite](#recipe_modules-chromite) (Python3 ✅)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage) (Python3 ✅)
-  * [cq_looks](#recipe_modules-cq_looks) (Python3 ✅)
   * [cros_artifacts](#recipe_modules-cros_artifacts) (Python3 ✅) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_bisect](#recipe_modules-cros_bisect) (Python3 ✅) &mdash; API for interacting with FindIt.
   * [cros_branch](#recipe_modules-cros_branch) (Python3 ✅) &mdash; API wrapping the cros branch tool.
@@ -71,6 +70,7 @@
   * [gs_step_logging](#recipe_modules-gs_step_logging) (Python3 ✅) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
   * [iterutils](#recipe_modules-iterutils) (Python3 ✅)
+  * [looks_for_green](#recipe_modules-looks_for_green) (Python3 ✅)
   * [manifest_doctor](#recipe_modules-manifest_doctor) (Python3 ✅) &mdash; API wrapping the manifest_doctor tool.
   * [metadata](#recipe_modules-metadata) (Python3 ✅) &mdash; API to support metadata generation and wrangling.
   * [metadata_json](#recipe_modules-metadata_json) (Python3 ✅)
@@ -176,7 +176,6 @@
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov) (Python3 ✅)
   * [config_backfill](#recipes-config_backfill) (Python3 ✅) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) (Python3 ✅) &mdash; Run miscellaneous actions on project repos.
-  * [cq_looks:examples/full](#recipes-cq_looks_examples_full) (Python3 ✅)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json) (Python3 ✅)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts) (Python3 ✅)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full) (Python3 ✅)
@@ -406,6 +405,7 @@
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
+  * [looks_for_green:examples/full](#recipes-looks_for_green_examples_full) (Python3 ✅)
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) (Python3 ✅) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [manifest_doctor:examples/full](#recipes-manifest_doctor_examples_full) (Python3 ✅)
@@ -1137,7 +1137,7 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
-[DEPS](/recipe_modules/build_plan/__init__.py#6): [cq\_looks](#recipe_modules-cq_looks), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_plan/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -1168,7 +1168,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#287)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#288)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1182,7 +1182,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#373)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#374)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1198,7 +1198,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#412)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#413)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1209,7 +1209,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#344)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#345)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -1743,27 +1743,6 @@ Uploads firmware lcov code coverage.
 Args:
   tarfile (Path): path to tarfile.
   step_name (str): name for the step.
-### *recipe_modules* / [cq\_looks](/recipe_modules/cq_looks)
-
-[DEPS](/recipe_modules/cq_looks/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-#### **class [CqLooksApi](/recipe_modules/cq_looks/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module to look for green CQ snapshots.
-
-&mdash; **def [get\_unfinished\_or\_failed\_snapshot\_ids](/recipe_modules/cq_looks/api.py#21)(self, snapshot_ids):**
-
-Returns a set of unfinished or failed snapshot ids.
-
-Args:
-  snapshot_ids (set): The set of snapshot ids to be used in build plan.
-
-Returns:
-  A tuple of two sets:
-    A set of snapshot ids referring to builds that are unfinished.
-    A set of snapshot ids referring to builds that are failed.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#8): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [metadata](#recipe_modules-metadata), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -6522,6 +6501,27 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
+### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
+
+[DEPS](/recipe_modules/looks_for_green/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+#### **class [CqLooksApi](/recipe_modules/looks_for_green/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to look for green CQ snapshots.
+
+&mdash; **def [get\_unfinished\_or\_failed\_snapshot\_ids](/recipe_modules/looks_for_green/api.py#21)(self, snapshot_ids):**
+
+Returns a set of unfinished or failed snapshot ids.
+
+Args:
+  snapshot_ids (set): The set of snapshot ids to be used in build plan.
+
+Returns:
+  A tuple of two sets:
+    A set of snapshot ids referring to builds that are unfinished.
+    A set of snapshot ids referring to builds that are failed.
 ### *recipe_modules* / [manifest\_doctor](/recipe_modules/manifest_doctor)
 
 [DEPS](/recipe_modules/manifest_doctor/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9179,13 +9179,6 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 
 &mdash; **def [RunSteps](/recipes/config_postsubmit.py#461)(api, properties):**
-### *recipes* / [cq\_looks:examples/full](/recipe_modules/cq_looks/examples/full.py)
-
-[DEPS](/recipe_modules/cq_looks/examples/full.py#12): [cq\_looks](#recipe_modules-cq_looks), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-&mdash; **def [RunSteps](/recipe_modules/cq_looks/examples/full.py#25)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#8): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -10853,6 +10846,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 Runs the presubmit for a project with checkout per local manifest.
 
 &mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#40)(api, properties):**
+### *recipes* / [looks\_for\_green:examples/full](/recipe_modules/looks_for_green/examples/full.py)
+
+[DEPS](/recipe_modules/looks_for_green/examples/full.py#12): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/examples/full.py#25)(api, properties):**
 ### *recipes* / [lvfs\_mirror](/recipes/lvfs_mirror.py)
 
 [DEPS](/recipes/lvfs_mirror.py#10): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)

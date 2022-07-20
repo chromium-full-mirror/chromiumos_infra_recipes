@@ -14,7 +14,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'cq_looks',
+    'looks_for_green',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -24,7 +24,7 @@ PROPERTIES = CqBuildPlanProperties
 
 def RunSteps(api, properties):
   snapshot_ids = set(properties.snapshot_ids)
-  unfinished, failed = api.cq_looks.get_unfinished_or_failed_snapshot_ids(
+  unfinished, failed = api.looks_for_green.get_unfinished_or_failed_snapshot_ids(
       snapshot_ids)
   api.assertions.assertCountEqual(properties.expected_failed_snapshots, failed)
   api.assertions.assertEqual(

@@ -259,7 +259,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       if cq_looks_enabled:
         with self.m.step.nest('CQ looks'):
           if snapshot_ids:
-            self.m.cq_looks.get_unfinished_or_failed_snapshot_ids(snapshot_ids)
+            self.m.looks_for_green.get_unfinished_or_failed_snapshot_ids(
+                snapshot_ids)
 
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.

@@ -12,7 +12,7 @@ DEPS = [
     'cros_history',
     'cros_relevance',
     'cros_tags',
-    'cq_looks',
+    'looks_for_green',
     'easy',
     'git_footers',
     'test_util',
