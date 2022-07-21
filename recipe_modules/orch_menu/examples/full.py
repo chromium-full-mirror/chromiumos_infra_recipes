@@ -221,6 +221,15 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
+      'public-orchestrator',
+      data.ctp_normal,
+      builder='public-main-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+  )
+
+  yield api.orch_menu.test(
       'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
       api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,

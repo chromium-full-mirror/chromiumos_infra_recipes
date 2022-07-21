@@ -1842,7 +1842,7 @@
     },
     {
       "id": {
-        "name": "main-public-orchestrator",
+        "name": "public-main-orchestrator",
         "type": "PUBLIC"
       },
       "general": {

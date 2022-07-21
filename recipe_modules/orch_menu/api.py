@@ -262,9 +262,13 @@ class OrchMenuApi(RecipeApi):
                 gs_location=self._properties.buildspec_gs_path, **kwargs)
             self.m.cros_lkgm.schedule_public_build()
 
-        if config:
-          self._is_public_orchestrator = (
-              config.id.type == BuilderConfig.Id.PUBLIC)
+        if config and config.id.type == BuilderConfig.Id.PUBLIC:
+          self._is_public_orchestrator = True
+          is_staging = self.m.cros_infra_config.is_staging
+          # Need to sync to buildspec in the public orchestrator so that
+          # chromeos_version.sh accurately reflects the version.
+          # b/238330273 for context.
+          self.m.workspace_util.sync_to_commit(staging=is_staging)
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
