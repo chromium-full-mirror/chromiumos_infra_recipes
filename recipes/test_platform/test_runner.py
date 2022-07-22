@@ -187,11 +187,11 @@ def summarize_results_from_phosphorus_results(api, result):
       * api (RecipeScriptApi): Ubiquitous recipe api.
       * result (DUTResult): The result of all tests.
     """
-  with api.step.nest('test results') as step:
-    if result.get_stainless_log_url():
-      s_link(step=step, name='Autotest logs',
-             link=result.get_stainless_log_url())
-      s_log(step=step, name='JSON output', log=result.to_json())
+  with api.step.nest('Results') as step:
+    # Do not surface empty link when provision has failure
+    if result.get_stainless_log_url() and not result.prejob_failed():
+      s_link(step=step, name='Logs', link=result.get_stainless_log_url())
+    s_log(step=step, name='JSON output', log=result.to_json())
     for prejob in result.get_prejob_steps():
       _set_step_status(
           api=api, step_name=prejob.name, summary=prejob.human_readable_summary,
@@ -1084,10 +1084,10 @@ def summarize_results_from_ctr_results(api, result):
       * api (RecipeScriptApi): Ubiquitous recipe api.
       * result (DUTResult): The result of all tests.
     """
-  with api.step.nest('test results') as step:
-    if result.get_stainless_log_url():
-      s_link(step=step, name='Autotest logs',
-             link=result.get_stainless_log_url())
+  with api.step.nest('Results') as step:
+    # Do not surface empty link when provision has failure
+    if result.get_stainless_log_url() and not result.prejob_failed():
+      s_link(step=step, name='Logs', link=result.get_stainless_log_url())
     for prejob in result.get_prejob_steps():
       _set_step_status(api=api, step_name="provision of " + prejob.test_id,
                        summary="", failure_condition=prejob.is_failure())

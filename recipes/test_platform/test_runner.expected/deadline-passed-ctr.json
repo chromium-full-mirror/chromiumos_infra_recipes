@@ -306,14 +306,14 @@
   },
   {
     "cmd": [],
-    "name": "test results",
+    "name": "Results",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test results.provision of dut",
+    "name": "Results.provision of dut",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"

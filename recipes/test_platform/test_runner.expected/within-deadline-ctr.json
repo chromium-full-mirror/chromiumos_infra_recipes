@@ -777,21 +777,21 @@
   },
   {
     "cmd": [],
-    "name": "test results",
+    "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Autotest logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test results.provision of test_dut_host_name",
+    "name": "Results.provision of test_dut_host_name",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "test results.tauto.dummy_id",
+    "name": "Results.tauto.dummy_id",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

@@ -14,7 +14,7 @@ from PB.test_platform import phosphorus
 from PB.test_platform.skylab_test_runner.result import Result as Skylab_Result
 
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
-                                   ['test_dut_responses'])
+                                   ['test_dut_responses', 'any_test_failed'])
 PrejobResponsesTuple = namedtuple(
     'PrejobResponsesTuple', ['prejob_dut_responses', 'any_provision_failed'])
 
@@ -96,7 +96,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     del max_duration_seconds
 
-    with self._api.step.nest('CrosToolRunner: run provision'):
+    with self._api.step.nest('CrosToolRunner: run provision') as step:
       with self._api.context(infra_steps=True):
         provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
             ctr.CrosToolRunnerProvisionRequest.Device(
@@ -104,8 +104,13 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                 .primary_dut.provision_state, container_metadata_key=self
                 .cft_test_request.primary_dut.container_metadata_key)
         ])
-        return self._process_prejob_response(
+        prejob_response = self._process_prejob_response(
             self._api.cros_tool_runner.provision(provision_request))
+
+        if prejob_response.any_provision_failed:
+          step.presentation.status = self._api.step.FAILURE
+
+        return prejob_response
 
   def run_test(self, metadata, container_image_info=None):
     """Submits a test execution on the DUT.
@@ -124,15 +129,20 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     del container_image_info
 
-    with self._api.step.nest('CrosToolRunner: run test'):
+    with self._api.step.nest('CrosToolRunner: run test') as step:
       primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
           dut=metadata.primary_dut, container_metadata_key=self.cft_test_request
           .primary_dut.container_metadata_key)
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
           primary_dut=primary_dut_device, artifact_dir=metadata.artifact_dir)
-      return self._process_run_test_response(
+      test_response = self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
+
+      if test_response.any_test_failed:
+        step.presentation.status = self._api.step.FAILURE
+
+      return test_response
 
   def load_skylab_local_state(
       self, test=None, test_id=dut_interface.DUTTestMetadata.DUMMY_TEST_ID):
@@ -642,8 +652,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       RunTestResponsesTuple
     """
     test_dut_responses = []
+    any_test_failed = False
     for each_resp in runtest_resp.test_case_results:
       test_dut_resp = CrosToolRunnerTestDUTResponse(
           each_resp.test_case_id.value, each_resp)
       test_dut_responses.append(test_dut_resp)
-    return RunTestResponsesTuple(test_dut_responses)
+      if test_dut_resp.is_failure():
+        any_test_failed = True
+    return RunTestResponsesTuple(test_dut_responses, any_test_failed)
