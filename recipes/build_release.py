@@ -75,7 +75,8 @@ def RunSteps(api, properties):
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   try:
-    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                       api.build_menu.build_target.name)
     snoopy_report(api, 'start')
 
     #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.

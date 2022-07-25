@@ -20,7 +20,8 @@ StepDetails = BuildReport.StepDetails
 
 
 def RunSteps(api):
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     "build_target")
 
   for failure in [None, "failure", "infra_failure"]:
     try:

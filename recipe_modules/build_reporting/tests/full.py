@@ -42,12 +42,9 @@ def _read_test_file(filename):
 
 def RunSteps(api):
   # test that we can't set an invalid value for build_type
-  api.assertions.assertRaisesRegexp(
-      ValueError,
-      "Invalid build type",
-      api.build_reporting.set_build_type,
-      -42,
-  )
+  api.assertions.assertRaisesRegexp(ValueError, "Invalid build type",
+                                    api.build_reporting.set_build_type, -42,
+                                    "build_target")
 
   # test that we have to set the build type before sending anything
   api.assertions.assertRaisesRegexp(
@@ -58,7 +55,8 @@ def RunSteps(api):
   )
 
   # basic build setup
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     "build_target")
   api.assertions.assertEqual(
       api.build_reporting.build_type,
       BuildReport.BUILD_TYPE_RELEASE,
@@ -69,12 +67,10 @@ def RunSteps(api):
                                     api.build_reporting.publish, {})
 
   # test that we can only set the build type once
-  api.assertions.assertRaisesRegexp(
-      RuntimeError,
-      "only be set once",
-      api.build_reporting.set_build_type,
-      BuildReport.BUILD_TYPE_RELEASE,
-  )
+  api.assertions.assertRaisesRegexp(RuntimeError, "only be set once",
+                                    api.build_reporting.set_build_type,
+                                    BuildReport.BUILD_TYPE_RELEASE,
+                                    "build_target")
 
   # Test that we can't send process builder meta with multiple build targets.
   response = GetBuilderMetadataResponse()
@@ -149,6 +145,7 @@ def RunSteps(api):
       build_report.buildbucket_id,
       api.buildbucket.build.id,
   )
+  api.assertions.assertEqual(build_report.config.target.name, "build_target")
   api.assertions.assertEqual(build_report.status.value, BuildStatus.SUCCESS)
   api.assertions.assertEqual(len(build_report.artifacts), 1)
   api.assertions.assertTrue(build_report.HasField("config"))

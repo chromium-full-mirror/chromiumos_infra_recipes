@@ -69,7 +69,8 @@ def RunSteps(api):
       ],
   )
 
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     "build_target")
   api.cros_release.set_output_properties()
   api.cros_release.run_payload_generation()
 

@@ -26,7 +26,8 @@ PARENT_ID = 8832734656515626817
 
 def RunSteps(api):
   # basic build setup
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     "build_target")
   api.build_reporting.publish_status(BuildStatus.RUNNING)
 
   # publish config information about the build

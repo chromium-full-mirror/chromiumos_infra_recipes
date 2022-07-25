@@ -20,7 +20,8 @@ StepDetails = BuildReport.StepDetails
 
 
 def RunSteps(api):
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     "build_target")
 
   for failure in [None, "failure", "infra_failure"]:
     with api.build_reporting.publish_to_gs(gs_path='gs://foo/bar'):

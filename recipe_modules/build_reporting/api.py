@@ -136,7 +136,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
   def merged_build_report(self):
     return self._build_report
 
-  def set_build_type(self, build_type):
+  def set_build_type(self, build_type, build_target):
     """Set the type for the build, must be set once and only once."""
     if not build_type in BuildReport.BuildType.values():
       raise ValueError("Invalid build type '%d', must be value defined in "
@@ -145,6 +145,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
       raise RuntimeError("Build type can only be set once.")
 
     self._build_type = build_type
+    self._build_target = build_target
 
   def __init__(self, properties, *args, **kwargs):
     super(BuildReportingApi, self).__init__(*args, **kwargs)
@@ -152,6 +153,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._pubsub_project = properties.pubsub_project
     self._pubsub_topic = properties.pubsub_topic
     self._build_type = None
+    self._build_target = None
     self._build_preamble_sent = False
     self._build_report = BuildReport()
     self._step_order = make_oneup()
@@ -192,6 +194,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
         build_report.parent.buildbucket_id = int(parent[0])
 
       build_report.type = self._build_type
+      build_report.config.target.name = self._build_target
       self._build_preamble_sent = True
 
     # Add counter to message for ordering

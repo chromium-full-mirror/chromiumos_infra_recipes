@@ -44,7 +44,8 @@ def RunSteps(api, properties):
       raise StepFailure(
           'public builder must be supplied a public buildspec in $chromeos/cros_source.syncToManifest'
       )
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_PUBLIC)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_PUBLIC,
+                                     api.build_menu.build_target.name)
 
   with api.build_reporting.publish_to_gs():
     with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
