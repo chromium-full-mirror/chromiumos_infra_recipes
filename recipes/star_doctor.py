@@ -387,6 +387,9 @@ def _regenerate_configs(api):
       with api.context(cwd=CONFIG_INTERNAL.checkout_path):
         api.step('regenerate test configs', ['./board_config/generate', '-b'],
                  timeout=3 * 60)
+        api.step('regenerate test exoneration configs',
+                 ['./board_config/test/exoneration/generate', '-b'],
+                 timeout=3 * 60)
         api.step('regenerate suite scheduler configs', [
             '/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b',
             '--gen-rubik'
