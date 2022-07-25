@@ -37,21 +37,17 @@ TEST_DATA = ReleaseBuilders(builders=[
         build_schedule="0 1 * * *"),
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R01-00001.B',
-                                           number=1),
-        build_schedule="0 8 * * *"),
+                                           number=1)),
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R02-00002.B',
-                                           number=2),
-        build_schedule="0 9 * * *"),
+                                           number=2)),
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R03-00003.B',
-                                           number=3),
-        build_schedule="0 * * * *"),
+                                           number=3)),
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R40-00040.B',
                                            number=40),
-        build_schedule="0 11 * * *", expiration_date=ReleaseBuilder.Date(
-            value='2100-01-01')),
+        expiration_date=ReleaseBuilder.Date(value='2100-01-01')),
 ])
 
 RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
@@ -89,34 +85,6 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       return datetime.strptime(builder.expiration_date.value, "%Y-%m-%d")
     except ValueError:
       return None
-
-  def _get_builder_schedule(self, existing_builders):
-    """Get a builder schedule for a new builder (in the form of a crontab).
-
-    If possible, choose an hour that is not currently in use to better distribute load.
-
-    Args:
-    existing_builders (ReleaseBuilders): existing release builders.
-    """
-    used_hours = set()
-    for b in existing_builders.builders:
-      cron_components = b.build_schedule.split()
-      if len(cron_components) == 5:
-        for hour in cron_components[1].split(','):
-          # We are supporting '*', so if the hour can't be parsed into an int,
-          # ignore it for our purposes.
-          try:
-            hour = int(hour)
-            used_hours.add(hour)
-          except ValueError:
-            pass
-    # TODO(crbug/1122854): This will eventually be triggered by the chromeos-chrome ebuild uprev.
-    schedule = '0 4 * * *'
-    for hour in range(24):
-      if hour not in used_hours:
-        schedule = '0 %d * * *' % hour
-        break
-    return schedule
 
   def _prune_builders(self, builders):
     """ Prune the list of builders.
@@ -309,11 +277,9 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         # Append new builder for specified branch.
         new_builder = ReleaseBuilder(
             milestone=ReleaseBuilder.Milestone(branch_name=release_branch,
-                                               number=milestone),
-            build_schedule=self._get_builder_schedule(release_builders))
+                                               number=milestone))
         release_builders = ReleaseBuilders(
             builders=list(release_builders.builders) + [new_builder])
-        # TODO(b/177487002): Add pruning support for legacy config.
         release_builders = self._prune_builders(release_builders)
         self.m.file.write_proto('write {}'.format(CONFIG), file_path,
                                 release_builders, 'TEXTPB')

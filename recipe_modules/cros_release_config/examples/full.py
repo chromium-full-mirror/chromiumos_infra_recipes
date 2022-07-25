@@ -101,7 +101,6 @@ BLOCK_1 = """builders {
     number: 1
     branch_name: "release-R01-00001.B"
   }
-  build_schedule: "0 8 * * *"
 }
 """
 
@@ -110,7 +109,6 @@ BLOCK_2 = """builders {
     number: 2
     branch_name: "release-R02-00002.B"
   }
-  build_schedule: "0 9 * * *"
 }
 """
 
@@ -119,7 +117,6 @@ BLOCK_3 = """builders {
     number: 3
     branch_name: "release-R03-00003.B"
   }
-  build_schedule: "0 * * * *"
 }
 """
 
@@ -128,7 +125,6 @@ BLOCK_NEW = """builders {
     number: %d
     branch_name: "%s"
   }
-  build_schedule: "0 0 * * *"
 }
 """
 
@@ -137,7 +133,6 @@ BLOCK_EXPIRATION = """builders {
     number: 40
     branch_name: "release-R40-00040.B"
   }
-  build_schedule: "0 11 * * *"
   expiration_date {
     value: "2100-01-01"
   }
@@ -156,14 +151,12 @@ builders {
     number: %d
     branch_name: "%s"
   }
-  build_schedule: "0 0 * * *"
 }
 builders {
   milestone {
     number: 3
     branch_name: "release-R03-00003.B"
   }
-  build_schedule: "0 10 * * *"
 }
 """
 

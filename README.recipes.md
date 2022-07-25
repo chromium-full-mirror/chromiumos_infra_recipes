@@ -3022,9 +3022,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#60)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#56)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#251)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#219)(self, release_branch):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -9762,7 +9762,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#177)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#170)(api, properties):**
 
 &mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#19)(\*blocks):**
 
