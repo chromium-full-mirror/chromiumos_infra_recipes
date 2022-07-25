@@ -56,9 +56,9 @@ def GenTests(api):
       api.buildbucket.try_build(
           experiments=[
               'chromeos.cros_infra_config.release_tot_builds_snapshot'
-          ], project='chromeos', bucket='release',
+          ], project='chromeos', bucket='staging',
           builder='staging-release-main-orchestrator'),
-      api.properties(expected_ref='refs/heads/snapshot'),
+      api.properties(expected_ref='refs/heads/staging-snapshot'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -249,7 +249,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         builder_name = six.ensure_str('{}release-main-orchestrator'.format(
             'staging-' if self._is_staging else ''))
         name_to_builder_config[
-            builder_name].orchestrator.gitiles_commit.ref = 'refs/heads/snapshot'
+            builder_name].orchestrator.gitiles_commit.ref = 'refs/heads/{}snapshot'.format(
+                'staging-' if self._is_staging else '')
       self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config
 

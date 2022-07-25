@@ -56,7 +56,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
             'could not find builder config, needed to determine branch')
       branch = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
       # Main release branches build from snapshot manifests.
-      if branch == 'snapshot':
+      if branch in ['snapshot', 'staging-snapshot']:
         branch = 'main'
 
       is_staging = self.m.cros_infra_config.is_staging

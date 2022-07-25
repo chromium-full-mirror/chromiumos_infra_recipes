@@ -43,6 +43,8 @@ import PB.chromiumos.common as common_pb2
 from PB.chromite.api.payload import GenerationResponse
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 
 PROPERTIES = PaygenProperties
 
@@ -125,13 +127,18 @@ def RunSteps(api, properties):
       # Repo leaves directories around... See: project.py "DeleteWorktree".
       api.step('remove repo cruft', ['rm', '-rf', config_path])
 
+      config_internal_branch = 'main' if (
+          'snapshot' in api.cros_source.manifest_branch
+      ) else api.cros_source.manifest_branch
+
       # Pull config-internal seperately. This repo has a huge history that we
       # can't delete (as it would break manifests). Therefore we want to clone
       # alone at depth=1.
-      api.git.clone(
-          'https://chrome-internal.googlesource.com/chromeos/config-internal',
-          branch=api.cros_source.manifest_branch, target_path=config_path,
-          depth=1)
+      with api.step.nest('clone config-internal from {} branch'.format(
+          config_internal_branch)):
+        api.git.clone(
+            'https://chrome-internal.googlesource.com/chromeos/config-internal',
+            branch=config_internal_branch, target_path=config_path, depth=1)
 
       # Create chroot, with retries!
       @exponential_retry(retries=3, delay=datetime.timedelta(seconds=300))
@@ -286,9 +293,14 @@ def GenTests(api):
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
                   ])
-          ])),
+          ]), **{
+              "$chromeos/cros_infra_config":
+                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
+          }),
       generate_payload_response(api),
       api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.MustRun,
+                     'initialization.clone config-internal from main branch'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
