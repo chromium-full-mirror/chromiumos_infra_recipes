@@ -2414,7 +2414,7 @@
   },
   {
     "cmd": [
-      "./board_config/test/exoneration/generate",
+      "./test/exoneration/generate",
       "-b"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_3",

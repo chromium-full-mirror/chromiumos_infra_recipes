@@ -388,8 +388,7 @@ def _regenerate_configs(api):
         api.step('regenerate test configs', ['./board_config/generate', '-b'],
                  timeout=3 * 60)
         api.step('regenerate test exoneration configs',
-                 ['./board_config/test/exoneration/generate', '-b'],
-                 timeout=3 * 60)
+                 ['./test/exoneration/generate', '-b'], timeout=3 * 60)
         api.step('regenerate suite scheduler configs', [
             '/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b',
             '--gen-rubik'
