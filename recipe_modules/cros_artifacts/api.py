@@ -465,11 +465,22 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # the builder name.
     version = self.m.cros_version.version
     ret = {
-        'version': str(version),
-        'legacy_version': version.legacy_version,
-        'build_id': str(self.m.buildbucket.build.id or self.m.led.run_id),
-        'target': target.name,
-        'builder_name': builder_name.replace('_', '-'),
+        'version':
+            str(version),
+        'legacy_version':
+            version.legacy_version,
+        # If this is a led launch, the ID will be in the format "led/user/id",
+        # which has the side effect of breaking path parsing (which assumes the
+        # last thing in this path starting with "/" will be version + build_id).
+        # As such, remove all "/"s and replace with underscores.
+        'build_id':
+            str(
+                self.m.buildbucket.build.id or
+                self.m.led.run_id.replace("/", "_")),
+        'target':
+            target.name,
+        'builder_name':
+            builder_name.replace('_', '-'),
     }
     if kind:
       ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')

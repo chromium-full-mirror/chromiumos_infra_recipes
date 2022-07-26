@@ -2,6 +2,7 @@
 # Copyright 2022 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -76,3 +77,23 @@ def GenTests(api):
               builder_name='eve-cq', target_name='eve',
               builder_type=BuilderConfig.Id.CQ,
               expected_upload_path='eve-cq/R99-1234.56.0-101-4321')))
+
+  yield api.test(
+      'led',
+      api.buildbucket.build(
+          build_pb2.Build(
+              id=0,
+          ),
+      ),
+      api.properties(
+          ArtifactsGsPathProperties(
+              builder_name='eve-staging-release-main', target_name='eve',
+              builder_type=BuilderConfig.Id.RELEASE,
+              expected_upload_path='eve-staging-release-main/R99-1234.56.0-101-led_user_example.com_deadbeef'
+          ), **{
+              '$recipe_engine/led': {
+                  'led_run_id': 'led/user_example.com/deadbeef'
+              }
+          }),
+      api.post_process(post_process.DropExpectation),
+  )
