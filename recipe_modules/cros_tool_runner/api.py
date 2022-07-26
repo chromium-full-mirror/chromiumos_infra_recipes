@@ -217,8 +217,10 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           * AssertionError if the Swarming bot ID env var is missing or invalid.
         """
     expected_prefix = 'crossk-'
-    assert swarming_bot_id.startswith(expected_prefix)
-    return swarming_bot_id[len(expected_prefix):]
+    if swarming_bot_id.startswith(expected_prefix):
+      return swarming_bot_id[len(expected_prefix):]
+    else:
+      return swarming_bot_id
 
   def read_dut_hostname(self):
     """"Return the DUT hostname."""

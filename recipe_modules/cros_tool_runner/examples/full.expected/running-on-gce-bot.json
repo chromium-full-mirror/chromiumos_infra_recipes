@@ -1,0 +1,216 @@
+[
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner`",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"containers\":{\"test-target\":{\"images\":{\"cros-test\":{\"digest\":\"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\",\"name\":\"cros-test\",\"repository\":{\"hostname\":\"gcr.io\",\"project\":\"chromeos-bot\"},\"tags\":[\"8835841547076258945\",\"amd64-generic-release.R96-1.2.3\"]}}}}}",
+      "[CLEANUP]/container_images_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "call `cros-tool-runner` (2).writing container metadata to file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@{\"containers\":{\"test-target\":{\"images\":{\"cros-test\":{\"digest\":\"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\",\"name\":\"cros-test\",\"repository\":{\"hostname\":\"gcr.io\",\"project\":\"chromeos-bot\"},\"tags\":[\"8835841547076258945\",\"amd64-generic-release.R96-1.2.3\"]}}}}}@@@",
+      "@@@STEP_LOG_END@container_images_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (2).ensure cros-tool-runner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/cros-tool-runner",
+      "-ensure-file",
+      "chromiumos/infra/cros-tool-runner/${platform} some-cipd-label",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "call `cros-tool-runner` (2).ensure cros-tool-runner.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-some-cipd-label-\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros-tool-runner/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "--non-interactive",
+      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
+      "provision",
+      "-docker_key_file",
+      "/creds/service_accounts/skylab-drone.json",
+      "-images",
+      "[CLEANUP]/container_images_tmp_1",
+      "-input",
+      "/dev/stdin",
+      "-output",
+      "/dev/stdout"
+    ],
+    "name": "call `cros-tool-runner` (2).provision",
+    "stdin": "{}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (3)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "--non-interactive",
+      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
+      "test-finder",
+      "-docker_key_file",
+      "/creds/service_accounts/skylab-drone.json",
+      "-images",
+      "[CLEANUP]/container_images_tmp_1",
+      "-input",
+      "/dev/stdin",
+      "-output",
+      "/dev/stdout"
+    ],
+    "name": "call `cros-tool-runner` (4).test-finder",
+    "stdin": "{}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (5)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (6)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "--non-interactive",
+      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
+      "test",
+      "-docker_key_file",
+      "/creds/service_accounts/skylab-drone.json",
+      "-images",
+      "[CLEANUP]/container_images_tmp_1",
+      "-input",
+      "/dev/stdin",
+      "-output",
+      "/dev/stdout"
+    ],
+    "name": "call `cros-tool-runner` (6).test",
+    "stdin": "{}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload-to-tko",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload-to-tko (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload-to-tko (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tko-parse stdout@@@@",
+      "@@@STEP_LOG_END@tko-parse stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "dummy/autotest/dir/tko/parse",
+      "--write-pidfile",
+      "dummy/results/dir",
+      "--effective_job_name",
+      "swarming-placeholder-task-i0",
+      "-l",
+      "3",
+      "--record-duration",
+      "-r",
+      "-o",
+      "--suite-report"
+    ],
+    "name": "upload-to-tko (3).tko-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

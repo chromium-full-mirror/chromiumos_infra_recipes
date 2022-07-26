@@ -12,12 +12,14 @@ from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
   CrosTestPostprocessRequest
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
   TestResult as PostProcessTestResult
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
+  import CrosToolRunnerProperties
 from PB.recipe_modules.chromeos.service_version.service_version import \
   ServiceVersionProperties
 from PB.test_platform import result_flow as result_flow_pb2
 from PB.test_platform import service_version as service_version_pb
 from PB.test_platform.steps.enumeration import \
-  EnumerationRequest, EnumerationRequests
+  EnumerationRequest, EnumerationRequests, EnumerationResponse
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.request import Request
@@ -25,8 +27,11 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.config.config import Config
 from PB.test_platform.steps.execute.build import Build
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from PB.chromite.api import test_metadata
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from PB.chromiumos.test.api import test_suite as ctr_test_suite
 
 import collections
 import json
@@ -52,6 +57,7 @@ DEPS = [
     'cros_resultdb',
     'cros_tags',
     'cros_test_platform',
+    'cros_tool_runner',
     'easy',
     'result_flow',
     'service_version',
@@ -243,18 +249,57 @@ def enumerate_tests(api, requests, error_in_requests):
 
   Returns: {tag: EnumerationResponse} dict.
   """
+  non_cft_requests = {
+      t: r
+      for t, r in requests.items()
+      if t not in error_in_requests and not _should_enumerate_via_ctf(r)
+  }
+  cft_requests = {
+      t: r
+      for t, r in requests.items()
+      if t not in error_in_requests and _should_enumerate_via_ctf(r)
+  }
+  # Fail build if no valid requests are found.
+  if not (non_cft_requests or cft_requests):
+    raise api.step.StepFailure("No valid request found")
+
+  enum_requests = _enumerate_non_cft_tests(api, non_cft_requests)
+  enum_requests.update(_enumerate_cft_tests(api, cft_requests))
+  return enum_requests
+
+
+def _should_enumerate_via_ctf(r):
+  """Whether the given request should be enumerated via cros-test-finder.
+
+  Args:
+    * r: test_platform.Request
+
+  Returns: bool
+  """
+  return r.params.run_via_cft and (
+      (r.test_plan.tag_criteria and r.test_plan.tag_criteria.tags) or
+      [s.name for s in r.test_plan.suite] == ["cft_ctf_test_suite"])
+
+
+def _enumerate_non_cft_tests(api, requests):
+  """Resolve non-CFT requests into list of tests and their metadata.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * requests: {tag: test_platform.Request} dict.
+
+  Returns: {tag: EnumerationResponse} dict.
+  """
+  if not requests:
+    return {}
   with api.step.nest('enumerate tests') as step:
     enum_requests = EnumerationRequests(
         tagged_requests={
             t: EnumerationRequest(
                 metadata=r.params.metadata,
                 test_plan=r.test_plan,
-            ) for t, r in requests.items() if t not in error_in_requests
+            ) for t, r in requests.items()
         })
-
-    # Fail build if enum_requests is empty
-    if not enum_requests.tagged_requests:
-      raise api.step.StepFailure("No valid request found")
 
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
     for tag, response in sorted(enum_responses.tagged_responses.items()):
@@ -264,6 +309,78 @@ def enumerate_tests(api, requests, error_in_requests):
           _enumeration_log(response), separators=(',', ': '), indent=2,
           sort_keys=True)
     return enum_responses.tagged_responses
+
+
+def _enumerate_cft_tests(api, requests):
+  """Resolve non-CFT requests into list of tests and their metadata.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * requests: {tag: test_platform.Request} dict.
+
+  Returns: {tag: EnumerationResponse} dict.
+  """
+  if not requests:
+    return {}
+  tagged_responses = {}
+  with api.step.nest('enumerate CFT tests') as step:
+    for t, r in requests.items():
+      api.cros_tool_runner.create_file_with_container_metadata(
+          r.params.execution_param.container_metadata)
+
+      build_target = r.params.software_attributes.build_target.name
+      test_finder_request = ctr.CrosToolRunnerTestFinderRequest(
+          test_suites=[_ctr_test_suite(r)], container_metadata_key=build_target)
+      test_finder_result = api.cros_tool_runner.find_tests(test_finder_request)
+
+      autotest_invocations = []
+      for test_suite in test_finder_result.test_suites:
+        for test_case in test_suite.test_cases.test_cases:
+          autotest_invocation = EnumerationResponse.AutotestInvocation(
+              test=test_metadata.AutotestTest(
+                  name=test_case.id.value,
+                  dependencies=[
+                      test_metadata.AutotestTaskDependency(label=dep.value)
+                      for dep in test_case.dependencies
+                  ],
+                  execution_environment=1,
+              ),
+          )
+          autotest_invocations.append(autotest_invocation)
+      if autotest_invocations:
+        tagged_responses[t] = EnumerationResponse(
+            autotest_invocations=autotest_invocations)
+      else:
+        tagged_responses[t] = EnumerationResponse(error_summary='no test found')
+
+    for tag, response in sorted(tagged_responses.items()):
+      _log_enumeration_errors(api, response, tag)
+      name = 'autotest tests for %s' % tag
+      step.presentation.logs[name] = json.dumps(
+          _enumeration_log(response), separators=(',', ': '), indent=2,
+          sort_keys=True)
+
+    return tagged_responses
+
+
+def _ctr_test_suite(request):
+  """Build a CrosToolRunnerTestFinderRequest from a list of test requests.
+
+  Args:
+    * request: test_platform.Request
+
+  Returns: ctr.TestSuite
+  """
+
+  tags = ["suite:%s" % s.name for s in request.test_plan.suite]
+  tag_excludes = []
+  tag_criteria = request.test_plan.tag_criteria
+  if tag_criteria:
+    tags.extend(tag_criteria.tags)
+    tag_excludes = tag_criteria.tag_excludes
+  return ctr_test_suite.TestSuite(
+      test_case_tag_criteria=ctr_test_suite.TestSuite.TestCaseTagCriteria(
+          tags=tags, tag_excludes=tag_excludes))
 
 
 def _enumeration_log(response):
@@ -868,29 +985,33 @@ def _default_software_dependencies():
   ]
 
 
-def _test_request(tag, build_target="foo-build-target",
-                  scheduling=_test_scheduling()):
-  return Request(
-      params=Request.Params(
-          software_attributes=Request.Params.SoftwareAttributes(
-              build_target=BuildTarget(
-                  name=build_target,
-              )),
-          hardware_attributes=Request.Params.HardwareAttributes(
-              model='%s-model' % tag),
-          metadata=Request.Params.Metadata(
-              test_metadata_url='gs://%s-metadata-url' % tag,
-              debug_symbols_archive_url='gs://%s-metadata-url' % tag,
-              container_metadata_url='gs://%s-container-metadata-url' % tag),
-          scheduling=scheduling,
-          software_dependencies=_default_software_dependencies(),
-      ),
-      test_plan=Request.TestPlan(suite=[Request.Suite(name='%s-suite' % tag)]),
+def _test_request(request_name_tag, build_target="foo-build-target",
+                  scheduling=_test_scheduling(), tag_criteria=None):
+  params = Request.Params(
+      software_attributes=Request.Params.SoftwareAttributes(
+          build_target=BuildTarget(
+              name=build_target,
+          )),
+      hardware_attributes=Request.Params.HardwareAttributes(model='%s-model' %
+                                                            request_name_tag),
+      metadata=Request.Params.Metadata(
+          test_metadata_url='gs://%s-metadata-url' % request_name_tag,
+          debug_symbols_archive_url='gs://%s-metadata-url' % request_name_tag,
+          container_metadata_url='gs://%s-container-metadata-url' %
+          request_name_tag),
+      scheduling=scheduling,
+      software_dependencies=_default_software_dependencies(),
   )
+  return Request(
+      params=params, test_plan=Request.TestPlan(
+          suite=[Request.Suite(name='%s-suite' % request_name_tag)],
+          tag_criteria=tag_criteria))
 
 
-def _cft_test_request(tag, build_target="foo-build-target"):
-  test_req = _test_request(tag, build_target)
+def _cft_test_request(request_name, build_target="foo-build-target",
+                      tag_criteria=None):
+  test_req = _test_request(request_name, build_target,
+                           tag_criteria=tag_criteria)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -1117,6 +1238,38 @@ def _empty_enumerate_response(api):
       'enumerate tests',
       '{ "tagged_responses": {} }',
   )
+
+
+def _generic_cft_enumerate_response(api):
+  return api.step_data(
+      'enumerate CFT tests.call `cros-tool-runner`.test-finder',
+      stdout=api.raw_io.output('''
+{
+   "test_suites":[
+      {
+         "test_cases":{
+            "test_cases":[
+               {
+                  "id":{
+                     "value":"foo-test"
+                  },
+                  "dependencies":[
+                     {
+                        "value":"foo-dep:bar"
+                     }
+                  ]
+               }
+            ]
+         }
+      }
+   ]
+}'''))
+
+
+def _empty_cft_enumerate_response(api):
+  return api.step_data(
+      'enumerate CFT tests.call `cros-tool-runner`.test-finder',
+      stdout=api.raw_io.output('{ "test_suites":[ { "test_cases":{} } ] }'))
 
 
 def _generic_passing_execute_response(api):
@@ -1942,14 +2095,52 @@ def GenTests(api):
           len(GetBuildProperties(steps).get('compressed_responses', {})) > 0)))
 
   yield api.test(
-      'cft-test-execution-with-passed-tasks',
+      'cft-suite-with-tags-execution-with-passed-tasks',
       api.properties(
           CrosTestPlatformProperties(
-              requests={'default': _cft_test_request('foo')},
-              config=_test_config('foo'))),
-      _mock_container_metadata_step(api, 'foo'),
-      _generic_enumerate_response(api), _generic_passing_execute_response(api),
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]))
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
       api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-empty-enumeration',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]))
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _empty_cft_enumerate_response(api),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_FAILED'))
+              }),
+      ), api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'cft-test-execution-with-missing-container-metadata',

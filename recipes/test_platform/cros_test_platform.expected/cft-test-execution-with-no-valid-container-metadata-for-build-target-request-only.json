@@ -155,13 +155,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "enumerate tests",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
     "failure": {
       "failure": {},
       "humanReason": "No valid request found"
