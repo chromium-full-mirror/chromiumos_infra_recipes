@@ -160,9 +160,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar.go\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bar.h\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar.rs\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"foo.c\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.rs\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
@@ -178,13 +176,8 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 6 modified relevant files@@@",
-      "@@@STEP_LOG_LINE@output@bar.go@@@",
-      "@@@STEP_LOG_LINE@output@bar.h@@@",
-      "@@@STEP_LOG_LINE@output@bar.rs@@@",
-      "@@@STEP_LOG_LINE@output@foo.c@@@",
-      "@@@STEP_LOG_LINE@output@foo.go@@@",
-      "@@@STEP_LOG_LINE@output@foo.rs@@@",
+      "@@@STEP_TEXT@found relevant files@@@",
+      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"foo.go\"], \"tidy\": []}@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
   },
@@ -4524,7 +4517,7 @@
   },
   {
     "cmd": [],
-    "name": "get affected packages",
+    "name": "get affected packages for clippy",
     "~followup_annotations": [
       "@@@STEP_TEXT@No packages affected for target platform@@@"
     ]
@@ -4559,7 +4552,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.repo forall",
+    "name": "get affected packages for clippy.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/foo|cros|refs/heads/main|refs/heads/fake-branch@@@",
@@ -4568,7 +4561,7 @@
   },
   {
     "cmd": [],
-    "name": "get affected packages.call chromite.api.DependencyService/List",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -4577,19 +4570,7 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"srcPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.go\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.h\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.rs\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.c\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.go\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.rs\"@@@",
@@ -4615,7 +4596,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.go\"\n    },\n    {\n      \"path\": \"src/foo/bar.h\"\n    },\n    {\n      \"path\": \"src/foo/bar.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.c\"\n    },\n    {\n      \"path\": \"src/foo/foo.go\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4632,7 +4613,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.call chromite.api.DependencyService/List.write input file",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -4666,7 +4647,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.call chromite.api.DependencyService/List.call build API script",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -4701,14 +4682,195 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.call chromite.api.DependencyService/List.read output file",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "get affected packages.call chromite.api.DependencyService/List.call response",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get affected packages for golint",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No packages affected for target platform@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "fake-project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get affected packages for golint.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/foo|cros|refs/heads/main|refs/heads/fake-branch@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get affected packages for golint.call chromite.api.DependencyService/List",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"srcPaths\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.go\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.go\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/atlas\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.go\"\n    },\n    {\n      \"path\": \"src/foo/foo.go\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get affected packages for golint.call chromite.api.DependencyService/List.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.DependencyService/List"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get affected packages for golint.call chromite.api.DependencyService/List.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get affected packages for golint.call chromite.api.DependencyService/List.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get affected packages for golint.call chromite.api.DependencyService/List.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -4763,7 +4925,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4788,9 +4950,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/BundleImageZip"
@@ -4827,7 +4989,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_10/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4868,7 +5030,7 @@
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"bundleRequest\":{\"buildTarget\":{\"name\":\"atlas\"},\"chroot\":{\"path\":\"[CACHE]/cros_chroot/chroot\"},\"outputDir\":\"[CLEANUP]/artifacts_tmp_1\",\"sysroot\":{\"buildTarget\":{\"name\":\"atlas\"},\"path\":\"/build/atlas\"}},\"bundleResponse\":{\"artifacts\":[{\"path\":\"[START_DIR]/tmp/artifact.tar.gz\"}]},\"requestTime\":\"2012-05-14T12:53:51.500Z\",\"responseTime\":\"2012-05-14T12:53:53Z\",\"stepName\":\"upload artifacts|bundle IMAGE_ZIP for upload|call chromite.api.ArtifactsService/BundleImageZip|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"bundleRequest\":{\"buildTarget\":{\"name\":\"atlas\"},\"chroot\":{\"path\":\"[CACHE]/cros_chroot/chroot\"},\"outputDir\":\"[CLEANUP]/artifacts_tmp_1\",\"sysroot\":{\"buildTarget\":{\"name\":\"atlas\"},\"path\":\"/build/atlas\"}},\"bundleResponse\":{\"artifacts\":[{\"path\":\"[START_DIR]/tmp/artifact.tar.gz\"}]},\"requestTime\":\"2012-05-14T12:53:54.500Z\",\"responseTime\":\"2012-05-14T12:53:56Z\",\"stepName\":\"upload artifacts|bundle IMAGE_ZIP for upload|call chromite.api.ArtifactsService/BundleImageZip|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -4877,7 +5039,7 @@
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI34DE/QQQgMq17gEiBgjhgMT9BCpbCgcKBWF0bGFzEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3RtcF8xGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhcKDC9idWlsZC9hdGxhcxIHCgVhdGxhczIjCiEKH1tTVEFSVF9ESVJdL3RtcC9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI4oDE/QQQgMq17gEiBgjkgMT9BCpbCgcKBWF0bGFzEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3RtcF8xGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhcKDC9idWlsZC9hdGxhcxIHCgVhdGxhczIjCiEKH1tTVEFSVF9ESVJdL3RtcC9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -4909,7 +5071,7 @@
       }
     },
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI34DE/QQQgMq17gEiBgjhgMT9BCpbCgcKBWF0bGFzEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3RtcF8xGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhcKDC9idWlsZC9hdGxhcxIHCgVhdGxhczIjCiEKH1tTVEFSVF9ESVJdL3RtcC9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI4oDE/QQQgMq17gEiBgjkgMT9BCpbCgcKBWF0bGFzEhlbQ0xFQU5VUF0vYXJ0aWZhY3RzX3RtcF8xGhwKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhcKDC9idWlsZC9hdGxhcxIHCgVhdGxhczIjCiEKH1tTVEFSVF9ESVJdL3RtcC9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4965,7 +5127,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1\n          ]\n        }\n      ]\n    }\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"location\": 2,\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\"\n    }\n  },\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4990,9 +5152,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/Get"
@@ -5029,7 +5191,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5227,7 +5389,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"atlas\"\n    ], \n    \"bot-config\": \"atlas-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"atlas-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:57\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"atlas\"\n    ], \n    \"bot-config\": \"atlas-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"atlas-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:54:00\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"chrome\": \"chrome_version\", \n        \"full\": \"full_version\", \n        \"milestone\": \"milestone_version\", \n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -5287,7 +5449,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:57\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:00\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null, @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
@@ -5368,7 +5530,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -5392,9 +5554,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -5429,7 +5591,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -5495,7 +5657,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -5519,9 +5681,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Unmount"
@@ -5556,7 +5718,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_13/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -5763,7 +5925,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0041@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0044@@@"
     ]
   },
   {

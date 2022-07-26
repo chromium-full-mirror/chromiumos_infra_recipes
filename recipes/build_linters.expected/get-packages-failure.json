@@ -160,9 +160,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar.go\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bar.h\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar.rs\": {}, @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"foo.c\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.rs\": {}@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
@@ -178,13 +176,8 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 6 modified relevant files@@@",
-      "@@@STEP_LOG_LINE@output@bar.go@@@",
-      "@@@STEP_LOG_LINE@output@bar.h@@@",
-      "@@@STEP_LOG_LINE@output@bar.rs@@@",
-      "@@@STEP_LOG_LINE@output@foo.c@@@",
-      "@@@STEP_LOG_LINE@output@foo.go@@@",
-      "@@@STEP_LOG_LINE@output@foo.rs@@@",
+      "@@@STEP_TEXT@found relevant files@@@",
+      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"foo.go\"], \"tidy\": []}@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
   },
@@ -4524,7 +4517,7 @@
   },
   {
     "cmd": [],
-    "name": "get affected packages",
+    "name": "get affected packages for clippy",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
@@ -4559,7 +4552,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.repo forall",
+    "name": "get affected packages for clippy.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/foo|cros|refs/heads/main|refs/heads/fake-branch@@@",
@@ -4568,7 +4561,7 @@
   },
   {
     "cmd": [],
-    "name": "get affected packages.call chromite.api.DependencyService/List",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -4577,19 +4570,7 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"srcPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.go\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.h\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.rs\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.c\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.go\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.rs\"@@@",
@@ -4616,7 +4597,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.go\"\n    },\n    {\n      \"path\": \"src/foo/bar.h\"\n    },\n    {\n      \"path\": \"src/foo/bar.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.c\"\n    },\n    {\n      \"path\": \"src/foo/foo.go\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.rs\"\n    },\n    {\n      \"path\": \"src/foo/foo.rs\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4633,7 +4614,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.call chromite.api.DependencyService/List.write input file",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -4667,7 +4648,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.call chromite.api.DependencyService/List.call build API script",
+    "name": "get affected packages for clippy.call chromite.api.DependencyService/List.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_FAILURE@@@"
@@ -5854,7 +5835,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('get affected packages.call chromite.api.DependencyService/List.call build API script') (retcode: 1)"
+      "humanReason": "Step('get affected packages for clippy.call chromite.api.DependencyService/List.call build API script') (retcode: 1)"
     },
     "name": "$result"
   }

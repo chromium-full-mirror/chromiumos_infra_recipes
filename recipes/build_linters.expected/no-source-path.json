@@ -174,9 +174,8 @@
     "cmd": [],
     "name": "get relevant files",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 2 modified relevant files@@@",
-      "@@@STEP_LOG_LINE@output@bar.rs@@@",
-      "@@@STEP_LOG_LINE@output@foo.rs@@@",
+      "@@@STEP_TEXT@found relevant files@@@",
+      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [], \"tidy\": []}@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
   },
@@ -4516,7 +4515,7 @@
   },
   {
     "cmd": [],
-    "name": "get affected packages",
+    "name": "get affected packages for clippy",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
@@ -4551,7 +4550,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected packages.repo forall",
+    "name": "get affected packages for clippy.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/foo|cros|refs/heads/main|refs/heads/fake-branch@@@",

@@ -34,50 +34,54 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 PROPERTIES = BuildLintersProperties
 
 
-def _GetRelevantPatchsets(api, properties):
-  """Returns a map of files with relevant extensions grouped by patchset."""
+def _GetRelevantPatchsetsByLinter(api, properties):
+  """Get relevant patchsets, grouped by the linter they require.
+
+  Returns:
+    A map of files with relevant extensions grouped by required linter and
+      patchset (Dict[linter:Text, Dict[patchset:PatchSet, files:List[Text]]]).
+  """
   with api.step.nest('get relevant patches') as presentation:
-    relevant_extensions = [
-        # Rust
-        'rs',
-        # Golang
-        'go',
-        # C/C++
-        'c',
-        'cc',
-        'cpp',
-        'cxx',
-        'c++',
-        'h',
-        'hh',
-        'hpp',
-        'hxx',
-        'h++'
-    ]
+    relevant_extensions = {
+        'clippy': ['rs'],
+        'golint': ['go'],
+        'tidy': [
+            'c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hh', 'hpp', 'hxx', 'h++'
+        ]
+    }
     patch_sets = [
         patchset for patchset in (
             api.gerrit.fetch_patch_set_from_change(commit, include_files=True)
             for commit in api.src_state.gerrit_changes)
         if patchset.project in properties.relevant_projects
     ]
+
     presentation.step_text = 'found %d relevant patchsets' % len(patch_sets)
     if not patch_sets:
       return {}
 
   with api.step.nest('get relevant files') as presentation:
-    relevant_files = {}
-    for patch_set in patch_sets:
-      relevant_for_patchset = [
-          filepath for filepath in patch_set.file_infos.keys()
-          if filepath.split('.')[-1] in relevant_extensions
-      ]
-      if relevant_for_patchset:
-        relevant_files[patch_set] = relevant_for_patchset
-    all_files = set(f for files in relevant_files.values() for f in files)
-    presentation.logs['output'] = sorted(all_files)
-    result_count = len(all_files)
-    presentation.step_text = 'found %d modified relevant files' % result_count
-    return relevant_files
+    relevant_patchsets = {}
+    for linter, extensions in relevant_extensions.items():
+      relevant_patchsets[linter] = {}
+      for patch_set in patch_sets:
+        relevant_for_patchset = [
+            filepath for filepath in patch_set.file_infos.keys()
+            if filepath.split('.')[-1] in extensions
+        ]
+        if relevant_for_patchset:
+          relevant_patchsets[linter][patch_set] = relevant_for_patchset
+
+    output_data = {
+        linter: sorted(f for files in relevant_patchsets[linter].values()
+                       for f in files) for linter in relevant_extensions.keys()
+    }
+    presentation.logs['output'] = json.dumps(output_data, sort_keys=True)
+    if any(len(files) for files in output_data.values()):
+      presentation.step_text = 'found relevant files'
+    else:
+      presentation.step_text = 'found no relevant files'
+    return relevant_patchsets
 
 
 def _GetSourcePaths(api, relevant_patchsets):
@@ -91,9 +95,9 @@ def _GetSourcePaths(api, relevant_patchsets):
   return source_paths
 
 
-def _GetAffectedPackages(api, relevant_patchsets):
+def _GetAffectedPackages(api, linter, relevant_patchsets):
   """Get a list of packages affected by changes to some list of files."""
-  with api.step.nest('get affected packages') as presentation:
+  with api.step.nest('get affected packages for %s' % linter) as presentation:
     source_paths = _GetSourcePaths(api, relevant_patchsets)
     source_paths.sort(key=lambda x: x.path)
     affected = api.cros_build_api.DependencyService.List(
@@ -107,41 +111,56 @@ def _GetAffectedPackages(api, relevant_patchsets):
     return affected
 
 
-def _GetLints(api, affected_packages):
+def _GetLints(api, linter, affected_packages):
   """Emerges affected packages and retrieves generated lints."""
-  with api.step.nest('linting packages'):
+  with api.step.nest('linting packages with %s' % linter):
+
+    linters = {
+        'tidy': LinterFinding.Linters.CLANG_TIDY,
+        'clippy': LinterFinding.Linters.CARGO_CLIPPY,
+        'golint': LinterFinding.Linters.GO_LINT,
+    }
+    enabled_linter = linters[linter]
+
+    test_findings = [{
+        'message': 'test message',
+        'locations': [{
+            'filepath': 'path/file.rs',
+            'line_start': 1,
+            'line_end': 1
+        }],
+        'linter': LinterFinding.Linters.CARGO_CLIPPY
+    }, {
+        'message': 'test message',
+        'locations': [{
+            'filepath': 'path/file.go',
+            'line_start': 1,
+            'line_end': 1
+        }],
+        'linter': LinterFinding.Linters.GO_LINT
+    }, {
+        'message': 'test message',
+        'locations': [{
+            'filepath': 'path/file.cpp',
+            'line_start': 1,
+            'line_end': 1
+        }],
+        'linter': LinterFinding.Linters.CLANG_TIDY
+    }]
+
     test_data = json.dumps(
         {
-            'findings': [{
-                'message': 'test message',
-                'locations': [{
-                    'filepath': 'path/file.rs',
-                    'line_start': 1,
-                    'line_end': 1
-                }],
-                'linter': LinterFinding.Linters.CARGO_CLIPPY
-            }, {
-                'message': 'test message',
-                'locations': [{
-                    'filepath': 'path/file.go',
-                    'line_start': 1,
-                    'line_end': 1
-                }],
-                'linter': LinterFinding.Linters.GO_LINT
-            }, {
-                'message': 'test message',
-                'locations': [{
-                    'filepath': 'path/file.cpp',
-                    'line_start': 1,
-                    'line_end': 1
-                }],
-                'linter': LinterFinding.Linters.CLANG_TIDY
-            }]
+            'findings':
+                [f for f in test_findings if f['linter'] == enabled_linter]
         }, sort_keys=True)
+
+    disabled_linters = set(linters.values()) - set([enabled_linter])
+
     return api.cros_build_api.ToolchainService.EmergeWithLinting(
         LinterRequest(packages=affected_packages,
                       sysroot=api.build_menu.sysroot,
-                      chroot=api.build_menu.chroot, filter_modified=True),
+                      chroot=api.build_menu.chroot, filter_modified=True,
+                      disabled_linters=disabled_linters),
         test_output_data=test_data).findings
 
 
@@ -168,30 +187,44 @@ def _WriteComments(api, findings):
 
 
 def RunSteps(api, properties):
-  relevant_patchsets = _GetRelevantPatchsets(api, properties)
-  if not relevant_patchsets:
+  relevant_patchsets_by_linter = _GetRelevantPatchsetsByLinter(api, properties)
+  if not any(patches for patches in relevant_patchsets_by_linter.values()):
     return RawResult(status=SUCCESS,
                      summary_markdown='No changes need linting.')
   with api.build_menu.configure_builder() as config:
     # We checkout the changes directly rather than using cherry pick
     # to ensure that line numbers are accurate for comments (see b/196275805).
     with api.build_menu.setup_workspace_and_chroot(cherry_pick_changes=False):
-      return DoRunSteps(api, config, relevant_patchsets, properties)
+      return DoRunSteps(api, config, relevant_patchsets_by_linter, properties)
 
 
-def DoRunSteps(api, config, relevant_patchsets, _properties):
+def DoRunSteps(api, config, relevant_patchsets_by_linter, _properties):
   api.build_menu.setup_sysroot_and_determine_relevance()
   try:
+    all_linter_output = []
+    packages_detected = False
+
+    # We need to iterate in sorted order to be deterministic in python2
     api.build_menu.bootstrap_sysroot(config)
-    affected_packages = _GetAffectedPackages(api, relevant_patchsets)
-    if not affected_packages:
+    for linter in sorted(relevant_patchsets_by_linter.keys()):
+      if not relevant_patchsets_by_linter[linter]:
+        continue
+      affected_packages = _GetAffectedPackages(
+          api, linter, relevant_patchsets_by_linter[linter])
+      if not affected_packages:
+        continue
+      if not packages_detected:
+        # Only do this once
+        api.cros_source.ensure_synced_cache(
+            projects=['chromiumos/chromite'],
+            cache_path_override=api.src_state.workspace_path)
+        packages_detected = True
+      linter_output = _GetLints(api, linter, affected_packages)
+      all_linter_output.extend(linter_output)
+    if not packages_detected:
       return RawResult(status=SUCCESS,
                        summary_markdown='No packages affected by changes.')
-    api.cros_source.ensure_synced_cache(
-        projects=['chromiumos/chromite'],
-        cache_path_override=api.src_state.workspace_path)
-    linter_output = _GetLints(api, affected_packages)
-    comment_count = _WriteComments(api, linter_output)
+    comment_count = _WriteComments(api, all_linter_output)
     if comment_count:
       return RawResult(status=SUCCESS,
                        summary_markdown='Wrote %d findings.' % comment_count)
@@ -222,8 +255,6 @@ def GenTests(api):
                   'bar.rs': {},
                   'foo.go': {},
                   'bar.go': {},
-                  'foo.c': {},
-                  'bar.h': {}
               }
           }
       },
@@ -266,7 +297,9 @@ def GenTests(api):
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.DoesNotRun, 'get relevant files'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
-      api.post_check(post_process.DoesNotRun, 'linting packages'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.StatusSuccess), revision=None, cq=False)
 
   # No changes to relevant projects
@@ -275,7 +308,9 @@ def GenTests(api):
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.DoesNotRun, 'get relevant files'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
-      api.post_check(post_process.DoesNotRun, 'linting packages'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
       api.post_check(post_process.StatusSuccess),
@@ -287,7 +322,9 @@ def GenTests(api):
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
-      api.post_check(post_process.DoesNotRun, 'linting packages'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.StatusSuccess),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get relevant patches', changes[:1],
@@ -312,16 +349,26 @@ def GenTests(api):
       'no-affected-packages',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
-      api.post_check(post_process.StepSuccess, 'get affected packages'),
-      api.post_check(post_process.DoesNotRun, 'linting packages'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for golint'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
-      api.build_menu.set_build_api_return('get affected packages',
+      api.build_menu.set_build_api_return('get affected packages for clippy',
+                                          'DependencyService/List', data='{}'),
+      api.repo.project_infos_step_data('get affected packages for golint',
+                                       data=project_info),
+      api.build_menu.set_build_api_return('get affected packages for golint',
                                           'DependencyService/List', data='{}'),
       api.post_check(post_process.StatusSuccess), **BuildTestArgs())
 
@@ -330,14 +377,22 @@ def GenTests(api):
       'one-change',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
-      api.post_check(post_process.StepSuccess, 'get affected packages'),
-      api.post_check(post_process.StepSuccess, 'linting packages'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for golint'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
+      api.post_check(post_process.StepSuccess, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
+                                       data=project_info),
+      api.repo.project_infos_step_data('get affected packages for golint',
                                        data=project_info),
       api.post_check(post_process.StatusSuccess), **BuildTestArgs())
 
@@ -346,16 +401,29 @@ def GenTests(api):
       'multiple-changes',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
-      api.post_check(post_process.StepSuccess, 'get affected packages'),
-      api.post_check(post_process.StepSuccess, 'linting packages'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for golint'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for tidy'),
+      api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
+      api.post_check(post_process.StepSuccess, 'linting packages with golint'),
+      api.post_check(post_process.StepSuccess, 'linting packages with tidy'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info, iteration=2),
+      api.repo.project_infos_step_data('get affected packages for golint',
+                                       data=project_info),
+      api.repo.project_infos_step_data('get affected packages for golint',
+                                       data=project_info, iteration=2),
+      api.repo.project_infos_step_data('get affected packages for tidy',
+                                       data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    [changes[0]],
                                                    relevant_edits),
@@ -369,11 +437,18 @@ def GenTests(api):
       'no-source-path',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
-      api.post_check(post_process.StepFailure, 'get affected packages'),
+      api.post_check(post_process.StepFailure,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.DoesNotRun,
+                     'get affected packages for golint'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.StatusFailure),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get relevant patches', changes[:1],
@@ -398,17 +473,20 @@ def GenTests(api):
       'get-packages-failure',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
-      api.post_check(post_process.StepFailure, 'get affected packages'),
-      api.post_check(post_process.DoesNotRun, 'linting packages'),
+      api.post_check(post_process.StepFailure,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
-      api.build_menu.set_build_api_return('get affected packages',
+      api.build_menu.set_build_api_return('get affected packages for clippy',
                                           'DependencyService/List', retcode=1),
       **BuildTestArgs())
 
@@ -417,16 +495,22 @@ def GenTests(api):
       'get-clipy-lints-failure',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
-      api.post_check(post_process.StepSuccess, 'get affected packages'),
-      api.post_check(post_process.StepFailure, 'linting packages'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.DoesNotRun,
+                     'get affected packages for golint'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.StepFailure, 'linting packages with clippy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusFailure),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
-      api.repo.project_infos_step_data('get affected packages',
+      api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
-      api.build_menu.set_build_api_return('linting packages',
+      api.build_menu.set_build_api_return('linting packages with clippy',
                                           'ToolchainService/EmergeWithLinting',
                                           retcode=1), **BuildTestArgs())
