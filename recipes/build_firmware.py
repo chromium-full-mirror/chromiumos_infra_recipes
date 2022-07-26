@@ -13,10 +13,12 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/properties',
+    "recipe_engine/resultdb",
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'cros_source',
     'easy',
     'src_state',
     'test_util',
@@ -103,6 +105,17 @@ def RunSteps(api, properties):
                                                properties=sign_image_props))
 
         api.buildbucket.schedule(requests)
+
+    cros_src_path = api.cros_source.workspace_path
+    test_results = cros_src_path.join(
+        'src/platform/ec/twister-out/twister.json')
+    api.step(
+        'Upload EC Firmware test results',
+        api.resultdb.wrap([
+            'vpython',
+            cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
+            '--result=' + str(test_results), '--upload=True'
+        ]))
 
 
 def _read_chromiumos_sdk_pin(api, properties):

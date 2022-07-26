@@ -3704,6 +3704,31 @@
     ]
   },
   {
+    "cmd": [
+      "rdb",
+      "stream",
+      "--",
+      "vpython",
+      "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",
+      "--result=[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out/twister.json",
+      "--upload=True"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Upload EC Firmware test results"
+  },
+  {
     "cmd": [],
     "name": "finalize metadata"
   },
