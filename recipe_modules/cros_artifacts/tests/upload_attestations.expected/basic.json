@@ -666,6 +666,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload artifacts.set artifact_link property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://test-bucket/builder/R99-1234.56.0-101-\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",

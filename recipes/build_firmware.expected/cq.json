@@ -4072,6 +4072,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "try to upload artifacts.upload artifacts.set artifact_link property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-ec-cq/R99-1234.56.0-101-8945511751514863184\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",

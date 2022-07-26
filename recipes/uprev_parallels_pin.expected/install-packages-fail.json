@@ -5325,6 +5325,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.upload artifacts.set artifact_link property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",

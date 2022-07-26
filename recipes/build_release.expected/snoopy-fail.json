@@ -4369,6 +4369,13 @@
   },
   {
     "cmd": [],
+    "name": "set critical property",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@critical@\"1\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install toolchain"
   },
   {
@@ -8654,6 +8661,14 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.set artifact_link property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101\"@@@"
     ]
   },
   {

@@ -3015,6 +3015,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload artifacts.set artifact_link property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R39-6301.202.4-101-8945511751514863184\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",

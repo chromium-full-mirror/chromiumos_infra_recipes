@@ -4061,6 +4061,13 @@
   },
   {
     "cmd": [],
+    "name": "set critical property",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@critical@\"1\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install toolchain"
   },
   {

@@ -137,6 +137,7 @@
         "manifest": "PUBLIC"
       },
       "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
         "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
@@ -670,6 +671,7 @@
         "manifest": "PRIVATE"
       },
       "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
         "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
@@ -722,6 +724,7 @@
         "manifest": "PRIVATE"
       },
       "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
         "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
@@ -770,6 +773,7 @@
         "manifest": "PRIVATE"
       },
       "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
         "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
@@ -1592,6 +1596,24 @@
       },
       "general": {
         "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      }
+    },
+    {
+      "id": {
+        "name": "eve-kernelnext-release-main",
+        "type": "RELEASE"
+      },
+      "general": {
+        "critical": false,
         "manifest": "PRIVATE"
       },
       "orchestrator": {

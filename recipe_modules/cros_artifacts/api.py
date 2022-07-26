@@ -682,6 +682,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           'https://console.cloud.google.com/storage/browser/%s/%s' %
           (gs_bucket, gs_path))
       upload_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
+      self.m.easy.set_properties_step('set artifact_link property',
+                                      artifact_link=upload_uri)
 
       if report_to_spike and kind == BuilderConfig.Id.Type.RELEASE:
         images = files_by_artifact.get('IMAGE_ARCHIVES', [])

@@ -108,6 +108,10 @@ def DoRunSteps(api, config, properties):
 
   failing_build_exception = None
 
+  critical = ('1' if (config.general.critical and config.general.critical.value)
+              else '0')
+  api.easy.set_properties_step('set critical property', critical=critical)
+
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, env_info.packages):
@@ -266,9 +270,50 @@ def GenTests(api):
               'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json'
           ],
       ),
+      api.post_process(post_process.PropertyEquals, 'critical', '1'),
+      api.post_process(
+          post_process.PropertyEquals, 'artifact_link',
+          'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # Normal release build.
+  yield api.build_menu.test(
+      'release-build-noncritical',
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-release.{cros-version}",
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/cros_signing':
+                  MessageToDict(CrosSigningProperties(timeout=5))
+          }),
+      api.cros_signing.setup_mocks(),
+      api.post_process(post_process.PropertyEquals, 'critical', '0'),
+      api.post_check(post_process.StatusSuccess),
+      build_target='eve',
+      builder='eve-kernelnext-release-main',
       bucket='release',
   )
 

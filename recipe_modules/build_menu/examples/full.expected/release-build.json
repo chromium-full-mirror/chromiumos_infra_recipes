@@ -7154,6 +7154,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload artifacts.set artifact_link property",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-releases-test/cloudready-release-R90-13816.B-release/R99-1234.56.0-101\"@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",
