@@ -30,15 +30,22 @@ def RunSteps(api):
       id=123,
       builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
       status='FAILURE')
-  failed_test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
+  failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Boot', verdict=TaskState.VERDICT_FAILED,
       human_readable_summary='something wrong here')
-  failed_test_case_dict = json_format.MessageToDict(failed_test_case_result)
+  failed_test_case_dict1 = json_format.MessageToDict(failed_test_case_result1)
+  failed_test_case_result2 = ExecuteResponse.TaskResult.TestCaseResult(
+      name='test2', verdict=TaskState.VERDICT_FAILED,
+      human_readable_summary='something also wrong here')
+  failed_test_case_dict2 = json_format.MessageToDict(failed_test_case_result2)
   passed_test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Notification', verdict=TaskState.VERDICT_PASSED)
   passed_test_case_dict = json_format.MessageToDict(passed_test_case_result)
-  build.output.properties.update(
-      {'all_test_cases': [failed_test_case_dict, passed_test_case_dict]})
+  build.output.properties.update({
+      'all_test_cases': [
+          failed_test_case_dict1, failed_test_case_dict2, passed_test_case_dict
+      ]
+  })
   build.input.properties.update(
       {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
   suite_name = 'betty.tast_vm.tast_vm_default'

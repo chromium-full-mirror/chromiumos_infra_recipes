@@ -25,17 +25,18 @@ def RunSteps(api):
   passing_test_cases = [
       ExecuteResponse.TaskResult.TestCaseResult(
           name='test1', verdict=TaskState.VERDICT_PASSED),
-      ExecuteResponse.TaskResult.TestCaseResult(
-          name='test2', verdict=TaskState.VERDICT_PASSED),
   ]
-  failing_exonerable_test_case = [
+  failing_exonerable_test_cases = [
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='test2', verdict=TaskState.VERDICT_FAILED,
+          human_readable_summary='line 22: error'),
       ExecuteResponse.TaskResult.TestCaseResult(
           name='test3', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='blah blah line 42:something went wrong'),
   ]
   failing_unexonerable_test_case = [
       ExecuteResponse.TaskResult.TestCaseResult(
-          name='test3', verdict=TaskState.VERDICT_FAILED,
+          name='test4', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='meh'),
   ]
   child_results = [
@@ -43,7 +44,7 @@ def RunSteps(api):
                                  test_cases=passing_test_cases),
       ExecuteResponse.TaskResult(
           name='suite2', state=fail_state,
-          test_cases=(passing_test_cases + failing_exonerable_test_case)),
+          test_cases=(passing_test_cases + failing_exonerable_test_cases)),
       ExecuteResponse.TaskResult(name='suite3', state=pass_state,
                                  test_cases=passing_test_cases),
   ]
@@ -61,6 +62,7 @@ def RunSteps(api):
   api.assertions.assertFalse(
       common_pb2.FAILURE in [f.status for f in hw_test_failures])
   api.assertions.assertEqual(exonerated_test_names, ['target.hw.bvt-cq'])
+  api.assertions.assertEqual(len(hw_test_failures[0].child_results), 3)
 
   child_results = [
       ExecuteResponse.TaskResult(name='suite1', state=pass_state,
@@ -80,6 +82,7 @@ def RunSteps(api):
   api.assertions.assertTrue(
       common_pb2.FAILURE in [f.status for f in hw_test_failures])
   api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(len(hw_test_failures[0].child_results), 2)
 
   # Testing the case of empty child_results and empty test_cases.
   hw_test_failures = [
@@ -90,6 +93,8 @@ def RunSteps(api):
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(len(hw_test_failures[0].child_results), 0)
+
   child_results_with_empty_test_cases = [
       ExecuteResponse.TaskResult(name='suite1', state=fail_state, test_cases=[])
   ]
@@ -101,6 +106,7 @@ def RunSteps(api):
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(len(hw_test_failures[0].child_results), 1)
 
   api.exonerate.print_stats()
 

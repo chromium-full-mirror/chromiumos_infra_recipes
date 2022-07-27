@@ -63,15 +63,16 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: TestCaseResult object changed based on the decision.
     """
     for config in self._exoneration_configs[test_case.name]:
-      bt_match = (build_target == config['target'])
-      reason_match = (config['reason'] in test_case.human_readable_summary)
-      exoneration_decision = bt_match and reason_match
-      if exoneration_decision:
-        self._add_log('Exonerated {} on {},\t{} rule'.format(
-            test_case.name, config['target'], config['reason']))
+      if config['targets'] == []:
+        bt_match = True
+      else:
+        bt_match = (build_target in config['targets'])
+      if bt_match:
+        self._add_log('Exonerated {} on {}'.format(test_case.name,
+                                                   build_target))
         self._stats.test_count += 1
 
-      if exoneration_decision and not self._dry_run:
+      if bt_match and not self._dry_run:
         return ExecuteResponse.TaskResult.TestCaseResult(
             name=test_case.name, verdict=TaskState.VERDICT_PASSED,
             human_readable_summary=('Exonerated: ' +
@@ -102,6 +103,8 @@ class ExonerateApi(recipe_api.RecipeApi):
         if test_case.name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
+        else:
+          new_test_cases.append(test_case)
 
     verdicts = [tc.verdict for tc in new_test_cases]
     if TaskState.VERDICT_FAILED in verdicts:
@@ -191,14 +194,15 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: test case dictionary changed based on the decision.
     """
     for config in self._exoneration_configs[test_case['name']]:
-      bt_match = (build_target == config['target'])
-      reason_match = (config['reason'] in test_case['humanReadableSummary'])
-      exoneration_decision = bt_match and reason_match
-      if exoneration_decision:
-        self._add_log('Exonerated {} on {},\t{} rule'.format(
-            test_case['name'], config['target'], config['reason']))
+      if config['targets'] == []:
+        bt_match = True
+      else:
+        bt_match = (build_target in config['targets'])
+      if bt_match:
+        self._add_log('Exonerated {} on {}'.format(test_case['name'],
+                                                   build_target))
         self._stats.test_count += 1
-      if exoneration_decision and not self._dry_run:
+      if bt_match and not self._dry_run:
         return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
 
     return test_case

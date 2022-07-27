@@ -3,7 +3,8 @@
     "cmd": [],
     "name": "exonerate hw tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test3 on build_target_name,\tblah blah rule@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test2 on build_target_name@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test3 on build_target_name@@@",
       "@@@STEP_LOG_END@exoneration logs@@@"
     ]
   },
@@ -35,7 +36,7 @@
     "cmd": [],
     "name": "set exoneration_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"testCount\": \"1\"}@@@"
+      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"testCount\": \"2\"}@@@"
     ]
   },
   {

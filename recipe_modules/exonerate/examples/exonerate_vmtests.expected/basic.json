@@ -3,7 +3,8 @@
     "cmd": [],
     "name": "exonerate vm tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@exoneration logs@Exonerated arc.Boot on betty,\tsomething wrong rule@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated arc.Boot on betty@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test2 on betty@@@",
       "@@@STEP_LOG_END@exoneration logs@@@"
     ]
   },
@@ -19,7 +20,7 @@
     "cmd": [],
     "name": "set exoneration_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"testCount\": \"1\"}@@@"
+      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"testCount\": \"2\"}@@@"
     ]
   },
   {

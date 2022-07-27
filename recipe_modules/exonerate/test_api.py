@@ -13,19 +13,15 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
     """Returns fake configs for unittesting."""
     return {
         "test1": [{
-            "target": "eve",
-            "reason": "blah blah"
+            "targets": ["eve"],
         }],
         "test2": [{
-            "target": "atlas",
-            "reason": "blah blah"
+            "targets": [],
         }],
         "arc.Boot": [{
-            "target": "betty",
-            "reason": "something wrong"
+            "targets": ["betty"],
         }],
         "test3": [{
-            "target": "build_target_name",
-            "reason": "blah blah"
+            "targets": ["build_target_name"],
         }]
     }
