@@ -23,6 +23,12 @@ message DupitProperties {
 
   // Regular expression representing additional files to be synced (if any.)
   string regex_for_additional_file_syncs = 5;
+
+  // Google Storage URI to store files matching the regex at.
+  // regex_for_additional_file_syncs must be set for this to have an effect.
+  // The string will be formatted by datetime.utcnow().strftime(...) before
+  // uploading.
+  string gs_uri_for_regex_archive = 6;
 }
 
 message Mirror {

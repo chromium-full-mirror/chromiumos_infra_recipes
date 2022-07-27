@@ -19,7 +19,8 @@ def RunSteps(api):
       rsync_mirror_rate_limit='1m',
       gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
       ignore_missing_args=True, filter_missing_links=True,
-      regex_for_additional_file_syncs="^.+[.](db|db.tar.gz|files|files.tar.gz)$"
+      regex_for_additional_file_syncs="^.+[.](db|db.tar.gz|files|files.tar.gz)$",
+      gs_uri_for_regex_archive='gs://stark-trek/the-ultimate-computer/distfiles-archive/%Y/%m/%d/%H%M%S%f/'
   )
   api.cros_dupit.run()
 
@@ -39,6 +40,14 @@ def GenTests(api):
       api.post_process(
           post_process.MustRun,
           'copy new distfiles to gs.gsutil upload additional regex files to gs://stark-trek/the-ultimate-computer/distfiles/'
+      ),
+      api.post_process(
+          post_process.StepSuccess,
+          'copy new distfiles to gs.gsutil archive additional regex files to gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/'
+      ),
+      api.post_process(
+          post_process.StepSuccess,
+          'copy new distfiles to gs.gsutil create donefile at gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/.dupit_done'
       ),
       api.step_data('copy new distfiles to gs.list new distfiles',
                     stdout=api.raw_io.output_text('new_distfile.tar.gz')),

@@ -17,7 +17,8 @@ class DupItApi(recipe_api.RecipeApi):
   def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
                 gs_distfiles_uri, ignore_missing_args=False,
                 filter_missing_links=False,
-                regex_for_additional_file_syncs=None):
+                regex_for_additional_file_syncs=None,
+                gs_uri_for_regex_archive=None):
     """Configure the DupIt script module.
 
     Args:
@@ -47,6 +48,7 @@ class DupItApi(recipe_api.RecipeApi):
     self._ignore_missing_args = ignore_missing_args
     self._filter_missing_links = filter_missing_links
     self._regex_for_additional_file_syncs = regex_for_additional_file_syncs
+    self._gs_uri_for_regex_archive = gs_uri_for_regex_archive
 
   def _get_list_of_gs_distfiles(self):
     """Get relative, sorted list of distfile paths from Google Storage bucket"""
@@ -309,6 +311,65 @@ class DupItApi(recipe_api.RecipeApi):
                     self.rsync_mirror_address)
       self.m.step(cmd=rsync_cmd, infra_step=True, name=rsync_name)
 
+  def _write_empty_file_to_gs(self, gs_path, step_name):
+    """Creates an empty temp file and then copies to gs_path.
+
+    Args:
+      * gs_path: Google Cloud Storage URI to upload the empty file to. Filename
+        should be included in this.
+      * step_name: name of the gsutil upload step to be shown in LUCI.
+    """
+    tempfile = self.m.path.mkstemp()
+    self.m.gsutil(cmd=['cp', tempfile, gs_path], name=step_name)
+
+  def _archive_distfiles_to_gs(self, gs_uri, distfiles,
+                               files_description='distfiles',
+                               donefile_name='.done'):
+    """Upload an additional copy of distfiles for archival.
+
+    Upload the files in the directory 'distfiles' points to to a Google Cloud
+    Storage URI for archival.
+
+    After the upload is complete create an empty file called 'done' at the
+    provided Google Cloud Storage URI. This step is to work around Google
+    Storage not supporting atomic moves so any consumer of this function can
+    ensure the upload was completed successfully.
+
+    Args:
+      * gs_uri: Google Cloud Storage URI to upload to -- interpreted by
+        datetime's strftime (using UTC time).
+      * distfiles: Path to the distfiles to be archived.
+      * files_description: used in the step name to allow the step to be more
+        descriptive (default='distfiles').
+      * donefile_name: name to be given to the empty file created after archive
+        upload is completed (default='.done').
+    """
+    # Interpret timecodes in the archive URI.
+    time_now_utc = self.m.time.utcnow()
+    gs_uri_dated = time_now_utc.strftime(gs_uri)
+
+    gsutil_cp_cmd = [
+        'cp',
+        # Recursively copy the files.
+        '-r',
+        # No cloberring.
+        '-n',
+        # All distfiles are public-read.
+        '-a',
+        'public-read',
+        self.m.path.join(distfiles, '*'),
+        self.m.path.join(gs_uri_dated, ''),
+    ]
+    gsutil_cp_name = 'archive %s to %s' % (files_description, gs_uri_dated)
+    self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True, name=gsutil_cp_name,
+                  parallel_upload=True)
+
+    # Create the donefile to signify we successfully uploaded.
+    donefile_gs_uri = self.m.path.join(gs_uri_dated, donefile_name)
+    donefile_step_name = 'create donefile at %s' % donefile_gs_uri
+    self._write_empty_file_to_gs(gs_path=donefile_gs_uri,
+                                 step_name=donefile_step_name)
+
   def _sync_additional_regex_matches_to_gs(self):
     """Copy files matching the additional regex from tmpdir to gs"""
     tmp_regexfiles_path = self.m.path.mkdtemp('regexfiles')
@@ -356,6 +417,12 @@ class DupItApi(recipe_api.RecipeApi):
     gsutil_cp_name = 'upload additional regex files to %s' % self.gs_distfiles_uri
     self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True, name=gsutil_cp_name,
                   parallel_upload=True)
+
+    if self._gs_uri_for_regex_archive:
+      self._archive_distfiles_to_gs(self._gs_uri_for_regex_archive,
+                                    tmp_regexfiles_path,
+                                    files_description='additional regex files',
+                                    donefile_name='.dupit_done')
 
   def _copy_new_distfiles_to_gs(self):
     """Copy new distfiles from tmpdir to gs"""

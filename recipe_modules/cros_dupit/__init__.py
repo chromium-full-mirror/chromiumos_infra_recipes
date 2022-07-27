@@ -6,6 +6,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'recipe_engine/time',
     'recipe_engine/raw_io',
     'depot_tools/gsutil',
     'easy',

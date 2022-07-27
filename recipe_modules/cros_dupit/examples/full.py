@@ -37,6 +37,10 @@ def GenTests(api):
           post_process.DoesNotRun,
           'copy new distfiles to gs.gsutil upload additional regex files to gs://stark-trek/the-ultimate-computer/distfiles/'
       ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'copy new distfiles to gs.gsutil archive additional regex files to gs://stark-trek/the-ultimate-computer/distfiles-archive/'
+      ),
       api.step_data('copy new distfiles to gs.list new distfiles',
                     stdout=api.raw_io.output_text('new_distfile.tar.gz')))
 

@@ -234,6 +234,49 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-n",
+      "-a",
+      "public-read",
+      "[CLEANUP]/regexfiles_tmp_1/*",
+      "gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.gsutil archive additional regex files to gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1",
+      "gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/.dupit_done"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.gsutil create donefile at gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/.dupit_done",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

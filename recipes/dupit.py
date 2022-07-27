@@ -40,6 +40,7 @@ def RunSteps(api, properties):
             filter_missing_links=properties.filter_missing_links,
             regex_for_additional_file_syncs=properties
             .regex_for_additional_file_syncs,
+            gs_uri_for_regex_archive=properties.gs_uri_for_regex_archive,
         )
         api.cros_dupit.run()
         mirror_success = True
@@ -89,6 +90,8 @@ def GenTests(api):
           False,
       'regex_for_additional_file_syncs':
           "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
+      'gs_uri_for_regex_archive':
+          'gs://chromeos-mirror/archlinux-archive/repos/%Y/%m/%d/%H%M%S%f/',
   }
 
   props = good_props.copy()
