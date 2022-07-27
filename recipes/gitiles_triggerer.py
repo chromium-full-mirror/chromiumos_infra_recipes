@@ -55,7 +55,8 @@ def RunSteps(api, properties):
   for key, value in triggers.items():
     # Only send one trigger: the last (most recent) one in the list.
     trigger = api.scheduler.GitilesTrigger(repo=value.repo, ref=value.ref,
-                                           revision=value.revision)
+                                           revision=value.revision,
+                                           inherit_tags=False)
     project = _expand(properties.project, key) or default_project
     jobs = [_expand(x.name, key) for x in properties.jobs]
     api.scheduler.emit_trigger(trigger, project, jobs,
