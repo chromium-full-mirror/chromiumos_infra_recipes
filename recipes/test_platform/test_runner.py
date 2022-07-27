@@ -731,12 +731,6 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
 
       api.cts_results_archive.archive(
           interface.get_results_directory(test_metadata))
-
-      interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
-
-      publish_to_result_flow(api, properties.config,
-                             properties.request.parent_request_uid,
-                             should_poll_for_completion=True)
     finally:
       # We'd want to prioritize CTS artifact upload as much as possible since
       # it would be fairly expensive to rerun CTS tests if it fails only on
@@ -744,6 +738,12 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
       # ResultDB upload will still be executed.
       _upload_to_resultdb(api, result, properties, interface, test_metadata,
                           autotest_keyval_file)
+
+      interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+
+      publish_to_result_flow(api, properties.config,
+                             properties.request.parent_request_uid,
+                             should_poll_for_completion=True)
 
   set_output_properties(api, result=result)
   return result
