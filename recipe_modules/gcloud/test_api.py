@@ -252,6 +252,13 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
         "name":
             "betty-arc-r-3447702",
         "networkInterfaces": [{
+            "accessConfigs": [{
+                "kind": "compute#accessConfig",
+                "name": "external-nat",
+                "natIP": "8.8.8.8",
+                "networkTier": "PREMIUM",
+                "type": "ONE_TO_ONE_NAT"
+            }],
             "fingerprint":
                 "U3oPE5xhuUo=",
             "kind":

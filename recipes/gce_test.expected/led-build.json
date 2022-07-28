@@ -206,11 +206,11 @@
       "--project=project",
       "--machine-type=machine-type",
       "--no-scopes",
-      "--no-address",
       "--zone=zone",
       "--format=json",
       "--network=network",
-      "--subnet=subnet"
+      "--subnet=subnet",
+      "--no-address"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -267,6 +267,15 @@
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"accessConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"kind\": \"compute#accessConfig\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"name\": \"external-nat\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"natIP\": \"8.8.8.8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"networkTier\": \"PREMIUM\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"type\": \"ONE_TO_ONE_NAT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
       "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",

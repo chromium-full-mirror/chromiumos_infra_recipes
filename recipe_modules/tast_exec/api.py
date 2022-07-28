@@ -508,8 +508,8 @@ class TastExecApi(RecipeApi):
 
     @contextlib.contextmanager
     def gce_vm_context():
-      instance, ip_addr = self.m.gcloud.create_instance(image, project, machine,
-                                                        zone, network, subnet)
+      instance, ip_addr, _ = self.m.gcloud.create_instance(
+          image, project, machine, zone, network, subnet)
       try:
         self._test_ssh_conn(ip_addr, GCE_VM_PORT, private_key_path)
         yield TastExecApi.VmInfo(ip_addr, GCE_VM_PORT)

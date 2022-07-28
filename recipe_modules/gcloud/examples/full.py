@@ -25,6 +25,10 @@ def RunSteps(api):
   api.gcloud.create_instance('image-name', project=GCE_PROJECT,
                              machine='n1-standard-4', zone='us-central1-b',
                              network='chromeos-gce-tests', subnet='us-central1')
+  api.gcloud.create_instance('image-name', project=GCE_PROJECT,
+                             machine='n1-standard-4', zone='us-central1-b',
+                             network='chromeos-gce-tests', subnet='us-central1',
+                             external_ip=True)
   api.gcloud.attach_disk(name='test-disk', instance='image-name',
                          disk='test-disk', zone='us-central1-b')
   api.gcloud.detach_disk(instance='image-name', disk='test-disk',

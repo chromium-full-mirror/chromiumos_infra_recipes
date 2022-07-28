@@ -205,7 +205,7 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
 
   def create_instance(self, image, project, machine, zone, network=None,
-                      subnet=None):
+                      subnet=None, external_ip=False):
     """Create an instance in the GCE project.
 
     Args:
@@ -215,15 +215,19 @@ class GcloudApi(recipe_api.RecipeApi):
       zone (str): GCE zone to create instance (e.g. us-central1-b).
       network (str): Network name to use.
       subnet (str): Network subnet on which to create instance.
+      external_ip (bool): Enables external IP address.
 
     Returns:
-      Tuple[str, str]: (name, ip_addr) of the instance.
+      Tuple[str, str, str|None]: (name, ip_addr, ext_ip_addr) of the instance.
     """
     extra_args = []
+    ext_ip_addr = None
     if network:
       extra_args.append('--network={}'.format(network))
     if subnet:
       extra_args.append('--subnet={}'.format(subnet))
+    if not external_ip:
+      extra_args.append('--no-address')
     gcloud_cmd = [
         'gcloud',
         'compute',
@@ -234,7 +238,6 @@ class GcloudApi(recipe_api.RecipeApi):
         '--project={}'.format(project),
         '--machine-type={}'.format(machine),
         '--no-scopes',
-        '--no-address',
         '--zone={}'.format(zone),
         '--format=json',
     ]
@@ -243,7 +246,11 @@ class GcloudApi(recipe_api.RecipeApi):
       output = self.m.easy.stdout_json_step(
           'create instance', gcloud_cmd,
           test_stdout=self.test_api.instance_data, infra_step=True)
-      return output[0]['name'], output[0]['networkInterfaces'][0]['networkIP']
+      if external_ip:
+        ext_ip_addr = output[0]['networkInterfaces'][0]['accessConfigs'][0][
+            'natIP']
+      return output[0]['name'], output[0]['networkInterfaces'][0][
+          'networkIP'], ext_ip_addr
 
   def delete_instance(self, instance, project, zone):
     """Delete a GCE instance.
