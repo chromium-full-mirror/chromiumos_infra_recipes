@@ -40,6 +40,7 @@ def RunSteps(api):
   except StepFailure as sf:
     with api.step.nest('failure') as presentation:
       presentation.step_text = str(sf)
+    raise sf
 
 
 def RunSpiders(api):
@@ -80,11 +81,21 @@ def GenTests(api):
           ]), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'test-failure',
+      'configure-failure',
+      api.runtime.global_shutdown_on_step(
+          'configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto'
+      ),
+      api.post_check(
+          post_process.StepTextEquals, 'failure',
+          "Infra Failure: Step('configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit') (canceled) (retcode: None)"
+      ), api.post_check(post_process.StatusAnyFailure))
+
+  yield api.test(
+      'api-endpoint-failure',
       api.build_menu.set_build_api_return('Portage Explorer Service',
                                           'PortageExplorerService/RunSpiders',
                                           retcode=1),
       api.post_check(
           post_process.StepTextEquals, 'failure',
           "Step('Portage Explorer Service.call chromite.api.PortageExplorerService/RunSpiders.call build API script') (retcode: 1)"
-      ))
+      ), api.post_check(post_process.StatusFailure))

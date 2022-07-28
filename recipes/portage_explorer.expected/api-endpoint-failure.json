@@ -2363,6 +2363,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('Portage Explorer Service.call chromite.api.PortageExplorerService/RunSpiders.call build API script') (retcode: 1)"
+    },
     "name": "$result"
   }
 ]

@@ -11135,7 +11135,7 @@ Recipe for Portage Explorer.
 Portage Explorer calls the RunSpiders endpoint from the PortageExplorerService
 and uploads the output from calling the endpoint to GS.
 
-&mdash; **def [RunSpiders](/recipes/portage_explorer.py#45)(api):**
+&mdash; **def [RunSpiders](/recipes/portage_explorer.py#46)(api):**
 
 Call the RunSpiders endpoint and upload to GS.
 
