@@ -5,23 +5,29 @@
 
 from recipe_engine import recipe_test_api
 
+from PB.chromiumos.test_disablement import TestDisablement
+from PB.chromiumos.test_disablement import TestDisablementCfg
+
 
 class ExonerateTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing Exonerate module."""
 
   def fake_exoneration_configs(self):
     """Returns fake configs for unittesting."""
-    return {
-        "test1": [{
-            "targets": ["eve"],
-        }],
-        "test2": [{
-            "targets": [],
-        }],
-        "arc.Boot": [{
-            "targets": ["betty"],
-        }],
-        "test3": [{
-            "targets": ["build_target_name"],
-        }]
-    }
+    betty_criteria = TestDisablement.FilterCriterion(key="build_target",
+                                                     values=["betty"])
+    bt_criteria = TestDisablement.FilterCriterion(key="build_target",
+                                                  values=["build_target_name"])
+    exonerations = [
+        TestDisablement(name="test1", bug_ids=["123456"]),
+        TestDisablement(name="test2", bug_ids=["123456"]),
+        TestDisablement(name="test3", dut_criteria=[bt_criteria],
+                        bug_ids=["123456"]),
+        TestDisablement(name="arc.Boot", dut_criteria=[betty_criteria],
+                        bug_ids=["123456"]),
+    ]
+    return TestDisablementCfg(disablements=exonerations)
+
+  def fake_config_file_contents(self):
+    return self.m.gitiles.make_encoded_file_from_bytes(
+        self.fake_exoneration_configs().SerializeToString())

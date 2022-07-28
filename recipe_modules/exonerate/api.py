@@ -4,14 +4,19 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import six
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.chromiumos.test_disablement import TestDisablementCfg
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateStats
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
+
+CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
+EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration.binaryproto'
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -26,13 +31,32 @@ class ExonerateApi(recipe_api.RecipeApi):
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
+  def fetch_config(self):
+    """Download config file and return the extracted config proto.
+
+    Returns: TestDisablementCfg object of the config.
+    """
+    str_config = six.ensure_binary(
+        self.m.gitiles.download_file(
+            CONFIG_INTERNAL_REPO, EXONERATION_CONFIG_BINPROTO_PATH,
+            timeout=3 * 60,
+            step_test_data=self.test_api.fake_config_file_contents))
+    return TestDisablementCfg.FromString(str_config)
+
   def _load_configs(self):
     """Load configs from binary/json files."""
-    if self._test_data.enabled:
-      self._exoneration_configs = self.test_api.fake_exoneration_configs()
-    #TODO(dhanyaganesh@) Config loading logic goes here once defined.
+    self._exoneration_configs = {}
+    exoneration_cfg = self.fetch_config()
+
+    for exoneration in exoneration_cfg.disablements:
+      targets = []
+      for bt_req in exoneration.dut_criteria:
+        if bt_req.key == 'build_target':
+          targets = bt_req.values
+
+      self._exoneration_configs[exoneration.name] = targets
+
     self._configs_loaded = True
-    return
 
   def _add_log(self, line):
     """Add log line (str) to global list."""
@@ -62,21 +86,21 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: TestCaseResult object changed based on the decision.
     """
-    for config in self._exoneration_configs[test_case.name]:
-      if config['targets'] == []:
-        bt_match = True
-      else:
-        bt_match = (build_target in config['targets'])
-      if bt_match:
-        self._add_log('Exonerated {} on {}'.format(test_case.name,
-                                                   build_target))
-        self._stats.test_count += 1
+    targets = self._exoneration_configs[test_case.name]
+    if targets == []:
+      # If targets is empty, match universally.
+      bt_match = True
+    else:
+      bt_match = build_target in targets
+    if bt_match:
+      self._add_log('Exonerated {} on {}'.format(test_case.name, build_target))
+      self._stats.test_count += 1
 
-      if bt_match and not self._dry_run:
-        return ExecuteResponse.TaskResult.TestCaseResult(
-            name=test_case.name, verdict=TaskState.VERDICT_PASSED,
-            human_readable_summary=('Exonerated: ' +
-                                    test_case.human_readable_summary))
+    if bt_match and not self._dry_run:
+      return ExecuteResponse.TaskResult.TestCaseResult(
+          name=test_case.name, verdict=TaskState.VERDICT_PASSED,
+          human_readable_summary=('Exonerated: ' +
+                                  test_case.human_readable_summary))
 
     return test_case
 
@@ -193,17 +217,18 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: test case dictionary changed based on the decision.
     """
-    for config in self._exoneration_configs[test_case['name']]:
-      if config['targets'] == []:
-        bt_match = True
-      else:
-        bt_match = (build_target in config['targets'])
-      if bt_match:
-        self._add_log('Exonerated {} on {}'.format(test_case['name'],
-                                                   build_target))
-        self._stats.test_count += 1
-      if bt_match and not self._dry_run:
-        return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
+    targets = self._exoneration_configs[test_case['name']]
+    if targets == []:
+      # If targets is empty, match universally.
+      bt_match = True
+    else:
+      bt_match = build_target in targets
+    if bt_match:
+      self._add_log('Exonerated {} on {}'.format(test_case['name'],
+                                                 build_target))
+      self._stats.test_count += 1
+    if bt_match and not self._dry_run:
+      return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
 
     return test_case
 
