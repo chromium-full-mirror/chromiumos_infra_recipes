@@ -413,6 +413,7 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   """
   base_tags = []
 
+  # Fetches the following information from buildbucket build tags.
   build_tag = api.cros_tags.get_values('build')
   if build_tag:
     base_tags.append(('image', build_tag[0]))
@@ -515,6 +516,7 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
     """
   base_variant = {}
 
+  # Fetches the following information from buildbucket build tags.
   board = api.cros_tags.get_values('label-board')
   if board:
     base_variant['board'] = board[0]
@@ -525,6 +527,10 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
 
   if build_target:
     base_variant['build_target'] = build_target
+
+  suite = api.cros_tags.get_values('suite')
+  if suite:
+    base_variant['suite'] = suite[0]
 
   # The template of a parent_request_uid is
   # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
@@ -1795,6 +1801,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-board': 'fake-board',
               'label-model': 'fake-model',
               'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
@@ -1822,6 +1829,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-board': 'fake-board',
               'label-model': 'fake-model',
               'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
@@ -1879,6 +1887,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-board': 'fake-board',
               'label-model': 'fake-model',
               'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
@@ -1935,6 +1944,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-board': 'fake-board',
               'label-model': 'fake-model',
               'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
           }, swarming_tags={
               'drone': 'fake-drone-1234',
