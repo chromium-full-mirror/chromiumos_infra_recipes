@@ -769,42 +769,6 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  }\n}",
-      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.write skylab_test_runner result for tast",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@{@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@  \"log_data\": {@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@  }@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@}@@@",
-      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
       "dummy-results-dir/autoserv_test/sysinfo/crossystem",
       "/path/to/tmp/"
     ],
