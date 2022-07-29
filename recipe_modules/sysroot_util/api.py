@@ -256,7 +256,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
                    disk_layout, base_is_recovery=False, version=None,
                    timeout_sec=2 * 60 * 60, build_test_data=None,
-                   test_test_data=None, name=None):
+                   test_test_data=None, name=None, skip_image_tests=False):
     """Build and validate images.
 
     Args:
@@ -272,6 +272,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       test_test_data (str): test response (JSON) from the ImageService/Test
           call, or None.
       name (str): Step name to use, or None for default name.
+      skip_image_tests (bool): Whether to skip tests of the built image via
+          ImageService/Test. Defaults to false.
     """
     if image_types:
       # TODO(b/217973414): Replace with MessageToJson once we don't need to
@@ -313,7 +315,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           # tested.
           return
 
-        with self.m.step.nest('test images'):
+        with self.m.step.nest('test images') as presentation:
+          if skip_image_tests:
+            presentation.step_text = \
+              "Skipping image tests as per board configuration.To check " \
+              "configuration, view generated/builder_configs.cfg or " \
+              "builderconfig/unit_tests_config.star in infra/config."
+            return
+
           failed_images = []
           for image in to_test:
             result_dir = self.m.path.mkdtemp(prefix='image-test-result-')
@@ -324,4 +333,4 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                     chroot=self.m.cros_sdk.chroot),
                 test_output_data=test_test_data).success:
               failed_images.append(image)
-          self.m.failures.raise_failed_image_tests(failed_images)
+            self.m.failures.raise_failed_image_tests(failed_images)

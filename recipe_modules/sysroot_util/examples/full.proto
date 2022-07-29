@@ -26,4 +26,7 @@ message FullTestProperties {
 
   // Copy the base image to recovery_image.bin for ChromeOS Flex.
   bool base_is_recovery = 6;
+
+  // Whether or not image unit tests should be skipped.
+  bool skip_tests = 7;
 }

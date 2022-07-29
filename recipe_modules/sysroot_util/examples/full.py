@@ -2,6 +2,7 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -47,7 +48,8 @@ def RunSteps(api, properties):
                                 disable_rootfs_verification=True,
                                 disk_layout="big_disk",
                                 base_is_recovery=properties.base_is_recovery,
-                                test_test_data=image_test_json)
+                                test_test_data=image_test_json,
+                                skip_image_tests=properties.skip_tests)
 
 
 def GenTests(api):
@@ -185,3 +187,9 @@ def GenTests(api):
 
   yield api.test('base-is-recovery', test_build(),
                  api.properties(base_is_recovery=True))
+
+  yield api.test(
+      'skip-image-tests', test_build(), api.properties(skip_tests=True),
+      api.post_process(
+          post_process.DoesNotRun,
+          'build images.test images.call chromite.api.ImageService/Test'))
