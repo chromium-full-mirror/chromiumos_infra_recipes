@@ -81,6 +81,70 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     super(CrosToolRunnerInterface, self).__init__(api, properties)
     self.cft_test_request = self._properties.cft_test_request
 
+  def _vm_is_vmtest(self):
+    """Checks if it qualifies VM testing.
+
+    Returns:
+      True if this should run via GCE.
+    """
+
+    check_suite = self.cft_test_request.test_suites[0].name == 'arc-cts-vm'
+    # Excludes betty and betty-pi-arc.
+    check_image = self.cft_test_request.autotest_keyvals['build'].startswith(
+        'betty-arc-')
+    return check_suite and check_image
+
+  # TODO(fqj, b/236679125): This is prototype hack, which breaks CFT
+  # reproducibility. Migrate to CFT services.
+  def _vm_direct_provision(self, metadata):
+    """Directly provision VM from GCP
+
+    Args:
+    * metadata (DUTTestMetadata): Input information relevant to one test.
+
+    Returns:
+      PrejobResponsesTuple: The prejob responses in ['prejob_dut_responses', 'any_provision_failed'] tuple.
+
+    Raises:
+      * api.test.StepFailure if prejob fails.
+    """
+    project = 'betty-cloud-prototype'
+    self._api.gcloud.set_gce_project(project=project)
+    self._api.gcloud.auth_list()
+
+    suffix = self._api.buildbucket.build.id
+    if suffix == 0:
+      # LED runs have buildbucket id=0. Use a random number.
+      self._api.random.seed(int(self._api.time.time()))
+      suffix = self._api.random.randint(1000000, 9999999)
+
+    build = metadata.autotest_keyvals['build']
+    gce_image = 'ctstest-{}-{}'.format(
+        build[0:30].replace('/', '-').replace('.', '-').lower(), suffix)
+
+    source_uri = 'https://storage.googleapis.com/chromeos-image-archive/{}/chromiumos_test_image_gce.tar.gz'.format(
+        build)
+
+    self._api.gcloud.create_image(
+        gce_image, source_uri=source_uri, licenses=[
+            'https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx',
+        ])
+
+    _, _, extip = self._api.gcloud.create_instance(gce_image, project,
+                                                   'n2-standard-4',
+                                                   'us-west2-a', 'default',
+                                                   'default', external_ip=True)
+
+    self._api.step('wait for betty boots', [
+        '/usr/bin/ssh', '-o', 'StrictHostKeyChecking=no', '-o',
+        'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes', 'root@' + extip,
+        'true'
+    ])
+
+    metadata.primary_dut.chromeos.ssh.address = extip
+
+    return PrejobResponsesTuple([], False)
+
   def submit_pre_job(self, metadata, max_duration_seconds=0):
     """Submits a Prejob execution on the DUT.
 
@@ -95,6 +159,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       * api.test.StepFailure If prejob fails.
     """
     del max_duration_seconds
+
+    if self._vm_is_vmtest():
+      with self._api.step.nest('Prototype GCE provision') as step:
+        return self._vm_direct_provision(metadata)
 
     with self._api.step.nest('CrosToolRunner: run provision') as step:
       with self._api.context(infra_steps=True):

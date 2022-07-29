@@ -49,6 +49,7 @@ DEPS = [
     'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
@@ -62,6 +63,7 @@ DEPS = [
     'cts_results_archive',
     'dut_interface',
     'easy',
+    'gcloud',
     'phosphorus',
     'result_flow',
 ]
@@ -1650,6 +1652,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         }
     }
 
+  def _canned_test_runner_request_for_ctr_for_vm():
+    req = _canned_test_runner_request_for_ctr()
+    req['autotest_keyvals']['build'] = 'betty-arc-r-release/R102-14637.0.0'
+    req['test_suites'][0]['name'] = 'arc-cts-vm'
+    return req
+
   def _canned_test_runner_request_for_ctr_within_deadline(current_time_sec):
     req = _canned_test_runner_request_for_ctr()
     req['deadline'] = timestamp_pb2.Timestamp(seconds=current_time_sec + 55)
@@ -2568,6 +2576,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _successful_run_test_step_for_ctr())
+
+  yield api.test(
+      'success-with-ctr-gce', _set_build(bid=42), _misc_properties(True),
+      _crossystem_keyval_file_step_data_for_ctr(),
+      _kernel_log_file_step_data_for_ctr(),
+      _request_properties_for_ctr(
+          cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),
+      _mock_load_step_for_ctr(), _successful_run_test_step_for_ctr())
 
   yield api.test(
       'within-deadline-ctr', api.time.seed(2369692800), _misc_properties(True),

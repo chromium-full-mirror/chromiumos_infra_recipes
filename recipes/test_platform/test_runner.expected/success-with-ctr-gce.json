@@ -1,0 +1,1238 @@
+[
+  {
+    "cmd": [],
+    "name": "No parent build."
+  },
+  {
+    "cmd": [],
+    "name": "inputs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@cft_test_request@{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"autotestKeyvals\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"branch\":\"main\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"build\":\"betty-arc-r-release/R102-14637.0.0\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"build_config\":\"bob-release\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"cidb_build_id\":\"5141110\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"datastore_parent_key\":\"('Build', 5141110)\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"master_build_config\":\"master-release\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"parent_job_id\":\"59dfe8555444e811\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"suite\":\"bvt-tast-informational\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"containerMetadata\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"containers\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"test-target\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        \"images\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          \"cros-test\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"digest\":\"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"name\":\"cros-test\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"repository\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"hostname\":\"gcr.io\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"project\":\"chromeos-bot\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"tags\":[@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"8835841547076258945\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@              \"amd64-generic-release.R96-1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            ]@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"parentBuildId\":\"12345\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"primaryDut\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"containerMetadataKey\":\"kevin\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"dutModel\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"buildTarget\":\"kevin\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"modelName\":\"kevin\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  \"testSuites\":[@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"name\":\"arc-cts-vm\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"testCaseIds\":{@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        \"testCaseIds\":[@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\":\"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\":\"tast.example.Fail\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\":\"tast.example.Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        ]@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@  ]@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@}@@@",
+      "@@@STEP_LOG_END@cft_test_request@@@",
+      "@@@STEP_LINK@parent CTP@https://cr-buildbucket.appspot.com/build/12345@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation"
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.cft_test_request validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.primary_dut validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.container_metadata validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.container_metadata_key validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "inputs validation.test_suites validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps"
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: create images file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"containers\":{\"test-target\":{\"images\":{\"cros-test\":{\"digest\":\"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\",\"name\":\"cros-test\",\"repository\":{\"hostname\":\"gcr.io\",\"project\":\"chromeos-bot\"},\"tags\":[\"8835841547076258945\",\"amd64-generic-release.R96-1.2.3\"]}}}}}",
+      "[CLEANUP]/container_images_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: create images file.writing container metadata to file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@container_images_tmp_1@{\"containers\":{\"test-target\":{\"images\":{\"cros-test\":{\"digest\":\"sha256:3e36d3622f5adad01080cc2120bb72c0714ecec6118eb9523586410b7435ae80\",\"name\":\"cros-test\",\"repository\":{\"hostname\":\"gcr.io\",\"project\":\"chromeos-bot\"},\"tags\":[\"8835841547076258945\",\"amd64-generic-release.R96-1.2.3\"]}}}}}@@@",
+      "@@@STEP_LOG_END@container_images_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID.call `result_flow`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID.call `result_flow`.ensure result_flow",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_flow",
+      "-ensure-file",
+      "chromiumos/infra/result_flow/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.publish build ID.call `result_flow`.ensure result_flow.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/result_flow/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.publish build ID.call `result_flow`.publish",
+    "stdin": "{\"buildId\":\"42\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\",\"testId\":\"original_test\"}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"dutTopology\":[@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"board\":\"fake_board\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"hostname\":\"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"model\":\"fake_model\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
+      "@@@STEP_LOG_LINE@response@  \"labDutTopology\":[@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"duts\":[@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"cacheServer\":{@@@",
+      "@@@STEP_LOG_LINE@response@            \"address\":{@@@",
+      "@@@STEP_LOG_LINE@response@              \"address\":\"0.0.0.0\",@@@",
+      "@@@STEP_LOG_LINE@response@              \"port\":123@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          },@@@",
+      "@@@STEP_LOG_LINE@response@          \"chromeos\":{@@@",
+      "@@@STEP_LOG_LINE@response@            \"dutModel\":{@@@",
+      "@@@STEP_LOG_LINE@response@              \"buildTarget\":\"fake_board\",@@@",
+      "@@@STEP_LOG_LINE@response@              \"modelName\":\"fake_model\"@@@",
+      "@@@STEP_LOG_LINE@response@            },@@@",
+      "@@@STEP_LOG_LINE@response@            \"ssh\":{@@@",
+      "@@@STEP_LOG_LINE@response@              \"address\":\"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          },@@@",
+      "@@@STEP_LOG_LINE@response@          \"id\":{@@@",
+      "@@@STEP_LOG_LINE@response@            \"value\":\"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ],@@@",
+      "@@@STEP_LOG_LINE@response@      \"id\":{@@@",
+      "@@@STEP_LOG_LINE@response@        \"value\":\"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
+      "@@@STEP_LOG_LINE@response@  \"resultsDir\":\"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/phosphorus",
+      "-ensure-file",
+      "chromiumos/infra/phosphorus/${platform} phosphorus_prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "env": {
+      "USE_DUT_TOPO": "True"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-phosphorus_prod-\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/phosphorus/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "load",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "env": {
+      "USE_DUT_TOPO": "True"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.load",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\",\"testId\":\"original_test\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\"}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "save",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.DUTInterface: check request deadline",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "config",
+      "set",
+      "project",
+      "betty-cloud-prototype"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.set gcloud project",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "auth",
+      "list"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.gcloud auth",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.create image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "create",
+      "ctstest-betty-arc-r-release-r102-14637-42",
+      "--source-uri=https://storage.googleapis.com/chromeos-image-archive/betty-arc-r-release/R102-14637.0.0/chromiumos_test_image_gce.tar.gz",
+      "--licenses=https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.create image.gce create image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "create",
+      "ctstest-betty-arc-r-release-r102-14637-42",
+      "--image=ctstest-betty-arc-r-release-r102-14637-42",
+      "--project=betty-cloud-prototype",
+      "--machine-type=n2-standard-4",
+      "--no-scopes",
+      "--zone=us-west2-a",
+      "--format=json",
+      "--network=default",
+      "--subnet=default"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.create instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"accessConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"kind\": \"compute#accessConfig\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"name\": \"external-nat\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"natIP\": \"8.8.8.8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"networkTier\": \"PREMIUM\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"type\": \"ONE_TO_ONE_NAT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/ssh",
+      "-o",
+      "StrictHostKeyChecking=no",
+      "-o",
+      "UserKnownHostsFile=/dev/null",
+      "-o",
+      "BatchMode=yes",
+      "root@8.8.8.8",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.wait for betty boots",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: run test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactDir\":\"[CLEANUP]/output_dir_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"primaryDut\":{@@@",
+      "@@@STEP_LOG_LINE@request@    \"containerMetadataKey\":\"kevin\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"dut\":{@@@",
+      "@@@STEP_LOG_LINE@request@      \"cacheServer\":{@@@",
+      "@@@STEP_LOG_LINE@request@        \"address\":{@@@",
+      "@@@STEP_LOG_LINE@request@          \"address\":\"0.0.0.0\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"port\":123@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"chromeos\":{@@@",
+      "@@@STEP_LOG_LINE@request@        \"dutModel\":{@@@",
+      "@@@STEP_LOG_LINE@request@          \"buildTarget\":\"fake_board\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"modelName\":\"fake_model\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"ssh\":{@@@",
+      "@@@STEP_LOG_LINE@request@          \"address\":\"8.8.8.8\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"id\":{@@@",
+      "@@@STEP_LOG_LINE@request@        \"value\":\"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"testSuites\":[@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\":\"arc-cts-vm\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testCaseIds\":{@@@",
+      "@@@STEP_LOG_LINE@request@        \"testCaseIds\":[@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\":\"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\":\"tast.example.Fail\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\":\"tast.example.Pass\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"testCaseResults\":[@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"pass\":{},@@@",
+      "@@@STEP_LOG_LINE@response@      \"resultDirPath\":{@@@",
+      "@@@STEP_LOG_LINE@response@        \"hostType\":\"LOCAL\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"path\":\"dummy-results-dir/subdir\"@@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
+      "@@@STEP_LOG_LINE@response@      \"testCaseId\":{@@@",
+      "@@@STEP_LOG_LINE@response@        \"value\":\"tauto.dummy_id\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.ensure cros-tool-runner",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/cros-tool-runner",
+      "-ensure-file",
+      "chromiumos/infra/cros-tool-runner/${platform} cros_tool_runner_prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.ensure cros-tool-runner.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-cros_tool_runner\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros-tool-runner/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "--non-interactive",
+      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
+      "test",
+      "-docker_key_file",
+      "/creds/service_accounts/skylab-drone.json",
+      "-images",
+      "[CLEANUP]/container_images_tmp_1",
+      "-input",
+      "/dev/stdin",
+      "-output",
+      "/dev/stdout"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test",
+    "stdin": "{\n  \"artifactDir\":\"[CLEANUP]/output_dir_tmp_1\",\n  \"primaryDut\":{\n    \"containerMetadataKey\":\"kevin\",\n    \"dut\":{\n      \"cacheServer\":{\n        \"address\":{\n          \"address\":\"0.0.0.0\",\n          \"port\":123\n        }\n      },\n      \"chromeos\":{\n        \"dutModel\":{\n          \"buildTarget\":\"fake_board\",\n          \"modelName\":\"fake_model\"\n        },\n        \"ssh\":{\n          \"address\":\"8.8.8.8\"\n        }\n      },\n      \"id\":{\n        \"value\":\"fake_host\"\n      }\n    }\n  },\n  \"testSuites\":[\n    {\n      \"name\":\"arc-cts-vm\",\n      \"testCaseIds\":{\n        \"testCaseIds\":[\n          {\n            \"value\":\"tauto.stub_Pass\"\n          },\n          {\n            \"value\":\"tast.example.Fail\"\n          },\n          {\n            \"value\":\"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ]\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to TKO",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to TKO.tauto.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'tauto.dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
+      "@@@STEP_LOG_END@TKO upload skipped@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/crossystem",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read crossystem keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@crossystem@@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_prev_result          = success                        # [RO/str] Firmware result of previous boot@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_result               = success                        # [RW/str] Firmware result this boot@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_tried                = B                              # [RO/str] Firmware tried this boot (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_try_count            = 0                              # [RW/int] Number of times to try fw_try_next@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_try_next             = B                              # [RW/str] Firmware to try next (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_vboot2               = 1                              # [RO/int] 1 if firmware was selected by vboot2 or 0 otherwise@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwb_tries               = 0                              # [RW/int] Try firmware B count@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)@@@",
+      "@@@STEP_LOG_LINE@crossystem@hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@    @@@",
+      "@@@STEP_LOG_END@crossystem@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@uname@@@@",
+      "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
+      "@@@STEP_LOG_LINE@uname@    @@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.tauto.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.exonerate ResultDB results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{\"gsDirectory\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"localDirectory\":\"[CLEANUP]/output_dir_tmp_1\"}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "upload-to-gs",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
+    "stdin": "{\"gsDirectory\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"localDirectory\":\"[CLEANUP]/output_dir_tmp_1\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Archive CTS results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json_input@{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"[CLEANUP]/output_dir_tmp_1\"}@@@",
+      "@@@STEP_LOG_END@json_input@@@",
+      "@@@STEP_LOG_LINE@instructions@[OrderedDict([('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction'), ('source', 'local/directory/to/upload')])]@@@",
+      "@@@STEP_LOG_END@instructions@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
+      "--json-input",
+      "{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"[CLEANUP]/output_dir_tmp_1\"}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Archive CTS results.prepare uploads",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"instructions\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"destination\": \"gs://fake-bucket/fake-folder\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"fake-instruction\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"source\": \"local/directory/to/upload\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Archive CTS results.Upload prepared results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-m",
+      "cp",
+      "-eR",
+      "local/directory/to/upload",
+      "gs://fake-bucket/fake-folder"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Archive CTS results.Upload prepared results.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: save local DUT state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"ready\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "save",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`.save",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"ready\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID (2).call `result_flow`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.publish build ID (2).call `result_flow`.publish",
+    "stdin": "{\"buildId\":\"42\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.create skylab result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@skylab_result@{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"autotestResult\":{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"testCases\":[@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\":\"tauto.stub_Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\":\"VERDICT_PASS\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"autotestResults\":{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"original_test\":{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      \"testCases\":[@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\":\"tauto.stub_Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\":\"VERDICT_PASS\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"logData\":{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"prejob\":{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"step\":[@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\":\"provision\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\":\"VERDICT_PASS\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\":{@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"dutState\":\"ready\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@  }@@@",
+      "@@@STEP_LOG_LINE@skylab_result@}@@@",
+      "@@@STEP_LOG_END@skylab_result@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.set output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkL0KwjAUhekg4oXSUnFxdHBL0x9F8CnEFyhpDWkgyS25acV39KG04NjRbzic6TtwYAdbSIIYA+YUxra5CaI0yhKIYTN4nDRpdGm0f0dwV3TlvOs9WonEgqTADCriHVqLjkk38aooK1acWXnixQ+2EDNlXV+yqQ9hmLUUhHZGEuUd+iFXiMrIb7e89fgk+d/dwxpWXorHqzpCjF4r7YRpZnO2fMgHkSBU/A==\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Results",
+    "~followup_annotations": [
+      "@@@STEP_LINK@Logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Results.tauto.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
