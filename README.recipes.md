@@ -130,7 +130,7 @@
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_legacy_fw](#recipes-build_legacy_fw) (Python3 ✅) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
-  * [build_linters](#recipes-build_linters) (Python3 ✅) &mdash; Recipe for linting CLs with Cargo Clippy.
+  * [build_linters](#recipes-build_linters) (Python3 ✅) &mdash; Recipe for linting CLs.
   * [build_menu:examples/full](#recipes-build_menu_examples_full) (Python3 ✅)
   * [build_menu:tests/is_cq_build_relevant](#recipes-build_menu_tests_is_cq_build_relevant) (Python3 ✅)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging) (Python3 ✅)
@@ -8613,9 +8613,9 @@ Recipe that builds chromeos-firmware on a firmware branch.
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-Recipe for linting CLs with Cargo Clippy.
+Recipe for linting CLs.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#201)(api, config, relevant_patchsets_by_linter, _properties):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#205)(api, config, relevant_patchsets_by_linter, _properties):**
 
 &mdash; **def [RunSteps](/recipes/build_linters.py#189)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)

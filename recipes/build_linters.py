@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for linting CLs with Cargo Clippy."""
+"""Recipe for linting CLs."""
 
 from collections import OrderedDict
 import json
@@ -192,9 +192,13 @@ def RunSteps(api, properties):
     return RawResult(status=SUCCESS,
                      summary_markdown='No changes need linting.')
   with api.build_menu.configure_builder() as config:
-    # We checkout the changes directly rather than using cherry pick
-    # to ensure that line numbers are accurate for comments (see b/196275805).
-    with api.build_menu.setup_workspace_and_chroot(cherry_pick_changes=False):
+    # Unfortunately we must pick between two bugs. We can either:
+    # 1) Checkout the changes directly rather than using cherry pick to ensure
+    #   that line numbers are accurate for comments (see b/196275805).
+    # 2) Cherry pick the changes to ensure that we're otherwise at TOT to
+    #   prevent problems with dependencies not being in sync (see b/240481231)
+    # Because the bug referenced in 2) is more common, we should cherry pick.
+    with api.build_menu.setup_workspace_and_chroot(cherry_pick_changes=True):
       return DoRunSteps(api, config, relevant_patchsets_by_linter, properties)
 
 

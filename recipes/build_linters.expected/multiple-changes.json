@@ -2208,7 +2208,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout gerrit change"
+    "name": "cherry-pick gerrit changes"
   },
   {
     "cmd": [
@@ -2228,8 +2228,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "checkout gerrit change.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2274,129 +2274,7 @@
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "fake-project",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "checkout gerrit change.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/fake-project|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/fake-project",
-      "refs/changes/1/1/1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "checkout gerrit change.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "checkout gerrit change.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "checkout gerrit change (2)"
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "checkout gerrit change (2).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"change_number\": 2, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
@@ -2443,6 +2321,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
@@ -2472,9 +2357,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "checkout gerrit change (2).repo forall",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/fake-project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -2484,7 +2369,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/fake-project",
-      "refs/changes/2/2/2"
+      "refs/changes/01/1/1:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
     "infra_step": true,
@@ -2500,15 +2385,15 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "checkout gerrit change (2).git fetch",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
       "git",
-      "checkout",
+      "rev-parse",
       "FETCH_HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
@@ -2525,9 +2410,149 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "checkout gerrit change (2).git checkout",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "fake-project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/fake-project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/fake-project",
+      "refs/changes/02/2/2:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "-m",
+      "merge gerrit changes"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/fake-project",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3244,11 +3269,7 @@
   },
   {
     "cmd": [],
-    "name": "update sdk"
-  },
-  {
-    "cmd": [],
-    "name": "update sdk.detect toolchain change",
+    "name": "init sdk.detect toolchain change",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@no change@@@"
@@ -3256,14 +3277,14 @@
   },
   {
     "cmd": [],
-    "name": "update sdk.detect toolchain change.determine toolchain paths",
+    "name": "init sdk.detect toolchain change.determine toolchain paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths",
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -3301,7 +3322,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3335,7 +3356,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3370,14 +3391,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.read output file",
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call response",
+    "name": "init sdk.detect toolchain change.determine toolchain paths.call chromite.api.DependencyService/GetToolchainPaths.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -3386,7 +3407,7 @@
   },
   {
     "cmd": [],
-    "name": "update sdk.detect toolchain change.path relevancy check",
+    "name": "init sdk.detect toolchain change.path relevancy check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
@@ -3411,7 +3432,7 @@
   },
   {
     "cmd": [],
-    "name": "update sdk.detect toolchain change.path relevancy check.ensure binaries",
+    "name": "init sdk.detect toolchain change.path relevancy check.ensure binaries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3443,7 +3464,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.path relevancy check.ensure binaries.ensure_installed",
+    "name": "init sdk.detect toolchain change.path relevancy check.ensure binaries.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3488,7 +3509,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.path relevancy check.write input binaryproto",
+    "name": "init sdk.detect toolchain change.path relevancy check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3516,7 +3537,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.path relevancy check.run check",
+    "name": "init sdk.detect toolchain change.path relevancy check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3546,18 +3567,22 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update sdk.detect toolchain change.path relevancy check.read output file",
+    "name": "init sdk.detect toolchain change.path relevancy check.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update sdk.detect toolchain change.set testing_toolchain",
+    "name": "init sdk.detect toolchain change.set testing_toolchain",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk"
   },
   {
     "cmd": [],
