@@ -17,6 +17,7 @@ from google.protobuf import duration_pb2
 
 from PB.lab import license as license_pb2
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
+from PB.chromiumos.test.api import test_suite as ctr_test_suite
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
@@ -62,6 +63,10 @@ def RunSteps(api):
   hw_test_unit_container.common.builder_name = builder_name
   hw_test_container = hw_test_unit_with_license.hw_test_cfg.hw_test[0]
   hw_test_container.run_via_cft = True
+  hw_test_container.tag_criteria.CopyFrom(
+      ctr_test_suite.TestSuite.TestCaseTagCriteria(
+          tags=["include_this_tag_1", "include_this_tag_2"],
+          tag_excludes=["exclude_this_tag_1", "exclude_this_tag_2"]))
   unit_hw_test_container = api.skylab.UnitHwTest(
       unit=hw_test_unit_container,
       hw_test=hw_test_container,

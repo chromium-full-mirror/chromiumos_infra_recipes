@@ -210,6 +210,8 @@ class SkylabApi(recipe_api.RecipeApi):
                 continue
               else:
                 request.params.run_via_cft = True
+                request.test_plan.tag_criteria.CopyFrom(
+                    uht.hw_test.tag_criteria)
                 configure_step.step_summary_text = "(Executing via CFT)"
 
             # TODO (b/217973414): Replace with MessageToJson once we don't need
