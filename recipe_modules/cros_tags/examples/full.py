@@ -30,7 +30,6 @@ def RunSteps(api, properties):
           'parent_buildbucket_id': str(api.buildbucket.build.id),
           'snapshot': snapshot.id,
           'commit_position': str(snapshot.position),
-          'buildset': 'commit/gitiles/host/proj/+/deadbeef',
           'hide-test-results-in-gerrit': 'true'
       })
   if properties.cq_cl_group_key:
