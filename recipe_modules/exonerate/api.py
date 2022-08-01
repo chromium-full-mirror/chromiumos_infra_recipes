@@ -16,7 +16,7 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
-EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration.binaryproto'
+EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -37,9 +37,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: TestDisablementCfg object of the config.
     """
     str_config = six.ensure_binary(
-        self.m.gitiles.download_file(
-            CONFIG_INTERNAL_REPO, EXONERATION_CONFIG_BINPROTO_PATH,
-            timeout=3 * 60,
+        self.m.cros_infra_config.download_binproto(
+            EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
+            repo=CONFIG_INTERNAL_REPO,
             step_test_data=self.test_api.fake_config_file_contents))
     return TestDisablementCfg.FromString(str_config)
 

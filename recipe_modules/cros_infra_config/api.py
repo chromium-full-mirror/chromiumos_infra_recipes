@@ -22,9 +22,9 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
-CHROME_OS_REPO_URL = (
+CHROME_OS_INFRA_CONFIG_REPO_URL = (
     'https://chrome-internal.googlesource.com/chromeos/infra/config')
-CHROME_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
+CHROME_CONFIG_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
 
 
 def ConvertPB(inpb, typ):
@@ -197,12 +197,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def download_binproto(self, filename, step_test_data, timeout=None,
-                        application='ChromeOS', message=None):
+                        repo=CHROME_OS_INFRA_CONFIG_REPO_URL, message=None):
     """Helper method to fetch a file from gitiles."""
-    repo = CHROME_OS_REPO_URL
-    if application == 'Chrome':
-      repo = CHROME_REPO_URL
-
     if self._config_ref.startswith('refs/changes/') and message:
       # If we are running with a CL for the config_ref, convert the jsonpb proto
       # to binaryproto and return that.
@@ -328,7 +324,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       return BotPolicyCfg.FromString(
           self.download_binproto('configs/bot-scaling/generated/bot_policy',
                                  self.test_api.bot_policy_test_data_chrome,
-                                 application='Chrome', message=BotPolicyCfg()))
+                                 repo=CHROME_CONFIG_REPO_URL,
+                                 message=BotPolicyCfg()))
     return BotPolicyCfg.FromString(
         self.download_binproto('bot_scaling/generated/bot_policy',
                                self.test_api.bot_policy_test_data,

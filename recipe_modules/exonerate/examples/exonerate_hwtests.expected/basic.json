@@ -16,11 +16,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/main/test/exoneration/generated/test_exoneration.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/test_exoneration.binaryproto",
       "--format",
       "text"
     ],
-    "name": "exonerate hw tests.fetch main:test/exoneration/generated/test_exoneration.binaryproto",
+    "name": "exonerate hw tests.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

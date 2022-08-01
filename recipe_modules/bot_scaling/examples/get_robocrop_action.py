@@ -47,7 +47,7 @@ def RunSteps(api):
       api.cros_infra_config.download_binproto(
           'configs/bot-scaling/generated/bot_policy',
           api.cros_infra_config.test_api.bot_policy_test_data_missing_fallback,
-          application='Chrome'))
+          repo='Chrome/config/repo'))
 
   robocrop_swarming_action = api.bot_scaling.get_robocrop_action(
       missing_fallback_bot_policy_config,

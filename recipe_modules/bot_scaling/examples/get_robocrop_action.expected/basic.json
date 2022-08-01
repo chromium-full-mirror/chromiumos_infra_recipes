@@ -225,7 +225,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy.binaryproto",
+      "Chrome/config/repo/+/HEAD/configs/bot-scaling/generated/bot_policy.binaryproto",
       "--format",
       "text"
     ],
