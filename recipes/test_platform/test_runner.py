@@ -2425,7 +2425,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           'execution steps.original_test.upload chromium test results '
           'to rdb.run rdb', retcode=1),
       api.post_process(
-          post_process.StepWarning, 'execution steps.'
+          post_process.StepFailure, 'execution steps.'
           'original_test.upload chromium test results to rdb'),
       api.post_process(
           post_process.MustRun,

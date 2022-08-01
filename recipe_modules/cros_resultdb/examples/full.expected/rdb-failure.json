@@ -20,7 +20,7 @@
       "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -152,7 +152,7 @@
     "name": "upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

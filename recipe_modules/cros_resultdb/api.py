@@ -196,12 +196,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
     pres.logs['config'] = self.m.json.dumps(config, indent=4)
     if not self.m.resultdb.enabled:
       pres.step_text = 'resultdb is not enabled on this builder'
-      pres.status = self.m.step.WARNING
+      pres.status = self.m.step.FAILURE
       return
     if config.get('result_format') not in RESULT_ADAPTER_FORMATS:
       pres.step_text = 'result_format must be one of %s got %s' % (
           ', '.join(RESULT_ADAPTER_FORMATS), config.get('result_format'))
-      pres.status = self.m.step.WARNING
+      pres.status = self.m.step.FAILURE
       return
 
     # ResultDB in CrOS recipes only supports uploading result file,
@@ -242,7 +242,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         self._upload_invocation_artifacts(stainless_url)
       return self.m.step('run rdb', cmd)
     except self.m.step.StepFailure:
-      self.m.step.active_result.presentation.status = self.m.step.WARNING
+      self.m.step.active_result.presentation.status = self.m.step.FAILURE
     return
 
   def _ensure_result_adapter_executables(self):

@@ -21,7 +21,7 @@
       "@@@STEP_LOG_LINE@config@    \"result_format\": \"not-supported\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

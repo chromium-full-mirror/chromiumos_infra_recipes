@@ -58,9 +58,9 @@ def GenTests(api):
 
   yield api.test(
       'not-enabled',
-      api.properties(
-          rdb_config=rdb_config_json, missing_test_names=['missing-test']),
-      api.post_process(post_process.StepWarning, 'upload test results to rdb'),
+      api.properties(rdb_config=rdb_config_json,
+                     missing_test_names=['missing-test']),
+      api.post_process(post_process.StepFailure, 'upload test results to rdb'),
       api.post_process(post_process.DoesNotRun,
                        'upload test results to rdb.run rdb'),
   )
@@ -149,4 +149,4 @@ def GenTests(api):
   yield api.test(
       'not-supported-format', api.buildbucket.ci_build(),
       api.properties(rdb_config=rdb_config_json),
-      api.post_process(post_process.StepWarning, 'upload test results to rdb'))
+      api.post_process(post_process.StepFailure, 'upload test results to rdb'))
