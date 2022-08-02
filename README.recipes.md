@@ -8628,9 +8628,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for linting CLs.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#205)(api, config, relevant_patchsets_by_linter, _properties):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#217)(api, config, relevant_patchsets_by_linter, _properties):**
 
-&mdash; **def [RunSteps](/recipes/build_linters.py#189)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_linters.py#201)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

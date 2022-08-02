@@ -218,7 +218,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 2, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bar.h\": {}, @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"/build/atlas/usr/include/chromeos/bar.h\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar2.go\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"bar2.rs\": {}, @@@",
       "@@@STEP_LOG_LINE@json.output@          \"foo.c\": {}, @@@",
@@ -238,7 +238,7 @@
     "name": "get relevant files",
     "~followup_annotations": [
       "@@@STEP_TEXT@found relevant files@@@",
-      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"bar2.rs\", \"foo.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"bar2.go\", \"foo.go\", \"foo.go\"], \"tidy\": [\"bar.h\", \"foo.c\"]}@@@",
+      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"bar2.rs\", \"foo.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"bar2.go\", \"foo.go\", \"foo.go\"], \"tidy\": [\"/build/atlas/usr/include/chromeos/bar.h\", \"foo.c\"]}@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
   },
@@ -6255,7 +6255,7 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"srcPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/bar.h\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo//build/atlas/usr/include/chromeos/bar.h\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"src/foo/foo.c\"@@@",
@@ -6281,7 +6281,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo/bar.h\"\n    },\n    {\n      \"path\": \"src/foo/foo.c\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/foo//build/atlas/usr/include/chromeos/bar.h\"\n    },\n    {\n      \"path\": \"src/foo/foo.c\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6419,7 +6419,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"findings\": [{\"linter\": 1, \"locations\": [{\"filepath\": \"path/file.cpp\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"findings\": [{\"linter\": 1, \"locations\": [{\"filepath\": \"path/file.cpp\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}, {\"linter\": 1, \"locations\": [{\"filepath\": \"/build/atlas/usr/include/chromeos/file.cpp\", \"line_end\": 1, \"line_start\": 1}], \"message\": \"test message\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

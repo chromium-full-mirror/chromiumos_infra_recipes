@@ -146,6 +146,14 @@ def _GetLints(api, linter, affected_packages):
             'line_end': 1
         }],
         'linter': LinterFinding.Linters.CLANG_TIDY
+    }, {
+        'message': 'test message',
+        'locations': [{
+            'filepath': '/build/atlas/usr/include/chromeos/file.cpp',
+            'line_start': 1,
+            'line_end': 1
+        }],
+        'linter': LinterFinding.Linters.CLANG_TIDY
     }]
 
     test_data = json.dumps(
@@ -168,6 +176,7 @@ def _WriteComments(api, findings):
   """Write comments with Tricium for linter findings."""
   with api.step.nest('write comments for linter findings') as presentation:
     comment_count = 0
+    ignored_count = 0
     category_names = {
         LinterFinding.Linters.LINTER_UNSPECIFIED: 'BuildLinters',
         LinterFinding.Linters.CLANG_TIDY: 'ClangTidy',
@@ -176,6 +185,9 @@ def _WriteComments(api, findings):
     }
     for finding in findings:
       for location in finding.locations:
+        if location.filepath.startswith('/'):
+          ignored_count += 1
+          continue
         comment_count += 1
         api.tricium.add_comment(category_names[finding.linter], finding.message,
                                 location.filepath,
@@ -275,7 +287,7 @@ def GenTests(api):
                   'foo.go': {},
                   'bar2.go': {},
                   'foo.c': {},
-                  'bar.h': {}
+                  '/build/atlas/usr/include/chromeos/bar.h': {},
               }
           }
       },
