@@ -302,6 +302,7 @@ class GcloudApi(recipe_api.RecipeApi):
         disk_device_map['cache_test1'] = 'sdv'
         disk_device_map['cache_test2'] = 'sdu'
         disk_device_map['cr'] = 'sdt'
+        disk_device_map['cros-internal'] = 'sds'
       else:  # pragma: no cover
         disks = os.listdir(disk_dir)
         for disk in disks:
@@ -755,6 +756,8 @@ class GcloudApi(recipe_api.RecipeApi):
     disk_suffix = ''
     if cache == 'chromiumos':
       disk_suffix = 'cros'
+    elif cache == 'chromeos':
+      disk_suffix = 'cros-internal'
     elif cache == 'chrome':
       disk_suffix = 'cr'
     elif cache == 'chromeosSDK':

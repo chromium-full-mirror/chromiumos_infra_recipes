@@ -25,6 +25,14 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.gcloud.lookup_device_id(disk_name='cros'), 'sdz')
   api.assertions.assertEqual(api.gcloud.gce_disk_blkid, 'sdz')
+  api.gcloud.create_disk(disk='chromeos', zone='us-central1-b',
+                         image='test-chromeos-snapshot', disk_type='pd-ssd')
+  api.gcloud.attach_disk(name='cros-internal', instance='test_bot1',
+                         disk='test_disk1', zone='us-central1-b')
+  api.assertions.assertEqual(
+      api.gcloud.disk_attached(disk_name='cros-internal'), True)
+  api.assertions.assertEqual(
+      api.gcloud.lookup_device_id(disk_name='cros-internal'), 'sds')
   api.gcloud.create_disk(disk='foo', zone='us-central1-b',
                          image='test-chromeos-snapshot', disk_type='pd-ssd')
   with api.assertions.assertRaises(StepFailure):

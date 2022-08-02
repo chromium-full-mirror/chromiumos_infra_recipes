@@ -58,6 +58,11 @@ def RunSteps(api):
           'result': 'cros',
       },
       {
+          'cache': 'chromeos',
+          'branch': 'main',
+          'result': 'cros-internal',
+      },
+      {
           'cache': 'chrome',
           'branch': 'main',
           'result': 'cr',

@@ -36,7 +36,7 @@
       "compute",
       "disks",
       "create",
-      "foo",
+      "chromeos",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
       "--quiet",
@@ -52,6 +52,37 @@
   {
     "cmd": [],
     "name": "look up device name to device id map (4)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (5)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (6)"
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "create",
+      "foo",
+      "--zone=us-central1-b",
+      "--image-project=chromeos-bot",
+      "--quiet",
+      "--image=test-chromeos-snapshot",
+      "--type=pd-ssd"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create disk from image (3)"
+  },
+  {
+    "cmd": [],
+    "name": "look up device name to device id map (7)"
   },
   {
     "cmd": [
@@ -73,11 +104,11 @@
   },
   {
     "cmd": [],
-    "name": "look up device name to device id map (5)"
+    "name": "look up device name to device id map (8)"
   },
   {
     "cmd": [],
-    "name": "look up device name to device id map (6)"
+    "name": "look up device name to device id map (9)"
   },
   {
     "cmd": [
@@ -99,11 +130,11 @@
   },
   {
     "cmd": [],
-    "name": "look up device name to device id map (7)"
+    "name": "look up device name to device id map (10)"
   },
   {
     "cmd": [],
-    "name": "look up device name to device id map (8)"
+    "name": "look up device name to device id map (11)"
   },
   {
     "cmd": [
@@ -125,11 +156,11 @@
   },
   {
     "cmd": [],
-    "name": "look up device name to device id map (9)"
+    "name": "look up device name to device id map (12)"
   },
   {
     "cmd": [],
-    "name": "look up device name to device id map (10)"
+    "name": "look up device name to device id map (13)"
   },
   {
     "name": "$result"

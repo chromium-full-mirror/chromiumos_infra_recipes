@@ -177,6 +177,13 @@ def GenTests(api):
                   branch='main',
                   disk_type='pd-ssd',
               ),
+              dict(
+                  cache_name='chromeos',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
           ],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
@@ -189,6 +196,13 @@ def GenTests(api):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+              dict(
+                  cache_name='chromeos',
                   command='repo',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
