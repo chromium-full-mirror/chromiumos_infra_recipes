@@ -20,4 +20,8 @@ message GitilesTriggererProperties {
     string name = 1;
   }
   repeated Job jobs = 2;
+
+  // Once we get the trigger, how much should we delay before launching
+  // children. This is used to smooth load and prevent race conditions.
+  int64 delay_trigger_seconds = 3;
 }

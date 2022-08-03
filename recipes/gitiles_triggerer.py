@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'recipe_engine/time',
     'test_util',
 ]
 
@@ -50,6 +51,9 @@ def RunSteps(api, properties):
     # Remember only the most recent trigger for each key.
     if trigger.HasField('gitiles'):
       triggers[_make_key(trigger.gitiles)] = trigger.gitiles
+
+  with api.step.nest('sleep configured delay'):
+    api.time.sleep(properties.delay_trigger_seconds)
 
   # Call emit_triggers once for each unique key in the dictionary.
   for key, value in triggers.items():
@@ -93,7 +97,7 @@ def GenTests(api):
           }).build,
       api.properties(
           GitilesTriggererProperties(
-              jobs=[GitilesTriggererProperties.Job(
-                  name='{branch}-branch-job')])),
+              jobs=[GitilesTriggererProperties.Job(name='{branch}-branch-job')],
+              delay_trigger_seconds=60)),
       api.post_check(post_process.MustRun, 'trigger chromeos jobs'),
       api.post_check(post_process.StatusSuccess))

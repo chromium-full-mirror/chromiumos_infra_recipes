@@ -1,5 +1,9 @@
 [
   {
+    "cmd": [],
+    "name": "sleep configured delay"
+  },
+  {
     "cmd": [
       "prpc",
       "call",
