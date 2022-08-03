@@ -49,6 +49,7 @@ function check_staging() {
   ignore_errors="${1}"
   check_bb_auth
   checks=("staging-Annealing" "staging-StarDoctor" "staging-DutTracker"
+          "staging-amd64-generic-direct-tast-vm"
           "staging-amd64-generic-postsubmit" "staging-RoboCrop"
           "staging-chrome-pupr-generator" "staging-backfiller"
           "staging-manifest-doctor" "staging-release-main-orchestrator"
