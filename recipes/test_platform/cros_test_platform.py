@@ -19,7 +19,7 @@ from PB.recipe_modules.chromeos.service_version.service_version import \
 from PB.test_platform import result_flow as result_flow_pb2
 from PB.test_platform import service_version as service_version_pb
 from PB.test_platform.steps.enumeration import \
-  EnumerationRequest, EnumerationRequests, EnumerationResponse
+  EnumerationRequest, EnumerationRequests, EnumerationResponse, EnumerationResponses
 from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
 from PB.test_platform.request import Request
@@ -263,9 +263,16 @@ def enumerate_tests(api, requests, error_in_requests):
   if not (non_cft_requests or cft_requests):
     raise api.step.StepFailure("No valid request found")
 
-  enum_requests = _enumerate_non_cft_tests(api, non_cft_requests)
-  enum_requests.update(_enumerate_cft_tests(api, cft_requests))
-  return enum_requests
+  non_cft_enums = _enumerate_non_cft_tests(api, non_cft_requests)
+  cft_enums = _enumerate_cft_tests(api, cft_requests)
+
+  all_enums = {}
+  for k, v in non_cft_enums.items():
+    all_enums[k] = v
+  for k, v in cft_enums.items():
+    all_enums[k] = v
+  enmeration_responses_proto = EnumerationResponses(tagged_responses=all_enums)
+  return enmeration_responses_proto.tagged_responses
 
 
 def _should_enumerate_via_ctf(r):
@@ -308,7 +315,7 @@ def _enumerate_non_cft_tests(api, requests):
       step.presentation.logs[name] = json.dumps(
           _enumeration_log(response), separators=(',', ': '), indent=2,
           sort_keys=True)
-    return enum_responses.tagged_responses
+    return dict(enum_responses.tagged_responses)
 
 
 def _enumerate_cft_tests(api, requests):
@@ -2111,6 +2118,28 @@ def GenTests(api):
                               cipd_label='prod')),
               }), _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-suite-mixed-with-non-cft-suite',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'cft':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"])),
+                  'default':
+                      _test_request('default')
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _generic_enumerate_response(api), _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.post_check(post_process.StatusSuccess))
 
