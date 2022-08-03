@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "name": "repo info"
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -576,6 +576,27 @@
   },
   {
     "cmd": [],
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
