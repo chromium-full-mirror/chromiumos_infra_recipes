@@ -225,13 +225,15 @@ class FailuresApi(RecipeApi):
       presentation.logs['list of failed images'] = failed_types
       raise StepFailure(message)
 
-  def aggregate_failures(self, failures):
+  def aggregate_failures(self, failures, ignore_build_test_failures=False):
     """Returns a recipe result based on the given failures.
 
     Only fatal failures cause the whole recipe to fail.
 
     Args:
       failures (list[Failure]): All failures encountered during execution.
+      ignore_build_test_failures (bool): If True, we will still produce a summary
+        of failures if present, but we will not set the build status to FAILURE.
 
     Returns:
       RawResult: The recipe result, including a human-readable failure summary.
@@ -276,7 +278,9 @@ class FailuresApi(RecipeApi):
       summary_lines.extend(lines)
 
     summary_markdown = self._format_summary_markdown(summary_lines)
-    return result_pb2.RawResult(status=common_pb2.FAILURE,
+
+    status = common_pb2.SUCCESS if ignore_build_test_failures else common_pb2.FAILURE
+    return result_pb2.RawResult(status=status,
                                 summary_markdown=summary_markdown)
 
   def _format_summary_markdown(self, summary_lines):

@@ -34,9 +34,13 @@ def RunSteps(api):
   with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api)
+
+    is_release = api.orch_menu.is_release_orchestrator
+    is_public = api.orch_menu.is_public_orchestrator
+
     return api.orch_menu.create_recipe_result(
-        include_build_details=api.orch_menu.is_release_orchestrator or
-        api.orch_menu.is_public_orchestrator)
+        include_build_details=is_release or is_public,
+        ignore_build_test_failures=is_release)
 
 
 def DoRunSteps(api):
@@ -218,6 +222,13 @@ def GenTests(api):
 
   yield api.orch_menu.test('critical-child-builder-fails', data.ctp_normal,
                            api.post_check(post_process.StatusAnyFailure),
+                           with_manifest_refs=True,
+                           collect_builds=data.crit_fail)
+
+  yield api.orch_menu.test('critical-child-builder-fails-but-release',
+                           data.ctp_normal,
+                           api.post_check(post_process.StatusSuccess),
+                           builder='release-main-orchestrator',
                            with_manifest_refs=True,
                            collect_builds=data.crit_fail)
 

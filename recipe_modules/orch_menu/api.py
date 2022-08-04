@@ -295,12 +295,15 @@ class OrchMenuApi(RecipeApi):
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
 
-  def create_recipe_result(self, include_build_details=False):
+  def create_recipe_result(self, include_build_details=False,
+                           ignore_build_test_failures=False):
     """Create the correct return value for RunSteps.
 
     Args:
       include_build_details (bool): If True augment RawResults.summary_markdown
         with additional details about the build for both successes and failures.
+      ignore_build_test_failures (bool): If True, we will still produce a summary
+        of failures if present, but we will not set the build status to FAILURE.
 
     Returns:
       (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
@@ -320,7 +323,8 @@ class OrchMenuApi(RecipeApi):
       # Set child output ids if any
       self.m.build_menu.add_child_build_ids_to_output_property()
 
-    raw_result = self.m.failures.aggregate_failures(self.builds_status.failures)
+    raw_result = self.m.failures.aggregate_failures(self.builds_status.failures,
+                                                    ignore_build_test_failures)
     if include_build_details:
       summary_markdown = "Full version: {}".format(
           self.m.cros_version.version.legacy_version)

@@ -4832,7 +4832,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#228)(self, failures):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#228)(self, failures, ignore_build_test_failures=False):**
 
 Returns a recipe result based on the given failures.
 
@@ -4840,11 +4840,13 @@ Only fatal failures cause the whole recipe to fail.
 
 Args:
   failures (list[Failure]): All failures encountered during execution.
+  ignore_build_test_failures (bool): If True, we will still produce a summary
+    of failures if present, but we will not set the build status to FAILURE.
 
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#533)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#537)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -4853,7 +4855,7 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#310)(self, builds, refresh_configs=False):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#314)(self, builds, refresh_configs=False):**
 
 Verify all builds completed successfully.
 
@@ -4864,7 +4866,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#364)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#368)(self, build):**
 
 Retrieve the status of the build.
 
@@ -4874,7 +4876,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#332)(self, hw_tests):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#336)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -4885,7 +4887,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#391)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#395)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -4895,7 +4897,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#348)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#352)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -4913,7 +4915,7 @@ Catches exceptions and logs them instead.
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#413)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#417)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -4923,7 +4925,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#425)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#429)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -4933,7 +4935,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#375)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#379)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -4943,7 +4945,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#402)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#406)(self, hw_test):**
 
 Determine if the vm test was critical.
 
@@ -4980,7 +4982,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#454)(self, failures, fresh_builder_configs, presentation=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#458)(self, failures, fresh_builder_configs, presentation=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
@@ -4995,7 +4997,7 @@ Returns:
   updated_failures (list[Failure]): The list of Failures with 'fatal'
       statuses possibly updated.
 
-&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#491)(self, failures, test_plan_summary, presentation=None):**
+&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#495)(self, failures, test_plan_summary, presentation=None):**
 
 If tests are now non-critical, failures are non-fatal.
 
@@ -6800,7 +6802,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#833)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#837)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6821,13 +6823,15 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#142)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#298)(self, include_build_details=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#298)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
 Args:
   include_build_details (bool): If True augment RawResults.summary_markdown
     with additional details about the build for both successes and failures.
+  ignore_build_test_failures (bool): If True, we will still produce a summary
+    of failures if present, but we will not set the build status to FAILURE.
 
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
@@ -6850,7 +6854,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#166)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#496)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#500)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -6864,7 +6868,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#762)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#766)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6879,11 +6883,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#690)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#694)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#696)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#700)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -11041,7 +11045,7 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#42)(api):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#46)(api):**
 
 &mdash; **def [RunSteps](/recipes/orchestrator.py#33)(api):**
 ### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
