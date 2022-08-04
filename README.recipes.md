@@ -11148,7 +11148,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#16)(api):**
 ### *recipes* / [portage\_explorer](/recipes/portage_explorer.py)
 
-[DEPS](/recipes/portage_explorer.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/portage_explorer.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -11157,7 +11157,7 @@ Recipe for Portage Explorer.
 Portage Explorer calls the RunSpiders endpoint from the PortageExplorerService
 and uploads the output from calling the endpoint to GS.
 
-&mdash; **def [RunSpiders](/recipes/portage_explorer.py#46)(api):**
+&mdash; **def [RunSpiders](/recipes/portage_explorer.py#47)(api):**
 
 Call the RunSpiders endpoint and upload to GS.
 
@@ -11165,7 +11165,7 @@ Call the RunSpiders endpoint from the PortageExplorerService. Store the
 output as a json in a tmp dir and upload to the portage_explorer bucket in
 GS.
 
-&mdash; **def [RunSteps](/recipes/portage_explorer.py#35)(api):**
+&mdash; **def [RunSteps](/recipes/portage_explorer.py#36)(api):**
 ### *recipes* / [presubmit\_cq](/recipes/presubmit_cq.py)
 
 [DEPS](/recipes/presubmit_cq.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

@@ -3139,6 +3139,14 @@
   },
   {
     "cmd": [],
+    "name": "Portage Explorer Service.Output to output.properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@portage_explorer_output@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {
