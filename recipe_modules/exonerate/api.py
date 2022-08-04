@@ -121,7 +121,8 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     new_test_cases = []
     for test_case in test_cases:
-      if test_case.verdict == TaskState.VERDICT_PASSED:
+      if test_case.verdict != TaskState.VERDICT_FAILED:
+        # If test didn't fail, noop.
         new_test_cases.append(test_case)
       else:
         if test_case.name in self._exoneration_configs:
@@ -248,7 +249,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       return [], common_pb2.FAILURE
     new_test_cases = []
     for test_case in all_test_cases:
-      if (test_case['verdict'] == 'VERDICT_PASSED' or
+      if (test_case['verdict'] != 'VERDICT_FAILED' or
           test_case['name'] not in self._exoneration_configs):
         new_test_cases.append(test_case)
       else:
