@@ -83,6 +83,22 @@ def GenTests(api):
   )
 
   yield api.test(
+      'dont-reuse',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.is_mount(True),
+      api.properties(**{
+          '$chromeos/gcloud': {
+              'source_cache_action': 'MOUNT_RECOVERY_IMAGE',
+          }
+      }),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.setup source cache disk.create disk from snapshot image.discarding mounted cache'
+      ),
+  )
+
+  yield api.test(
       'is-mount',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.gcloud.is_mount(True),
