@@ -283,9 +283,7 @@ def _should_enumerate_via_ctf(r):
 
   Returns: bool
   """
-  return r.params.run_via_cft and (
-      (r.test_plan.tag_criteria and r.test_plan.tag_criteria.tags) or
-      [s.name for s in r.test_plan.suite] == ["cft_ctf_test_suite"])
+  return r.params.run_via_cft
 
 
 def _enumerate_non_cft_tests(api, requests):
@@ -2112,6 +2110,21 @@ def GenTests(api):
                           .TestCaseTagCriteria(tags=["beep", "boop"],
                                                tag_excludes=["blap", "blop"]))
               }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-suite-without-tags-execution-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={'default': _cft_test_request('foo')},
+              config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
