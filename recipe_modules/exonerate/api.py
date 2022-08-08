@@ -72,6 +72,15 @@ class ExonerateApi(recipe_api.RecipeApi):
           dry_run_text + '\n'.join(self._global_log_lines))
       self._global_log_lines = []
 
+  def _get_printable_configs(self):
+    """Return configs in a printable str format."""
+    lines = []
+    for test in sorted(self._exoneration_configs.keys()):
+      targets = [str(t) for t in self._exoneration_configs[test]]
+      lines.append('{}: {}'.format(test, targets))
+
+    return lines
+
   def print_stats(self):
     """Write exoneration stats to output properties."""
     self.m.easy.set_properties_step(exoneration_stats=self._stats)
@@ -189,6 +198,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     with self.m.step.nest('exonerate hw tests') as pres:
       if not self._configs_loaded:
         self._load_configs()
+        pres.logs['configs'] = self._get_printable_configs()
 
       for skylab_res in hw_test_results:
         if skylab_res.status == common_pb2.SUCCESS:
@@ -282,6 +292,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     with self.m.step.nest('exonerate vm tests') as pres:
       if not self._configs_loaded:
         self._load_configs()
+        pres.logs['configs'] = self._get_printable_configs()
 
       for build in vm_builds:
         if build.status == common_pb2.SUCCESS:

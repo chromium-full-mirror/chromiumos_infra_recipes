@@ -4766,7 +4766,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#175)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#184)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -4777,7 +4777,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#211)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#221)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -4788,7 +4788,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#236)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#246)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4800,7 +4800,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#266)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#276)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -4817,7 +4817,7 @@ Download config file and return the extracted config proto.
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#75)(self):**
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#84)(self):**
 
 Write exoneration stats to output properties.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
