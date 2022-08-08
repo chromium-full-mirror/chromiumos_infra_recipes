@@ -39,12 +39,24 @@ def RunSteps(api):
       unit=another_hw_test_unit,
   )
 
+  separate_ctp_unit = api.cros_test_plan.test_api.some_other_hw_test_unit
+  separate_ctp_test = separate_ctp_unit.hw_test_cfg.hw_test[0]
+  separate_ctp_test.common.display_name = 'wait_on_separate_ctp'
+  separate_ctp_task = api.skylab.test_api.skylab_task(
+      bid=5679,
+      url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b5678',
+      test=separate_ctp_test,
+      unit=separate_ctp_unit,
+  )
+
   responses = api.skylab.wait_on_suites(
-      [task, another_task], timeout=duration_pb2.Duration(seconds=3600))
-  api.assertions.assertEqual(len(responses), 2)
+      [task, another_task, separate_ctp_task],
+      timeout=duration_pb2.Duration(seconds=3600))
+  api.assertions.assertEqual(len(responses), 3)
 
   expected_tasks = [r.task for r in responses]
-  api.assertions.assertEqual(expected_tasks, [task, another_task])
+  api.assertions.assertEqual(expected_tasks,
+                             [task, another_task, separate_ctp_task])
 
 
 def GenTests(api):

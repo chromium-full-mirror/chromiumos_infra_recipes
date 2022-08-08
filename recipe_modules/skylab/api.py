@@ -311,22 +311,23 @@ class SkylabApi(recipe_api.RecipeApi):
     if not tasks:
       return []
     with self.m.step.nest('collect skylab tasks v2') as presentation:
-
-      # All the tasks contain the same cros_test_platform build ID.
-      task_id = tasks[0].id
+      # Get a list of the unique Buildbucket ids for skylab tasks.
+      task_ids = list(set(task.id for task in tasks))
       # Give 30 minutes grace period for recipes to time out.
       timeout_seconds = int(timeout.seconds + 30 * 60)
       try:
-        hw_tests = self.m.buildbucket.collect_builds(
-            [task_id], timeout=timeout_seconds)[task_id]
+        hw_test_builds = self.m.buildbucket.collect_builds(
+            task_ids, timeout=timeout_seconds)
       except recipe_api.StepFailure:  #pragma: no cover
         # Mark the step as an INFRA_FAILURE and get the output
         # properties of underlying recipes.
         presentation.status = 'EXCEPTION'
-        hw_tests = self.m.buildbucket.get_multi([task_id])[task_id]
+        hw_test_builds = self.m.buildbucket.get_multi(task_ids)
 
       results = []
-      responses = self._get_multi_response_binary(hw_tests)
+      for build in hw_test_builds.values():
+        responses = {}
+        responses.update(self._get_multi_response_binary(build))
       for t in tasks:
         result = responses.get(
             _request_tag(t.test), self._default_failed_response())
