@@ -274,14 +274,14 @@
   },
   {
     "cmd": [],
-    "name": "mount overlay chromiumos"
+    "name": "mount overlay chromeos"
   },
   {
     "cmd": [],
-    "name": "mount overlay chromiumos.set chromiumos_warm_cache",
+    "name": "mount overlay chromeos.set chromeos_warm_cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chromiumos_warm_cache@false@@@"
+      "@@@SET_BUILD_PROPERTY@chromeos_warm_cache@false@@@"
     ]
   },
   {
@@ -294,7 +294,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos/upperdir/chromiumos"
+      "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -309,7 +309,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "mount overlay chromiumos.create upperdir",
+    "name": "mount overlay chromeos.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -324,7 +324,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos/workdir/chromiumos"
+      "[CACHE]/chromeos/workdir/chromeos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -339,7 +339,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "mount overlay chromiumos.create workdir",
+    "name": "mount overlay chromeos.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -354,7 +354,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -369,7 +369,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "mount overlay chromiumos.create mount path",
+    "name": "mount overlay chromeos.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -382,9 +382,9 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromeos/upperdir/chromeos,workdir=[CACHE]/chromeos/workdir/chromeos,x-chromeos-overlay.name=chromeos",
       "overlay",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -399,7 +399,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "mount overlay chromiumos.mount",
+    "name": "mount overlay chromeos.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -466,7 +466,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -481,7 +481,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "clean up overlayfs mounts.unmount overlay chromiumos",
+    "name": "clean up overlayfs mounts.unmount overlay chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -491,7 +491,7 @@
       "sudo",
       "rm",
       "-rf",
-      "[CACHE]/chromiumos/workdir"
+      "[CACHE]/chromeos/workdir"
     ],
     "infra_step": true,
     "luci_context": {

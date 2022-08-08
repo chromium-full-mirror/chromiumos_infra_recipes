@@ -232,7 +232,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
@@ -284,7 +284,7 @@
     "name": "source cache.setup source cache disk.create disk from snapshot image.set snapshot_version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromiumos-source-snapshot\"@@@"
+      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chromeos-source-snapshot\"@@@"
     ]
   },
   {
@@ -293,17 +293,17 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
     ],
     "infra_step": true,
-    "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+    "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -319,7 +319,7 @@
     "cmd": [
       "mkdir",
       "-p",
-      "/snapshot_mounts/chromiumos"
+      "/snapshot_mounts/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -336,14 +336,14 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdz",
-      "/snapshot_mounts/chromiumos"
+      "/dev/sds",
+      "/snapshot_mounts/chromeos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache.mount disk cros",
+    "name": "source cache.mount disk cros-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -356,7 +356,7 @@
       "UUID",
       "-o",
       "value",
-      "/dev/sdz"
+      "/dev/sds"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -377,8 +377,8 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache.update fstab for /dev/sdz",
-    "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromiumos ext4 discard,defaults,noatime,nofail 0 2",
+    "name": "source cache.update fstab for /dev/sds",
+    "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromeos ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -410,7 +410,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -430,15 +430,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "initial-chromiumos-source-snapshot",
-      "[CACHE]/infra_versions/chromiumos-main-cache-snapshot-version.txt"
+      "initial-chromeos-source-snapshot",
+      "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@initial-chromiumos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
+      "@@@STEP_LOG_END@chromeos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -476,14 +476,14 @@
   },
   {
     "cmd": [],
-    "name": "mount overlay chromiumos"
+    "name": "mount overlay chromeos"
   },
   {
     "cmd": [],
-    "name": "mount overlay chromiumos.set chromiumos_warm_cache",
+    "name": "mount overlay chromeos.set chromeos_warm_cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chromiumos_warm_cache@false@@@"
+      "@@@SET_BUILD_PROPERTY@chromeos_warm_cache@false@@@"
     ]
   },
   {
@@ -496,10 +496,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos/upperdir/chromiumos"
+      "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "infra_step": true,
-    "name": "mount overlay chromiumos.create upperdir",
+    "name": "mount overlay chromeos.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -514,10 +514,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos/workdir/chromiumos"
+      "[CACHE]/chromeos/workdir/chromeos"
     ],
     "infra_step": true,
-    "name": "mount overlay chromiumos.create workdir",
+    "name": "mount overlay chromeos.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -532,10 +532,10 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
-    "name": "mount overlay chromiumos.create mount path",
+    "name": "mount overlay chromeos.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -548,12 +548,12 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=/snapshot_mounts/chromiumos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
+      "lowerdir=/snapshot_mounts/chromeos,upperdir=[CACHE]/chromeos/upperdir/chromeos,workdir=[CACHE]/chromeos/workdir/chromeos,x-chromeos-overlay.name=chromeos",
       "overlay",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
-    "name": "mount overlay chromiumos.mount",
+    "name": "mount overlay chromeos.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -603,10 +603,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
+      "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
+    "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -635,7 +635,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.ensure root path",
@@ -656,7 +656,7 @@
       "--repo-rev=stable",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -684,7 +684,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -705,7 +705,7 @@
       "checkout",
       "--force"
     ],
-    "cwd": "[CACHE]/chromiumos/.repo/repo",
+    "cwd": "[CACHE]/chromeos/.repo/repo",
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.repo binary update.git checkout",
     "~followup_annotations": [
@@ -717,7 +717,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -737,7 +737,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -763,7 +763,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -787,7 +787,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -821,7 +821,7 @@
       "reset",
       "--hard"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -851,7 +851,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -885,7 +885,7 @@
       "--force-remove-dirty",
       "--prune"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -928,7 +928,7 @@
       "[CLEANUP]/event_log__tmp_1",
       "/path/to/tmp/"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.repo stats.event-log",
     "~followup_annotations": [
@@ -974,7 +974,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "info"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.repo info.repo info",
     "~followup_annotations": [
@@ -990,10 +990,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
+      "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
+    "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1010,7 +1010,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "cwd": "[CACHE]/chromeos/manifest-internal",
     "infra_step": true,
     "name": "sync cached directory.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
@@ -1083,7 +1083,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
@@ -1129,11 +1129,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CACHE]/chromiumos/.recipes_state.json",
+      "[CACHE]/chromeos/.recipes_state.json",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).Read proto from [CACHE]/chromiumos/.recipes_state.json",
+    "name": "sync cached directory (2).Read proto from [CACHE]/chromeos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1161,10 +1161,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
+      "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json",
+    "name": "sync cached directory (2).Write proto to [CACHE]/chromeos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1193,7 +1193,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
     "name": "sync cached directory (2).ensure synced checkout.ensure root path",
@@ -1214,7 +1214,7 @@
       "--repo-rev=stable",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1241,7 +1241,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "infra_step": true,
     "name": "sync cached directory (2).ensure synced checkout.clear repo locks",
     "~followup_annotations": [
@@ -1265,7 +1265,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1299,7 +1299,7 @@
       "reset",
       "--hard"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1329,7 +1329,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1363,7 +1363,7 @@
       "--force-remove-dirty",
       "--prune"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1406,7 +1406,7 @@
       "[CLEANUP]/event_log__tmp_2",
       "/path/to/tmp/"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "infra_step": true,
     "name": "sync cached directory (2).ensure synced checkout.repo stats.event-log",
     "~followup_annotations": [
@@ -1452,7 +1452,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "info"
     ],
-    "cwd": "[CACHE]/chromiumos",
+    "cwd": "[CACHE]/chromeos",
     "infra_step": true,
     "name": "sync cached directory (2).ensure synced checkout.repo info.repo info",
     "~followup_annotations": [
@@ -1468,10 +1468,10 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromiumos/.recipes_state.json"
+      "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
-    "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
+    "name": "sync cached directory (2).Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1488,7 +1488,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromiumos/manifest-internal",
+    "cwd": "[CACHE]/chromeos/manifest-internal",
     "infra_step": true,
     "name": "sync cached directory (2).sync chromeos/manifest-internal branches",
     "~followup_annotations": [
@@ -1561,7 +1561,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
@@ -1622,10 +1622,10 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CACHE]/chromiumos"
+      "[CACHE]/chromeos"
     ],
     "infra_step": true,
-    "name": "clean up overlayfs mounts.unmount overlay chromiumos",
+    "name": "clean up overlayfs mounts.unmount overlay chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1635,7 +1635,7 @@
       "sudo",
       "rm",
       "-rf",
-      "[CACHE]/chromiumos/workdir"
+      "[CACHE]/chromeos/workdir"
     ],
     "infra_step": true,
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir",

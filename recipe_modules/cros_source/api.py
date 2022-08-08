@@ -183,7 +183,7 @@ class CrosSourceApi(RecipeApi):
     usually updated once at the beginning of a build and then mounted into the
     workspace path.
     """
-    return self.m.path['cache'].join('chromiumos')
+    return self.m.path['cache'].join('chromeos')
 
   @property
   def workspace_path(self):
@@ -380,10 +380,10 @@ class CrosSourceApi(RecipeApi):
     with self.m.step.nest('retry cache sync'):
       # If the checkout sync failed then we'll unmount and try again.
       self.m.overlayfs.unmount('workspace', self.workspace_path)
-      self.m.overlayfs.unmount('chromiumos', self.cache_path)
+      self.m.overlayfs.unmount('chromeos', self.cache_path)
       self.m.file.rmtree("Destroying cache at {}".format(self.cache_path),
                          self.cache_path)
-      self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+      self.m.overlayfs.mount('chromeos', self.preload_path, self.cache_path,
                              persist=True)
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
       clean = self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
@@ -436,7 +436,7 @@ class CrosSourceApi(RecipeApi):
 
     assert self._is_configured, 'cros_source not configured'
     if self._enable_custom_overlays:
-      self.m.overlayfs.mount('chromiumos', self.preload_path, self.cache_path,
+      self.m.overlayfs.mount('chromeos', self.preload_path, self.cache_path,
                              persist=True)
       self.m.path.mock_add_paths(self.cache_path.join('.repo'))
 
@@ -776,7 +776,7 @@ class CrosSourceApi(RecipeApi):
         if snapshot_mount:
           branch = self.manifest_branch or 'main'
           lower_dir = self.m.gcloud.setup_cache_disk(
-              cache_name='chromiumos', branch=branch, disk_type=disk_type,
+              cache_name='chromeos', branch=branch, disk_type=disk_type,
               recovery_snapshot=self._recovery_snapshot)
           self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
         # TODO(mikenichols): Remove once source cache lands and is not reverted.
@@ -784,12 +784,12 @@ class CrosSourceApi(RecipeApi):
             self.m.file.listdir('check for existing verison file',
                                 self.m.gcloud.snapshot_version_path)) > 0:
           self.m.overlayfs.cleanup_overlay_directories(
-              cache_name='chromiumos'
+              cache_name='chromeos'
           )  # pragma: nocover, no way to simulate in tests.
           self.m.file.rmcontents(
               'removing version files', self.m.gcloud.snapshot_version_path
           )  # pragma: nocover, no way to simulate in tests.
-        self.m.overlayfs.mount('chromiumos', lower_dir, self.cache_path,
+        self.m.overlayfs.mount('chromeos', lower_dir, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))
         # Explicitly do not mount the workspace overlay at this time, to prevent
