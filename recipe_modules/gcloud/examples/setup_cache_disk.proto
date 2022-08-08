@@ -9,4 +9,7 @@ package recipe_modules.chromeos.gcloud.examples;
 message TestInputProperties {
   // Whether or not we expect mounting the cache disk to fail.
   bool should_fail = 1;
+
+  // Whether to expect a chromiumos- bot prefix instead of chromeos-.
+  bool chromiumos_bot_prefix = 2;
 }

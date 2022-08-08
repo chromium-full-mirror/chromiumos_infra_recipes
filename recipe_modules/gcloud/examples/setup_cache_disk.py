@@ -30,6 +30,7 @@ def RunSteps(api, properties):
     with api.assertions.assertRaises(StepFailure):
       api.gcloud.setup_cache_disk(cache_name='chromiumos', disk_size='600GB',
                                   disallow_previously_mounted=True)
+  regexp_prefix = r'chromiumos' if properties.chromiumos_bot_prefix else r'chromeos'
 
   # Multiple disks
   mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
@@ -39,7 +40,8 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.gcloud.disk_short_name, 'cros')
   if api.build_menu.is_staging:
     api.assertions.assertRegexpMatches(
-        api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-\w*-cros')
+        api.gcloud.gce_disk,
+        regexp_prefix + r'-\w*-\w*-us-central1-b-x16-0-\w*-cros')
     api.assertions.assertEqual(
         api.gcloud.snapshot_version_file,
         'staging-chromiumos-main-cache-snapshot-version.txt')
@@ -54,7 +56,8 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.gcloud.branch, 'release-r90-13816-b')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   api.assertions.assertRegexpMatches(
-      api.gcloud.gce_disk, r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosr90')
+      api.gcloud.gce_disk,
+      regexp_prefix + r'-\w*-\w*-us-central1-b-x16-0-.*-crosr90')
   api.gcloud.unmount_disk(name='cros-r90', mount_path=mount_path)
   api.gcloud.setup_cache_disk(cache_name='chromiumos',
                               branch='release-R90-13816.B', recipe_mount=True)
@@ -63,7 +66,7 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(api.gcloud.branch, 'stabilize-rust-13836-b')
   api.assertions.assertRegexpMatches(
       api.gcloud.gce_disk,
-      r'chromeos-\w*-\w*-us-central1-b-x16-0-.*-crosstabilize')
+      regexp_prefix + r'-\w*-\w*-us-central1-b-x16-0-.*-crosstabilize')
   api.gcloud.delete_disk(disk=api.gcloud.gce_disk, zone='us-central1-b')
   api.assertions.assertEqual(api.gcloud.snapshot_suffix, '13370000')
   mount_path = api.gcloud.setup_cache_disk(cache_name='chromiumos',
@@ -79,6 +82,13 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'chromiumos-bot',
+      api.properties(chromiumos_bot_prefix=True),
+      api.gcloud.infra_host('chromiumos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StatusSuccess),
   )
 

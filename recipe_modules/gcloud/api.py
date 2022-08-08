@@ -18,7 +18,7 @@ from recipe_engine.recipe_api import StepFailure
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
 
-_SWARMING_HOST_REGEXP = (r'^chromeos-'
+_SWARMING_HOST_REGEXP = (r'^(chromeos|chromiumos)-'
                          r'\w*-'
                          r'(?P<role>\w*)-'
                          r'(?P<zone>\w*-\w*-\w*)-'
