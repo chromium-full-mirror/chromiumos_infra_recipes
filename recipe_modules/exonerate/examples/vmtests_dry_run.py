@@ -46,6 +46,8 @@ def RunSteps(api):
   vm_builds = [build]
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
+  summary = api.exonerate.get_exoneration_markdown()
+  api.assertions.assertEqual(summary, '')
   api.assertions.assertEqual(exonerated_test_names, [])
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
   api.assertions.assertIn(

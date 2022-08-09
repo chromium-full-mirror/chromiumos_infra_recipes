@@ -11,6 +11,7 @@ DEPS = [
     'easy',
     'naming',
     'skylab',
+    'urls',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

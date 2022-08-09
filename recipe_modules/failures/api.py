@@ -239,11 +239,13 @@ class FailuresApi(RecipeApi):
       RawResult: The recipe result, including a human-readable failure summary.
     """
     failures = [failure for failure in failures if failure.fatal]
+    exoneration_summary = self.m.exonerate.get_exoneration_markdown()
 
     # If there were no fatal failures, then the recipe succeeded and there is
     # no need for a summary.
     if not failures:
-      return result_pb2.RawResult(status=common_pb2.SUCCESS)
+      return result_pb2.RawResult(status=common_pb2.SUCCESS,
+                                  summary_markdown=exoneration_summary)
 
     # Otherwise, we need to create a detailed failure summary.
     failures_by_kind = collections.defaultdict(list)
@@ -259,7 +261,7 @@ class FailuresApi(RecipeApi):
     # - hw.coral.bvt-cq: <a>Graphics_Something<\a>
     # - hw.coral.bvt-tast-cq: <a>Cheets_SomethingElse<\a>
     # ...
-    summary_lines = []
+    summary_lines = [exoneration_summary] if exoneration_summary else []
     for kind in sorted(failures_by_kind):
       failure_group = sorted(failures_by_kind[kind],
                              key=operator.attrgetter('title'))

@@ -59,6 +59,9 @@ def RunSteps(api):
   # Testing the case of exoneration
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
+  # Testing the markdown output.
+  md_string = api.exonerate.get_exoneration_markdown()
+  api.assertions.assertTrue('bvt-cq' in md_string)
   api.assertions.assertFalse(
       common_pb2.FAILURE in [f.status for f in hw_test_failures])
   api.assertions.assertEqual(exonerated_test_names, ['target.hw.bvt-cq'])

@@ -28,6 +28,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._exoneration_configs = {}
     self._configs_loaded = False
     self._stats = ExonerateStats(dry_run=properties.dry_run)
+    self._exoneration_link_map = {}
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
@@ -213,8 +214,11 @@ class ExonerateApi(recipe_api.RecipeApi):
               child_results=new_child_results)
           new_test_results.append(new_skylab_res)
           if new_status == common_pb2.SUCCESS:
-            exonerated_test_names.append(
-                str(skylab_res.task.test.common.display_name))
+            suite_name = str(skylab_res.task.test.common.display_name)
+            link_text = '{}.{}'.format(build_target, suite_name)
+            self._exoneration_link_map[
+                link_text] = self.m.urls.get_skylab_task_url(skylab_res.task)
+            exonerated_test_names.append(suite_name)
       self._print_logs(pres)
       return new_test_results, exonerated_test_names
 
@@ -312,9 +316,30 @@ class ExonerateApi(recipe_api.RecipeApi):
           new_build.status = new_status
           new_build.output.properties.update({'all_test_cases': new_test_cases})
           if new_status == common_pb2.SUCCESS:
-            exonerated_test_names.append(self.m.naming.get_vm_test_title(build))
+            suite_name = self.m.naming.get_vm_test_title(build)
+            link_text = '{}.{}'.format(build_target, suite_name)
+            self._exoneration_link_map[
+                link_text] = self.m.urls.get_vm_test_link_map(build)
+            exonerated_test_names.append(suite_name)
           new_vm_builds.append(new_build)
 
       self._print_logs(pres)
 
     return new_vm_builds, exonerated_test_names
+
+  def get_exoneration_markdown(self):
+    """Return markdown style info about suites that were exonerated.
+
+    Returns: str in markdown style.
+    """
+    exonerated_count = len(self._exoneration_link_map)
+    if exonerated_count == 0:
+      return ''
+    md_string = '{} {} exonerated\n- '.format(
+        exonerated_count, 'suite' + ('s' if exonerated_count > 1 else ''))
+    all_links = [
+        '[{}]({})'.format(text, link)
+        for text, link in self._exoneration_link_map.items()
+    ]
+    md_string += ', '.join(all_links)
+    return md_string
