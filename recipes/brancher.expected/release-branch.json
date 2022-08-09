@@ -1049,27 +1049,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sync cached directory.ensure synced checkout.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
-      "@@@STEP_LOG_END@repo-info stdout@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info"
-    ],
-    "cwd": "[CACHE]/chromeos",
-    "infra_step": true,
-    "name": "sync cached directory.ensure synced checkout.repo info.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",

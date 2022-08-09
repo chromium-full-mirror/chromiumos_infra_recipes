@@ -182,25 +182,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "repo info",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
-      "@@@STEP_LOG_END@repo-info stdout@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info"
-    ],
-    "cwd": "[START_DIR]/repo",
-    "name": "repo info.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
