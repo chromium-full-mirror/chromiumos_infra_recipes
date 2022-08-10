@@ -77,6 +77,7 @@ _DUT_STATE_READY = 'ready'
 _24_HOURS = 24 * 60 * 60
 
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
+TAST_TEST_NAME_PREFIX = 'tast.'
 
 
 # TODO(b/217973414): remove this py2 compatibility workaround.
@@ -563,6 +564,9 @@ def _upload_missing_tast_results(api, base_variant, autotest_keyval_file):
   missing_tests = []
   for key, value in autotest_keyval_file.items():
     if key.startswith(TAST_MISSING_TEST_KEY):
+      # Adds the "tast." prefix to Tast test name for convention.
+      if not value.startswith(TAST_TEST_NAME_PREFIX):
+        value = TAST_TEST_NAME_PREFIX + value
       missing_tests.append(value)
   api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant)
 
