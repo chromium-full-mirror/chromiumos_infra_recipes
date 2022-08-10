@@ -112,7 +112,7 @@ def RunSteps(api, properties):
     api.step(
         'Upload EC Firmware test results',
         api.resultdb.wrap([
-            'vpython',
+            'vpython3',
             cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
             '--result=' + str(test_results), '--upload=True'
         ]))

@@ -3645,7 +3645,7 @@
       "rdb",
       "stream",
       "--",
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",
       "--result=[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out/twister.json",
       "--upload=True"
