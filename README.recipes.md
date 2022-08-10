@@ -321,7 +321,6 @@
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full) (Python3 ✅)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
   * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
-  * [dupit_arch](#recipes-dupit_arch) (Python3 ✅) &mdash; Recipe for syncing Archlinux to our local cache for Borealis VM image.
   * [dut_interface:tests/full](#recipes-dut_interface_tests_full) (Python3 ✅)
   * [dut_tracker](#recipes-dut_tracker) (Python3 ✅) &mdash; Recipe for the Star Doctor.
   * [easy:examples/full](#recipes-easy_examples_full) (Python3 ✅)
@@ -10242,15 +10241,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 Recipe for syncing remote, distributed tarballs to our local cache.
 
 &mdash; **def [RunSteps](/recipes/dupit.py#24)(api, properties):**
-### *recipes* / [dupit\_arch](/recipes/dupit_arch.py)
-
-[DEPS](/recipes/dupit_arch.py#8): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-Recipe for syncing Archlinux to our local cache for Borealis VM image.
-
-&mdash; **def [RunSteps](/recipes/dupit_arch.py#35)(api):**
 ### *recipes* / [dut\_interface:tests/full](/recipe_modules/dut_interface/tests/full.py)
 
 [DEPS](/recipe_modules/dut_interface/tests/full.py#6): [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
