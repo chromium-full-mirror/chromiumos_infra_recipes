@@ -1566,7 +1566,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [ChromiteApi](/recipe_modules/chromite/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [build\_packages](/recipe_modules/chromite/api.py#174)(self, board, args=None, \*\*kwargs):**
+&mdash; **def [build\_packages](/recipe_modules/chromite/api.py#175)(self, board, args=None, \*\*kwargs):**
 
 Run the build_packages script inside the chroot.
 
@@ -1592,9 +1592,9 @@ Args:
   value (str): The value to scan for.
 Returns (bool): True if the value was found.
 
-&mdash; **def [checkout](/recipe_modules/chromite/api.py#134)(self, manifest_url=None, repo_url=None, branch=None):**
+&mdash; **def [checkout](/recipe_modules/chromite/api.py#135)(self, manifest_url=None, repo_url=None, branch=None):**
 
-&mdash; **def [checkout\_chromite](/recipe_modules/chromite/api.py#194)(self):**
+&mdash; **def [checkout\_chromite](/recipe_modules/chromite/api.py#195)(self):**
 
 Checks out the configured Chromite branch.
     
@@ -1603,14 +1603,14 @@ Checks out the configured Chromite branch.
 
 &emsp; **@property**<br>&mdash; **def [chromite\_path](/recipe_modules/chromite/api.py#57)(self):**
 
-&mdash; **def [configure](/recipe_modules/chromite/api.py#182)(self, \*\*KWARGS):**
+&mdash; **def [configure](/recipe_modules/chromite/api.py#183)(self, \*\*KWARGS):**
 
 Loads configuration from build properties into this recipe config.
 
 Args:
   KWARGS: Additional keyword arguments to forward to the configuration.
 
-&mdash; **def [cros\_sdk](/recipe_modules/chromite/api.py#145)(self, name, cmd, args=None, environ=None, chroot_cmd=None, \*\*kwargs):**
+&mdash; **def [cros\_sdk](/recipe_modules/chromite/api.py#146)(self, name, cmd, args=None, environ=None, chroot_cmd=None, \*\*kwargs):**
 
 Return a step to run a command inside the cros_sdk.
 
@@ -1628,7 +1628,7 @@ Return: (config) A 'gclient' recipe module configuration.
 
 &mdash; **def [get\_config\_defaults](/recipe_modules/chromite/api.py#69)(self):**
 
-&mdash; **def [run](/recipe_modules/chromite/api.py#231)(self, goma_dir=None):**
+&mdash; **def [run](/recipe_modules/chromite/api.py#232)(self, goma_dir=None):**
 
 Runs the configured 'cbuildbot' build.
 
@@ -1653,13 +1653,13 @@ Args:
             directory so that cbuildbot can find it automatically.
 Returns: (Step) the 'cbuildbot' execution step.
 
-&mdash; **def [setup\_board](/recipe_modules/chromite/api.py#165)(self, board, args=None, \*\*kwargs):**
+&mdash; **def [setup\_board](/recipe_modules/chromite/api.py#166)(self, board, args=None, \*\*kwargs):**
 
 Run the setup_board script inside the chroot.
 
 Used by the internal goma recipe.
 
-&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#204)(self):**
+&mdash; **def [with\_system\_python](/recipe_modules/chromite/api.py#205)(self):**
 
 Prepare a directory with the system python binary available.
 

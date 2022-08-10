@@ -128,6 +128,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     args.append(config)
 
     cmd = [self.chromite_path.join('scripts', 'cbuildbot_launch')] + args
+    kwargs['legacy_global_namespace'] = True
     return self.m.legacy_annotation(name, cmd, **kwargs)
 
   # Only used by the internal goma recipe.
