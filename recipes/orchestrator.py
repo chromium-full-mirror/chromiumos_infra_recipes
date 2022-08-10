@@ -79,7 +79,11 @@ def DoRunSteps(api):
   metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
 
   # Run any HW tests.
-  api.orch_menu.plan_and_run_tests(container_metadata=metadata)
+  if not api.orch_menu.is_public_orchestrator:
+    # Don't want to run tests on the public orchestrator, and unlike other
+    # orchestrators without testing we can't run the test plan generator because
+    # it requires access to internal repos.
+    api.orch_menu.plan_and_run_tests(container_metadata=metadata)
 
   if api.orch_menu.is_release_orchestrator:
     api.cros_lkgm.collect_public_build()
@@ -106,7 +110,7 @@ def GenTests(api):
                            with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test(
-      'public-orchestrator', data.ctp_normal,
+      'public-orchestrator',
       api.properties(
           **{
               "$chromeos/cros_source":
