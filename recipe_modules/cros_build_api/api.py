@@ -95,6 +95,14 @@ class DependencyService(Stub):
   """Stub for DependencyService."""
 
 
+class FirmwareService(Stub):
+  """Stub for FirmwareService."""
+
+
+class ImageService(Stub):
+  """Stub for ImageService."""
+
+
 class MethodService(Stub):
   """Stub for MethodService."""
 
@@ -111,14 +119,6 @@ class PayloadService(Stub):
 
 class PortageExplorerService(Stub):
   """Stub for PortageExplorerService."""
-
-
-class FirmwareService(Stub):
-  """Stub for FirmwareService."""
-
-
-class ImageService(Stub):
-  """Stub for ImageService."""
 
 
 class SdkService(Stub):
