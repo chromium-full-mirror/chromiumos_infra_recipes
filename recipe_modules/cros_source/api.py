@@ -524,7 +524,8 @@ class CrosSourceApi(RecipeApi):
     return branch
 
   def checkout_manifests(self, commit=None, is_staging=False,
-                         checkout_external=False, test_footers=None):
+                         checkout_internal=True, checkout_external=False,
+                         test_footers=None):
     """Check out the manifest projects.
 
     Syncs the manifest projects into the workspace, at the appropriate revision.
@@ -542,27 +543,41 @@ class CrosSourceApi(RecipeApi):
       commit (GitilesCommit): The commit to use, or None for the default (from
         cros_infra_config.configure_builder)
       is_staging (bool): Whether this is staging.
+      checkout_internal (bool): Whether to checkout the internal manifest.
+        Defaults to true.
       checkout_external (bool): Whether to checkout the external manifest.
+        Defaults to false.
       test_footers (str): test Cr-External-Snapshot footer data(values separated
           by newlines), or None.
 
     Returns:
       (GitilesCommit) The GitilesCommit to use for the external manifest.
     """
+    if not checkout_internal and not checkout_external:
+      # Nothing to do in this case!
+      return
     i_manifest = self.m.src_state.internal_manifest
     e_manifest = self.m.src_state.external_manifest
+    working_manifest = i_manifest if checkout_internal else e_manifest
     commit = commit or self.m.src_state.gitiles_commit
-    commit = commit if commit.host else i_manifest.as_gitiles_commit_proto
-    # Start building the external commit.  The id field will be set later, if we
-    # can determine the one that matches the current checkout.
-    ext_commit = e_manifest.as_gitiles_commit_proto
-    ext_commit.ref = commit.ref
+    commit = commit if commit.host else working_manifest.as_gitiles_commit_proto
+
+    if not checkout_internal:
+      ext_commit = commit
+    else:
+      # Start building the external commit.  The id field will be set later, if we
+      # can determine the one that matches the current checkout.
+      ext_commit = e_manifest.as_gitiles_commit_proto
+      ext_commit.ref = commit.ref
     branch = self._gitiles_branch(commit.ref)
 
     projects = self.m.src_state.manifest_projects
+    if not checkout_internal:
+      projects = [self.m.src_state.external_manifest.project]
 
     # Sync only the manifest projects, into the workspace directory.
     self.ensure_synced_cache(cache_path_override=self.workspace_path,
+                             manifest_url=working_manifest.url,
                              is_staging=is_staging,
                              init_opts=dict(manifest_branch=branch or None),
                              sync_opts=dict(current_branch=False),
@@ -571,34 +586,35 @@ class CrosSourceApi(RecipeApi):
     # If the commit uses a ref other than the manifest's ref, switch to that.
     # In general, this means that we will switch to either "snapshot", or to
     # some release branch (such as "release-R88-13597.B").
-    if commit.ref != i_manifest.ref:
+    if commit.ref != working_manifest.ref:
       self._manifest_branch = branch
     self._sync_target = dict(call='checkout_manifests',
                              commit=MessageToDict(commit))
-    with self.m.context(cwd=i_manifest.path):
+    with self.m.context(cwd=working_manifest.path):
       # If we have an ID in the ref, make that HEAD.
       if commit.id:
         self.m.git.checkout(commit.id, force=True)
 
       # The branch we are on is either a snapshot branch (has a snapshot.xml
       # file), or it is an unpinned branch.
-      snapshot_xml = i_manifest.path.join('snapshot.xml')
+      snapshot_xml = working_manifest.path.join('snapshot.xml')
       self._branch_manifest_file = snapshot_xml
       if self._test_data.enabled and self._test_data.get(
           'snapshot_xml_exists', True):
         self.m.path.mock_add_paths(snapshot_xml)
       if not self.m.path.exists(snapshot_xml):
-        # If there is no snapshot.xml, then there is no reasonable way to
-        # determine which revision of the external manifest corresponds to our
-        # commit.  Copy the mirrored files into the public manifest, and leave
-        # the tree dirty.
-        for m_file in self.mirrored_manifest_files:
-          i_path = i_manifest.path.join(m_file.src)
-          if m_file.src != 'external_full.xml':
-            self.m.path.mock_add_paths(i_path)
-          if self.m.path.exists(i_path):
-            self.m.file.copy('copy {}'.format(m_file.src), i_path,
-                             e_manifest.path.join(m_file.dest))
+        if working_manifest.project == i_manifest.project:
+          # If we're checking out both manifests and there is no snapshot.xml,
+          # then there is no reasonable way to determine which revision of the
+          # external manifest corresponds to our commit.  Copy the mirrored
+          # files into the public manifest, and leave the tree dirty.
+          for m_file in self.mirrored_manifest_files:
+            i_path = i_manifest.path.join(m_file.src)
+            if m_file.src != 'external_full.xml':
+              self.m.path.mock_add_paths(i_path)
+            if self.m.path.exists(i_path):
+              self.m.file.copy('copy {}'.format(m_file.src), i_path,
+                               e_manifest.path.join(m_file.dest))
 
         # Generate a manifest file, and save the path.
         manifest_file = self.m.path.mkstemp(prefix='manifest')
@@ -607,6 +623,10 @@ class CrosSourceApi(RecipeApi):
         self._branch_manifest_file = manifest_file
         return ext_commit
 
+      # If we only have an external commit, there's no syncing to do. Return
+      # early.
+      if not checkout_internal:
+        return ext_commit
       # If we have a snapshot.xml, checkout the corresponding public manifest
       # commit id, and update the external commit.
       test_data = self.m.git_footers.test_api.step_test_data_factory(

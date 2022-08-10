@@ -12,4 +12,7 @@ message CheckoutManifestsProperties {
 
   // Whether to checkout the external manifest.
   bool checkout_external = 2;
+
+  // Whether to checkout only the external manifest.
+  bool only_external = 3;
 }

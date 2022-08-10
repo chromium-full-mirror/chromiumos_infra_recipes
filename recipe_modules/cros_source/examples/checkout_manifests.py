@@ -34,7 +34,10 @@ def RunSteps(api, properties):
 
   with api.cros_source.checkout_overlays_context():
     api.cros_source.checkout_manifests(
-        checkout_external=properties.checkout_external)
+        checkout_external=properties.checkout_external,
+        checkout_internal=not properties.only_external)
+    if properties.only_external and not properties.checkout_external:
+      return
     api.assertions.assertEqual(api.cros_source.manifest_branch,
                                properties.branch_name or 'main')
 
@@ -80,3 +83,18 @@ def GenTests(api):
       api.step_data('read git footers',
                     stdout=api.raw_io.output('\n'.join(['1' * 40, '2' * 40]))),
       cq=False)
+
+  yield api.cros_source.test(
+      'only-external', manifest_branch,
+      api.post_check(post_process.StatusSuccess),
+      api.properties(
+          CheckoutManifestsProperties(only_external=True,
+                                      checkout_external=True)), revision=None,
+      cq=False, git_ref=None)
+
+  yield api.cros_source.test(
+      'noop', manifest_branch, api.post_check(post_process.StatusSuccess),
+      api.properties(
+          CheckoutManifestsProperties(only_external=True,
+                                      checkout_external=False)), revision=None,
+      cq=False, git_ref=None)

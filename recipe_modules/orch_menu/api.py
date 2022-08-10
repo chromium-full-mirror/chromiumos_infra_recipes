@@ -238,9 +238,11 @@ class OrchMenuApi(RecipeApi):
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
 
+        use_external = self.gitiles_commit.project == 'chromiumos/manifest'
         external_commit = self.m.cros_source.checkout_manifests(
             is_staging=self.m.cros_infra_config.is_staging,
-            checkout_external=self._update_manifest_refs,
+            checkout_internal=not use_external,
+            checkout_external=self._update_manifest_refs or use_external,
             test_footers=test_footers)
         self._external_gitiles_commit = external_commit
 
