@@ -851,6 +851,9 @@ def execution_steps_with_phosphorus(api, properties):
     for test_id, test in tests.items():
       with api.step.nest(test_id):
         validate_request(api, test)
+        if 'build' in test.autotest.keyvals and test.autotest.keyvals[
+            'build'].startswith('betty'):
+          raise api.step.StepFailure("VMTest should go through CFT.")
         test_metadata = interface.build_test_metadata(test_id, test)
         # Needs to be distinct per test as logs are uploaded for each test separately.
         interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR,
@@ -990,6 +993,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
+      interface.submit_post_job()
 
       # Gets the result dir path for the first test case result,
       # e.g. "/home/chromeos-test/skylab_bots/c6-r1-r24-h11.584871424/w/ir/x/w
@@ -1356,6 +1360,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   def _request_properties_with_suite_name(suite_name):
     request = _canned_test_runner_request()
     request['test']['autotest']['keyvals']['suite'] = suite_name
+    return api.properties(TestRunnerProperties(request=request))
+
+  def _request_properties_for_bad_vm_request():
+    request = _canned_test_runner_request()
+    request['test']['autotest']['keyvals'][
+        'build'] = 'betty-arc-r-release/R102-14637.0.0'
     return api.properties(TestRunnerProperties(request=request))
 
   def _canned_test_runner_request(
@@ -2570,6 +2580,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'fail-vm-on-phosphorus',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties_for_bad_vm_request(),
   )
 
   ############ CTR Test Cases ##########

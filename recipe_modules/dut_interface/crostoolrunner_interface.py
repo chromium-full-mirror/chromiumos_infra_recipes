@@ -80,6 +80,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     super(CrosToolRunnerInterface, self).__init__(api, properties)
     self.cft_test_request = self._properties.cft_test_request
+    self._vm_provisioned = None
 
   def _vm_is_vmtest(self):
     """Checks if it qualifies VM testing.
@@ -89,9 +90,16 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
 
     check_suite = self.cft_test_request.test_suites[0].name == 'arc-cts-vm'
+    is_betty = self.cft_test_request.autotest_keyvals['build'].startswith(
+        'betty')
     # Excludes betty and betty-pi-arc.
     check_image = self.cft_test_request.autotest_keyvals['build'].startswith(
         'betty-arc-')
+    if is_betty and not check_image:
+      raise self._api.step.StepFailure(
+          'betty and betty-pi-arc is not supported.')
+    if check_image and not check_suite:
+      raise self._api.step.StepFailure('betty can only run CTS at this moment.')
     return check_suite and check_image
 
   # TODO(fqj, b/236679125): This is prototype hack, which breaks CFT
@@ -130,10 +138,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             'https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx',
         ])
 
-    _, _, extip = self._api.gcloud.create_instance(gce_image, project,
-                                                   'n2-standard-4',
-                                                   'us-west2-a', 'default',
-                                                   'default', external_ip=True)
+    instance_name, _, extip = self._api.gcloud.create_instance(
+        gce_image, project, 'n2-standard-4', 'us-west2-a', 'default', 'default',
+        external_ip=True)
 
     self._api.step('wait for betty boots', [
         '/usr/bin/ssh', '-o', 'StrictHostKeyChecking=no', '-o',
@@ -142,8 +149,34 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     ])
 
     metadata.primary_dut.chromeos.ssh.address = extip
+    self._vm_provisioned = {
+        'instance_name': instance_name,
+        'image_name': gce_image,
+    }
 
     return PrejobResponsesTuple([], False)
+
+  def _vm_shutdown_and_cleanup(self):
+    """Shutsdown and cleanup environment on GCE."""
+
+    if not self._vm_provisioned:
+      return
+
+    project = 'betty-cloud-prototype'
+
+    self._api.gcloud.delete_instance(self._vm_provisioned['instance_name'],
+                                     project, 'us-west2-a')
+
+    self._api.gcloud.delete_image(self._vm_provisioned['image_name'])
+
+  def submit_post_job(self):
+    """Submits a Postjob for VM"""
+
+    if not self._vm_is_vmtest():
+      return
+
+    with self._api.step.nest('Prototype GCE shutdown'):
+      self._vm_shutdown_and_cleanup()
 
   def submit_pre_job(self, metadata, max_duration_seconds=0):
     """Submits a Prejob execution on the DUT.
@@ -237,6 +270,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     * dut_state (str): The desired state.
     * metadata (DUTTestMetadata): Input information relevant to one test.
     """
+    if self._vm_is_vmtest():
+      self._api.step('stub mark local DUT state', ['echo', dut_state])
+      return
+
     with self._api.step.nest(
         'CrosToolRunner: Phosphorus: mark local DUT state: {}'.format(
             dut_state)):
@@ -251,6 +288,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     * dut_state (str): The desired state.
     * metadata (DUTTestMetadata): Input information relevant to one test.
     """
+    if self._vm_is_vmtest():
+      self._api.step('stub save local DUT state', ['echo', dut_state])
+      return
+
     with self._api.step.nest(
         'CrosToolRunner: Phosphorus: save local DUT state'):
       self._api.phosphorus.save_and_seal_skylab_local_state(
