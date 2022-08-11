@@ -106,18 +106,6 @@ def RunSteps(api, properties):
 
         api.buildbucket.schedule(requests)
 
-    cros_src_path = api.cros_source.workspace_path
-    test_results = cros_src_path.join(
-        'src/platform/ec/twister-out/twister.json')
-    api.step(
-        'Upload EC Firmware test results',
-        api.resultdb.wrap([
-            'vpython3',
-            cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
-            '--result=' + str(test_results), '--upload=True'
-        ]))
-
-
 def _read_chromiumos_sdk_pin(api, properties):
   if properties.chromiumos_sdk_pin_file:
     with api.step.nest('read chromiumos-sdk pin'):
