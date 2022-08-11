@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import defaultdict
 import six
 from google.protobuf import json_format
 from recipe_engine import recipe_api
@@ -29,6 +30,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._configs_loaded = False
     self._stats = ExonerateStats(dry_run=properties.dry_run)
     self._exoneration_link_map = {}
+    self._test_stats_map = defaultdict(int)
+    self._suite_stats_map = defaultdict(int)
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
@@ -84,6 +87,19 @@ class ExonerateApi(recipe_api.RecipeApi):
 
   def print_stats(self):
     """Write exoneration stats to output properties."""
+    test_stats = [
+        ExonerateStats.GranularStats(name=test,
+                                     count=self._test_stats_map[test])
+        for test in sorted(self._test_stats_map.keys())
+    ]
+    self._stats.test_stats.extend(test_stats)
+    suite_stats = [
+        ExonerateStats.GranularStats(name=suite,
+                                     count=self._suite_stats_map[suite])
+        for suite in sorted(self._suite_stats_map.keys())
+    ]
+    self._stats.test_stats.extend(test_stats)
+    self._stats.suite_stats.extend(suite_stats)
     self.m.easy.set_properties_step(exoneration_stats=self._stats)
 
   def _exonerate_hw_testcase(self, test_case, build_target):
@@ -105,6 +121,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     if bt_match:
       self._add_log('Exonerated {} on {}'.format(test_case.name, build_target))
       self._stats.test_count += 1
+      self._test_stats_map[test_case.name] += 1
 
     if bt_match and not self._dry_run:
       return ExecuteResponse.TaskResult.TestCaseResult(
@@ -219,6 +236,8 @@ class ExonerateApi(recipe_api.RecipeApi):
             self._exoneration_link_map[
                 link_text] = self.m.urls.get_skylab_task_url(skylab_res.task)
             exonerated_test_names.append(suite_name)
+            self._suite_stats_map[suite_name] += 1
+            self._stats.suite_count += 1
       self._print_logs(pres)
       return new_test_results, exonerated_test_names
 
@@ -242,6 +261,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       self._add_log('Exonerated {} on {}'.format(test_case['name'],
                                                  build_target))
       self._stats.test_count += 1
+      self._test_stats_map[test_case['name']] += 1
     if bt_match and not self._dry_run:
       return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
 
@@ -321,6 +341,8 @@ class ExonerateApi(recipe_api.RecipeApi):
             self._exoneration_link_map[
                 link_text] = self.m.urls.get_vm_test_link_map(build)
             exonerated_test_names.append(suite_name)
+            self._suite_stats_map[suite_name] += 1
+            self._stats.suite_count += 1
           new_vm_builds.append(new_build)
 
       self._print_logs(pres)

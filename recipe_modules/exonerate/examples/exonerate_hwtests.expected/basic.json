@@ -59,7 +59,7 @@
     "cmd": [],
     "name": "set exoneration_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"testCount\": \"2\"}@@@"
+      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"suiteCount\": \"1\", \"suiteStats\": [{\"count\": \"1\", \"name\": \"target.hw.bvt-cq\"}], \"testCount\": \"2\", \"testStats\": [{\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"test3\"}, {\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"test3\"}]}@@@"
     ]
   },
   {

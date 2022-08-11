@@ -25,4 +25,15 @@ message ExonerateStats {
 
   // Number of test suites exonerated.
   int64 suite_count = 3;
+
+  // Track the names of tests and suites exonerated for dashboarding.
+  message GranularStats {
+    // Name of the dimension.
+    string name = 1;
+
+    // Number of exonerations.
+    int64 count = 2;
+  }
+  repeated GranularStats test_stats = 4;
+  repeated GranularStats suite_stats = 5;
 }
