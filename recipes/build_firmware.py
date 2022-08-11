@@ -30,6 +30,7 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.firmware import (BuildAllFirmwareRequest,
                                       TestAllFirmwareRequest)
+import PB.chromiumos.common as common_pb2
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -106,6 +107,19 @@ def RunSteps(api, properties):
 
         api.buildbucket.schedule(requests)
 
+    if location == common_pb2.PLATFORM_ZEPHYR:
+      cros_src_path = api.cros_source.workspace_path
+      test_results = cros_src_path.join(
+          'src/platform/ec/twister-out/twister.json')
+      api.step(
+          'Upload EC Firmware test results',
+          api.resultdb.wrap([
+              'vpython3',
+              cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
+              '--result=' + str(test_results), '--upload=True'
+          ]))
+
+
 def _read_chromiumos_sdk_pin(api, properties):
   if properties.chromiumos_sdk_pin_file:
     with api.step.nest('read chromiumos-sdk pin'):
@@ -165,6 +179,10 @@ def GenTests(api):
   yield test('postsubmit',)
 
   yield test('cq', cq=True, builder='fw-ec-cq')
+
+  yield test(
+      'zephyr-cq', cq=True, builder='fw-ec-cq',
+      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
 
   sdk_pin_path = 'src/platform/ti50/sdk-version'
   yield test(

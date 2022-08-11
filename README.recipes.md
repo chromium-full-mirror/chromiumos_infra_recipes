@@ -8638,7 +8638,7 @@ Recipe that builds and tests firmware.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/build_firmware.py#40)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_firmware.py#41)(api, properties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#11): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
