@@ -552,8 +552,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         install_packages.run_spec)
     return self.packages_installed
 
-  def build_and_test_images(self, config=None, include_version=False):
-    """Build the image and run ebuild tests.
+  def build_images(self, config=None, include_version=False):
+    """Build the image.
 
     This behavior is adjusted by the run_spec values in config.
 
@@ -561,8 +561,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config (BuilderConfig): The Builder Config for the build, or None.
       include_version (bool): Whether or not to pass the workspace version
         to sysroot_util.build.
-    Returns:
-      (bool): Whether to continue with the build.
     """
     config = config or self.config_or_default
     build_images = config.build.build_images
@@ -582,9 +580,36 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                      build_images.disk_layout,
                                      build_images.base_is_recovery,
                                      **extra_kwargs)
+
+  def unit_test_images(self, config=None):
+    """Run ebuild tests.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    Returns:
+      (bool): Whether to continue with the build.
+    """
+    config = config or self.config_or_default
+    unit_tests = config.unit_tests
+
     self.run_unittests(config)
 
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
+
+  def build_and_test_images(self, config=None, include_version=False):
+    """Build the image and run ebuild tests.
+
+    This behavior is adjusted by the run_spec values in config.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+      include_version (bool): Whether or not to pass the workspace version
+        to sysroot_util.build.
+    Returns:
+      (bool): Whether to continue with the build.
+    """
+    self.build_images(config, include_version)
+    return self.unit_test_images(config)
 
   def run_unittests(self, config=None):
     """run ebuild tests as specified by config.

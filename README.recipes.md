@@ -866,13 +866,13 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#819)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#844)(self):**
 
 Add child build ids to output property of current build.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#77)(self):**
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#666)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#691)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
@@ -888,7 +888,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#555)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#599)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -900,6 +900,17 @@ Args:
     to sysroot_util.build.
 Returns:
   (bool): Whether to continue with the build.
+
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#555)(self, config=None, include_version=False):**
+
+Build the image.
+
+This behavior is adjusted by the run_spec values in config.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+  include_version (bool): Whether or not to pass the workspace version
+    to sysroot_util.build.
 
 &emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#81)(self):**
 
@@ -938,7 +949,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#680)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#705)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1025,7 +1036,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#149)(self):**
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#828)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#853)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1038,7 +1049,7 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#589)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#614)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1109,7 +1120,16 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#638)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#584)(self, config=None):**
+
+Run ebuild tests.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
+Returns:
+  (bool): Whether to continue with the build.
+
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#663)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False):**
 
 Upload artifacts from the build.
 
@@ -1126,7 +1146,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#783)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#808)(self, config=None):**
 
 Upload prebuilts from the build.
 

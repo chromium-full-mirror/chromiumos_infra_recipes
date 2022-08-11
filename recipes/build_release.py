@@ -133,8 +133,7 @@ def DoRunSteps(api, config, properties):
 
         snoopy_report(api, 'compile')
 
-      with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
-        api.build_menu.build_and_test_images(config, include_version=True)
+      api.build_menu.build_images(config, include_version=True)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of
@@ -170,6 +169,9 @@ def DoRunSteps(api, config, properties):
   with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
     with api.step.nest("upload debug symbols"):
       api.debug_symbols.upload_debug_symbols(gs_image_dir)
+
+  with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
+    api.build_menu.unit_test_images(config)
 
   # Signing does not work in staging, so we shouldn't wait for it in that case.
   # We also can't sign anything if push_and_sign_images returned 0 instructions.
@@ -399,7 +401,7 @@ def GenTests(api):
           }),
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.build_menu.set_build_api_return('upload artifacts',
                                           'ArtifactsService/Get', retcode=1),
       bucket='release',
