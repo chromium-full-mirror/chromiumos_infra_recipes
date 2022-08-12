@@ -171,6 +171,13 @@ class PuprApi(recipe_api.RecipeApi):
 
     open_cls = sorted_cls(open_cls)
 
+    # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
+    # If a CL is in the process of running, no retry will occur.
+    running_cls = list(filter(is_running_cl, open_cls))
+    if running_cls:
+      return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
+          [cl.display_url for cl in running_cls])), False)
+
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
     retry_cl = None
@@ -192,13 +199,6 @@ class PuprApi(recipe_api.RecipeApi):
                   'Pinned retry CL {} has not failed.'.format(cl.display_url),
                   False)
         break
-
-    # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
-    # If a CL is in the process of running, no retry will occur.
-    running_cls = list(filter(is_running_cl, open_cls))
-    if running_cls:
-      return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
-          [cl.display_url for cl in running_cls])), False)
 
     # If no_existing_cls_policy is FULL_RUN, then CLs that were dry run instead
     # (because a full run was in progress when they were created) and passed
