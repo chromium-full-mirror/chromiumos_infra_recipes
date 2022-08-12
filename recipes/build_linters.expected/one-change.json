@@ -5290,7 +5290,6 @@
       "@@@STEP_LOG_LINE@request@    1,@@@",
       "@@@STEP_LOG_LINE@request@    3@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"filterModified\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"category\": \"chromeos-base\",@@@",
@@ -5323,7 +5322,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"disabledLinters\": [\n    1,\n    3\n  ],\n  \"filterModified\": true,\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"disabledLinters\": [\n    1,\n    3\n  ],\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5621,7 +5620,6 @@
       "@@@STEP_LOG_LINE@request@    1,@@@",
       "@@@STEP_LOG_LINE@request@    2@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"filterModified\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"packages\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"category\": \"chromeos-base\",@@@",
@@ -5654,7 +5652,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"disabledLinters\": [\n    1,\n    2\n  ],\n  \"filterModified\": true,\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"disabledLinters\": [\n    1,\n    2\n  ],\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    },\n    \"path\": \"/build/atlas\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
