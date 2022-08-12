@@ -150,7 +150,7 @@
     "name": "assign container metadata to requests.cft-default",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@container metadata error@No container information found in container metadata for request 'cft-default', build target 'build_target123', container metadata url 'gs://foo-container-metadata-url'.@@@",
+      "@@@STEP_LOG_LINE@container metadata error@No container information found in container metadata for request 'cft-default', build target 'foo-build-target', container metadata url 'gs://foo-container-metadata-url'.@@@",
       "@@@STEP_LOG_END@container metadata error@@@"
     ]
   },

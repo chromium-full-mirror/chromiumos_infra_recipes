@@ -275,6 +275,28 @@ def enumerate_tests(api, requests, error_in_requests):
   return enmeration_responses_proto.tagged_responses
 
 
+# TODO(b/242007010): Remove this reconstruction.
+# software_attributes.build_target are passed from skylab_board, which
+# doesn't contain variant like -arc-r. metadata json are keyed with
+# build target with varianed info.
+# So use softwareDependencies.chromeosBuild to reconstruct
+# build_target.
+def _reconstruct_build_target(r):
+  """Reconstruct build_target with variant from chromeos_build.
+
+  Args:
+    * r: test_platform.Request
+
+  Returns: str or None
+  """
+  dep = None
+  for dep in r.params.software_dependencies:
+    if dep.WhichOneof('dep') == 'chromeos_build':
+      dep = '-'.join(dep.chromeos_build.split('/')[0].split('-')[:-1])
+      break
+  return dep
+
+
 def _should_enumerate_via_ctf(r):
   """Whether the given request should be enumerated via cros-test-finder.
 
@@ -335,7 +357,11 @@ def _enumerate_cft_tests(api, requests):
       api.cros_tool_runner.create_file_with_container_metadata(
           r.params.execution_param.container_metadata)
 
-      build_target = r.params.software_attributes.build_target.name
+      # TODO(b/242007010): Change back to use build_target.
+      # See more details in the other comment about b/242007010 in this
+      # file.
+      # build_target = r.params.software_attributes.build_target.name
+      build_target = _reconstruct_build_target(r)
       test_finder_request = ctr.CrosToolRunnerTestFinderRequest(
           test_suites=[_ctr_test_suite(r)], container_metadata_key=build_target)
       test_finder_result = api.cros_tool_runner.find_tests(test_finder_request)
@@ -564,7 +590,11 @@ def add_container_metadata(api, requests, error_in_requests):
       error = ""
       if r.params.run_via_cft:
         with api.step.nest(t) as step:
-          build_target = r.params.software_attributes.build_target.name
+          # TODO(b/242007010): Change back to use build_target.
+          # See more details in the other comment about b/242007010 in this
+          # file.
+          # build_target = r.params.software_attributes.build_target.name
+          build_target = _reconstruct_build_target(r)
           metadata_url = r.params.metadata.container_metadata_url
           metadata = url_to_metadata_map[metadata_url]
           if metadata:
@@ -981,7 +1011,7 @@ def _test_scheduling():
 def _default_software_dependencies():
   return [
       Request.Params.SoftwareDependency(
-          chromeos_build="single-build",
+          chromeos_build="foo-build-target-postsubmit/R106-33333.0.0-112318231231",
       ),
       Request.Params.SoftwareDependency(
           ro_firmware_build="single-ro-firmware",
