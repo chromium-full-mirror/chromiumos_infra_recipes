@@ -17,10 +17,10 @@
       "----",
       "ls",
       "-r",
-      "gs://chromeos-mirror/gentoo/distfiles/**"
+      "gs://chromeos-mirror-test/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/",
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror-test/gentoo/distfiles/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -28,7 +28,7 @@
   {
     "cmd": [
       "cut",
-      "-c39-",
+      "-c44-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
     "infra_step": true,
@@ -143,8 +143,7 @@
     "cmd": [],
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy new distfiles to gs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@No new distfiles to upload@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -161,7 +160,33 @@
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy new distfiles to gs.list new distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/distfiles_tmp_1/new_distfile.tar.gz@@@",
       "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-n",
+      "-a",
+      "public-read",
+      "[CLEANUP]/distfiles_tmp_1/*",
+      "gs://chromeos-mirror-test/gentoo/distfiles/"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy new distfiles to gs.gsutil upload new distfiles to gs://chromeos-mirror-test/gentoo/distfiles/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

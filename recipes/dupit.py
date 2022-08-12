@@ -7,6 +7,7 @@
 
 DEPS = [
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_dupit',
 ]
@@ -66,7 +67,7 @@ def GenTests(api):
               'rate': '1m',
           },
       ],
-      'gs_uri': 'gs://chromeos-mirror/gentoo/distfiles/',
+      'gs_uri': 'gs://chromeos-mirror-test/gentoo/distfiles/',
       'ignore_missing_args': False,
       'filter_missing_links': False,
       'regex_for_additional_file_syncs': "",
@@ -83,11 +84,11 @@ def GenTests(api):
           },
       ],
       'gs_uri':
-          'gs://chromeos-mirror/archlinux/',
+          'gs://chromeos-mirror-test/archlinux/',
       'ignore_missing_args':
-          False,
+          True,
       'filter_missing_links':
-          False,
+          True,
       'regex_for_additional_file_syncs':
           "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
       'gs_uri_for_regex_archive':
@@ -97,11 +98,15 @@ def GenTests(api):
   props = good_props.copy()
   yield api.test(
       'basic',
+      api.step_data(
+          'mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy new distfiles to gs.list new distfiles',
+          stdout=api.raw_io.output_text('new_distfile.tar.gz')),
       api.properties(**props),
       api.post_process(
           post_process.MustRun,
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
-           'gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/'),
+           'gsutil list distfiles in gs://chromeos-mirror-test/gentoo/distfiles/'
+          ),
       ),
       api.post_process(
           post_process.MustRun,
@@ -114,16 +119,35 @@ def GenTests(api):
            'rsync distfiles from rsync://mirror.rackspace.com/gentoo/distfiles'
           ),
       ),
+      api.post_process(
+          post_process.MustRun,
+          ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.copy'
+           ' new distfiles to gs.gsutil upload new distfiles to gs://'
+           'chromeos-mirror-test/gentoo/distfiles/')),
+      api.post_process(
+          post_process.DoesNotRun,
+          ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
+           'copy new distfiles to gs.gsutil upload additional regex files'
+           ' to gs://chromeos-mirror-test/gentoo/distfiles/')),
       api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
       'basic-arch',
+      api.step_data(
+          'mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.list new distfiles',
+          stdout=api.raw_io.output_text('new_distfile.tar.gz')),
       api.properties(**arch_props),
       api.post_process(
           post_process.MustRun,
           ('mirror from rsync://arch.mirror.constant.com/archlinux/.'
-           'gsutil list distfiles in gs://chromeos-mirror/archlinux/'),
+           'gsutil list distfiles in gs://chromeos-mirror-test/archlinux/'),
+      ),
+      api.post_process(
+          post_process.MustRun,
+          ('mirror from rsync://arch.mirror.constant.com/archlinux/.'
+           'copy new distfiles to gs.gsutil upload additional regex files'
+           ' to gs://chromeos-mirror-test/archlinux/'),
       ),
       api.post_process(
           post_process.MustRun,

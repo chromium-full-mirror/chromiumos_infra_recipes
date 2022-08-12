@@ -17,10 +17,10 @@
       "----",
       "ls",
       "-r",
-      "gs://chromeos-mirror/archlinux/**"
+      "gs://chromeos-mirror-test/archlinux/**"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror/archlinux/",
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.gsutil list distfiles in gs://chromeos-mirror-test/archlinux/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -28,7 +28,7 @@
   {
     "cmd": [
       "cut",
-      "-c32-",
+      "-c37-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
     "infra_step": true,
@@ -142,6 +142,7 @@
       "--timeout=180",
       "--bwlimit=50m",
       "--files-from=[CLEANUP]/distfile_lists_tmp_1/new_regex_sorted.txt",
+      "--ignore-missing-args",
       "rsync://arch.mirror.constant.com/archlinux/",
       "[CLEANUP]/distfiles_tmp_1"
     ],
@@ -168,8 +169,22 @@
     "cmd": [],
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@No new distfiles to upload@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      "[CLEANUP]/distfiles_tmp_1/",
+      "-xtype",
+      "l",
+      "-ls",
+      "-delete"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.filtering missing symlinks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -186,7 +201,123 @@
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.list new distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/distfiles_tmp_1/new_distfile.tar.gz@@@",
       "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-n",
+      "-a",
+      "public-read",
+      "[CLEANUP]/distfiles_tmp_1/*",
+      "gs://chromeos-mirror-test/archlinux/"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.gsutil upload new distfiles to gs://chromeos-mirror-test/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rsync",
+      "--prune-empty-dirs",
+      "--recursive",
+      "--links",
+      "--safe-links",
+      "--perms",
+      "--times",
+      "--compress",
+      "--stats",
+      "--progress",
+      "--human-readable",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/additional_regex_matches_file.txt",
+      "[CLEANUP]/distfiles_tmp_1",
+      "[CLEANUP]/regexfiles_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.prepare additional regex files for sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-a",
+      "public-read",
+      "[CLEANUP]/regexfiles_tmp_1/*",
+      "gs://chromeos-mirror-test/archlinux/"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.gsutil upload additional regex files to gs://chromeos-mirror-test/archlinux/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-n",
+      "-a",
+      "public-read",
+      "[CLEANUP]/regexfiles_tmp_1/*",
+      "gs://chromeos-mirror/archlinux-archive/repos/2012/05/14/125321500000/"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.gsutil archive additional regex files to gs://chromeos-mirror/archlinux-archive/repos/2012/05/14/125321500000/",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1",
+      "gs://chromeos-mirror/archlinux-archive/repos/2012/05/14/125321500000/.dupit_done"
+    ],
+    "infra_step": true,
+    "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.gsutil create donefile at gs://chromeos-mirror/archlinux-archive/repos/2012/05/14/125321500000/.dupit_done",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

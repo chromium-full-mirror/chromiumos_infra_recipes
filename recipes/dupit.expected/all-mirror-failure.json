@@ -21,10 +21,10 @@
       "----",
       "ls",
       "-r",
-      "gs://chromeos-mirror/gentoo/distfiles/**"
+      "gs://chromeos-mirror-test/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/",
+    "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror-test/gentoo/distfiles/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -32,7 +32,7 @@
   {
     "cmd": [
       "cut",
-      "-c39-",
+      "-c44-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
     "infra_step": true,
@@ -88,10 +88,10 @@
       "----",
       "ls",
       "-r",
-      "gs://chromeos-mirror/gentoo/distfiles/**"
+      "gs://chromeos-mirror-test/gentoo/distfiles/**"
     ],
     "infra_step": true,
-    "name": "mirror from rsync://mirror.rackspace.com/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror/gentoo/distfiles/",
+    "name": "mirror from rsync://mirror.rackspace.com/gentoo/distfiles.gsutil list distfiles in gs://chromeos-mirror-test/gentoo/distfiles/",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -99,7 +99,7 @@
   {
     "cmd": [
       "cut",
-      "-c39-",
+      "-c44-",
       "[CLEANUP]/distfile_lists_tmp_2/gs.txt"
     ],
     "infra_step": true,
