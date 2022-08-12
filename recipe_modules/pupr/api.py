@@ -178,11 +178,16 @@ class PuprApi(recipe_api.RecipeApi):
       return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
           [cl.display_url for cl in running_cls])), False)
 
+    # Helper function to generate return value for retry.
+    def with_retry(retry_cl, is_dry_run, retry_cl_is_passed):
+      return (retry_cl, 1 if is_dry_run else 2,
+              'Found cl: {}'.format(retry_cl.display_url), retry_cl_is_passed)
+
+    def no_retry(message='No open CL was found to retry.'):
+      return (None, 0, message, False)
+
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
-    retry_cl = None
-    is_dry_run = False
-    retry_cl_is_passed = False
     for cl in open_cls:
       if self.HASHTAG_PINNED_RETRY in cl.hashtags:
         # (Most recent) pinned CL identified. If the CL has not previously
@@ -190,43 +195,41 @@ class PuprApi(recipe_api.RecipeApi):
 
         # Identify most recent failure type (if any).
         if is_failed_cl(cl):
-          retry_cl = cl
-        elif is_failed_cl(cl, dry_run=True):
-          retry_cl = cl
-          is_dry_run = True
-        else:  # Pinned CL has not failed, do not attempt any retry.
-          return (None, 0,
-                  'Pinned retry CL {} has not failed.'.format(cl.display_url),
-                  False)
-        break
+          return with_retry(cl, False, False)
+        if is_failed_cl(cl, dry_run=True):
+          return with_retry(cl, True, False)
+        # Pinned CL has not failed, do not attempt any retry.
+        return no_retry('Pinned retry CL {} has not failed.'.format(
+            cl.display_url))
 
     # If no_existing_cls_policy is FULL_RUN, then CLs that were dry run instead
     # (because a full run was in progress when they were created) and passed
     # their dry run take precedence over retrying failures.
-    if no_existing_cls_policy == FULL_RUN and not retry_cl:
+    if no_existing_cls_policy == FULL_RUN:
       retry_cl = next((cl for cl in open_cls if is_passed_cl(cl, dry_run=True)),
                       None)
-      retry_cl_is_passed = (retry_cl is not None)
+      if retry_cl:
+        return with_retry(retry_cl, False, True)
 
     # If none exists, find the most recent failed CQ+2 CL, or if none exist
     # then the most recent failed CQ+1 CL if no newer dry run is ongoing, as
     # long as the retry strategy is not RETRY_LATEST_PINNED.
-    if retry_policy != RETRY_LATEST_PINNED and not retry_cl:
-      # First look for passed dry runs.
-      # Look for CLs with failed full runs first.
-      retry_cl = next(iter(filter(is_failed_cl, open_cls)), None)
-      if not retry_cl:
-        # Look for failed dry runs, as long as no newer dry run is ongoing.
-        retry_cl = next((c for c in open_cls if is_failed_cl(c, dry_run=True)),
-                        None)
-        if retry_cl:
-          if any(cl for cl in open_cls if cl.created > retry_cl.created and
-                 is_running_cl(cl, dry_run=True)):
-            retry_cl = None
-          else:
-            is_dry_run = no_existing_cls_policy == DRY_RUN
+    if retry_policy == RETRY_LATEST_PINNED:
+      return no_retry()
 
+    # First look for passed dry runs.
+    # Look for CLs with failed full runs first.
+    retry_cl = next(iter(filter(is_failed_cl, open_cls)), None)
     if retry_cl:
-      return (retry_cl, 1 if is_dry_run else 2,
-              'Found cl: {}'.format(retry_cl.display_url), retry_cl_is_passed)
-    return (None, 0, 'No open CL was found to retry.', False)
+      return with_retry(retry_cl, False, False)
+
+    # Look for failed dry runs, as long as no newer dry run is ongoing.
+    retry_cl = next((c for c in open_cls if is_failed_cl(c, dry_run=True)),
+                    None)
+    if retry_cl:
+      if not any(
+          cl for cl in open_cls
+          if cl.created > retry_cl.created and is_running_cl(cl, dry_run=True)):
+        return with_retry(retry_cl, no_existing_cls_policy == DRY_RUN, False)
+
+    return no_retry()
