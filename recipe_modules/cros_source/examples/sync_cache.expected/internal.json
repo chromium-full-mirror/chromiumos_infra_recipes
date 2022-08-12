@@ -952,7 +952,8 @@
       "all",
       "--manifest-branch",
       "release-R90-13816.B",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
@@ -1262,6 +1263,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "--force-remove-dirty",
       "--prune"
     ],

@@ -477,7 +477,7 @@ class CrosSourceApi(RecipeApi):
     sync_opts['jobs'] = self._determine_sync_jobs()
     local_manifests = init_opts.get('local_manifests')
     groups = init_opts.get('groups')
-    verbose = init_opts.get('verbose')
+    verbose = init_opts.get('verbose', True)
     manifest_branch = init_opts.get('manifest_branch')
     retry_fetches = sync_opts.get('retry_fetches')
 
@@ -723,7 +723,7 @@ class CrosSourceApi(RecipeApi):
           count=count)
 
   def _sync_cached_dir(self, manifest_branch, retry_fetches=None, projects=None,
-                       verbose=False, is_staging=False):
+                       verbose=True, is_staging=False):
     """Sync to the chromiumos overlay.
 
     Args:

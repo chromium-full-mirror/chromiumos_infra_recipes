@@ -636,7 +636,8 @@
       "all",
       "--manifest-branch",
       "snapshot",
-      "--repo-rev=main"
+      "--repo-rev=main",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
@@ -946,6 +947,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "--force-remove-dirty",
       "--prune"
     ],
@@ -1418,7 +1420,8 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=main"
+      "--repo-rev=main",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
@@ -1625,6 +1628,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "--force-remove-dirty",
       "--prune"
     ],

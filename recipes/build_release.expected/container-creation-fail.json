@@ -1327,7 +1327,8 @@
       "all",
       "--manifest-branch",
       "main",
-      "--repo-rev=stable"
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
@@ -1661,6 +1662,7 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
+      "--verbose",
       "--force-remove-dirty",
       "--prune"
     ],
