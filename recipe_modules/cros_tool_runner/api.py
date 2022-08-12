@@ -26,7 +26,9 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     self._dut_id = env_vars.SKYLAB_DUT_ID
     self._run_id = env_vars.SWARMING_TASK_ID
     self._docker_key_file_location = '/creds/service_accounts/skylab-drone.json'
+    # last created image file path.
     self._images_file_path = None
+    # container metadata for last created image file.
     self.container_metadata = None
 
   def create_file_with_container_metadata(self, container_metadata):
@@ -35,14 +37,18 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
         Args:
           container_metadata: (ContainerMetadata) container metadata.
         """
-    if not self._images_file_path:
+    # CTR module allows creating image file from container metadata repeatedly.
+    # Every time a new image file is created, previous image file path
+    # and container metadata will be replaced by the new one.
+    if container_metadata and (self.container_metadata != container_metadata or
+                               not self._images_file_path):
       self.container_metadata = container_metadata
-      self._images_file_path = self.m.path.mkstemp(prefix='container_images')
       # TODO(b/217973414): Replace with MessageToJson once we don't need to fix the separator
       # spacing between py2 and py3 MessageToJson.
       container_metadata_output = json.dumps(
           json_format.MessageToDict(self.container_metadata),
           separators=(',', ':'), sort_keys=True)
+      self._images_file_path = self.m.path.mkstemp(prefix='container_images')
       self.m.file.write_text('writing container metadata to file',
                              self._images_file_path, container_metadata_output)
 
