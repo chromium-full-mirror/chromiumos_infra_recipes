@@ -2,6 +2,7 @@
 # Copyright 2020 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from PB.chromite.api.sysroot import Sysroot
 
 DEPS = [
     'recipe_engine/assertions',
@@ -21,9 +22,10 @@ def RunSteps(api):
   # Uploading prebuilts for a CQ builder is invalid and raises ValueError.
   # _binhost_key() is where we discover that we do not have a key for that
   # value.
+  target = BuildTarget(name='target')
   api.assertions.assertRaises(ValueError,
                               api.cros_prebuilts.upload_target_prebuilts,
-                              BuildTarget(name='target'),
+                              target, Sysroot(build_target=target),
                               Profile(name='profile_name'), BuilderConfig.Id.CQ,
                               'prebuilts_gs_bucket')
 

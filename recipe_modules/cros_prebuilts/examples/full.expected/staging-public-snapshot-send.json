@@ -819,9 +819,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"packageIndexFiles\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
@@ -836,6 +833,11 @@
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -851,7 +853,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"location\": 2,\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\"\n      }\n    },\n    {\n      \"path\": {\n        \"location\": 2,\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\"\n      }\n    }\n  ],\n  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
+      "{\n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"location\": 2,\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\"\n      }\n    },\n    {\n      \"path\": {\n        \"location\": 2,\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\"\n      }\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -954,7 +956,7 @@
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"prepareBinhostUploadsRequest\":{\"buildTarget\":{\"name\":\"amd64-generic\"},\"packageIndexFiles\":[{\"path\":{\"location\":\"OUTSIDE\",\"path\":\"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\"}},{\"path\":{\"location\":\"OUTSIDE\",\"path\":\"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\"}}],\"uri\":\"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"},\"prepareBinhostUploadsResponse\":{\"uploadTargets\":[{\"path\":\"foo.tbz2\"}],\"uploadsDir\":\"[START_DIR]/uploads/dir\"},\"requestTime\":\"2012-05-14T12:53:26Z\",\"responseTime\":\"2012-05-14T12:53:27.500Z\",\"stepName\":\"upload prebuilts|prepare binhost uploads|call chromite.api.BinhostService/PrepareBinhostUploads|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"prepareBinhostUploadsRequest\":{\"packageIndexFiles\":[{\"path\":{\"location\":\"OUTSIDE\",\"path\":\"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\"}},{\"path\":{\"location\":\"OUTSIDE\",\"path\":\"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\"}}],\"sysroot\":{\"buildTarget\":{\"name\":\"amd64-generic\"}},\"uri\":\"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"},\"prepareBinhostUploadsResponse\":{\"uploadTargets\":[{\"path\":\"foo.tbz2\"}],\"uploadsDir\":\"[START_DIR]/uploads/dir\"},\"requestTime\":\"2012-05-14T12:53:26Z\",\"responseTime\":\"2012-05-14T12:53:27.500Z\",\"stepName\":\"upload prebuilts|prepare binhost uploads|call chromite.api.BinhostService/PrepareBinhostUploads|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -963,7 +965,7 @@
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAWLrAQoPCg1hbWQ2NC1nZW5lcmljEmpnczovL3N0YWdpbmctcHJlYnVpbHQtYnVja2V0L2JvYXJkL2FtZDY0LWdlbmVyaWMvcG9zdHN1Ym1pdC1SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0L3BhY2thZ2VzKjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL3NvbWUvcGF0aC9QYWNrYWdlSW5kZXgQAio1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBfMS9kaWZmL3BhdGgvUGFja2FnZUluZGV4EAJqJQoXW1NUQVJUX0RJUl0vdXBsb2Fkcy9kaXISCgoIZm9vLnRiejLQAtDsgNmu8bWSfNoCdXVwbG9hZCBwcmVidWlsdHN8cHJlcGFyZSBiaW5ob3N0IHVwbG9hZHN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvUHJlcGFyZUJpbmhvc3RVcGxvYWRzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAWLtARJqZ3M6Ly9zdGFnaW5nLXByZWJ1aWx0LWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlcyIREg8KDWFtZDY0LWdlbmVyaWMqNQozCi9bQ0xFQU5VUF0vYmluaG9zdHNfdG1wXzEvc29tZS9wYXRoL1BhY2thZ2VJbmRleBACKjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL2RpZmYvcGF0aC9QYWNrYWdlSW5kZXgQAmolChdbU1RBUlRfRElSXS91cGxvYWRzL2RpchIKCghmb28udGJ6MtAC0OyA2a7xtZJ82gJ1dXBsb2FkIHByZWJ1aWx0c3xwcmVwYXJlIGJpbmhvc3QgdXBsb2Fkc3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9QcmVwYXJlQmluaG9zdFVwbG9hZHN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -994,7 +996,7 @@
       }
     },
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAWLrAQoPCg1hbWQ2NC1nZW5lcmljEmpnczovL3N0YWdpbmctcHJlYnVpbHQtYnVja2V0L2JvYXJkL2FtZDY0LWdlbmVyaWMvcG9zdHN1Ym1pdC1SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0L3BhY2thZ2VzKjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL3NvbWUvcGF0aC9QYWNrYWdlSW5kZXgQAio1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBfMS9kaWZmL3BhdGgvUGFja2FnZUluZGV4EAJqJQoXW1NUQVJUX0RJUl0vdXBsb2Fkcy9kaXISCgoIZm9vLnRiejLQAtDsgNmu8bWSfNoCdXVwbG9hZCBwcmVidWlsdHN8cHJlcGFyZSBiaW5ob3N0IHVwbG9hZHN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvUHJlcGFyZUJpbmhvc3RVcGxvYWRzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAWLtARJqZ3M6Ly9zdGFnaW5nLXByZWJ1aWx0LWJ1Y2tldC9ib2FyZC9hbWQ2NC1nZW5lcmljL3Bvc3RzdWJtaXQtUjk5LTEyMzQuNTYuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9wYWNrYWdlcyIREg8KDWFtZDY0LWdlbmVyaWMqNQozCi9bQ0xFQU5VUF0vYmluaG9zdHNfdG1wXzEvc29tZS9wYXRoL1BhY2thZ2VJbmRleBACKjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL2RpZmYvcGF0aC9QYWNrYWdlSW5kZXgQAmolChdbU1RBUlRfRElSXS91cGxvYWRzL2RpchIKCghmb28udGJ6MtAC0OyA2a7xtZJ82gJ1dXBsb2FkIHByZWJ1aWx0c3xwcmVwYXJlIGJpbmhvc3QgdXBsb2Fkc3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9QcmVwYXJlQmluaG9zdFVwbG9hZHN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2135,6 +2137,243 @@
       }
     },
     "name": "upload prebuilts.upload metadata.gsutil acl (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload devinstall prebuilts"
+  },
+  {
+    "cmd": [],
+    "name": "upload devinstall prebuilts.prepare dev_install binhost uploads",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload devinstall prebuilts.prepare dev_install binhost uploads.call chromite.api.BinhostService/PrepareDevInstallBinhostUploads",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"uploadsDir\": \"[CLEANUP]/binhosts_tmp_2\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/1234.56.0/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"uploadsDir\": \"[CLEANUP]/binhosts_tmp_2\",\n  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/1234.56.0/packages\"\n}",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload devinstall prebuilts.prepare dev_install binhost uploads.call chromite.api.BinhostService/PrepareDevInstallBinhostUploads.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.BinhostService/PrepareDevInstallBinhostUploads"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload devinstall prebuilts.prepare dev_install binhost uploads.call chromite.api.BinhostService/PrepareDevInstallBinhostUploads.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload devinstall prebuilts.prepare dev_install binhost uploads.call chromite.api.BinhostService/PrepareDevInstallBinhostUploads.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload devinstall prebuilts.prepare dev_install binhost uploads.call chromite.api.BinhostService/PrepareDevInstallBinhostUploads.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload devinstall prebuilts.upload prebuilt blobs to GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/symlink.py",
+      "--link-json",
+      "{\"[CLEANUP]/binhosts_tmp_2/foo.tbz2\": [\"[CLEANUP]/prebuilts_tmp_2/foo.tbz2\"]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload devinstall prebuilts.upload prebuilt blobs to GS.link files to upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/prebuilts_tmp_2",
+      "gs://staging-prebuilt-bucket/board/amd64-generic/1234.56.0/packages"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload devinstall prebuilts.upload prebuilt blobs to GS.gsutil rsync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "acl",
+      "ch",
+      "-r",
+      "-u",
+      "AllUsers:R",
+      "gs://staging-prebuilt-bucket/board/amd64-generic/1234.56.0/packages"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload devinstall prebuilts.upload prebuilt blobs to GS.gsutil acl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

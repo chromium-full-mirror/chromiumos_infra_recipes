@@ -56,6 +56,25 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     return 'gs://%s/board/%s/%s-%s-%s/packages' % (
         gs_bucket, target.name, label, version, self._build_id)
 
+  def _devinstall_prebuilts_uri(self, target, gs_bucket, staging=False):
+    """Determine the GS URI to upload devinstall prebuilts.
+
+    Args:
+      target (BuildTarget): The build target.
+      gs_bucket (str): Google storage bucket to upload devinstall prebuilts to.
+
+    Returns:
+      The full GS URI in which to upload devinstall prebuilts.
+    """
+    version = self.m.cros_version.version.platform_version
+    # Since there is not a strong guarantee that staging configuration will
+    # provide a bucket that is used only for this purpose, if this is running in
+    # staging play it safe and create another directory specifically for the
+    # devinstall prebuilts to help find staging artifacts.
+    bucket_suffix = '/devinstall_prebuilts' if staging else ''
+    return 'gs://%s%s/board/%s/%s/packages' % (gs_bucket, bucket_suffix,
+                                               target.name, version)
+
   def _get_snapshot_package_index_info(self, snapshots, build_target, profile,
                                        gs_bucket, test_data_dict=None):
     """Get prebuilts metadata for snapshots.
@@ -299,11 +318,11 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
                 path=Path(path=str(dest), location=Path.OUTSIDE)))
       return package_index_files
 
-  def _prepare_binhost_uploads(self, target, uri, package_index_files):
+  def _prepare_binhost_uploads(self, sysroot, uri, package_index_files):
     """Determine which prebuilt archives should be uploaded to the binhost.
 
     Args:
-      target (BuildTarget): Build target whose prebuilts will be uploaded.
+      sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
       uri (str): URI where prebuilts will be uploaded.
       package_index_files (List[PackageIndex]): package index files to
           deduplicate the prebuilt list.
@@ -314,10 +333,31 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('prepare binhost uploads'):
       request = binhost_pb.PrepareBinhostUploadsRequest(
-          build_target=target, uri=uri, package_index_files=package_index_files)
+          sysroot=sysroot, uri=uri, package_index_files=package_index_files)
       response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
           request, infra_step=True)
       upload_root = self.m.path.abs_to_path(response.uploads_dir)
+      upload_paths = [ut.path for ut in response.upload_targets]
+      return upload_root, upload_paths
+
+  def _prepare_devinstall_binhost_uploads(self, sysroot, uri):
+    """Get the prebuilts from the build-api into a local directory.
+
+    Args:
+      sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
+      uri (str): URI where prebuilts will be uploaded.
+
+    Returns:
+      tuple(Path, List[str]): Path to directory containing uploads and
+          a list of uploadable string paths relative to that directory.
+    """
+    with self.m.step.nest('prepare dev_install binhost uploads'):
+      upload_root = self.m.path.mkdtemp(prefix='binhosts')
+      request = binhost_pb.PrepareDevInstallBinhostUploadsRequest(
+          sysroot=sysroot, uploads_dir=self.m.path.abspath(upload_root),
+          uri=uri)
+      response = self.m.cros_build_api.BinhostService.PrepareDevInstallBinhostUploads(
+          request, infra_step=True)
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
@@ -406,7 +446,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       cmd.append(acl.arg)
       cmd.append(acl.value)
 
-  def upload_target_prebuilts(self, target, profile, kind, gs_bucket,
+  def upload_target_prebuilts(self, target, sysroot, profile, kind, gs_bucket,
                               private=True):
     """Upload binary prebuilts for the build target to Google Storage.
 
@@ -415,6 +455,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
     Args:
       target (BuildTarget): The build target to upload prebuilts for.
+      sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
       profile (chromiumos.Profile): The Profile, or None.
       kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
       gs_bucket (str): Google storage bucket to upload prebuilts to.
@@ -434,7 +475,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       package_index_files = self._get_binhosts(target, private)
       upload_root, upload_paths = self._prepare_binhost_uploads(
-          target, upload_uri, package_index_files)
+          sysroot, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)
       step = self.m.step('set properties', cmd=None)
       step.presentation.properties['prebuilts_private'] = private
@@ -458,3 +499,28 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       if self._enable_snapshot_prebuilts:
         self._upload_metadata(target, profile, kind, gs_bucket, acls,
                               upload_uri)
+
+  def upload_devinstall_prebuilts(self, target, sysroot, gs_bucket):
+    """Upload binary devinstall prebuilts for build target to Google Storage.
+
+    Args:
+      target (BuildTarget): The build target to upload prebuilts for.
+      sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
+      kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
+    """
+    with self.m.step.nest('upload devinstall prebuilts'):
+      # First, set up the ACLs. dev_install prebuilts should always be public.
+      acls = [binhost_pb.AclArgsResponse.AclArg(arg='-u', value='AllUsers:R')]
+
+      # Next, craft the uri where these prebuilts will end up, so it can be
+      # passed to the build-api to live in the metadata.
+      upload_uri = self._devinstall_prebuilts_uri(
+          target, gs_bucket, self.m.cros_infra_config.is_staging)
+
+      # Next, hit the build API to get the devinstall prebuilts copied to a
+      # directory.
+      upload_root, upload_paths = self._prepare_devinstall_binhost_uploads(
+          sysroot, upload_uri)
+
+      # Finally, upload the prebuilts in the path up to gs.
+      self._upload(upload_root, upload_paths, upload_uri, acls)

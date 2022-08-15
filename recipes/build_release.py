@@ -18,6 +18,7 @@ DEPS = [
     'builder_metadata',
     'cros_build_api',
     'cros_infra_config',
+    'cros_prebuilts',
     'cros_release',
     'cros_sdk',
     'cros_signing',
@@ -134,6 +135,11 @@ def DoRunSteps(api, config, properties):
         snoopy_report(api, 'compile')
 
       api.build_menu.build_images(config, include_version=True)
+      # We upload devinstall prebuilts at this stage instead of earlier on
+      # because ImageService/Create (which is called in build_images above) is
+      # the call that generates the package list that the devinstall prebuilts
+      # call uses.
+      api.build_menu.upload_devinstall_prebuilts(config)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of

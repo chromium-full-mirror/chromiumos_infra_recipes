@@ -820,9 +820,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
     profile = Profile(name=config.build.portage_profile.profile)
     if artifacts.prebuilts in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_target_prebuilts(
-          self.build_target, profile, config.id.type,
+          self.build_target, self.sysroot, profile, config.id.type,
           artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+  def upload_devinstall_prebuilts(self, config=None):
+    """Upload dev_install prebuilts from the build.
+
+    Args:
+      config (BuilderConfig): The Builder Config for the build, or None.
+    """
+    config = config or self.config
+    artifacts = config.artifacts
+
+    self.m.cros_prebuilts.upload_devinstall_prebuilts(
+        self.build_target, self.sysroot,
+        artifacts.devinstall_prebuilts_gs_bucket)
 
   def _get_child_builds(self):
     """

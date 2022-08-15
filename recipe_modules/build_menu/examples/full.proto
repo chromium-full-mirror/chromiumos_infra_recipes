@@ -36,4 +36,7 @@ message FullProperties {
   // Value of cherry_pick_changes to pass to setup_workspace_and_chroot.
   // Inverted so that `false` is the default.
   bool dont_cherry_pick_changes = 9;
+
+  // Whether to call upload_devinstall_prebuilts.
+  bool upload_devinstall_prebuilts = 10;
 }

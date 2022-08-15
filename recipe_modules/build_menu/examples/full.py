@@ -62,6 +62,8 @@ def DoRunSteps(api, config, properties):
       api.build_menu.build_and_test_images(include_version=True)
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
+      if properties.upload_devinstall_prebuilts:
+        api.build_menu.upload_devinstall_prebuilts()
       _ = api.build_menu.artifacts_gs_path()
       api.build_menu.upload_artifacts()
       api.build_menu.create_containers()
@@ -165,6 +167,18 @@ def GenTests(api):
       'release-build',
       api.properties(**api.test_util.build_menu_properties(
           build_target_name='cloudready-release-R90-13816.B')),
+      input_properties={
+          '$chromeos/cros_artifacts':
+              dict(gs_upload_path='{target}-release/{version}')
+      }, build_target='cloudready-release-R90-13816.B', bucket='release')
+
+  # Release build with devinstall prebuilts.
+  yield api.build_menu.test(
+      'release-build-prebuilts',
+      api.properties(**api.test_util.build_menu_properties(
+          build_target_name='cloudready-release-R90-13816.B')),
+      api.properties(FullProperties(upload_devinstall_prebuilts=True)),
+      api.post_check(post_process.MustRun, 'upload devinstall prebuilts'),
       input_properties={
           '$chromeos/cros_artifacts':
               dict(gs_upload_path='{target}-release/{version}')

@@ -122,6 +122,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         uploads_dir=self.path('uploads/dir'), upload_targets=[{
             'path': 'foo.tbz2'
         }])
+    responses['PrepareDevInstallBinhostUploads'] = jsonify(upload_targets=[{
+        'path': 'foo.tbz2'
+    }])
     responses['SetBinhost'] = jsonify(output_file=self.path('BINHOST.conf'))
     responses['Get'] = jsonify(binhosts=[
         {

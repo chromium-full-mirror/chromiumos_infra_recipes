@@ -866,7 +866,7 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#844)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#857)(self):**
 
 Add child build ids to output property of current build.
 
@@ -1036,7 +1036,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#149)(self):**
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#853)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#866)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1145,6 +1145,13 @@ Args:
 
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
+
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#827)(self, config=None):**
+
+Upload dev_install prebuilts from the build.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build, or None.
 
 &mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#808)(self, config=None):**
 
@@ -2927,7 +2934,7 @@ API for uploading CrOS prebuilts to Google Storage.
 
 A module for uploading package prebuilts.
 
-&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#135)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
+&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#154)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
 
 Return the PackageIndexInfo for this build.
 
@@ -2944,7 +2951,16 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#409)(self, target, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#503)(self, target, sysroot, gs_bucket):**
+
+Upload binary devinstall prebuilts for build target to Google Storage.
+
+Args:
+  target (BuildTarget): The build target to upload prebuilts for.
+  sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
+  kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
+
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#449)(self, target, sysroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -2953,6 +2969,7 @@ This step works entirely within the workspace checkout.
 
 Args:
   target (BuildTarget): The build target to upload prebuilts for.
+  sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
   profile (chromiumos.Profile): The Profile, or None.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
   gs_bucket (str): Google storage bucket to upload prebuilts to.
@@ -8774,17 +8791,17 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#25)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_signing](#recipe_modules-cros_signing), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#103)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#104)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#70)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#71)(api, properties):**
 
-&mdash; **def [snoopy\_report](/recipes/build_release.py#53)(api, report):**
+&mdash; **def [snoopy\_report](/recipes/build_release.py#54)(api, report):**
 
 Report a step to snoopy.
 
@@ -9752,11 +9769,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/cros_paygen/tests/verify_paygen_timeout.py#17)(api):**
 ### *recipes* / [cros\_prebuilts:examples/full](/recipe_modules/cros_prebuilts/examples/full.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_prebuilts/examples/full.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/examples/full.py#34)(api, properties):**
 ### *recipes* / [cros\_prebuilts:tests/get\_pkg\_idx\_info](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9766,11 +9783,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py#30)(api, properties):**
 ### *recipes* / [cros\_prebuilts:tests/upload\_cq](/recipe_modules/cros_prebuilts/tests/upload_cq.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#6): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#7): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#21)(api):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release/examples/full.py#6): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

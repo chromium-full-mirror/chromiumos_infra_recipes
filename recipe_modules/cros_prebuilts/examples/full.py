@@ -2,6 +2,7 @@
 # Copyright 2019 The Chromium OS Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from PB.chromite.api.sysroot import Sysroot
 
 DEPS = [
     'recipe_engine/assertions',
@@ -38,11 +39,13 @@ def RunSteps(api, properties):
       api.cros_prebuilts.get_package_index_info(properties.gs_bucket,
                                                 profile=properties.profile))
 
-  api.cros_prebuilts.upload_target_prebuilts(properties.build_target,
-                                             properties.profile,
-                                             BuilderConfig.Id.POSTSUBMIT,
-                                             properties.gs_bucket,
-                                             properties.private)
+  api.cros_prebuilts.upload_target_prebuilts(
+      properties.build_target, properties.sysroot, properties.profile,
+      BuilderConfig.Id.POSTSUBMIT, properties.gs_bucket, properties.private)
+
+  api.cros_prebuilts.upload_devinstall_prebuilts(properties.build_target,
+                                                 properties.sysroot,
+                                                 properties.gs_bucket)
 
 
 def GenTests(api):
@@ -76,9 +79,11 @@ def GenTests(api):
                                                       count=count)
 
     ret = api.test_util.test_child_build(target, cq=False).build
-    test_props = FullProperties(
-        build_target=BuildTarget(name=target), private=private,
-        gs_bucket=gs_bucket, profile=profile, dirty_source=dirty_source)
+    build_target = BuildTarget(name=target)
+    test_props = FullProperties(build_target=build_target,
+                                sysroot=Sysroot(build_target=build_target),
+                                private=private, gs_bucket=gs_bucket,
+                                profile=profile, dirty_source=dirty_source)
     for x in expected_package_indexes:
       test_props.expected_package_indexes.add().CopyFrom(x)
 

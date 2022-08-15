@@ -7,23 +7,27 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_prebuilts.examples;
 
 import "chromiumos/common.proto";
+import "chromite/api/sysroot.proto";
 
 message FullProperties {
   // The build_target for this builder.
   chromiumos.BuildTarget build_target = 1;
 
+  // The sysroot for this builder.
+  chromite.api.Sysroot sysroot = 2;
+
   // Expected builder name, if any.  See BuilderConfig.Id.name.
-  bool private = 2;
+  bool private = 3;
 
   // The gs_bucket to use.
-  string gs_bucket = 3;
+  string gs_bucket = 4;
 
   // The name of the profile to use.
-  chromiumos.Profile profile = 4;
+  chromiumos.Profile profile = 5;
 
   // Expected PackageIndexInfo data
-  repeated chromiumos.PackageIndexInfo expected_package_indexes = 5;
+  repeated chromiumos.PackageIndexInfo expected_package_indexes = 6;
 
   // Whether to make the source appear dirty.
-  bool dirty_source = 6;
+  bool dirty_source = 7;
 }
