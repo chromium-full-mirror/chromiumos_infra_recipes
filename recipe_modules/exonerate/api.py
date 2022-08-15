@@ -32,8 +32,14 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._exoneration_link_map = {}
     self._test_stats_map = defaultdict(int)
     self._suite_stats_map = defaultdict(int)
+    self._rdb_test_configs = []
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
+
+  @property
+  def rdb_test_configs(self):
+    """Returns exonerated suite names for ResultDB."""
+    return self._rdb_test_configs
 
   def fetch_config(self):
     """Download config file and return the extracted config proto.
@@ -233,6 +239,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           if new_status == common_pb2.SUCCESS:
             suite_name = str(skylab_res.task.test.common.display_name)
             link_text = '{}.{}'.format(build_target, suite_name)
+            self._rdb_test_configs.append('{}.hw.{}'.format(
+                build_target, suite_name))
             self._exoneration_link_map[
                 link_text] = self.m.urls.get_skylab_task_url(skylab_res.task)
             exonerated_test_names.append(suite_name)
@@ -338,6 +346,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           if new_status == common_pb2.SUCCESS:
             suite_name = self.m.naming.get_vm_test_title(build)
             link_text = '{}.{}'.format(build_target, suite_name)
+            self._rdb_test_configs.append('{}.vm.{}'.format(
+                build_target, suite_name))
             self._exoneration_link_map[
                 link_text] = self.m.urls.get_vm_test_link_map(build)
             exonerated_test_names.append(suite_name)

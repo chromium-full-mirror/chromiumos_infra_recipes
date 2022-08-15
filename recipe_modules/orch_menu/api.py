@@ -322,6 +322,7 @@ class OrchMenuApi(RecipeApi):
       self._non_critical_test_check()
       self.m.greenness.print_step()
       self.m.exonerate.print_stats()
+      self._exonerate_resultdb_results(self.m.exonerate.rdb_test_configs)
       # Set child output ids if any
       self.m.build_menu.add_child_build_ids_to_output_property()
 

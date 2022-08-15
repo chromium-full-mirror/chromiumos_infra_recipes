@@ -112,6 +112,7 @@ def RunSteps(api):
   api.assertions.assertEqual(len(hw_test_failures[0].child_results), 1)
 
   api.exonerate.print_stats()
+  api.assertions.assertEqual(len(api.exonerate.rdb_test_configs), 1)
 
 
 def GenTests(api):
