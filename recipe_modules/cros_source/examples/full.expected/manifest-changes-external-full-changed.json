@@ -470,7 +470,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -500,7 +500,7 @@
       "--options",
       "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
       "overlay",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -589,7 +589,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromeos/.recipes_state.json"
+      "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -605,7 +605,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json",
+    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -634,7 +634,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -668,7 +668,7 @@
       "--repo-rev=main",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -708,7 +708,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -740,7 +740,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -772,7 +772,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "version"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -810,7 +810,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -846,7 +846,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -892,7 +892,7 @@
       "reset",
       "--hard"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -934,7 +934,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -980,7 +980,7 @@
       "--force-remove-dirty",
       "--prune"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1035,7 +1035,7 @@
       "[CLEANUP]/event_log__tmp_1",
       "/path/to/tmp/"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1088,7 +1088,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromeos/.recipes_state.json"
+      "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -1104,7 +1104,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
+    "name": "sync cached directory.Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1121,7 +1121,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromeos/manifest-internal",
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1245,7 +1245,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
@@ -1328,7 +1328,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CACHE]/chromeos/.recipes_state.json",
+      "[CACHE]/chromiumos/.recipes_state.json",
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1345,7 +1345,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync cached directory (2).Read proto from [CACHE]/chromeos/.recipes_state.json",
+    "name": "sync cached directory (2).Read proto from [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1373,7 +1373,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
-      "[CACHE]/chromeos/.recipes_state.json"
+      "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -1389,7 +1389,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync cached directory (2).Write proto to [CACHE]/chromeos/.recipes_state.json",
+    "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1418,7 +1418,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -1452,7 +1452,7 @@
       "--repo-rev=main",
       "--verbose"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1491,7 +1491,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1527,7 +1527,7 @@
       "-print",
       "-delete"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1573,7 +1573,7 @@
       "reset",
       "--hard"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1615,7 +1615,7 @@
       "-d",
       "-f"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1661,7 +1661,7 @@
       "--force-remove-dirty",
       "--prune"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1716,7 +1716,7 @@
       "[CLEANUP]/event_log__tmp_2",
       "/path/to/tmp/"
     ],
-    "cwd": "[CACHE]/chromeos",
+    "cwd": "[CACHE]/chromiumos",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1769,7 +1769,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CACHE]/chromeos/.recipes_state.json"
+      "[CACHE]/chromiumos/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -1785,7 +1785,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync cached directory (2).Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
+    "name": "sync cached directory (2).Write proto to [CACHE]/chromiumos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
@@ -1802,7 +1802,7 @@
       "remote",
       "update"
     ],
-    "cwd": "[CACHE]/chromeos/manifest-internal",
+    "cwd": "[CACHE]/chromiumos/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1926,7 +1926,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromiumos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
@@ -2227,7 +2227,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {

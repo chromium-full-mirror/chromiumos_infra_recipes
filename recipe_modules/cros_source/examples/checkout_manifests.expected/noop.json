@@ -336,7 +336,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -366,7 +366,7 @@
       "--options",
       "lowerdir=/preload/chromeos,upperdir=[CACHE]/chromiumos/upperdir/chromiumos,workdir=[CACHE]/chromiumos/workdir/chromiumos,x-chromeos-overlay.name=chromiumos",
       "overlay",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {
@@ -400,7 +400,7 @@
   {
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
-      "[CACHE]/chromeos"
+      "[CACHE]/chromiumos"
     ],
     "infra_step": true,
     "luci_context": {
