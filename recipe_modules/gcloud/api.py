@@ -899,8 +899,9 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('setup source cache disk'):
       self._disk = '{}-{}'.format(self.infra_host, self._short_name)
-      self._disk = self._disk[:self.gce_name_limit] if len(
-          self._disk) > self.gce_name_limit else self._disk
+      self._disk = (self._disk[:self.gce_name_limit]
+                    if len(self._disk) > self.gce_name_limit else
+                    self._disk).rstrip('-')
       recovery_snapshot = (
           recovery_snapshot or 'initial-{}-source-snapshot'.format(cache_name))
       remote_version = self._get_image_version(recovery_snapshot)
