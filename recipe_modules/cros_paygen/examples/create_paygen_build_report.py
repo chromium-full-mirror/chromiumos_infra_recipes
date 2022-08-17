@@ -9,7 +9,6 @@ DEPS = [
     'cros_paygen',
 ]
 
-from google.protobuf.json_format import MessageToDict
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 from PB.chromite.api.payload import Build, DLCImage, GenerationRequest, SignedImage, UnsignedImage
@@ -20,59 +19,50 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
+
+  class dotdict(dict):
+    """dot.notation access to dictionary attributes.
+
+    This is necessary because of the way the recipes engine handles request
+    objects, and ensuring our test is able to replicate the code under test.
+    """
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
   api.assertions.maxDiff = None
-  standard_payload = build_pb2.Build(status='SUCCESS')
-
-  # The absence of any DLC or MINIOS markers implies a standard payload for
-  # the tested module's purposes.
-  standard_payload.input.properties['requests'] = [
-      {
-          'generation_request':
-              MessageToDict(
-                  GenerationRequest(
+  build_report = [
+      api.cros_paygen.create_paygen_build_report_payload(
+          dotdict(
+              dict(
+                  generation_request=GenerationRequest(
                       tgt_signed_image=SignedImage(
-                          build=Build(channel='canary-channel'))))
-      },
-      {
-          'generation_request':
-              MessageToDict(
-                  GenerationRequest(
+                          build=Build(channel='canary-channel'))))),
+          'gs://path/to/standard/payload'),
+      api.cros_paygen.create_paygen_build_report_payload(
+          dotdict(
+              dict(
+                  generation_request=GenerationRequest(
                       tgt_unsigned_image=UnsignedImage(
-                          build=Build(channel='dev-channel'))))
-      },
-  ]
-
-  standard_payload.output.properties['payload_uris'] = [
-      'gs://path/to/standard/payload', ''
-  ]
-
-  minios_and_dlc_payload = build_pb2.Build(status='SUCCESS')
-  minios_and_dlc_payload.input.properties['requests'] = [
-      {
-          'generation_request':
-              MessageToDict(
-                  GenerationRequest(
-                      tgt_signed_image=SignedImage(
-                          build=Build(channel='stable-channel')), minios=True)),
-      },
-      {
-          'generation_request':
-              MessageToDict(
-                  GenerationRequest(
+                          build=Build(channel='dev-channel'))))), None),
+      api.cros_paygen.create_paygen_build_report_payload(
+          build_pb2.Build(status="FAILURE"), None),
+      api.cros_paygen.create_paygen_build_report_payload(
+          dotdict(
+              dict(
+                  generation_request=GenerationRequest(
+                      tgt_unsigned_image=UnsignedImage(
+                          build=Build(
+                              channel='stable-channel')), minios=True))),
+          'gs://path/to/minios/payload'),
+      api.cros_paygen.create_paygen_build_report_payload(
+          dotdict(
+              dict(
+                  generation_request=GenerationRequest(
                       tgt_dlc_image=DLCImage(
-                          build=Build(channel='beta-channel'), dlc_id='dlc'))),
-      },
+                          build=Build(channel='beta-channel'), dlc_id='dlc')))),
+          'gs://path/to/dlc/payload'),
   ]
-  minios_and_dlc_payload.output.properties['payload_uris'] = [
-      'gs://path/to/minios/payload', 'gs://path/to/dlc/payload'
-  ]
-
-  paygen_builds = [
-      standard_payload,
-      build_pb2.Build(status="FAILURE"),
-      minios_and_dlc_payload,
-  ]
-  build_report = api.cros_paygen.create_paygen_build_report(paygen_builds)
 
   expected_build_report = [
       BuildReport.Payload(
@@ -90,7 +80,7 @@ def RunSteps(api):
           size=1234,
           source_version='1.2.3',
           target_version='4.5.6',
-      ),
+      ), None, None,
       BuildReport.Payload(
           payload=BuildReport.BuildArtifact(
               uri=BuildReport.BuildArtifact.URI(

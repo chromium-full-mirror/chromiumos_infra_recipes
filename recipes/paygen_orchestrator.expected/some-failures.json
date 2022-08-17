@@ -2041,7 +2041,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514001\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2053,7 +2053,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2065,7 +2065,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514005\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2077,7 +2077,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2089,7 +2089,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514009\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2101,7 +2101,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514011\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2113,7 +2113,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514013\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2125,7 +2125,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514015\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2137,7 +2137,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514017\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2149,7 +2149,7 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514019\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }, @@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2250,7 +2250,7 @@
     "cmd": [],
     "name": "results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@0 of 13 passed@@@"
+      "@@@STEP_TEXT@6 of 13 passed@@@"
     ]
   },
   {
@@ -2271,7 +2271,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "0 of 13 passed\n\nhttps://cr-buildbucket.appspot.com/build/8922054662172514000\nhttps://cr-buildbucket.appspot.com/build/8922054662172514001\nhttps://cr-buildbucket.appspot.com/build/8922054662172514002\nhttps://cr-buildbucket.appspot.com/build/8922054662172514003\nhttps://cr-buildbucket.appspot.com/build/8922054662172514004\nhttps://cr-buildbucket.appspot.com/build/8922054662172514005\nhttps://cr-buildbucket.appspot.com/build/8922054662172514006\nhttps://cr-buildbucket.appspot.com/build/8922054662172514007\nhttps://cr-buildbucket.appspot.com/build/8922054662172514008\nhttps://cr-buildbucket.appspot.com/build/8922054662172514009\nhttps://cr-buildbucket.appspot.com/build/8922054662172514010\nhttps://cr-buildbucket.appspot.com/build/8922054662172514011\nhttps://cr-buildbucket.appspot.com/build/8922054662172514012"
+      "humanReason": "6 of 13 passed\n\nhttps://cr-buildbucket.appspot.com/build/8922054662172514000\nhttps://cr-buildbucket.appspot.com/build/8922054662172514002\nhttps://cr-buildbucket.appspot.com/build/8922054662172514004\nhttps://cr-buildbucket.appspot.com/build/8922054662172514006\nhttps://cr-buildbucket.appspot.com/build/8922054662172514008\nhttps://cr-buildbucket.appspot.com/build/8922054662172514010\nhttps://cr-buildbucket.appspot.com/build/8922054662172514012"
     },
     "name": "$result"
   }

@@ -195,7 +195,11 @@ def RunSteps(api, properties):
     pres.step_text = '%s of %s passed' % (len(suc), (len(suc) + len(fail)))
 
     with api.step.nest('set `payloads` output property'):
-      payloads = api.cros_paygen.create_paygen_build_report(res)
+      payloads = []
+      for run in res:
+        if run.status != common_pb2.SUCCESS or 'payloads' not in run.output.properties:
+          continue
+        payloads.extend(run.output.properties['payloads'])
       payloads_json = [py2_MessageToJson(payload) for payload in payloads]
       api.easy.set_properties_step(payloads=payloads_json)
 
@@ -224,9 +228,215 @@ def GenTests(api):
   def paygen_child_data(child_num):
     paygen_child_data = build_pb2.Build(id=8922054662172514000 + child_num,
                                         status='SUCCESS')
-    paygen_child_data.output.properties['payload_uris'] = [
-        'gs://path/to/payload'
-    ]
+    paygen_child_data.output.properties['payloads'] = [{
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }, {
+        "appid": "appid",
+        "channel": "CHANNEL_CANARY",
+        "metadataSignature": "signature",
+        "metadataSize": "1337",
+        "payload": {
+            "sha256": "deadbeef",
+            "type": "PAYLOAD_DELTA",
+            "uri": {
+                "gcs": "gs://path/to/payload"
+            }
+        },
+        "payloadType": "PAYLOAD_TYPE_STANDARD",
+        "size": "1234",
+        "sourceVersion": "1.2.3",
+        "targetVersion": "4.5.6"
+    }]
 
     paygen_child_data.input.properties['requests'] = [
         {
@@ -240,25 +450,10 @@ def GenTests(api):
 
     return paygen_child_data
 
-  payload_json_data = """{
-  "appid": "appid",
-  "metadata_signature": "signature",
-  "metadata_size": 1337,
-  "size": 1234,
-  "source_version": "1.2.3",
-  "target_version": "4.5.6",
-  "sha256_hex": "deadbeef",
-  "is_delta": true
-}"""
-
-  def repeated_step_data(step_name, stdout, n):
-    return [
-        api.step_data('{}{}'.format(step_name, ' (%d)' % n if n > 1 else ''),
-                      stdout=stdout) for n in range(1, n + 1)
-    ]
-
   yield api.test(
-      'basic', get_props(), good_paygen_cfg,
+      'basic',
+      get_props(),
+      good_paygen_cfg,
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -273,9 +468,7 @@ def GenTests(api):
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(23)],
           'running children.collect'),
-      *repeated_step_data(
-          'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
-          api.raw_io.output(payload_json_data), 13))
+  )
 
   yield api.test(
       'some-failures', get_props(), good_paygen_cfg,
@@ -288,7 +481,8 @@ def GenTests(api):
           'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.buildbucket.simulated_collect_output([
-          build_pb2.Build(id=8922054662172514000 + x, status='FAILURE')
+          build_pb2.Build(id=8922054662172514000 + x,
+                          status=('FAILURE' if x % 2 == 0 else 'SUCCESS'))
           for x in range(21)
       ], 'running children.collect'),
       api.post_check(post_process.StatusFailure),
@@ -319,7 +513,9 @@ def GenTests(api):
   assert len(summary) < 4000
 
   yield api.test(
-      'no-deltas', get_props(), good_paygen_cfg,
+      'no-deltas',
+      get_props(),
+      good_paygen_cfg,
       api.cros_paygen.test_paygen(
           'discovering payload configuration.get paygen json.gsutil cat',
           api.cros_paygen.NO_DELTA_PAYGEN_JSON),
@@ -330,6 +526,4 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(5)], 'running children.collect'),
-      *repeated_step_data(
-          'results.set `payloads` output property.gsutil cat gs://path/to/payload.json',
-          api.raw_io.output(payload_json_data), 5))
+  )

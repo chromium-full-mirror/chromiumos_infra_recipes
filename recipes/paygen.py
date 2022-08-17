@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/futures',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'bot_scaling',
     'cros_build_api',
@@ -150,7 +151,7 @@ def RunSteps(api, properties):
 
 
     # Set up holder objects.
-    paygen_test_configs, paygen_uris = [], []
+    paygen_test_configs, payloads = [], []
 
     CallPair = namedtuple('CallPair', ['req', 'resp', 'call_count'])
 
@@ -225,13 +226,17 @@ def RunSteps(api, properties):
                 CallPair(request, StepFailure(response.failure_reason),
                          f_result.call_count))
 
-        paygen_uris.append(response.remote_uri)
+        report_payload = api.cros_paygen.create_paygen_build_report_payload(
+            request, response.remote_uri)
+        if report_payload:
+          payloads.append(report_payload)
 
         test_configs = _set_up_test_configs(api, request, response)
         if test_configs:
           paygen_test_configs.extend(test_configs)
 
-      api.easy.set_properties_step(payload_uris=paygen_uris)
+      api.easy.set_properties_step(
+          payloads=[MessageToDict(payload) for payload in payloads])
       api.easy.set_properties_step(paygen_retries=total_retries)
 
       if errors:
@@ -281,6 +286,16 @@ def GenTests(api):
   full_payload_uri = (
       'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
       'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
+  payload_json_data = """{
+  "appid": "appid",
+  "metadata_signature": "signature",
+  "metadata_size": 1337,
+  "size": 1234,
+  "source_version": "1.2.3",
+  "target_version": "4.5.6",
+  "sha256_hex": "deadbeef",
+  "is_delta": true
+}"""
 
   yield api.test(
       'dryrun',
@@ -327,6 +342,8 @@ def GenTests(api):
                   ])
           ])),
       generate_payload_response(api),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(
           post_process.MustRun,
@@ -372,6 +389,8 @@ def GenTests(api):
                       ])
               ], max_concurrent_requests=1)),
       generate_payload_response(api),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(
           post_process.MustRun,
@@ -443,6 +462,8 @@ def GenTests(api):
               dict(generation_request=api.cros_paygen
                    .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0])
           ])),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
@@ -476,6 +497,8 @@ def GenTests(api):
           'doing paygen.setting up paygen test config.discover gs artifacts (2).gsutil list',
           full_payload_uri,
       ),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'testing paygen.buildbucket.schedule'),
@@ -494,6 +517,8 @@ def GenTests(api):
                                            applicable_models=['woomax'])
                   ])
           ])),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
@@ -512,6 +537,8 @@ def GenTests(api):
                                            applicable_models=['woomax'])
                   ])
           ])),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),

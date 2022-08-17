@@ -29,7 +29,6 @@ from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
 import PB.chromiumos.common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as bb_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.test_platform.request import Request
@@ -841,71 +840,63 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     Returns:
       A chromiumos.Channel.
     """
-    for x in ['tgtSignedImage', 'tgtUnsignedImage', 'tgtDlcImage']:
-      if x in gen_req:
-        return self.m.cros_release_util.channel_long_string_to_enum(
-            gen_req[x]['build']['channel'])
+    if gen_req.HasField('tgt_signed_image'):
+      return self.m.cros_release_util.channel_long_string_to_enum(
+          gen_req.tgt_signed_image.build.channel)
+    if gen_req.HasField('tgt_unsigned_image'):
+      return self.m.cros_release_util.channel_long_string_to_enum(
+          gen_req.tgt_unsigned_image.build.channel)
+    if gen_req.HasField('tgt_dlc_image'):
+      return self.m.cros_release_util.channel_long_string_to_enum(
+          gen_req.tgt_dlc_image.build.channel)
 
-  def create_paygen_build_report(self, paygen_build_results):
+  def create_paygen_build_report_payload(self, req, payload_uri):
     """Prepare payload information for the release pubsub.
 
     Args:
-      paygen_build_results (list[build_pb2.Build]): The results of the child
-        paygen builders, as returned by api.buildbucket.run.
+      req (PaygenRequest): The paygen request that was used.
+      payload_uri (str): The uri of the generated payload.
 
     Returns:
       A list[BuildReport.Payload] containing payload information for the pubsub.
     """
-    payloads = []
-    for res in paygen_build_results:
-      if res.status != bb_pb2.SUCCESS:
-        continue
 
-      paygen_requests = res.input.properties['requests']
-      # Note - this assumed that payload_requests and payload_uris have the same
-      # number of elements, and are in the same order. This is currently true,
-      # but should that behavior change this logic would need to be hardened.
-      for payload_request, payload_uri in zip(
-          paygen_requests, res.output.properties['payload_uris']):
+    # If paygen was skipped (minios) this will be empty, so skip it.
+    if not payload_uri:
+      return
 
-        # If paygen was skipped (minios) this will be empty, so skip it.
-        if not payload_uri:
-          continue
+    # Assign generation request for shorthand access.
+    gen_req = req.generation_request
 
-        # Assign generation request for shorthand access.
-        gen_req = payload_request['generation_request']
+    # Determine payload type from the paygen request.
+    payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
+    if gen_req and gen_req.minios:
+      payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
+    elif gen_req.HasField('tgt_dlc_image'):
+      payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
 
-        # Determine payload type from the paygen request.
-        payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_STANDARD
-        if 'minios' in gen_req and gen_req['minios']:
-          payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_MINIOS
-        elif 'tgtDlcImage' in gen_req:
-          payload_type = BuildReport.Payload.PayloadType.PAYLOAD_TYPE_DLC
+    payload_json_path = '{}.json'.format(payload_uri)
+    payload_info = self.m.gsutil.cat(
+        payload_json_path, name='cat {}'.format(payload_json_path),
+        stdout=self.m.raw_io.output(add_output_log=True)).stdout
+    payload_info = json.loads(payload_info)
 
-        payload_json_path = '{}.json'.format(payload_uri)
-        payload_info = self.m.gsutil.cat(
-            payload_json_path, name='cat {}'.format(payload_json_path),
-            stdout=self.m.raw_io.output(add_output_log=True)).stdout
-        payload_info = json.loads(payload_info)
+    is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_FULL
+    if payload_info.get('is_delta', False):
+      is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_DELTA
 
-        is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_FULL
-        if payload_info.get('is_delta', False):
-          is_delta = BuildReport.BuildArtifact.Type.PAYLOAD_DELTA
-
-        payload = BuildReport.Payload(
-            payload=BuildReport.BuildArtifact(
-                type=is_delta,
-                uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
-                sha256=payload_info['sha256_hex'],
-            ), payload_type=payload_type, appid=payload_info['appid'],
-            channel=self._get_channel_from_paygen_request(gen_req),
-            metadata_signature=payload_info['metadata_signature'],
-            metadata_size=payload_info['metadata_size'],
-            source_version=payload_info.get('source_version', None),
-            target_version=payload_info['target_version'],
-            size=payload_info['size'])
-        payloads.append(payload)
-    return payloads
+    return BuildReport.Payload(
+        payload=BuildReport.BuildArtifact(
+            type=is_delta,
+            uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
+            sha256=payload_info['sha256_hex'],
+        ), payload_type=payload_type, appid=payload_info['appid'],
+        channel=self._get_channel_from_paygen_request(gen_req),
+        metadata_signature=payload_info['metadata_signature'],
+        metadata_size=payload_info['metadata_size'],
+        source_version=payload_info.get('source_version', None),
+        target_version=payload_info['target_version'],
+        size=payload_info['size'])
 
   @staticmethod
   def _create_paygen_request_dict(generation_request, test_requests=None):
