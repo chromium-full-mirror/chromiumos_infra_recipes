@@ -2604,7 +2604,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _kernel_log_file_step_data_for_ctr(),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),
-      _mock_load_step_for_ctr(), _successful_run_test_step_for_ctr())
+      _successful_run_test_step_for_ctr())
 
   yield api.test(
       'within-deadline-ctr', api.time.seed(2369692800), _misc_properties(True),

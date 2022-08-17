@@ -10,7 +10,10 @@ from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToo
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from PB.chromiumos.test.lab import api as lab_api
 from PB.test_platform import phosphorus
+from PB.test_platform.skylab_local_state.load import Dut as LoadDut
+from PB.test_platform.skylab_local_state.load import LoadResponse
 from PB.test_platform.skylab_test_runner.result import Result as Skylab_Result
 
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
@@ -70,6 +73,31 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   ARTIFACT_DIR_NAME = 'artifact'
   TEST_RUNNER_RESULT_JSON = 'test_runner_result.json'
   STREAMED_RESULTS_JSON = 'streamed_results.jsonl'
+
+  # TODO(fqj): Remove once InventoryServer can have FakeDut.
+  FAKE_LOAD_RESPONSE_FOR_BETTY = LoadResponse(
+      dut_topology=[
+          LoadDut(
+              board='betty',
+              model='betty',
+              hostname='fake_dut',
+          )
+      ],
+      lab_dut_topology=[
+          lab_api.dut.DutTopology(duts=[
+              lab_api.dut.Dut(
+                  id=lab_api.dut.Dut.Id(
+                      value="fake_dut"), cache_server=lab_api.dut.CacheServer(
+                          address=lab_api.ip_endpoint.IpEndpoint(
+                              address="0.0.0.0", port=8080)),
+                  chromeos=lab_api.dut.Dut.ChromeOS(
+                      dut_model=lab_api.dut.DutModel(
+                          build_target="betty", model_name="betty"), ssh=lab_api
+                      .ip_endpoint.IpEndpoint(address="fake_host", port=22)))
+          ])
+      ],
+  )
+  USE_FAKE_LOAD_RESPONSE_FOR_BETTY = True
 
   def __init__(self, api, properties):
     """DUTInterface implementation with cros-tool-runner.
@@ -257,6 +285,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       skylab_local_state.LoadResponse
     """
     del test
+
+    if self._vm_is_vmtest() and self.USE_FAKE_LOAD_RESPONSE_FOR_BETTY:
+      return self.FAKE_LOAD_RESPONSE_FOR_BETTY
 
     with self._api.step.nest(
         'CrosToolRunner: Phosphorus: load skylab local state'):
