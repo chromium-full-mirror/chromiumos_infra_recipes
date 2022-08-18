@@ -10653,13 +10653,23 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#79)(api, properties):**
+&mdash; **def [RunSteps](/recipes/generator.py#102)(api, properties):**
 
-&mdash; **def [py2\_MessageToJson](/recipes/generator.py#72)(obj):**
+&mdash; **def [py2\_MessageToJson](/recipes/generator.py#76)(obj):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#417)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#440)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
+
+&mdash; **def [serializeVersions](/recipes/generator.py#83)(versions):**
+
+Serialize versions information.
+
+Args:
+  versions (List[UprevVersionedPackageRequest.GitRef]): The versions to consider for an update.
+
+Returns:
+  A JSON string that encodes the input.
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)
