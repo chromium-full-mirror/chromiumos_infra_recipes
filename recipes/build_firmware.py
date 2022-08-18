@@ -38,6 +38,28 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 PROPERTIES = BuildFirmwareProperties
 
 
+def UploadTestResults(api, location):
+  if location == common_pb2.PLATFORM_ZEPHYR:
+    cros_src_path = api.cros_source.workspace_path
+    test_results = cros_src_path.join(
+        'src/platform/ec/twister-out/twister.json')
+
+    with api.step.nest('Upload EC Firmware test results') as pres:
+      try:
+        api.step(
+            'run',
+            api.resultdb.wrap([
+                'vpython3',
+                cros_src_path.join(
+                    'src/platform/ec/util/zephyr_to_resultdb.py'),
+                '--result=' + str(test_results), '--upload=True'
+            ]))
+
+      except StepFailure:
+        pres.status = api.step.FAILURE
+        pres.step_text = 'Failed to upload test results'
+
+
 def RunSteps(api, properties):
   if properties.manifest_branch:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
@@ -70,10 +92,14 @@ def RunSteps(api, properties):
     api.easy.set_properties_step(got_revision=snapshot_sha,
                                  step_name='output got_revision')
 
-    service.TestAllFirmware(
-        TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                               code_coverage=properties.code_coverage),
-        name='test firmware')
+    try:
+      service.TestAllFirmware(
+          TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
+                                 code_coverage=properties.code_coverage),
+          name='test firmware')
+    except StepFailure as ex:
+      UploadTestResults(api, location)
+      raise ex
 
     uploaded_artifacts = None
     if properties.working_artifacts:
@@ -107,17 +133,7 @@ def RunSteps(api, properties):
 
         api.buildbucket.schedule(requests)
 
-    if location == common_pb2.PLATFORM_ZEPHYR:
-      cros_src_path = api.cros_source.workspace_path
-      test_results = cros_src_path.join(
-          'src/platform/ec/twister-out/twister.json')
-      api.step(
-          'Upload EC Firmware test results',
-          api.resultdb.wrap([
-              'vpython3',
-              cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
-              '--result=' + str(test_results), '--upload=True'
-          ]))
+    UploadTestResults(api, location)
 
 
 def _read_chromiumos_sdk_pin(api, properties):
@@ -212,6 +228,26 @@ def GenTests(api):
           retcode=1), api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun, 'schedule signing build'),
       input_properties=(dict(firmware_location=1, working_artifacts=True)))
+
+  yield test(
+      'fw-test-fail',
+      api.step_data('test firmware.call build API script', retcode=1),
+      api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
+      api.post_check(post_process.StatusAnyFailure),
+      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
+
+  yield test(
+      'upload-test-results-fail',
+      api.step_data('Upload EC Firmware test results.run', retcode=1),
+      api.post_check(
+          post_process.StepTextContains,
+          'Upload EC Firmware test results',
+          ['Failed to upload test results'],
+      ),
+      api.post_check(post_process.StepFailure,
+                     'Upload EC Firmware test results.run'),
+      api.post_check(post_process.StatusSuccess),
+      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
 
   yield test(
       'signing-invocation', api.post_check(post_process.StatusSuccess),
