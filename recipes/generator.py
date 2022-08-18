@@ -137,15 +137,15 @@ def RunSteps(api, properties):
     packages = properties.packages
   cpv = [api.naming.get_package_title(package) for package in packages]
 
-  # If we see gitiles_info populated in the recipe properties, we will be
-  # performing a fetch from the Gitiles API for the package's target uprev
-  # version. This information will be used in branch determination and sent to
-  # the uprev handler.
-  gitiles_response = None
-
   with api.cros_source.checkout_overlays_context(snapshot_mount=True), \
       api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache(manifest_branch_override='main')
+
+    # If we see gitiles_info populated in the recipe properties, we will be
+    # performing a fetch from the Gitiles API for the package's target uprev
+    # version. This information will be used in branch determination and sent to
+    # the uprev handler.
+    gitiles_response = None
 
     # Check out the appropriate branch, and use the appropriate policy.
     # If gitiles_info is given to us then we will determine the branch based on
@@ -233,10 +233,16 @@ def RunSteps(api, properties):
     if not retry_only_run:
       # If earlier we fetched for a target version through Gitiles, pass along
       # the retrieved value.
+      versions = [
+          UprevVersionedPackageRequest.GitRef(
+              repository=urlparse.urlparse(trigger.gitiles.repo).path,
+              ref=trigger.gitiles.ref, revision=(gitiles_response or
+                                                 trigger.gitiles.revision))
+          for trigger in triggers
+      ]
       ebuilds_by_pinfo = _do_uprev(
-          api, properties, workspace_path, triggers, packages, cpv, topic,
-          Ebuilds, version_no_rev=gitiles_response,
-          allow_partial_uprev=properties.allow_partial_uprev)
+          api, properties, workspace_path, versions, packages, cpv, topic,
+          Ebuilds, allow_partial_uprev=properties.allow_partial_uprev)
       if ebuilds_by_pinfo is None:
         return
 
@@ -452,23 +458,21 @@ def _abandon_cls(api, outdated_cls, most_recent_merged_uprev,
         abandoned_cls.append(outdated_cl)
 
 
-def _do_uprev(api, properties, workspace_path, triggers, packages, cpvs, topic,
-              Ebuilds, version_no_rev=None, allow_partial_uprev=False):
+def _do_uprev(api, properties, workspace_path, versions, packages, cpvs, topic,
+              Ebuilds, allow_partial_uprev=False):
   """Try the uprev for the given package. If successful, commit the uprev.
 
   Args:
     properties (GeneratorProperties): Current properties for the recipe run.
     workspace_path (string): Workspace checkout path where the build is
       processed.
+    versions (List[UpdateVersionedPackageRequest.GitRef]): The versions to consider for an update.
     triggers (scheduler.Trigger): Triggers which invoked the recipe.
     packages (List[chromiumos.PackageInfo]): Information describing the package.
     cpv (List[string]): Package title. Must be in a matching order to packages.
     topic (string): Topic describing package. Defaults to package title.
       can be same as cpv.
     Ebuilds (namedtuple): Contains path and version.
-    version_no_rev (string): Target version for uperv. If populated this will
-      override trigger.gitiles.revision in the UprevVersionedPackageRequest sent
-      to the uprev handler.
     allow_partial_uprev: Whether to continue operation when either of the packages
       has no modified files.
 
@@ -483,13 +487,7 @@ def _do_uprev(api, properties, workspace_path, triggers, packages, cpvs, topic,
       request = UprevVersionedPackageRequest(
           chroot=api.cros_sdk.chroot,
           package_info=package,
-          versions=[
-              UprevVersionedPackageRequest.GitRef(
-                  repository=urlparse.urlparse(trigger.gitiles.repo).path,
-                  ref=trigger.gitiles.ref, revision=(version_no_rev or
-                                                     trigger.gitiles.revision))
-              for trigger in triggers
-          ],
+          versions=versions,
           build_targets=properties.build_targets,
       )
       presentation.logs['request'] = str(request)
