@@ -12,8 +12,7 @@ message SkylabProperties {
   string skylab_version = 2;
   string skylab_qs_account = 3;
   int32 skylab_priority = 4;
-  bool enable_retries = 6;
-  reserved 7, 8;
+  reserved 6, 7, 8;
 
   // TODO(b/209497087): Experiment flag to enable passing container information
   // to CTP, remove once support is stabilized.
