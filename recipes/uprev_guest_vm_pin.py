@@ -148,8 +148,8 @@ def FindLegacyReleaseBuilds(api, board, version_build_map):
         'unable to find latest build for {}-release'.format(board))
 
   for build in builds:
-    branch = build.output.properties['cbb_branch']
-    version = build.output.properties['full_version']
+    branch = build.input.properties['cbb_branch']
+    version = build.input.properties['full_version']
     version_build_map[branch][version][board] = build
 
 
@@ -653,16 +653,18 @@ def _generate_legacy_release_build_set(board, ids_by_branch):
   idx = 1
   for (branch, build_ids) in sorted(ids_by_branch.items()):
     for build_id in build_ids:
-      properties = Struct()
-      properties['cbb_branch'] = 'release-R{}-12345.B'.format(branch)
-      properties['full_version'] = 'R{}-1.2.{}'.format(branch, build_id)
-      properties['artifact_link'] = \
+      input_ = Struct()
+      input_['cbb_branch'] = 'release-R{}-12345.B'.format(branch)
+      input_['full_version'] = 'R{}-1.2.{}'.format(branch, build_id)
+      output = Struct()
+      output['artifact_link'] = \
         'gs://chromeos-image-archive/{}-release/{}' \
-        .format(board, properties['full_version'])
+        .format(board, input_['full_version'])
 
       builds.append(
           bb_build.Build(id=idx, status=bb_common.SUCCESS,
-                         output=bb_build.Build.Output(properties=properties)))
+                         input=bb_build.Build.Input(properties=input_),
+                         output=bb_build.Build.Output(properties=output)))
       idx += 1
 
   return builds
