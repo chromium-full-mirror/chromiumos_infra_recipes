@@ -31,6 +31,7 @@ from PB.chromite.api import test_metadata
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from PB.chromiumos.test.api import test_case as ctr_test_case
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 
 import collections
@@ -402,6 +403,13 @@ def _ctr_test_suite(request):
 
   Returns: ctr.TestSuite
   """
+
+  if request.test_plan.test:
+    return ctr_test_suite.TestSuite(
+        test_case_ids=ctr_test_case.TestCaseIdList(test_case_ids=[
+            ctr_test_case.TestCase.Id(value=t.autotest.name)
+            for t in request.test_plan.test
+        ]))
 
   tags = ["suite:%s" % s.name for s in request.test_plan.suite]
   tag_excludes = []
@@ -1021,7 +1029,8 @@ def _default_software_dependencies():
 
 
 def _test_request(request_name_tag, build_target="foo-build-target",
-                  scheduling=_test_scheduling(), tag_criteria=None):
+                  scheduling=_test_scheduling(), individual_test=False,
+                  tag_criteria=None):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -1037,15 +1046,24 @@ def _test_request(request_name_tag, build_target="foo-build-target",
       scheduling=scheduling,
       software_dependencies=_default_software_dependencies(),
   )
-  return Request(
-      params=params, test_plan=Request.TestPlan(
-          suite=[Request.Suite(name='%s-suite' % request_name_tag)],
-          tag_criteria=tag_criteria))
+  if individual_test:
+    return Request(
+        params=params, test_plan=Request.TestPlan(test=[
+            Request.Test(
+                autotest=Request.Test.Autotest(name='%s-test' %
+                                               request_name_tag))
+        ]))
+  else:
+    return Request(
+        params=params, test_plan=Request.TestPlan(
+            suite=[Request.Suite(name='%s-suite' % request_name_tag)],
+            tag_criteria=tag_criteria))
 
 
 def _cft_test_request(request_name, build_target="foo-build-target",
-                      tag_criteria=None):
+                      individual_test=False, tag_criteria=None):
   test_req = _test_request(request_name, build_target,
+                           individual_test=individual_test,
                            tag_criteria=tag_criteria)
   test_req.params.run_via_cft = True
   return test_req
@@ -2155,6 +2173,22 @@ def GenTests(api):
           CrosTestPlatformProperties(
               requests={'default': _cft_test_request('foo')},
               config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-individual-test-execution-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default': _cft_test_request('foo', individual_test=True)
+              }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
