@@ -190,8 +190,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           self.m.cros_source.workspace_path.join(CHROMIUMOS_OVERLAY_PATH)):
         files = self.m.step(
             'list chrome ebuild files', [
-                'stat', '-c', '%n',
-                'chromeos-base/chromeos-chrome/chromeos-chrome-*'
+                'find', 'chromeos-base/chromeos-chrome', '-name',
+                'chromeos-chrome-*'
             ], stdout=self.m.raw_io.output_text(),
             step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
                 CHROME_EBUILD_TEST_DATA)).stdout.strip().split()
