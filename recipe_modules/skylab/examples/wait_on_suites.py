@@ -69,6 +69,9 @@ def GenTests(api):
           api.skylab.test_with_multi_response(
               1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
+          api.skylab.test_with_multi_response(
+              5679, names=['wait_on_separate_ctp'],
+              task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
       ], step_name='collect skylab tasks v2.buildbucket.collect'),
   )
 

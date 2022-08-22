@@ -323,8 +323,8 @@ class SkylabApi(recipe_api.RecipeApi):
         hw_test_builds = self.m.buildbucket.get_multi(task_ids)
 
       results = []
+      responses = {}
       for build in hw_test_builds.values():
-        responses = {}
         responses.update(self._get_multi_response_binary(build))
       for t in tasks:
         result = responses.get(
