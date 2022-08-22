@@ -759,7 +759,6 @@ def _classify_request_failure(consolidated_results):
 def summarize(api, enumerations, responses, error_in_requests):
   # Failures in summarization are non-infra related.
   failures = 0
-  invocations = []
 
   request_classifications = collections.OrderedDict()
   for state in _REQUEST_STATES:
@@ -773,7 +772,6 @@ def summarize(api, enumerations, responses, error_in_requests):
 
         _log_enumeration_errors(api, enumerations[tag], tag)
         _log_task_results(api, response.task_results)
-        invocations.extend(_get_rdb_invocations(response.task_results))
         if response.state.verdict in _SUCCESSFUL_VERDICTS:
           request_classifications[_REQUEST_SUCCESS] += 1
         else:
@@ -785,9 +783,6 @@ def summarize(api, enumerations, responses, error_in_requests):
               response.consolidated_results)
           request_classifications[classification] += 1
           step.presentation.status = api.step.FAILURE
-
-    if invocations and api.resultdb.enabled:
-      api.resultdb.include_invocations(api.resultdb.invocation_ids(invocations))
 
     if failures:
       summary_lines = [
@@ -903,18 +898,6 @@ def _log_task_results(api, task_results):
         _emit_links(step, task_results)
         if task_state in _UNSUCCESSFUL_TASK_STATES:
           step.presentation.status = api.step.FAILURE
-
-
-def _get_rdb_invocations(task_results):
-  """Get the test_runner invocation names from the task results."""
-  invs = []
-  for t in task_results:
-    res = re.search(BUILD_ID_REGEX, t.task_url)
-    if res and res.group('build_id'):
-      inv = 'invocations/build-%s' % res.group('build_id')
-      invs.append(inv)
-  return invs
-
 
 _PASSED_VERDICTS = [TaskState.VERDICT_PASSED, TaskState.VERDICT_PASSED_ON_RETRY]
 _FAILED_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]

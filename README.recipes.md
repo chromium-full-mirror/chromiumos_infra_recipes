@@ -11814,11 +11814,11 @@ Args:
 
 &mdash; **def [py2\_MessageToJson](/recipes/test_platform/cros_test_platform.py#78)(obj):**
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#834)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#829)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#923)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#906)(task_results):**
 
 &mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#759)(api, enumerations, responses, error_in_requests):**
 
