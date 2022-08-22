@@ -240,7 +240,8 @@ class RepoApi(recipe_api.RecipeApi):
            optimized_fetch=False, cache_dir=None, timeout=None,
            retry_fetches=None, projects=None, verbose=True,
            no_manifest_update=False, force_remove_dirty=False, prune=None,
-           repo_event_log=True):
+           repo_event_log=True, manifest_branch_state=True,
+           test_manifest_branch_state_failure=False):
     """Executes 'repo sync' with the given arguments.
 
     Args:
@@ -261,6 +262,9 @@ class RepoApi(recipe_api.RecipeApi):
         uncommitted modifications if projects no longer exist in the manifest.
       prune (bool): Delete refs that no longer exist on the remote.
       repo_event_log (bool): Write the repo event log, do analysis steps.
+      manifest_branch_state (bool): Write `repo info` to stdout.
+      test_manifest_branch_state_failure (bool): Raise StepFailure in repo-info
+      step and confirm it does not fail the entire build.
     """
     assert _kwonly == (), 'sync accepts no positional args'
     cmd = ['sync']
@@ -319,6 +323,16 @@ class RepoApi(recipe_api.RecipeApi):
             # Don't fail the builder on issues reporting stats.
             pres.status = self.m.step.INFRA_FAILURE
             pres.step_text = 'failure reading repo request logs {}'.format(e)
+      if manifest_branch_state:
+        with self.m.step.nest('repo info') as pres:
+          try:
+            pres.logs['repo-info stdout'] = self.report_manifest_branch_state(
+                test_failure=test_manifest_branch_state_failure)
+          except StepFailure as e:
+            # Don't fail the builder on issues reporting manifest branch state.
+            pres.status = self.m.step.INFRA_FAILURE
+            pres.step_text = 'failure reporting manifest branch state {}'.format(
+                e)
       if step_exception:
         # We're certain that this is an Exception.
         raise step_exception  #pylint: disable=raising-bad-type
@@ -536,6 +550,23 @@ class RepoApi(recipe_api.RecipeApi):
           raise StepFailure('unexpected error: {}'.format(stderr))
         return False
       return True
+
+  def report_manifest_branch_state(self, test_data='Repo: info',
+                                   test_failure=False):
+    """Use 'repo info' to output manifest state to stdout.
+    Args:
+      test_data (str): Optional data for testing stdout.
+      test_failure (bool): Raise StepFailure or not
+    Returns:
+      (str): Full info on the manifest branch, current branch or
+      unmerged branches.
+    """
+    if test_failure:
+      raise StepFailure('tested failure in repo-info step')
+    cmd = [self.repo_path, 'info']
+    stdout = self.m.easy.stdout_step('repo info', cmd,
+                                     test_stdout=lambda: test_data)
+    return six.ensure_str(stdout).strip()
 
   def ensure_pinned_manifest(self, projects=None, regexes=None, test_data=None,
                              step_name=None):

@@ -1534,6 +1534,39 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set up orchestrator.ensure synced checkout.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.ensure synced checkout.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",

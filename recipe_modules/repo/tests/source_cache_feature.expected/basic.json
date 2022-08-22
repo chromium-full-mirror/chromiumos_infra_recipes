@@ -262,6 +262,27 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure synced checkout.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CLEANUP]/ensure",
+    "infra_step": true,
+    "name": "ensure synced checkout.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",

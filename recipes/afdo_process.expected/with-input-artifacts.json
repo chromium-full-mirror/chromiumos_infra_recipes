@@ -1531,6 +1531,39 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CACHE]/chromiumos",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync cached directory.ensure synced checkout.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -1934,6 +1967,38 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync to gitiles commit.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
