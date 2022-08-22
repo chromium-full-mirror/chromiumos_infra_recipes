@@ -53,7 +53,7 @@
       "@@@STEP_LOG_LINE@cft_test_request@      \"testCaseIds\":{@@@",
       "@@@STEP_LOG_LINE@cft_test_request@        \"testCaseIds\":[@@@",
       "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
-      "@@@STEP_LOG_LINE@cft_test_request@            \"value\":\"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"value\":\"tauto.cheets_CTS_R.internal.arm.CtsPdf\"@@@",
       "@@@STEP_LOG_LINE@cft_test_request@          },@@@",
       "@@@STEP_LOG_LINE@cft_test_request@          {@@@",
       "@@@STEP_LOG_LINE@cft_test_request@            \"value\":\"tast.example.Fail\"@@@",
@@ -553,7 +553,7 @@
       "@@@STEP_LOG_LINE@request@      \"testCaseIds\":{@@@",
       "@@@STEP_LOG_LINE@request@        \"testCaseIds\":[@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\":\"tauto.stub_Pass\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\":\"tauto.cheets_CTS_R.internal.arm.CtsPdf\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"value\":\"tast.example.Fail\"@@@",
@@ -661,7 +661,7 @@
       }
     },
     "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test",
-    "stdin": "{\n  \"artifactDir\":\"[CLEANUP]/output_dir_tmp_1\",\n  \"primaryDut\":{\n    \"containerMetadataKey\":\"kevin\",\n    \"dut\":{\n      \"cacheServer\":{\n        \"address\":{\n          \"address\":\"0.0.0.0\",\n          \"port\":8080\n        }\n      },\n      \"chromeos\":{\n        \"dutModel\":{\n          \"buildTarget\":\"betty\",\n          \"modelName\":\"betty\"\n        },\n        \"ssh\":{\n          \"address\":\"8.8.8.8\",\n          \"port\":22\n        }\n      },\n      \"id\":{\n        \"value\":\"fake_dut\"\n      }\n    }\n  },\n  \"testSuites\":[\n    {\n      \"name\":\"arc-cts-vm\",\n      \"testCaseIds\":{\n        \"testCaseIds\":[\n          {\n            \"value\":\"tauto.stub_Pass\"\n          },\n          {\n            \"value\":\"tast.example.Fail\"\n          },\n          {\n            \"value\":\"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ]\n}",
+    "stdin": "{\n  \"artifactDir\":\"[CLEANUP]/output_dir_tmp_1\",\n  \"primaryDut\":{\n    \"containerMetadataKey\":\"kevin\",\n    \"dut\":{\n      \"cacheServer\":{\n        \"address\":{\n          \"address\":\"0.0.0.0\",\n          \"port\":8080\n        }\n      },\n      \"chromeos\":{\n        \"dutModel\":{\n          \"buildTarget\":\"betty\",\n          \"modelName\":\"betty\"\n        },\n        \"ssh\":{\n          \"address\":\"8.8.8.8\",\n          \"port\":22\n        }\n      },\n      \"id\":{\n        \"value\":\"fake_dut\"\n      }\n    }\n  },\n  \"testSuites\":[\n    {\n      \"name\":\"arc-cts-vm\",\n      \"testCaseIds\":{\n        \"testCaseIds\":[\n          {\n            \"value\":\"tauto.cheets_CTS_R.internal.arm.CtsPdf\"\n          },\n          {\n            \"value\":\"tast.example.Fail\"\n          },\n          {\n            \"value\":\"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1116,7 +1116,7 @@
       "@@@STEP_LOG_LINE@skylab_result@  \"autotestResult\":{@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"testCases\":[@@@",
       "@@@STEP_LOG_LINE@skylab_result@      {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@        \"name\":\"tauto.stub_Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\":\"tauto.cheets_CTS_R.internal.arm.CtsPdf\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@        \"verdict\":\"VERDICT_PASS\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@      }@@@",
       "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
@@ -1125,7 +1125,7 @@
       "@@@STEP_LOG_LINE@skylab_result@    \"original_test\":{@@@",
       "@@@STEP_LOG_LINE@skylab_result@      \"testCases\":[@@@",
       "@@@STEP_LOG_LINE@skylab_result@        {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@          \"name\":\"tauto.stub_Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\":\"tauto.cheets_CTS_R.internal.arm.CtsPdf\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@          \"verdict\":\"VERDICT_PASS\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@        }@@@",
       "@@@STEP_LOG_LINE@skylab_result@      ]@@@",
@@ -1155,7 +1155,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkL0KwjAUhekg4oXSUnFxdHBL0x9F8CnEFyhpDWkgyS25acV39KG04NjRbzic6TtwYAdbSIIYA+YUxra5CaI0yhKIYTN4nDRpdGm0f0dwV3TlvOs9WonEgqTADCriHVqLjkk38aooK1acWXnixQ+2EDNlXV+yqQ9hmLUUhHZGEuUd+iFXiMrIb7e89fgk+d/dwxpWXorHqzpCjF4r7YRpZnO2fMgHkSBU/A==\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkLGKwkAURUmxyA6IIeWWW1jIzkwSFUGw8gfE3T6M8TkZyMwL854R/9GP0oDlNoK3uNzqXDjiR8zElM2ZUdUNAFO1/fut9soFhhhMq0z0asu0O57SJJuIsfjsIvaOHIY0+bolYm9prXXdRPSAJBmIZYuWdI3eY5AQel3mRSnzpSwWOn9G/lNDivl8lfUNczdgiY0LLRCpGmOnLKJt4bG9PkS8ELz393skPiKY47XciDFGZ93DQDWQs5c83QGCz2X3\"@@@"
     ]
   },
   {

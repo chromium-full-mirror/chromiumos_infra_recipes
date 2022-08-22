@@ -117,7 +117,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       True if this should run via GCE.
     """
 
-    check_suite = self.cft_test_request.test_suites[0].name == 'arc-cts-vm'
+    # TODO(b/243367000): Check self.cft_test_request.test_suites[0].name
+    # instead.
+    check_suite = 'cheets_CTS_R' in self.cft_test_request.test_suites[
+        0].test_case_ids.test_case_ids[0].value
     is_betty = self.cft_test_request.autotest_keyvals['build'].startswith(
         'betty')
     # Excludes betty and betty-pi-arc.

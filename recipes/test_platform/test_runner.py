@@ -1670,6 +1670,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     req = _canned_test_runner_request_for_ctr()
     req['autotest_keyvals']['build'] = 'betty-arc-r-release/R102-14637.0.0'
     req['test_suites'][0]['name'] = 'arc-cts-vm'
+    req['test_suites'][0]['test_case_ids']['test_case_ids'][0][
+        'value'] = 'tauto.cheets_CTS_R.internal.arm.CtsPdf'
     return req
 
   def _canned_test_runner_request_for_ctr_within_deadline(current_time_sec):
