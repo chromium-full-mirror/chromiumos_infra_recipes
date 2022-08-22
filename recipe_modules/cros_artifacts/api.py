@@ -568,6 +568,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         for publish_template in info['gsLocations']:
           for aname in info['artifactTypes']:
             files = files_by_artifact.get(aname, [])
+            files = [x for x in files if x != "."]
             if files:
               location_dict['artifact_name'] = aname
               publish_loc = publish_template.format(**location_dict)
