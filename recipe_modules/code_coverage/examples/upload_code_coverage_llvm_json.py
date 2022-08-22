@@ -43,7 +43,8 @@ def GenTests(api):
       ),
       cq=True,
       input_properties={
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
+          '$chromeos/code_coverage':
+              dict(project='chromiumos/platform2', cq_builder=True)
       },
   )
 
@@ -55,7 +56,8 @@ def GenTests(api):
       ),
       cq=True,
       input_properties={
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
+          '$chromeos/code_coverage':
+              dict(project='chromiumos/platform2', cq_builder=True)
       },
   )
 
@@ -67,7 +69,8 @@ def GenTests(api):
       ),
       cq=True,
       input_properties={
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
+          '$chromeos/code_coverage':
+              dict(project='chromiumos/platform2', cq_builder=True)
       },
   )
 

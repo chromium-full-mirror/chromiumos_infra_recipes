@@ -25,4 +25,9 @@ message CodeCoverageProperties {
 
   // Whether we need to skip uploading to chromium coverage.
   bool skip_chromium_upload = 5;
+
+  // Whether invoked by the incremental(CQ) builder.
+  // This is analogous to the cq.active flag. But, sometimes that flag can be false if
+  // builder is manually triggered and this flag will still be true. Details in b/239721591.
+  bool cq_builder = 6;
 }
