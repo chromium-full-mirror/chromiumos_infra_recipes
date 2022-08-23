@@ -93,9 +93,9 @@ def _set_up_test_configs(api, request, response):
     tgt_payload = (
         # Notice FullPayload doesn't get a bucket. That's because a full payload
         # source is created in cros_paygen.create_paygen_test_config().
-        api.cros_storage.FullPayload.parse_uri(response.remote_uri) or
-        api.cros_storage.DeltaPayload.parse_uri(response.remote_uri, milestone,
-                                                src_bucket))
+        api.cros_storage.FullPayload.parse_uri(response.remote_uri, milestone)
+        or api.cros_storage.DeltaPayload.parse_uri(response.remote_uri,
+                                                   milestone, src_bucket))
     for test_config in request.autoupdate_test_configs:
       paygen_test_configs.append(
           api.cros_paygen.create_paygen_test_config(
