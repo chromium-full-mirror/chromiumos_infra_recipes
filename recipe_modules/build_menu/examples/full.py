@@ -436,3 +436,25 @@ def GenTests(api):
           'upload artifacts.upload code coverage data (code coverage llvm json)'),
     cq=True,
   )
+
+  yield api.build_menu.test(
+    'code-coverage-builder-failure',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='atlas',
+        container_version_format=\
+        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+      )
+    ),
+    # Simulate a failure when installing packages.
+    api.cros_build_api.set_api_return(
+      'install packages',
+      endpoint='SysrootService/InstallPackages',
+      data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
+    ),
+    api.post_check(
+          post_process.DoesNotRun,
+          'upload artifacts.upload code coverage data (code coverage llvm json)'
+      ),
+    cq=True,
+  )

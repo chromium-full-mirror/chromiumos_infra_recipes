@@ -679,6 +679,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """
     config = config or self.config_or_default
     sysroot = sysroot or self.sysroot or Sysroot(build_target=self.build_target)
+    # Check if the unit tests are being run. Only run upload coverage step if true.
+    # If tests are not run, we dont have the coverage data and this step should be skipped.
+    unit_test_configured = self.m.cros_infra_config.should_run(
+        config.unit_tests.ebuilds_run_spec)
+    run_upload_coverage = self.packages_installed and unit_test_configured
 
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
@@ -686,7 +691,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, private_bundle_func=private_bundle_func,
-          report_to_spike=report_to_spike)
+          report_to_spike=report_to_spike, upload_coverage=run_upload_coverage)
 
   def artifacts_gs_path(self):
     """Get the standard artifacts GS path for the builder (including bucket).

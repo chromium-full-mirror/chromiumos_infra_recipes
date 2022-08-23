@@ -627,7 +627,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   def upload_artifacts(self, builder_name, kind, gs_bucket, _kwonly=(),
                        artifacts_info=None, chroot=None, sysroot=None,
                        name='upload artifacts', test_data=None,
-                       private_bundle_func=None, report_to_spike=False):
+                       private_bundle_func=None, report_to_spike=False,
+                       upload_coverage=True):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -655,6 +656,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           information and trigger Spike to upload the provenance as
           [artifact-name].attestation if kind is RELEASE. Right now, this only
           reports on the base image.tar.xz.
+      upload_coverage(bool): If True, we will run the upload coverage step and
+           store coverage information. This should be set of False when we dont
+           run unit tests and hence have no coverage information to store.
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
@@ -752,8 +756,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
         self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
-      for fname in files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', []):
-        self.m.code_coverage.upload_code_coverage_llvm_json(outpath.join(fname))
+      if upload_coverage:
+        for fname in files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', []):
+          self.m.code_coverage.upload_code_coverage_llvm_json(
+              outpath.join(fname))
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
