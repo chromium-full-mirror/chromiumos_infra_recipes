@@ -54,11 +54,23 @@ PROPERTIES = {
             help='Whether the configured_payload should be for an FSI payload.',
             default=False,
         ),
+    'au_testing_models':
+        Property(
+            kind=list,
+            help='List of string to be used for au_testing_models.',
+            default=[],
+        ),
+    'au_fsi_testing_models':
+        Property(
+            kind=list,
+            help='List of string to be used for au_fsi_testing_models.',
+            default=[],
+        ),
 }
 
 
 def RunSteps(api, gen_req_ser, expected_test_configs_ser, delta_test_override,
-             full_test_override, fsi):
+             full_test_override, fsi, au_testing_models, au_fsi_testing_models):
   api.assertions.maxDiff = None
   with api.step.nest('setup'):
     configured_payloads = [
@@ -66,10 +78,6 @@ def RunSteps(api, gen_req_ser, expected_test_configs_ser, delta_test_override,
     ]
     if fsi:
       configured_payloads[0]['delta_type'] = 'FSI'
-    api.cros_paygen._au_testing_models = \
-        api.cros_paygen.test_api.AU_TESTING_MODELS
-    api.cros_paygen._au_fsi_testing_models = \
-        api.cros_paygen.test_api.ALL_EXPORTED_MODELS
     with api.step.nest('deserialize GenerationRequest'):
       gen_req = GenerationRequest()
       gen_req.ParseFromString(gen_req_ser)
@@ -81,25 +89,29 @@ def RunSteps(api, gen_req_ser, expected_test_configs_ser, delta_test_override,
         expected_test_configs.append(test_config)
   with api.step.nest('run'):
     actual_test_configs = api.cros_paygen.create_au_test_configs(
-        gen_req, configured_payloads, delta_test_override=delta_test_override,
+        gen_req, configured_payloads, au_testing_models, au_fsi_testing_models,
+        delta_test_override=delta_test_override,
         full_test_override=full_test_override)
   with api.step.nest('assert'):
     api.assertions.assertCountEqual(actual_test_configs, expected_test_configs)
 
 
 def GenTests(api):
-  # TODO (b/223385038): Add tests for filtering by au_testing_configs
-  # and fsi_testing_configs
-
   def create_properties(gen_req, expected_test_configs, delta_test_override=0,
-                        full_test_override=0, fsi=False):
+                        full_test_override=0, fsi=False, au_testing_models=None,
+                        au_fsi_testing_models=None):
+    au_testing_models = au_testing_models or []
+    au_fsi_testing_models = au_fsi_testing_models or []
     gen_req_ser = gen_req.SerializeToString()
     expected_test_configs_ser = tuple(
         [etc.SerializeToString() for etc in expected_test_configs])
-    return api.properties(gen_req_ser=gen_req_ser,
-                          expected_test_configs_ser=expected_test_configs_ser,
-                          delta_test_override=delta_test_override,
-                          full_test_override=full_test_override, fsi=fsi)
+    return api.properties(
+        gen_req_ser=gen_req_ser,
+        expected_test_configs_ser=expected_test_configs_ser,
+        delta_test_override=delta_test_override,
+        full_test_override=full_test_override, fsi=fsi,
+        au_testing_models=api.cros_paygen.AU_TESTING_MODELS,
+        au_fsi_testing_models=api.cros_paygen.ALL_EXPORTED_MODELS)
 
   yield api.test(
       'delta-(m2n)-respect-configs',

@@ -333,8 +333,6 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       self._quota_scheduler_label_pool = \
           properties.quota_scheduler_config.label_pool or \
           self._quota_scheduler_label_pool
-    self._au_testing_models = properties.au_testing_models
-    self._au_fsi_testing_models = properties.au_fsi_testing_models
 
   @property
   def paygen_children_timeout_sec(self):
@@ -575,7 +573,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     return reqs
 
   def create_au_test_configs(
-      self, gen_req, configured_payloads,
+      self, gen_req, configured_payloads, au_testing_models,
+      au_fsi_testing_models,
       delta_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG,
       full_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
     """Determine which hardware tests need to be run for the given payload.
@@ -585,6 +584,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         find tests.
       configured_payloads (list[dict]): Configs for the payloads we are
         generating and testing.
+      au_testing_models (list[str]): The au testing models configured.
+      au_fsi_testing_models (list[str]): The au fsi testing models configured.
       delta_test_override (PayloadTestsOverride): Option to override
         the configured delta payload testing policy.
       full_test_override (PayloadTestsOverride): Option to override the
@@ -611,6 +612,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           PaygenOrchestratorProperties.FORCE_TESTS
       return self._get_au_test_configs_for_full_payload(gen_req,
                                                         configured_payloads,
+                                                        au_testing_models,
+                                                        au_fsi_testing_models,
                                                         force_tests=force_tests)
     else:
       if delta_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
@@ -618,7 +621,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       force_tests = delta_test_override == \
           PaygenOrchestratorProperties.FORCE_TESTS
       return self._get_au_test_configs_for_delta_payload(
-          gen_req, configured_payloads, force_tests=force_tests)
+          gen_req, configured_payloads, au_testing_models,
+          au_fsi_testing_models, force_tests=force_tests)
 
   def run_paygen_builders(self, paygen_reqs):
     """Launch paygen builders to generate payloads and run configured tests.
@@ -699,6 +703,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         presentation.links[key] = value
 
   def _get_au_test_configs_for_full_payload(self, gen_req, configured_payloads,
+                                            au_testing_models,
+                                            au_fsi_testing_models,
                                             force_tests=False):
     """Create AutoupdateTestConfigs for a test-image's full paygen request.
 
@@ -707,6 +713,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         for which to find tests and schedule.
       configured_payloads (list[dict]): Configs for the payloads we are
         generating and testing.
+      au_testing_models (list[str]): The au testing models configured.
+      au_fsi_testing_models (list[str]): The au fsi testing models configured.
       force_tests (bool): Whether to override the configured full payload
         testing policy.
 
@@ -718,17 +726,15 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         AutoupdateTestConfig(
             src_version=gen_req.tgt_unsigned_image.build.version,
             src_channel=gen_req.tgt_unsigned_image.build.channel,
-            delta_type=common_pb2.N2N,
-            applicable_models=self._au_testing_models)
+            delta_type=common_pb2.N2N, applicable_models=au_testing_models)
     ]
     # Get tests from matched configured payloads.
     matching_cfgs = self._match_gen_req_to_configured_payloads(
         gen_req, configured_payloads)
     for cfg in matching_cfgs:
       if cfg.get('full_payload_tests', False) or force_tests:
-        applicable_models = self._filter_applicable_models(
-            cfg.get('applicable_models', []), fsi=cfg.get('delta_type',
-                                                          '') == 'FSI')
+        fsi = cfg.get('delta_type', '') == 'FSI'
+        applicable_models = au_fsi_testing_models if fsi else au_testing_models
         test_configs.append(
             AutoupdateTestConfig(
                 src_version=cfg['chrome_os_version'],
@@ -738,6 +744,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     return test_configs
 
   def _get_au_test_configs_for_delta_payload(self, gen_req, configured_payloads,
+                                             au_testing_models,
+                                             au_fsi_testing_models,
                                              force_tests=False):
     """Create AutoupdateTestConfigs for a test-image's delta paygen request.
 
@@ -746,6 +754,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         for which to find tests and schedule.
       configured_payloads (list[dict]): Configs for the payloads we are
         generating and testing.
+      au_testing_models (list[str]): The au testing models configured.
+      au_fsi_testing_models (list[str]): The au fsi testing models configured.
       force_tests (bool): Whether to override the configured full payload
         testing policy.
 
@@ -757,46 +767,19 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     if gen_req.tgt_unsigned_image == gen_req.src_unsigned_image:
       test_configs.append(
           AutoupdateTestConfig(delta_type=common_pb2.N2N,
-                               applicable_models=self._au_testing_models))
+                               applicable_models=au_testing_models))
     # Get tests from matched configured payloads.
     matching_cfgs = self._match_gen_req_to_configured_payloads(
         gen_req, configured_payloads)
     for cfg in matching_cfgs:
       if cfg['delta_payload_tests'] or force_tests:
-        applicable_models = self._filter_applicable_models(
-            cfg.get('applicable_models', []),
-            fsi=cfg.get('delta_type') == 'FSI')
+        fsi = cfg.get('delta_type', '') == 'FSI'
+        applicable_models = au_fsi_testing_models if fsi else au_testing_models
         test_configs.append(
             AutoupdateTestConfig(
                 delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
                 applicable_models=applicable_models))
     return test_configs
-
-  def _filter_applicable_models(self, applicable_models, fsi=False):
-    """Determine which models should run AU tests.
-
-    applicable_models come from GoldenEye. Not all models are configured for
-    autoupdate tests, so we filter down to au_testing_models (which is a list of
-    models exported by GoldenEye, based on a checkbox). However, FSI payloads
-    are held to a higher standard, so if the payload is FSI, then we filter down
-    to au_fsi_testing_models (which is all models exported by GoldenEye).
-
-    N2n payloads generally shouldn't use this function, since they don't have
-    applicable_models. Instead, they should schedule tests on all of
-    self._au_testing_models.
-
-    Args:
-      applicable_models (list[str]): Names of models configured for testing by
-        GoldenEye for the specified payload.
-      fsi (bool): Whether the specified payload is configured by GoldenEye as an
-        FSI payload.
-
-    Returns:
-      list[str]): Model names that should run tests for the payload.
-    """
-    testing_models = self._au_fsi_testing_models if fsi \
-        else self._au_testing_models
-    return [model for model in applicable_models if model in testing_models]
 
   def _match_gen_req_to_configured_payloads(self, gen_req, configured_payloads):
     """Determine which paygen configs correlate with the GenerationRequest.

@@ -45,4 +45,14 @@ message PaygenOrchestratorProperties {
 
   // Should we override the configured full testing policy?
   PayloadTestsOverride full_payload_test_override = 9;
+
+  // The models for which we've enabled AU testing.
+  // If empty (or if there is no overlap with applicable_models), then one test
+  // request will be sent, with no model specified, meaning that the test can be
+  // run on any model.
+  repeated string au_testing_models = 10;
+
+  // The models which should run AU testing for FSI payloads.
+  // If empty, behavior will be the same as for empty au_testing_models.
+  repeated string au_fsi_testing_models = 11;
 }

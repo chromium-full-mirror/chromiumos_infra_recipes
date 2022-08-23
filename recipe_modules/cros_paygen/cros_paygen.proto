@@ -33,18 +33,4 @@ message CrosPaygenProperties {
 
   // Override options for Quote Scheduler.
   QuotaSchedulerConfig quota_scheduler_config = 3;
-
-  // The models for which we've enabled AU testing.
-  // Generally, this should be set when running the PaygenOrchestrator recipe,
-  // to certain models exported by GoldenEye.
-  // If empty (or if there is no overlap with applicable_models), then one test
-  // request will be sent, with no model specified, meaning that the test can be
-  // run on any model.
-  repeated string au_testing_models = 4;
-
-  // The models which should run AU testing for FSI payloads.
-  // Generally, this should be set when running the PaygenOrchestrator recipe,
-  // to all models exported by GoldenEye.
-  // If empty, behavior will be the same as for empty au_testing_models.
-  repeated string au_fsi_testing_models = 5;
 }

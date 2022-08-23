@@ -67,6 +67,8 @@ def RunSteps(api, properties):
   # Set default values for unspecified properties.
   delta_types = properties.delta_types
   delta_types = delta_types or api.cros_paygen.default_delta_types
+  au_testing_models = properties.au_testing_models or []
+  au_fsi_testing_models = properties.au_fsi_testing_models or []
 
   # Get the current paygen configuration.
   with api.step.nest('discovering payload configuration') as pres:
@@ -178,7 +180,7 @@ def RunSteps(api, properties):
   paygen_reqs = []
   for gen_req in gen_reqs:
     au_test_configs = api.cros_paygen.create_au_test_configs(
-        gen_req, configured_payloads,
+        gen_req, configured_payloads, au_testing_models, au_fsi_testing_models,
         delta_test_override=properties.delta_payload_test_override,
         full_test_override=properties.full_payload_test_override)
     paygen_reqs.append(
