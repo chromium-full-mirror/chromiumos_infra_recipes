@@ -410,6 +410,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs) (Python3 ✅)
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
+  * [kernel_technical_debt](#recipes-kernel_technical_debt) (Python3 ✅) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
@@ -11034,6 +11035,15 @@ https://www.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-configur
 and go/mini-splitconfigs.
 
 &mdash; **def [RunSteps](/recipes/kernel_checkconfig.py#31)(api, properties):**
+### *recipes* / [kernel\_technical\_debt](/recipes/kernel_technical_debt.py)
+
+[DEPS](/recipes/kernel_technical_debt.py#12): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+Recipe to enforce go/kernel-upstream-tracking-process
+
+&mdash; **def [RunSteps](/recipes/kernel_technical_debt.py#28)(api):**
 ### *recipes* / [libchrome\_upstream](/recipes/libchrome_upstream.py)
 
 [DEPS](/recipes/libchrome_upstream.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
