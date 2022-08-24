@@ -60,7 +60,7 @@ function check_staging() {
     printf "Checking the status of: %s --> " "${name}"
     # Look for statuses that match "SUCCESS" or "FAILURE".
     statuses=$(bb ls -n 5 -json "chromeos/staging/${name}" |
-      jq -r '.status|select(.|test("(SUCCESS|FAILURE)"))' |
+      jq -r '.status|select(.|test("(SUCCESS|FAILURE|CANCELED)"))' |
       sort | uniq)
     # These ops first give statuses good printing, then good matching.
     statuses=$(echo "${statuses}" | tr '\n' ' ')
