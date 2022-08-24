@@ -450,6 +450,19 @@
   },
   {
     "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos/.repo/repo",
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],

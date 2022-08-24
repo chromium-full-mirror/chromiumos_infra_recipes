@@ -316,6 +316,19 @@
   },
   {
     "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/temp_cache_tmp_1/.repo/repo",
+    "infra_step": true,
+    "name": "ensure synced checkout.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],
