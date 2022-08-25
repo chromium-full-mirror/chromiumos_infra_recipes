@@ -391,6 +391,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         # Instead, use a branch with the last component named 'staging'
         branch = project.branch
         if branch:
+          current_commit = self.m.git.head_commit()
           if self._use_staging_branch:
             branch_parts = branch.split('/')
             branch_parts[-1] = 'staging'
@@ -403,6 +404,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
               project.remote,
               'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
               binhost_path, binhost_data, automerge=True, ref=branch)
+          self.m.git.checkout(current_commit)
 
   def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.
