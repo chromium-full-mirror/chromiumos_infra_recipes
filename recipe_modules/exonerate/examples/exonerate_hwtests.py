@@ -12,6 +12,8 @@ DEPS = [
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
@@ -112,7 +114,24 @@ def RunSteps(api):
   api.assertions.assertEqual(len(hw_test_failures[0].child_results), 1)
 
   api.exonerate.print_stats()
-  api.assertions.assertEqual(len(api.exonerate.rdb_test_configs), 1)
+  variant = rdb_common_pb2.Variant()
+  getattr(variant, 'def')['build_target'] = 'build_target_name'
+  api.assertions.assertEqual(
+      api.exonerate.is_exonerated(
+          test_result_pb2.TestResult(test_id='test2', variant=variant)), True)
+  bad_variant = rdb_common_pb2.Variant()
+  getattr(bad_variant, 'def')['build_target'] = 'bad_build_target'
+  api.assertions.assertEqual(
+      api.exonerate.is_exonerated(
+          test_result_pb2.TestResult(test_id='test2', variant=bad_variant)),
+      False)
+  api.assertions.assertEqual(
+      api.exonerate.is_exonerated(
+          test_result_pb2.TestResult(test_id='badtest', variant=variant)),
+      False)
+  api.assertions.assertEqual(
+      api.exonerate.is_exonerated(
+          test_result_pb2.TestResult(test_id='test1', variant=variant)), False)
 
 
 def GenTests(api):
