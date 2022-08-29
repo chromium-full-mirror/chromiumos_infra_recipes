@@ -268,6 +268,26 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['Get'] = jsonify(methods=methods,)
     return responses
 
+  def uprev_methods_responses(self, ebuilds):
+    """Returns response for uprev-related methods in PackageService.
+
+    Args:
+      ebuilds (list(str)): Modified ebuild file path, relative to the workspace directory.
+    """
+    modified_ebuilds = [{'path': self.src_path(e)} for e in ebuilds]
+    responses = {}
+    responses['Uprev'] = jsonify(version='1.2.3',
+                                 modified_ebuilds=modified_ebuilds)
+    responses['UprevVersionedPackage'] = jsonify(responses=[
+        dict(
+            version='1.2.3',
+            additional_commit_info='additional info to be rendered on uprev cl.',
+            modified_ebuilds=modified_ebuilds)
+    ])
+    responses['RevBumpChrome'] = jsonify(
+        responses=[dict(version='1.2.3', modified_ebuilds=modified_ebuilds)])
+    return responses
+
   @property
   def package_service_responses(self):
     """Generate responses for PackageService."""
@@ -316,39 +336,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         needs_chrome_source=True,
         reasons=["LOCAL_UPREV", "NO_PREBUILT"],
     )
-    responses['Uprev'] = jsonify(
-        version='1.2.3', modified_ebuilds=[
-            {
-                'path': self.src_path('src/overlay/foo.ebuild')
-            },
-            {
-                'path': self.src_path('src/private-overlay/bar.ebuild')
-            },
-        ])
-    responses['UprevVersionedPackage'] = jsonify(responses=[
-        dict(
-            version='1.2.3',
-            additional_commit_info='additional info to be rendered on uprev cl.',
-            modified_ebuilds=[
-                {
-                    'path': self.src_path('src/overlay/foo.ebuild')
-                },
-                {
-                    'path': self.src_path('src/private-overlay/bar.ebuild')
-                },
-            ])
-    ])
-    responses['RevBumpChrome'] = jsonify(responses=[
-        dict(
-            version='1.2.3', modified_ebuilds=[
-                {
-                    'path': self.src_path('src/overlay/foo.ebuild')
-                },
-                {
-                    'path': self.src_path('src/private-overlay/bar.ebuild')
-                },
-            ])
-    ])
+    default_modified_ebuilds = [
+        'src/overlay/foo.ebuild',
+        'src/private-overlay/bar.ebuild',
+    ]
+    responses.update(self.uprev_methods_responses(default_modified_ebuilds))
     return responses
 
   @property
@@ -476,11 +468,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       result['MethodService'] = self.method_service_responses
     return result
 
-  def response_for_endpoint(self, endpoint):
+  def response_for_endpoint(self, endpoint, test_data=None):
     """Return a fake response for the endpoint, if any.
 
     Args:
       endpoint (str): Fully qualified endpoint to get test response data for.
+      test_data (recipe_test_api.ModuleTestData): The _test_data in the invoker RecipeApi object.
 
     Returns:
       str: JSON string containing fake response data for the endpoint.
@@ -501,7 +494,29 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       raise KeyError('No default test data for method '
                      '%s in service %s. %s' % (method, service, epilog))
 
+    if service == 'PackageService':
+      if test_data.enabled and test_data.get('set_upreved_ebuilds'):
+        custom_responses = self.uprev_methods_responses(
+            test_data.get('set_upreved_ebuilds'))
+        if method in custom_responses:
+          return custom_responses[method]
+
     return responses_by_service[service][method]
+
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def set_upreved_ebuilds(ebuilds):
+    """Set the return data from some uprev-related build API endpoints.
+
+    Changes the modified ebuild files returned from these endpoints:
+    - Uprev
+    - UprevVersionedPackage
+    - RevBumpChrome
+
+    Args:
+      ebuilds (list(str)): Modified ebuild file path, relative to the workspace directory.
+    """
+    return ebuilds
 
   def set_api_return(self, parent_step_name, endpoint='', data='', iteration=1,
                      retcode=0, step_name=''):

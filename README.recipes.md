@@ -199,6 +199,7 @@
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes) (Python3 ✅)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events) (Python3 ✅)
   * [cros_build_api:examples/set_api_return](#recipes-cros_build_api_examples_set_api_return) (Python3 ✅)
+  * [cros_build_api:examples/set_upreved_ebuilds](#recipes-cros_build_api_examples_set_upreved_ebuilds) (Python3 ✅)
   * [cros_build_api:tests/bad_retcodes](#recipes-cros_build_api_tests_bad_retcodes) (Python3 ✅)
   * [cros_build_api:tests/failed_pkg_data_names](#recipes-cros_build_api_tests_failed_pkg_data_names) (Python3 ✅)
   * [cros_build_api:tests/failed_pkg_log_retrieval](#recipes-cros_build_api_tests_failed_pkg_log_retrieval) (Python3 ✅)
@@ -2233,7 +2234,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#532)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#533)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2264,7 +2265,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#529)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#530)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#237)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -9525,7 +9526,14 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/set_api_return.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/set_api_return.py#26)(api, properties):**
+### *recipes* / [cros\_build\_api:examples/set\_upreved\_ebuilds](/recipe_modules/cros_build_api/examples/set_upreved_ebuilds.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/set_upreved_ebuilds.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/set_upreved_ebuilds.py#26)(api, properties):**
 ### *recipes* / [cros\_build\_api:tests/bad\_retcodes](/recipe_modules/cros_build_api/tests/bad_retcodes.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/bad_retcodes.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

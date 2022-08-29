@@ -17,6 +17,7 @@ from google.protobuf import json_format
 
 from PB.chromite.api.api import VersionGetRequest
 from PB.chromite.api.api import VersionGetResponse
+
 # pylint: disable=unused-import
 from PB.recipe_modules.chromeos.cros_build_api.examples.set_api_return import (
     SetReturnProperties as PROPERTIES)

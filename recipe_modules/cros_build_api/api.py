@@ -479,7 +479,8 @@ class CrosBuildApiApi(RecipeApi):
 
           # If no test data is provided, see if we have our own.
           test_output_data = (
-              test_output_data or self.test_api.response_for_endpoint(endpoint))
+              test_output_data or
+              self.test_api.response_for_endpoint(endpoint, self._test_data))
 
           # Parse the output to a proto and record it in the logs.
           output_json = self.m.file.read_raw('read output file', output_path,
