@@ -1490,7 +1490,8 @@
     "cmd": [],
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Found cl: https://chromium-review.googlesource.com/c/1@@@"
+      "@@@STEP_TEXT@Found cl: https://chromium-review.googlesource.com/c/1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1593,59 +1594,177 @@
   },
   {
     "cmd": [],
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2}@@@",
-      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Pupr-Upstream-Versions: [{\"ref\": \"refs/tags/79.0.3945.20\", \"repository\": \"/chromium/src\", \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"}]@@@",
+      "@@@STEP_LOG_END@description text@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/1@@@"
     ]
   },
   {
     "cmd": [
-      "luci-auth",
-      "token",
-      "-scopes",
-      "https://www.googleapis.com/auth/gerritcodereview",
-      "-json-output",
-      "-"
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.Retrieve service_account auth token",
+    "infra_step": true,
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
+    "timeout": 600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": 1, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-22 18:54:00.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2020-10-26T18:54:00Z\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Quote: Patch Set 3:\\n\\nThis CL has failed the run. Reason: ...\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2020-10-24T18:54:00Z\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Patch Set 3:\\n\\nCV is trying the patch...\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"tag\": \"autogenerated:cv:full-run\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }, @@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2020-10-25T18:54:00Z\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Patch Set 3:\\n\\nThis CL has failed the run. Reason: ...\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"tag\": \"autogenerated:cv:full-run\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\\nPupr-Upstream-Versions: [{\\\"ref\\\": \\\"refs/tags/79.0.3945.20\\\", \\\"repository\\\": \\\"/chromium/src\\\", \\\"revision\\\": \\\"83a1812dddfc24f604d92bf61ad58efe9227a6fc\\\"}]\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/change/foo\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 2, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 2, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": 2, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2020-10-23 18:54:00.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/02/2/0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/02/2/0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@skipping uprev for chromeos-base/chromite. no modified files@@@",
+      "@@@STEP_LOG_LINE@request@chroot {@@@",
+      "@@@STEP_LOG_LINE@request@  path: \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@package_info {@@@",
+      "@@@STEP_LOG_LINE@request@  package_name: \"chromite\"@@@",
+      "@@@STEP_LOG_LINE@request@  category: \"chromeos-base\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@versions {@@@",
+      "@@@STEP_LOG_LINE@request@  repository: \"/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@request@  ref: \"refs/tags/79.0.3945.20\"@@@",
+      "@@@STEP_LOG_LINE@request@  revision: \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_LINE@request@build_targets {@@@",
+      "@@@STEP_LOG_LINE@request@  name: \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.uprev versioned package",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"packageInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"packageName\": \"chromite\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"category\": \"chromeos-base\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"repository\": \"/chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"ref\": \"refs/tags/79.0.3945.20\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"responses\": [{\"additional_commit_info\": \"additional info to be rendered on uprev cl.\", \"modified_ebuilds\": [{\"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"}, {\"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"}], \"version\": \"1.2.3\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
@@ -1656,34 +1775,86 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_1"
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"packageInfo\": {\n    \"packageName\": \"chromite\",\n    \"category\": \"chromeos-base\"\n  },\n  \"versions\": [\n    {\n      \"repository\": \"/chromium/src\",\n      \"ref\": \"refs/tags/79.0.3945.20\",\n      \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"\n    }\n  ],\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ]\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.Write auth token to temp file",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.uprev versioned package.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/UprevVersionedPackage"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.uprev versioned package.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.uprev versioned package.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.uprev versioned package.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.verify updates",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
-    "cmd": [
-      "curl",
-      "-f",
-      "-X",
-      "POST",
-      "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_1",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
-      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.verify updates.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.try uprev chromeos-base/chromite.verify updates.diff check (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1721,7 +1892,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
     "name": "clean up SDK chroot.ensure no rogue SDK.call chromite.api.SdkService/Delete.write input file",
@@ -1733,9 +1904,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Delete"
@@ -1758,7 +1929,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -1841,6 +2012,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "The uprev had no file."
+    },
     "name": "$result"
   }
 ]

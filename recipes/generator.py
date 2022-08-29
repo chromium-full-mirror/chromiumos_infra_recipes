@@ -13,6 +13,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 """
 
 import json
+import copy
 import re
 from collections import defaultdict
 from typing import DefaultDict, List, NamedTuple, Optional, Tuple
@@ -76,6 +77,7 @@ DEPS = [
     'easy',
     'gerrit',
     'git',
+    'git_cl',
     'git_footers',
     'gitiles',
     'naming',
@@ -127,6 +129,58 @@ def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
       'revision': v.revision,
   } for v in versions]
   return json.dumps(o)
+
+
+def deserializeVersions(json_str: str
+                       ) -> List[UprevVersionedPackageRequest.GitRef]:
+  """ Deserializes versions information.
+
+  Args:
+    json_str (str): A string serialized by serializeVersions().
+
+  Returns:
+    List[UprevVersionedPackageRequest.Gitref]: The versions to consider for an uprev.
+  """
+  objs = json.loads(json_str)
+  return [
+      UprevVersionedPackageRequest.GitRef(
+          repository=o.get('repository'), ref=o.get('ref'),
+          revision=o.get('revision')) for o in objs
+  ]
+
+
+def extractMetadata(description: str, pattern: str) -> str:
+  m = re.findall(pattern, description)
+  if len(m) != 1:
+    raise StepFailure(
+        'failed to find a single pattern {} in the Change description (found {}): {}'
+        .format(pattern, len(m), description))
+  return m[0]
+
+
+def rebase_cl(api: RecipeApi, open_changes: List[GerritChange], change_id: str,
+              properties: GeneratorProperties, workspace_path: str,
+              packages: List[PackageInfo], cpv: List[str], topic: str,
+              additional_commit_message: str = ''):
+  with api.step.nest("rebase CL {}".format(change_id)):
+    retry_changes = [p for p in open_changes if p.change == change_id]
+    assert len(retry_changes) == 1
+    retry_change = retry_changes[0]
+    # Extract Change-Id from commit message
+    description = api.gerrit.get_change_description(retry_change)
+    change_id = extractMetadata(description, 'Change-Id: (.*)')
+    existing_versions = deserializeVersions(
+        extractMetadata(description, UPREV_VERSION_LABEL + ': (.*)'))
+    ebuilds_by_pinfo = _do_uprev(
+        api, properties, workspace_path, existing_versions, packages, cpv,
+        topic, additional_commit_message, change_id,
+        allow_partial_uprev=properties.allow_partial_uprev)
+    if not ebuilds_by_pinfo:
+      raise StepFailure('The uprev had no file.')
+    if len(ebuilds_by_pinfo.keys()) > 1:
+      raise StepFailure(
+          'The uprev requires multi-repo commit. Cannot be rebased. {}'.format(
+              sorted(ebuilds_by_pinfo.keys())))
 
 
 def RunSteps(api: RecipeApi, properties: GeneratorProperties):
@@ -248,7 +302,7 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
       ebuilds_by_pinfo = _do_uprev(
           api, properties, workspace_path, versions, packages, cpv, topic,
           additional_commit_message=properties.additional_commit_message,
-          allow_partial_uprev=properties.allow_partial_uprev)
+          change_id=None, allow_partial_uprev=properties.allow_partial_uprev)
       if ebuilds_by_pinfo is None:
         return
 
@@ -352,6 +406,20 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
             presentation.step_text = message
 
             if retry_ci:
+              if properties.rebase_before_retry:
+                rebase_cl(api, open_changes, retry_ci.change_id, properties,
+                          workspace_path, packages, cpv, topic,
+                          properties.additional_commit_message)
+                with api.step.nest("upload patchset for Change-Id {}".format(
+                    retry_ci.change_id)):
+                  with api.context(cwd=workspace_path):
+                    retry_cl = retry_ci.to_gerrit_change_proto()
+                    project_info = api.repo.project_info(retry_cl.project)
+                    repository_path = api.path.join(workspace_path,
+                                                    project_info.path)
+                    with api.context(cwd=api.path.abs_to_path(repository_path)):
+                      api.git_cl.upload(send_mail=False)
+
               with api.step.nest("retry CL {}".format(retry_ci.change_id)):
                 labels = {
                     api.gerrit.Label.BOT_COMMIT: 1,
@@ -540,7 +608,7 @@ def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
               workspace_path: str,
               versions: List[UprevVersionedPackageRequest.GitRef],
               packages: List[PackageInfo], cpvs: List[str], topic: str,
-              additional_commit_message: str = '',
+              additional_commit_message: str = '', change_id: str = None,
               allow_partial_uprev: bool = False) -> Optional[EbuildsByPinfo]:
   """Try the uprev for the given package. If successful, commit the uprev.
 
@@ -551,10 +619,13 @@ def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
     versions (List[UprevVersionedPackageRequest.GitRef]): The versions to consider for an update.
     triggers (scheduler.Trigger): Triggers which invoked the recipe.
     packages (List[chromiumos.PackageInfo]): Information describing the package.
-    cpv (List[string]): Package title. Must be in a matching order to packages.
+    cpvs (List[string]): Package title. Must be in a matching order to packages.
     topic (string): Topic describing package. Defaults to package title.
       can be same as cpv.
     additional_commit_message: Additional message to add to the commit description.
+    change_id (string): If not None, set Change-Id to the commit message,
+      so that the commit is uploaded as a new patchset of an existing Change.
+      When this is set, the uprev should not span multiple repositories.
     allow_partial_uprev: Whether to continue operation when either of the packages
       has no modified files.
 
@@ -663,6 +734,8 @@ def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
             '{}:{}'.format(
                 x.host.split('.', 1)[0].replace('-review', ''), x.change)
             for x in api.src_state.gerrit_changes)))
+      if change_id is not None:
+        commit_lines.append('Change-Id: ' + change_id)
       commit_message = '\n'.join(commit_lines) + '\n'
 
       with api.step.nest('commit in {}'.format(name)), api.context(cwd=root):
@@ -1123,8 +1196,7 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield _with_infos(
-      'multiple-packages',
-      api.properties(triggers=[trigger_prop]),
+      'multiple-packages', api.properties(triggers=[trigger_prop]),
       _props(
           packages=[
               package_chrome,
@@ -1133,8 +1205,7 @@ def GenTests(api: RecipeTestApi):
           ],
           package_info=None,
           topic='chromeos-base/new-topic-name',
-      ),
-      api.git.diff_check(True),
+      ), api.git.diff_check(True),
       api.post_check(post_process.MustRun,
                      'try uprev chromeos-base/chromeos-chrome'),
       api.post_check(post_process.MustRun,
@@ -1150,8 +1221,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'generate CLs.create gerrit change for src/overlay.git_cl upload',
-          ['--topic', 'chromeos-base/new-topic-name']),
-  )
+          ['--topic', 'chromeos-base/new-topic-name']))
 
   yield api.test(
       'allow-partial-uprev',
@@ -1293,6 +1363,7 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
   )
 
+  revision = '83a1812dddfc24f604d92bf61ad58efe9227a6fc'
   value_dict = {
       1: {
           'change_id': 1,
@@ -1316,6 +1387,11 @@ def GenTests(api: RecipeTestApi):
           }],
           'revision_info': {
               'ref': 'refs/change/foo',
+              'commit': {
+                  'message':
+                      'a quick description\n\nChange-Id: deadbeef\n\nPupr-Upstream-Versions: [{"ref": "refs/tags/79.0.3945.20", "repository": "/chromium/src", "revision": "'
+                      + revision + '"}]',
+              },
           },
       },
       2: {
@@ -1337,8 +1413,137 @@ def GenTests(api: RecipeTestApi):
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
           value_dict),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message'
+      ),
+  )
+
+  yield api.test(
+      'cron-trigger-rebase',
+      _props(
+          branch_policies=[
+              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                      existing_cls_policy=DRY_RUN,
+                      no_existing_cls_policy=DRY_RUN)
+          ], retry_ref=retry_ref, rebase_before_retry=True),
+      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          changes, value_dict),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
+      api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
+      api.post_check(
+          post_process.StepSuccess,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
+      # Commit message should contain the same version label as the original.
+      # The change should be uploaded as a new patchset for the same Change-Id.
+      api.post_check(
+          post_process.StepCommandRE,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message',
+          [
+              '.*', '.*', '.*', '.*', '.*', '.*',
+              r'(.|\n)*' + UPREV_VERSION_LABEL + '.*' + revision +
+              r'(.|\n)*Change-Id: deadbeef(.|\n)*', '.*'
+          ]),
+      api.post_check(post_process.MustRunRE,
+                     r'.*upload patchset for Change-Id 1\.git_cl upload'))
+
+  yield api.test(
+      'cron-trigger-rebase-no-diff',
+      _props(
+          branch_policies=[
+              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                      existing_cls_policy=DRY_RUN,
+                      no_existing_cls_policy=DRY_RUN)
+          ], retry_ref=retry_ref, rebase_before_retry=True),
+      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+      api.git.diff_check(False),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          changes, value_dict),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
+      api.post_check(
+          post_process.StepFailure,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
+  )
+
+  yield api.test(
+      'cron-trigger-rebase-multi-repo',
+      _props(
+          branch_policies=[
+              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                      existing_cls_policy=DRY_RUN,
+                      no_existing_cls_policy=DRY_RUN)
+          ], retry_ref=retry_ref, rebase_before_retry=True),
+      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          changes, value_dict),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      # The default of mocked UprevVersionedPackage updates multiple repos.
+      # Current implementation does not support rebasing CLs in such a case.
+      api.post_check(
+          post_process.StepFailure,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
+  )
+
+  value_dict2 = copy.deepcopy(value_dict)
+  # missing versions data in CL description.
+  value_dict2[1]['revision_info']['commit'][
+      'message'] = 'CL Description\n\nChange-Id: f00'
+  yield api.test(
+      'cron-trigger-rebase-no-data',
+      _props(
+          branch_policies=[
+              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                      existing_cls_policy=DRY_RUN,
+                      no_existing_cls_policy=DRY_RUN)
+          ], retry_ref=retry_ref, rebase_before_retry=True),
+      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
+          value_dict2),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
+          changes, value_dict2),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      api.post_check(
+          post_process.StepFailure,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
   )
 
   value_dict = {
