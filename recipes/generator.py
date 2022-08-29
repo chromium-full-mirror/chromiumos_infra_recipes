@@ -375,8 +375,8 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
     if mrm:
       open_ci = api.gerrit.fetch_patch_sets(open_changes)
       with api.step.nest('outdated CLs') as presentation:
-        outdated_cls.extend(
-            [ci for ci in open_ci if ci.created < mrm.submitted])
+        d = mrm.created if properties.rebase_before_retry else mrm.submitted
+        outdated_cls.extend([ci for ci in open_ci if ci.created < d])
         presentation.logs['outdated CLs'] = [
             ci.display_id for ci in outdated_cls
         ]
@@ -396,8 +396,9 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
           open_ci = api.gerrit.fetch_patch_sets(open_changes,
                                                 include_messages=True)
           # Filter out outdated CLs, sort by recency
+          d = mrm.created if properties.rebase_before_retry else mrm.submitted
           if mrm:
-            open_ci = [ci for ci in open_ci if ci.created > mrm.submitted]
+            open_ci = [ci for ci in open_ci if ci.created > d]
           open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
 
           if not api.pupr.retries_frozen(open_ci):

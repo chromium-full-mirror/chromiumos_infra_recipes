@@ -1477,14 +1477,8 @@
     "cmd": [],
     "name": "outdated CLs",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@outdated CLs@chromium:1@@@",
-      "@@@STEP_LOG_LINE@outdated CLs@chromium:2@@@",
       "@@@STEP_LOG_END@outdated CLs@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_DO_NOTHING"
   },
   {
     "cmd": [],
