@@ -24,6 +24,7 @@ DEPS = [
     'gerrit',
     'git',
     'repo',
+    'src_state',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -53,7 +54,12 @@ def RunSteps(api, properties):
 
     presentation.step_text = 'all properties good'
 
-  with api.build_menu.configure_builder(missing_ok=True), \
+  commit = None
+  if properties.manifest_branch:
+    commit = api.src_state.internal_manifest.as_gitiles_commit_proto
+    commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
+
+  with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
     api.build_menu.setup_workspace_and_chroot():
     return DoRunSteps(api, properties)
 
@@ -75,6 +81,12 @@ def DoRunSteps(api, properties):
 
     # Version the archive.
     version = api.time.utcnow().strftime('%Y.%m.%d.%H%M%S')
+    if properties.manifest_branch:
+      # Replace all forward slashes with underscores for filename validity
+      manifest_branch = properties.manifest_branch.replace('/', '_')
+      # Prepend the branch name into the version
+      version = manifest_branch + '-' + version
+
     package_name = properties.package_info.package_name
     archive_name = package_name + '-' + version + '.tar.xz'
 
@@ -172,3 +184,18 @@ def GenTests(api):
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
                  api.post_check(post_process.StatusAnyFailure),
                  api.post_check(post_process.StatusFailure))
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R105-14989.B'
+  yield api.test(
+      'branched-manifest', api.properties(**props),
+      api.post_check(post_process.MustRun,
+                     'configure builder.cros_infra_config.gitiles-fetch-ref'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'ensure synced checkout.repo init',
+          [
+              '--manifest-branch',
+              'release-R105-14989.B',
+          ],
+      ), api.post_check(post_process.StatusSuccess))

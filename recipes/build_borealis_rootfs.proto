@@ -24,4 +24,8 @@ message BuildBorealisRootfsProperties {
   // Destination gs path where the VM image will be copied.
   // Required
   string destination_gs_path = 4;
+
+  // The manifest branch to check out (e.g. 'release-R105-14989.B')
+  // Defaults to main tip of tree if not specified.
+  string manifest_branch = 5;
 }
