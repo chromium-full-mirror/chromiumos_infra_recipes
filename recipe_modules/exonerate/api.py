@@ -36,17 +36,23 @@ class ExonerateApi(recipe_api.RecipeApi):
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
-  def fetch_config(self):
+  def fetch_config(self, mock_data=None):
     """Download config file and return the extracted config proto.
+
+    Args:
+      mock_data: step_test_data for the config download step.
 
     Returns: TestDisablementCfg object of the config.
     """
-    str_config = six.ensure_binary(
-        self.m.cros_infra_config.download_binproto(
-            EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
-            repo=CONFIG_INTERNAL_REPO,
-            step_test_data=self.test_api.fake_config_file_contents))
-    return TestDisablementCfg.FromString(str_config)
+    if not mock_data:
+      mock_data = self.test_api.fake_config_file_contents
+    bin_proto = self.m.cros_infra_config.download_binproto(
+        EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
+        repo=CONFIG_INTERNAL_REPO, step_test_data=mock_data)
+    if bin_proto:
+      return TestDisablementCfg.FromString(six.ensure_binary(bin_proto))
+    else:
+      return TestDisablementCfg()
 
   def _load_configs(self):
     """Load configs from binary/json files."""

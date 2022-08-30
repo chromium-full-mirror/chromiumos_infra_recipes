@@ -22,6 +22,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
+  api.exonerate.fetch_config(api.exonerate.test_api.empty_config_file_contents)
   pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)
   fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)
   passing_test_cases = [
@@ -132,7 +133,6 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.exonerate.is_exonerated(
           test_result_pb2.TestResult(test_id='test1', variant=variant)), False)
-
 
 def GenTests(api):
   yield api.test(
