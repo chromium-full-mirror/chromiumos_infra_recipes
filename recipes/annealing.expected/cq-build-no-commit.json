@@ -1893,6 +1893,24 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/DIR_METADATA",
+      "[CLEANUP]/chromiumos_workspace/manifest/DIR_METADATA"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.Copy manifest-internal/DIR_METADATA",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "[CLEANUP]/chromiumos_workspace/manifest-internal/README.md",
       "[CLEANUP]/chromiumos_workspace/manifest/README.md"
     ],
@@ -2072,7 +2090,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/chromiumos_workspace/manifest/README.md"
+      "[CLEANUP]/chromiumos_workspace/manifest/DIR_METADATA"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2087,11 +2105,47 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/chromiumos_workspace/manifest/README.md"
+      "[CLEANUP]/chromiumos_workspace/manifest/DIR_METADATA"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
     "name": "sync manifests.diff check (5).git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync manifests.diff check (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-files",
+      "--error-unmatch",
+      "[CLEANUP]/chromiumos_workspace/manifest/README.md"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.diff check (6).git ls-files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--quiet",
+      "HEAD",
+      "[CLEANUP]/chromiumos_workspace/manifest/README.md"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "sync manifests.diff check (6).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
