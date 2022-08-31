@@ -350,7 +350,7 @@ class CrosSdkApi(RecipeApi):
       reuse &= (
           bool(cache_state.snapshot_hash) and
           self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
-                                  self.m.src_state.gitiles_commit.id))
+                                  head=self.m.src_state.gitiles_commit.id))
     return reuse
 
   def _check_sdk_cache_state(self, version):
