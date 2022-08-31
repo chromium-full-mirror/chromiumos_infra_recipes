@@ -401,6 +401,8 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         e.g. "marvell"
     * kernel_version:
         e.g. "5.4.151-16902-g93699f4e73de"
+    * hwid_sku:
+        e.g. "katsu_MT8183_0B"
 
 
     Args:
@@ -453,6 +455,11 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
       'label-wifi_chip', api.buildbucket.build.infra.swarming.bot_dimensions)
   if wifi_chip:
     base_tags.append(('wifi_chip', wifi_chip[0]))
+
+  hwid_sku = api.cros_tags.get_values(
+      'label-hwid_sku', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if hwid_sku:
+    base_tags.append(('hwid_sku', hwid_sku[0]))
 
   suite_task_id = api.buildbucket.build.infra.swarming.parent_run_id
   if suite_task_id:
@@ -1982,6 +1989,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'dut_name': 'fakedut1-row2-rack3-host4',
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
+              'label-hwid_sku': 'katsu_MT8183_0B',
           }),
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
