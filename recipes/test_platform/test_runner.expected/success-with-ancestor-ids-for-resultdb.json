@@ -188,7 +188,7 @@
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\"}@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id1\"}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"dutTopology\":[@@@",
@@ -281,7 +281,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: load skylab local state.call `phosphorus`.load",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id\"}",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -848,11 +848,11 @@
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"suite_task_id\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"parent-task-id\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"parent-task-id0\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"task_id\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"dummy-task-id\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"dummy-task-id0\"@@@",
       "@@@STEP_LOG_LINE@config@        ], @@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
@@ -1006,9 +1006,9 @@
       "-tag",
       "rw_fwid:Google_Voema.13672.224.0",
       "-tag",
-      "suite_task_id:parent-task-id",
+      "suite_task_id:parent-task-id0",
       "-tag",
-      "task_id:dummy-task-id",
+      "task_id:dummy-task-id0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
       "--",
@@ -1302,7 +1302,7 @@
     "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"runId\":\"dummy-task-id\"}@@@",
+      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"runId\":\"dummy-task-id1\"}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -1327,7 +1327,7 @@
       }
     },
     "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`.remove",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"runId\":\"dummy-task-id\"}",
+    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"runId\":\"dummy-task-id1\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

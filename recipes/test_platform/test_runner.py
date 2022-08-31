@@ -358,6 +358,24 @@ def _read_kernel_version(api, kernel_log_file_path):
     return None
 
 
+def _convert_to_task_request_id(swarming_task_run_id):
+  """ Converts the swarming task run id with non "0" suffix to the swarming task
+  request id with "0" suffix. Both can be used to point to the same swarming
+  task. Swarming supported implicit retry and first task has "1" in suffix and
+  retried task has "2" in suffix.
+
+  Args:
+  * swarming_task_run_id: The swarming task run id.
+
+  Returns:
+  * swarming_task_request_id (string): The swarming task request id.
+  """
+  if not swarming_task_run_id:
+    return ''
+
+  return swarming_task_run_id[:-1] + "0"
+
+
 def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
                                  crossystem_keyvals, kernel_version):
   """Generate the base tags for the test results.
@@ -461,11 +479,13 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   if hwid_sku:
     base_tags.append(('hwid_sku', hwid_sku[0]))
 
-  suite_task_id = api.buildbucket.build.infra.swarming.parent_run_id
+  suite_task_id = _convert_to_task_request_id(
+      api.buildbucket.build.infra.swarming.parent_run_id)
   if suite_task_id:
     base_tags.append(('suite_task_id', suite_task_id))
 
-  base_tags.append(('task_id', api.swarming.task_id))
+  base_tags.append(
+      ('task_id', _convert_to_task_request_id(api.swarming.task_id)))
 
   # Fetches the following information from buildbucket.build.
   builder_object = api.buildbucket.build.builder
@@ -1198,7 +1218,7 @@ def GenTests(api):
     if swarming_tags:
       build_msg.infra.swarming.bot_dimensions.extend(
           api.cros_tags.tags(**swarming_tags))
-    build_msg.infra.swarming.parent_run_id = 'parent-task-id'
+    build_msg.infra.swarming.parent_run_id = 'parent-task-id1'
 
     if ancestor_buildbucket_ids:
       build_msg.ancestor_ids.extend(ancestor_buildbucket_ids)
@@ -1287,11 +1307,11 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                         cipd_label='cros_tool_runner_prod'))
         }) + api.properties.environ(
             PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
-                                    SWARMING_TASK_ID='dummy-task-id',
+                                    SWARMING_TASK_ID='dummy-task-id1',
                                     SKYLAB_DUT_ID='dummy-dut-id')) +
             api.properties.environ(
                 CrosToolRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
-                                            SWARMING_TASK_ID='dummy-task-id',
+                                            SWARMING_TASK_ID='dummy-task-id1',
                                             SKYLAB_DUT_ID='dummy-dut-id')))
 
   def _get_test_runner_properties():
@@ -1330,7 +1350,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         }) +  #
             api.properties.environ(
                 PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
-                                        SWARMING_TASK_ID='dummy-task-id',
+                                        SWARMING_TASK_ID='dummy-task-id1',
                                         SKYLAB_DUT_ID='dummy-dut-id')))
 
   # An example request.
