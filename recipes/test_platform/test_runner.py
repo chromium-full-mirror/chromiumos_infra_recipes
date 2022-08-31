@@ -364,7 +364,7 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
 
   This function adds the following tags:
     * image:
-        e.g. R102-14632.0.0-62834-8818718496810023809
+        e.g. atlas-kernelnext-release/R105-14989.57.0
     * build:
         e.g. R102-14632.0.0-62834-8818718496810023809
     * declared_name:
@@ -418,6 +418,8 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
 
   # Fetches the following information from buildbucket build tags.
   build_tag = api.cros_tags.get_values('build')
+  if not build_tag:
+    build_tag = api.cros_tags.get_values('label-image')
   if build_tag:
     base_tags.append(('image', build_tag[0]))
     base_tags.append(('build', build_tag[0].split('/')[-1]))
@@ -521,10 +523,16 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
 
   # Fetches the following information from buildbucket build tags.
   board = api.cros_tags.get_values('label-board')
+  if not board:
+    board = api.cros_tags.get_values(
+        'label-board', api.buildbucket.build.infra.swarming.bot_dimensions)
   if board:
     base_variant['board'] = board[0]
 
   model = api.cros_tags.get_values('label-model')
+  if not model:
+    model = api.cros_tags.get_values(
+        'label-model', api.buildbucket.build.infra.swarming.bot_dimensions)
   if model:
     base_variant['model'] = model[0]
 
@@ -1969,6 +1977,44 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
           }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb-tast-with-missing-bb-tags',
+      _set_build(
+          bid=42,
+          tags={
+              # Falls back to the `label-image` label if the `build` label is
+              # missing.
+              # Context: b/244294904
+              'label-image': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
+          },
+          swarming_tags={
+              # Fetches board and model info from swarming tags if they
+              # are missing in buildbucket tags.
+              # Context: b/244297392
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
               'dut_name': 'fakedut1-row2-rack3-host4',
