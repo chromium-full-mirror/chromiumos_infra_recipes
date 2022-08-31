@@ -252,19 +252,21 @@ class GitApi(recipe_api.RecipeApi):
     """
     self._step(['remote', 'update'], name=step_name, timeout=timeout_sec)
 
-  def checkout(self, commit, force=False, branch=None):
+  def checkout(self, commit=None, force=False, branch=None):
     """Runs 'git checkout'.
 
     Args:
-      commit (str): The commit (technically "tree-like") to checkout.
+      commit (Optional[str]): The commit (technically "tree-like") to checkout.
       force (bool): If True, throw away local changes (--force).
+      branch (Optional[str]): The branch to check out a commit from.
     """
     args = ['checkout']
     if force:
       args += ['--force']
     if branch:
       args += ['-b', branch]
-    args += [commit]
+    if commit:
+      args += [commit]
     self._step(args)
 
   def merge(self, ref, message, *args, **kwargs):

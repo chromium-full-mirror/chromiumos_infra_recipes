@@ -31,3 +31,6 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
   def fake_config_file_contents(self):
     return self.m.gitiles.make_encoded_file_from_bytes(
         self.fake_exoneration_configs().SerializeToString())
+
+  def empty_config_file_contents(self):
+    return self.m.gitiles.make_encoded_file_from_bytes(b'')

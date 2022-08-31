@@ -1025,6 +1025,16 @@ class RepoApi(recipe_api.RecipeApi):
       return
     with self.m.step.nest('repo binary update'):
       self.version()
+      # When repo updates to the next version, the `.repo/repo` project
+      # sometimes gets stuck with local changes that prevent selfupdate.
+      # This error  presents as: "could not reset index file to revision".
+      # `git checkout --force` fixes this by clobbering local changes to the
+      # `.repo/repo` project.
+      # See b/243418745 for more info.
+      if root_path:
+        with self.m.context(
+            cwd=root_path.join('.repo', 'repo'), infra_steps=True):
+          self.m.git.checkout(force=True)
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']
         if not verify_repo:

@@ -993,7 +993,6 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
-      interface.submit_post_job()
 
       # Gets the result dir path for the first test case result,
       # e.g. "/home/chromeos-test/skylab_bots/c6-r1-r24-h11.584871424/w/ir/x/w
@@ -1022,6 +1021,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     result.add_prejob_response(prejob_response)
     result.add_test_response(run_test_response)
   finally:
+    interface.submit_post_job()
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
     api.cts_results_archive.archive(

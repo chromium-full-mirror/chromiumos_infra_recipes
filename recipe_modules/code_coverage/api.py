@@ -59,6 +59,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._branch = props.branch or DEFAULT_CODE_BRANCH
     # Whether we need to skip chromium coverage upload.
     self._skip_chromium_upload = props.skip_chromium_upload or False
+    # Whether invoked by incremental(CQ) builder.
+    self._cq_builder = props.cq_builder
     # Path to incremental coverage client.
     self._incremental_coverage_tool = None
     # Path to absolute coverage client.
@@ -271,7 +273,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         absolute_cs_settings (CoverageFileSettings): settings for uploading coverage.
     """
-    if self.m.cq.active or absolute_cs_settings is None:
+    if self._cq_builder or self.m.cq.active or absolute_cs_settings is None:
       return
 
     with self.m.step.nest(
@@ -330,7 +332,11 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         incremental_settings (CoverageFileSettings): settings for uploading coverage.
     """
-    if not self.m.cq.active or incremental_settings is None:
+    if incremental_settings is None:
+      return
+
+    # Make sure we are triggered by the CQ builder.
+    if not (self._cq_builder or self.m.cq.active):
       return
 
     with self.m.step.nest('upload incremental coverage to gerrit'):
@@ -390,7 +396,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         project_name_to_use (str): name of the project.
         absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage.
     """
-    if self.m.cq.active or absolute_chromium_settings is None:
+    if self._cq_builder or self.m.cq.active or absolute_chromium_settings is None:
       return
 
     # Do not update coverage information of asked to skip.

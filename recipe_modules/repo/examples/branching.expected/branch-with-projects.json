@@ -66,6 +66,19 @@
   },
   {
     "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[START_DIR]/repo/.repo/repo",
+    "infra_step": true,
+    "name": "repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "selfupdate"
     ],

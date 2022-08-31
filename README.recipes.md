@@ -1746,13 +1746,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#69)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#117)(self, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#119)(self, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -1764,7 +1764,7 @@ Args:
   absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
   absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
 
-&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#98)(self, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
+&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#100)(self, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
 
 Uploads code coverage llvm json.
 
@@ -1772,7 +1772,7 @@ Args:
   tarfile (Path): path to tarfile.
   step_name (str): name for the step.
 
-&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#81)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
+&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#83)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
 Uploads firmware lcov code coverage.
 
@@ -3326,7 +3326,7 @@ Returns:
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
 
-[DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [exonerate](#recipe_modules-exonerate), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -3430,7 +3430,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#364)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#378)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB.
 
@@ -4855,7 +4855,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#208)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#210)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -4877,7 +4877,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#278)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#280)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4889,7 +4889,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#308)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#310)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -4900,25 +4900,33 @@ Returns:
   [Build] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#44)(self):**
+&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#39)(self, mock_data=None):**
 
 Download config file and return the extracted config proto.
 
+Args:
+  mock_data: step_test_data for the config download step.
+
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#362)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#378)(self):**
 
 Return markdown style info about suites that were exonerated.
 
 Returns: str in markdown style.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#94)(self):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#362)(self, test_result):**
+
+Whether the test_result was exonerated.
+
+Args:
+  test_result[TestResult]: Test result to check for.
+
+Returns: boolean indicating if test_result was exonerated.
+
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#95)(self):**
 
 Write exoneration stats to output properties.
-
-&emsp; **@property**<br>&mdash; **def [rdb\_test\_configs](/recipe_modules/exonerate/api.py#39)(self):**
-
-Returns exonerated suite names for ResultDB.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
 [DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -5741,7 +5749,7 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   paths (list[str|Path]): The file paths to stage.
 
-&mdash; **def [amend\_head\_message](/recipe_modules/git/api.py#314)(self, message, \*\*kwargs):**
+&mdash; **def [amend\_head\_message](/recipe_modules/git/api.py#316)(self, message, \*\*kwargs):**
 
 Runs 'git commit --amend' with the given description.
 
@@ -5749,7 +5757,7 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [author\_email](/recipe_modules/git/api.py#783)(self, commit_id):**
+&mdash; **def [author\_email](/recipe_modules/git/api.py#785)(self, commit_id):**
 
 Returns the email of the author of the given commit.
 
@@ -5758,7 +5766,7 @@ Args:
 
 Returns: (str): commit author email.
 
-&mdash; **def [branch\_exists](/recipe_modules/git/api.py#823)(self, branch):**
+&mdash; **def [branch\_exists](/recipe_modules/git/api.py#825)(self, branch):**
 
 Check if a branch exists.
 
@@ -5767,15 +5775,16 @@ Args:
 
 Returns: (bool) Whether or not the branch exists.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#255)(self, commit, force=False, branch=None):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#255)(self, commit=None, force=False, branch=None):**
 
 Runs 'git checkout'.
 
 Args:
-  commit (str): The commit (technically "tree-like") to checkout.
+  commit (Optional[str]): The commit (technically "tree-like") to checkout.
   force (bool): If True, throw away local changes (--force).
+  branch (Optional[str]): The branch to check out a commit from.
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#300)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#302)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick'.
 
@@ -5783,7 +5792,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#602)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
+&mdash; **def [clone](/recipe_modules/git/api.py#604)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
 
 Clones a Git repo into the current directory.
 
@@ -5801,7 +5810,7 @@ Args:
   verbose (bool): If set, run git clone as verbose.
   progress (bool): If set, print progress to stdout.
 
-&mdash; **def [commit](/recipe_modules/git/api.py#331)(self, message, files=None, author=None, \*\*kwargs):**
+&mdash; **def [commit](/recipe_modules/git/api.py#333)(self, message, files=None, author=None, \*\*kwargs):**
 
 Runs 'git commit' with the given files.
 
@@ -5812,7 +5821,7 @@ Args:
     added to test permission oddities by forcing forged commit failure.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [create\_branch](/recipe_modules/git/api.py#809)(self, branch, remote_branch=None):**
+&mdash; **def [create\_branch](/recipe_modules/git/api.py#811)(self, branch, remote_branch=None):**
 
 Create a branch.
 
@@ -5822,7 +5831,7 @@ Args:
   * remote_branch (str): Name of the remote branch to track, e.g.
     origin/main or cros/mybranch.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#588)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#590)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -5834,7 +5843,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#411)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#413)(self):**
 
 Returns the currently checked out branch name.
 
@@ -5853,7 +5862,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#668)(self, refspec, default=None):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#670)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -5903,7 +5912,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#687)(self, branch):**
+&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#689)(self, branch):**
 
 Creates the full ref for a branch.
 
@@ -5931,7 +5940,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#702)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#704)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -5945,7 +5954,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#727)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#729)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -5956,15 +5965,15 @@ Args:
 Returns:
   (GitilesCommit): The GitilesCommit corresponding to HEAD.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#454)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#456)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#462)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#464)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#716)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#718)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -5974,7 +5983,7 @@ Args:
 Returns:
   (bool): whether the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#526)(self, revision, head='HEAD'):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#528)(self, revision, head='HEAD'):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -5985,7 +5994,7 @@ Args:
 Returns:
   (bool): Whether the revision is reachable from (is an ancestor of) |head|.
 
-&mdash; **def [log](/recipe_modules/git/api.py#493)(self, from_rev, to_rev, limit=None, paths=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#495)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -5998,7 +6007,7 @@ Args:
 Returns:
   (list[Commit]): A list of commit metas.
 
-&mdash; **def [ls\_remote](/recipe_modules/git/api.py#472)(self, refs, repo_url=None):**
+&mdash; **def [ls\_remote](/recipe_modules/git/api.py#474)(self, refs, repo_url=None):**
 
 Return ls-remote output for a repository.
 
@@ -6009,7 +6018,7 @@ Args:
 Returns:
   (list[Reference]): A list of Refs.
 
-&mdash; **def [merge](/recipe_modules/git/api.py#270)(self, ref, message, \*args, \*\*kwargs):**
+&mdash; **def [merge](/recipe_modules/git/api.py#272)(self, ref, message, \*args, \*\*kwargs):**
 
 Runs `git merge`.
 
@@ -6019,11 +6028,11 @@ Args:
   args (tuple): Additional arguments to git merge.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [merge\_abort](/recipe_modules/git/api.py#310)(self):**
+&mdash; **def [merge\_abort](/recipe_modules/git/api.py#312)(self):**
 
 Runs 'git merge --abort'.
 
-&mdash; **def [merge\_base](/recipe_modules/git/api.py#554)(self, \*args, \*\*kwargs):**
+&mdash; **def [merge\_base](/recipe_modules/git/api.py#556)(self, \*args, \*\*kwargs):**
 
 Return the output from `git merge-base`.
 
@@ -6034,7 +6043,7 @@ Args:
 Returns:
   (str) stdout of the command, or None for errors.
 
-&mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#282)(self, ref, message, \*\*kwargs):**
+&mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#284)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge` and returns whether the merge succeeded.
 
@@ -6048,7 +6057,7 @@ Args:
 Returns:
   (bool): whether the merge succeeded
 
-&mdash; **def [push](/recipe_modules/git/api.py#387)(self, remote, refspec, dry_run=False, capture_stdout=False, capture_stderr=False, retry=True, force=False, \*\*kwargs):**
+&mdash; **def [push](/recipe_modules/git/api.py#389)(self, remote, refspec, dry_run=False, capture_stdout=False, capture_stderr=False, retry=True, force=False, \*\*kwargs):**
 
 Runs 'git push'.
 
@@ -6065,7 +6074,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#642)(self, force=False, branch=None, strategy_option=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#644)(self, force=False, branch=None, strategy_option=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -6075,13 +6084,13 @@ Args:
   strategy_option (str): If set, sets the --strategy-option flag. See
     `git help rebase` for details.
 
-&mdash; **def [remote](/recipe_modules/git/api.py#795)(self):**
+&mdash; **def [remote](/recipe_modules/git/api.py#797)(self):**
 
 Return the name of the remote.
 
 Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#428)(self, remote='.', test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#430)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
@@ -6100,7 +6109,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#751)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#753)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -6120,14 +6129,14 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#660)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#662)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#767)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#769)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -6138,7 +6147,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#571)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#573)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -6901,7 +6910,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#840)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#839)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6953,7 +6962,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#166)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#503)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#502)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -6967,7 +6976,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#769)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#768)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6982,11 +6991,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#697)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#696)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#703)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#702)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -8483,7 +8492,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#18)(api):**
 ### *recipes* / [android\_uprev\_orchestrator](/recipes/android_uprev_orchestrator.py)
 
-[DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/android_uprev_orchestrator.py#17): [android](#recipe_modules-android), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -8497,9 +8506,9 @@ Once all builds and tests passed, it submits a CL to update the Android LKGB
 file. The change will in turn trigger the PUpr generator to publish an actual
 Android uprev.
 
-&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#51)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#52)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#44)(api, properties):**
+&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#45)(api, properties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#33): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10467,7 +10476,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_hwtests.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exonerate_hwtests.py#24)(api):**
 ### *recipes* / [exonerate:examples/exonerate\_vmtests](/recipe_modules/exonerate/examples/exonerate_vmtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/exonerate_vmtests.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12240,41 +12249,41 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#22)(api):**
 
-[depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-bot_update
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-gerrit
-[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-git
-[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-git_cl
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/19b3eb5adbe00e9da40375cb5dc47380a46f3041/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/91ef58c77d66d22205e41ec6b8d789a7d18a2f1a/recipes/README.recipes.md#recipe_modules-docker
-[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-archive
-[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-assertions
-[recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-bcid_reporter
-[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-buildbucket
-[recipe_engine/recipe_modules/cas]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-cas
-[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-cipd
-[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-context
-[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-cq
-[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-file
-[recipe_engine/recipe_modules/futures]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-futures
-[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-json
-[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-led
-[recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-legacy_annotation
-[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-path
-[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-properties
-[recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-random
-[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-raw_io
-[recipe_engine/recipe_modules/resultdb]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-resultdb
-[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-runtime
-[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-scheduler
-[recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-service_account
-[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-step
-[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-swarming
-[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-time
-[recipe_engine/recipe_modules/tricium]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-tricium
-[recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-url
-[recipe_engine/recipe_modules/uuid]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/README.recipes.md#recipe_modules-uuid
-[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/18a8990ccd78ccaf47cd97616bf1c8513ffc5482/recipe_engine/recipe_api.py#886
+[depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-bot_update
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-git
+[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-git_cl
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/b0fb8d570df94ed4e457adaa827d1ce9b51ade00/recipes/README.recipes.md#recipe_modules-tryserver
+[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/a8c1a214c0bcf9336f7c29edf4ec57f60bc3cde6/recipes/README.recipes.md#recipe_modules-docker
+[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-archive
+[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-assertions
+[recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-bcid_reporter
+[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/cas]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-cas
+[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-cipd
+[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-cq
+[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/futures]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-futures
+[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-json
+[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-led
+[recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-legacy_annotation
+[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-path
+[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-random
+[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-raw_io
+[recipe_engine/recipe_modules/resultdb]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-resultdb
+[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-runtime
+[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-scheduler
+[recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-service_account
+[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-step
+[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-swarming
+[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-time
+[recipe_engine/recipe_modules/tricium]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-tricium
+[recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-url
+[recipe_engine/recipe_modules/uuid]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/README.recipes.md#recipe_modules-uuid
+[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/a6f21e9dfe6a20329a4e5a97f569ee7fe0a60263/recipe_engine/recipe_api.py#886
