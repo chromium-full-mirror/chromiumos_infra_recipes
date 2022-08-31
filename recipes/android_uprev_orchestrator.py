@@ -21,6 +21,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'android',
+    'cros_infra_config',
     'cros_source',
     'easy',
     'gerrit',
@@ -52,6 +53,13 @@ def DoRunSteps(api, properties):
   android_package = properties.android_package
   if not android_package:
     raise StepFailure('android_package not set')
+
+  with api.step.nest('ensure latest chromite') as pres, \
+       api.context(cwd=api.cros_source.workspace_path.join('chromite')):
+    api.git.head_commit()  # log the commit prior to sync for debug purposes
+    api.cros_source.ensure_synced_cache(
+        projects=['chromite'], is_staging=api.cros_infra_config.is_staging)
+    pres.step_text = 'chromite synced to {}'.format(api.git.head_commit())
 
   android_version = (
       properties.android_version or
