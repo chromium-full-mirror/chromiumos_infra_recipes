@@ -2191,44 +2191,6 @@
             "version": ""
           }
         ]
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsInfo": {
-          "test": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "CODE_COVERAGE_LLVM_JSON"
-                ]
-              }
-            ]
-          },
-          "toolchain": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "CLANG_CRASH_DIAGNOSES"
-                ],
-                "gsLocations": [
-                  "chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
-                ]
-              }
-            ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE",
-                  "LICENSE_CREDITS"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
       }
     },
     {

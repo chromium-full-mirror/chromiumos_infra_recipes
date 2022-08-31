@@ -32,27 +32,26 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._exoneration_link_map = {}
     self._test_stats_map = defaultdict(int)
     self._suite_stats_map = defaultdict(int)
-    self._exonerated_tests = defaultdict(set)
+    self._rdb_test_configs = []
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
-  def fetch_config(self, mock_data=None):
-    """Download config file and return the extracted config proto.
+  @property
+  def rdb_test_configs(self):
+    """Returns exonerated suite names for ResultDB."""
+    return self._rdb_test_configs
 
-    Args:
-      mock_data: step_test_data for the config download step.
+  def fetch_config(self):
+    """Download config file and return the extracted config proto.
 
     Returns: TestDisablementCfg object of the config.
     """
-    if not mock_data:
-      mock_data = self.test_api.fake_config_file_contents
-    bin_proto = self.m.cros_infra_config.download_binproto(
-        EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
-        repo=CONFIG_INTERNAL_REPO, step_test_data=mock_data)
-    if bin_proto:
-      return TestDisablementCfg.FromString(six.ensure_binary(bin_proto))
-    else:
-      return TestDisablementCfg()
+    str_config = six.ensure_binary(
+        self.m.cros_infra_config.download_binproto(
+            EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
+            repo=CONFIG_INTERNAL_REPO,
+            step_test_data=self.test_api.fake_config_file_contents))
+    return TestDisablementCfg.FromString(str_config)
 
   def _load_configs(self):
     """Load configs from binary/json files."""
@@ -129,7 +128,6 @@ class ExonerateApi(recipe_api.RecipeApi):
       self._add_log('Exonerated {} on {}'.format(test_case.name, build_target))
       self._stats.test_count += 1
       self._test_stats_map[test_case.name] += 1
-      self._exonerated_tests[test_case.name].add(build_target)
 
     if bt_match and not self._dry_run:
       return ExecuteResponse.TaskResult.TestCaseResult(
@@ -241,6 +239,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           if new_status == common_pb2.SUCCESS:
             suite_name = str(skylab_res.task.test.common.display_name)
             link_text = '{}.{}'.format(build_target, suite_name)
+            self._rdb_test_configs.append('{}.hw.{}'.format(
+                build_target, suite_name))
             self._exoneration_link_map[
                 link_text] = self.m.urls.get_skylab_task_url(skylab_res.task)
             exonerated_test_names.append(suite_name)
@@ -270,8 +270,6 @@ class ExonerateApi(recipe_api.RecipeApi):
                                                  build_target))
       self._stats.test_count += 1
       self._test_stats_map[test_case['name']] += 1
-      self._exonerated_tests[test_case['name']].add(build_target)
-
     if bt_match and not self._dry_run:
       return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
 
@@ -348,6 +346,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           if new_status == common_pb2.SUCCESS:
             suite_name = self.m.naming.get_vm_test_title(build)
             link_text = '{}.{}'.format(build_target, suite_name)
+            self._rdb_test_configs.append('{}.vm.{}'.format(
+                build_target, suite_name))
             self._exoneration_link_map[
                 link_text] = self.m.urls.get_vm_test_link_map(build)
             exonerated_test_names.append(suite_name)
@@ -358,22 +358,6 @@ class ExonerateApi(recipe_api.RecipeApi):
       self._print_logs(pres)
 
     return new_vm_builds, exonerated_test_names
-
-  def is_exonerated(self, test_result):
-    """Whether the test_result was exonerated.
-
-    Args:
-      test_result[TestResult]: Test result to check for.
-
-    Returns: boolean indicating if test_result was exonerated.
-    """
-    if not self._dry_run:
-      if test_result.test_id in self._exonerated_tests:
-        build_target = getattr(test_result.variant, 'def')['build_target']
-        if build_target in self._exonerated_tests[test_result.test_id]:
-          return True
-
-    return False
 
   def get_exoneration_markdown(self):
     """Return markdown style info about suites that were exonerated.

@@ -9,7 +9,6 @@ from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import (
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/path',
-    'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/gsutil',

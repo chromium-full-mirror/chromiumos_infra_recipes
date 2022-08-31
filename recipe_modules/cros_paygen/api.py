@@ -21,7 +21,6 @@ import math
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 from os import path
-import string
 
 from PB.chromite.api import test_metadata
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
@@ -89,10 +88,9 @@ class PaygenTestConfig(object):
   # (e.g. reef-release/R77-12345.0.0)
   _CHROMEOS_BUILD_NAME_TEMPLATE = (
       '%(build_target_name)s-release/%(tgt_archive_basename)s')
-  _REQUEST_TAG_TEMPLATE = '%(chromeos_build_name)s-%(tgt_channel)s-%(update_type)s-%(rand)s'
+  _REQUEST_TAG_TEMPLATE = '%(chromeos_build_name)s-%(tgt_channel)s'
   _REQUEST_WITH_MODEL_TAG_TEMPLATE = (
-      '%(chromeos_build_name)s-%(tgt_channel)s-%(update_type)s-%(model)s-%(rand)s'
-  )
+      '%(chromeos_build_name)s-%(tgt_channel)s-%(model)s')
 
   def __init__(self, test_build_target, build_target_name, tgt_channel,
                tgt_version, tgt_payload_uri, tgt_archive_uri,
@@ -199,7 +197,7 @@ class PaygenTestConfig(object):
 
     return ' '.join(template % (key, val) for key, val in arg_values)
 
-  def to_ctp_tagged_requests(self, request_opts=None, rand_suffix=None):
+  def to_ctp_tagged_requests(self, request_opts=None):
     """Turn self into a dict of tagged test_platform.Requests.
 
     Creates one request per testable model or one request with no model
@@ -208,30 +206,25 @@ class PaygenTestConfig(object):
     Args:
       models (list(str)): A list of models to run paygen AU tests on.
       request_opts (TestRequestOpts): Overrides for the test_platform.Request.
-      rand_suffix (str): Append this randomness to the opaque test name.
 
     Returns:
        A dictionary of string to test_platform.Request objects.
     """
     if not self._applicable_models:
-      return self._create_tagged_request(request_opts=request_opts,
-                                         rand_suffix=rand_suffix)
+      return self._create_tagged_request(request_opts=request_opts)
 
     tagged_requests = {}
     for model in self._applicable_models:
       tagged_requests.update(
-          self._create_tagged_request(model=model, request_opts=request_opts,
-                                      rand_suffix=rand_suffix))
+          self._create_tagged_request(model=model, request_opts=request_opts))
     return tagged_requests
 
-  def _create_tagged_request(self, model=None, request_opts=None,
-                             rand_suffix=None):
+  def _create_tagged_request(self, model=None, request_opts=None):
     """Create a tagged test_platform.Request for the given model.
 
     Args:
       model (str): A model to run paygen AU tests on.
       request_opts (TestRequestOpts): Overrides for the test_platform.Request.
-      rand_suffix (str): Append this randomness to the opaque test name.
 
     Returns:
       A dictionary mapping a string to a test_platform.Request.
@@ -240,16 +233,12 @@ class PaygenTestConfig(object):
       request_tag = self._REQUEST_WITH_MODEL_TAG_TEMPLATE % {
           'chromeos_build_name': self._chromeos_build_name,
           'tgt_channel': self._tgt_channel,
-          'model': model,
-          'update_type': self._update_type,
-          'rand': rand_suffix,
+          'model': model
       }
     else:
       request_tag = self._REQUEST_TAG_TEMPLATE % {
           'chromeos_build_name': self._chromeos_build_name,
-          'tgt_channel': self._tgt_channel,
-          'update_type': self._update_type,
-          'rand': rand_suffix,
+          'tgt_channel': self._tgt_channel
       }
     return {
         request_tag:
@@ -1175,22 +1164,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     # Fill out requests and update the bb_tags which will be applied to the
     # ctp runs overall. They should be identical, but the last update of bb_tags
     # wins.
-
-    # FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME
-    # This behavior might be ok for bb tags, but for the tagged requests,
-    # updating them each time without sufficiently unique request names caused
-    # the overwriting of test configuration.
-    # See b/243185455.
-    # FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME
     for ptc in paygen_test_configs:
-
-      # TODO(b/243185455): Make these unique without random suffix.
-      rand_suffix = ''.join(
-          self.m.random.choice(string.ascii_letters) for n in range(8))
-
       tagged_requests.update(
-          ptc.to_ctp_tagged_requests(self._test_request_opts,
-                                     rand_suffix=rand_suffix))
+          ptc.to_ctp_tagged_requests(self._test_request_opts))
       bb_tags.update(ptc.get_test_runner_tags())
     if not tagged_requests:
       return

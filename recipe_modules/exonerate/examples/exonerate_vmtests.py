@@ -76,6 +76,7 @@ def RunSteps(api):
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
 
   api.exonerate.print_stats()
+  api.assertions.assertEqual(len(api.exonerate.rdb_test_configs), 1)
 
 
 def GenTests(api):

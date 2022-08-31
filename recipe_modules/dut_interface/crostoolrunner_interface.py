@@ -164,18 +164,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     source_uri = 'https://storage.googleapis.com/chromeos-image-archive/{}/chromiumos_test_image_gce.tar.gz'.format(
         build)
 
-    self._vm_provisioned = {}
-
     self._api.gcloud.create_image(
         gce_image, source_uri=source_uri, licenses=[
             'https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx',
         ])
-    self._vm_provisioned['image_name'] = gce_image
 
     instance_name, _, extip = self._api.gcloud.create_instance(
         gce_image, project, 'n2-standard-4', 'us-west2-a', 'default', 'default',
         external_ip=True)
-    self._vm_provisioned['instance_name'] = instance_name
 
     self._api.step('wait for betty boots', [
         '/usr/bin/ssh', '-o', 'StrictHostKeyChecking=no', '-o',
@@ -184,6 +180,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     ])
 
     metadata.primary_dut.chromeos.ssh.address = extip
+    self._vm_provisioned = {
+        'instance_name': instance_name,
+        'image_name': gce_image,
+    }
 
     return PrejobResponsesTuple([], False)
 
@@ -195,12 +195,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     project = 'betty-cloud-prototype'
 
-    if 'instance_name' in self._vm_provisioned:
-      self._api.gcloud.delete_instance(self._vm_provisioned['instance_name'],
-                                       project, 'us-west2-a')
+    self._api.gcloud.delete_instance(self._vm_provisioned['instance_name'],
+                                     project, 'us-west2-a')
 
-    if 'image_name' in self._vm_provisioned:
-      self._api.gcloud.delete_image(self._vm_provisioned['image_name'])
+    self._api.gcloud.delete_image(self._vm_provisioned['image_name'])
 
   def submit_post_job(self):
     """Submits a Postjob for VM"""

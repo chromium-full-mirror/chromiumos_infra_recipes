@@ -325,7 +325,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       return max(TEST_EXEC_BEHAVIOR_ORDERING[default_behavior],
                  TEST_EXEC_BEHAVIOR_ORDERING[override_behavior])
 
-    def _is_non_critical(test_result):
+    def _is_exonerable(test_result):
       test_exec_behavior = _test_exec_behavior(test_result.test_id)
       is_non_critical = test_exec_behavior == TestExecutionBehavior.NON_CRITICAL
 
@@ -336,9 +336,6 @@ class ResultDBCommand(recipe_api.RecipeApi):
           variant.items())
 
       return is_non_critical and contains_variant_filter
-
-    def _is_exonerated(test_result):
-      self.m.exonerate.is_exonerated(test_result)
 
     # ResultDB test_id represents the name of the test case.
     inv_bundle = self.m.resultdb.query(
@@ -359,18 +356,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
           for result in unexpected_results
           # Unexpected passes are currently exonerated by default.
           if not result.expected and result.status != test_result_pb2.PASS and
-          _is_non_critical(result)
-      ])
-      test_exonerations.extend([
-          test_result_pb2.TestExoneration(
-              test_id=result.test_id, variant=result.variant,
-              explanation_html='failed but is exonerated',
-              reason=test_result_pb2.ExonerationReason.OCCURS_ON_OTHER_CLS)
-          for result in unexpected_results
-          # Unexpected passes are currently exonerated by default.
-          if not result.expected and result.status not in (
-              test_result_pb2.PASS,
-              test_result_pb2.SKIP) and _is_exonerated(result)
+          _is_exonerable(result)
       ])
     self.m.resultdb.exonerate(test_exonerations,
                               step_name="exonerate non-critical failures")

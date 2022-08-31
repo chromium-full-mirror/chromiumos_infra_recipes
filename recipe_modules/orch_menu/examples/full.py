@@ -509,7 +509,6 @@ def GenTests(api):
       'ctp2-enabled',
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE, 'CTP2 not implemented'),
-      api.post_process(post_process.DropExpectation),
       api.gerrit.set_gerrit_fetch_changes_response(
           'check test planning v2 enabled',
           gerrit_changes,
