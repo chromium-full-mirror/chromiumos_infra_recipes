@@ -298,6 +298,8 @@ class BotScalingApi(recipe_api.RecipeApi):
       stats = fut.result()
       bot_stats.append(stats['bot_stats'])
       task_stats.extend(stats['task_stats'])
+    bot_stats = sorted(bot_stats, key=lambda e: e[0])
+    task_stats = sorted(task_stats, key=lambda e: e[0])
     return SwarmingStats(bot_stats, task_stats)
 
   def get_current_gce_config(self, bot_policy_config):
