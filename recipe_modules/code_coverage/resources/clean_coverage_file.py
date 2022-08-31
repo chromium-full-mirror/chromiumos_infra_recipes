@@ -31,17 +31,7 @@ def clean_file_paths(coverage_file, path_mapping_file, output_file,
                                             'r') as config_file:
     coverage_file_data = coverage_file_obj.read()
 
-    if code_coverage_util.is_valid_llvm_coverage_json_file(coverage_file_data):
-      logging.info('Cleaning llvm json file %s to_absolute_path=%s',
-                   coverage_file, to_absolute_path)
-      data = json.loads(coverage_file_data)
-      path_mappings = json.load(config_file)
-      results = code_coverage_util.clean_file_names_in_llvm_coverage_json(
-          data, path_mappings, to_absolute_path)
-
-      with open(output_file, 'w') as out_file:
-        json.dump(results, out_file)
-    elif code_coverage_util.is_valid_lcov_coverage_file(coverage_file_data):
+    if code_coverage_util.is_valid_lcov_coverage_file(coverage_file_data):
       logging.info('Cleaning lcov file %s to_absolute_path=%s', coverage_file,
                    to_absolute_path)
       path_mappings = json.load(config_file)

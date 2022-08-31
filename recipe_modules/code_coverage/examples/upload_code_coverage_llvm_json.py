@@ -49,23 +49,10 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
-      'cq-should-write-cleaned-coverage-file-for-incremental',
-      api.post_check(
-          post_process.MustRun,
-          'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.writing cleaned coverage file'
-      ),
-      cq=True,
-      input_properties={
-          '$chromeos/code_coverage':
-              dict(project='chromiumos/platform2', cq_builder=True)
-      },
-  )
-
-  yield api.build_menu.test(
       'cq-should-write-cleaned-and-filtered-coverage-file-for-incremental',
       api.post_check(
           post_process.MustRun,
-          'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write cleaned and filtered file'
+          'upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write filtered file'
       ),
       cq=True,
       input_properties={
@@ -96,19 +83,6 @@ def GenTests(api):
       input_properties={
           '$chromeos/code_coverage': dict(project='chromiumos/platform2'),
           '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
-      },
-  )
-
-  yield api.build_menu.test(
-      'non-cq-should-write-cleaned-coverage-file-for-absolute-code-search',
-      api.post_check(
-          post_process.MustRun,
-          'upload code coverage data (code coverage llvm json).upload absolute coverage to Code Search.writing cleaned coverage file'
-      ),
-      cq=False,
-      input_properties={
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
       },
   )
 

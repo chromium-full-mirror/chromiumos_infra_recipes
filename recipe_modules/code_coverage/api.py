@@ -107,9 +107,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         step_name (str): name for the step.
     """
     # Settings for capturing incremental coverage.
-    incremental_settings = CoverageFileSettings(True, True, False)
+    incremental_settings = CoverageFileSettings(False, True, False)
     # Settings for capturing absolute coverage.
-    absolute_settings = CoverageFileSettings(True, False, True)
+    absolute_settings = CoverageFileSettings(False, False, True)
     # Settings for capturing absolute coverage on Chromium dashboard.
     absolute_chromium_settings = CoverageFileSettings(False, False, True)
 
@@ -196,10 +196,13 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     # Read the file and include it in the log for debugging purposes.
     self.m.file.read_text('read cleaned.file', cleaned_path_file,
                           include_log=True)
+    return cleaned_path_file
 
+  def _filter_llvm_json_coverage_to_cl_files(self, path_to_coverage_file,
+                                             coverage_file_setting):
     # Exit if the file does not need to be filtered.
     if not coverage_file_setting.filter_llvm_json_coverage_to_cl_files:
-      return cleaned_path_file
+      return path_to_coverage_file
 
     # Filter the data to the changed files.
     with self.m.step.nest('filter to changed files only') as presentation:
@@ -223,8 +226,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
       # Rewrite the coverage llvm json file to only include the files from the cls.
       data_to_clean = self.m.file.read_json(
-          'read coverage data from {}'.format(cleaned_path_file),
-          cleaned_path_file, test_data={
+          'read coverage data from {}'.format(path_to_coverage_file),
+          path_to_coverage_file, test_data={
               'data': [{
                   'files': [{
                       'filename': 'my/fake/file',
@@ -252,9 +255,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               coverage_data.append(file_data_copy)
 
       # Write out the results and return the path to the filtered file.
-      cleaned_and_filtered_path_file = tmp_dir.join('cleaned_and_filtered.file')
+      tmp_dir = self.m.path.mkdtemp(prefix='filtered-coverage')
+      filtered_path_file = tmp_dir.join('filtered.file')
       self.m.file.write_json(
-          'write cleaned and filtered file', cleaned_and_filtered_path_file, {
+          'write filtered file', filtered_path_file, {
               'data': [{
                   'files': coverage_data
               }],
@@ -262,7 +266,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               'version': data_to_clean['version'],
           }, include_log=True)
 
-      return cleaned_and_filtered_path_file
+      return filtered_path_file
 
   def _upload_absolute_coverage_to_code_search(self, fpath, coverage_type,
                                                absolute_cs_settings):
@@ -343,6 +347,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       incremental_coverage_file = self._write_cleaned_coverage_file(
           fpath, incremental_settings)
 
+      incremental_coverage_file = self._filter_llvm_json_coverage_to_cl_files(
+          incremental_coverage_file, incremental_settings)
       for change in self.m.cros_infra_config.gerrit_changes:
         self.m.step(
             'upload {} for {} (ps #{})'.format(

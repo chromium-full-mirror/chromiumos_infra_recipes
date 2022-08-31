@@ -6790,68 +6790,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "RECIPE_MODULE[chromeos::code_coverage]/resources/clean_coverage_file.py",
-      "--coverage-file",
-      "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
-      "--constants-file",
-      "RECIPE_MODULE[chromeos::code_coverage]/resources/path_mapping.json",
-      "--output-file",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
-      "--to_absolute_path",
-      "False"
-    ],
-    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.writing cleaned coverage file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.read cleaned.file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@cleaned.file@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only",
     "~followup_annotations": [
@@ -6946,7 +6884,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
+      "[CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
@@ -6963,26 +6901,26 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.read coverage data from [CLEANUP]/cleaned-coverage_tmp_1/cleaned.file",
+    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.read coverage data from [CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@{@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@  \"data\": [@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@    {@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@      \"files\": [@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@        {@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@          \"filename\": \"my/fake/file\"@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@        },@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@        {@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@          \"filename\": \"a_random/file.cc\"@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@        }@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@      ]@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@    }@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@  ],@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@  \"type\": \"coverage\",@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@  \"version\": \"0.0\"@@@",
-      "@@@STEP_LOG_LINE@cleaned.file@}@@@",
-      "@@@STEP_LOG_END@cleaned.file@@@"
+      "@@@STEP_LOG_LINE@coverage.json@{@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  \"data\": [@@@",
+      "@@@STEP_LOG_LINE@coverage.json@    {@@@",
+      "@@@STEP_LOG_LINE@coverage.json@      \"files\": [@@@",
+      "@@@STEP_LOG_LINE@coverage.json@        {@@@",
+      "@@@STEP_LOG_LINE@coverage.json@          \"filename\": \"my/fake/file\"@@@",
+      "@@@STEP_LOG_LINE@coverage.json@        },@@@",
+      "@@@STEP_LOG_LINE@coverage.json@        {@@@",
+      "@@@STEP_LOG_LINE@coverage.json@          \"filename\": \"a_random/file.cc\"@@@",
+      "@@@STEP_LOG_LINE@coverage.json@        }@@@",
+      "@@@STEP_LOG_LINE@coverage.json@      ]@@@",
+      "@@@STEP_LOG_LINE@coverage.json@    }@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  ],@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  \"type\": \"coverage\",@@@",
+      "@@@STEP_LOG_LINE@coverage.json@  \"version\": \"0.0\"@@@",
+      "@@@STEP_LOG_LINE@coverage.json@}@@@",
+      "@@@STEP_LOG_END@coverage.json@@@"
     ]
   },
   {
@@ -6994,7 +6932,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\"data\": [{\"files\": [{\"filename\": \"my/fake/file\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned_and_filtered.file"
+      "[CLEANUP]/filtered-coverage_tmp_1/filtered.file"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "infra_step": true,
@@ -7010,11 +6948,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write cleaned and filtered file",
+    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write filtered file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@cleaned_and_filtered.file@{\"data\": [{\"files\": [{\"filename\": \"my/fake/file\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}@@@",
-      "@@@STEP_LOG_END@cleaned_and_filtered.file@@@"
+      "@@@STEP_LOG_LINE@filtered.file@{\"data\": [{\"files\": [{\"filename\": \"my/fake/file\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}@@@",
+      "@@@STEP_LOG_END@filtered.file@@@"
     ]
   },
   {
@@ -7040,7 +6978,7 @@
       "--format",
       "LLVM",
       "--coverage_file",
-      "[CLEANUP]/cleaned-coverage_tmp_1/cleaned_and_filtered.file"
+      "[CLEANUP]/filtered-coverage_tmp_1/filtered.file"
     ],
     "cwd": "[CLEANUP]/ccov-upload_tmp_1",
     "luci_context": {
