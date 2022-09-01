@@ -240,6 +240,36 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "update config.fetch chromiumdash schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=5&n=1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "update config.fetch chromiumdash schedule.curl fetch_milestone_schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",

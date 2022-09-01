@@ -10,7 +10,8 @@ from recipe_engine import recipe_test_api
 
 class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
 
-  def test_chromiumdash_fetch_response(self, start_mstone=88, fetch_n=2):
+  def test_chromiumdash_fetch_response(self, start_mstone=88, fetch_n=2,
+                                       ltr_last_refresh_date=None):
 
     def _make_mstone(inc_days=0, mstone=start_mstone):
       # Annoyingly, this doesn't contain the 'Z' suffix. We have to include
@@ -43,6 +44,8 @@ class CrosScheduleTestApi(recipe_test_api.RecipeTestApi):
           'earliest_beta_ios': '2020-11-17T00:00:00',
           'branch_point': '2020-11-12T00:00:00',
       }
+      if ltr_last_refresh_date:
+        dates['ltr_last_refresh_date'] = ltr_last_refresh_date
       for k, v in dates.items():
         try:
           t = datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')

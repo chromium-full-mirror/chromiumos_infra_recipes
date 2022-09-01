@@ -6,7 +6,7 @@
 """An API for managing release config."""
 
 from collections import namedtuple
-from datetime import datetime
+import datetime
 import re
 
 import six
@@ -82,7 +82,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     builder (ReleaseBuilder): builder in question
     """
     try:
-      return datetime.strptime(builder.expiration_date.value, "%Y-%m-%d")
+      return datetime.datetime.strptime(builder.expiration_date.value,
+                                        "%Y-%m-%d")
     except ValueError:
       return None
 
@@ -108,7 +109,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       # need for '# BOT-TAG:NO_PRUNE`.
       expiration_date = self._get_builder_expiration_date(builder)
       if expiration_date:
-        pinned_by_date = expiration_date > datetime.now()
+        pinned_by_date = expiration_date > datetime.datetime.now()
       if re.match(RELEASE_BRANCH_REGEX,
                   builder.milestone.branch_name) and not pinned_by_date:
         true_release_builders.append(builder)
@@ -274,10 +275,22 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                                                   file_path, ReleaseBuilders,
                                                   'TEXTPB',
                                                   test_proto=TEST_DATA)
+        # Query chromiumdash to see if the branch is LTS.
+        branch_metadata = self.m.cros_schedule.json_to_proto(
+            self.m.cros_schedule.fetch_chromiumdash_schedule(
+                start_mstone=milestone, fetch_n=1)).mstones[0]
+        expiration_date = None
+        if branch_metadata.ltr_last_refresh_date and branch_metadata.ltr_last_refresh_date.ToSeconds(
+        ):
+          expiration_date = ReleaseBuilder.Date(
+              value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
+                     datetime.timedelta(days=14)).strftime("%Y-%m-%d"))
+
         # Append new builder for specified branch.
         new_builder = ReleaseBuilder(
             milestone=ReleaseBuilder.Milestone(branch_name=release_branch,
-                                               number=milestone))
+                                               number=milestone),
+            expiration_date=expiration_date)
         release_builders = ReleaseBuilders(
             builders=list(release_builders.builders) + [new_builder])
         release_builders = self._prune_builders(release_builders)

@@ -6,7 +6,9 @@
 DEPS = [
     'recipe_engine/file',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_release_config',
+    'cros_schedule',
     'repo',
     'test_util',
 ]
@@ -124,9 +126,23 @@ BLOCK_NEW = """builders {
   milestone {
     number: %d
     branch_name: "%s"
-  }
+  }%s
 }
 """
+
+EXPIRATION_SECTION_TEMPLATE = """
+  expiration_date {
+    value: "%s"
+  }"""
+
+
+# Return a block of config to be included in textpb expecations.
+def new_block(number, branch_name, expiration_date=None):
+  expiration_block = ''
+  if expiration_date:
+    expiration_block = EXPIRATION_SECTION_TEMPLATE % expiration_date
+  return BLOCK_NEW % (number, branch_name, expiration_block)
+
 
 BLOCK_EXPIRATION = """builders {
   milestone {
@@ -194,6 +210,12 @@ def GenTests(api):
           }),
       api.step_data('update legacy config.read config/chromeos_config.py',
                     api.file.read_raw(legacy_config_test_data)),
+      api.step_data(
+          'update config.fetch chromiumdash schedule.curl fetch_milestone_schedule',
+          api.raw_io.stream_output(
+              api.cros_schedule.test_chromiumdash_fetch_response(
+                  start_mstone=5, fetch_n=1,
+                  ltr_last_refresh_date='2023-01-01T00:00:00'))),
       api.post_process(post_process.StepCommandContains,
                        'update legacy config.write config/chromeos_config.py', [
                            construct_legacy_config(
@@ -203,26 +225,22 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
-              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION, BLOCK_NEW %
-                              (branch_milestone, branch), BLOCK_3, BLOCK_2,
-                              BLOCK_1)
-          ]))
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
+                              new_block(branch_milestone, branch, '2023-01-15'),
+                              BLOCK_3, BLOCK_2, BLOCK_1)
+          ]), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'bad-branch',
-      api.properties(**{
+      'bad-branch', api.properties(**{
           'release_branch': 'release-foo.B',
-      }),
-      api.post_check(post_process.StepFailure, 'validate release_branch'),
-  )
+      }), api.post_check(post_process.StepFailure, 'validate release_branch'),
+      api.post_check(post_process.StatusFailure))
 
   yield api.test(
-      'no-reviewers-no-autosubmit',
-      api.properties(**{
+      'no-reviewers-no-autosubmit', api.properties(**{
           'release_branch': branch,
-      }),
-      api.post_check(post_process.StepFailure, 'validate CL settings'),
-  )
+      }), api.post_check(post_process.StepFailure, 'validate CL settings'),
+      api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'auto-submit',
@@ -235,7 +253,7 @@ def GenTests(api):
           }),
       api.step_data('update legacy config.read config/chromeos_config.py',
                     api.file.read_raw(legacy_config_test_data)),
-  )
+      api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'prune',
@@ -258,9 +276,9 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
-              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION, BLOCK_NEW %
-                              (branch_milestone, branch), BLOCK_3)
-          ]))
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
+                              new_block(branch_milestone, branch), BLOCK_3)
+          ]), api.post_check(post_process.StatusSuccess))
 
   legacy_config_test_data = 'foo'
   yield api.test(
@@ -277,7 +295,7 @@ def GenTests(api):
                     api.file.read_raw(legacy_config_test_data)),
       api.post_check(post_process.StepFailure,
                      'update legacy config.prune legacy config'),
-  )
+      api.post_check(post_process.StatusFailure))
 
   legacy_config_test_data = '# BOT-TAG:RELEASES_START\nfoo\n# BOT-TAG:RELEASES_END'
   yield api.test(
@@ -294,7 +312,7 @@ def GenTests(api):
                     api.file.read_raw(legacy_config_test_data)),
       api.post_check(post_process.StepFailure,
                      'update legacy config.prune legacy config'),
-  )
+      api.post_check(post_process.StatusFailure))
 
   legacy_config_test_data = """
   # BOT-TAG:RELEASES_START
@@ -318,7 +336,7 @@ def GenTests(api):
                     api.file.read_raw(legacy_config_test_data)),
       api.post_check(post_process.StepFailure,
                      'update legacy config.prune legacy config'),
-  )
+      api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'with-build-creator',
@@ -333,7 +351,7 @@ def GenTests(api):
                     api.file.read_raw(legacy_config_test_data)),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
-  )
+      api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'with-build-creator-duplicate-email',
@@ -350,4 +368,4 @@ def GenTests(api):
                     api.file.read_raw(legacy_config_test_data)),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
-  )
+      api.post_check(post_process.StatusSuccess))

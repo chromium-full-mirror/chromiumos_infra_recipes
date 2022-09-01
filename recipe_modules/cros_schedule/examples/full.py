@@ -52,7 +52,8 @@ def GenTests(api):
   yield api.test(
       'fetch-one', api.properties(start_mstone=88, fetch_n=1),
       override_fetch(
-          api.cros_schedule.test_chromiumdash_fetch_response(fetch_n=1)),
+          api.cros_schedule.test_chromiumdash_fetch_response(
+              fetch_n=1, ltr_last_refresh_date='2023-01-01T00:00:00')),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(

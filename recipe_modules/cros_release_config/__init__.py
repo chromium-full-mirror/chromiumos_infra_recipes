@@ -11,6 +11,7 @@ DEPS = [
     'build_menu',
     'cros_artifacts',
     'cros_paygen',
+    'cros_schedule',
     'cros_source',
     'cros_version',
     'gerrit',
