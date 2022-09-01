@@ -41,6 +41,9 @@ PROPERTIES = AndroidUprevProperties
 # The overlay that hosts Android packages.
 _OVERLAY_PATH = 'src/private-overlays/project-cheets-private'
 
+# Projects that need to be synced to input manifest.
+_SYNC_PROJECTS = ['chromite', _OVERLAY_PATH]
+
 
 def RunSteps(api, properties):
   with api.orch_menu.setup_orchestrator() as config:
@@ -54,12 +57,8 @@ def DoRunSteps(api, properties):
   if not android_package:
     raise StepFailure('android_package not set')
 
-  with api.step.nest('ensure latest chromite') as pres, \
-       api.context(cwd=api.cros_source.workspace_path.join('chromite')):
-    api.git.head_commit()  # log the commit prior to sync for debug purposes
-    api.cros_source.ensure_synced_cache(
-        projects=['chromite'], is_staging=api.cros_infra_config.is_staging)
-    pres.step_text = 'chromite synced to {}'.format(api.git.head_commit())
+  api.cros_source.ensure_synced_cache(
+      projects=_SYNC_PROJECTS, is_staging=api.cros_infra_config.is_staging)
 
   android_version = (
       properties.android_version or
