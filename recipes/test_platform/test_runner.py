@@ -276,6 +276,37 @@ def _populate_timestamps_for_results(result, autotest_keyval_file):
   return result
 
 
+def _populate_full_name_for_autotest_results(api, result):
+  """Populates the full test name for Autotest results. The upstream parser
+  (interface.parse_test_results) returns an Autotest test name which sometimes
+  is not a full name. Instead, the `display_name` tag always contains the full
+  test name.
+
+  Context: b/244263157, crbug.com/964028
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * result (DUTResult): The result for all tests run in this run without
+        timestamp information.
+
+  Returns:
+  * result (DUTResult): The result for all tests run in this run with
+      the full test name.
+  """
+  # Example: trogdor-release/R106-15054.28.0/bvt-perbuild/security_Nosym.test
+  declared_name = api.cros_tags.get_values('display_name')
+  if declared_name:
+    index = declared_name[0].rfind('/')
+    if index != -1:
+      full_test_name = declared_name[0][index:]
+      # Generally there is only 1 Autotest result in the test case.
+      for _, autotest_result in result.get_test_results():
+        for test_case in autotest_result.test_cases:
+          test_case.name = full_test_name
+
+  return result
+
+
 def _read_autotest_keyval_file(api, base_dir):
   """Reads the contents of autotest keyval file.
 
@@ -655,6 +686,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
         base_dir, result_format)
   else:
     # Write the result to a file which can be read by result_adapter.
+    _populate_full_name_for_autotest_results(api, result)
     temp_dir = api.path.mkdtemp()
     test_runner_result_file = temp_dir.join('test_runner_result.json')
     api.file.write_proto('write skylab_test_runner result',
@@ -2200,6 +2232,47 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+  )
+
+  yield api.test(
+      'success-with-full-test-name-for-autotest',
+      _set_build(
+          bid=42,
+          tags={
+              'label-board':
+                  'fake-board',
+              'label-model':
+                  'fake-model',
+              'build':
+                  'fake-board-cq/R11-123.45',
+              'suite':
+                  'fake-suite',
+              # Contains the full test name.
+              'display_name':
+                  'fake-board-cq/R11-123.45/fake-suite/pass_full_test_case_1'
+          }),
+      _autotest_keyval_file_step_data(),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_results={
+                          "original_test":
+                              Result.Autotest(test_cases=[
+                                  Result.Autotest.TestCase(
+                                      name='pass_test_case_1', verdict=Result
+                                      .Autotest.TestCase.VERDICT_PASS)
+                              ])
+                      },
+                  )))),
   )
 
   yield api.test(
