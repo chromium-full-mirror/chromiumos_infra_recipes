@@ -61,7 +61,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
       is_staging = self.m.cros_infra_config.is_staging
       staging_prefix = 'staging-' if is_staging else ''
-      public_orch_name = '{}public-{}-orchestrator'.format(
+      # TODO(b/239096715): Drop chromiumos- when builders are consolidated.
+      public_orch_name = '{}chromiumos-public-{}-orchestrator'.format(
           staging_prefix, branch)
 
       buildspec_location = self.m.cros_release.buildspec.manifest_gs_path
@@ -70,7 +71,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           'chromeos-manifest-versions', 'chromiumos-manifest-versions')
 
       request = self.m.buildbucket.schedule_request(
-          bucket='staging' if is_staging else 'release',
+          bucket='staging' if is_staging else 'chromiumos',
           builder=public_orch_name,
           properties={
               '$chromeos/cros_source':

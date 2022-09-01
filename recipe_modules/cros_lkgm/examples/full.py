@@ -30,10 +30,10 @@ def RunSteps(api):
   is_staging = api.cros_infra_config.is_staging
   if is_staging:
     api.assertions.assertEqual(build.builder.builder,
-                               'staging-public-main-orchestrator')
+                               'staging-chromiumos-public-main-orchestrator')
   else:
     api.assertions.assertEqual(build.builder.builder,
-                               'public-main-orchestrator')
+                               'chromiumos-public-main-orchestrator')
 
 
 def GenTests(api):
