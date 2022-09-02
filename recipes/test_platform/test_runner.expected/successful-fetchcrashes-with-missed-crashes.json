@@ -845,177 +845,33 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "execution steps.original_test.upload test results to rdb",
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read test result file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@config@{@@@",
-      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
-      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"suite_task_id\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"parent-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ], @@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"task_id\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"dummy-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ], @@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"bb-42-chromeos/test_runner/test_runner\"@@@",
-      "@@@STEP_LOG_LINE@config@        ], @@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
-      "@@@STEP_LOG_LINE@config@        ], @@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
-      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@config@        ]@@@",
-      "@@@STEP_LOG_LINE@config@    ], @@@",
-      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
-      "@@@STEP_LOG_LINE@config@        \"build_target\": \"fake_board\", @@@",
-      "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
-      "@@@STEP_LOG_LINE@config@    }, @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
-      "@@@STEP_LOG_LINE@config@}@@@",
-      "@@@STEP_LOG_END@config@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/result_adapter",
-      "-ensure-file",
-      "infra/tools/result_adapter/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rdb",
-      "rpc",
-      "luci.resultdb.v1.Recorder",
-      "BatchCreateArtifacts",
-      "-include-update-token"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.upload test results to rdb.upload_invocation_artifacts",
-    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"stainless_logs\", \"contents\": \"aHR0cHM6Ly9zdGFpbmxlc3MuY29ycC5nb29nbGUuY29tL2Jyb3dzZS9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi8yMDEyLTA1LTE0LzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMTMzNw==\"}, \"parent\": \"invocations/build:42\"}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@json.input@{@@@",
-      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@json.input@    {@@@",
-      "@@@STEP_LOG_LINE@json.input@      \"artifact\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"artifactId\": \"stainless_logs\", @@@",
-      "@@@STEP_LOG_LINE@json.input@        \"contents\": \"aHR0cHM6Ly9zdGFpbmxlc3MuY29ycC5nb29nbGUuY29tL2Jyb3dzZS9jaHJvbWVvcy10ZXN0LWxvZ3MvY29tbW9uLWVudi8yMDEyLTA1LTE0LzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMTMzNw==\"@@@",
-      "@@@STEP_LOG_LINE@json.input@      }, @@@",
-      "@@@STEP_LOG_LINE@json.input@      \"parent\": \"invocations/build:42\"@@@",
-      "@@@STEP_LOG_LINE@json.input@    }@@@",
-      "@@@STEP_LOG_LINE@json.input@  ]@@@",
-      "@@@STEP_LOG_LINE@json.input@}@@@",
-      "@@@STEP_LOG_END@json.input@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rdb",
-      "stream",
-      "-var",
-      "build_target:fake_board",
-      "-var",
-      "test_config:fake_board-cq.hw.bvt-tast-cq",
-      "-tag",
-      "job_name:bb-42-chromeos/test_runner/test_runner",
-      "-tag",
-      "logs_url:gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
-      "-tag",
-      "queued_time:2018-05-25 23:50:17.000000 UTC",
-      "-tag",
-      "suite_task_id:parent-task-id0",
-      "-tag",
-      "task_id:dummy-task-id0",
-      "-coerce-negative-duration",
-      "-exonerate-unexpected-pass",
-      "--",
-      "[START_DIR]/cipd/result_adapter/result_adapter",
-      "skylab-test-runner",
-      "-result-file",
-      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
-      "--",
-      "echo"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.upload test results to rdb.run rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_LOG_END@test_runner_result.json@@@"
     ]
   },
   {

@@ -890,6 +890,68 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read test result file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@{@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"name\":\"crostini.SSHFSMount.bullseye_stable\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"pkg\":\"chromiumos/tast/local/bundles/cros/crostini\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"desc\":\"Checks crostini SSHFS mount\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"contacts\":[@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"clumptini+oncall@google.com\"@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   ],@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"attr\":[@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"group:mainline\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"name:crostini.SSHFSMount.bullseye_stable\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dep:vm_host\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dep:dlc\"@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   ],@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"data\":null,@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"softwareDeps\":[@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"chrome\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"vm_host\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dlc\"@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   ],@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"fixture\":\"crostiniBullseye\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"timeout\":420000000000,@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"bundle\":\"cros\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"errors\":null,@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"start\":\"2022-09-02T03:54:14.032069253Z\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"end\":\"2022-09-02T03:54:15.173194233Z\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"outDir\":\"/usr/local/autotest/results/lxc_job_folder/tast/results/tests/crostini.SSHFSMount.bullseye_stable\",@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@   \"skipReason\":\"\"@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@}@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@    @@@",
+      "@@@STEP_LOG_END@test_runner_result.json@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "execution steps.original_test.upload test results to rdb",
     "~followup_annotations": [

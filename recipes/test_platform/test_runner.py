@@ -389,6 +389,25 @@ def _read_kernel_version(api, kernel_log_file_path):
     return None
 
 
+def _read_test_result_file(api, test_result_file_path):
+  """Reads the cnotents from the test result file. The contents are different
+  for different test harnesses, e.g. Tauto and Tast.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * test_result_file_path (string): The path to the test result file.
+  Returns:
+  * content (string): The content of the test results.
+  """
+  try:
+    content = api.file.read_text('read test result file', test_result_file_path,
+                                 test_data='')
+    return content if content else ''
+  except (api.file.Error, FileNotFoundError):
+    api.step.active_result.presentation.status = api.step.WARNING
+    return None
+
+
 def _convert_to_task_request_id(swarming_task_run_id):
   """ Converts the swarming task run id with non "0" suffix to the swarming task
   request id with "0" suffix. Both can be used to point to the same swarming
@@ -740,8 +759,12 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
           artifact_directory,
   }
 
-  api.cros_resultdb.upload(
-      config, six.ensure_binary(str(result.get_stainless_log_url())))
+  result_file_content = _read_test_result_file(api, result_file)
+  if result_file_content:
+    # Uploads test results to ResultDB only when the test result file exists.
+    api.cros_resultdb.upload(
+        config, six.ensure_binary(str(result.get_stainless_log_url())))
+
   _upload_missing_tast_results(api, config.get('base_variant'),
                                autotest_keyval_file)
   api.cros_resultdb.apply_exonerations(
@@ -1314,6 +1337,42 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
 Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux
   """))
 
+  def _tast_test_result_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.read test result file',
+        api.file.read_text("""
+{
+   "name":"crostini.SSHFSMount.bullseye_stable",
+   "pkg":"chromiumos/tast/local/bundles/cros/crostini",
+   "desc":"Checks crostini SSHFS mount",
+   "contacts":[
+      "clumptini+oncall@google.com"
+   ],
+   "attr":[
+      "group:mainline",
+      "name:crostini.SSHFSMount.bullseye_stable",
+      "bundle:cros",
+      "dep:chrome",
+      "dep:vm_host",
+      "dep:dlc"
+   ],
+   "data":null,
+   "softwareDeps":[
+      "chrome",
+      "vm_host",
+      "dlc"
+   ],
+   "fixture":"crostiniBullseye",
+   "timeout":420000000000,
+   "bundle":"cros",
+   "errors":null,
+   "start":"2022-09-02T03:54:14.032069253Z",
+   "end":"2022-09-02T03:54:15.173194233Z",
+   "outDir":"/usr/local/autotest/results/lxc_job_folder/tast/results/tests/crostini.SSHFSMount.bullseye_stable",
+   "skipReason":""
+}
+    """))
+
   # Required for initial module set up.
   def _misc_properties(cft_is_enabled=False):
     if cft_is_enabled:
@@ -1655,6 +1714,11 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 phosphorus.upload_to_gs.UploadToGSResponse(
                     gs_url='gs://chromeos-test-logs/common-env/UUID/logs'))))
 
+  def _successful_resultdb_upload_step():
+    return api.post_process(
+        post_process.MustRun,
+        'execution steps.original_test.upload test results to rdb.run rdb')
+
   ######## CFT MVP Testing related functions ############
 
   def mock_metadata(target="test-target"):
@@ -1881,6 +1945,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -1909,6 +1976,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -1937,6 +2007,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -1967,6 +2040,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -1995,6 +2071,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -2024,6 +2103,40 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'no-test-result-file-and-skip-resultdb-upload',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      api.step_data('execution steps.original_test.read test result file',
+                    api.file.read_text(errno_name='file does not exist')),
+      api.post_process(
+          post_process.DoesNotRun,
+          'execution steps.original_test.upload test results to rdb.run rdb'),
   )
 
   yield api.test(
@@ -2043,9 +2156,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-wifi_chip': 'marvell',
               'label-hwid_sku': 'katsu_MT8183_0B',
           }),
-      _autotest_keyval_file_step_data(),
-      _crossystem_keyval_file_step_data(),
-      _kernel_log_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -2055,6 +2165,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -2081,9 +2198,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
           }),
-      _autotest_keyval_file_step_data(),
-      _crossystem_keyval_file_step_data(),
-      _kernel_log_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -2093,6 +2207,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -2117,6 +2238,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -2142,6 +2266,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   r_with_deadline = _canned_test_runner_request()
@@ -2215,14 +2342,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                               ])
                       },
                   )))),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
       'success-with-ancestor-ids-for-resultdb',
       _set_build(bid=42, ancestor_buildbucket_ids=[123, 456]),
-      _autotest_keyval_file_step_data(),
-      _crossystem_keyval_file_step_data(),
-      _kernel_log_file_step_data(),
       api.properties(result_format='tast'),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -2232,6 +2359,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(
@@ -2320,6 +2454,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
       api.step_data(
           'execution steps.original_test.upload test results to rdb.run rdb',
           retcode=1),
