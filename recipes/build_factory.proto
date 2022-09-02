@@ -1,0 +1,20 @@
+// Copyright 2022 The Chromium OS Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_factory;
+
+import "chromiumos/common.proto";
+
+message BuildFactoryProperties {
+  // The manifest branch to check out.
+  string manifest_branch = 1;
+
+  // The build targets to build.  Replaces build_target above.
+  repeated chromiumos.BuildTarget build_targets = 2;
+
+  // Whether to bump the version.
+  bool bump_version = 3;
+}

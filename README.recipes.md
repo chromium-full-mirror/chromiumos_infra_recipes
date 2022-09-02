@@ -128,6 +128,7 @@
   * [build_chromiumos](#recipes-build_chromiumos) (Python3 ✅) &mdash; Recipe for building public ChromiumOS images.
   * [build_compilation_database](#recipes-build_compilation_database) (Python3 ✅)
   * [build_cq](#recipes-build_cq) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for CQ.
+  * [build_factory](#recipes-build_factory) (Python3 ✅) &mdash; Recipe that builds factory images/artifacts on a factory branch.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_legacy_fw](#recipes-build_legacy_fw) (Python3 ✅) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
@@ -8705,6 +8706,15 @@ Recipe for building a BuildTarget image for CQ.
 &mdash; **def [DoRunSteps](/recipes/build_cq.py#57)(api, config):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#30)(api):**
+### *recipes* / [build\_factory](/recipes/build_factory.py)
+
+[DEPS](/recipes/build_factory.py#13): [build\_menu](#recipe_modules-build_menu), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+Recipe that builds factory images/artifacts on a factory branch.
+
+&mdash; **def [RunSteps](/recipes/build_factory.py#59)(api, properties):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
