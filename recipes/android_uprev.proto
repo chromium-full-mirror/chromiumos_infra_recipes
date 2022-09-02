@@ -13,4 +13,8 @@ message AndroidUprevProperties {
 
   // Orchestrator only: whether to actually submit an uprev on successful run.
   bool submit_uprev = 3;
+
+  // Always run full builds even if LKGB is already up to date. This is to
+  // prevent staging builders from skipping builds most the time.
+  bool always_build = 4;
 }

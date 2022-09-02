@@ -39,11 +39,13 @@ def DoRunSteps(api, properties, config):
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
-  # Bootstrap sysroot, and skip the rest if android is not revved at all.
+  # Bootstrap sysroot, and skip the rest if android is not revved at all (unless
+  # |always_build| is set).
   api.build_menu.bootstrap_sysroot(config)
-  if not api.android.uprev(api.build_menu.chroot, api.build_menu.sysroot,
-                           properties.android_package,
-                           properties.android_version):
+  revved = api.android.uprev(api.build_menu.chroot, api.build_menu.sysroot,
+                             properties.android_package,
+                             properties.android_version)
+  if not revved and not properties.always_build:
     return
 
   # Artifacts are frequently of use even if the build failed.  For example, it
@@ -96,6 +98,21 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.StatusSuccess))
+
+  # Android uprev build where uprev is not needed yet |always_build| is set.
+  yield api.build_menu.test(
+      'always-build',
+      api.properties(
+          **{
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True,
+              },
+              'always_build': True,
+          }), uprev_props, api.android.set_mark_stable_early_exit(),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess))
 
   # Android uprev build with install-packages failure.
