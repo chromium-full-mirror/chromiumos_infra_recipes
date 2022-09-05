@@ -376,10 +376,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
                               step_name="exonerate non-critical failures")
 
   def report_missing_test_cases(self, test_names, base_variant):
-    """Upload test results for missing test cases to ResultDB.
+    """Upload test results for missing test cases to ResultDB. These missing
+    test cases should have run but did not unexpectedly, so their result
+    status is marked as SKIP and the expected field is False.
 
     Args:
-      test_names (str[]): The names of the tests that should have run but did not.
+      test_names (str[]): The names of the tests that should have run but did
+          not.
       base_variant (dict): Variant key-value pairs to attach to the test
           results.
     """
@@ -414,6 +417,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
                 str(self.m.buildbucket.build.id),
             'status':
                 'SKIP',
+            'expected':
+                False,
             'testId':
                 test,
         } for test in sorted(test_names)]
