@@ -80,6 +80,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "is chroot usable.log command",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', '123', '']@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "merge-base",

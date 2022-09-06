@@ -27,7 +27,7 @@ class GitApi(recipe_api.RecipeApi):
   Commit = namedtuple('Commit', ['rev', 'message'])
   Reference = namedtuple('Reference', ['hash', 'ref'])
 
-  def _step(self, args, name=None, test_stdout=None, **kwargs):
+  def _step(self, args, name=None, test_stdout=None, log_args=False, **kwargs):
     """Executes 'git' with the supplied arguments.
 
     Args:
@@ -52,6 +52,11 @@ class GitApi(recipe_api.RecipeApi):
           lambda: self.m.raw_io.test_api.stream_output_text(test_stdout))
 
     kwargs.setdefault('infra_step', True)
+    if log_args:
+      with self.m.step.nest('log command'):
+        self.m.step.active_result.presentation.step_text = 'running git with args: %s' % [
+            str(i) for i in args
+        ]
     return self.m.step(name, ['git'] + args, **kwargs)
 
   def repository_root(self, step_name=None):
@@ -543,7 +548,8 @@ class GitApi(recipe_api.RecipeApi):
 
     cmd = ['merge-base', '--is-ancestor', revision, head]
     try:
-      retcode = test_retcode or self._step(cmd, ok_ret=(0, 1)).retcode
+      retcode = test_retcode or self._step(cmd, ok_ret=(0, 1),
+                                           log_args=True).retcode
       self.m.step.active_result.presentation.step_text = (
           'commit is %sreachable' % ('NOT ' if retcode == 1 else ''))
       return not retcode

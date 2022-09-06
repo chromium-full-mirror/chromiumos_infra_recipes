@@ -1051,6 +1051,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure manifest cq-depend fulfilled (2).log command",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', 'deadbeef', 'HEAD']@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "merge-base",

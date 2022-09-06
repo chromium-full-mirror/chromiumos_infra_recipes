@@ -2621,6 +2621,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "diff remote and local manifest.validate NAME.log command",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', 'FROM_REV', 'TO_REV']@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "merge-base",
@@ -2657,6 +2665,14 @@
       "@@@STEP_TEXT@some downrevs occurred@@@",
       "@@@STEP_LOG_LINE@downrevs@NAME: FROM_REV is not an ancestor of TO_REV@@@",
       "@@@STEP_LOG_END@downrevs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check reachability.log command",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', 'FROM_REV', 'HEAD']@@@"
     ]
   },
   {

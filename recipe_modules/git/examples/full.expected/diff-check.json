@@ -319,6 +319,13 @@
     "name": "git add"
   },
   {
+    "cmd": [],
+    "name": "log command",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', 'deadbeef', 'HEAD']@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "merge-base",
