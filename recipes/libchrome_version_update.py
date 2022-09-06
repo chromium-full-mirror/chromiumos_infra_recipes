@@ -61,7 +61,8 @@ def RunSteps(api):
               's/^REQUIRED_LIBCHROME_EBUILD_VERSION.*/REQUIRED_LIBCHROME_EBUILD_VERSION=%d/g'
               % (libchrome_ebuild_revision), _LIBCHROME_ECLASS_PATH
           ])
-          api.file.read_text('display new eclass', _LIBCHROME_ECLASS_PATH)
+          api.file.read_text('display new eclass',
+                             project_dir.join(_LIBCHROME_ECLASS_PATH))
           api.git.add([_LIBCHROME_ECLASS_PATH])
 
         if api.git.get_working_dir_diff_files():

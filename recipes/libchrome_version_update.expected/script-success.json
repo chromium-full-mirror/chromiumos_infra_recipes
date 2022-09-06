@@ -1448,7 +1448,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "eclass/libchrome-version.eclass",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/eclass/libchrome-version.eclass",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
