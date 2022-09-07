@@ -44,16 +44,22 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         self._properties.platform_test_plan_docker_tag.encode('utf-8') or
         default_ref)
     self._docker_image = "{}:{}".format(docker_image_name, docker_tag)
-
-    # Map from (host, project) -> ProjectMigrationConfig, for lookup when
-    # enabled_on_changes is called.
-    self._host_project_to_migration_config = {
-        (mc.host, mc.project): mc for mc in self._properties.migration_configs
-    }
+    self._migration_configs = self._properties.migration_configs
 
   @property
   def generate_ctpv1_format(self):
     return self._properties.generate_ctpv1_format
+
+  def _get_project_migration_config(self, host, project):
+    """Looks up the MigrationConfig for host and project.
+
+    Returns None if no MigrationConfig is found.
+    """
+    for mc in self._migration_configs:
+      if mc.host == host and re.match('^{}$'.format(mc.project), project):
+        return mc
+
+    return None
 
   def enabled_on_changes(self, gerrit_changes):
     """Returns true if test planning v2 is enabled on gerrit_changes.
@@ -76,8 +82,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         raise ValueError('gerrit_changes must be non-empty')
 
       for gc in gerrit_changes:
-        migration_config = self._host_project_to_migration_config.get(
-            (gc.host, gc.project))
+        migration_config = self._get_project_migration_config(
+            gc.host, gc.project)
 
         # If there is no ProjectMigrationConfig for a (host, project) pair, do
         # not enable v2.

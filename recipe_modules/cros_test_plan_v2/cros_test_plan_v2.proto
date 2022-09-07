@@ -33,6 +33,10 @@ message CrosTestPlanV2Properties {
     string host = 1;
 
     // Gerrit project being migrated, e.g. "chromium/src". Required.
+    // Regular expressions are allowed. Expressions must be compatible with the
+    // re module in the Python standard library. When checking a match, '^' and
+    // '$' are added at the front and back of the pattern, respectively, i.e.
+    // the pattern must match the entire path string.
     string project = 2;
 
     // Allowlist of branch regexps that will be migrated. Required.

@@ -25,7 +25,7 @@ gerrit_changes = [
     ),
     GerritChange(
         host="chromium-review.googlesource.com",
-        project="src/projectB",
+        project="src/project/nestedproject/projectB",
         change=456,
         patchset=7,
     ),
@@ -58,7 +58,7 @@ def GenTests(api):
                       ),
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
                           host="chromium-review.googlesource.com",
-                          project="src/projectB",
+                          project="src/project/.*",
                           file_allowlist_regexps=['test.json'],
                           branch_allowlist_regexps=['.*'],
                       )
