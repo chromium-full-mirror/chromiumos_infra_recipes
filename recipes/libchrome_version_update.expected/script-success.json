@@ -1407,6 +1407,13 @@
     "name": "update libchrome-version.eclass"
   },
   {
+    "cmd": [],
+    "name": "update libchrome-version.eclass.update for chromeos-base/libchrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -1418,10 +1425,12 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
-    "name": "update libchrome-version.eclass.list libchrome ebuilds",
+    "name": "update libchrome-version.eclass.update for chromeos-base/libchrome.list libchrome ebuilds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libchrome/files@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libchrome/libbrillo-0.0.1-r5678.ebuild@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libchrome/libbrillo-9999.ebuild@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libchrome/libchrome-0.0.1-r1234.ebuild@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libchrome/libchrome-9999.ebuild@@@",
       "@@@STEP_LOG_END@listdir@@@"
@@ -1435,9 +1444,52 @@
       "eclass/libchrome-version.eclass"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
-    "name": "update libchrome-version.eclass.update eclass",
+    "name": "update libchrome-version.eclass.update for chromeos-base/libchrome.update eclass",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update libchrome-version.eclass.update for chromeos-base/libbrillo",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libbrillo"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "name": "update libchrome-version.eclass.update for chromeos-base/libbrillo.list libbrillo ebuilds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libbrillo/files@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libbrillo/libbrillo-0.0.1-r5678.ebuild@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libbrillo/libbrillo-9999.ebuild@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libbrillo/libchrome-0.0.1-r1234.ebuild@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/libbrillo/libchrome-9999.ebuild@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sed",
+      "-i",
+      "s/^REQUIRED_LIBBRILLO_EBUILD_VERSION.*/REQUIRED_LIBBRILLO_EBUILD_VERSION=5678/g",
+      "eclass/libchrome-version.eclass"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "name": "update libchrome-version.eclass.update for chromeos-base/libbrillo.update eclass",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1490,14 +1542,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Update minimum required libchrome revision\n\nBUG=None\nTEST=None",
+      "Update minimum required libchrome/libbrillo revision\n\nBUG=None\nTEST=None",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "name": "write commit message",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update minimum required libchrome revision@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update minimum required libchrome/libbrillo revision@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=None@@@",

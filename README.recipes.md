@@ -11050,9 +11050,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Recipe for updating libchrome-version.eclass
 
-&mdash; **def [RunSteps](/recipes/libchrome_version_update.py#44)(api):**
+&mdash; **def [RunSteps](/recipes/libchrome_version_update.py#58)(api):**
 
 &mdash; **def [get\_latest\_version](/recipes/libchrome_version_update.py#24)(api, project_dir, pkg_group, pkg_name):**
+
+&mdash; **def [update\_eclass](/recipes/libchrome_version_update.py#46)(api, project_dir, pkg_group, pkg_name):**
 ### *recipes* / [local\_manifest\_presubmit](/recipes/local_manifest_presubmit.py)
 
 [DEPS](/recipes/local_manifest_presubmit.py#18): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
