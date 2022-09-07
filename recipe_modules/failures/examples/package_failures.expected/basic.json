@@ -5,9 +5,9 @@
   },
   {
     "cmd": [],
-    "name": "one failure",
+    "name": "one compile failure",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install category/package-name@@@",
+      "@@@STEP_TEXT@failed compilation for category/package-name@@@",
       "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
@@ -17,9 +17,21 @@
   },
   {
     "cmd": [],
-    "name": "multiple failures",
+    "name": "one test failure",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install 2 packages: /package1, /package2@@@",
+      "@@@STEP_TEXT@failed unit tests for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "multiple compile failures",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for 2 packages: /package1, /package2@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package1@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package2@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
@@ -32,9 +44,24 @@
   },
   {
     "cmd": [],
+    "name": "multiple test failures",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed unit tests for 2 packages: /package3, /package4@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package3@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package4@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@&#x2f;package3 log@test log for package3@@@",
+      "@@@STEP_LOG_END@&#x2f;package3 log@@@",
+      "@@@STEP_LOG_LINE@&#x2f;package4 log@test log for package4@@@",
+      "@@@STEP_LOG_END@&#x2f;package4 log@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "test3",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install /package@@@",
+      "@@@STEP_TEXT@failed compilation for /package@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_FAILURE@@@"

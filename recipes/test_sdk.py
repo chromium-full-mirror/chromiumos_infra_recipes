@@ -59,7 +59,7 @@ def RunSteps(api):
           pkg_logs_lambda=api.cros_build_api.failed_pkg_logs)
       pkgs = api.cros_build_api.failed_pkg_logs(request, response,
                                                 api.file.read_raw)
-      api.failures.set_failed_packages(step, pkgs)
+      api.failures.set_test_failed_packages(step, pkgs)
 
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()

@@ -125,7 +125,7 @@ class FailuresApi(RecipeApi):
       step = self.m.step('ignored exception', cmd=None)
       step.presentation.logs['caught exception'] = [repr(e)]
 
-  def set_failed_packages(self, enclosing_step, packages):
+  def _set_failed_packages(self, enclosing_step, packages, compile_failure):
     """If any failed packages, set presentation and raise failure.
 
     Args:
@@ -183,14 +183,20 @@ class FailuresApi(RecipeApi):
         _concat_package_markdown_link(p[0], p[1]) for p in packages
     ]
 
-    if len(packages) == 1:
-      step_text = 'failed to install %s' % failed_package_names[0]
-      failure_message = 'failed to install %s' % failed_packages_links[0]
-
+    if compile_failure:
+      error_reason_text = 'failed compilation for'
     else:
-      step_text = 'failed to install {} packages: {}'.format(
-          len(packages), ', '.join(failed_package_names))
-      summary_lines = ['failed to install {} packages'.format(len(packages))]
+      error_reason_text = 'failed unit tests for'
+
+    if len(packages) == 1:
+      step_text = '%s %s' % (error_reason_text, failed_package_names[0])
+      failure_message = '%s %s' % (error_reason_text, failed_packages_links[0])
+    else:
+      step_text = '{} {} packages: {}'.format(error_reason_text, len(packages),
+                                              ', '.join(failed_package_names))
+      summary_lines = [
+          '{} {} packages'.format(error_reason_text, len(packages))
+      ]
       for p in failed_packages_links:
         summary_lines.append('- {}'.format(p))
       failure_message = self._format_summary_markdown(summary_lines)
@@ -198,6 +204,12 @@ class FailuresApi(RecipeApi):
     enclosing_step.presentation.status = self.m.step.FAILURE
     enclosing_step.presentation.step_text = step_text
     raise StepFailure(failure_message)
+
+  def set_test_failed_packages(self, enclosing_step, packages):
+    return self._set_failed_packages(enclosing_step, packages, False)
+
+  def set_compile_failed_packages(self, enclosing_step, packages):
+    return self._set_failed_packages(enclosing_step, packages, True)
 
   def raise_failed_image_tests(self, failed_images):
     """Display failed image tests and raise a failure.

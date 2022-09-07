@@ -721,7 +721,7 @@
     "cmd": [],
     "name": "install packages",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install 3 packages: edge-base/shortpackagename-0.0.1-r197, chromeos-base/thislongpackagenameomg-0.0.1-r199, safari-base/thisotherexceedinglylongpackage-0.0.1-r129@@@",
+      "@@@STEP_TEXT@failed compilation for 3 packages: edge-base/shortpackagename-0.0.1-r197, chromeos-base/thislongpackagenameomg-0.0.1-r199, safari-base/thisotherexceedinglylongpackage-0.0.1-r129@@@",
       "@@@STEP_LOG_LINE@list of failed packages@edge-base/shortpackagename-0.0.1-r197@@@",
       "@@@STEP_LOG_LINE@list of failed packages@chromeos-base/thislongpackagenameomg-0.0.1-r199@@@",
       "@@@STEP_LOG_LINE@list of failed packages@safari-base/thisotherexceedinglylongpackage-0.0.1-r129@@@",
@@ -1814,7 +1814,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "failed to install 3 packages\n\n- [edge-base/shortpackagename-0.0.1-r197](https:///logs///+/u/install_packages/edge-base_shortpackagename_log)\n\n- [chromeos-base/thislongpackagenameomg-0.0.1-r199](https:///logs///+/u/install_packages/chromeos-base_thislongpackagenameomg_log)\n\n- [safari-base/thisotherexceedinglylongpackage-0.0.1-r129](https:///logs///+/u/install_packages/safari-base_thisotherexceedinglylongpackage_log)"
+      "humanReason": "failed compilation for 3 packages\n\n- [edge-base/shortpackagename-0.0.1-r197](https:///logs///+/u/install_packages/edge-base_shortpackagename_log)\n\n- [chromeos-base/thislongpackagenameomg-0.0.1-r199](https:///logs///+/u/install_packages/chromeos-base_thislongpackagenameomg_log)\n\n- [safari-base/thisotherexceedinglylongpackage-0.0.1-r129](https:///logs///+/u/install_packages/safari-base_thisotherexceedinglylongpackage_log)"
     },
     "name": "$result"
   }

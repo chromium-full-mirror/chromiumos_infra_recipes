@@ -5838,7 +5838,7 @@
     "cmd": [],
     "name": "run ebuild tests",
     "~followup_annotations": [
-      "@@@STEP_TEXT@failed to install foo/bar-1.0-r1@@@",
+      "@@@STEP_TEXT@failed unit tests for foo/bar-1.0-r1@@@",
       "@@@STEP_LOG_LINE@list of failed packages@foo/bar-1.0-r1@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_LOG_LINE@foo&#x2f;bar log@test data for foo/bar log file@@@",
@@ -6921,7 +6921,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "failed to install [foo/bar-1.0-r1](https:///logs///+/u/run_ebuild_tests/foo_bar_log)"
+      "humanReason": "failed unit tests for [foo/bar-1.0-r1](https:///logs///+/u/run_ebuild_tests/foo_bar_log)"
     },
     "name": "$result"
   }

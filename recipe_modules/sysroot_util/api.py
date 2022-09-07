@@ -160,7 +160,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           test_output_data=test_data)
       pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
                                                    self.m.file.read_raw)
-      self.m.failures.set_failed_packages(pres, pkgs)
+      self.m.failures.set_compile_failed_packages(pres, pkgs)
 
   def install_packages(self, config, dep_graph, packages=None,
                        artifact_build=False, package_indexes=None,
@@ -251,7 +251,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
                                                      response,
                                                      self.m.file.read_raw)
-        self.m.failures.set_failed_packages(presentation, pkgs)
+        self.m.failures.set_compile_failed_packages(presentation, pkgs)
 
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
                    disk_layout, base_is_recovery=False, version=None,
@@ -303,7 +303,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             request, timeout=timeout_sec,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
             test_output_data=build_test_data)
-        self.m.failures.set_failed_packages(
+        self.m.failures.set_compile_failed_packages(
             pres, [(p, '') for p in response.failed_packages])
 
         to_test = [

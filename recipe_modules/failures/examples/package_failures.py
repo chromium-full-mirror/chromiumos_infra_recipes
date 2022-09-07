@@ -19,24 +19,41 @@ def RunSteps(api):
 
   with api.step.nest('no failures') as test_step:
     # Call with no failed packages, should noop.
-    api.failures.set_failed_packages(test_step, [])
+    api.failures.set_compile_failed_packages(test_step, [])
+    api.failures.set_test_failed_packages(test_step, [])
 
-  with api.step.nest('one failure') as test_step:
+  with api.step.nest('one compile failure') as test_step:
     api.assertions.assertRaisesRegexp(
-        api.step.StepFailure, r'failed to install \[category/package-name]'
+        api.step.StepFailure, r'failed compilation for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
-        r'\+/u/one_failure/category_package-name_log\)',
-        api.failures.set_failed_packages, test_step, [(PackageInfo(
+        r'\+/u/one_compile_failure/category_package-name_log\)',
+        api.failures.set_compile_failed_packages, test_step, [(PackageInfo(
+            package_name='package-name', category='category'), 'test log')])
+  with api.step.nest('one test failure') as test_step:
+    api.assertions.assertRaisesRegexp(
+        api.step.StepFailure, r'failed unit tests for \[category/package-name]'
+        r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
+        r'\+/u/one_test_failure/category_package-name_log\)',
+        api.failures.set_test_failed_packages, test_step, [(PackageInfo(
             package_name='package-name', category='category'), 'test log')])
 
-  with api.step.nest('multiple failures') as test_step:
+  with api.step.nest('multiple compile failures') as test_step:
     api.assertions.assertRaises(
-        api.step.StepFailure, api.failures.set_failed_packages, test_step,
+        api.step.StepFailure, api.failures.set_compile_failed_packages,
+        test_step,
         [(PackageInfo(package_name='package1'), 'test log for package1'),
          (PackageInfo(package_name='package2'), 'test log for package2')])
+
+  with api.step.nest('multiple test failures') as test_step:
+    api.assertions.assertRaises(
+        api.step.StepFailure, api.failures.set_test_failed_packages, test_step,
+        [(PackageInfo(package_name='package3'), 'test log for package3'),
+         (PackageInfo(package_name='package4'), 'test log for package4')])
+
   with api.step.nest('test3') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,
-                                api.failures.set_failed_packages, test_step,
+                                api.failures.set_compile_failed_packages,
+                                test_step,
                                 [(PackageInfo(package_name='package'), '')])
 
 
