@@ -2158,7 +2158,7 @@
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2199,7 +2199,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git checkout",
     "~followup_annotations": [
@@ -2212,7 +2212,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git branch",
     "~followup_annotations": [
@@ -2225,7 +2225,7 @@
       "add",
       "."
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git add",
     "~followup_annotations": [
@@ -2243,7 +2243,7 @@
       "Update Metadata Cache",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit and push metadata.update ref.gerrit transaction.write commit message",
     "~followup_annotations": [
@@ -2259,7 +2259,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git commit",
     "~followup_annotations": [
@@ -2274,7 +2274,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
     "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git push",
     "~followup_annotations": [

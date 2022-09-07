@@ -44,12 +44,15 @@ def RunSteps(api):
       overlays = api.cros_build_api.BinhostService.RegenBuildCache(
           RegenBuildCacheRequest(overlay_type=OVERLAYTYPE_BOTH,
                                  chroot=api.cros_sdk.chroot)).modified_overlays
+      # We'll have a list of updated overlays, but some might be in the same git
+      # project, so we have to dedupe as we go.
       if overlays:
         overlay_dirs = [overlay.path for overlay in overlays]
         with api.step.nest('commit and push metadata'):
-          for overlay_dir in overlay_dirs:
-            with api.context(cwd=api.path.abs_to_path(overlay_dir)):
-              project = api.repo.project_infos(projects=[overlay_dir])[0]
+          projects = api.repo.project_infos(projects=overlay_dirs)
+          for project in projects:
+            with api.context(
+                cwd=api.cros_source.workspace_path.join(project.path)):
               api.git_txn.update_ref(project.remote, _add_and_commit,
                                      ref=project.branch, automerge=True)
 
