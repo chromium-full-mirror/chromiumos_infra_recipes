@@ -1,4 +1,4 @@
-// Copyright 2020 The Chromium Authors. All Rights Reserved.
+// Copyright 2020 The Chromium Authors
 
 // Copied from https://chromium.googlesource.com/chromium/tools/build/+/HEAD/scripts/slave/goma/compile_events.proto
 
