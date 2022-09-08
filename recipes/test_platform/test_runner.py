@@ -463,8 +463,11 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         e.g. Google_Voema.13672.224.0
     * ancestor_buildbucket_ids: All the ancestor buildbucket ids,
         e.g. "8814950840874708945, 8814951792758733697"
-    * pool: Device pool,
+    * pool: Device pool, an optional dimension to Swarming, which is used only
+        by ChromeOS,
         e.g. "ChromeOSSkylab"
+    * label_pool: A pool dimension for swarming task scheduling,
+        e.g. "DUT_POOL_QUOTA"
     * wifi_chip: The wifi chip info,
         e.g. "marvell"
     * kernel_version:
@@ -518,6 +521,11 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
       'pool', api.buildbucket.build.infra.swarming.bot_dimensions)
   if pool:
     base_tags.append(('pool', pool[0]))
+
+  label_pool = api.cros_tags.get_values(
+      'label-pool', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if label_pool:
+    base_tags.append(('label_pool', label_pool[0]))
 
   wifi_chip = api.cros_tags.get_values(
       'label-wifi_chip', api.buildbucket.build.infra.swarming.bot_dimensions)
@@ -2155,6 +2163,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
               'label-hwid_sku': 'katsu_MT8183_0B',
+              'label-pool': 'DUT_POOL_QUOTA',
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
