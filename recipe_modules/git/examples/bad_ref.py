@@ -17,6 +17,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 def RunSteps(api):
   revision = 'abcdef'
   api.assertions.assertFalse(api.git.is_reachable(revision))
+  api.assertions.assertTrue(api.git.is_reachable(revision, head=revision))
 
 
 def GenTests(api):
