@@ -54,6 +54,14 @@ def RunSteps(api, properties):
 
 
 def DoRunSteps(api, properties):
+  # Copy input properties to output properties. cbuildbot makes some
+  # assumptions on the presence of input properties in output properties.
+  # See b/243052729 for context.
+  input_properties = api.properties.thaw()
+  api.easy.set_properties_step(
+      step_name='copy input properties to output properties',
+      **input_properties)
+
   # Get parameters specified in the tryjob description.
   cbb_extra_args = api.properties.get('cbb_extra_args', [])
 

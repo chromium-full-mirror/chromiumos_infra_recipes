@@ -9096,7 +9096,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [DoRunSteps](/recipes/chromeos_cbuildbot.py#56)(api, properties):**
 
-&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#88)(api, failure):**
+&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#96)(api, failure):**
 
 &mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#32)(api, properties):**
 ### *recipes* / [chromeos\_chrome\_uprev](/recipes/chromeos_chrome_uprev.py)

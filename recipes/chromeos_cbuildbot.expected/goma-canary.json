@@ -1,6 +1,19 @@
 [
   {
     "cmd": [],
+    "name": "copy input properties to output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@bot_id@\"test_builder\"@@@",
+      "@@@SET_BUILD_PROPERTY@buildbucket@{\"build\": {\"id\": \"12345\"}}@@@",
+      "@@@SET_BUILD_PROPERTY@buildername@\"Test\"@@@",
+      "@@@SET_BUILD_PROPERTY@cbb_config@\"amd64-generic-goma-canary-chromium-pfq-informational\"@@@",
+      "@@@SET_BUILD_PROPERTY@cbb_goma_canary@true@@@",
+      "@@@SET_BUILD_PROPERTY@email@\"user@google.com\"@@@",
+      "@@@SET_BUILD_PROPERTY@recipe@\"chromeos_cbuildbot\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "fetch depot_tools pin from manifest"
   },
   {

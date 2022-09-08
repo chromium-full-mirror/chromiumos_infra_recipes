@@ -1,6 +1,15 @@
 [
   {
     "cmd": [],
+    "name": "copy input properties to output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@bot_id@\"chromeos-ci-infra-us-central1-b-x16-0-nvcj\"@@@",
+      "@@@SET_BUILD_PROPERTY@cbb_config@\"swarming-build-config\"@@@",
+      "@@@SET_BUILD_PROPERTY@recipe@\"chromeos_cbuildbot\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "fetch depot_tools pin from manifest"
   },
   {
