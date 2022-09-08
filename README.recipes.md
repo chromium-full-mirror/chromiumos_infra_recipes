@@ -12358,7 +12358,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f1addcbe9ed4ce1bee34c0403c1bcb31933cc81/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f1addcbe9ed4ce1bee34c0403c1bcb31933cc81/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0f1addcbe9ed4ce1bee34c0403c1bcb31933cc81/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/a8e78e7d034a46117ccd18aad8236e886f673eca/recipes/README.recipes.md#recipe_modules-docker
+[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/afa4ac6d601d823f627103dfb0ce3bdbc4a21f07/recipes/README.recipes.md#recipe_modules-docker
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/85a3b044c6906cc17abe42442dfcb119047ff613/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/85a3b044c6906cc17abe42442dfcb119047ff613/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/85a3b044c6906cc17abe42442dfcb119047ff613/README.recipes.md#recipe_modules-bcid_reporter
