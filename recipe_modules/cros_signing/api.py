@@ -52,7 +52,7 @@ class CrosSigningApi(recipe_api.RecipeApi):
     with self.m.step.nest('wait for signing to complete'):
       # Place each instructions location in the dict.
       for instructions in sorted(instructions_list):
-        # Fail fast if the instuctions file doesn't match the expected pattern.
+        # Fail fast if the instructions file doesn't match the expected pattern.
         if not INSTRUCTIONS_PATTERN.match(instructions):
           raise recipe_api.StepFailure(
               'invalid locations file format: {}'.format(instructions))

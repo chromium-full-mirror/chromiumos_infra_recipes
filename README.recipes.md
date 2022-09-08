@@ -24,6 +24,7 @@
   * [cros_cache](#recipe_modules-cros_cache) (Python3 ✅) &mdash; API for working with CrOS cache.
   * [cros_cq_additional_tests](#recipe_modules-cros_cq_additional_tests) (Python3 ✅)
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) (Python3 ✅) &mdash; APIs for interacting with Cq-Depends.
+  * [cros_debug](#recipe_modules-cros_debug) (Python3 ✅)
   * [cros_dupit](#recipe_modules-cros_dupit) (Python3 ✅) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history) (Python3 ✅)
   * [cros_infra_config](#recipe_modules-cros_infra_config) (Python3 ✅)
@@ -216,6 +217,8 @@
   * [cros_cq_additional_tests:examples/unmatched_build_targets](#recipes-cros_cq_additional_tests_examples_unmatched_build_targets) (Python3 ✅)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings) (Python3 ✅)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled) (Python3 ✅)
+  * [cros_debug:tests/pause_and_wait_for_signal](#recipes-cros_debug_tests_pause_and_wait_for_signal) (Python3 ✅) &mdash; Success workflow tests for the cros_signing recipe module.
+  * [cros_debug:tests/pause_and_wait_for_signal_timeout](#recipes-cros_debug_tests_pause_and_wait_for_signal_timeout) (Python3 ✅) &mdash; Success workflow tests for the cros_signing recipe module.
   * [cros_dupit:examples/arch](#recipes-cros_dupit_examples_arch) (Python3 ✅)
   * [cros_dupit:examples/full](#recipes-cros_dupit_examples_full) (Python3 ✅)
   * [cros_history:examples/get_annealing_from_snapshot](#recipes-cros_history_examples_get_annealing_from_snapshot) (Python3 ✅)
@@ -2382,6 +2385,42 @@ Args:
 
 Return:
   list[str]: Cq-Depend strings in same order as changes.
+### *recipe_modules* / [cros\_debug](/recipe_modules/cros_debug)
+
+[DEPS](/recipe_modules/cros_debug/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+#### **class [CrosDebugApi](/recipe_modules/cros_debug/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to be used for debugging builders.
+
+&mdash; **def [pause\_and\_wait\_for\_signal](/recipe_modules/cros_debug/api.py#18)(self, timeout=(10 \* 60), override_led_launch_only_staging=False, test_location_override=None):**
+
+Halt the builder and wait for a signal to continue.
+
+This method is meant to be used to debug a builder. The thought here is that
+we've exhausted all other possibilities and our course of action is to try
+to run the recipe and then ssh into the bot.
+
+To use this, call the method right where you want the builder to halt. When
+you run the build, it will halt there and wait. If you look at the builder's
+step output, it should tell you that it is sleeping for a time span, and
+specify a sentinel file to create when you are ready to release the bot and
+continue the execution.
+
+By default, this will only work for a led launch against a staging builder,
+but if you are determined to do it either against a prod builder or merge
+through the code and run in staging, you can specify the override flag.
+
+Args:
+  timeout (int): how long to wait for a continue signal, in seconds.
+    Defaults to 10 minutes.
+  override_led_launch_only_staging (bool): override flag to allow outside
+    led and/or outside of staging.
+  test_location_override (Path): by default this method creates its own temp
+    location to look for the `resume` file, but for tests the location can
+    be passed in with this property for ease of verification.
 ### *recipe_modules* / [cros\_dupit](/recipe_modules/cros_dupit)
 
 [DEPS](/recipe_modules/cros_dupit/__init__.py#5): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -9613,6 +9652,24 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#25)(api):**
+### *recipes* / [cros\_debug:tests/pause\_and\_wait\_for\_signal](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal.py)
+
+[DEPS](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal.py#8): [cros\_debug](#recipe_modules-cros_debug), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+Success workflow tests for the cros_signing recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal.py#29)(api, exists, override):**
+### *recipes* / [cros\_debug:tests/pause\_and\_wait\_for\_signal\_timeout](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal_timeout.py)
+
+[DEPS](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal_timeout.py#8): [cros\_debug](#recipe_modules-cros_debug), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+Success workflow tests for the cros_signing recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal_timeout.py#23)(api):**
 ### *recipes* / [cros\_dupit:examples/arch](/recipe_modules/cros_dupit/examples/arch.py)
 
 [DEPS](/recipe_modules/cros_dupit/examples/arch.py#6): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
