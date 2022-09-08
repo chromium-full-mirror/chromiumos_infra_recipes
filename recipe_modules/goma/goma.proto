@@ -25,4 +25,7 @@ message GomaProperties {
   string bigquery_table_name = 7;
   // Set the verbose flag in the bq-insert's input json.
   bool bigquery_verbose = 8;
+  // Disable goma_client_json.
+  // TODO(crbug.com/1359171): make it true by default and remove this.
+  bool disable_goma_client_json = 9;
 }

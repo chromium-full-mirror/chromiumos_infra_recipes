@@ -216,14 +216,15 @@ class CrosSdkApi(RecipeApi):
       counterz_file (str): Name of the goma counterz file, relative to log_dir.
     """
     self._goma_dir = str(goma_dir)
-    self._goma_client_json = str(goma_client_json)
+    if goma_client_json:
+      self._goma_client_json = str(goma_client_json)
     self._goma_approach = goma_approach
     self._goma_log_dir = str(log_dir)
     self._goma_stats_file = stats_file
     self._goma_counterz_file = counterz_file
 
   def has_goma_config(self):
-    return bool(self._goma_dir and self._goma_client_json)
+    return bool(self._goma_dir)
 
   def goma_config(self):
     if not self.has_goma_config():
@@ -231,7 +232,7 @@ class CrosSdkApi(RecipeApi):
 
     return common.GomaConfig(
         goma_dir=str(self._goma_dir),
-        goma_client_json=str(self._goma_client_json),
+        goma_client_json=self._goma_client_json,
         goma_approach=self._goma_approach,
         log_dir=common.SyncedDir(dir=self._goma_log_dir),
         stats_file=self._goma_stats_file,
