@@ -298,7 +298,9 @@ class PaygenTestConfig(object):
     params.decorations.autotest_keyvals['build'] = self._chromeos_build_name
     params.decorations.autotest_keyvals['suite'] = self._suite_name
     tags = self.get_test_runner_tags(model)
-    request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
+    request_tags = [
+        '{}:{}'.format(key, value) for key, value in sorted(tags.items())
+    ]
     params.decorations.tags.extend(request_tags)
 
     return params
