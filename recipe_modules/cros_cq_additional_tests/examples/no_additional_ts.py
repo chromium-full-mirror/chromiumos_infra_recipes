@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -25,15 +25,20 @@ def RunSteps(api):
   pre_resp_str = str(test_plan_response)
   api.cros_cq_additional_tests.append_user_provided_test_suites_to_test_plan(
       builds, gerrit_change, test_plan_response)
-  api.assertions.assertFalse(
-      api.cros_cq_additional_tests
-      .is_missing_board_build_target_footer_addtnl_ts_run())
   api.assertions.assertEqual(pre_resp_str, str(test_plan_response))
 
 
 def GenTests(api):
+
+  def build_bucket_setup(**kwargs):
+    """Generate a test build proto with no gitiles commit project."""
+    kwargs.setdefault('bucket', 'cq')
+    kwargs.setdefault('builder', 'cq-orchestrator')
+    return api.buildbucket.try_build(project='chromeos', **kwargs)
+
   yield api.test(
       'basic',
+      build_bucket_setup(),
       api.properties(
           **{
               '$chromeos/cros_cq_additional_tests': {

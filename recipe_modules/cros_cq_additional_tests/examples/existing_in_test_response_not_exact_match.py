@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 from recipe_engine import post_process
@@ -28,14 +28,6 @@ def RunSteps(api):
   api.cros_cq_additional_tests.append_user_provided_test_suites_to_test_plan(
       builds, gerrit_change, test_plan_response)
 
-  #check state appropriately set since footers are valid
-  api.assertions.assertFalse(
-      api.cros_cq_additional_tests
-      .is_missing_board_build_target_footer_addtnl_ts_run())
-  api.assertions.assertEqual(
-      len(api.cros_cq_additional_tests.unmatched_build_targets_addtnl_ts_run()),
-      0)
-
   build_target_tests = [
       test for test in test_plan_response.hw_test_units
       if test.common.build_target.name == 'build_target'
@@ -57,8 +49,15 @@ def RunSteps(api):
 
 
 def GenTests(api):
+
+  def build_bucket_setup(**kwargs):
+    """Generate a test build proto with no gitiles commit project."""
+    kwargs.setdefault('bucket', 'cq')
+    kwargs.setdefault('builder', 'cq-orchestrator')
+    return api.buildbucket.try_build(project='chromeos', **kwargs)
+
   yield api.test(
-      'basic',
+      'basic', build_bucket_setup(),
       api.properties(
           **{
               '$chromeos/cros_cq_additional_tests': {

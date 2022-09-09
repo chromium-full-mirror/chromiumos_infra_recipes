@@ -3,7 +3,8 @@
     "cmd": [],
     "name": "process additional test suites",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Additional TestSuite cannot be run on build targets that are not built or failed building as part of cq: missing_build_traget@@@"
+      "@@@STEP_TEXT@Additional TestSuites cannot be run on build targets that are not built or failed building as part of cq: missing_build_traget@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -26,6 +27,18 @@
       "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "process additional test suites.get CL 1235 description.read deploy_cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -51,6 +64,18 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "process additional test suites.get CL 1235 description.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -72,6 +97,18 @@
       "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "process additional test suites.get CL 1235 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1235, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
     "timeout": 600,
@@ -132,6 +169,18 @@
       "Cros-Add-Test-Suites"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "process additional test suites.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
@@ -146,6 +195,18 @@
       "Cros-Add-TS-Boards-BuildTarget"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "process additional test suites.read git footers (2)",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
@@ -160,6 +221,18 @@
       "Cros-Add-TS-Pool"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "process additional test suites.read git footers (3)",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [

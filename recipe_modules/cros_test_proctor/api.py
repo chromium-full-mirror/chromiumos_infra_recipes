@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -44,6 +44,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._vm_bucket = properties.vm_bucket or "staging"
     self._skylab_task_per_build_target = properties.skylab_task_per_build_target
     self._test_summary = []
+    self._not_runnable_addtnl_tests = []
 
   @property
   def test_summary(self):
@@ -244,6 +245,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
       self.m.greenness.update_vmtest_info(test_results.tast_gce)
       failures = self.get_test_failures(test_results)
+      failures += self.m.failures.get_additional_hw_test_not_run_failures(
+          self._not_runnable_addtnl_tests)
     return failures
 
   def _get_test_plan(self, builds, gerrit_changes, snapshot, use_test_plan_v2):
@@ -282,7 +285,15 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           starlark_files, generate_test_plan_request=req
       ) if starlark_files else GenerateTestPlanResponse()
     else:
-      return self.m.cros_test_plan.generate(builds, gerrit_changes, snapshot)
+      test_plan = self.m.cros_test_plan.generate(builds, gerrit_changes,
+                                                 snapshot)
+      try:
+        self.m.cros_cq_additional_tests.append_user_provided_test_suites_to_test_plan(
+            builds, gerrit_changes, test_plan)
+      except self.m.cros_cq_additional_tests.CrosCqAddnlTestsMissingBuildTargetsError as e:
+        self._not_runnable_addtnl_tests = e.not_runnable_addtnl_tests
+
+      return test_plan
 
   def _tast_vm_builder(self, build_target, expressions):
     """Returns the tast builder name for the given build_target and expressions."""

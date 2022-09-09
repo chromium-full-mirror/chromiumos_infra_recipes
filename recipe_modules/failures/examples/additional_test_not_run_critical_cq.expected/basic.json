@@ -1,0 +1,30 @@
+[
+  {
+    "cmd": [],
+    "name": "additional test not run",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build targets for tests was not built or failed building@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "additional test not run.my_build_target.hw.my_test_suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Test not run and is critical@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "additional test not run.build_target.hw.my_test_suite",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Test not run but is not critical@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

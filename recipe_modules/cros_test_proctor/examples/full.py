@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -30,11 +30,13 @@ DEPS = [
     'cros_history',
     'cros_relevance',
     'cros_test_proctor',
+    'cros_cq_additional_tests',
     'easy',
     'gerrit',
     'skylab',
     'src_state',
     'test_util',
+    'git_footers',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -164,6 +166,44 @@ def GenTests(api):
               api.cros_history.build_with_passed_tests(
                   ['arm-generic/hw/bvt-cq'])
           ])),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule'),
+      api.buildbucket.simulated_schedule_output(
+          ctp_response2, 'run tests.schedule tests.schedule hardware tests.'
+          'schedule skylab tests v2.buildbucket.schedule'),
+      api.buildbucket.simulated_collect_output(
+          hw_tests, 'run tests.collect tests.'
+          'collect skylab tasks v2.buildbucket.collect'),
+      api.buildbucket.simulated_collect_output([
+          vm_tast_build('vm-test'),
+          vm_tast_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
+      ], step_name='run tests.collect tests.collect tast vm tests'),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='run tests.collect tests.collect tast GCE tests'))
+
+  yield api.test(
+      'with_additional_test_runs', cq_orchestrator_build_with_gerrit_change(),
+      api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
+      api.properties(enable_history=True),
+      api.properties(
+          need_tests_builds_serialized=serialize_builds([
+              api.cros_history.build_with_passed_tests(
+                  ['arm-generic/hw/bvt-cq'])
+          ])),
+      api.properties(
+          **{
+              '$chromeos/cros_cq_additional_tests': {
+                  'enable_running_additional_tests': True,
+                  'run_additional_tests_as_critical': True,
+              }
+          }),
+      api.git_footers.simulated_get_footers(
+          ['AddtnlTestSuite'],
+          'run tests.schedule tests.process additional test suites', 1),
+      api.git_footers.simulated_get_footers(
+          ['missing_build_traget'],
+          'run tests.schedule tests.process additional test suites', 2),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
           'schedule skylab tests v2.buildbucket.schedule'),

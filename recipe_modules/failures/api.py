@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The Chromium OS Authors. All rights reserved.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -362,6 +362,36 @@ class FailuresApi(RecipeApi):
                               self.is_hw_test_critical,
                               self.m.naming.get_skylab_result_title,
                               self.m.urls.get_skylab_result_link_map, get_id)
+
+  def get_additional_hw_test_not_run_failures(self, not_runnable_addtnl_tests):
+
+    critical_failures = []
+    if not_runnable_addtnl_tests:
+      kind = 'additional test not run'
+      critical_failures = []
+      with self.m.step.nest('{}'.format(kind)) as results_pres:
+
+        for nr in not_runnable_addtnl_tests:
+          title = nr.common.display_name
+          link_map = {}
+
+          critical = nr.common.critical.value
+          with self.m.step.nest(title) as presentation:
+            if critical:
+              presentation.step_text = 'Test not run and is critical'
+              presentation.status = self.m.step.FAILURE
+              critical_failures.append(
+                  self.Failure(kind=kind, title=title, link_map=link_map,
+                               fatal=True, id=title))
+            else:
+              presentation.step_text = 'Test not run but is not critical'
+              presentation.status = self.m.step.SUCCESS
+        status = self.m.step.SUCCESS
+        if critical_failures:
+          status = self.m.step.FAILURE
+        results_pres.status = status
+        results_pres.step_text = 'Build targets for tests was not built or failed building'
+    return critical_failures
 
   def get_vm_test_failures(self, vm_tests):
     """Logs VM test status to UI, and raises on failed tests.
