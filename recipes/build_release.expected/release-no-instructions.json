@@ -10289,459 +10289,16 @@
   },
   {
     "cmd": [],
-    "name": "wait for signing",
+    "name": "skipping signing",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no signing instructions generated@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@no signing instructions generated@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "generate payloads"
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine au testing models",
+    "name": "skipping payloads",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine au testing models.generate target test requirements",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "kukui-release-main",
-      "--paygen"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.determine au testing models.generate target test requirements.generate_test_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine fsi testing models",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine fsi testing models.generate target test requirements",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "kukui-release-main",
-      "--paygen"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.determine fsi testing models.generate target test requirements.generate_test_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.running paygen orchestrator",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.running paygen orchestrator.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_fsi_testing_models\": [], \"au_testing_models\": [], \"builder_name\": \"kukui\", \"channels\": [], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"release\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"paygen-orchestrator\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"release\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"paygen-orchestrator\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"project-a\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
-      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"au_fsi_testing_models\": [], @@@",
-      "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [], @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder_name\": \"kukui\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"channels\": [], @@@",
-      "@@@STEP_LOG_LINE@request@          \"delta_payload_test_override\": \"RESPECT_CONFIG\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"delta_types\": [], @@@",
-      "@@@STEP_LOG_LINE@request@          \"dest_bucket\": \"\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"dryrun\": false, @@@",
-      "@@@STEP_LOG_LINE@request@          \"full_payload_test_override\": \"RESPECT_CONFIG\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"src_bucket\": \"\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"target_chromeos_version\": \"1234.56.0\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.running paygen orchestrator.collect",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "collect",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-interval",
-      "60s",
-      "8922054662172514000"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.running paygen orchestrator.collect.wait",
-    "timeout": 25200,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.running paygen orchestrator.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514000\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"payloads\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"{\\n  \\\"size\\\": \\\"1337\\\"\\n}\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            ]@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514000\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.build status pubsub update",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@message@{@@@",
-      "@@@STEP_LOG_LINE@message@  \"buildbucketId\":\"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"config\":{@@@",
-      "@@@STEP_LOG_LINE@message@    \"androidContainerBranch\":{@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\":\"git_rvc-arc\"@@@",
-      "@@@STEP_LOG_LINE@message@    },@@@",
-      "@@@STEP_LOG_LINE@message@    \"androidContainerTarget\":{@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\":\"bertha\"@@@",
-      "@@@STEP_LOG_LINE@message@    },@@@",
-      "@@@STEP_LOG_LINE@message@    \"arcUseSet\":true,@@@",
-      "@@@STEP_LOG_LINE@message@    \"branch\":{@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\":\"main\"@@@",
-      "@@@STEP_LOG_LINE@message@    },@@@",
-      "@@@STEP_LOG_LINE@message@    \"models\":[@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"firmwareKeyId\":\"EVE\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"name\":\"eve\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"versions\":[@@@",
-      "@@@STEP_LOG_LINE@message@          {@@@",
-      "@@@STEP_LOG_LINE@message@            \"kind\":\"MODEL_VERSION_KIND_EC_FIRMWARE\",@@@",
-      "@@@STEP_LOG_LINE@message@            \"value\":\"eve_v1.1.6659-ba2088ed3\"@@@",
-      "@@@STEP_LOG_LINE@message@          },@@@",
-      "@@@STEP_LOG_LINE@message@          {@@@",
-      "@@@STEP_LOG_LINE@message@            \"kind\":\"MODEL_VERSION_KIND_MAIN_READWRITE_FIRMWARE\",@@@",
-      "@@@STEP_LOG_LINE@message@            \"value\":\"Google_Eve.9584.230.0\"@@@",
-      "@@@STEP_LOG_LINE@message@          },@@@",
-      "@@@STEP_LOG_LINE@message@          {@@@",
-      "@@@STEP_LOG_LINE@message@            \"kind\":\"MODEL_VERSION_KIND_MAIN_READONLY_FIRMWARE\",@@@",
-      "@@@STEP_LOG_LINE@message@            \"value\":\"Google_Eve.9584.107.0\"@@@",
-      "@@@STEP_LOG_LINE@message@          }@@@",
-      "@@@STEP_LOG_LINE@message@        ]@@@",
-      "@@@STEP_LOG_LINE@message@      }@@@",
-      "@@@STEP_LOG_LINE@message@    ],@@@",
-      "@@@STEP_LOG_LINE@message@    \"target\":{@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\":\"eve\"@@@",
-      "@@@STEP_LOG_LINE@message@    },@@@",
-      "@@@STEP_LOG_LINE@message@    \"versions\":[@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_ASH_CHROME\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"chrome_version\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_MILESTONE\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"milestone_version\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_PLATFORM\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"platform_version\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_ARC\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"1\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_ANDROID_CONTAINER\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"7978506\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_EC_FIRMWARE\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"eve_v1.1.6659-ba2088ed3\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_KERNEL\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"5.4.163-r2827\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\":\"VERSION_KIND_MAIN_FIRMWARE\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\":\"Google_Eve.9584.230.0\"@@@",
-      "@@@STEP_LOG_LINE@message@      }@@@",
-      "@@@STEP_LOG_LINE@message@    ]@@@",
-      "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"count\":\"9\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"payloads\":[@@@",
-      "@@@STEP_LOG_LINE@message@    {@@@",
-      "@@@STEP_LOG_LINE@message@      \"size\":\"1337\"@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  ],@@@",
-      "@@@STEP_LOG_LINE@message@  \"sdkVersion\":\"foo\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"steps\":{@@@",
-      "@@@STEP_LOG_LINE@message@    \"info\":{@@@",
-      "@@@STEP_LOG_LINE@message@      \"STEP_DEBUG_SYMBOLS\":{@@@",
-      "@@@STEP_LOG_LINE@message@        \"order\":2,@@@",
-      "@@@STEP_LOG_LINE@message@        \"runtime\":{@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\":\"2012-05-14T12:54:38Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\":\"2012-05-14T12:54:39.500Z\"@@@",
-      "@@@STEP_LOG_LINE@message@        },@@@",
-      "@@@STEP_LOG_LINE@message@        \"status\":\"STATUS_SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\":{@@@",
-      "@@@STEP_LOG_LINE@message@        \"order\":1,@@@",
-      "@@@STEP_LOG_LINE@message@        \"runtime\":{@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\":\"2012-05-14T12:53:23Z\"@@@",
-      "@@@STEP_LOG_LINE@message@        },@@@",
-      "@@@STEP_LOG_LINE@message@        \"status\":\"STATUS_RUNNING\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      \"STEP_UNIT_TESTS\":{@@@",
-      "@@@STEP_LOG_LINE@message@        \"order\":3,@@@",
-      "@@@STEP_LOG_LINE@message@        \"runtime\":{@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\":\"2012-05-14T12:54:41Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\":\"2012-05-14T12:54:45.500Z\"@@@",
-      "@@@STEP_LOG_LINE@message@        },@@@",
-      "@@@STEP_LOG_LINE@message@        \"status\":\"STATUS_SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@message@      }@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"toolchainUrl\":\"bar\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"type\":\"BUILD_TYPE_RELEASE\"@@@",
-      "@@@STEP_LOG_LINE@message@}@@@",
-      "@@@STEP_LOG_END@message@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.build status pubsub update.publish message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBABIqkCCgYKBG1haW4SDQoLZ2l0X3J2Yy1hcmMaBQoDZXZlIggKBmJlcnRoYTISCAESDmNocm9tZV92ZXJzaW9uMhUIBRIRbWlsZXN0b25lX3ZlcnNpb24yFAgEEhBwbGF0Zm9ybV92ZXJzaW9uMgUIAxIBMTILCAYSBzc5Nzg1MDYyGwgHEhdldmVfdjEuMS42NjU5LWJhMjA4OGVkMzIRCAkSDTUuNC4xNjMtcjI4MjcyGQgKEhVHb29nbGVfRXZlLjk1ODQuMjMwLjA4AUJdCgNldmUSA0VWRRobCAESF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzGhkIAxIVR29vZ2xlX0V2ZS45NTg0LjIzMC4wGhkIAhIVR29vZ2xlX0V2ZS45NTg0LjEwNy4wKoYBEjIKElNURVBfREVCVUdfU1lNQk9MUxIcCAIQZBoWCgYIjoHE/QQSDAiPgcT9BBCAyrXuARIfCgxTVEVQX09WRVJBTEwSDwgBEMgBGggKBgjDgMT9BBIvCg9TVEVQX1VOSVRfVEVTVFMSHAgDEGQaFgoGCJGBxP0EEgwIlYHE/QQQgMq17gFACVoDULkKagNmb29yA2Jhcg==',@@@",
-      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
-      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
-      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBABIqkCCgYKBG1haW4SDQoLZ2l0X3J2Yy1hcmMaBQoDZXZlIggKBmJlcnRoYTISCAESDmNocm9tZV92ZXJzaW9uMhUIBRIRbWlsZXN0b25lX3ZlcnNpb24yFAgEEhBwbGF0Zm9ybV92ZXJzaW9uMgUIAxIBMTILCAYSBzc5Nzg1MDYyGwgHEhdldmVfdjEuMS42NjU5LWJhMjA4OGVkMzIRCAkSDTUuNC4xNjMtcjI4MjcyGQgKEhVHb29nbGVfRXZlLjk1ODQuMjMwLjA4AUJdCgNldmUSA0VWRRobCAESF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzGhkIAxIVR29vZ2xlX0V2ZS45NTg0LjIzMC4wGhkIAhIVR29vZ2xlX0V2ZS45NTg0LjEwNy4wKoYBEjIKElNURVBfREVCVUdfU1lNQk9MUxIcCAIQZBoWCgYIjoHE/QQSDAiPgcT9BBCAyrXuARIfCgxTVEVQX09WRVJBTEwSDwgBEMgBGggKBgjDgMT9BBIvCg9TVEVQX1VOSVRfVEVTVFMSHAgDEGQaFgoGCJGBxP0EEgwIlYHE/QQQgMq17gFACVoDULkKagNmb29yA2Jhcg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_TEXT@no payloads generated since no signed images@@@"
     ]
   },
   {
@@ -11546,12 +11103,7 @@
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    ]@@@",
       "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"count\":\"10\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"payloads\":[@@@",
-      "@@@STEP_LOG_LINE@message@    {@@@",
-      "@@@STEP_LOG_LINE@message@      \"size\":\"1337\"@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\":\"9\",@@@",
       "@@@STEP_LOG_LINE@message@  \"sdkVersion\":\"foo\",@@@",
       "@@@STEP_LOG_LINE@message@  \"steps\":{@@@",
       "@@@STEP_LOG_LINE@message@    \"info\":{@@@",
@@ -11592,7 +11144,7 @@
     "name": "build status pubsub update (7).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBABIqsCCgYKBG1haW4SDQoLZ2l0X3J2Yy1hcmMaBwoFa3VrdWkiCAoGYmVydGhhMhIIARIOY2hyb21lX3ZlcnNpb24yFQgFEhFtaWxlc3RvbmVfdmVyc2lvbjIUCAQSEHBsYXRmb3JtX3ZlcnNpb24yBQgDEgExMgsIBhIHNzk3ODUwNjIbCAcSF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzMhEICRINNS40LjE2My1yMjgyNzIZCAoSFUdvb2dsZV9FdmUuOTU4NC4yMzAuMDgBQl0KA2V2ZRIDRVZFGhsIARIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDMaGQgDEhVHb29nbGVfRXZlLjk1ODQuMjMwLjAaGQgCEhVHb29nbGVfRXZlLjk1ODQuMTA3LjAqjQESMgoSU1RFUF9ERUJVR19TWU1CT0xTEhwIAhBkGhYKBgiOgcT9BBIMCI+BxP0EEIDKte4BEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgiggcT9BBIvCg9TVEVQX1VOSVRfVEVTVFMSHAgDEGQaFgoGCJGBxP0EEgwIlYHE/QQQgMq17gFACloDULkKagNmb29yA2Jhcg==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBABIqsCCgYKBG1haW4SDQoLZ2l0X3J2Yy1hcmMaBwoFa3VrdWkiCAoGYmVydGhhMhIIARIOY2hyb21lX3ZlcnNpb24yFQgFEhFtaWxlc3RvbmVfdmVyc2lvbjIUCAQSEHBsYXRmb3JtX3ZlcnNpb24yBQgDEgExMgsIBhIHNzk3ODUwNjIbCAcSF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzMhEICRINNS40LjE2My1yMjgyNzIZCAoSFUdvb2dsZV9FdmUuOTU4NC4yMzAuMDgBQl0KA2V2ZRIDRVZFGhsIARIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDMaGQgDEhVHb29nbGVfRXZlLjk1ODQuMjMwLjAaGQgCEhVHb29nbGVfRXZlLjk1ODQuMTA3LjAqjQESMgoSU1RFUF9ERUJVR19TWU1CT0xTEhwIAhBkGhYKBgiOgcT9BBIMCI+BxP0EEIDKte4BEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgiggcT9BBIvCg9TVEVQX1VOSVRfVEVTVFMSHAgDEGQaFgoGCJGBxP0EEgwIlYHE/QQQgMq17gFACWoDZm9vcgNiYXI=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -11621,7 +11173,7 @@
       }
     },
     "name": "build status pubsub update (7).publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBABIqsCCgYKBG1haW4SDQoLZ2l0X3J2Yy1hcmMaBwoFa3VrdWkiCAoGYmVydGhhMhIIARIOY2hyb21lX3ZlcnNpb24yFQgFEhFtaWxlc3RvbmVfdmVyc2lvbjIUCAQSEHBsYXRmb3JtX3ZlcnNpb24yBQgDEgExMgsIBhIHNzk3ODUwNjIbCAcSF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzMhEICRINNS40LjE2My1yMjgyNzIZCAoSFUdvb2dsZV9FdmUuOTU4NC4yMzAuMDgBQl0KA2V2ZRIDRVZFGhsIARIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDMaGQgDEhVHb29nbGVfRXZlLjk1ODQuMjMwLjAaGQgCEhVHb29nbGVfRXZlLjk1ODQuMTA3LjAqjQESMgoSU1RFUF9ERUJVR19TWU1CT0xTEhwIAhBkGhYKBgiOgcT9BBIMCI+BxP0EEIDKte4BEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgiggcT9BBIvCg9TVEVQX1VOSVRfVEVTVFMSHAgDEGQaFgoGCJGBxP0EEgwIlYHE/QQQgMq17gFACloDULkKagNmb29yA2Jhcg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBABIqsCCgYKBG1haW4SDQoLZ2l0X3J2Yy1hcmMaBwoFa3VrdWkiCAoGYmVydGhhMhIIARIOY2hyb21lX3ZlcnNpb24yFQgFEhFtaWxlc3RvbmVfdmVyc2lvbjIUCAQSEHBsYXRmb3JtX3ZlcnNpb24yBQgDEgExMgsIBhIHNzk3ODUwNjIbCAcSF2V2ZV92MS4xLjY2NTktYmEyMDg4ZWQzMhEICRINNS40LjE2My1yMjgyNzIZCAoSFUdvb2dsZV9FdmUuOTU4NC4yMzAuMDgBQl0KA2V2ZRIDRVZFGhsIARIXZXZlX3YxLjEuNjY1OS1iYTIwODhlZDMaGQgDEhVHb29nbGVfRXZlLjk1ODQuMjMwLjAaGQgCEhVHb29nbGVfRXZlLjk1ODQuMTA3LjAqjQESMgoSU1RFUF9ERUJVR19TWU1CT0xTEhwIAhBkGhYKBgiOgcT9BBIMCI+BxP0EEIDKte4BEiYKDFNURVBfT1ZFUkFMTBIWCAEQZBoQCgYIw4DE/QQSBgiggcT9BBIvCg9TVEVQX1VOSVRfVEVTVFMSHAgDEGQaFgoGCJGBxP0EEgwIlYHE/QQQgMq17gFACWoDZm9vcgNiYXI=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -11645,7 +11197,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildbucketId\":\"8945511751514863184\",\n  \"config\":{\n    \"androidContainerBranch\":{\n      \"name\":\"git_rvc-arc\"\n    },\n    \"androidContainerTarget\":{\n      \"name\":\"bertha\"\n    },\n    \"arcUseSet\":true,\n    \"branch\":{\n      \"name\":\"main\"\n    },\n    \"models\":[\n      {\n        \"firmwareKeyId\":\"EVE\",\n        \"name\":\"eve\",\n        \"versions\":[\n          {\n            \"kind\":\"MODEL_VERSION_KIND_EC_FIRMWARE\",\n            \"value\":\"eve_v1.1.6659-ba2088ed3\"\n          },\n          {\n            \"kind\":\"MODEL_VERSION_KIND_MAIN_READWRITE_FIRMWARE\",\n            \"value\":\"Google_Eve.9584.230.0\"\n          },\n          {\n            \"kind\":\"MODEL_VERSION_KIND_MAIN_READONLY_FIRMWARE\",\n            \"value\":\"Google_Eve.9584.107.0\"\n          }\n        ]\n      }\n    ],\n    \"target\":{\n      \"name\":\"kukui\"\n    },\n    \"versions\":[\n      {\n        \"kind\":\"VERSION_KIND_ASH_CHROME\",\n        \"value\":\"chrome_version\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_MILESTONE\",\n        \"value\":\"milestone_version\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_PLATFORM\",\n        \"value\":\"platform_version\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_ARC\",\n        \"value\":\"1\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_ANDROID_CONTAINER\",\n        \"value\":\"7978506\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_EC_FIRMWARE\",\n        \"value\":\"eve_v1.1.6659-ba2088ed3\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_KERNEL\",\n        \"value\":\"5.4.163-r2827\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_MAIN_FIRMWARE\",\n        \"value\":\"Google_Eve.9584.230.0\"\n      }\n    ]\n  },\n  \"count\":\"10\",\n  \"payloads\":[\n    {\n      \"size\":\"1337\"\n    }\n  ],\n  \"sdkVersion\":\"foo\",\n  \"steps\":{\n    \"info\":{\n      \"STEP_DEBUG_SYMBOLS\":{\n        \"order\":2,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:54:38Z\",\n          \"end\":\"2012-05-14T12:54:39.500Z\"\n        },\n        \"status\":\"STATUS_SUCCESS\"\n      },\n      \"STEP_OVERALL\":{\n        \"order\":1,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:53:23Z\",\n          \"end\":\"2012-05-14T12:54:56Z\"\n        },\n        \"status\":\"STATUS_SUCCESS\"\n      },\n      \"STEP_UNIT_TESTS\":{\n        \"order\":3,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:54:41Z\",\n          \"end\":\"2012-05-14T12:54:45.500Z\"\n        },\n        \"status\":\"STATUS_SUCCESS\"\n      }\n    }\n  },\n  \"toolchainUrl\":\"bar\",\n  \"type\":\"BUILD_TYPE_RELEASE\"\n}",
+      "{\n  \"buildbucketId\":\"8945511751514863184\",\n  \"config\":{\n    \"androidContainerBranch\":{\n      \"name\":\"git_rvc-arc\"\n    },\n    \"androidContainerTarget\":{\n      \"name\":\"bertha\"\n    },\n    \"arcUseSet\":true,\n    \"branch\":{\n      \"name\":\"main\"\n    },\n    \"models\":[\n      {\n        \"firmwareKeyId\":\"EVE\",\n        \"name\":\"eve\",\n        \"versions\":[\n          {\n            \"kind\":\"MODEL_VERSION_KIND_EC_FIRMWARE\",\n            \"value\":\"eve_v1.1.6659-ba2088ed3\"\n          },\n          {\n            \"kind\":\"MODEL_VERSION_KIND_MAIN_READWRITE_FIRMWARE\",\n            \"value\":\"Google_Eve.9584.230.0\"\n          },\n          {\n            \"kind\":\"MODEL_VERSION_KIND_MAIN_READONLY_FIRMWARE\",\n            \"value\":\"Google_Eve.9584.107.0\"\n          }\n        ]\n      }\n    ],\n    \"target\":{\n      \"name\":\"kukui\"\n    },\n    \"versions\":[\n      {\n        \"kind\":\"VERSION_KIND_ASH_CHROME\",\n        \"value\":\"chrome_version\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_MILESTONE\",\n        \"value\":\"milestone_version\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_PLATFORM\",\n        \"value\":\"platform_version\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_ARC\",\n        \"value\":\"1\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_ANDROID_CONTAINER\",\n        \"value\":\"7978506\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_EC_FIRMWARE\",\n        \"value\":\"eve_v1.1.6659-ba2088ed3\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_KERNEL\",\n        \"value\":\"5.4.163-r2827\"\n      },\n      {\n        \"kind\":\"VERSION_KIND_MAIN_FIRMWARE\",\n        \"value\":\"Google_Eve.9584.230.0\"\n      }\n    ]\n  },\n  \"count\":\"9\",\n  \"sdkVersion\":\"foo\",\n  \"steps\":{\n    \"info\":{\n      \"STEP_DEBUG_SYMBOLS\":{\n        \"order\":2,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:54:38Z\",\n          \"end\":\"2012-05-14T12:54:39.500Z\"\n        },\n        \"status\":\"STATUS_SUCCESS\"\n      },\n      \"STEP_OVERALL\":{\n        \"order\":1,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:53:23Z\",\n          \"end\":\"2012-05-14T12:54:56Z\"\n        },\n        \"status\":\"STATUS_SUCCESS\"\n      },\n      \"STEP_UNIT_TESTS\":{\n        \"order\":3,\n        \"runtime\":{\n          \"begin\":\"2012-05-14T12:54:41Z\",\n          \"end\":\"2012-05-14T12:54:45.500Z\"\n        },\n        \"status\":\"STATUS_SUCCESS\"\n      }\n    }\n  },\n  \"toolchainUrl\":\"bar\",\n  \"type\":\"BUILD_TYPE_RELEASE\"\n}",
       "[CLEANUP]/LATEST_tmp_1/build_report.json"
     ],
     "env": {
@@ -11738,12 +11290,7 @@
       "@@@STEP_LOG_LINE@build_report.json@      }@@@",
       "@@@STEP_LOG_LINE@build_report.json@    ]@@@",
       "@@@STEP_LOG_LINE@build_report.json@  },@@@",
-      "@@@STEP_LOG_LINE@build_report.json@  \"count\":\"10\",@@@",
-      "@@@STEP_LOG_LINE@build_report.json@  \"payloads\":[@@@",
-      "@@@STEP_LOG_LINE@build_report.json@    {@@@",
-      "@@@STEP_LOG_LINE@build_report.json@      \"size\":\"1337\"@@@",
-      "@@@STEP_LOG_LINE@build_report.json@    }@@@",
-      "@@@STEP_LOG_LINE@build_report.json@  ],@@@",
+      "@@@STEP_LOG_LINE@build_report.json@  \"count\":\"9\",@@@",
       "@@@STEP_LOG_LINE@build_report.json@  \"sdkVersion\":\"foo\",@@@",
       "@@@STEP_LOG_LINE@build_report.json@  \"steps\":{@@@",
       "@@@STEP_LOG_LINE@build_report.json@    \"info\":{@@@",

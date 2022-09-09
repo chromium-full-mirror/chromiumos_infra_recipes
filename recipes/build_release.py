@@ -197,12 +197,18 @@ def DoRunSteps(api, config, properties):
       # Now that we've published informational artifacts, we need to fail the
       # build if the outcome was anything other than "passed".
       api.cros_signing.verify_signing_success(metadata)
-  elif not instructions:
-    with api.step.nest('wait for signing') as pres:
-      pres.step_text = 'no signing instructions generated'
-      pres.status = api.m.step.FAILURE
 
-  api.cros_release.run_payload_generation()
+  elif not instructions:
+    with api.step.nest('skipping signing') as pres:
+      pres.step_text = 'no signing instructions generated'
+
+  # With signing complete, we can start payload generation (only if there were
+  # signed images generated). We _do_ want this in staging.
+  if instructions:
+    api.cros_release.run_payload_generation()
+  else:
+    with api.step.nest('skipping payloads') as pres:
+      pres.step_text = 'no payloads generated since no signed images'
 
   if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,
@@ -349,9 +355,6 @@ def GenTests(api):
       api.cros_build_api.set_api_return(parent_step_name='push images',
                                         endpoint='ImageService/PushImage',
                                         data='{}', retcode=0),
-      api.buildbucket.simulated_collect_output(
-          [successful_paygen_orch],
-          'generate payloads.running paygen orchestrator.collect'),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun,
@@ -359,7 +362,9 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
-      api.post_check(post_process.MustRun, 'wait for signing'),
+      api.post_check(post_process.MustRun, 'skipping signing'),
+      api.post_check(post_process.DoesNotRun, 'generate payloads'),
+      api.post_check(post_process.MustRun, 'skipping payloads'),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
