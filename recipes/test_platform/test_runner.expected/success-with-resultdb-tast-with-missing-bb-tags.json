@@ -575,57 +575,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "dummy-results-dir/autoserv_test/keyval",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.read autotest keyval file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@keyval@@@@",
-      "@@@STEP_LOG_LINE@keyval@parent_job_id=58067d9ab42aca11@@@",
-      "@@@STEP_LOG_LINE@keyval@build=board-cq/R00-0.0.0@@@",
-      "@@@STEP_LOG_LINE@keyval@suite=sweet-cq@@@",
-      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_stainless_url=https://path/to/stainless@@@",
-      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_url=gs://path/to/test/logs@@@",
-      "@@@STEP_LOG_LINE@keyval@branch=main@@@",
-      "@@@STEP_LOG_LINE@keyval@label=board-cq/R00-0.0.0/sweet-cq/test-case@@@",
-      "@@@STEP_LOG_LINE@keyval@build_config=eve-release@@@",
-      "@@@STEP_LOG_LINE@keyval@master_build_config=master-release@@@",
-      "@@@STEP_LOG_LINE@keyval@drone=skylab-drone-xyz@@@",
-      "@@@STEP_LOG_LINE@keyval@hostname=chromeos0-row0-rack0-host0@@@",
-      "@@@STEP_LOG_LINE@keyval@job_started=1651467359@@@",
-      "@@@STEP_LOG_LINE@keyval@status_version=0@@@",
-      "@@@STEP_LOG_LINE@keyval@user=test-user@@@",
-      "@@@STEP_LOG_LINE@keyval@job_finished=1651468010@@@",
-      "@@@STEP_LOG_LINE@keyval@tast_missing_test.0=foo.SomeTest@@@",
-      "@@@STEP_LOG_LINE@keyval@tast_missing_test.1=foo.SomeOtherTest@@@",
-      "@@@STEP_LOG_LINE@keyval@tast_missing_test.2=bar.DifferentTest@@@",
-      "@@@STEP_LOG_LINE@keyval@tast_missing_test.3=bar.YetAnotherTest@@@",
-      "@@@STEP_LOG_LINE@keyval@    @@@",
-      "@@@STEP_LOG_END@keyval@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "execution steps.original_test.archive all test logs to Google Storage",
     "~followup_annotations": [
@@ -766,6 +715,57 @@
     "name": "execution steps.original_test.Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/autoserv_test/keyval",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read autotest keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@keyval@@@@",
+      "@@@STEP_LOG_LINE@keyval@parent_job_id=58067d9ab42aca11@@@",
+      "@@@STEP_LOG_LINE@keyval@build=board-cq/R00-0.0.0@@@",
+      "@@@STEP_LOG_LINE@keyval@suite=sweet-cq@@@",
+      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_stainless_url=https://path/to/stainless@@@",
+      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_url=gs://path/to/test/logs@@@",
+      "@@@STEP_LOG_LINE@keyval@branch=main@@@",
+      "@@@STEP_LOG_LINE@keyval@label=board-cq/R00-0.0.0/sweet-cq/test-case@@@",
+      "@@@STEP_LOG_LINE@keyval@build_config=eve-release@@@",
+      "@@@STEP_LOG_LINE@keyval@master_build_config=master-release@@@",
+      "@@@STEP_LOG_LINE@keyval@drone=skylab-drone-xyz@@@",
+      "@@@STEP_LOG_LINE@keyval@hostname=chromeos0-row0-rack0-host0@@@",
+      "@@@STEP_LOG_LINE@keyval@job_started=1651467359@@@",
+      "@@@STEP_LOG_LINE@keyval@status_version=0@@@",
+      "@@@STEP_LOG_LINE@keyval@user=test-user@@@",
+      "@@@STEP_LOG_LINE@keyval@job_finished=1651468010@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.0=foo.SomeTest@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.1=foo.SomeOtherTest@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.2=bar.DifferentTest@@@",
+      "@@@STEP_LOG_LINE@keyval@tast_missing_test.3=bar.YetAnotherTest@@@",
+      "@@@STEP_LOG_LINE@keyval@    @@@",
+      "@@@STEP_LOG_END@keyval@@@"
     ]
   },
   {

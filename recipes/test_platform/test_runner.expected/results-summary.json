@@ -594,36 +594,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "dummy-results-dir/autoserv_test/keyval",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.read autotest keyval file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@keyval@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "execution steps.original_test.archive all test logs to Google Storage",
     "~followup_annotations": [
@@ -774,7 +744,37 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"autotest_result\": {\n    \"incomplete\": true,\n    \"test_cases\": [\n      {\n        \"human_readable_summary\": \"failing test case\",\n        \"name\": \"failing_test_case\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  },\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {\n    \"step\": [\n      {\n        \"human_readable_summary\": \"failed prejob\",\n        \"name\": \"failing_prejob_step\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  }\n}",
+      "dummy-results-dir/autoserv_test/keyval",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read autotest keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@keyval@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"autotest_result\": {\n    \"incomplete\": true,\n    \"test_cases\": [\n      {\n        \"human_readable_summary\": \"failing test case\",\n        \"name\": \"failing_test_case\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  },\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {\n    \"step\": [\n      {\n        \"human_readable_summary\": \"failed prejob\",\n        \"name\": \"failing_prejob_step\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  },\n  \"state_update\": {}\n}",
       "[CLEANUP]/tmp_tmp_1/test_runner_result.json"
     ],
     "infra_step": true,
@@ -816,7 +816,8 @@
       "@@@STEP_LOG_LINE@test_runner_result.json@        \"verdict\": \"VERDICT_FAIL\"@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@      }@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@    ]@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  }@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@  \"state_update\": {}@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@}@@@",
       "@@@STEP_LOG_END@test_runner_result.json@@@"
     ]

@@ -250,37 +250,10 @@ def _collect_tests_for_phosphorus(request):
   return tests
 
 
-def _populate_timestamps_for_results(result, autotest_keyval_file):
-  """Fetches timestamp information from autotest keyval file and pass them to
-     the test cases in autotest result.
-
-    Args:
-    * result (DUTResult): The result for all tests run in this run without
-        timestamp information.
-    * autotest_keyval_file (dict): The contents for autotest keyval file
-        in logs.
-
-    Returns:
-    * result (DUTResult): The result for all tests run in this run with
-        timestamp information.
-  """
-  for _, autotest_result in result.get_test_results():
-    for test_case in autotest_result.test_cases:
-      test_case.start_time.CopyFrom(
-          timestamp_pb2.Timestamp(
-              seconds=int(autotest_keyval_file['job_started'])))
-      test_case.end_time.CopyFrom(
-          timestamp_pb2.Timestamp(
-              seconds=int(autotest_keyval_file['job_finished'])))
-
-  return result
-
-
-def _populate_full_name_for_autotest_results(api, result):
-  """Populates the full test name for Autotest results. The upstream parser
-  (interface.parse_test_results) returns an Autotest test name which sometimes
-  is not a full name. Instead, the `display_name` tag always contains the full
-  test name.
+def _populate_additional_info_for_autotest_result(api, result,
+                                                  autotest_keyval_file):
+  """Populates additional information for autotest results, e.g. full test name,
+  timestamps.
 
   Context: b/244263157, crbug.com/964028
 
@@ -288,23 +261,44 @@ def _populate_full_name_for_autotest_results(api, result):
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result for all tests run in this run without
         timestamp information.
+  * autotest_keyval_file (dict): The contents for autotest keyval file
+        in logs.
 
   Returns:
-  * result (DUTResult): The result for all tests run in this run with
-      the full test name.
+  * autotest_result (DUTResult): The result for all tests run in this run with
+        timestamp information.
   """
-  # Example: trogdor-release/R106-15054.28.0/bvt-perbuild/security_Nosym.test
+  # Initializes a new autotest result proto with required fields instead of
+  # modifying the original DUT result object directly.
+  autotest_result = Result(autotest_result=result.data.autotest_result,
+                           log_data=result.data.log_data,
+                           prejob=result.data.prejob,
+                           state_update=result.data.state_update)
+
+  # Gets the full test name from the "display_name" label.
+  # Example: "volteer-release/R107-15099.0.0/bluetooth_e2e/bluetooth_AdapterQRHealth.qr_check_states_test"
+  full_test_name = ''
   declared_name = api.cros_tags.get_values('display_name')
   if declared_name:
     index = declared_name[0].rfind('/')
     if index != -1:
-      full_test_name = declared_name[0][index:]
-      # Generally there is only 1 Autotest result in the test case.
-      for _, autotest_result in result.get_test_results():
-        for test_case in autotest_result.test_cases:
-          test_case.name = full_test_name
+      full_test_name = declared_name[0][index + 1:]
 
-  return result
+  for test_case in autotest_result.autotest_result.test_cases:
+    # Sets the full test name if necessary.
+    if full_test_name and full_test_name.startswith(test_case.name):
+      test_case.name = full_test_name
+
+    # Sets the start time and end time.
+    if autotest_keyval_file:
+      test_case.start_time.CopyFrom(
+          timestamp_pb2.Timestamp(
+              seconds=int(autotest_keyval_file.get('job_started'))))
+      test_case.end_time.CopyFrom(
+          timestamp_pb2.Timestamp(
+              seconds=int(autotest_keyval_file.get('job_finished'))))
+
+  return autotest_result
 
 
 def _read_autotest_keyval_file(api, base_dir):
@@ -665,8 +659,7 @@ def _upload_missing_tast_results(api, base_variant, autotest_keyval_file):
   api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant)
 
 
-def _upload_to_resultdb(api, result, properties, interface, test_metadata,
-                        autotest_keyval_file):
+def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
     Args:
@@ -676,8 +669,6 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
     * interface (DUTInterface): The interface to run commands on the DUT.
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
-    * autotest_keyval_file (dict): The contents for autotest keyval file
-        in logs.
     """
   if not api.resultdb.enabled:
     return
@@ -686,7 +677,10 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
   if not result:
     return
 
+  # Autotest keyval file is created after test execution `interface.run_test()`
+  # is done, so the file needs to be read after test execution.
   base_dir = interface.get_results_directory(test_metadata)
+  autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
 
   # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
   if (test_metadata.test.autotest.test_args and
@@ -713,18 +707,28 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
     artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
         base_dir, result_format)
   else:
-    # Write the result to a file which can be read by result_adapter.
-    _populate_full_name_for_autotest_results(api, result)
+    # Populates additional info for autotest results that are required by ResultDB
+    # upload.
+    autotest_result = _populate_additional_info_for_autotest_result(
+        api, result, autotest_keyval_file)
+
+    # Writes the result to a file which can be parsed by result_adapter.
     temp_dir = api.path.mkdtemp()
     test_runner_result_file = temp_dir.join('test_runner_result.json')
     api.file.write_proto('write skylab_test_runner result',
-                         test_runner_result_file, result.data, 'JSONPB')
+                         test_runner_result_file, autotest_result, 'JSONPB')
     result_format = 'skylab-test-runner'
     result_file = test_runner_result_file
     artifact_directory = None
 
-    for test_id, _ in result.get_test_results():
-      first_test_case_name = test_id
+    # Gets the initial test name from the first test case in the iniital result
+    # instead of the full test name from the first test case in the modified
+    # autotest_result. That's becaise the upstream is still using the initial
+    # test name to construct the log artifact directory.
+    # The first_test_case_name will be used to read log files below.
+    # Context: b/238706967
+    for test_case in result.data.autotest_result.test_cases:
+      first_test_case_name = test_case.name
       break
 
   # Fetches rich information from log artifacts.
@@ -737,7 +741,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
   crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
                                       'crossystem')
   crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-  if crossystem_keyvals is None:
+  if crossystem_keyvals is None and first_test_case_name:
     crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
                                         first_test_case_name, 'sysinfo',
                                         'crossystem')
@@ -745,7 +749,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata,
   kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
                                       'uname')
   kernel_version = _read_kernel_version(api, kernel_log_file_path)
-  if kernel_version is None:
+  if kernel_version is None and first_test_case_name:
     kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
                                         first_test_case_name, 'sysinfo',
                                         'uname')
@@ -810,11 +814,6 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
   """
   result = None
   run_test_response = None
-
-  # Autotest keyval file is created after test execution is done, so the file
-  # needs to be read after test execution.
-  autotest_keyval_file = {}
-  base_dir = interface.get_results_directory(test_metadata)
   try:
     # prejob and test failures are detected when parsing results.
     # An exception from the steps here indicates an infrastructure
@@ -834,11 +833,11 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
 
       interface.upload_to_tko(test_metadata, run_test_response)
 
+    # The autotest result object returned here is populated with the
+    # "autotest_result" field instead of the "autotest_results" field.
     result = interface.parse_test_results(test_metadata)
     result.add_prejob_response(prejob_response)
     result.add_test_response(run_test_response)
-    autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
-    result = _populate_timestamps_for_results(result, autotest_keyval_file)
 
     if not prejob_response.is_failure():
       dut_state = result.get_dut_state()
@@ -857,8 +856,7 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
       # it would be fairly expensive to rerun CTS tests if it fails only on
       # the upload step. Even though the GCS artifact upload fails, the
       # ResultDB upload will still be executed.
-      _upload_to_resultdb(api, result, properties, interface, test_metadata,
-                          autotest_keyval_file)
+      _upload_to_resultdb(api, result, properties, interface, test_metadata)
 
       interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
@@ -1114,6 +1112,10 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
           properties.cft_test_request.parent_request_uid, autotest_keyvals)
+      # TODO(b/246473902): Populate additional info to Tauto results for CFT
+      # MVP, e.g. timestamps, full test name. The logic would be added to
+      # crostoolrunner_interface.py and could be similar to the
+      # `_post_process_tauto_result()` method above.
       interface.upload_to_rdb(test_metadata, run_test_response)
 
     result = interface.parse_test_results(test_metadata)
@@ -1379,6 +1381,37 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
    "end":"2022-09-02T03:54:15.173194233Z",
    "outDir":"/usr/local/autotest/results/lxc_job_folder/tast/results/tests/crostini.SSHFSMount.bullseye_stable",
    "skipReason":""
+}
+    """))
+
+  def _tauto_test_result_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.read test result file',
+        api.file.read_text("""
+{
+  "autotest_result": {
+    "test_cases": [
+      {
+        "name": "login_LoginSuccess",
+        "verdict": "VERDICT_PASS"
+      }
+    ]
+  },
+  "log_data": {
+    "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
+    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+  },
+  "prejob": {
+    "step": [
+      {
+        "name": "provision",
+        "verdict": "VERDICT_PASS"
+      }
+    ]
+  },
+  "state_update": {
+    "dut_state": "ready"
+  }
 }
     """))
 
@@ -2032,7 +2065,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2051,6 +2084,19 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
           }),
+      # Sets the test case so that it can use the test case name to find the
+      # child directory.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS),
+                      ]),
+                  )))),
       api.step_data('execution steps.original_test.read crossystem keyval file',
                     api.file.read_text(errno_name='file does not exist')),
       api.step_data(
@@ -2065,7 +2111,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2096,7 +2142,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2115,6 +2161,19 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
           }),
+      # Sets the test case so that it can use the test case name to find the
+      # child directory.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS),
+                      ]),
+                  )))),
       api.step_data('execution steps.original_test.read kernel log file',
                     api.file.read_text(errno_name='file does not exist')),
       api.step_data('execution steps.original_test.read kernel log file (2)',
@@ -2128,7 +2187,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2264,7 +2323,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2292,7 +2351,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2355,20 +2414,16 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           'call `phosphorus`.parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
-                      autotest_results={
-                          "original_test":
-                              Result.Autotest(test_cases=[
-                                  Result.Autotest.TestCase(
-                                      name='pass_test_case_1', verdict=Result
-                                      .Autotest.TestCase.VERDICT_PASS),
-                                  Result.Autotest.TestCase(
-                                      name='pass_test_case_2', verdict=Result
-                                      .Autotest.TestCase.VERDICT_PASS)
-                              ])
-                      },
-                  )))),
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS),
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_2',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS)
+                      ]))))),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2408,7 +2463,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                   'fake-suite',
               # Contains the full test name.
               'display_name':
-                  'fake-board-cq/R11-123.45/fake-suite/pass_full_test_case_1'
+                  'fake-board-cq/R11-123.45/fake-suite/pass_test_case_1_full'
           }),
       _autotest_keyval_file_step_data(),
       _misc_properties(),
@@ -2423,15 +2478,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           'call `phosphorus`.parse', stdout=api.raw_io.output(
               json_format.MessageToJson(
                   Result(
-                      autotest_results={
-                          "original_test":
-                              Result.Autotest(test_cases=[
-                                  Result.Autotest.TestCase(
-                                      name='pass_test_case_1', verdict=Result
-                                      .Autotest.TestCase.VERDICT_PASS)
-                              ])
-                      },
-                  )))),
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS)
+                      ]))))),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
   )
 
   yield api.test(

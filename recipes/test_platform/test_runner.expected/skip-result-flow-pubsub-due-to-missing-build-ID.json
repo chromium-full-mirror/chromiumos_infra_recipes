@@ -391,24 +391,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "dummy-results-dir/autoserv_test/keyval",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "execution steps.original_test.read autotest keyval file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@keyval@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "execution steps.original_test.archive all test logs to Google Storage",
     "~followup_annotations": [
