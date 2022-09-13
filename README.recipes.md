@@ -436,8 +436,9 @@
   * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) (Python3 ✅) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata) (Python3 ✅)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full) (Python3 ✅)
-  * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
+  * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status) (Python3 ✅)
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect) (Python3 ✅)
+  * [orch_menu:tests/filter_child_builds](#recipes-orch_menu_tests_filter_child_builds) (Python3 ✅)
   * [orchestrator](#recipes-orchestrator) (Python3 ✅) &mdash; Recipe that schedules child builders and watches for failures.
   * [os_install_vm](#recipes-os_install_vm) (Python3 ✅) &mdash; Test reven (aka ChromeOS Flex) installation.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full) (Python3 ✅)
@@ -6950,7 +6951,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#839)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#844)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7016,7 +7017,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#768)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#773)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -7031,11 +7032,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#696)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#701)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#702)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#707)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -11291,9 +11292,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/orch_menu/tests/builds_status.py#6): [failures](#recipe_modules-failures), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
-PYTHON_VERSION_COMPATIBILITY: PY2
+PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/builds_status.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/builds_status.py#17)(api):**
 ### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/collect.py#6): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11301,6 +11302,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#22)(api, properties):**
+### *recipes* / [orch\_menu:tests/filter\_child\_builds](/recipe_modules/orch_menu/tests/filter_child_builds.py)
+
+[DEPS](/recipe_modules/orch_menu/tests/filter_child_builds.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/filter_child_builds.py#20)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#11): [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

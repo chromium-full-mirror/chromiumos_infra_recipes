@@ -9,6 +9,8 @@ DEPS = [
     'orch_menu',
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 

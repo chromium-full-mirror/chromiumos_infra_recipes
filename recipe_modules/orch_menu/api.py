@@ -523,8 +523,7 @@ class OrchMenuApi(RecipeApi):
                                      self.m.buildbucket.build.tags)):
         return self._builds_status
       completed_builds, collect_after = self._filter_schedule_wait_builds(
-          pres, self._bisect_builder_child_specs(),
-          extra_props=extra_child_props)
+          pres, self._get_child_specs(), extra_props=extra_child_props)
 
     self._collect_and_check_build_results(
         completed_builds, results_step_name=results_step_name,
@@ -573,18 +572,24 @@ class OrchMenuApi(RecipeApi):
         check_critical_step_name or 'non-critical build check', builds,
         failures)
 
-  def _bisect_builder_child_specs(self):
-    """Get the child_spec list from cros_bisect.
+  def _get_child_specs(self):
+    """Get the list of child specs this builder should run.
 
     Returns:
       (list[BuilderConfig.Orchestrator.ChildSpec]) The list of child_specs.
     """
-    return [
+    child_specs = [
         BuilderConfig.Orchestrator.ChildSpec(
             name=cb,
             collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT)
         for cb in self.m.cros_bisect.get_test_child_builders()
     ] or self.config.orchestrator.child_specs
+    if self._properties.filter_child_builds:
+      return [
+          cs for cs in child_specs
+          if cs.name in self._properties.filter_child_builds
+      ]
+    return child_specs
 
   def _filter_schedule_wait_builds(self, parent_step, child_specs,
                                    extra_props=None):

@@ -56,4 +56,7 @@ message OrchMenuProperties {
   // Branch of manifest-versions to upload to. Only used for release builders.
   // Defaults to 'release'.
   string manifest_versions_branch = 9;
+
+  // If non-empty, only launch child builders with child_spec.name listed here.
+  repeated string filter_child_builds = 10;
 }
