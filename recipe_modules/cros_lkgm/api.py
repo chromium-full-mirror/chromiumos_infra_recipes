@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The Chromium OS Authors. All rights reserved.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -61,8 +61,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
       is_staging = self.m.cros_infra_config.is_staging
       staging_prefix = 'staging-' if is_staging else ''
-      # TODO(b/239096715): Drop chromiumos- when builders are consolidated.
-      public_orch_name = '{}chromiumos-public-{}-orchestrator'.format(
+      public_orch_name = '{}public-{}-orchestrator'.format(
           staging_prefix, branch)
 
       buildspec_location = self.m.cros_release.buildspec.manifest_gs_path

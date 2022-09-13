@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The Chromium OS Authors. All rights reserved.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -30,10 +30,10 @@ def RunSteps(api):
   is_staging = api.cros_infra_config.is_staging
   if is_staging:
     api.assertions.assertEqual(build.builder.builder,
-                               'staging-chromiumos-public-main-orchestrator')
+                               'staging-public-main-orchestrator')
   else:
     api.assertions.assertEqual(build.builder.builder,
-                               'chromiumos-public-main-orchestrator')
+                               'public-main-orchestrator')
 
 
 def GenTests(api):

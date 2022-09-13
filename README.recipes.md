@@ -2777,13 +2777,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#92)(self):**
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#91)(self):**
 
 Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#109)(self, release_build_results, use_branch=False):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#108)(self, release_build_results, use_branch=False):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 

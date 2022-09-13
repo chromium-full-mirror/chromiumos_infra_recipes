@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -23,7 +23,7 @@ PROPERTIES = {
                  default='refs/heads/main'),
     'expected_builder':
         Property(kind=str, help='The expected builder name.',
-                 default='chromiumos-public-main-orchestrator'),
+                 default='public-main-orchestrator'),
 }
 
 
@@ -49,7 +49,7 @@ def GenTests(api):
               'chromeos.cros_infra_config.release_tot_builds_snapshot'
           ], bucket='release', builder='release-main-orchestrator').build,
       api.properties(expected_ref='refs/heads/snapshot'),
-      api.properties(expected_builder='chromiumos-public-main-orchestrator'),
+      api.properties(expected_builder='public-main-orchestrator'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
@@ -62,8 +62,7 @@ def GenTests(api):
           ], bucket='staging',
           builder='staging-release-main-orchestrator').build,
       api.properties(expected_ref='refs/heads/staging-snapshot'),
-      api.properties(
-          expected_builder='staging-chromiumos-public-main-orchestrator'),
+      api.properties(expected_builder='staging-public-main-orchestrator'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
