@@ -133,6 +133,10 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.exonerate.is_exonerated(
           test_result_pb2.TestResult(test_id='test1', variant=variant)), False)
+  api.assertions.assertEqual(
+      api.exonerate.get_tastless_name('tast.test_name'), 'test_name')
+  api.assertions.assertEqual(
+      api.exonerate.get_tastless_name('test_name'), 'test_name')
 
 
 def GenTests(api):

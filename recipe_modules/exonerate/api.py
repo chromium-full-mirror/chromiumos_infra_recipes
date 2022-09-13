@@ -54,6 +54,12 @@ class ExonerateApi(recipe_api.RecipeApi):
     else:
       return TestDisablementCfg()
 
+  def get_tastless_name(self, test_name):
+    """Return test_name without the tast prefix."""
+    if test_name.startswith('tast.'):
+      return test_name[5:]
+    return test_name
+
   def _load_configs(self):
     """Load configs from binary/json files."""
     self._exoneration_configs = {}
@@ -119,21 +125,22 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: TestCaseResult object changed based on the decision.
     """
-    targets = self._exoneration_configs[test_case.name]
+    test_name = self.get_tastless_name(test_case.name)
+    targets = self._exoneration_configs[test_name]
     if targets == []:
       # If targets is empty, match universally.
       bt_match = True
     else:
       bt_match = build_target in targets
     if bt_match:
-      self._add_log('Exonerated {} on {}'.format(test_case.name, build_target))
+      self._add_log('Exonerated {} on {}'.format(test_name, build_target))
       self._stats.test_count += 1
-      self._test_stats_map[test_case.name] += 1
-      self._exonerated_tests[test_case.name].add(build_target)
+      self._test_stats_map[test_name] += 1
+      self._exonerated_tests[test_name].add(build_target)
 
     if bt_match and not self._dry_run:
       return ExecuteResponse.TaskResult.TestCaseResult(
-          name=test_case.name, verdict=TaskState.VERDICT_PASSED,
+          name=test_name, verdict=TaskState.VERDICT_PASSED,
           human_readable_summary=('Exonerated: ' +
                                   test_case.human_readable_summary))
 
@@ -160,7 +167,8 @@ class ExonerateApi(recipe_api.RecipeApi):
         # If test didn't fail, noop.
         new_test_cases.append(test_case)
       else:
-        if test_case.name in self._exoneration_configs:
+        test_name = self.get_tastless_name(test_case.name)
+        if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
         else:
@@ -259,21 +267,21 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: test case dictionary changed based on the decision.
     """
-    targets = self._exoneration_configs[test_case['name']]
+    test_name = test_case['name']
+    targets = self._exoneration_configs[test_name]
     if targets == []:
       # If targets is empty, match universally.
       bt_match = True
     else:
       bt_match = build_target in targets
     if bt_match:
-      self._add_log('Exonerated {} on {}'.format(test_case['name'],
-                                                 build_target))
+      self._add_log('Exonerated {} on {}'.format(test_name, build_target))
       self._stats.test_count += 1
-      self._test_stats_map[test_case['name']] += 1
-      self._exonerated_tests[test_case['name']].add(build_target)
+      self._test_stats_map[test_name] += 1
+      self._exonerated_tests[test_name].add(build_target)
 
     if bt_match and not self._dry_run:
-      return {'name': test_case['name'], 'verdict': 'VERDICT_PASSED'}
+      return {'name': test_name, 'verdict': 'VERDICT_PASSED'}
 
     return test_case
 
@@ -293,8 +301,9 @@ class ExonerateApi(recipe_api.RecipeApi):
       return [], common_pb2.FAILURE
     new_test_cases = []
     for test_case in all_test_cases:
+      test_name = test_case['name']
       if (test_case['verdict'] != 'VERDICT_FAILED' or
-          test_case['name'] not in self._exoneration_configs):
+          test_name not in self._exoneration_configs):
         new_test_cases.append(test_case)
       else:
         new_test_case = self.exonerate_vm_testcase(test_case, build_target)
