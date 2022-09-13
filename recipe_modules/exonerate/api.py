@@ -168,6 +168,11 @@ class ExonerateApi(recipe_api.RecipeApi):
         new_test_cases.append(test_case)
       else:
         test_name = self.get_tastless_name(test_case.name)
+        if test_name == 'tast':
+          # See http://b/246571825 for context. This test case only exists to
+          # summarize failures. Remove from the list to let exoneration work
+          # on actual test cases.
+          continue
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)

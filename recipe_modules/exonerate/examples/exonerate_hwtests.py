@@ -36,6 +36,9 @@ def RunSteps(api):
       ExecuteResponse.TaskResult.TestCaseResult(
           name='test3', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='blah blah line 42:something went wrong'),
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='tast', verdict=TaskState.VERDICT_FAILED,
+          human_readable_summary='2 failures: test2, test3'),
   ]
   failing_unexonerable_test_case = [
       ExecuteResponse.TaskResult.TestCaseResult(

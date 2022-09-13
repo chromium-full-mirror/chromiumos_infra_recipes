@@ -4896,7 +4896,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#218)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#223)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -4907,7 +4907,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#260)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#265)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -4918,7 +4918,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#288)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#293)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4930,7 +4930,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#319)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#324)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -4950,7 +4950,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#387)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#392)(self):**
 
 Return markdown style info about suites that were exonerated.
 
@@ -4960,7 +4960,7 @@ Returns: str in markdown style.
 
 Return test_name without the tast prefix.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#371)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#376)(self, test_result):**
 
 Whether the test_result was exonerated.
 
