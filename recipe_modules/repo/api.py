@@ -329,8 +329,8 @@ class RepoApi(recipe_api.RecipeApi):
             pres.logs['repo-info stdout'] = self.report_manifest_branch_state(
                 test_failure=test_manifest_branch_state_failure)
           except StepFailure as e:
-            # Don't fail the builder on issues reporting manifest branch state.
-            pres.status = self.m.step.INFRA_FAILURE
+            # Failure on this should not stop the build
+            pres.status = self.m.step.WARNING
             pres.step_text = 'failure reporting manifest branch state {}'.format(
                 e)
       if step_exception:
