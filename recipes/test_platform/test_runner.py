@@ -624,10 +624,6 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
   if build_target:
     base_variant['build_target'] = build_target
 
-  suite = api.cros_tags.get_values('suite')
-  if suite:
-    base_variant['suite'] = suite[0]
-
   # The template of a parent_request_uid is
   # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
   # tagged_request key is the test config's display_name in
@@ -636,6 +632,11 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
       parent_request_uid.split('/')[-1] if parent_request_uid else '')
   if test_config_display_name:
     base_variant['test_config'] = test_config_display_name
+
+  # Fetches the following information from the autotest.keyvals in the request.
+  suite = autotest_keyvals['suite']
+  if suite:
+    base_variant['suite'] = suite
 
   builder_name = autotest_keyvals['build_config']
   if builder_name:
@@ -1524,7 +1525,22 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 'name': 'dummy_name',
                 'test_args': test_arg,
                 'keyvals': {
-                    'key1': 'value1',
+                    'branch':
+                        'release-R105-14989.B',
+                    'build':
+                        'guybrush-release/R105-14989.97.0',
+                    'build_config':
+                        'guybrush-release',
+                    'cidb_build_id':
+                        '5233649',
+                    'label':
+                        'guybrush-release/R105-14989.97.0/bvt-perbuild/graphics_Idle.arc',
+                    'master_build_config':
+                        'master-release',
+                    'parent_job_id':
+                        '5d39c90af9d1ab11',
+                    'suite':
+                        'bvt-perbuild'
                 },
                 'is_client_test': True,
                 'display_name': 'fancy_name'
