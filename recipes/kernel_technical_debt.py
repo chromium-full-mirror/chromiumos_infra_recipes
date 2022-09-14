@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -21,7 +21,7 @@ DEPS = {
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 TECH_DEBT_ALIAS = 'cros-kernel-upstream-debt-review@google.com'
-TECH_DEBT_MSG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug A member of the review committee will review the CL. Thank you'
+TECH_DEBT_MSG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it. A member of the review committee will review the CL. Thank you'
 TECH_DEBT_PROJECTS = {'chromiumos/third_party/kernel'}
 
 
@@ -57,14 +57,9 @@ def RunSteps(api):
   with api.step.nest('check tag') as presentation:
     message = patch_set.commit_info.get('message')
     if not re.search(r'\nUPSTREAM-TASK=b:\d+[ \t]*\n', message):
-      suggestions = [{
-          'description': 'Add UPSTREAM-TASK tag to your commit message.'
-      }]
-      api.tricium.add_comment('Technical debt', TECH_DEBT_MSG, '/COMMIT_MSG',
-                              suggestions=suggestions)
+      api.tricium.add_comment('Technical debt', TECH_DEBT_MSG, '/COMMIT_MSG')
       api.tricium.write_comments()
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
-      return
 
   with api.step.nest('get reviewers') as presentation:
     reviewers = api.depot_gerrit.call_raw_api(
@@ -153,10 +148,10 @@ def GenTests(api):
   yield api.test(
       'downstream', test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'fetch patch set', changes,
-          gen_patch_sets('CHROMIUM: IPU6 non Kcam')),
-      api.post_check(post_process.StepSuccess, 'check tag'),
-      api.post_check(post_process.DoesNotRun, 'get reviewers'),
+          'fetch patch set', changes, gen_patch_sets('CHROMIUM: IPU6 non Kcam'))
+      + api.step_data('get reviewers.gerrit raw_get_reviewers',
+                      api.depot_gerrit.m.json.output([])),
+      api.post_check(post_process.StepSuccess, 'add reviewer'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
@@ -170,8 +165,7 @@ def GenTests(api):
           'get reviewers.gerrit raw_get_reviewers',
           api.depot_gerrit.m.json.output([{
               'email': 'cros-kernel-upstream-debt-review@google.com'
-          }])), api.post_check(post_process.StepSuccess, 'validate inputs'),
-      api.post_check(post_process.StepSuccess, 'get reviewers'),
+          }])), api.post_check(post_process.StepSuccess, 'get reviewers'),
       api.post_check(post_process.DoesNotRun, 'add reviewer'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
