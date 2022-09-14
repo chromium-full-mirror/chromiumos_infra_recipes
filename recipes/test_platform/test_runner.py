@@ -431,6 +431,10 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
         e.g. R102-14632.0.0-62834-8818718496810023809
     * declared_name:
         e.g. hatch-cq/R102-14632.0.0-62834-8818718496810023809/wificell-cq/tast.wificell-cq
+    * board:
+        e.g. hatch
+    * model:
+        e.g. nipperkin
     * drone:
         e.g. skylab-drone-deployment-prod-6dc79d4f9-czjlj
     * drone_server:
@@ -495,7 +499,21 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   if declared_name:
     base_tags.append(('declared_name', declared_name[0]))
 
-  # Fetches the following information from buildbucket.swarming.
+  # Fetches the following information from buildbucket.swarming bot dimensions.
+  board = api.cros_tags.get_values(
+      'label-board', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if not board:
+    board = api.cros_tags.get_values('label-board')
+  if board:
+    base_tags.append(('board', board[0]))
+
+  model = api.cros_tags.get_values(
+      'label-model', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if not model:
+    model = api.cros_tags.get_values('label-model')
+  if model:
+    base_tags.append(('model', model[0]))
+
   drone = api.cros_tags.get_values(
       'drone', api.buildbucket.build.infra.swarming.bot_dimensions)
   if drone:
@@ -602,16 +620,10 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
 
   # Fetches the following information from buildbucket build tags.
   board = api.cros_tags.get_values('label-board')
-  if not board:
-    board = api.cros_tags.get_values(
-        'label-board', api.buildbucket.build.infra.swarming.bot_dimensions)
   if board:
     base_variant['board'] = board[0]
 
   model = api.cros_tags.get_values('label-model')
-  if not model:
-    model = api.cros_tags.get_values(
-        'label-model', api.buildbucket.build.infra.swarming.bot_dimensions)
   if model:
     base_variant['model'] = model[0]
 
