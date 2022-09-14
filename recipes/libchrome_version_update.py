@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -81,7 +81,7 @@ def RunSteps(api):
           api.git.push(
               project_info.remote,
               # TODO(fqj): change to %submit once stablized.
-              'HEAD:refs/for/main%r=fqj@google.com,r=hscham@chromium.org,l=Commit-Queue+1',
+              'HEAD:refs/for/main%r=fqj@google.com,r=hscham@chromium.org,l=Commit-Queue+2,l=Bot-Commit+1',
               dry_run=api.build_menu.is_staging)
 
 
