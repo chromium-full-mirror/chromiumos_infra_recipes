@@ -76,6 +76,7 @@
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  devinstall_prebuilts_gs_bucket: \"chromeos-dev-installer\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@chrome {@@@",
       "@@@STEP_LOG_LINE@builder config@  internal: true@@@",
@@ -5613,7 +5614,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"/build/cloudready-release-R90-13816.B\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"uploadsDir\": \"[CLEANUP]/binhosts_tmp_1\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs:///board/cloudready-release-R90-13816.B/1234.56.0/packages\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://chromeos-dev-installer/board/cloudready-release-R90-13816.B/1234.56.0/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"upload_targets\": [{\"path\": \"foo.tbz2\"}]}@@@",
@@ -5628,7 +5629,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"cloudready-release-R90-13816.B\"\n    },\n    \"path\": \"/build/cloudready-release-R90-13816.B\"\n  },\n  \"uploadsDir\": \"[CLEANUP]/binhosts_tmp_1\",\n  \"uri\": \"gs:///board/cloudready-release-R90-13816.B/1234.56.0/packages\"\n}",
+      "{\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"cloudready-release-R90-13816.B\"\n    },\n    \"path\": \"/build/cloudready-release-R90-13816.B\"\n  },\n  \"uploadsDir\": \"[CLEANUP]/binhosts_tmp_1\",\n  \"uri\": \"gs://chromeos-dev-installer/board/cloudready-release-R90-13816.B/1234.56.0/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5777,7 +5778,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/prebuilts_tmp_1",
-      "gs:///board/cloudready-release-R90-13816.B/1234.56.0/packages"
+      "gs://chromeos-dev-installer/board/cloudready-release-R90-13816.B/1234.56.0/packages"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -5812,7 +5813,7 @@
       "-r",
       "-u",
       "AllUsers:R",
-      "gs:///board/cloudready-release-R90-13816.B/1234.56.0/packages"
+      "gs://chromeos-dev-installer/board/cloudready-release-R90-13816.B/1234.56.0/packages"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

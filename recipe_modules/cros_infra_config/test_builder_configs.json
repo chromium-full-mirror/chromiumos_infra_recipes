@@ -1759,6 +1759,7 @@
       "artifacts": {
         "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-releases-test",
+        "devinstallPrebuiltsGsBucket": "chromeos-dev-installer",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [

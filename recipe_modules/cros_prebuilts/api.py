@@ -510,7 +510,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
       kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
     """
-    with self.m.step.nest('upload devinstall prebuilts'):
+    with self.m.step.nest('upload devinstall prebuilts') as presentation:
+      if not gs_bucket:
+        presentation.step_text = 'no bucket specified, skipping'
+        return
       # First, set up the ACLs. dev_install prebuilts should always be public.
       acls = [binhost_pb.AclArgsResponse.AclArg(arg='-u', value='AllUsers:R')]
 

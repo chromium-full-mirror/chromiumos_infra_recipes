@@ -48,7 +48,24 @@ def RunSteps(api, properties):
                                                  properties.gs_bucket)
 
 
+  api.cros_prebuilts.upload_devinstall_prebuilts(properties.build_target,
+                                                 properties.sysroot, None)
+
+
 def GenTests(api):
+
+  def StepTextEquals(check, step_odict, step, expected):
+    """Check that the step's text equals given value.
+
+    Args:
+      step (str) - The step to check the step text of.
+      expected (str) - The expected text of the step.
+
+    Usage:
+      yield TEST + \
+          api.post_process(StepTextEquals, 'step-name', 'expected-text')
+    """
+    check(step_odict[step].step_text == expected)
 
   def make_package_indexes(gs_bucket, target, profile=None, count=4):
     profile = profile or Profile()
@@ -145,7 +162,10 @@ def GenTests(api):
                    '.gerrit transaction.git push'),
                   stderr=api.raw_io.output_text(
                       ('remote:   https://chromium-review.googlesource'
-                       '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
+                       '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
+              api.post_process(StepTextEquals,
+                               'upload devinstall prebuilts (2)',
+                               'no bucket specified, skipping'))
 
   yield api.test('disable-overlay-commits',
                  test_data(commit_overlay_binhost=False))

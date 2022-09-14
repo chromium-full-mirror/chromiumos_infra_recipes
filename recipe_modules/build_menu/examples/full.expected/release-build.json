@@ -76,6 +76,7 @@
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  devinstall_prebuilts_gs_bucket: \"chromeos-dev-installer\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@chrome {@@@",
       "@@@STEP_LOG_LINE@builder config@  internal: true@@@",
