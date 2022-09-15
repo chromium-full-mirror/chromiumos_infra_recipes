@@ -49,6 +49,8 @@
       "--repo-rev=stable",
       "--manifest-name",
       "../tmp_manifest",
+      "--manifest-depth",
+      "0",
       "--verbose"
     ],
     "cwd": "[START_DIR]/repo",
@@ -241,7 +243,8 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "empty-projects"
+      "no-projects",
+      "--all"
     ],
     "cwd": "[START_DIR]/repo",
     "env_suffixes": {
@@ -259,7 +262,8 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "abandon",
-      "empty-projects"
+      "no-projects",
+      "--all"
     ],
     "cwd": "[START_DIR]/repo",
     "env_suffixes": {

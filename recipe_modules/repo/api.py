@@ -10,6 +10,9 @@ See: https://chromium.googlesource.com/external/repo/
 
 from google.protobuf.json_format import MessageToDict
 from collections import defaultdict, namedtuple
+# There's a bug in the version of pylint used for python 2 presubmit checks, so
+# disable the import check. https://github.com/PyCQA/pylint/issues/5645.
+import distutils.version  # pylint: disable=no-name-in-module
 import json
 import re
 import six
@@ -25,6 +28,7 @@ MANIFEST_MOCK = """
       <project path="SAMPLE" revision="FROM_REV"/>
     </manifest>
   """
+MANIFEST_DEPTH_VERSION = '2.29'
 
 ManifestDiff = namedtuple('ManifestDiff',
                           ['name', 'path', 'from_rev', 'to_rev'])
@@ -148,14 +152,48 @@ class RepoApi(recipe_api.RecipeApi):
         self._step(['forall'] + base_args,
                    'retry clear git locks without projects')
 
-  def version(self):
-    """Prints the current version information of repo."""
-    self._step(['version'], 'repo version', infra_step=True)
+  def version(self, return_version=False):
+    """Gets the version info retrieved by running `repo version`.
+
+    Args:
+      return_version (bool): If true, return just the parsed version. If false,
+        emit the full version command text into the step's stdout.
+    """
+    output = self._step(
+        ['version'], 'repo version', infra_step=True,
+        stdout=self.m.raw_io.output_text() if return_version else None)
+    if return_version:
+      match = re.match(r'repo version v([0-9.]+)', output.stdout)
+      return match.group(1) if match else ''
+    else:
+      return output
+
+  def version_at_least(self, version_string):
+    """Checks to make sure repo version is as least the specified version.
+
+    Args:
+      version_string (str): the minimum version in format #.#(.#).
+
+    Returns:
+      True if the minimum version is satisfied, otherwise False.
+    """
+    with self.m.step.nest(
+        'check if repo version is at least {}'.format(version_string)):
+      current_version_string = self.version(return_version=True)
+      if current_version_string:
+        # Note: distutils is slated for deprecation in python 3.12. We should
+        # explore replacing this with a suitable alternative, which will be made
+        # easier when we're off python 2. See b/197782701.
+        min_version = distutils.version.LooseVersion(version_string)
+        cur_version = distutils.version.LooseVersion(current_version_string)
+        return cur_version >= min_version
+
+    return False
 
   def init(self, manifest_url, _kwonly=(), manifest_branch='', reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
            local_manifests=None, manifest_name=None, projects=None,
-           verbose=True, clean=True):
+           verbose=True, clean=True, manifest_depth=None):
     """Executes 'repo init' with the given arguments.
 
     Args:
@@ -172,6 +210,7 @@ class RepoApi(recipe_api.RecipeApi):
       projects (list[str]): Projects of concern or None if all projects are of
         concern. Ignored as of go/cros-source-cache-health.
       verbose (bool): Whether to produce verbose output.
+      manifest_depth (str): Value to pass in as manifest-depth to repo.
     """
     assert _kwonly == (), 'init accepts only 1 positional arg'
     _ = projects
@@ -203,6 +242,9 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--no-repo-verify']
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
+    # When repo in prod is at least 2.29, this check can be removed.
+    if manifest_depth and self.version_at_least(MANIFEST_DEPTH_VERSION):
+      cmd += ['--manifest-depth', manifest_depth]
     if verbose:
       cmd += ['--verbose']
     self._step(cmd, timeout=15 * 60)
@@ -320,8 +362,8 @@ class RepoApi(recipe_api.RecipeApi):
               pres.logs['repo-event-log'] = event_log_text
               self._export_sync_stats(event_log_text)
           except StepFailure as e:
-            # Don't fail the builder on issues reporting stats.
-            pres.status = self.m.step.INFRA_FAILURE
+            # Failure on this should not stop the build.
+            pres.status = self.m.step.WARNING
             pres.step_text = 'failure reading repo request logs {}'.format(e)
       if manifest_branch_state:
         with self.m.step.nest('repo info') as pres:
@@ -329,8 +371,8 @@ class RepoApi(recipe_api.RecipeApi):
             pres.logs['repo-info stdout'] = self.report_manifest_branch_state(
                 test_failure=test_manifest_branch_state_failure)
           except StepFailure as e:
-            # Failure on this should not stop the build
-            pres.status = self.m.step.WARNING
+            # Don't fail the builder on issues reporting manifest branch state.
+            pres.status = self.m.step.INFRA_FAILURE
             pres.step_text = 'failure reporting manifest branch state {}'.format(
                 e)
       if step_exception:
@@ -423,7 +465,8 @@ class RepoApi(recipe_api.RecipeApi):
     manifest_relpath = self.m.path.relpath(manifest_path, repo_manifests_path)
 
     init_opts = {"projects": kwargs.get("projects", None)}
-    self.init(manifest_url, manifest_name=manifest_relpath, **init_opts)
+    self.init(manifest_url, manifest_name=manifest_relpath, manifest_depth='0',
+              **init_opts)
     self.sync(**kwargs)
 
   def start(self, branch, projects=None):
