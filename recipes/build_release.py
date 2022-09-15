@@ -214,6 +214,11 @@ def DoRunSteps(api, config, properties):
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,
                                         properties.latest_files_gs_path)
 
+  # Mark whether the suite_scheduling query for firmware should find this.
+  # Should happen for all release builds, but not in staging.
+  api.easy.set_properties_step(
+      suite_scheduling=str(not api.cros_infra_config.is_staging))
+
 
 def GenTests(api):
   manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
