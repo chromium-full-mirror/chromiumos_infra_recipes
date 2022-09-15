@@ -21,3 +21,6 @@ recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
 # Changes to subdirectories or modules cause machine-generated updates to
 # README.recipes.md, so exclude it from OWNERS enforcement.
 per-file README.recipes.md=*
+
+# These are generated files checked by presubmit.
+per-file .../*.expected/*.json=*
