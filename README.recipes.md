@@ -2834,11 +2834,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 API for working with Paygen and its config.
 
-#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#329)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPaygenApi](/recipe_modules/cros_paygen/api.py#320)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_au\_test\_configs](/recipe_modules/cros_paygen/api.py#588)(self, gen_req, configured_payloads, au_testing_models, au_fsi_testing_models, delta_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&mdash; **def [create\_au\_test\_configs](/recipe_modules/cros_paygen/api.py#579)(self, gen_req, configured_payloads, au_testing_models, au_fsi_testing_models, delta_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):**
 
 Determine which hardware tests need to be run for the given payload.
 
@@ -2858,7 +2858,13 @@ Returns:
   list[AutoupdateTestConfig]: Test configs that should be
     run for the requested payload.
 
-&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/cros_paygen/api.py#849)(self, req, payload_uri):**
+&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/cros_paygen/api.py#1150)(self, paygen_test_configs):**
+
+Takes in paygen test configs and creates au test requests.
+
+This is its own method mainly for testing.
+
+&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/cros_paygen/api.py#840)(self, req, payload_uri):**
 
 Prepare payload information for the release pubsub.
 
@@ -2869,7 +2875,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#1063)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None, src_bucket=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/cros_paygen/api.py#1054)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None, src_bucket=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -2892,9 +2898,9 @@ Returns:
   A PaygenTestConfig or None if no source payload exists or unsupported
   Payload provided.
 
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#398)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/cros_paygen/api.py#389)(self):**
 
-&mdash; **def [get\_builder\_configs](/recipe_modules/cros_paygen/api.py#402)(self, builder_name, \*\*kwargs):**
+&mdash; **def [get\_builder\_configs](/recipe_modules/cros_paygen/api.py#393)(self, builder_name, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -2927,7 +2933,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#473)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/cros_paygen/api.py#464)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, dryrun):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -2946,7 +2952,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#546)(self, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_full\_requests](/recipe_modules/cros_paygen/api.py#537)(self, tgt_artifacts, bucket, verify, dryrun):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -2959,7 +2965,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/cros_paygen/api.py#443)(self, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/cros_paygen/api.py#434)(self, tgt_artifacts, bucket, verify, dryrun):**
 
 Generate a N2N testing payloads.
 
@@ -2976,11 +2982,11 @@ Args:
 Returns:
   A list[GenerationRequest] or [].
 
-&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/cros_paygen/api.py#350)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/cros_paygen/api.py#341)(self):**
 
 Get the currently configured paygen timeout in seconds.
 
-&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/cros_paygen/api.py#355)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/cros_paygen/api.py#346)(self):**
 
 Get the currently configured paygen orchestrator timeout in seconds.
 
@@ -2989,7 +2995,7 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/cros_paygen/api.py#640)(self, paygen_reqs):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/cros_paygen/api.py#631)(self, paygen_reqs):**
 
 Launch paygen builders to generate payloads and run configured tests.
 
@@ -3000,7 +3006,7 @@ Args:
 Returns:
   A list of completed builds.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1159)(self, paygen_test_configs):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/cros_paygen/api.py#1182)(self, paygen_test_configs):**
 
 Schedule Paygen autoupdate (AU) tests.
 

@@ -89,6 +89,18 @@ def RunSteps(api):
       api.cros_paygen.schedule_au_tests([paygen_test_config_13414]))
   paygen_test_config_13414._applicable_models = applicable_models
 
+  # Test test config merging by model.
+  _, requests = api.cros_paygen.create_au_test_tagged_requests(
+      [paygen_test_config_13414, paygen_test_config_13414_no_models])
+  api.assertions.assertEqual(
+      3,  # 3 because two models and one for no specific model.
+      len(requests.keys()))
+  _, requests = api.cros_paygen.create_au_test_tagged_requests(
+      [paygen_test_config_13414, paygen_test_config_13413])
+  api.assertions.assertEqual(
+      2,  # 2 because two models (and test configs should be merged).
+      len(requests.keys()))
+
 
 def GenTests(api):
   yield api.test('basic', api.post_check(post_process.StatusSuccess),
