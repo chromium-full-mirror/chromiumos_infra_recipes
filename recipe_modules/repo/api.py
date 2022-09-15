@@ -462,6 +462,9 @@ class RepoApi(recipe_api.RecipeApi):
     ProjectInfos are the union, without duplicates, of what each would
     return separately.
 
+    Note that this doesn't guarantee that the return value has no duplicates.
+    The caller will need to handle that themselves.
+
     Args:
       projects (list[str]): Project names or paths to return info for. Defaults
         to all projects.

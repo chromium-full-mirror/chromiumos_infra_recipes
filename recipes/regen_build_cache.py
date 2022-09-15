@@ -57,7 +57,7 @@ def RunSteps(api):
         overlay_dirs = [overlay.path for overlay in overlays]
         with api.step.nest('commit and push metadata'):
           projects = api.repo.project_infos(projects=overlay_dirs)
-          for project in projects:
+          for project in sorted(set(projects)):
             # Don't abort early if updating one project fails -- we still want
             # to update all the others.
             with api.context(
