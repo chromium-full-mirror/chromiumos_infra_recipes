@@ -22,13 +22,17 @@ CONFIG = "release/release_builders.textpb"
 CHROMITE_ANDROID = "lib/constants.py"
 
 LEGACY_RELEASE_BLOCK_TEMPLATE = """
-      ('{}',
-       ['kevin-android-pi-pre-flight-branch',
-        'hatch-android-rvc-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
+        (
+            "{}",
+            [
+                "kevin-android-pi-pre-flight-branch",
+                "hatch-android-rvc-pre-flight-branch",
+            ],
+            "",
+            [],
+            [],
+            config_lib.LUCI_BUILDER_LEGACY_RELEASE,
+        ),
 """
 
 TEST_DATA = ReleaseBuilders(builders=[
@@ -139,13 +143,13 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         r'(?P<releases>(\n|.)*)# BOT-TAG:RELEASES_END'
       res = re.search(LEGACY_REGEX, file_contents)
       if not res:
-        raise StepFailure("malformated legacy config")
+        raise StepFailure("couldn't find release block")
 
       # Isolate 'RELEASES = [' section.
       legacy_block = res.group('releases').strip()
       if not legacy_block.startswith(
           "RELEASES = [") or not legacy_block.endswith("]"):
-        raise StepFailure("malformated legacy config")
+        raise StepFailure("couldn't parse release block")
 
       builder_block = legacy_block[len("RELEASES = ["):-1].strip()
       builders = [x for x in builder_block.split("),")]
@@ -157,7 +161,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       def get_builder_info(builder_text):
         # This regex collects any leading comments as well as the branch name
         # (which should be the first item in the tuple).
-        BRANCH_NAME_REGEX = r'(?P<cmts>(#.*\s*)*)\s*\n*\(\'(?P<branch>.*)\''
+        BRANCH_NAME_REGEX = r'(?P<cmts>(#.*\s*)*)\s*\n*\([\n\s]*[\'\"](?P<branch>.*)[\'\"]'
         res = re.search(BRANCH_NAME_REGEX, builder_text)
         if not res:
           return None
@@ -178,7 +182,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       for builder in builders:
         info = get_builder_info(builder)
         if not info:
-          raise StepFailure("malformated legacy config")
+          raise StepFailure("couldn't get builder info")
         builder_info[builder] = info
         if info.milestone > 0 and "# BOT-TAG:NO_PRUNE" not in info.comments:
           pruneable.append(builder)

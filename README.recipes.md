@@ -3152,9 +3152,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#56)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#60)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#220)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#224)(self, release_branch):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -10021,13 +10021,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#186)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#191)(api, properties):**
 
 &mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#21)(\*blocks):**
 
-&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#88)(\*blocks):**
+&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#93)(\*blocks):**
 
-&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#140)(number, branch_name, expiration_date=None):**
+&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#145)(number, branch_name, expiration_date=None):**
 ### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_util/examples/full.py#8): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

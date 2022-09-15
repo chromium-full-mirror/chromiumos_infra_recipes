@@ -96,7 +96,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "malformated legacy config"
+      "humanReason": "couldn't find release block"
     },
     "name": "$result"
   }

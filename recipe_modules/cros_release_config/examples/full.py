@@ -29,14 +29,19 @@ def construct_legacy_config(*blocks):
 
 
 LEGACY_BLOCK_NEW = """
-      ('{}',
-       ['kevin-android-pi-pre-flight-branch',
-        'hatch-android-rvc-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
+        (
+            "{}",
+            [
+                "kevin-android-pi-pre-flight-branch",
+                "hatch-android-rvc-pre-flight-branch",
+            ],
+            "",
+            [],
+            [],
+            config_lib.LUCI_BUILDER_LEGACY_RELEASE,
+        ),
 """
+
 LEGACY_BLOCK_4 = """
       # This is a branch.
       ('release-R04-13729.B',
@@ -72,7 +77,7 @@ LEGACY_BLOCK_1 = """
 
       # LTS branch, please do not delete. Contact: cros-lts-team@google.com.
       # BOT-TAG:NO_PRUNE
-      ('release-R01-13421.B',
+      ("release-R01-13421.B",
        ['grunt-android-pi-pre-flight-branch'],
        'chell-chrome-no-afdo-uprev-pre-flight-branch',
        ['orderfile-generate-toolchain',
