@@ -243,7 +243,7 @@ def _collect_tests_for_phosphorus(request):
   return tests
 
 
-def _populate_additional_info_for_autotest_result(api, result,
+def _populate_additional_info_for_autotest_result(api, autotest_result,
                                                   autotest_keyval_file):
   """Populates additional information for autotest results, e.g. full test name,
   timestamps.
@@ -252,22 +252,14 @@ def _populate_additional_info_for_autotest_result(api, result,
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
-  * result (DUTResult): The result for all tests run in this run without
-        timestamp information.
-  * autotest_keyval_file (dict): The contents for autotest keyval file
-        in logs.
+  * autotest_result (AutotestProto): The Autotest result for all tests run in
+      this run.
+  * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
 
   Returns:
-  * autotest_result (DUTResult): The result for all tests run in this run with
-        timestamp information.
+  * autotest_result (AutotestProto): The Autotest result for all tests run in
+      this run. Modify the input Autotest result and add additional information.
   """
-  # Initializes a new autotest result proto with required fields instead of
-  # modifying the original DUT result object directly.
-  autotest_result = Result(autotest_result=result.data.autotest_result,
-                           log_data=result.data.log_data,
-                           prejob=result.data.prejob,
-                           state_update=result.data.state_update)
-
   # Gets the full test name from the "display_name" label.
   # Example: "volteer-release/R107-15099.0.0/bluetooth_e2e/bluetooth_AdapterQRHealth.qr_check_states_test"
   full_test_name = ''
@@ -293,6 +285,82 @@ def _populate_additional_info_for_autotest_result(api, result,
             timestamp_pb2.Timestamp(
                 seconds=int(autotest_keyval_file.get('job_finished'))))
 
+  return autotest_result
+
+
+def _get_unexpected_skip_reason_for_autotest(result):
+  """Return all the unexpected skip reasons if the Autotest test never ran and
+  got skipped unexpectedly.
+
+  Note: this check is mainly for Autotest results. In general, there is only
+  one Autotest test result for each test case.
+
+  Context: b/245017288
+
+  Args:
+  * result (DUTResult): The result for all tests run in this run.
+
+  Returns:
+  * unexpected_skip_reason (string): The unexpected skip reason. Return empty
+        if the unexpected skip condition doesn't meet.
+  """
+  unexpected_skip_reasons = []
+
+  if result.prejob_failed():
+    # Checks if the prejob state succeeded.
+    unexpected_skip_reasons.append('Failed prejob')
+  elif result.get_prejob_steps():
+    # Checks if the first prejob was a failed provision.
+    first_prejob = result.get_prejob_steps()[0]
+    if first_prejob.name == 'provision' \
+        and first_prejob.verdict != Result.Prejob.Step.VERDICT_PASS:
+      failure_reason = first_prejob.human_readable_summary if first_prejob.human_readable_summary else 'N/A'
+      unexpected_skip_reasons.append('Failed provision: ' + failure_reason)
+
+  # Checks if the test run was incomplete.
+  if result.is_test_incomplete():
+    unexpected_skip_reasons.append('Incomplete test run')
+
+  return '[UNEXPECTED SKIP] Incomplete result caused by: ' + ' | '.join(
+      unexpected_skip_reasons) if unexpected_skip_reasons else ''
+
+
+def _process_incomplete_test(api, result, autotest_result):
+  """Constructs a placeholder test case manually for incomplete test.
+
+  Context: b/244263157, crbug.com/964028
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * result (DUTResult): The result for all tests run in this run.
+  * autotest_result (AutotestProto): The Autotest result proto for all tests run
+      in this run.
+
+  Returns:
+  * autotest_result (AutotestProto): The Autotest result proto for all tests
+      run. Append the input Autotest result with a new test case for incomplete
+      result.
+  """
+  # Gets the full test name from the "display_name" label.
+  # Example: "volteer-release/R107-15099.0.0/bluetooth_e2e/bluetooth_AdapterQRHealth.qr_check_states_test"
+  full_test_name = ''
+  declared_name = api.cros_tags.get_values('display_name')
+  if declared_name:
+    index = declared_name[0].rfind('/')
+    if index != -1:
+      full_test_name = declared_name[0][index + 1:]
+
+  # Skips if no test name is provided.
+  if not full_test_name:
+    return autotest_result
+
+  # Construct a placeholder test case manually.
+  test_case = Result.Autotest.TestCase(
+      name=full_test_name,
+      human_readable_summary=_get_unexpected_skip_reason_for_autotest(result),
+      verdict=Result.Autotest.TestCase.VERDICT_NO_VERDICT)
+
+  autotest_result.autotest_result.test_cases.append(test_case)
   return autotest_result
 
 
@@ -384,16 +452,17 @@ def _read_test_result_file(api, test_result_file_path):
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
-  * test_result_file_path (string): The path to the test result file.
+  * test_result_file_path (Path): The path to the test result file.
   Returns:
   * content (string): The content of the test results.
   """
   try:
-    content = api.file.read_text('read test result file', test_result_file_path,
-                                 test_data='')
+    file_name = api.path.basename(test_result_file_path)
+    content = api.file.read_text('read test results from ' + file_name,
+                                 test_result_file_path, test_data='')
     return content if content else ''
   except (api.file.Error, FileNotFoundError):
-    api.step.active_result.presentation.status = api.step.WARNING
+    api.step.active_result.presentation.status = api.step.FAILURE
     return None
 
 
@@ -413,6 +482,38 @@ def _convert_to_task_request_id(swarming_task_run_id):
     return ''
 
   return swarming_task_run_id[:-1] + "0"
+
+
+def _generate_initial_resultdb_base_tags(test_metadata):
+  """Generate the base tags for the test results based on the initial test
+  metadata.
+
+  Args:
+  * test_metadata (DUTTestMetadata): All metadata needed for the interface
+      to access a test.
+  Returns:
+  * base_tags (list[tuples]): Tags for the test results.
+  """
+  base_tags = []
+  declared_name = test_metadata.test.autotest.display_name
+  if declared_name:
+    base_tags.append(('declared_name', declared_name))
+
+  build_tag = test_metadata.test.autotest.keyvals.get('build')
+  if build_tag:
+    base_tags.append(('image', build_tag))
+    base_tags.append(('build', build_tag.split('/')[-1]))
+
+  branch = test_metadata.test.autotest.keyvals.get('branch')
+  if branch:
+    base_tags.append(('branch', branch))
+
+  main_builder_name = test_metadata.test.autotest.keyvals.get(
+      'master_build_config')
+  if main_builder_name:
+    base_tags.append(('main_builder_name', main_builder_name))
+
+  return base_tags
 
 
 def _generate_resultdb_base_tags(api, properties, test_metadata,
@@ -645,6 +746,29 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   return base_tags
 
 
+def _generate_initial_resultdb_variant_def(test_metadata):
+  """Generate the variant defintions for the test results based on the initial
+  test metadata.
+
+  Args:
+  * test_metadata (DUTTestMetadata): All metadata needed for the interface
+      to access a test.
+  Returns:
+  * base_variant (dict): Variant attributes for the test results.
+  """
+  base_variant = {}
+
+  suite = test_metadata.test.autotest.keyvals.get('suite')
+  if suite:
+    base_variant['suite'] = suite
+
+  builder_name = test_metadata.test.autotest.keyvals.get('build_config')
+  if builder_name:
+    base_variant['builder_name'] = builder_name
+
+  return base_variant
+
+
 def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
                                    autotest_keyvals):
   """Generate the variant defintions for the test results.
@@ -718,6 +842,62 @@ def _upload_missing_tast_results(api, base_variant, autotest_keyval_file):
   api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant)
 
 
+def _upload_incomplete_test_to_resultdb(api, result, test_metadata,
+                                        autotest_keyval_file):
+  """Uploads the incomplete test. When a test run is incomplete, the upstream
+  test execution won't generate any test case by default, so we need to
+  construct a placeholder test case manually to capture the NOT_RUN result which
+  was skipped unexpectedly.
+
+  In addition, generate ResultDB variants and tags based on the autotest keyvals
+  in the initial test request. The test case is constructed in the Autotest
+  format so it will be parsed by Autotest adapter in ResultSink.
+
+  This method works for both Tauto and Tast results. For Tast, the additional
+  result can be regarded as a Autotest wrapper result with an overall Autotest
+  wrapper test name, e.g. "tast.informational-crostini-shard-0".
+
+  Context: b/245017288
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * result (DUTResult): The results of the test.
+  * test_metadata (DUTTestMetadata): All metadata needed for the interface
+      to access a test.
+  * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
+  """
+  if not result.data.autotest_result.incomplete:
+    return
+
+  # Constructs a placeholder test case manually.
+  autotest_result = Result(autotest_result=result.data.autotest_result,
+                           log_data=result.data.log_data,
+                           prejob=result.data.prejob,
+                           state_update=result.data.state_update)
+  autotest_result = _process_incomplete_test(api, result, autotest_result)
+  autotest_result = _populate_additional_info_for_autotest_result(
+      api, autotest_result, autotest_keyval_file)
+
+  # Writes the result to a file which can be parsed by result_adapter.
+  temp_dir = api.path.mkdtemp()
+  incomplete_test_result_file = temp_dir.join('incomplete_test_result.json')
+  api.file.write_proto('write incomplete test result',
+                       incomplete_test_result_file, autotest_result, 'JSONPB')
+
+  # Uploads test results to ResultDB only when the test result file exists.
+  result_file_content = _read_test_result_file(api, incomplete_test_result_file)
+  if result_file_content:
+    config = {
+        'result_format': 'skylab-test-runner',
+        'base_variant': _generate_initial_resultdb_variant_def(test_metadata),
+        'base_tags': _generate_initial_resultdb_base_tags(test_metadata),
+        'result_file': incomplete_test_result_file,
+        'artifact_directory': None,
+    }
+    api.cros_resultdb.upload(
+        config, six.ensure_binary(str(autotest_result.log_data.stainless_url)))
+
+
 def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
@@ -767,10 +947,17 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
         base_dir, result_format)
   else:
-    # Populates additional info for autotest results that are required by ResultDB
-    # upload.
+    # Initializes a new autotest result proto with required fields instead of
+    # modifying the original DUT result object directly.
+    autotest_result = Result(autotest_result=result.data.autotest_result,
+                             log_data=result.data.log_data,
+                             prejob=result.data.prejob,
+                             state_update=result.data.state_update)
+
+    # Populates additional info for autotest results that are required by
+    # ResultDB upload.
     autotest_result = _populate_additional_info_for_autotest_result(
-        api, result, autotest_keyval_file)
+        api, autotest_result, autotest_keyval_file)
 
     # Writes the result to a file which can be parsed by result_adapter.
     temp_dir = api.path.mkdtemp()
@@ -833,12 +1020,15 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
           artifact_directory,
   }
 
+  # Uploads test results to ResultDB only when the test result file exists.
   result_file_content = _read_test_result_file(api, result_file)
   if result_file_content:
-    # Uploads test results to ResultDB only when the test result file exists.
     api.cros_resultdb.upload(
         config, six.ensure_binary(str(result.get_stainless_log_url())))
 
+  # Uploads incomplete test result for both Tauto and Tast.
+  _upload_incomplete_test_to_resultdb(api, result, test_metadata,
+                                      autotest_keyval_file)
   _upload_missing_tast_results(api, config.get('base_variant'),
                                autotest_keyval_file)
   api.cros_resultdb.apply_exonerations(
@@ -1177,6 +1367,11 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       # MVP, e.g. timestamps, full test name. The logic would be added to
       # crostoolrunner_interface.py and could be similar to the
       # `_post_process_tauto_result()` method above.
+      #
+      # TODO(b/245017288): Upload incomplete Tauto and Tast result to ResultDB
+      # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
+      # could be similar to the `_upload_incomplete_test_to_resultdb()` method
+      # above.
       interface.upload_to_rdb(test_metadata, run_test_response)
 
     result = interface.parse_test_results(test_metadata)
@@ -1434,7 +1629,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _tast_test_result_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read test result file',
+        'execution steps.original_test.read test results from streamed_results.jsonl',
         api.file.read_text("""
 {
    "name":"crostini.SSHFSMount.bullseye_stable",
@@ -1470,7 +1665,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _tauto_test_result_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read test result file',
+        'execution steps.original_test.read test results from test_runner_result.json',
         api.file.read_text("""
 {
   "autotest_result": {
@@ -1478,6 +1673,38 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       {
         "name": "login_LoginSuccess",
         "verdict": "VERDICT_PASS"
+      }
+    ]
+  },
+  "log_data": {
+    "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
+    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+  },
+  "prejob": {
+    "step": [
+      {
+        "name": "provision",
+        "verdict": "VERDICT_PASS"
+      }
+    ]
+  },
+  "state_update": {
+    "dut_state": "ready"
+  }
+}
+    """))
+
+  def _incomplete_test_result_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.read test results from incomplete_test_result.json',
+        api.file.read_text("""
+{
+  "autotest_result": {
+    "test_cases": [
+      {
+        "name": "login_LoginSuccess",
+        "verdict": "VERDICT_NO_VERDICT",
+        "human_readable_summary": "Incomplete result caused by: Failed provision | Incomplete test run"
       }
     ]
   },
@@ -1690,8 +1917,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
             'multi_test_2':
                 Request.Test(
                     autotest={
-                        'name': 'dummy_name',
-                        'test_args': 'foo=bar',
+                        'name':
+                            'dummy_name',
+                        'test_args':
+                            'foo=bar',
                         'keyvals': {
                             "branch":
                                 "main",
@@ -1704,7 +1933,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                             "datastore_parent_key":
                                 "('Build', 5141110)",
                             "label":
-                                "bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0",
+                                "bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess",
                             "master_build_config":
                                 "master-release",
                             "parent_job_id":
@@ -1712,8 +1941,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                             "suite":
                                 "bvt-tast-informational"
                         },
-                        'is_client_test': True,
-                        'display_name': 'multi_test_2'
+                        'is_client_test':
+                            True,
+                        'display_name':
+                            'bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess'
                     }),
         }
     }
@@ -1927,7 +2158,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
             "datastore_parent_key":
                 "('Build', 5141110)",
             "label":
-                "bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0",
+                "bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess",
             "master_build_config":
                 "master-release",
             "parent_job_id":
@@ -2086,7 +2317,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
-      _tast_test_result_file_step_data(),
+      _tauto_test_result_file_step_data(),
       _successful_resultdb_upload_step(),
   )
 
@@ -2106,6 +2337,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
           }),
+      api.properties(result_format='tast'),
       api.step_data('execution steps.original_test.read autotest keyval file',
                     api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
@@ -2298,8 +2530,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
-      api.step_data('execution steps.original_test.read test result file',
-                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.read test results from test_runner_result.json',
+          api.file.read_text(errno_name='file does not exist')),
       api.post_process(
           post_process.DoesNotRun,
           'execution steps.original_test.upload test results to rdb.run rdb'),
@@ -2631,6 +2864,126 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
+      'success-with-incomplete-test-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board':
+                  'fake-board',
+              'label-model':
+                  'fake-model',
+              'build':
+                  'bob-release/R102-14637.0.0-71034-8802911174428529793',
+              'suite':
+                  'bvt-inline',
+              'display_name':
+                  'bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess'
+          }),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Returns incomplete test.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(incomplete=True),
+                      prejob=Result.Prejob(step=[
+                          Result.Prejob.Step(
+                              name='provision',
+                              human_readable_summary='failed prejob',
+                              verdict=Result.Prejob.Step.VERDICT_FAIL)
+                      ]))))),
+      _autotest_keyval_file_step_data(),
+      # Enables the ResultDB upload.
+      _incomplete_test_result_file_step_data(),
+      # Uploads a placeholder test case manually for the incomplete test.
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-with-incomplete-test-for-tast',
+      _set_build(
+          bid=42, tags={
+              'label-board':
+                  'fake-board',
+              'label-model':
+                  'fake-model',
+              'build':
+                  'bob-release/R102-14637.0.0-71034-8802911174428529793',
+              'suite':
+                  'bvt-inline',
+              'display_name':
+                  'bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/tast.login_LoginSuccess'
+          }),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Returns incomplete test.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(incomplete=True),
+                      prejob=Result.Prejob(step=[
+                          Result.Prejob.Step(
+                              name='provision',
+                              human_readable_summary='failed prejob',
+                              verdict=Result.Prejob.Step.VERDICT_FAIL)
+                      ]))))),
+      _autotest_keyval_file_step_data(),
+      # Enables the ResultDB upload.
+      _incomplete_test_result_file_step_data(),
+      # Uploads a placeholder test case manually for the incomplete test.
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-with-failed-prejob-step-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board':
+                  'fake-board',
+              'label-model':
+                  'fake-model',
+              'build':
+                  'bob-release/R102-14637.0.0-71034-8802911174428529793',
+              'suite':
+                  'bvt-inline',
+              'display_name':
+                  'bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess'
+          }),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      # Prejob failed and then caused the test execution step skipped.
+      _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
+      _successful_logs_archive_step(),
+      # Returns incomplete test.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(autotest_result=Result.Autotest(incomplete=True))))),
+      _autotest_keyval_file_step_data(),
+      # Enables the ResultDB upload.
+      _incomplete_test_result_file_step_data(),
+      # Uploads a placeholder test case manually for the failed prejob though
+      # the test execution step is skipped.
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
       'prejob-crash',
       _set_build(bid=42),
       _misc_properties(),
@@ -2676,6 +3029,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       # Enables the ResultDB upload.
+      api.properties(result_format='tast'),
       _tast_test_result_file_step_data(),
       api.step_data(
           'execution steps.original_test.upload test results to rdb.run rdb',

@@ -906,10 +906,96 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test result file",
+    "name": "execution steps.original_test.read test results from test_runner_result.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@test_runner_result.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"autotest_result\": {\n    \"incomplete\": true,\n    \"test_cases\": [\n      {\n        \"human_readable_summary\": \"failing test case\",\n        \"name\": \"failing_test_case\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  },\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {\n    \"step\": [\n      {\n        \"human_readable_summary\": \"failed prejob\",\n        \"name\": \"failing_prejob_step\",\n        \"verdict\": \"VERDICT_FAIL\"\n      }\n    ]\n  },\n  \"state_update\": {}\n}",
+      "[CLEANUP]/tmp_tmp_2/incomplete_test_result.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.write incomplete test result",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@{@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  \"autotest_result\": {@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    \"incomplete\": true,@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    \"test_cases\": [@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@      {@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@        \"human_readable_summary\": \"failing test case\",@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@        \"name\": \"failing_test_case\",@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@        \"verdict\": \"VERDICT_FAIL\"@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@      }@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    ]@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  },@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  \"log_data\": {@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  },@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  \"prejob\": {@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    \"step\": [@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@      {@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@        \"human_readable_summary\": \"failed prejob\",@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@        \"name\": \"failing_prejob_step\",@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@        \"verdict\": \"VERDICT_FAIL\"@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@      }@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@    ]@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  },@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@  \"state_update\": {}@@@",
+      "@@@STEP_LOG_LINE@incomplete_test_result.json@}@@@",
+      "@@@STEP_LOG_END@incomplete_test_result.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_2/incomplete_test_result.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.read test results from incomplete_test_result.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@incomplete_test_result.json@@@"
     ]
   },
   {

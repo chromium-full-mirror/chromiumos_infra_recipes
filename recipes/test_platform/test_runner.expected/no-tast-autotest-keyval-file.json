@@ -760,45 +760,6 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"autotest_result\": {},\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {},\n  \"state_update\": {}\n}",
-      "[CLEANUP]/tmp_tmp_1/test_runner_result.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.write skylab_test_runner result",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@{@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"autotest_result\": {},@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"log_data\": {@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"prejob\": {},@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@  \"state_update\": {}@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@}@@@",
-      "@@@STEP_LOG_END@test_runner_result.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
       "dummy-results-dir/autoserv_test/sysinfo/crossystem",
       "/path/to/tmp/"
     ],
@@ -859,7 +820,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
+      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -875,42 +836,42 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test result file",
+    "name": "execution steps.original_test.read test results from streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@{@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"name\":\"crostini.SSHFSMount.bullseye_stable\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"pkg\":\"chromiumos/tast/local/bundles/cros/crostini\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"desc\":\"Checks crostini SSHFS mount\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"contacts\":[@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"clumptini+oncall@google.com\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   ],@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"attr\":[@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"group:mainline\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"name:crostini.SSHFSMount.bullseye_stable\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"bundle:cros\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dep:chrome\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dep:vm_host\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dep:dlc\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   ],@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"data\":null,@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"softwareDeps\":[@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"chrome\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"vm_host\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@      \"dlc\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   ],@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"fixture\":\"crostiniBullseye\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"timeout\":420000000000,@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"bundle\":\"cros\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"errors\":null,@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"start\":\"2022-09-02T03:54:14.032069253Z\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"end\":\"2022-09-02T03:54:15.173194233Z\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"outDir\":\"/usr/local/autotest/results/lxc_job_folder/tast/results/tests/crostini.SSHFSMount.bullseye_stable\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@   \"skipReason\":\"\"@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@}@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    @@@",
-      "@@@STEP_LOG_END@test_runner_result.json@@@"
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"name\":\"crostini.SSHFSMount.bullseye_stable\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"pkg\":\"chromiumos/tast/local/bundles/cros/crostini\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"desc\":\"Checks crostini SSHFS mount\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"contacts\":[@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"clumptini+oncall@google.com\"@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   ],@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"attr\":[@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"group:mainline\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"name:crostini.SSHFSMount.bullseye_stable\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"bundle:cros\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"dep:chrome\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"dep:vm_host\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"dep:dlc\"@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   ],@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"data\":null,@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"softwareDeps\":[@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"chrome\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"vm_host\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@      \"dlc\"@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   ],@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"fixture\":\"crostiniBullseye\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"timeout\":420000000000,@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"bundle\":\"cros\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"errors\":null,@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"start\":\"2022-09-02T03:54:14.032069253Z\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"end\":\"2022-09-02T03:54:15.173194233Z\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"outDir\":\"/usr/local/autotest/results/lxc_job_folder/tast/results/tests/crostini.SSHFSMount.bullseye_stable\",@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"skipReason\":\"\"@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@    @@@",
+      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
     ]
   },
   {
@@ -919,7 +880,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
-      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/autoserv_test\", @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"declared_name\", @@@",
@@ -1002,8 +963,8 @@
       "@@@STEP_LOG_LINE@config@        \"suite\": \"bvt-perbuild\", @@@",
       "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -1154,9 +1115,11 @@
       "-exonerate-unexpected-pass",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
-      "skylab-test-runner",
+      "tast",
       "-result-file",
-      "[CLEANUP]/tmp_tmp_1/test_runner_result.json",
+      "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
+      "-artifact-directory",
+      "dummy-results-dir/autoserv_test",
       "--",
       "echo"
     ],

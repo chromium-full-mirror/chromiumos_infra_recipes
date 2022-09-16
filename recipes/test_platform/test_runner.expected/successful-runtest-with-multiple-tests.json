@@ -27,7 +27,7 @@
       "@@@STEP_LOG_LINE@request@  \"tests\":{@@@",
       "@@@STEP_LOG_LINE@request@    \"multi_test_2\":{@@@",
       "@@@STEP_LOG_LINE@request@      \"autotest\":{@@@",
-      "@@@STEP_LOG_LINE@request@        \"displayName\":\"multi_test_2\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"displayName\":\"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",@@@",
       "@@@STEP_LOG_LINE@request@        \"isClientTest\":true,@@@",
       "@@@STEP_LOG_LINE@request@        \"keyvals\":{@@@",
       "@@@STEP_LOG_LINE@request@          \"branch\":\"main\",@@@",
@@ -35,7 +35,7 @@
       "@@@STEP_LOG_LINE@request@          \"build_config\":\"bob-release\",@@@",
       "@@@STEP_LOG_LINE@request@          \"cidb_build_id\":\"5141110\",@@@",
       "@@@STEP_LOG_LINE@request@          \"datastore_parent_key\":\"('Build', 5141110)\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",@@@",
       "@@@STEP_LOG_LINE@request@          \"master_build_config\":\"master-release\",@@@",
       "@@@STEP_LOG_LINE@request@          \"parent_job_id\":\"59dfe8555444e811\",@@@",
       "@@@STEP_LOG_LINE@request@          \"suite\":\"bvt-tast-informational\"@@@",
@@ -402,7 +402,7 @@
     "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"autotest\":{\"displayName\":\"multi_test_2\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostnames\":[\"fake_host\"]}@@@",
+      "@@@STEP_LOG_LINE@request@{\"autotest\":{\"displayName\":\"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostnames\":[\"fake_host\"]}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"resultsDir\":\"dummy-results-dir/subdir\",@@@",
@@ -433,7 +433,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\"autotest\":{\"displayName\":\"multi_test_2\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/tast.informational-crostini-shard-0\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostnames\":[\"fake_host\"]}",
+    "stdin": "{\"autotest\":{\"displayName\":\"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostnames\":[\"fake_host\"]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -870,7 +870,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.multi_test_2.read test result file",
+    "name": "execution steps.multi_test_2.read test results from test_runner_result.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@test_runner_result.json@@@"

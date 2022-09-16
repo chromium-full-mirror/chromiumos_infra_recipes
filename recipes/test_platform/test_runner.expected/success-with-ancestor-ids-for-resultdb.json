@@ -869,7 +869,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test result file",
+    "name": "execution steps.original_test.read test results from streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@@@@",
