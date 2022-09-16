@@ -271,7 +271,7 @@ class ChromiteApi(recipe_api.RecipeApi):
 
     cbb_args = []
     cbb_args.extend(
-        ['--buildroot', self.m.path['cleanup'].join('snapshot', 'chromiumos')])
+        ['--buildroot', self.m.path['cleanup'].join('snapshot', 'chromeos')])
     cbb_args.extend(['--workspace', self.m.path['cleanup'].join('workspace')])
     cbb_args.extend(['--source_cache'])
 

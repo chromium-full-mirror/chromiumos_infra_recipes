@@ -501,7 +501,7 @@
       "--",
       "[START_DIR]/chromite/scripts/cbuildbot_launch",
       "--buildroot",
-      "[CLEANUP]/snapshot/chromiumos",
+      "[CLEANUP]/snapshot/chromeos",
       "--workspace",
       "[CLEANUP]/workspace",
       "--source_cache",
