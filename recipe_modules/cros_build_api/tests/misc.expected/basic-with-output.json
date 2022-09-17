@@ -76,6 +76,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "call chromite.api.TestApiService/InputOutputMethod.adding prebuilt metrics",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.TestApiService/InputOutputMethod.adding prebuilt metrics.set portage prebuilt stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@prebuilt_stats@{}@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -285,6 +300,21 @@
     "name": "call chromite.api.ArtifactsService/BundleFirmware.read tee output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.ArtifactsService/BundleFirmware.adding prebuilt metrics",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.ArtifactsService/BundleFirmware.adding prebuilt metrics.set portage prebuilt stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@prebuilt_stats@{}@@@"
     ]
   },
   {

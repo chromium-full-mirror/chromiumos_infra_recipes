@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'analysis_service',
+    'portage',
     'src_state',
 ]
 
