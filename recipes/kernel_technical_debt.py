@@ -21,7 +21,8 @@ DEPS = {
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 TECH_DEBT_ALIAS = 'cros-kernel-upstream-debt-review@google.com'
-TECH_DEBT_MSG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it. A member of the review committee will review the CL. Thank you'
+TECH_DEBT_MSG_TAG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it. A member of the review committee will review the CL. Thank you.'
+TECH_DEBT_MSG_REVIEWER = 'Please add %s to the reviewers on the top CL of this set' % TECH_DEBT_ALIAS
 TECH_DEBT_PROJECTS = {'chromiumos/third_party/kernel'}
 
 
@@ -67,8 +68,8 @@ def RunSteps(api):
   with api.step.nest('check tag') as presentation:
     message = patch_set.commit_info.get('message')
     if not re.search(r'\nUPSTREAM-TASK=b:\d+[ \t]*\n', message):
-      api.tricium.add_comment('Technical debt', TECH_DEBT_MSG, '/COMMIT_MSG')
-      api.tricium.write_comments()
+      api.tricium.add_comment('Technical debt', TECH_DEBT_MSG_TAG,
+                              '/COMMIT_MSG')
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
 
   with api.step.nest('get reviewers') as presentation:
@@ -79,16 +80,14 @@ def RunSteps(api):
     for reviewer in reviewers:
       if 'email' in reviewer and reviewer['email'] == TECH_DEBT_ALIAS:
         presentation.step_text = 'Tech debt alias found as reviewer.'
-        return
-    presentation.step_text = 'Tech debt alias not found as reviewer.'
+        break
+    else:
+      api.tricium.add_comment('Technical debt', TECH_DEBT_MSG_REVIEWER,
+                              '/COMMIT_MSG')
+      presentation.step_text = 'Tech debt alias not found as reviewer.'
 
-  with api.step.nest('add reviewer') as presentation:
-    body = {'reviewer': TECH_DEBT_ALIAS}
-    api.depot_gerrit.call_raw_api(
-        'https://' + patch_set.host,
-        '/changes/%s/reviewers/' % patch_set.change_id, method='POST',
-        body=body, accept_statuses=[200], name='raw_add_reviewer')
-    presentation.step_text = 'Add tech debt alias as reviewer.'
+  with api.step.nest('write comments') as presentation:
+    api.tricium.write_comments()
 
 
 def GenTests(api):
@@ -180,7 +179,7 @@ def GenTests(api):
           gen_patch_sets('CHROMIUM: IPU6 non Kcam', 'Makefile')) +
       api.step_data('get reviewers.gerrit raw_get_reviewers',
                     api.depot_gerrit.m.json.output([])),
-      api.post_check(post_process.StepSuccess, 'add reviewer'),
+      api.post_check(post_process.StepSuccess, 'write comments'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
@@ -196,7 +195,6 @@ def GenTests(api):
           api.depot_gerrit.m.json.output([{
               'email': 'cros-kernel-upstream-debt-review@google.com'
           }])), api.post_check(post_process.StepSuccess, 'get reviewers'),
-      api.post_check(post_process.DoesNotRun, 'add reviewer'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
@@ -209,6 +207,6 @@ def GenTests(api):
                          'Makefile')) +
       api.step_data('get reviewers.gerrit raw_get_reviewers',
                     api.depot_gerrit.m.json.output([])),
-      api.post_check(post_process.StepSuccess, 'add reviewer'),
+      api.post_check(post_process.StepSuccess, 'write comments'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
