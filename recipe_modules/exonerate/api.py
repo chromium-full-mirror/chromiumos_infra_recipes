@@ -382,9 +382,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: boolean indicating if test_result was exonerated.
     """
     if not self._dry_run:
-      if test_result.test_id in self._exonerated_tests:
+      test_id = self.get_tastless_name(test_result.test_id)
+      if test_id in self._exonerated_tests:
         build_target = getattr(test_result.variant, 'def')['build_target']
-        if build_target in self._exonerated_tests[test_result.test_id]:
+        if build_target in self._exonerated_tests[test_id]:
           return True
 
     return False

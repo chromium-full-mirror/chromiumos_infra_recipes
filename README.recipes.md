@@ -4957,7 +4957,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#392)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#393)(self):**
 
 Return markdown style info about suites that were exonerated.
 

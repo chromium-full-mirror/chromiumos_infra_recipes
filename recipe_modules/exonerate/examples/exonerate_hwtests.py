@@ -35,14 +35,17 @@ def RunSteps(api):
           human_readable_summary='line 22: error'),
       ExecuteResponse.TaskResult.TestCaseResult(
           name='test3', verdict=TaskState.VERDICT_FAILED,
+          human_readable_summary='blah blah line 4:something went wrong'),
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='tast.test4', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='blah blah line 42:something went wrong'),
       ExecuteResponse.TaskResult.TestCaseResult(
           name='tast', verdict=TaskState.VERDICT_FAILED,
-          human_readable_summary='2 failures: test2, test3'),
+          human_readable_summary='3 failures: test2, test3, tast.test4'),
   ]
   failing_unexonerable_test_case = [
       ExecuteResponse.TaskResult.TestCaseResult(
-          name='test4', verdict=TaskState.VERDICT_FAILED,
+          name='test5', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='meh'),
   ]
   child_results = [
@@ -136,6 +139,10 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.exonerate.is_exonerated(
           test_result_pb2.TestResult(test_id='test1', variant=variant)), False)
+  api.assertions.assertEqual(
+      api.exonerate.is_exonerated(
+          test_result_pb2.TestResult(test_id='tast.test4', variant=variant)),
+      True)
   api.assertions.assertEqual(
       api.exonerate.get_tastless_name('tast.test_name'), 'test_name')
   api.assertions.assertEqual(
