@@ -50,8 +50,18 @@ def RunSteps(api):
         gerrit_changes[0], include_commit_info=True, include_files=True)
 
   with api.step.nest('check if tech debt') as presentation:
-    if not patch_set.subject.startswith(('CHROMIUM:', 'WIP:', 'FROMLIST:')):
+    subject = patch_set.subject
+    if subject.startswith(
+        ('UPSTREAM:', 'FROMGIT:', 'WIP:', 'TEST:', 'TEST-ONLY:', 'BACKPORT:',
+         'Revert')) and not subject.startswith('BACKPORT: FROMLIST'):
       presentation.step_text = 'Patch set does not show a technical debt.'
+      return
+    for f in patch_set.file_infos:
+      if not f.startswith(
+          ('chromeos/', 'OWNERS', 'PRESUBMIT.cfg', 'unblocked_terms.txt')):
+        break
+    else:
+      presentation.step_text = 'Chrome-only patch, no technical debt.'
       return
 
   with api.step.nest('check tag') as presentation:
@@ -91,7 +101,7 @@ def GenTests(api):
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_build(**kwargs).build
 
-  def gen_patch_sets(message):
+  def gen_patch_sets(message, filename):
     return {
         1: {
             'subject': message.splitlines()[0],
@@ -100,6 +110,13 @@ def GenTests(api):
                     'message': message,
                 },
                 '_number': 1,
+                'files': {
+                    filename: {
+                        'lines_inserted': 1,
+                        'size': 42,
+                        'size_delta': 3
+                    },
+                },
             },
         },
     }
@@ -139,7 +156,18 @@ def GenTests(api):
   yield api.test(
       'upstream', test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'fetch patch set', changes, gen_patch_sets('UPSTREAM: Land Kcam')),
+          'fetch patch set', changes,
+          gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile')),
+      api.post_check(post_process.StepSuccess, 'check if tech debt'),
+      api.post_check(post_process.DoesNotRun, 'check tag'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'chromium', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets('CHROMIUM: add config', 'chromeos/configs/hi')),
       api.post_check(post_process.StepSuccess, 'check if tech debt'),
       api.post_check(post_process.DoesNotRun, 'check tag'),
       api.post_check(post_process.StatusSuccess),
@@ -148,9 +176,10 @@ def GenTests(api):
   yield api.test(
       'downstream', test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'fetch patch set', changes, gen_patch_sets('CHROMIUM: IPU6 non Kcam'))
-      + api.step_data('get reviewers.gerrit raw_get_reviewers',
-                      api.depot_gerrit.m.json.output([])),
+          'fetch patch set', changes,
+          gen_patch_sets('CHROMIUM: IPU6 non Kcam', 'Makefile')) +
+      api.step_data('get reviewers.gerrit raw_get_reviewers',
+                    api.depot_gerrit.m.json.output([])),
       api.post_check(post_process.StepSuccess, 'add reviewer'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
@@ -160,8 +189,9 @@ def GenTests(api):
       test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
           'fetch patch set', changes,
-          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:123456\n'))
-      + api.step_data(
+          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:123456\n',
+                         'Makefile')) +
+      api.step_data(
           'get reviewers.gerrit raw_get_reviewers',
           api.depot_gerrit.m.json.output([{
               'email': 'cros-kernel-upstream-debt-review@google.com'
@@ -175,9 +205,10 @@ def GenTests(api):
       test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
           'fetch patch set', changes,
-          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:123456\n'))
-      + api.step_data('get reviewers.gerrit raw_get_reviewers',
-                      api.depot_gerrit.m.json.output([])),
+          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:123456\n',
+                         'Makefile')) +
+      api.step_data('get reviewers.gerrit raw_get_reviewers',
+                    api.depot_gerrit.m.json.output([])),
       api.post_check(post_process.StepSuccess, 'add reviewer'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
