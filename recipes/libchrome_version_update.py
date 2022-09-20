@@ -81,7 +81,7 @@ def RunSteps(api):
           api.git.push(
               project_info.remote,
               # TODO(fqj): change to %submit once stablized.
-              'HEAD:refs/for/main%r=fqj@google.com,r=hscham@chromium.org,l=Commit-Queue+2,l=Bot-Commit+1',
+              'HEAD:refs/for/main%r=fqj@google.com,r=hscham@chromium.org,l=Commit-Queue+2,l=Bot-Commit+1,-l=Owners-Override+1',
               dry_run=api.build_menu.is_staging)
 
 
