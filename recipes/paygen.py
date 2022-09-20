@@ -13,8 +13,11 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 DEPS = [
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/futures',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -26,6 +29,7 @@ DEPS = [
     'cros_source',
     'cros_storage',
     'easy',
+    'failures',
     'git',
     'gitiles',
     'naming',
@@ -110,11 +114,15 @@ def _set_up_test_configs(api, request, response):
 
 def RunSteps(api, properties):
   api.easy.log_parent_step()
+  with api.failures.ignore_exceptions():
+    api.bcid_reporter.report_stage('start')
 
   if api.cros_infra_config.is_staging:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.75)
 
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+    with api.failures.ignore_exceptions():
+      api.bcid_reporter.report_stage('fetch')
     with api.step.nest('initialization'):
 
       # Sync the paygen manifest group.
@@ -175,6 +183,11 @@ def RunSteps(api, properties):
                 name='making single payload{}'.format(suffix),
                 step_text=api.naming.get_generation_request_title(
                     MessageToDict(req).get('generationRequest', {})))
+            if resp.success:
+              with api.failures.ignore_exceptions():
+                abspath = api.path.abspath(resp.local_path)
+                file_hash = api.file.file_hash(abspath, test_data='deadbeef')
+                api.bcid_reporter.report_gcs(file_hash, resp.remote_uri)
 
             return CallPair(req, resp, num_tries)
         except StepFailure as e:
@@ -182,6 +195,8 @@ def RunSteps(api, properties):
       return CallPair(req, last_err, num_tries)
 
     with api.step.nest('doing paygen') as presentation:
+      with api.failures.ignore_exceptions():
+        api.bcid_reporter.report_stage('generating payloads')
 
       # Get max number of concurrent requests - None is unlimited.
       max_concurrent_requests = properties.max_concurrent_requests or len(
@@ -251,6 +266,8 @@ def RunSteps(api, properties):
                 error=x.resp) for x in errors
         ])))
 
+    with api.failures.ignore_exceptions():
+      api.bcid_reporter.report_stage('upload-complete')
     if paygen_test_configs:
       # Test all paygens.
       with api.step.nest('testing paygen'):
