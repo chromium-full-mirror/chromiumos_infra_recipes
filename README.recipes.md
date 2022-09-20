@@ -2783,7 +2783,7 @@ Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#108)(self, release_build_results, use_branch=False):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#119)(self, release_build_results, use_branch=False):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 

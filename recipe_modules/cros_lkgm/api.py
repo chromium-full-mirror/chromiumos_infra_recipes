@@ -101,9 +101,20 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       self._public_build_results = self.m.buildbucket.collect_build(
           self._public_build.id, step_name='collect', timeout=60 * 60 * 8)
 
+  def _success_build_count(self, builds):
+    return sum([b.status == common_pb2.SUCCESS for b in builds])
+
   def _success_percent(self, builds):
-    successful_builds = sum([b.status == common_pb2.SUCCESS for b in builds])
+    successful_builds = self._success_build_count(builds)
     return successful_builds / float(len(builds)) * 100. if len(builds) else 0
+
+  def _build_result_text(self, builds):
+    successful_builds = self._success_build_count(builds)
+    total_builds = len(builds)
+    success_percent = self._success_percent(builds)
+    return '{:.2f}% ({:d} of {:d}) builds succeeded, threshold: {:d}%'.format(
+        success_percent, successful_builds, total_builds,
+        self._builder_threshold_percentage)
 
   def do_lkgm(self, release_build_results, use_branch=False):
     """Performs the LGKM process if the build is an LKGM candidate.
@@ -159,8 +170,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         result = False
       else:
         success_percent = self._success_percent(release_build_results)
-        presentation.step_text = 'release builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
-            success_percent, self._builder_threshold_percentage)
+        presentation.step_text = \
+            'release builds: ' + self._build_result_text(release_build_results)
         if success_percent < self._builder_threshold_percentage:
           result = False
 
@@ -177,10 +188,13 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         # to consider this version for LKGM.
         presentation.step_text = 'public orchestrator failed and did not report any child builds'
         result = False
+      elif not child_builds:
+        presentation.step_text = 'no public builds'
+        result = False
       else:
         success_percent = self._success_percent(child_builds)
-        presentation.step_text = 'public builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
-            success_percent, self._builder_threshold_percentage)
+        presentation.step_text = \
+            'public builds: ' + self._build_result_text(child_builds)
         if success_percent < self._builder_threshold_percentage:
           result = False
 
