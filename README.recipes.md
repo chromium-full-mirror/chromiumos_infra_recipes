@@ -3010,7 +3010,10 @@ Returns:
 
 Schedule Paygen autoupdate (AU) tests.
 
-Create a cros_test_platform build request to launch AU tests.
+Create a cros_test_platform build request to launch AU tests. This
+schedules the ctp request per model. The reason to do this is because
+the full requests can be greater than the buildbucket input property
+size which is currently 1MB, see crbug.com/1336469.
 
 Args:
   paygen_test_configs (list[PaygenTestConfig]): A list of PaygenTestConfigs

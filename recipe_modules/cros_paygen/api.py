@@ -1182,7 +1182,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
   def schedule_au_tests(self, paygen_test_configs):
     """Schedule Paygen autoupdate (AU) tests.
 
-    Create a cros_test_platform build request to launch AU tests.
+    Create a cros_test_platform build request to launch AU tests. This
+    schedules the ctp request per model. The reason to do this is because
+    the full requests can be greater than the buildbucket input property
+    size which is currently 1MB, see crbug.com/1336469.
 
     Args:
       paygen_test_configs (list[PaygenTestConfig]): A list of PaygenTestConfigs
@@ -1191,10 +1194,35 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     Returns:
       The scheduled buildbucket build.
     """
+    # bb_tags here doesn't include label-model so it applies universally
+    # even though we're scheduling per model below we can apply it to each
+    # individual request.
     bb_tags, tagged_requests = self.create_au_test_tagged_requests(
         paygen_test_configs)
 
     if not tagged_requests:
       return
 
-    return self.m.skylab.schedule_ctp_requests(tagged_requests, bb_tags=bb_tags)
+    # This is definitely an inefficient loop to break the requests up,
+    # but N should remain small. See doc string for why we do this.
+    def _get_label_model_from_ptc(ptc):
+      tags = ptc.get('params', {}).get('decorations', {}).get('tags', [])
+      # Pull the matching label-model field or None.
+      return next(iter([x for x in tags if x.startswith('label-model:')]), None)
+
+    models = [_get_label_model_from_ptc(v) for k, v in tagged_requests.items()]
+
+    model_tagged_requests = []
+    for m in sorted(models):
+      model_tagged_request = collections.OrderedDict()
+      for k, v in tagged_requests.items():
+        if _get_label_model_from_ptc(v) == m:
+          model_tagged_request[k] = v
+      model_tagged_requests.append(model_tagged_request)
+
+    skylab_requests = []
+    for mtr in model_tagged_requests:
+      skylab_requests.append(
+          self.m.skylab.schedule_ctp_requests(mtr, bb_tags=bb_tags))
+
+    return skylab_requests
