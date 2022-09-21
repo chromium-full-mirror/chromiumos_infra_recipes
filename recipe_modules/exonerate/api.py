@@ -240,8 +240,9 @@ class ExonerateApi(recipe_api.RecipeApi):
         pres.logs['configs'] = self._get_printable_configs()
 
       for skylab_res in hw_test_results:
-        if skylab_res.status == common_pb2.SUCCESS:
-          # If test suite passed, do nothing.
+        if (skylab_res.status == common_pb2.SUCCESS or
+            not skylab_res.task.test.common.critical.value):
+          # If test suite passed or is non-critical, do nothing.
           new_test_results.append(skylab_res)
         else:
           build_target = skylab_res.task.unit.common.build_target.name
@@ -343,7 +344,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         pres.logs['configs'] = self._get_printable_configs()
 
       for build in vm_builds:
-        if build.status == common_pb2.SUCCESS:
+        if build.status == common_pb2.SUCCESS or build.critical == common_pb2.NO:
           # If the test suite passed, do nothing.
           new_vm_builds.append(build)
         elif 'all_test_cases' not in build.output.properties:

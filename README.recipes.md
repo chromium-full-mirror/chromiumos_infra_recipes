@@ -344,6 +344,7 @@
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests) (Python3 ✅)
   * [exonerate:examples/exonerate_vmtests](#recipes-exonerate_examples_exonerate_vmtests) (Python3 ✅)
   * [exonerate:examples/hwtests_dry_run](#recipes-exonerate_examples_hwtests_dry_run) (Python3 ✅)
+  * [exonerate:examples/non_critical_hwtests](#recipes-exonerate_examples_non_critical_hwtests) (Python3 ✅)
   * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests) (Python3 ✅)
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate) (Python3 ✅)
   * [exonerate:examples/vmtests_dry_run](#recipes-exonerate_examples_vmtests_dry_run) (Python3 ✅)
@@ -4913,7 +4914,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#265)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#266)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -4924,7 +4925,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#293)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#294)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4936,7 +4937,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#324)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#325)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -4956,7 +4957,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#393)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#394)(self):**
 
 Return markdown style info about suites that were exonerated.
 
@@ -4966,7 +4967,7 @@ Returns: str in markdown style.
 
 Return test_name without the tast prefix.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#376)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#377)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -10580,6 +10581,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/hwtests_dry_run.py#22)(api):**
+### *recipes* / [exonerate:examples/non\_critical\_hwtests](/recipe_modules/exonerate/examples/non_critical_hwtests.py)
+
+[DEPS](/recipe_modules/exonerate/examples/non_critical_hwtests.py#7): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/non_critical_hwtests.py#22)(api):**
 ### *recipes* / [exonerate:examples/noop\_vmtests](/recipe_modules/exonerate/examples/noop_vmtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/noop_vmtests.py#7): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -42,6 +42,14 @@
   },
   {
     "cmd": [],
+    "name": "exonerate vm tests (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set exoneration_stats",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"suiteCount\": \"1\", \"suiteStats\": [{\"count\": \"1\", \"name\": \"betty.tast_vm.tast_vm_default\"}], \"testCount\": \"2\", \"testStats\": [{\"count\": \"1\", \"name\": \"arc.Boot\"}, {\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"arc.Boot\"}, {\"count\": \"1\", \"name\": \"test2\"}]}@@@"

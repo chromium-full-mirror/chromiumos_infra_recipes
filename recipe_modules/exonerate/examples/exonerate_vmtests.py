@@ -59,6 +59,16 @@ def RunSteps(api):
       'VERDICT_FAILED',
       str(exonerated_vm_builds[0].output.properties['all_test_cases']))
 
+  # Case where the VM test is non-critical
+  build.critical = common_pb2.NO
+  exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
+      vm_builds)
+  api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
+  api.assertions.assertIn(
+      'VERDICT_FAILED',
+      str(exonerated_vm_builds[0].output.properties['all_test_cases']))
+
   # Test empty all_test_cases.
   build = build_pb2.Build(
       id=123,
