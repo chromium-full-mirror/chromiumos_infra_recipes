@@ -1517,7 +1517,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromium/src"
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,
@@ -1996,7 +1997,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromium/src"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {

@@ -17,7 +17,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 def RunSteps(api):
   # clean report_manifest_branch_state
   test_data = api.properties.get('test_data')
-  stdout = api.repo.report_manifest_branch_state(test_data)
+  stdout = api.repo.report_manifest_branch_state(projects=['foo'],
+                                                 test_data=test_data)
   api.assertions.assertEqual(stdout, test_data)
 
   # step failure in report_manifest_branch_state

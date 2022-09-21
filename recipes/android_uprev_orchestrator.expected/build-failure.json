@@ -1594,7 +1594,9 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromeos/manifest-internal",
+      "chromiumos/manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2232,7 +2234,9 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromite",
+      "src/private-overlays/project-cheets-private"
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,

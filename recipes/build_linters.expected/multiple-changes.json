@@ -5632,7 +5632,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromiumos/chromite"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

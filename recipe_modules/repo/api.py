@@ -369,6 +369,7 @@ class RepoApi(recipe_api.RecipeApi):
         with self.m.step.nest('repo info') as pres:
           try:
             pres.logs['repo-info stdout'] = self.report_manifest_branch_state(
+                projects=projects,
                 test_failure=test_manifest_branch_state_failure)
           except StepFailure as e:
             # Don't fail the builder on issues reporting manifest branch state.
@@ -597,10 +598,12 @@ class RepoApi(recipe_api.RecipeApi):
         return False
       return True
 
-  def report_manifest_branch_state(self, test_data='Repo: info',
+  def report_manifest_branch_state(self, projects=None, test_data='Repo: info',
                                    test_failure=False):
     """Use 'repo info' to output manifest state to stdout.
     Args:
+      projects (list[str]): Projects to limit the info call to, or None to get
+        info for all projects.
       test_data (str): Optional data for testing stdout.
       test_failure (bool): Raise StepFailure or not
     Returns:
@@ -610,6 +613,8 @@ class RepoApi(recipe_api.RecipeApi):
     if test_failure:
       raise StepFailure('tested failure in repo-info step')
     cmd = [self.repo_path, 'info']
+    if projects:
+      cmd += projects
     stdout = self.m.easy.stdout_step('repo info', cmd,
                                      test_stdout=lambda: test_data)
     return six.ensure_str(stdout).strip()

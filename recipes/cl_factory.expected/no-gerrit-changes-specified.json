@@ -2501,7 +2501,11 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromiumos/config",
+      "project-a",
+      "project-b",
+      "project-c"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {

@@ -1423,7 +1423,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromiumos/manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

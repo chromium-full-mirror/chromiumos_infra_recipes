@@ -974,7 +974,10 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "infra/config",
+      "src/config",
+      "src/config-internal"
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,

@@ -423,7 +423,9 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromiumos/config",
+      "chromeos/project/puff/duffy"
     ],
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,

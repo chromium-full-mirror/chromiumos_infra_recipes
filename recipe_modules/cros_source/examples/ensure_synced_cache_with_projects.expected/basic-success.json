@@ -970,7 +970,8 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromiumos/config"
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,

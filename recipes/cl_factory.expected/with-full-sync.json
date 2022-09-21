@@ -1619,7 +1619,9 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromiumos/config",
+      "chromeos/program/galaxy"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

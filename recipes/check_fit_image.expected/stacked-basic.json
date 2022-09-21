@@ -1543,7 +1543,10 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info"
+      "info",
+      "chromeos/overlays/baseboard-bar-private",
+      "chromeos/overlays/baseboard-baz-private",
+      "chromeos/overlays/baseboard-foo-private"
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,
