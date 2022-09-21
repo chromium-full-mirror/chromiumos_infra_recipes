@@ -21,7 +21,7 @@
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"softwareDependencies\":[@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeosBuild\":\"fake_build\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"chromeosBuild\":\"guybrush-release/R105-14989.97.0\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",

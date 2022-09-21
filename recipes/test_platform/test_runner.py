@@ -420,8 +420,9 @@ def _convert_to_task_request_id(swarming_task_run_id):
   return swarming_task_run_id[:-1] + "0"
 
 
-def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
-                                 crossystem_keyvals, kernel_version):
+def _generate_resultdb_base_tags(api, properties, test_metadata,
+                                 autotest_keyvals, crossystem_keyvals,
+                                 kernel_version, cft_is_enabled):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
@@ -476,11 +477,13 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
+    * properties (TestRunnerProperties): Recipe input properties.
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
     * autotest_keyvals (dict): The keyval labels for autotest test results.
     * crossystem_keyvals (dict): The keyval labels for crossystem.
     * kernel_version (string): The kernel version.
+    * cft_is_enabled (bool): Whether CFT feature is enabled.
 
     Returns:
     * base_tags (list[tuples]): Tags for the test results.
@@ -488,13 +491,6 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
   base_tags = []
 
   # Fetches the following information from buildbucket build tags.
-  build_tag = api.cros_tags.get_values('build')
-  if not build_tag:
-    build_tag = api.cros_tags.get_values('label-image')
-  if build_tag:
-    base_tags.append(('image', build_tag[0]))
-    base_tags.append(('build', build_tag[0].split('/')[-1]))
-
   declared_name = api.cros_tags.get_values('display_name')
   if declared_name:
     base_tags.append(('declared_name', declared_name[0]))
@@ -576,15 +572,36 @@ def _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
     base_tags.append(('ancestor_buildbucket_ids', ancestor_buildbucket_ids))
 
   # Fetches the following information from test_metadata.
+  build_tag = ''
+  if not cft_is_enabled:
+    # The 'request.prejob.softwareDependencies.chromeosBuild' is from the input
+    # properties which is actually used by provisioning and is guaranteed to be
+    # present as a result. Example:
+    # "octopus-postsubmit/R108-15121.0.0-71034-8802912605960970113"
+    software_dependencies = properties.request.prejob.software_dependencies
+    if software_dependencies:
+      for dep in software_dependencies:
+        if dep.WhichOneof('dep') == 'chromeos_build':
+          build_tag = dep.chromeos_build
+          break
+  else:
+    # CFT test request has 'autotest_keyvals' instead of
+    # 'prejob.softwareDependencies.chromeosBuild'. CFT test request example:
+    # https://logs.chromium.org/logs/chromeos/buildbucket/cr-buildbucket/8802533370122261697/+/u/inputs/cft_test_request
+    build_tag = autotest_keyvals.get('build')
+  if build_tag:
+    base_tags.append(('image', build_tag))
+    base_tags.append(('build', build_tag.split('/')[-1]))
+
   logs_url = test_metadata.gs_url
   if logs_url:
     base_tags.append(('logs_url', logs_url))
 
   # Fetches the following information from autotest keyvals.
-  branch = autotest_keyvals['branch']
+  branch = autotest_keyvals.get('branch')
   if branch:
     base_tags.append(('branch', branch))
-  main_builder_name = autotest_keyvals['master_build_config']
+  main_builder_name = autotest_keyvals.get('master_build_config')
   if main_builder_name:
     base_tags.append(('main_builder_name', main_builder_name))
 
@@ -776,8 +793,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
               properties.request.prejob.software_attributes.build_target.name,
               properties.request.parent_request_uid, autotest_keyvals),
       'base_tags':
-          _generate_resultdb_base_tags(api, test_metadata, autotest_keyvals,
-                                       crossystem_keyvals, kernel_version),
+          _generate_resultdb_base_tags(api, properties, test_metadata,
+                                       autotest_keyvals, crossystem_keyvals,
+                                       kernel_version, cft_is_enabled=False),
       'result_file':
           result_file,
       'artifact_directory':
@@ -1119,8 +1137,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       autotest_keyvals = test_metadata.autotest_keyvals
 
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
-          api, test_metadata, autotest_keyvals, crossystem_keyvals,
-          kernel_version)
+          api, properties, test_metadata, autotest_keyvals, crossystem_keyvals,
+          kernel_version, cft_is_enabled=True)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
           properties.cft_test_request.parent_request_uid, autotest_keyvals)
@@ -1562,7 +1580,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 },
             },
             'software_dependencies': [{
-                'chromeos_build': 'fake_build',
+                'chromeos_build': 'guybrush-release/R105-14989.97.0',
             },]
         },
         'test': {
@@ -1612,7 +1630,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 },
             },
             'software_dependencies': [{
-                'chromeos_build': 'fake_build',
+                'chromeos_build': 'bob-release/R102-14637.0.0',
             },]
         },
         'tests': {
@@ -1659,7 +1677,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 },
             },
             'software_dependencies': [{
-                'chromeos_build': 'fake_build',
+                'chromeos_build': 'guybrush-release/R105-14989.97.0',
             },],
             'secondary_devices': [{
                 'software_attributes': {
@@ -1668,7 +1686,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                     }
                 },
                 'software_dependencies': [{
-                    'chromeos_build': 'fake_build2',
+                    'chromeos_build': 'bob-release/R105-14989.97.0',
                 }]
             },]
         },
@@ -1699,7 +1717,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 },
             },
             'software_dependencies': [{
-                'chromeos_build': 'fake_build',
+                'chromeos_build': 'guybrush-release/R105-14989.97.0',
             },],
             'secondary_devices': [{
                 'software_attributes': {
