@@ -54,6 +54,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._force_relevant_build = props.force_relevant_build
     self._artifact_build = props.artifact_build
     self._test_with_code_coverage = props.test_with_code_coverage
+    self._test_with_rust_code_coverage = props.test_with_rust_code_coverage
     # Prebuilt information for the builder.  Created in setup_sysroot, used
     # there and install_packages.
     self._package_indexes = None
@@ -647,6 +648,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             packages=relevant_testable_packages,
             flags=BuildTargetUnitTestRequest.Flags(
                 code_coverage=self._test_with_code_coverage,
+                rust_code_coverage=self._test_with_rust_code_coverage,
                 empty_sysroot=unit_tests.empty_sysroot,
                 testable_packages_optional=testable_packages_optional,
                 filter_only_cros_workon=filter_only_cros_workon))

@@ -46,4 +46,9 @@ message BuildMenuProperties {
   // Example, for CQ we use:
   //   {staging?}{build-target}-cq.{cros-version}-{bbid}
   string container_version_format = 6;
+
+  // Whether to run unit tests with rust code coverage or not.
+  // We need different flags for rust as it is triggered by a different builder.
+  // Check b/246409134 for details.
+  bool test_with_rust_code_coverage = 7;
 }
