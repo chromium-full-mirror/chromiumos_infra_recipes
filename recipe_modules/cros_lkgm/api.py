@@ -151,15 +151,18 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
     Returns: (bool) LKGM candidate status.
     """
+    result = True
+
     with self.m.step.nest('assess release build results') as presentation:
       if not release_build_results:
         presentation.step_text = 'no release builds'
-        return False
-      success_percent = self._success_percent(release_build_results)
-      presentation.step_text = 'release builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
-          success_percent, self._builder_threshold_percentage)
-      if success_percent < self._builder_threshold_percentage:
-        return False
+        result = False
+      else:
+        success_percent = self._success_percent(release_build_results)
+        presentation.step_text = 'release builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
+            success_percent, self._builder_threshold_percentage)
+        if success_percent < self._builder_threshold_percentage:
+          result = False
 
     with self.m.step.nest('assess public build results') as presentation:
       output_props = self._public_build_results.output.properties
@@ -173,14 +176,15 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         # If the public orchestrator failed AND there are no child builds, we don't want
         # to consider this version for LKGM.
         presentation.step_text = 'public orchestrator failed and did not report any child builds'
-        return False
+        result = False
       else:
         success_percent = self._success_percent(child_builds)
         presentation.step_text = 'public builds have {:.2f}% percent success rate, threshold is {:d}%'.format(
             success_percent, self._builder_threshold_percentage)
         if success_percent < self._builder_threshold_percentage:
-          return False
-    return True
+          result = False
+
+    return result
 
   def _get_chrome_branch(self):
     """Get the Chrome branch number from the current checkout."""
