@@ -166,7 +166,6 @@
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
   * [chrome:tests/gclient_retry](#recipes-chrome_tests_gclient_retry) (Python3 ✅)
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot) (Python3 ✅)
-  * [chromeos_chrome_uprev](#recipes-chromeos_chrome_uprev) (Python3 ✅) &mdash; Recipe for the Chrome uprev builder.
   * [chromite:examples/full](#recipes-chromite_examples_full) (Python3 ✅)
   * [cipd_uprev](#recipes-cipd_uprev) (Python3 ✅)
   * [cl_factory](#recipes-cl_factory) (Python3 ✅) &mdash; Used to create sweeping changes by creating CLs in many repos.
@@ -9154,19 +9153,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#96)(api, failure):**
 
 &mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#32)(api, properties):**
-### *recipes* / [chromeos\_chrome\_uprev](/recipes/chromeos_chrome_uprev.py)
-
-[DEPS](/recipes/chromeos_chrome_uprev.py#16): [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY2+3
-
-Recipe for the Chrome uprev builder.
-
-Triggers a passive uprev attempt against current Chrome ToT by generating a CL
-that touches chromeos-chrome-9999.ebuild, adding the gardeners as reviewers,
-and triggering a CQ dry-run.
-
-&mdash; **def [RunSteps](/recipes/chromeos_chrome_uprev.py#43)(api):**
 ### *recipes* / [chromite:examples/full](/recipe_modules/chromite/examples/full.py)
 
 [DEPS](/recipe_modules/chromite/examples/full.py#7): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
