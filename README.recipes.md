@@ -11331,7 +11331,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/filter_child_builds.py#20)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#11): [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/orchestrator.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -11339,9 +11339,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#46)(api):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#48)(api):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#33)(api):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#35)(api):**
 ### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
 
 [DEPS](/recipes/os_install_vm.py#46): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
