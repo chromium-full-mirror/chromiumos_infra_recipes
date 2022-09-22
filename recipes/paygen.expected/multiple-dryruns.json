@@ -1496,7 +1496,7 @@
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
       "-stage",
-      "generating payloads"
+      "compile"
     ],
     "name": "doing paygen.report_stage",
     "~followup_annotations": [

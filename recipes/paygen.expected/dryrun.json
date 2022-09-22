@@ -2366,7 +2366,7 @@
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
       "-stage",
-      "generating payloads"
+      "compile"
     ],
     "luci_context": {
       "realm": {

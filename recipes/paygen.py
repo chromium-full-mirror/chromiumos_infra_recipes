@@ -196,7 +196,7 @@ def RunSteps(api, properties):
 
     with api.step.nest('doing paygen') as presentation:
       with api.failures.ignore_exceptions():
-        api.bcid_reporter.report_stage('generating payloads')
+        api.bcid_reporter.report_stage('compile')
 
       # Get max number of concurrent requests - None is unlimited.
       max_concurrent_requests = properties.max_concurrent_requests or len(
