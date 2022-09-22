@@ -7953,7 +7953,7 @@ Args:
   limit (int): Number of tasks to return.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
-[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/sysroot_util/__init__.py#6): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 

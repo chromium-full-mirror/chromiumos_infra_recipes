@@ -15,6 +15,7 @@ DEPS = [
     'cros_infra_config',
     'cros_sdk',
     'cros_artifacts',
+    'easy',
     'failures',
     'goma',
     'workspace_util',

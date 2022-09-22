@@ -6221,6 +6221,14 @@
   },
   {
     "cmd": [],
+    "name": "build images.set rootfs_size",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@rootfs_size@0@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build images.test images",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

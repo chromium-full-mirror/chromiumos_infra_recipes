@@ -306,6 +306,16 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         self.m.failures.set_compile_failed_packages(
             pres, [(p, '') for p in response.failed_packages])
 
+        # Hack warning. Add the rootfs size to the output properties to make
+        # image size regressions easy to calculate until we have the proper
+        # system in place.
+        rootfs_size = 0
+        for event in response.events:
+          if event.name.endswith('total_size.base.rootfs'):
+            rootfs_size = event.gauge
+            break
+        self.m.easy.set_properties_step(rootfs_size=rootfs_size)
+
         to_test = [
             image for image in response.images if image.type == IMAGE_TYPE_BASE
         ]

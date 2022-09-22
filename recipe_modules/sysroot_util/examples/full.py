@@ -79,6 +79,14 @@ def GenTests(api):
       }
     return json.dumps(ret, sort_keys=True)
 
+  def create_image_events():
+    ret = dict(events=[{
+        "name": "board.total_size.base.rootfs",
+        "gauge": str(2**30),
+        "timestampMilliseconds": "1580481610805"
+    }])
+    return json.dumps(ret, sort_keys=True)
+
   yield api.test('basic', test_build())
 
   yield api.test('cq-build', test_build(cq=True))
@@ -193,3 +201,8 @@ def GenTests(api):
       api.post_process(
           post_process.DoesNotRun,
           'build images.test images.call chromite.api.ImageService/Test'))
+
+  yield api.test(
+      'image-size', test_build(),
+      api.cros_build_api.set_api_return('build images', 'ImageService/Create',
+                                        create_image_events()))
