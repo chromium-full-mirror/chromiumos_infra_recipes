@@ -117,18 +117,3 @@ def GenTests(api):
       api.cros_build_api.set_api_return(parent_step_name='upload artifacts',
                                         endpoint='ArtifactsService/Get',
                                         retcode=1))
-  yield api.test(
-      'use-gcloud-storage',
-      api.buildbucket.try_build(
-          experiments=['chromeos.cros_artifacts.use_gcloud_storage']))
-
-  yield api.test(
-      'use-gcloud-storage-exception',
-      api.buildbucket.try_build(
-          experiments=['chromeos.cros_artifacts.use_gcloud_storage']),
-      api.step_data(
-          'upload artifacts.gcloud storage experiment.gcloud storage cp',
-          retcode=1),
-      api.post_check(post_process.StepTextEquals,
-                     'upload artifacts.gcloud storage experiment',
-                     'failed to upload artifacts using gcloud storage'))

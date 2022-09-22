@@ -32,8 +32,5 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_check(post_process.DoesNotRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'upload artifacts.gcloud storage experiment.gcloud storage cp'),
       api.cros_build_api.set_api_return('upload artifacts',
                                         'ArtifactsService/Get', '{}'))

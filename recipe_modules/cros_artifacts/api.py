@@ -728,23 +728,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           else:
             raise
 
-      # TODO(b/232400423): Remove at end of gcloud storage experiment.
-      #   If the gcloud storage experiment is enabled, perform a duplicate
-      #   upload of the artifacts to our throw away bucket to capture data
-      #   about the performance of the upload.
-      if 'chromeos.cros_artifacts.use_gcloud_storage' in self.m.buildbucket.build.input.experiments:
-        exec_cmd = [
-            'gcloud', 'alpha', 'storage', 'cp', '-r', outpath,
-            'gs://chromeos-throw-away-bucket/gcloud-storage-tests/'
-        ]
-        with self.m.step.nest('gcloud storage experiment') as presentation:
-          try:
-            self.m.step('gcloud storage cp', exec_cmd, infra_step=True,
-                        timeout=self.test_api.gsutil_timeout_seconds)
-          except StepFailure as e:
-            presentation.status = self.m.step.FAILURE
-            presentation.step_text = 'failed to upload artifacts using gcloud storage'
-
       uploaded_artifacts = UploadedArtifacts(gs_bucket, gs_path,
                                              files_by_artifact)
       self._set_artifacts_property(uploaded_artifacts)
