@@ -11272,7 +11272,7 @@
       "----",
       "cp",
       "[CLEANUP]/LATEST_tmp_1/LATEST",
-      "gs://chromeos-image-archive/main-release/main/LATEST-1234.56.0"
+      "gs://chromeos-image-archive/main-release/LATEST-1234.56.0"
     ],
     "infra_step": true,
     "luci_context": {
@@ -11287,7 +11287,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/main-release/main/LATEST-1234.56.0",
+    "name": "write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/main-release/LATEST-1234.56.0",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -11308,7 +11308,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-image-archive/main-release/main/LATEST-main"
+      "gs://chromeos-image-archive/main-release/LATEST-main"
     ],
     "infra_step": true,
     "luci_context": {
@@ -11338,7 +11338,7 @@
       "----",
       "cp",
       "[CLEANUP]/LATEST_tmp_1/LATEST",
-      "gs://chromeos-image-archive/main-release/main/LATEST-main"
+      "gs://chromeos-image-archive/main-release/LATEST-main"
     ],
     "infra_step": true,
     "luci_context": {
@@ -11353,7 +11353,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/main-release/main/LATEST-main",
+    "name": "write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/main-release/LATEST-main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
