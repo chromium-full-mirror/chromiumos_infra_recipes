@@ -89,15 +89,15 @@ def DoRunSteps(api):
 
   if api.orch_menu.is_release_orchestrator:
     api.cros_lkgm.collect_public_build()
-    use_branch = api.cros_source.manifest_branch != 'main'
 
-    # Publish main-release/LATEST-main so SuSch can figure out what ToT is.
+    # Publish main-release so SuSch can figure out what ToT is.
     # TODO(b/247451917): Remove when SuSch is gone.
-    if api.cros_source.manifest_branch == 'main':
+    if api.cros_source.is_tot:
       gs_path = 'LATEST-staging' if api.build_menu.is_staging else 'main-release'
       api.cros_artifacts.publish_latest_files('chromeos-image-archive', gs_path)
 
-    api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_branch=use_branch)
+    api.cros_lkgm.do_lkgm(builds_status.completed_builds,
+                          use_branch=not api.cros_source.is_tot)
 
   # Launch any specified follow on orchestrator.
   api.orch_menu.run_follow_on_orchestrator()

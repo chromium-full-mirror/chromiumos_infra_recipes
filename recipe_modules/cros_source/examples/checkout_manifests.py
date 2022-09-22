@@ -41,6 +41,11 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(api.cros_source.manifest_branch,
                                properties.branch_name or 'main')
 
+    is_tot = api.cros_source.manifest_branch in [
+        'main', 'snapshot', 'staging-snapshot'
+    ]
+    api.assertions.assertEqual(api.cros_source.is_tot, is_tot)
+
   if api.path.exists(snapshot_xml):
     api.assertions.assertEqual(snapshot_xml,
                                api.cros_source.branch_manifest_file)
