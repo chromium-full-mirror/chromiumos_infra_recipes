@@ -7294,11 +7294,11 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for PUpr.
 
-#### **class [PuprApi](/recipe_modules/pupr/api.py#127)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PuprApi](/recipe_modules/pupr/api.py#130)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for PUpr steps.
 
-&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#143)(self, retry_policy, no_existing_cls_policy, open_cls):**
+&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#146)(self, retry_policy, no_existing_cls_policy, open_cls):**
 
 Identify the CL to be retried based on retry_policy.
 
@@ -7325,7 +7325,7 @@ Returns:
                                The description of the action,
                                Whether the CL, if any, is currently passed)
 
-&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#132)(self, changes):**
+&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#135)(self, changes):**
 
 Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
 
