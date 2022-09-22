@@ -506,6 +506,10 @@ def GenTests(api):
                                            applicable_models=['woomax']),
                       AutoupdateTestConfig(src_version='123',
                                            src_channel='canary-channel',
+                                           delta_type=common_pb2.FSI,
+                                           applicable_models=['woomax']),
+                      AutoupdateTestConfig(src_version='123',
+                                           src_channel='canary-channel',
                                            delta_type=common_pb2.OMAHA,
                                            applicable_models=['other']),
                   ])
@@ -518,11 +522,21 @@ def GenTests(api):
           'doing paygen.setting up paygen test config.discover gs artifacts (2).gsutil list',
           full_payload_uri,
       ),
+      api.cros_storage.test_listing(
+          'doing paygen.setting up paygen test config.discover gs artifacts (3).gsutil list',
+          full_payload_uri,
+      ),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.MustRun,
+                     'testing paygen.buildbucket.schedule (2)'),
+      # Checking for a third test request ensures we collapse by model,
+      # since there are two woomax test requests.
+      api.post_check(post_process.DoesNotRun,
+                     'testing paygen.buildbucket.schedule (3)'),
       api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
