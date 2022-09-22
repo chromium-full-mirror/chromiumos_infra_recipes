@@ -1213,7 +1213,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     models = [_get_label_model_from_ptc(v) for k, v in tagged_requests.items()]
 
     model_tagged_requests = []
-    for m in set(sorted(models)):
+    for m in sorted(set(models)):
       model_tagged_request = collections.OrderedDict()
       for k, v in tagged_requests.items():
         if _get_label_model_from_ptc(v) == m:
