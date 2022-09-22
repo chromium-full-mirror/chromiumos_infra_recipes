@@ -79,7 +79,6 @@ _24_HOURS = 24 * 60 * 60
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 TAST_TEST_NAME_PREFIX = 'tast.'
 
-
 # TODO(b/217973414): remove this py2 compatibility workaround.
 try:
   FileNotFoundError
@@ -436,6 +435,12 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. hatch
     * model:
         e.g. nipperkin
+    * multiduts: whether the test includes multiple duts
+        e.g. "True"
+    * secondary_boards: secondary boards participating in the multiduts test
+        e.g. "brya,pixel5"
+    * secondary_models: secondary models participating in the multiduts test
+        e.g. "gimble,pixel5a"
     * drone:
         e.g. skylab-drone-deployment-prod-6dc79d4f9-czjlj
     * drone_server:
@@ -509,6 +514,23 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     model = api.cros_tags.get_values('label-model')
   if model:
     base_tags.append(('model', model[0]))
+
+  # Multi-DUTs support
+  multiduts = api.cros_tags.get_values(
+      'label-multiduts', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if multiduts and multiduts[0] == 'True':
+    base_tags.append(('multiduts', multiduts[0]))
+
+    # Get the secondary boards and models from the buildbucket tags.
+    secondary_boards = api.cros_tags.get_values('secondary_boards')
+    if secondary_boards:
+      base_tags.append(('secondary_boards', secondary_boards[0]))
+
+    secondary_models = api.cros_tags.get_values('secondary_models')
+    if secondary_models:
+      base_tags.append(('secondary_models', secondary_models[0]))
+  else:
+    base_tags.append(('multiduts', 'False'))
 
   drone = api.cros_tags.get_values(
       'drone', api.buildbucket.build.infra.swarming.bot_dimensions)
@@ -2311,6 +2333,35 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'dut_name': 'fakedut1-row2-rack3-host4',
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
+          }),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb-multiduts-tast',
+      _set_build(
+          bid=42, tags={
+              'primary_board': 'fake-board',
+              'secondary_boards': 'fake-secondary-board',
+              'primary_model': 'fake-model',
+              'secondary_models': 'fake-secondary-model',
+          }, swarming_tags={
+              'label-multiduts': 'True',
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
