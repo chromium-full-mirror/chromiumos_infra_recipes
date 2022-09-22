@@ -8,11 +8,13 @@ import json
 from PB.chromiumos import common
 from PB.recipe_modules.chromeos.sysroot_util.examples.full import FullTestProperties
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_build_api',
     'cros_infra_config',
@@ -44,12 +46,11 @@ def RunSteps(api, properties):
   api.sysroot_util.install_packages(config, dep_graph,
                                     artifact_build=properties.artifact_build)
 
-  api.sysroot_util.build_images(image_types, 'builder/path',
-                                disable_rootfs_verification=True,
-                                disk_layout="big_disk",
-                                base_is_recovery=properties.base_is_recovery,
-                                test_test_data=image_test_json,
-                                skip_image_tests=properties.skip_tests)
+  api.sysroot_util.build_images(
+      image_types, 'builder/path', disable_rootfs_verification=True,
+      disk_layout="big_disk", base_is_recovery=properties.base_is_recovery,
+      test_test_data=image_test_json, skip_image_tests=properties.skip_tests,
+      verify_image_size_delta=properties.verify_image_size_delta)
 
 
 def GenTests(api):
@@ -79,13 +80,33 @@ def GenTests(api):
       }
     return json.dumps(ret, sort_keys=True)
 
-  def create_image_events():
-    ret = dict(events=[{
-        "name": "board.total_size.base.rootfs",
-        "gauge": str(2**30),
-        "timestampMilliseconds": "1580481610805"
-    }])
+  def create_image_events(rootfs_size):
+    ret = {}
+    if rootfs_size:
+      ret['events'] = [{
+          "name": "board.total_size.base.rootfs",
+          "gauge": str(rootfs_size),
+          "timestampMilliseconds": "1580481610805"
+      }]
     return json.dumps(ret, sort_keys=True)
+
+  def get_buildbucket_simulated_search_results(rootfs_size):
+    """Get buildbucket simulated search results for finding child builders.
+
+    Args:
+      size (int): Size to set.
+
+    Returns:
+      (TestData): Test data for 'buildbucket.search' step.
+    """
+    results = []
+    if rootfs_size:
+      output = build_pb2.Build.Output()
+      output.properties['rootfs_size'] = rootfs_size
+      results.append(build_pb2.Build(id=101, output=output))
+    return api.buildbucket.simulated_search_results(
+        results, 'build images.image size regression check.'
+        'fetch last recorded rootfs size.buildbucket.search')
 
   yield api.test('basic', test_build())
 
@@ -205,4 +226,77 @@ def GenTests(api):
   yield api.test(
       'image-size', test_build(),
       api.cros_build_api.set_api_return('build images', 'ImageService/Create',
-                                        create_image_events()))
+                                        create_image_events(rootfs_size=2**30)),
+      api.post_process(post_process.PropertyEquals, 'rootfs_size', 2**30))
+
+  yield api.test(
+      'image-size-regression-check-no-rootfs-size', test_build(),
+      api.properties(verify_image_size_delta=True),
+      api.cros_build_api.set_api_return('build images', 'ImageService/Create',
+                                        create_image_events(rootfs_size=0)),
+      api.post_process(
+          post_process.StepTextEquals,
+          'build images.image size regression check',
+          'No rootfs size found for current build.',
+      ))
+
+  yield api.test(
+      'image-size-regression-check-no-reference-size', test_build(),
+      api.properties(verify_image_size_delta=True),
+      get_buildbucket_simulated_search_results(0),
+      api.cros_build_api.set_api_return('build images', 'ImageService/Create',
+                                        create_image_events(rootfs_size=2**30)),
+      api.post_process(
+          post_process.StepTextEquals,
+          'build images.image size regression check',
+          'No previous rootfs size found.',
+      ))
+
+  yield api.test(
+      'image-size-regression-check-decrease', test_build(),
+      api.properties(verify_image_size_delta=True),
+      get_buildbucket_simulated_search_results(rootfs_size=2**30),
+      api.cros_build_api.set_api_return('build images', 'ImageService/Create',
+                                        create_image_events(rootfs_size=2**29)),
+      api.post_process(
+          post_process.StepTextEquals,
+          'build images.image size regression check',
+          'Estimated 512.0MiB rootfs size decrease.',
+      ), api.post_process(post_process.PropertyEquals, 'rootfs_delta', -2**29))
+
+  yield api.test(
+      'image-size-regression-check-increase', test_build(),
+      api.properties(verify_image_size_delta=True),
+      get_buildbucket_simulated_search_results(rootfs_size=2**29),
+      api.cros_build_api.set_api_return('build images', 'ImageService/Create',
+                                        create_image_events(rootfs_size=2**30)),
+      api.post_process(
+          post_process.StepTextEquals,
+          'build images.image size regression check',
+          'Estimated 512.0MiB rootfs size increase.',
+      ), api.post_process(post_process.PropertyEquals, 'rootfs_delta', 2**29))
+
+  yield api.test(
+      'image-size-regression-check-increase-small', test_build(),
+      api.properties(verify_image_size_delta=True),
+      get_buildbucket_simulated_search_results(rootfs_size=2**30),
+      api.cros_build_api.set_api_return(
+          'build images', 'ImageService/Create',
+          create_image_events(rootfs_size=2**30 + 1)),
+      api.post_process(
+          post_process.StepTextEquals,
+          'build images.image size regression check',
+          'Estimated 1B rootfs size increase.',
+      ), api.post_process(post_process.PropertyEquals, 'rootfs_delta', 1))
+
+  yield api.test(
+      'image-size-regression-check-no-change', test_build(),
+      api.properties(verify_image_size_delta=True),
+      get_buildbucket_simulated_search_results(rootfs_size=2**30),
+      api.cros_build_api.set_api_return('build images', 'ImageService/Create',
+                                        create_image_events(rootfs_size=2**30)),
+      api.post_process(
+          post_process.StepTextEquals,
+          'build images.image size regression check',
+          'No rootfs size delta.',
+      ), api.post_process(post_process.PropertyEquals, 'rootfs_delta', 0))

@@ -581,11 +581,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       extra_kwargs['version'] = str(version.platform_version)
 
-    self.m.sysroot_util.build_images(build_images.image_types, builder_path,
-                                     build_images.disable_rootfs_verification,
-                                     build_images.disk_layout,
-                                     build_images.base_is_recovery,
-                                     **extra_kwargs)
+    self.m.sysroot_util.build_images(
+        build_images.image_types, builder_path,
+        build_images.disable_rootfs_verification, build_images.disk_layout,
+        build_images.base_is_recovery,
+        verify_image_size_delta=build_images.verify_image_size_delta,
+        **extra_kwargs)
 
   def unit_test_images(self, config=None):
     """Run ebuild tests.

@@ -29,4 +29,7 @@ message FullTestProperties {
 
   // Whether or not image unit tests should be skipped.
   bool skip_tests = 7;
+
+  // Whether to do the image size regression check.
+  bool verify_image_size_delta = 8;
 }

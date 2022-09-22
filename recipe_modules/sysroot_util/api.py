@@ -25,6 +25,8 @@ from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos.common import IMAGE_TYPE_BASE
 from PB.chromiumos.common import ImageType
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 
 
 class SysrootUtilApi(recipe_api.RecipeApi):
@@ -257,7 +259,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
                    disk_layout, base_is_recovery=False, version=None,
                    timeout_sec=2 * 60 * 60, build_test_data=None,
-                   test_test_data=None, name=None, skip_image_tests=False):
+                   test_test_data=None, name=None, skip_image_tests=False,
+                   verify_image_size_delta=False):
     """Build and validate images.
 
     Args:
@@ -275,6 +278,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       name (str): Step name to use, or None for default name.
       skip_image_tests (bool): Whether to skip tests of the built image via
           ImageService/Test. Defaults to false.
+      verify_image_size_delta (bool): Whether to verify the image size delta.
     """
     if image_types:
       # TODO(b/217973414): Replace with MessageToJson once we don't need to
@@ -317,6 +321,30 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             break
         self.m.easy.set_properties_step(rootfs_size=rootfs_size)
 
+        if verify_image_size_delta:
+          # Use the rootfs size output property from the latest successful
+          # postsubmit builder as the base for the comparison.
+          with self.m.step.nest('image size regression check') as presentation:
+            if not rootfs_size:
+              presentation.step_text = 'No rootfs size found for current build.'
+            else:
+              with self.m.step.nest(
+                  'fetch last recorded rootfs size') as subpres:
+                bbid, latest_size = self._get_last_postsubmit_rootfs_size()
+                subpres.step_text = 'build {}: {}B'.format(bbid, latest_size)
+              if not latest_size:
+                presentation.step_text = 'No previous rootfs size found.'
+              else:
+                delta = int(rootfs_size) - int(latest_size)
+                self.m.easy.set_properties_step(rootfs_delta=delta)
+                if delta == 0:
+                  presentation.step_text = 'No rootfs size delta.'
+                else:
+                  direction = 'increase' if delta > 0 else 'decrease'
+                  hr_delta = format_size(abs(delta))
+                  presentation.step_text = \
+                    'Estimated {} rootfs size {}.'.format(hr_delta, direction)
+
         to_test = [
             image for image in response.images if image.type == IMAGE_TYPE_BASE
         ]
@@ -345,3 +373,34 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 test_output_data=test_test_data).success:
               failed_images.append(image)
             self.m.failures.raise_failed_image_tests(failed_images)
+
+  def _get_last_postsubmit_rootfs_size(self):
+    builder_name = '{}-postsubmit'.format(self.sysroot.build_target.name)
+    fields = frozenset({'id', 'output.properties'})
+    predicate = builds_service_pb2.BuildPredicate(
+        builder=builder_common_pb2.BuilderID(project='chromeos',
+                                             bucket='postsubmit',
+                                             builder=builder_name),
+        tags=self.m.buildbucket.tags(relevance='relevant'), status='SUCCESS')
+    result = self.m.buildbucket.search(predicate, limit=1, fields=fields)
+
+    if result:
+      bid = result[0].id
+      props = result[0].output.properties
+      size = int(props['rootfs_size']) if 'rootfs_size' in props else 0
+      return bid, size
+
+    return None, 0
+
+
+def format_size(bytesize):
+  """Convert bytes to human-readable format."""
+  if bytesize < 1024:
+    return '{}B'.format(bytesize)
+
+  for suffix in 'BKMGTPEZY':
+    if bytesize < 1024:
+      break
+    bytesize /= 1024
+
+  return '{:.1f}{}iB'.format(bytesize, suffix)  # pylint: disable=undefined-loop-variable
