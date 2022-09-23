@@ -1208,7 +1208,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     def _get_label_model_from_ptc(ptc):
       tags = ptc.get('params', {}).get('decorations', {}).get('tags', [])
       # Pull the matching label-model field or None.
-      return next(iter([x for x in tags if x.startswith('label-model:')]), None)
+      return next(
+          iter([x for x in tags if x.startswith('label-model:')]),
+          'no-model-found')
 
     models = [_get_label_model_from_ptc(v) for k, v in tagged_requests.items()]
 
