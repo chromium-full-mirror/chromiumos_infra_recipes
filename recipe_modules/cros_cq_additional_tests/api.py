@@ -72,14 +72,20 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
     if (self._properties.enable_running_additional_tests and
         'cq-orchestrator' in self.m.buildbucket.build.builder.builder):
       with self.m.step.nest('process additional test suites') as pres:
-        test_suites, test_boards_buildTargets, pool = (
+        test_suites, test_boards_build_targets, pool = (
             self._read_additional_test_suites_related_footers(gerrit_changes))
         #check additional test suites are provided.
+
         if len(test_suites) == 0:
           return
+        pres.logs['read_git_footer_result'] = [
+            ('footer data: test suites: %s \nboards_build_targets: %s\n'
+             'pool : %s\n') %
+            (','.join(test_suites), ','.join(test_boards_build_targets), pool)
+        ]
 
         #check if footers are correctly provided
-        if len(test_boards_buildTargets) == 0:
+        if len(test_boards_build_targets) == 0:
           pres.step_text = (
               'No additional test suites run. '
               'Board and/or board build target combination is required')
@@ -92,19 +98,26 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
 
         #process additional test suites -
         # cross product - board, build target, test suites
-        for tbb in test_boards_buildTargets:
+        for tbb in test_boards_build_targets:
           self._process_each_test_board_build_target(tbb, bt_build_map,
                                                      bt_hw_test_cfg_map,
                                                      bt_tests_map, test_plan,
                                                      test_suites, pool)
+
+        pres.logs['updated_test_plan'] = [str(test_plan)]
         #check for errors in additional test suite processing.
         if self._not_runnable_addtnl_tests:
-          pres.step_text = ('Additional TestSuites cannot be run on build '
-                            'targets that are not built or failed building'
-                            ' as part of cq: %s') % ', '.join([
-                                t.common.display_name.split('.hw', 1)[0]
-                                for t in self._not_runnable_addtnl_tests
-                            ])
+          not_run_for_build_targets_str = ', '.join({
+              t.common.display_name.split('.hw', 1)[0]
+              for t in self._not_runnable_addtnl_tests
+          })
+          not_run_test_suites = ', '.join(
+              {t.common.display_name for t in self._not_runnable_addtnl_tests})
+          pres.logs['not_runnable_addtnl_test_suites'] = [not_run_test_suites]
+          pres.step_text = (
+              'Additional TestSuites cannot be run on build '
+              'targets that are not built or failed building'
+              ' as part of cq: %s') % not_run_for_build_targets_str
           raise CrosCqAddnlTestsMissingBuildTargetsError(
               self._not_runnable_addtnl_tests)
         else:
@@ -121,13 +134,13 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
     """
     test_suites = self._read_footers(CROS_ADDITIONAL_TEST_SUITES,
                                      gerrit_changes)
-    test_boards_buildTargets = self._read_footers(
+    test_boards_build_targets = self._read_footers(
         CROS_ADDITIONAL_TS_BOARDS_BUILDTARGET, gerrit_changes)
     pool_footer = self._read_footers(CROS_ADDITIONAL_TS_POOL, gerrit_changes)
     pool = 'DUT_POOL_QUOTA'
     if len(pool_footer) > 0:
       pool = list(pool_footer)[0]
-    return test_suites, test_boards_buildTargets, pool
+    return test_suites, test_boards_build_targets, pool
 
   def _read_footers(self, key, gerrit_changes):
     return self.m.git_footers.get_footer_values(

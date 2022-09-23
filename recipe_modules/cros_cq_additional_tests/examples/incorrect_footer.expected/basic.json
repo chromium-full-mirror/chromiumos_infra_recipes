@@ -4,6 +4,10 @@
     "name": "process additional test suites",
     "~followup_annotations": [
       "@@@STEP_TEXT@No additional test suites run. Board and/or board build target combination is required@@@",
+      "@@@STEP_LOG_LINE@read_git_footer_result@footer data: test suites: AddtnlTestSuite @@@",
+      "@@@STEP_LOG_LINE@read_git_footer_result@boards_build_targets: @@@",
+      "@@@STEP_LOG_LINE@read_git_footer_result@pool : DUT_POOL_QUOTA@@@",
+      "@@@STEP_LOG_END@read_git_footer_result@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
