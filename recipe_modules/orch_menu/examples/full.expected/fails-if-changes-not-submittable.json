@@ -788,6 +788,7 @@
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
       "@@@STEP_LOG_LINE@builder config@    name: \"atlas-cq\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    bucket: \"atlas\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
       "@@@STEP_LOG_LINE@builder config@    name: \"cave-cq\"@@@",

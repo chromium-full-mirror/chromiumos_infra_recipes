@@ -222,7 +222,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # test bisection should find all builds already completed or in flight
         # as *-snapshot builds. If it does need to schedule such a build, those
         # builders run in the postsubmit bucket.
-        bucket = self.m.buildbucket.build.builder.bucket
+        bucket = child_spec.bucket or self.m.buildbucket.build.builder.bucket
         if bucket == 'bisect':
           bucket = 'postsubmit'
         parent_run_id = None
