@@ -630,7 +630,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                        artifacts_info=None, chroot=None, sysroot=None,
                        name='upload artifacts', test_data=None,
                        private_bundle_func=None, report_to_spike=False,
-                       upload_coverage=True):
+                       attestation_eligible=False, upload_coverage=True):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -656,8 +656,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           instead of the internal bundling method.
       report_to_spike(bool): If True, will call bcid_reporter to report artifact
           information and trigger Spike to upload the provenance as
-          [artifact-name].attestation if kind is RELEASE. Right now, this only
-          reports on the base image.tar.xz.
+          [artifact-name].attestation if attestation_eligible is true.
+      attestation_eligible(bool): Will call bcid_reporter to report artifact information if
+          report_to_spike is also true. This is set in BuilderConfig.Artifacts.AttestationEligible.
       upload_coverage(bool): If True, we will run the upload coverage step and
            store coverage information. This should be set of False when we dont
            run unit tests and hence have no coverage information to store.
@@ -692,7 +693,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       self.m.easy.set_properties_step('set artifact_link property',
                                       artifact_link=upload_uri)
 
-      if report_to_spike and kind == BuilderConfig.Id.Type.RELEASE:
+      if report_to_spike and attestation_eligible:
         image_archives = files_by_artifact.get('IMAGE_ARCHIVES', [])
 
         artifact_basenames = []

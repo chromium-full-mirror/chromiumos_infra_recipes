@@ -700,7 +700,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, private_bundle_func=private_bundle_func,
-          report_to_spike=report_to_spike, upload_coverage=run_upload_coverage)
+          report_to_spike=report_to_spike,
+          attestation_eligible=config.artifacts.attestation_eligible,
+          upload_coverage=run_upload_coverage)
     return uploaded
 
   def artifacts_gs_path(self):

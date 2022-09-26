@@ -19,6 +19,7 @@ import PB.chromiumos.common as common_pb2
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
 DEPS = [
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/json',
@@ -30,6 +31,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'easy',
+    'failures',
     'src_state',
     'test_util',
 ]
@@ -62,6 +64,8 @@ def UploadTestResults(api, location):
 
 
 def RunSteps(api, properties):
+  with api.failures.ignore_exceptions():
+    api.bcid_reporter.report_stage('start')
   if properties.manifest_branch:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
     commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
@@ -75,6 +79,9 @@ def RunSteps(api, properties):
     service = api.cros_build_api.FirmwareService
     chroot = api.cros_sdk.chroot
     location = properties.firmware_location or config.general.firmware_location
+
+    with api.failures.ignore_exceptions():
+      api.bcid_reporter.report_stage('compile')
     response = service.BuildAllFirmware(
         BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                 code_coverage=properties.code_coverage),
@@ -102,7 +109,11 @@ def RunSteps(api, properties):
       UploadTestResults(api, location)
       raise ex
 
-    uploaded_artifacts = api.build_menu.upload_artifacts(config=config)
+    uploaded_artifacts = api.build_menu.upload_artifacts(
+        config=config, report_to_spike=True)
+
+    with api.failures.ignore_exceptions():
+      api.bcid_reporter.report_stage('upload-complete')
 
     # Invoke signing if applies.
     build = api.buildbucket.build

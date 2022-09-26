@@ -68,7 +68,7 @@ def RunSteps(api, exclude_image_archives):
       artifacts_info=artifacts_info,
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
-      report_to_spike=True)
+      report_to_spike=True, attestation_eligible=True)
 
 
 def GenTests(api):
