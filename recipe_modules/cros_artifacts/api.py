@@ -741,7 +741,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
       for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
-        self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
+        with self.m.failures.ignore_exceptions():
+          self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
       if upload_coverage:
         for fname in files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', []):

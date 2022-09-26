@@ -13,9 +13,7 @@ message BuildFirmwareProperties {
   // Firmware location.  See chromite.api.firmware.
   chromiumos.FwLocation firmware_location = 1;
 
-  // Whether upload_artifacts works for this builder.
-  // TODO(b:177907747): Remove this.
-  bool working_artifacts = 2;
+  reserved 2;
 
   // Whether to pass --code-coverage to firmware_builder.py.
   bool code_coverage = 3;

@@ -101,23 +101,13 @@ def RunSteps(api, properties):
       UploadTestResults(api, location)
       raise ex
 
-    uploaded_artifacts = None
-    if properties.working_artifacts:
-      uploaded_artifacts = api.build_menu.upload_artifacts(config=config)
-    else:
-      # TODO(b/177907749): Once we have artifacts in all of the builders, stop
-      # ignoring failures.
-      with api.step.nest('try to upload artifacts') as pres:
-        try:
-          uploaded_artifacts = api.build_menu.upload_artifacts(config=config)
-        except StepFailure as ex:
-          pres.step_text = ex.reason_message()
+    uploaded_artifacts = api.build_menu.upload_artifacts(config=config)
 
     # Invoke signing if applies.
     build = api.buildbucket.build
     if _invoke_signing_for_current_build(build.builder.builder,
                                          uploaded_artifacts, properties):
-      with api.step.nest('schedule signing build') as pres:
+      with api.step.nest('schedule signing build'):
         requests = []
         sign_image_props = MessageToDict(properties.sign_image_properties,
                                          preserving_proto_field_name=True)
@@ -217,9 +207,8 @@ def GenTests(api):
   yield test(
       'upload-fail',
       api.cros_build_api.set_api_return(
-          'try to upload artifacts.upload artifacts',
-          'FirmwareService/BundleFirmwareArtifacts', retcode=1),
-      api.post_check(post_process.StatusSuccess))
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          retcode=1), api.post_check(post_process.StatusAnyFailure))
 
   yield test(
       'working-upload-fail',
@@ -227,7 +216,7 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1), api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun, 'schedule signing build'),
-      input_properties=(dict(firmware_location=1, working_artifacts=True)))
+      input_properties=(dict(firmware_location=1)))
 
   yield test(
       'fw-test-fail',
