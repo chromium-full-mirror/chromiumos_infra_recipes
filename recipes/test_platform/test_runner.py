@@ -680,6 +680,11 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
 
   # Fetches the following information from the autotest.keyvals in the request.
   suite = autotest_keyvals['suite']
+  if not suite:
+    # Fallback to Buildbucket tags because CFT test request doesn't populate
+    # `suite` in autotest_keyvals.
+    suite = api.cros_tags.get_values('suite')[0] if api.cros_tags.get_values(
+        'suite') else None
   if suite:
     base_variant['suite'] = suite
 
