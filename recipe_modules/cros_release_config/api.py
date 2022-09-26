@@ -24,10 +24,7 @@ CHROMITE_ANDROID = "lib/constants.py"
 LEGACY_RELEASE_BLOCK_TEMPLATE = """
         (
             "{}",
-            [
-                "kevin-android-pi-pre-flight-branch",
-                "hatch-android-rvc-pre-flight-branch",
-            ],
+            [],
             "",
             [],
             [],

@@ -126,7 +126,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\n  # BOT-TAG:RELEASES_START\n  RELEASES = [\n        (\n            \"release-R05-00004.B\",\n            [\n                \"kevin-android-pi-pre-flight-branch\",\n                \"hatch-android-rvc-pre-flight-branch\",\n            ],\n            \"\",\n            [],\n            [],\n            config_lib.LUCI_BUILDER_LEGACY_RELEASE,\n        ),\n\n    (foo),\n    (bar),\n  ]\n  # BOT-TAG:RELEASES_END'\n  ",
+      "\n  # BOT-TAG:RELEASES_START\n  RELEASES = [\n        (\n            \"release-R05-00004.B\",\n            [],\n            \"\",\n            [],\n            [],\n            config_lib.LUCI_BUILDER_LEGACY_RELEASE,\n        ),\n\n    (foo),\n    (bar),\n  ]\n  # BOT-TAG:RELEASES_END'\n  ",
       "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite/config/chromeos_config.py"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
