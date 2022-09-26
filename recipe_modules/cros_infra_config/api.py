@@ -18,7 +18,8 @@ from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
-                                                              GitilesCommit)
+                                                              GitilesCommit,
+                                                              Trinary)
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
@@ -542,6 +543,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         # The url can be constructed from output.properties.config_ref:
         # ('+/%s/%s' % (CHROME_OS_REPO_URL, self._config_ref, filename))
         presentation.logs['builder config'] = [str(config)]
+        # If the build's criticality is not explicitly set do so now.
+        self.set_build_criticality(override=False)
       else:
         presentation.step_text = 'config not found, assuming deleted'
 
@@ -616,3 +619,27 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     build_targets = {self.get_build_target_name(b): b for b in builds}
     build_targets.pop(None, None)
     return build_targets
+
+  def set_build_criticality(self, critical=None, override=False):
+    """Set the buildbucket.build.critical value.
+
+    Args:
+      critical (Trinary): The value to set for the build criticality.
+        If None, will read the value from the builder config.
+      override (bool): Whether to override the existing criticality value.
+        Defaults to False.
+    """
+    # Exit early if criticality is set and override is False.
+    if not override and self.m.buildbucket.build.critical != Trinary.UNSET:
+      return
+
+    if critical is None:
+      # If the config does not exist, return early.
+      if not self.config:
+        return
+      if self.config.general.critical.value:
+        critical = Trinary.YES
+      else:
+        critical = Trinary.NO
+
+    self.m.buildbucket.build.critical = critical

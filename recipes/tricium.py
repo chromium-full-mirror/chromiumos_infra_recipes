@@ -5,7 +5,7 @@
 
 """Recipe for running tricium on CLs."""
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange, Trinary
 from recipe_engine import post_process
 
 DEPS = [
@@ -34,6 +34,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 def RunSteps(api):
   with api.bot_cost.build_cost_context():
+
+    # This builder should not usually block CQ.
+    # If this build does not have criticality set, set it as non-critical so
+    # that the Gerrit Checks UI shows failures as warnings.
+    api.cros_infra_config.set_build_criticality(Trinary.NO, override=False)
+
     # This builder doesn't have a builder config, but we want the shared
     # handling of gitiles_commit and gerrit_changes, and enough of a config to
     # let us work.
