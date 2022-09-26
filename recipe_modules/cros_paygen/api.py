@@ -8,9 +8,6 @@
 """API for working with Paygen and its config."""
 import collections
 
-from future.standard_library import install_aliases
-install_aliases()
-
 from google.protobuf import duration_pb2
 from google.protobuf.json_format import MessageToDict
 from collections import namedtuple

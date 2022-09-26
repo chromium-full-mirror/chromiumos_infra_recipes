@@ -10,7 +10,7 @@ import json
 
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'recipe_engine/bcid_reporter',
@@ -39,7 +39,7 @@ DEPS = [
 
 from collections import namedtuple
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, MessageToJson
 
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
@@ -210,11 +210,7 @@ def RunSteps(api, properties):
       futures = []
       with api.step.nest('running paygen operations in parallel') as pres:
         for request in properties.requests:
-          # TODO(b/217973414): Replace with MessageToJson once we don't need to
-          # fix the separator spacing between py2 and py3 MessageToJson.
-          pres.logs['request'] = json.dumps(
-              MessageToDict(request), separators=(',', ': '), indent=2,
-              sort_keys=True)
+          pres.logs['request'] = MessageToJson(request)
           # Execute build api endpoint for paygen.
           futures.append(
               api.m.futures.spawn(_execute_paygen, request,
