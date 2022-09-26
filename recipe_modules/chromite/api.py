@@ -297,11 +297,7 @@ class ChromiteApi(recipe_api.RecipeApi):
 
     if goma_dir is None:
       goma_dir = self.m.goma.goma_dir
-    if self.m.goma.goma_client_json:
-      cbb_args.extend([
-          '--goma_dir', goma_dir, '--goma_client_json',
-          self.m.goma.goma_client_json
-      ])
+      cbb_args.extend(['--goma_dir', goma_dir])
 
     # Add custom args, if there are any.
     cbb_args.extend(self.c.cbb.extra_args)

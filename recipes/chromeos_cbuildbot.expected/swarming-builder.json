@@ -745,8 +745,6 @@
       "/preload/chrome_cache",
       "--goma_dir",
       "[START_DIR]/cipd/goma",
-      "--goma_client_json",
-      "/creds/service_accounts/service-account-goma-client.json",
       "swarming-build-config"
     ],
     "env": {

@@ -12,8 +12,6 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
-from recipe_engine import post_process
-
 from PB.chromiumos import common
 
 from PB.chromite.api.sysroot import InstallPackagesResponse
@@ -28,11 +26,6 @@ def RunSteps(api, properties):
 
   # Expectations should show it didn't fetch again.
   api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
-  if properties.expected_goma_client_json:
-    api.assertions.assertEqual(api.goma.goma_client_json,
-                               properties.expected_goma_client_json)
-  else:
-    api.assertions.assertEqual(api.goma.goma_client_json, None)
 
   api.assertions.assertEqual(api.goma.goma_approach,
                              properties.expected_goma_approach)
@@ -51,15 +44,11 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  expected_goma_client_json = (
-      '/creds/service_accounts/service-account-goma-client.json')
-
   yield api.test(
       'basic',
       api.properties(
           TestInputProperties(
               expected_goma_approach=common.GomaConfig.DEFAULT,
-              expected_goma_client_json=expected_goma_client_json,
           )),
   )
 
@@ -76,16 +65,5 @@ def GenTests(api):
       api.properties(
           TestInputProperties(
               expected_goma_approach=common.GomaConfig.RBE_STAGING,
-              expected_goma_client_json=expected_goma_client_json,
           )),
   )
-  yield api.test(
-      'goma-client-json-disabled',
-      api.properties(
-          **{'$chromeos/goma': GomaProperties(
-              disable_goma_client_json=True,
-          )}),
-      api.properties(
-          TestInputProperties(
-              expected_goma_approach=common.GomaConfig.DEFAULT,
-          )), api.post_process(post_process.DropExpectation))

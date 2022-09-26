@@ -27,9 +27,6 @@ def RunSteps(api, properties):
 
   # Expectations should show it didn't fetch again.
   api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
-  api.assertions.assertEqual(
-      str(api.goma.goma_client_json),
-      '/creds/service_accounts/service-account-goma-client.json')
   api.assertions.assertEqual(api.goma.goma_approach,
                              properties.expected_goma_approach)
   api.assertions.assertEqual(

@@ -76,8 +76,6 @@ def RunSteps(api, properties):
 
       goma = api.cros_sdk.goma_config()
       api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
-      api.assertions.assertEqual(goma.goma_client_json,
-                                 str(api.goma.goma_client_json))
       api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
       api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
 
