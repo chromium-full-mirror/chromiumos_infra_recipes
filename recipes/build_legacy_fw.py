@@ -21,6 +21,7 @@ from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
 
 DEPS = [
+    'recipe_engine/bcid_reporter',
     'recipe_engine/context',
     'recipe_engine/cq',
     'recipe_engine/file',
@@ -463,8 +464,15 @@ class FirmwareBuilder(object):
       yield
 
   def run(self):
+    with self.m.failures.ignore_exceptions():
+      self.m.bcid_reporter.report_stage('start')
+
     all_uploaded = []
     step_failures = []
+
+    with self.m.failures.ignore_exceptions():
+      self.m.bcid_reporter.report_stage('compile')
+
     with self._setup():
       for bt in self.properties.build_targets:
         with self._maybe_step(bt.name, len(self.properties.build_targets) > 1):
@@ -473,7 +481,7 @@ class FirmwareBuilder(object):
             bt_uploaded = self.m.build_menu.upload_artifacts(
                 private_bundle_func=self._bundle_firmware,
                 sysroot=Sysroot(path='/build/{}'.format(bt.name),
-                                build_target=bt))
+                                build_target=bt), report_to_spike=True)
           except NoFilesToUploadFailure as e:
             # If one build target fails, continue with the other build targets
             # and fail at the end.
@@ -481,6 +489,9 @@ class FirmwareBuilder(object):
             continue
           all_uploaded.append(bt_uploaded)
           self._push_image(bt)
+
+    with self.m.failures.ignore_exceptions():
+      self.m.bcid_reporter.report_stage('upload-complete')
 
       # Mark whether the suite_scheduling query for firmware should find this.
       self.m.easy.set_properties_step(
