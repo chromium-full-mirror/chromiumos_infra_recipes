@@ -281,19 +281,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
               serialized_proto=build.SerializeToString(deterministic=True))
           for build in builds
       ])
-      return self.m.cros_test_plan_v2.generate_hw_test_plans(
+      test_plan = self.m.cros_test_plan_v2.generate_hw_test_plans(
           starlark_files, generate_test_plan_request=req
       ) if starlark_files else GenerateTestPlanResponse()
     else:
       test_plan = self.m.cros_test_plan.generate(builds, gerrit_changes,
                                                  snapshot)
-      try:
-        self.m.cros_cq_additional_tests.append_user_provided_test_suites_to_test_plan(
-            builds, gerrit_changes, test_plan)
-      except self.m.cros_cq_additional_tests.CrosCqAddnlTestsMissingBuildTargetsError as e:
-        self._not_runnable_addtnl_tests = e.not_runnable_addtnl_tests
+    try:
+      self.m.cros_cq_additional_tests.append_user_provided_test_suites_to_test_plan(
+          builds, gerrit_changes, test_plan)
+    except self.m.cros_cq_additional_tests.CrosCqAddnlTestsMissingBuildTargetsError as e:
+      self._not_runnable_addtnl_tests = e.not_runnable_addtnl_tests
 
-      return test_plan
+    return test_plan
 
   def _tast_vm_builder(self, build_target, expressions):
     """Returns the tast builder name for the given build_target and expressions."""
