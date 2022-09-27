@@ -6,18 +6,18 @@
 
 DEPS = [
     'recipe_engine/assertions',
-    'cros_paygen',
+    'paygen_orchestration',
 ]
 
 from recipe_engine import post_process
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
   # Test timeout settings (includes individual runs and orch).
-  api.assertions.assertEqual(7 * 60 * 60,
-                             api.cros_paygen.paygen_orchestrator_timeout_sec)
+  api.assertions.assertEqual(
+      7 * 60 * 60, api.paygen_orchestration.paygen_orchestrator_timeout_sec)
 
 
 def GenTests(api):

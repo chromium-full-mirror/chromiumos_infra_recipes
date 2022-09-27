@@ -14,7 +14,6 @@ DEPS = [
     'build_reporting',
     'builder_metadata',
     'cros_artifacts',
-    'cros_paygen',
     'cros_release_util',
     'cros_test_plan',
     'cros_version',
@@ -22,6 +21,7 @@ DEPS = [
     'gerrit',
     'git',
     'manifest_doctor',
+    'paygen_orchestration',
     'repo',
     'src_state',
 ]

@@ -24,7 +24,7 @@ DEPS = [
     'bot_scaling',
     'cros_build_api',
     'cros_infra_config',
-    'cros_paygen',
+    'paygen_testing',
     'cros_sdk',
     'cros_source',
     'cros_storage',
@@ -96,13 +96,13 @@ def _set_up_test_configs(api, request, response):
                  request.generation_request.tgt_unsigned_image.build.bucket
     tgt_payload = (
         # Notice FullPayload doesn't get a bucket. That's because a full payload
-        # source is created in cros_paygen.create_paygen_test_config().
+        # source is created in paygen_testing.create_paygen_test_config().
         api.cros_storage.FullPayload.parse_uri(response.remote_uri, milestone)
         or api.cros_storage.DeltaPayload.parse_uri(response.remote_uri,
                                                    milestone, src_bucket))
     for test_config in request.autoupdate_test_configs:
       paygen_test_configs.append(
-          api.cros_paygen.create_paygen_test_config(
+          api.paygen_testing.create_paygen_test_config(
               tgt_payload, src_version=test_config.src_version,
               src_channel=test_config.src_channel,
               delta_type=test_config.delta_type,
@@ -241,7 +241,7 @@ def RunSteps(api, properties):
                 CallPair(request, StepFailure(response.failure_reason),
                          f_result.call_count))
 
-        report_payload = api.cros_paygen.create_paygen_build_report_payload(
+        report_payload = api.paygen_testing.create_paygen_build_report_payload(
             request, response.remote_uri)
         if report_payload:
           payloads.append(report_payload)
@@ -267,7 +267,7 @@ def RunSteps(api, properties):
     if paygen_test_configs:
       # Test all paygens.
       with api.step.nest('testing paygen'):
-        api.cros_paygen.schedule_au_tests(paygen_test_configs)
+        api.paygen_testing.schedule_au_tests(paygen_test_configs)
 
 
 # TODO(crbug.com/1157719): Improve testing mock data. There is a disconnect
@@ -320,7 +320,7 @@ def GenTests(api):
       api.properties(
           PaygenProperties(requests=[
               dict(
-                  generation_request=api.cros_paygen
+                  generation_request=api.paygen_testing
                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
@@ -345,13 +345,13 @@ def GenTests(api):
       api.properties(
           PaygenProperties(requests=[
               dict(
-                  generation_request=api.cros_paygen
+                  generation_request=api.paygen_testing
                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
                   ]),
               dict(
-                  generation_request=api.cros_paygen
+                  generation_request=api.paygen_testing
                   .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
                   autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
@@ -391,14 +391,14 @@ def GenTests(api):
           PaygenProperties(
               requests=[
                   dict(
-                      generation_request=api.cros_paygen
+                      generation_request=api.paygen_testing
                       .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                       autoupdate_test_configs=[
                           AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                                applicable_models=['woomax'])
                       ]),
                   dict(
-                      generation_request=api.cros_paygen
+                      generation_request=api.paygen_testing
                       .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                       autoupdate_test_configs=[
                           AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
@@ -428,7 +428,7 @@ def GenTests(api):
       'failed-paygen',
       api.properties(
           PaygenProperties(requests=[
-              dict(generation_request=api.cros_paygen
+              dict(generation_request=api.paygen_testing
                    .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
           ])),
       generate_payload_response(api, is_success=False, retcode=2,
@@ -443,7 +443,7 @@ def GenTests(api):
       'failed-paygen-exception',
       api.properties(
           PaygenProperties(requests=[
-              dict(generation_request=api.cros_paygen
+              dict(generation_request=api.paygen_testing
                    .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
           ])),
       generate_payload_response(api, is_success=False, retcode=3,
@@ -460,7 +460,7 @@ def GenTests(api):
       'failed-minios',
       api.properties(
           PaygenProperties(requests=[
-              dict(generation_request=api.cros_paygen
+              dict(generation_request=api.paygen_testing
                    .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
           ])),
       generate_payload_response(
@@ -476,7 +476,7 @@ def GenTests(api):
       'no-testing',
       api.properties(
           PaygenProperties(requests=[
-              dict(generation_request=api.cros_paygen
+              dict(generation_request=api.paygen_testing
                    .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0])
           ])),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
@@ -490,11 +490,12 @@ def GenTests(api):
 
   yield api.test(
       'with-testing',
-      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.properties(
           PaygenProperties(requests=[
               dict(
-                  generation_request=api.cros_paygen
+                  generation_request=api.paygen_testing
                   .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(src_version='123',
                                            src_channel='canary-channel',
@@ -542,7 +543,7 @@ def GenTests(api):
       api.properties(
           PaygenProperties(requests=[
               dict(
-                  generation_request=api.cros_paygen
+                  generation_request=api.paygen_testing
                   .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
@@ -562,7 +563,7 @@ def GenTests(api):
       api.properties(
           PaygenProperties(requests=[
               dict(
-                  generation_request=api.cros_paygen
+                  generation_request=api.paygen_testing
                   .EXAMPLE_GEN_REQUEST_DELTA_DLC[0], autoupdate_test_configs=[
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])

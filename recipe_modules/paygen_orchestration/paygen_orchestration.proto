@@ -1,0 +1,15 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.paygen_orchestration;
+
+message PaygenOrchestrationProperties {
+
+  // The max number of dlc payloads to include in a single generation request.
+  // If not provided, dlc payloads will be sent in a single batch.
+  int32 max_dlc_batch_size = 1;
+
+}

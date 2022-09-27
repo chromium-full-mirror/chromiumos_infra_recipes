@@ -9,14 +9,14 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_paygen',
+    'paygen_testing',
     'cros_storage',
     'gitiles',
 ]
 
 from recipe_engine import post_process
 from PB.chromiumos.common import DeltaType, ImageType
-from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
+from PB.recipe_modules.chromeos.paygen_testing.examples.test import TestPaygenProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
@@ -55,10 +55,10 @@ def RunSteps(api, properties):
       test_dlc_image, test_dlc_image, 'gvtgcmjugztghjioi4bbf32rlvybuioo')
 
   # Create delta and full test configs
-  api.cros_paygen.create_paygen_test_config(tgt_payload=unsigned_delta_payload,
-                                            delta_type=DeltaType.Value('OMAHA'),
-                                            applicable_models=['woomax'])
-  full_test_config = api.cros_paygen.create_paygen_test_config(
+  api.paygen_testing.create_paygen_test_config(
+      tgt_payload=unsigned_delta_payload, delta_type=DeltaType.Value('OMAHA'),
+      applicable_models=['woomax'])
+  full_test_config = api.paygen_testing.create_paygen_test_config(
       tgt_payload=unsigned_full_payload, delta_type=DeltaType.Value('OMAHA'),
       src_version='13336.0.1', src_channel='canary-channel')
 
@@ -72,15 +72,15 @@ def RunSteps(api, properties):
 
   # The source payload does not exist.
   with api.assertions.assertRaises(api.step.StepFailure):
-    api.cros_paygen.create_paygen_test_config(
+    api.paygen_testing.create_paygen_test_config(
         tgt_payload=unsigned_delta_payload, delta_type=DeltaType.Value('OMAHA'))
   # Full payload without source information.
   with api.assertions.assertRaises(api.step.StepFailure):
-    api.cros_paygen.create_paygen_test_config(
+    api.paygen_testing.create_paygen_test_config(
         tgt_payload=unsigned_full_payload, delta_type=DeltaType.Value('OMAHA'))
   # Unsupported Payload type.
   with api.assertions.assertRaises(api.step.StepFailure):
-    api.cros_paygen.create_paygen_test_config(
+    api.paygen_testing.create_paygen_test_config(
         tgt_payload=delta_dlc_payload, delta_type=DeltaType.Value('OMAHA'))
 
   api.assertions.assertEqual(
@@ -95,7 +95,8 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(builder_name='zork', expected_test_build_target='zork'),
-      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),
@@ -110,14 +111,15 @@ def GenTests(api):
           builder_name='zork', expected_test_build_target='zork',
           expected_quota_scheduler_account='foo',
           expected_quota_scheduler_label_pool='bar', **{
-              '$chromeos/cros_paygen': {
+              '$chromeos/paygen_testing': {
                   'quota_scheduler_config': {
                       'account': 'foo',
                       'label_pool': 'bar',
                   },
               },
           }),
-      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),
@@ -166,7 +168,8 @@ def GenTests(api):
                   'generate_target_test_requirements_from_source': True,
               },
           }),
-      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.step_data('generate target test requirements.generate_test_config',
                     stdout=api.raw_io.output(generate_test_config_output)),
       api.step_data(
@@ -190,7 +193,8 @@ def GenTests(api):
       api.properties(builder_name='atlas-kernelnext',
                      expected_test_build_target='atlas',
                      expected_build_target_name='atlas-kernelnext'),
-      api.gitiles.get_file(api.cros_paygen.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.cros_storage.test_listing(
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),

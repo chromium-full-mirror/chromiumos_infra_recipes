@@ -5,16 +5,16 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
-    'cros_paygen',
+    'paygen_orchestration',
 ]
 
 from recipe_engine import post_process
 
 import PB.chromiumos.common as common_pb2
 
-from PB.recipe_modules.chromeos.cros_paygen.examples.test import TestPaygenProperties
+from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import TestPaygenProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestPaygenProperties
 
@@ -22,21 +22,21 @@ PROPERTIES = TestPaygenProperties
 def RunSteps(api, properties):
   api.assertions.assertEqual(
       len(
-          api.cros_paygen.get_builder_configs(
+          api.paygen_orchestration.get_builder_configs(
               builder_name=properties.builder_name,
               delta_type=properties.delta_type)), properties.expected_length)
 
-  api.assertions.assertEqual(api.cros_paygen.default_delta_types, [
+  api.assertions.assertEqual(api.paygen_orchestration.default_delta_types, [
       common_pb2.STEPPING_STONE, common_pb2.OMAHA, common_pb2.NO_DELTA,
       common_pb2.MILESTONE, common_pb2.FSI
   ])
 
 
 def GenTests(api):
-  good_json, bad_json, not_json = map(api.cros_paygen.test_paygen,
-                                      ['get paygen json.gsutil cat'] *
-                                      len(api.cros_paygen.ALL_EXAMPLE_JSONS),
-                                      api.cros_paygen.ALL_EXAMPLE_JSONS)
+  good_json, bad_json, not_json = map(
+      api.paygen_orchestration.test_paygen, ['get paygen json.gsutil cat'] *
+      len(api.paygen_orchestration.ALL_EXAMPLE_JSONS),
+      api.paygen_orchestration.ALL_EXAMPLE_JSONS)
 
   yield api.test(
       'basic', good_json,

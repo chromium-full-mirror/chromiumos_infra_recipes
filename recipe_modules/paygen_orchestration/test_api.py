@@ -20,7 +20,7 @@ from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 import PB.chromiumos.common as common_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
-from PB.recipe_modules.chromeos.cros_paygen.examples.test import GetRequestTestInputProperties
+from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import GetRequestTestInputProperties
 
 
 def _read_test_file(filename):
@@ -38,66 +38,9 @@ def _read_test_file(filename):
     return f.read().strip()
 
 
-TEST_TARGET_TEST_REQUIREMENTS_DATA = b'''{
-    "perTargetTestRequirements": [
-        {
-            "targetCriteria": {
-                "buildTarget": "atlas-kernelnext",
-                "builderName": "atlas-kernelnext-release-main"
-            },
-            "hwTestCfg": {
-                "hwTest": [
-                    {
-                        "common": {
-                            "displayName": "atlas-kernelnext-release-main.hw.bvt-tast-cq",
-                            "critical": false,
-                            "testSuiteGroups": [
-                                {
-                                    "testSuiteGroup": "default-tast-suites"
-                                }
-                            ]
-                        },
-                        "suite": "bvt-tast-cq",
-                        "skylabBoard": "atlas",
-                        "hwTestSuiteType": "TAST",
-                        "pool": "DUT_POOL_QUOTA"
-                    }
-                ]
-            }
-        },
-        {
-            "targetCriteria": {
-                "buildTarget": "zork",
-                "builderName": "zork-release-main"
-            },
-            "hwTestCfg": {
-                "hwTest": [
-                    {
-                        "common": {
-                            "displayName": "zork-release-main.hw.bvt-tast-cq",
-                            "critical": false,
-                            "testSuiteGroups": [
-                                {
-                                    "testSuiteGroup": "default-tast-suites"
-                                }
-                            ]
-                        },
-                        "suite": "bvt-tast-cq",
-                        "skylabBoard": "zork",
-                        "hwTestSuiteType": "TAST",
-                        "pool": "DUT_POOL_QUOTA"
-                    }
-                ]
-            }
-        }
-    ]
-}'''
-
-
-class PaygenTestApi(recipe_test_api.RecipeTestApi):
+class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
   """Helper class for testing Chrome OS Paygen Recipes."""
 
-  TEST_TARGET_TEST_REQUIREMENTS_DATA = TEST_TARGET_TEST_REQUIREMENTS_DATA
   EXAMPLE_PAYGEN_JSON = _read_test_file('test_paygen.json')
   NO_DELTA_PAYGEN_JSON = _read_test_file('test_no_deltas.json')
 
@@ -106,8 +49,6 @@ class PaygenTestApi(recipe_test_api.RecipeTestApi):
   ALL_EXAMPLE_JSONS = [
       EXAMPLE_PAYGEN_JSON, EXAMPLE_EMPTY_JSON, EXAMPLE_NOT_EVEN_JSON
   ]
-  # TODO(b:195415535): Remove this and rubik_override_paygen.json.
-  RUBIK_OVERRIDE_PAYGEN_JSON = _read_test_file('rubik_override_paygen.json')
 
   # Pull out useful configs for testing get_requests (and others).
   EXAMPLE_SINGLE_PAYGEN_CONFIG = _read_test_file('test_single_cfg.json')

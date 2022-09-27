@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_paygen.examples;
+package recipe_modules.chromeos.paygen_testing.examples;
 
 message ConfigProperties {
   // Empty for now.

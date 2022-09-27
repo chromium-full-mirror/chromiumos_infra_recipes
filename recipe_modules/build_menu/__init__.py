@@ -15,7 +15,6 @@ DEPS = [
     'cros_bisect',
     'cros_build_api',
     'cros_infra_config',
-    'cros_paygen',
     'cros_prebuilts',
     'cros_relevance',
     'cros_sdk',

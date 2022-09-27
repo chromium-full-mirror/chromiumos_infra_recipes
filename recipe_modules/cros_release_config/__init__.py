@@ -10,7 +10,6 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
     'cros_artifacts',
-    'cros_paygen',
     'cros_schedule',
     'cros_source',
     'cros_version',

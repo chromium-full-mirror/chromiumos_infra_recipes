@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.cros_paygen.cros_paygen import (
-    CrosPaygenProperties)
+from PB.recipe_modules.chromeos.paygen_orchestration.paygen_orchestration import PaygenOrchestrationProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -28,4 +27,4 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = CrosPaygenProperties
+PROPERTIES = PaygenOrchestrationProperties

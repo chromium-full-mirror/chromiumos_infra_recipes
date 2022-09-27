@@ -27,7 +27,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_paygen',
+    'paygen_orchestration',
     'cros_release_util',
     'cros_storage',
     'easy',
@@ -37,33 +37,17 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = PaygenOrchestratorProperties
 
-
-def _summarize_failed_builds(failures):
-  # Truncate the list of failures per section to keep the summary under
-  # Buildbucket's 4000 byte limit on the summary_markdown field.
-  # To be removed when https://crbug.com/1063398 is resolved.
-  summary_markdown = ''
-  for failure in failures:
-    line = 'https://cr-buildbucket.appspot.com/build/{}'.format(failure.id)
-    if len(summary_markdown) + len(line) < 3990:
-      summary_markdown += ('\n' + line)
-    else:
-      # Abruptly truncate to avoid INFRA_FAILURE.
-      summary_markdown += '\n...'
-      break
-  return summary_markdown
-
-
 def RunSteps(api, properties):
-  api.easy.log_parent_step()
-
-  # Set default values for unspecified properties.
-  delta_types = properties.delta_types
-  delta_types = delta_types or api.cros_paygen.default_delta_types
+  # Parse all properties, defaulting the values if not set.
+  delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
   au_testing_models = properties.au_testing_models or []
   au_fsi_testing_models = properties.au_fsi_testing_models or []
 
-  # Get the current paygen configuration.
+  # Since this job is intended to be run via a release build, log the
+  # parent's build ID.
+  api.easy.log_parent_step()
+
+  # Get the current payload configuration.
   with api.step.nest('discovering payload configuration') as pres:
     configured_payloads = []
 
@@ -74,9 +58,8 @@ def RunSteps(api, properties):
           DeltaType.Name(delta_type),
           api.cros_release_util.channel_strip_prefix(channel))
 
-      cfgs = api.cros_paygen.get_builder_configs(properties.builder_name,
-                                                 delta_type=delta_t_str,
-                                                 channel=channel_str)
+      cfgs = api.paygen_orchestration.get_builder_configs(
+          properties.builder_name, delta_type=delta_t_str, channel=channel_str)
       configured_payloads.extend(cfgs)
 
     pres.logs['%s configured sources' % len(configured_payloads)] = (
@@ -123,15 +106,16 @@ def RunSteps(api, properties):
   # Aka: "GenerationRequests".
   gen_reqs = []
 
+  # Split out the artifacts into buckets: n2n, delta, full.
+
   # Find the src and tgt artifacts applicable for each configured payload
   # and construct the child requests. Report missing artifacts.
   # TODO(crbug.com/1122854): Missing artifacts are silently ignored.
   with api.step.nest('pairing artifacts') as pres:
 
     # Do N2N testing payloads.
-    n2n_gen_reqs = api.cros_paygen.get_n2n_requests(target_artifacts,
-                                                    properties.dest_bucket,
-                                                    True, properties.dryrun)
+    n2n_gen_reqs = api.paygen_orchestration.get_n2n_requests(
+        target_artifacts, properties.dest_bucket, True, properties.dryrun)
     pres.logs['%s n2n' %
               len(n2n_gen_reqs)] = [MessageToJson(x) for x in n2n_gen_reqs]
     gen_reqs.extend(n2n_gen_reqs)
@@ -140,19 +124,19 @@ def RunSteps(api, properties):
     delta_gen_reqs = []
     for payload_cfg in configured_payloads:
       delta_gen_reqs.extend(
-          api.cros_paygen.get_delta_requests(payload_cfg, source_artifacts,
-                                             target_artifacts,
-                                             properties.dest_bucket, True,
-                                             properties.dryrun))
+          api.paygen_orchestration.get_delta_requests(payload_cfg,
+                                                      source_artifacts,
+                                                      target_artifacts,
+                                                      properties.dest_bucket,
+                                                      True, properties.dryrun))
     gen_reqs.extend(delta_gen_reqs)
 
     pres.logs['%s deltas' %
               len(delta_gen_reqs)] = [MessageToJson(x) for x in delta_gen_reqs]
 
     # Do full payloads.
-    full_gen_reqs = api.cros_paygen.get_full_requests(target_artifacts,
-                                                      properties.dest_bucket,
-                                                      True, properties.dryrun)
+    full_gen_reqs = api.paygen_orchestration.get_full_requests(
+        target_artifacts, properties.dest_bucket, True, properties.dryrun)
     pres.logs['%s full' %
               len(full_gen_reqs)] = [MessageToJson(x) for x in full_gen_reqs]
     gen_reqs.extend(full_gen_reqs)
@@ -166,7 +150,7 @@ def RunSteps(api, properties):
   # Determine hardware tests to run for each payload.
   paygen_reqs = []
   for gen_req in gen_reqs:
-    au_test_configs = api.cros_paygen.create_au_test_configs(
+    au_test_configs = api.paygen_orchestration.create_au_test_configs(
         gen_req, configured_payloads, au_testing_models, au_fsi_testing_models,
         delta_test_override=properties.delta_payload_test_override,
         full_test_override=properties.full_payload_test_override)
@@ -175,7 +159,7 @@ def RunSteps(api, properties):
                                        autoupdate_test_configs=au_test_configs))
 
   # Schedule child builders, and wait for them to finish.
-  res = api.cros_paygen.run_paygen_builders(paygen_reqs)
+  res = api.paygen_orchestration.run_paygen_builders(paygen_reqs)
 
   # Present results.
   with api.step.nest('results') as pres:
@@ -200,6 +184,22 @@ def RunSteps(api, properties):
                                          _summarize_failed_builds(fail)))
 
 
+def _summarize_failed_builds(failures):
+  # Truncate the list of failures per section to keep the summary under
+  # Buildbucket's 4000 byte limit on the summary_markdown field.
+  # To be removed when https://crbug.com/1063398 is resolved.
+  summary_markdown = ''
+  for failure in failures:
+    line = 'https://cr-buildbucket.appspot.com/build/{}'.format(failure.id)
+    if len(summary_markdown) + len(line) < 3990:
+      summary_markdown += ('\n' + line)
+    else:
+      # Abruptly truncate to avoid INFRA_FAILURE.
+      summary_markdown += '\n...'
+      break
+  return summary_markdown
+
+
 def GenTests(api):
 
   def get_props(delta_types=None, builder_name='coral',
@@ -210,9 +210,9 @@ def GenTests(api):
                           target_chromeos_version=target_chromeos_version,
                           channels=channels)
 
-  good_paygen_cfg = api.cros_paygen.test_paygen(
+  good_paygen_cfg = api.paygen_orchestration.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
-      api.cros_paygen.EXAMPLE_PAYGEN_JSON)
+      api.paygen_orchestration.EXAMPLE_PAYGEN_JSON)
 
   def paygen_child_data(child_num):
     paygen_child_data = build_pb2.Build(id=8922054662172514000 + child_num,
@@ -505,9 +505,9 @@ def GenTests(api):
       'no-deltas',
       get_props(),
       good_paygen_cfg,
-      api.cros_paygen.test_paygen(
+      api.paygen_orchestration.test_paygen(
           'discovering payload configuration.get paygen json.gsutil cat',
-          api.cros_paygen.NO_DELTA_PAYGEN_JSON),
+          api.paygen_orchestration.NO_DELTA_PAYGEN_JSON),
       api.cros_storage.test_listing(
           'examining beta-channel.target artifacts.'
           'discover gs artifacts.gsutil list',

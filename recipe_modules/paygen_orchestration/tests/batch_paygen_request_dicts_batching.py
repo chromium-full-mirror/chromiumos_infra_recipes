@@ -8,7 +8,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'cros_paygen',
+    'paygen_orchestration',
 ]
 
 from recipe_engine import post_process
@@ -16,7 +16,7 @@ from recipe_engine.recipe_api import Property
 
 from PB.chromite.api.payload import GenerationRequest
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = {
     # Following the pattern from create_au_test_configs.py.
@@ -43,7 +43,8 @@ def RunSteps(api, max_batch_size, paygen_requests, expected_batches):
     for request in paygen_requests:
       gen_req = GenerationRequest()
       gen_req.ParseFromString(request)
-      requests.append(api.cros_paygen._create_paygen_request_dict(gen_req))
+      requests.append(
+          api.paygen_orchestration._create_paygen_request_dict(gen_req))
   if expected_batches:
     with api.step.nest('deserialize expected_batches'):
       batches = []
@@ -53,15 +54,16 @@ def RunSteps(api, max_batch_size, paygen_requests, expected_batches):
           gen_req = GenerationRequest()
           gen_req.ParseFromString(single_request)
           single_requests.append(
-              api.cros_paygen._create_paygen_request_dict(gen_req))
+              api.paygen_orchestration._create_paygen_request_dict(gen_req))
         batches.append(single_requests)
 
   # Execute test.
   with api.step.nest('run test'):
     if max_batch_size:
-      api.cros_paygen._max_dlc_batch_size = max_batch_size
+      api.paygen_orchestration._max_dlc_batch_size = max_batch_size
 
-    actual_batches = api.cros_paygen._batch_paygen_request_dicts(requests)
+    actual_batches = api.paygen_orchestration._batch_paygen_request_dicts(
+        requests)
     api.assertions.assertEqual(batches, actual_batches)
 
 
@@ -72,15 +74,15 @@ def GenTests(api):
       api.properties(
           paygen_requests=tuple([
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ]
           ])),
       api.properties(
           expected_batches=tuple([[
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ]
           ]])), api.post_check(post_process.StatusSuccess))
 
@@ -89,15 +91,15 @@ def GenTests(api):
       api.properties(
           paygen_requests=tuple([
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ] * 300
           ])),
       api.properties(
           expected_batches=tuple([[
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ] * 300
           ]])), api.post_check(post_process.StatusSuccess))
 
@@ -106,18 +108,18 @@ def GenTests(api):
       api.properties(
           paygen_requests=tuple([
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ]
           ])),
       api.properties(
           expected_batches=tuple(
               [[
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_DELTA_DLC[0]
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0]
                   .SerializeToString()
               ],
                [
-                   api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
                    .SerializeToString()
                ]])), api.post_check(post_process.StatusSuccess))
 
@@ -126,29 +128,29 @@ def GenTests(api):
       api.properties(
           paygen_requests=tuple([
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ]
           ])),
       api.properties(
           expected_batches=tuple(
               [[
                   r.SerializeToString() for r in [
-                      api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                      api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                   ]
               ],
                [
                    r.SerializeToString() for r in [
-                       api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                       api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                       api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                       api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                    ]
                ],
                [
-                   api.cros_paygen.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
                    .SerializeToString()
                ]])), api.post_check(post_process.StatusSuccess))
 
@@ -157,15 +159,17 @@ def GenTests(api):
       api.properties(
           paygen_requests=tuple([
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                  api.paygen_orchestration
+                  .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
               ]
           ])),
       api.properties(
           expected_batches=tuple([[
               r.SerializeToString() for r in [
-                  api.cros_paygen.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-                  api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                  api.paygen_orchestration
+                  .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
               ]
           ]])), api.post_check(post_process.StatusSuccess))
 
@@ -173,6 +177,6 @@ def GenTests(api):
       'n2n-without-matching-full',
       api.properties(
           paygen_requests=tuple([
-              api.cros_paygen.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]
+              api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]
               .SerializeToString(),
           ])), api.post_check(post_process.StepFailure, 'run test'))

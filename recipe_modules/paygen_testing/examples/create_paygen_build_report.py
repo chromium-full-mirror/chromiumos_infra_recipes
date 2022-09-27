@@ -6,7 +6,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
-    'cros_paygen',
+    'paygen_testing',
 ]
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -32,22 +32,22 @@ def RunSteps(api):
 
   api.assertions.maxDiff = None
   build_report = [
-      api.cros_paygen.create_paygen_build_report_payload(
+      api.paygen_testing.create_paygen_build_report_payload(
           dotdict(
               dict(
                   generation_request=GenerationRequest(
                       tgt_signed_image=SignedImage(
                           build=Build(channel='canary-channel'))))),
           'gs://path/to/standard/payload'),
-      api.cros_paygen.create_paygen_build_report_payload(
+      api.paygen_testing.create_paygen_build_report_payload(
           dotdict(
               dict(
                   generation_request=GenerationRequest(
                       tgt_unsigned_image=UnsignedImage(
                           build=Build(channel='dev-channel'))))), None),
-      api.cros_paygen.create_paygen_build_report_payload(
+      api.paygen_testing.create_paygen_build_report_payload(
           build_pb2.Build(status="FAILURE"), None),
-      api.cros_paygen.create_paygen_build_report_payload(
+      api.paygen_testing.create_paygen_build_report_payload(
           dotdict(
               dict(
                   generation_request=GenerationRequest(
@@ -55,7 +55,7 @@ def RunSteps(api):
                           build=Build(
                               channel='stable-channel')), minios=True))),
           'gs://path/to/minios/payload'),
-      api.cros_paygen.create_paygen_build_report_payload(
+      api.paygen_testing.create_paygen_build_report_payload(
           dotdict(
               dict(
                   generation_request=GenerationRequest(

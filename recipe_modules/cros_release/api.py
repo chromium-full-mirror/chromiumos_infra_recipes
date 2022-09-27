@@ -203,7 +203,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               parent_buildbucket_id=str(self.m.buildbucket.build.id)),
       )
       builds = self.m.buildbucket.run(
-          [request], timeout=self.m.cros_paygen.paygen_orchestrator_timeout_sec,
+          [request],
+          timeout=self.m.paygen_orchestration.paygen_orchestrator_timeout_sec,
           step_name='running paygen orchestrator')
 
       paygen_orch_build = builds[0]

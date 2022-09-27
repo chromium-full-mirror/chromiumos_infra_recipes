@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_paygen;
+package recipe_modules.chromeos.paygen_testing;
 
 import "google/protobuf/duration.proto";
 
@@ -23,14 +23,10 @@ message QuotaSchedulerConfig {
   string label_pool = 2;
 }
 
-message CrosPaygenProperties {
+message PaygenTestingProperties {
   // test_platform.Request override options for scheduling autoupdate tests.
   TestRequestOpts test_request_opts = 1;
 
-  // The max number of dlc payloads to include in a single generation request.
-  // If not provided, dlc payloads will be sent in a single batch.
-  int32 max_dlc_batch_size = 2;
-
   // Override options for Quote Scheduler.
-  QuotaSchedulerConfig quota_scheduler_config = 3;
+  QuotaSchedulerConfig quota_scheduler_config = 2;
 }
