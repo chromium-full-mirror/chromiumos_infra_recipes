@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,6 +7,8 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.test_disablement import TestDisablement
 from PB.chromiumos.test_disablement import TestDisablementCfg
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 
 
 class ExonerateTestApi(recipe_test_api.RecipeTestApi):
@@ -36,3 +38,10 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
 
   def empty_config_file_contents(self):
     return self.m.gitiles.make_encoded_file_from_bytes(b'')
+
+  @staticmethod
+  def fake_vm_build(status="FAILURE"):
+    return build_pb2.Build(
+        id=123,
+        builder=builder_common_pb2.BuilderID(builder="something-direct-vm"),
+        status=status)

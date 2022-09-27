@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from google.protobuf import json_format
+
 from recipe_engine import recipe_test_api
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
-from PB.go.chromium.org.luci.buildbucket.proto.build import Build
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from google.protobuf import json_format
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
 class CrosCqAdditionalTestsTestApi(recipe_test_api.RecipeTestApi):

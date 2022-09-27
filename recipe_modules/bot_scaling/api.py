@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -75,7 +75,7 @@ class BotScalingApi(recipe_api.RecipeApi):
         pres.step_text = 'CPUs are already offline! You must reboot to use this feature!'
         pres.status = self.m.step.WARNING
         self.m.easy.set_properties_step(enabled_cpu_cores=n_proc)
-        return
+        return 0
 
       # Pick a random number of cores to drop to target.
       rand = test_rand if isinstance(

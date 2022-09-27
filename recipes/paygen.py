@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -75,10 +75,10 @@ def _set_up_test_configs(api, request, response):
   with api.step.nest('setting up paygen test config') as presentation:
     if request.generation_request.dryrun:
       presentation.step_text = 'dry run, skip testing'
-      return
+      return None
     if not request.autoupdate_test_configs:
       presentation.step_text = 'no test configured, skip testing'
-      return
+      return None
     if request.generation_request.WhichOneof(
         'tgt_image_oneof') != 'tgt_unsigned_image':
       raise StepFailure(
@@ -236,10 +236,9 @@ def RunSteps(api, properties):
           if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
             presentation.step_text = 'not compatible with miniOS, skipping'
             continue
-          else:
-            errors.append(
-                CallPair(request, StepFailure(response.failure_reason),
-                         f_result.call_count))
+          errors.append(
+              CallPair(request, StepFailure(response.failure_reason),
+                       f_result.call_count))
 
         report_payload = api.paygen_testing.create_paygen_build_report_payload(
             request, response.remote_uri)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -38,9 +38,6 @@ class FailuresApi(RecipeApi):
       'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
       '+/u/%(step_name)s/%(log_name)s')
 
-  def __init__(self, *args, **kwargs):
-    super(FailuresApi, self).__init__(*args, **kwargs)
-
   def _proto_to_step_status(self, proto_status):
     """Convert from common_pb2.Status to api.step status.
 
@@ -52,10 +49,9 @@ class FailuresApi(RecipeApi):
     """
     if proto_status == common_pb2.SUCCESS:
       return self.m.step.SUCCESS
-    elif proto_status == common_pb2.INFRA_FAILURE:
+    if proto_status == common_pb2.INFRA_FAILURE:
       return self.m.step.EXCEPTION
-    else:
-      return self.m.step.FAILURE
+    return self.m.step.FAILURE
 
   def _present_run(self, title, link_map, status, critical=True):
     with self.m.step.nest(title) as presentation:
@@ -431,10 +427,9 @@ class FailuresApi(RecipeApi):
     """
     if isinstance(test, build_pb2.Build):
       return self.is_critical_build_failure(test)
-    elif isinstance(test, self.m.skylab.SkylabResult):
+    if isinstance(test, self.m.skylab.SkylabResult):
       return self.is_critical_hw_test_failure(test)
-    else:
-      raise StepFailure('expected Build or SkylabResult,' 'got %s' % type(test))
+    raise StepFailure('expected Build or SkylabResult,' 'got %s' % type(test))
 
   def get_hwtest_status(self, hw_test):
     """Get the status of the hw_test.
@@ -496,8 +491,8 @@ class FailuresApi(RecipeApi):
     if step:
       yield step
     else:
-      with self.m.step.nest(name) as step:
-        yield step
+      with self.m.step.nest(name) as new_step:
+        yield new_step
 
   def update_non_critical_build_failures(self, failures, fresh_builder_configs,
                                          presentation=None):

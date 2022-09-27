@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -57,6 +57,5 @@ class CloudPubsubApi(recipe_api.RecipeApi):
       except recipe_api.InfraFailure as e:
         if raise_on_failed_publish:
           raise e
-        else:
-          presentation.step_text = 'Failed but not fatal.'
-          presentation.status = self.m.step.INFRA_FAILURE
+        presentation.step_text = 'Failed but not fatal.'
+        presentation.status = self.m.step.INFRA_FAILURE

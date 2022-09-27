@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -81,7 +81,6 @@ class DUTInterface(object):  # pragma: no cover
     Raises:
       * api.test.StepFailure If prejob fails.
     """
-    pass
 
   @abstractmethod
   def run_test(self, metadata, container_image_info):
@@ -99,7 +98,6 @@ class DUTInterface(object):  # pragma: no cover
     Raises:
       * api.test.StepFailure If test fails.
     """
-    pass
 
   @abstractmethod
   def fetch_crashes(self, metadata, max_duration_seconds):
@@ -115,7 +113,6 @@ class DUTInterface(object):  # pragma: no cover
     Raises:
       * api.test.StepFailure If test fails.
     """
-    pass
 
   @abstractmethod
   def upload_to_google_storage(self, metadata):
@@ -124,7 +121,6 @@ class DUTInterface(object):  # pragma: no cover
     Args:
       metadata (DUTTestMetadata): Input information relevant to one test.
     """
-    pass
 
   @abstractmethod
   def upload_to_tko(self, metadata, run_test_response):
@@ -137,7 +133,6 @@ class DUTInterface(object):  # pragma: no cover
     Raises:
     * InfraFailure.
     """
-    pass
 
   @abstractmethod
   def upload_to_rdb(self, metadata, run_test_response):
@@ -150,7 +145,6 @@ class DUTInterface(object):  # pragma: no cover
     Raises:
     * InfraFailure.
     """
-    pass
 
   @abstractmethod
   def parse_test_results(self, metadata):
@@ -165,7 +159,6 @@ class DUTInterface(object):  # pragma: no cover
     Raises:
     * InfraFailure.
     """
-    pass
 
   @abstractmethod
   def save_and_seal_skylab_local_state(self, dut_state, metadata):
@@ -175,7 +168,6 @@ class DUTInterface(object):  # pragma: no cover
     * dut_state (str): The desired state.
     * metadata (DUTTestMetadata): Input information relevant to one test.
     """
-    pass
 
   @abstractmethod
   def save_skylab_local_state(self, dut_state, metadata):
@@ -185,7 +177,6 @@ class DUTInterface(object):  # pragma: no cover
     * dut_state (str): The desired state.
     * metadata (DUTTestMetadata): Input information relevant to one test.
     """
-    pass
 
   @abstractmethod
   def load_skylab_local_state(self, test, test_id):
@@ -198,7 +189,6 @@ class DUTInterface(object):  # pragma: no cover
     Returns:
       skylab_local_state.LoadResponse
     """
-    pass
 
   def read_dut_hostname(self):
     """Read cached hostname for DUT.
@@ -219,7 +209,6 @@ class DUTInterface(object):  # pragma: no cover
     Returns:
       str
     """
-    pass
 
   @abstractmethod
   def build_test_metadata(self, test_id, test, autotest_keyvals):
@@ -235,7 +224,6 @@ class DUTInterface(object):  # pragma: no cover
       DUTTestMetadata: Compact metadata representing the single test for this
       interface.
     """
-    pass
 
   @abstractmethod
   def get_results_directory(self, metadata):
@@ -247,7 +235,6 @@ class DUTInterface(object):  # pragma: no cover
     Returns:
       str
     """
-    pass
 
   @staticmethod
   @abstractmethod
@@ -260,7 +247,6 @@ class DUTInterface(object):  # pragma: no cover
     Returns:
       dut_results.DUTPrejobResponse
     """
-    pass
 
   @staticmethod
   @abstractmethod
@@ -270,7 +256,6 @@ class DUTInterface(object):  # pragma: no cover
     Returns:
       dut_results.DUTResult
     """
-    pass
 
   def is_within_deadline(self):
     """Determines if a test is within deadline.

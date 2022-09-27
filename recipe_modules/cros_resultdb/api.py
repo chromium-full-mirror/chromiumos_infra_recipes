@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import base64
@@ -48,7 +48,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
   def current_invocation_id(self):
     """Return the current invocation's id."""
     if not self.m.resultdb.enabled:
-      return
+      return None
 
     inv_id = self.m.resultdb.invocation_ids(
         [self.m.resultdb.current_invocation])
@@ -182,7 +182,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       step_name (str): The name of the step or None for default.
     """
     with self.m.step.nest(step_name):
-      return self._upload(config, stainless_url)
+      self._upload(config, stainless_url)
 
   def _upload(self, config, stainless_url=None):
     """Call the ResultDB module to upload test result
@@ -240,7 +240,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     try:
       if stainless_url:
         self._upload_invocation_artifacts(stainless_url)
-      return self.m.step('run rdb', cmd)
+      self.m.step('run rdb', cmd)
     except self.m.step.StepFailure:
       self.m.step.active_result.presentation.status = self.m.step.FAILURE
     return

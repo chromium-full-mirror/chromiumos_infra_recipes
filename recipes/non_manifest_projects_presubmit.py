@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -59,7 +59,7 @@ def categorize_changes(api, properties, gerrit_changes):
 
   with api.step.nest('validate inputs') as presentation:
     # If there are no gerrit_changes, we're done.
-    if not len(gerrit_changes):
+    if not gerrit_changes:
       presentation.step_text = "No changes given:  Build is POINTLESS."
 
     patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)

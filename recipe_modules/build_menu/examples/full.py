@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -39,7 +39,7 @@ def RunSteps(api, properties):
       api.assertions.assertTrue(properties.expect_missing_config)
       api.assertions.assertIsNotNone(api.build_menu.config_or_default)
       return
-    return DoRunSteps(api, config, properties)
+    DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -266,10 +266,10 @@ def _determine_sync_projects(api, gc_infos, cl_infos, properties):
   # Thus make sure that all projects that could be involved in config generation
   # are up to date even when not specified by gerrit changes or repos to make
   # CLs in. This would include chromiumos/config and all program repos.
-  projects = set([i.name for i in gc_infos + cl_infos])
+  projects = {i.name for i in gc_infos + cl_infos}
   projects.add(_CHROMIOUS_CONFIG_PROJECT)
   program_infos = api.repo.project_infos(regexes=['chromeos/program'])
-  projects.update(set([i.name for i in program_infos]))
+  projects.update({i.name for i in program_infos})
   return sorted(list(projects))
 
 

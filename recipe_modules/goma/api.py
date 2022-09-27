@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -28,8 +28,8 @@ _GOMA_NINJA_LOG_URL_TEMPLATE = (
 # GsDestination stores GS bucket and path.
 GsDestination = namedtuple('GsDestination', ['bucket', 'path'])
 
-# GomaResults includes GSDestination fields and BigQuery errors (str|None).
-GomaResults = namedtuple('GomaResults', ['bucket', 'path', 'bq_errors'])
+# GomaResults includes GSDestination fields.
+GomaResults = namedtuple('GomaResults', ['bucket', 'path'])
 
 
 class GomaApi(recipe_api.RecipeApi):
@@ -100,8 +100,7 @@ class GomaApi(recipe_api.RecipeApi):
 
     Returns:
       tuple[GomaResults]: tuple containing the GS bucket and path used to write
-          log files and any BQ errors when updating stats/counterz. None is
-          returned if there were no artifacts to process.
+          log files. None is returned if there were no artifacts to process.
     """
     # Skip if config has disabled this step entirely.
     if not self._upload_goma_logs and not self._upload_stats_counterz:
@@ -116,11 +115,9 @@ class GomaApi(recipe_api.RecipeApi):
         ]
       return None
 
-    bq_errors = None
     if self._upload_stats_counterz:
-      bq_errors = self._process_counterz_and_stats(install_pkg_response,
-                                                   goma_log_dir,
-                                                   is_staging)
+      self._process_counterz_and_stats(install_pkg_response, goma_log_dir,
+                                       is_staging)
 
     gs_tuple = None
     if self._upload_goma_logs:
@@ -131,8 +128,8 @@ class GomaApi(recipe_api.RecipeApi):
     if gs_tuple:
       gs_bucket = gs_tuple.bucket
       gs_path = gs_tuple.path
-    # Based on GsDestination and bq_erros, create and return GomaResults.
-    return GomaResults(gs_bucket, gs_path, bq_errors)
+    # Based on GsDestination, create and return GomaResults.
+    return GomaResults(gs_bucket, gs_path)
 
   def _process_counterz_and_stats(self, install_pkg_response, goma_log_dir,
                                   is_staging):
@@ -143,9 +140,6 @@ class GomaApi(recipe_api.RecipeApi):
         goma artifacts.
       goma_log_dir (str): Log directory that contains the goma log files.
       is_staging (bool): If being run in staging environment instead of prod.
-
-    Returns:
-      BigQuery error message (str) or None if no errors occurred.
     """
     with self.m.step.nest('process_goma_counterz_stats') as presentation:
       if install_pkg_response.HasField('goma_artifacts') and goma_log_dir:
@@ -207,8 +201,6 @@ class GomaApi(recipe_api.RecipeApi):
             self.m.support.call('bq-insert', support_input,
                                 test_output_data=test_output_data,
                                 raise_on_failure=False)
-
-    return None
 
   def _process_log_files(self, install_pkg_response, goma_log_dir,
                          build_target_name, is_staging):

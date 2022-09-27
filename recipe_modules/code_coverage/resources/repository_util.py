@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Lint as: python2, python3
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -105,7 +105,8 @@ def add_git_revisions_to_coverage_files_metadata(files_coverage_data, src_path):
   for file_record in files_coverage_data:
     git_metadata = file_git_metadata.get(file_record['path'])
     if not git_metadata:
-      logging.warn('Failed to retrive git metadata for %s', file_record['path'])
+      logging.warning('Failed to retrive git metadata for %s',
+                      file_record['path'])
       continue
 
     file_record['revision'], file_record['timestamp'] = git_metadata

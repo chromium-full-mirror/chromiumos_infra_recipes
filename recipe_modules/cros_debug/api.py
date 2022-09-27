@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -11,9 +11,6 @@ TOTAL_MAX_TIMEOUT = 4 * 60 * 60
 
 class CrosDebugApi(recipe_api.RecipeApi):
   """A module to be used for debugging builders."""
-
-  def __init__(self, *args, **kwargs):
-    super(CrosDebugApi, self).__init__(*args, **kwargs)
 
   def pause_and_wait_for_signal(self, timeout=10 * 60,
                                 override_led_launch_only_staging=False,
@@ -46,7 +43,7 @@ class CrosDebugApi(recipe_api.RecipeApi):
     with self.m.step.nest("debug builder steps") as presentation:
       # Step 1. Safety checks.
       if (not self.m.cros_infra_config.is_staging or self.m.buildbucket.build.id
-          is not 0) and not override_led_launch_only_staging:
+          != 0) and not override_led_launch_only_staging:
         # Emit that we're skipping this debug step.
         presentation.step_text = 'Skipping debug steps as this is not a led launch or it is running outside of staging. Please either remove `cros_debug` from this recipe, or pass in the override flag if you really must run this this way.'
         presentation.status = self.m.step.INFRA_FAILURE

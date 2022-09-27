@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -133,8 +133,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       if not self._is_lkgm_candidate(release_build_results):
         presentation.step_text = 'not an LKGM candidate'
         return
-      else:
-        presentation.step_text = 'LKGM candidate'
+      presentation.step_text = 'LKGM candidate'
     branch = None
     if use_branch:
       branch = self._get_chrome_branch()

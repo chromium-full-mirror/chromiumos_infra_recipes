@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -139,8 +139,6 @@ def build_os_with_uprev(api, properties, package, upstream_version):
         api.build_menu.bootstrap_sysroot(config)
         api.build_menu.install_packages(config, packages)
         api.build_menu.build_and_test_images(config)
-      except StepFailure:
-        raise
       finally:
         api.build_menu.upload_artifacts(config)
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -95,8 +95,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
         # If we're already past the branch point, something's wrong.
         if prev is None:
           break
-        else:
-          return prev
+        return prev
       prev = mstone
     # Failed to find the mstone that is most recently branched.
     raise StepFailure('could not find milestone')

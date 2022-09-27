@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -66,3 +66,12 @@ def GenTests(api):
       api.properties(**{
           '$chromeos/exonerate': ExonerateProperties(enable_exoneration=False)
       }), api.post_check(post_process.DoesNotRun, 'exonerate hw tests'))
+
+  # Dry runs implicitly disable exoneration.
+  yield api.test(
+      'dry-run',
+      api.properties(
+          **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True, dry_run=True)
+          }))

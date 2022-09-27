@@ -135,7 +135,7 @@ class Pulp(object):
     # parse into lines
     for line in rv.content.decode().split("\n"):
       try:
-        fn, csum, sz = line.rsplit(",", 2)
+        fn, _, _ = line.rsplit(",", 2)
       except ValueError as e:
         continue
       self._sync_file(fn, path)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -56,15 +56,16 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
            send_response=False):
     """Generic subcommand runner for cros_tool_runner.
 
-        Args:
-          subcommand: (str) subcommand to run.
-          request: proto input request to subcommand.
-          request_type: request must be of this type.
-          response_type: response will be interpreted as this type.
-          send_response: whether to relay a response from the command to the caller
-        Returns:
-          JSON proto of response_type if send_response is set, None otherwise
-        """
+    Args:
+      subcommand: (str) subcommand to run.
+      request: proto input request to subcommand.
+      request_type: request must be of this type.
+      response_type: response will be interpreted as this type.
+      send_response: whether to relay a response from the command to the caller
+
+    Returns:
+      JSON proto of response_type if send_response is set, None otherwise
+    """
     with self.m.step.nest('call `cros-tool-runner`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
@@ -96,7 +97,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
               indent=2, sort_keys=True))
       if not send_response:  # pragma: nocover
         self.m.easy.step(subcommand, cmd, stdin=stdin)
-        return
+        return None
       cmd += [
           '-output',
           '/dev/stdout',
@@ -225,8 +226,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     expected_prefix = 'crossk-'
     if swarming_bot_id.startswith(expected_prefix):
       return swarming_bot_id[len(expected_prefix):]
-    else:
-      return swarming_bot_id
+    return swarming_bot_id
 
   def read_dut_hostname(self):
     """"Return the DUT hostname."""

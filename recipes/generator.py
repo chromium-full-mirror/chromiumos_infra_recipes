@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -149,7 +149,7 @@ def RunSteps(api, properties):
     else:
       for trigger in triggers:
         if not trigger.HasField('gitiles'):
-          raise StepFailure('found non-gitiles trigger: %r', trigger)
+          raise StepFailure('found non-gitiles trigger: %r' % trigger)
 
       presentation.step_text = 'found {} good triggers'.format(len(triggers))
       presentation.logs['list of triggers'] = map(py2_MessageToJson, triggers)
@@ -427,7 +427,7 @@ def _get_policy(api, policies, tag):
         if len(refs) == 1:
           ref = refs[0]
           return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
-        elif refs:
+        if refs:
           raise StepFailure('multiple branches matched {}: {}'.format(
               query, ' '.join(x.ref for x in refs)))
         # If we found no references, this policy does not apply.
@@ -477,7 +477,7 @@ def _abandon_cls(api, outdated_cls, most_recent_merged_uprev,
                                       most_recent_merged_uprev.display_url)
       api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
                                 message=outdated_comment_message)
-      if abandoned_cls != None:
+      if abandoned_cls is not None:
         abandoned_cls.append(outdated_cl)
 
 
@@ -574,7 +574,7 @@ def _do_uprev(api, properties, workspace_path, versions, packages, cpvs, topic,
     for info, ebuilds in sorted(ebuilds_by_pinfo.items()):
       name = api.path.basename(info.path)
       root = workspace_path.join(info.path)
-      vers = ', '.join(sorted(set([e.version for e in ebuilds])))
+      vers = ', '.join(sorted({e.version for e in ebuilds}))
       additional_commit_msg = ''
       additional_commit_info = [e.commit_info for e in ebuilds if e.commit_info]
       if additional_commit_info:

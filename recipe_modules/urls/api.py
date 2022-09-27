@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -51,8 +51,7 @@ class UrlsApi(recipe_api.RecipeApi):
           link_map[test_case_json['name']] = link_url
 
       return link_map
-    else:
-      return {'test page': link_url}
+    return {'test page': link_url}
 
   def get_skylab_task_url(self, skylab_task):
     """Returns the URL to the given skylab task.
@@ -80,25 +79,24 @@ class UrlsApi(recipe_api.RecipeApi):
         not skylab_result.child_results):
       link_url = self.get_skylab_task_url(skylab_result.task)
       return {'suite page': link_url}
-    else:
-      link_map = {}
-      for task_result in skylab_result.child_results:
-        # Return per-test case results if possible.
-        if (task_result.test_cases and
-            task_result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED):
-          for tc in task_result.test_cases:
-            if tc.verdict in failure_verdicts:
-              case_name = tc.name
-              if case_name == 'tast' and tc.human_readable_summary:
-                case_name += ': ' + tc.human_readable_summary
-              link_map[case_name] = task_result.task_url
-        else:
-          task_name = (
-              task_result.name + self.get_state_suffix(task_result.state))
-          if task_result.state.verdict in failure_verdicts:
-            link_map[task_name] = task_result.task_url
+    link_map = {}
+    for task_result in skylab_result.child_results:
+      # Return per-test case results if possible.
+      if (task_result.test_cases and
+          task_result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED):
+        for tc in task_result.test_cases:
+          if tc.verdict in failure_verdicts:
+            case_name = tc.name
+            if case_name == 'tast' and tc.human_readable_summary:
+              case_name += ': ' + tc.human_readable_summary
+            link_map[case_name] = task_result.task_url
+      else:
+        task_name = (
+            task_result.name + self.get_state_suffix(task_result.state))
+        if task_result.state.verdict in failure_verdicts:
+          link_map[task_name] = task_result.task_url
 
-      return link_map
+    return link_map
 
   def get_state_suffix(self, task_state):
     """String suffix to supply info about the task.

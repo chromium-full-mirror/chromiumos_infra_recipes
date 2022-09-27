@@ -1,4 +1,4 @@
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -98,7 +98,6 @@ def base(c):
 @config_ctx(includes=['base'])
 def cros(_):
   """Base configuration for CrOS builders to inherit from."""
-  pass
 
 
 @config_ctx(includes=['cros'])

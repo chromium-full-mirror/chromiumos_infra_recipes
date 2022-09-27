@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -14,9 +14,6 @@ from recipe_engine import post_process
 from google.protobuf import json_format
 
 from PB.chromiumos.common import BuildTarget
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -26,10 +23,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
-  build = build_pb2.Build(
-      id=123,
-      builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
-      status='FAILURE')
+  build = api.exonerate.test_api.fake_vm_build()
   failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.FakeTest', verdict=TaskState.VERDICT_FAILED,
       human_readable_summary='something wrong here')

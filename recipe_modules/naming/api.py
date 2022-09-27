@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -39,10 +39,9 @@ class NamingApi(recipe_api.RecipeApi):
     """
     if isinstance(test, build_pb2.Build):
       return self.get_vm_test_title(test)
-    elif isinstance(test, self.m.skylab.SkylabResult):
+    if isinstance(test, self.m.skylab.SkylabResult):
       return self.get_skylab_result_title(test)
-    else:
-      raise StepFailure('Expected Build or SkylabResult,' 'got %s' % type(test))
+    raise StepFailure('Expected Build or SkylabResult,' 'got %s' % type(test))
 
   def get_hw_test_title(self, hw_test):
     """Get a string to describe the HW test.
@@ -141,17 +140,15 @@ class NamingApi(recipe_api.RecipeApi):
     ]
     if len(paygen_request_dicts) == 1:
       return '%s | %s' % (build_id, gen_req_titles[0])
-    elif len(paygen_request_dicts) == 0:
+    if len(paygen_request_dicts) == 0:
       return '%s | No paygen requests' % build_id
 
     image_types = [title.split(' | ')[0] for title in gen_req_titles]
     image_types_without_suffices = [
         img_type.split('(')[0].strip() for img_type in image_types
     ]
-    if all([
-        img_type == image_types_without_suffices[0]
-        for img_type in image_types_without_suffices
-    ]):
+    if all(img_type == image_types_without_suffices[0]
+           for img_type in image_types_without_suffices):
       image_type_part = '%dx %s' % (len(paygen_request_dicts),
                                     image_types_without_suffices[0])
     else:
@@ -160,9 +157,9 @@ class NamingApi(recipe_api.RecipeApi):
 
     versions = [title.split(' | ')[1] for title in gen_req_titles]
     full_or_deltas = [version.split()[0] for version in versions]
-    if all([version == versions[0] for version in versions]):
+    if all(version == versions[0] for version in versions):
       version_part = versions[0]
-    elif all([fod == full_or_deltas[0] for fod in full_or_deltas]):
+    elif all(fod == full_or_deltas[0] for fod in full_or_deltas):
       version_part = '%s (various versions)' % full_or_deltas[0]
     else:
       version_part = 'Some full, some delta'

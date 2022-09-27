@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -66,6 +66,7 @@ def DoRunSteps(api, config):
     # the upload succeeded, raise that exception.
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
+  return None
 
 
 def GenTests(api):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -77,7 +77,6 @@ _CHROMITE_URL = '{}/{}'.format(_CHROMITE_HOST, _CHROMITE_PROJECT)
 
 class NoFilesToUploadFailure(recipe_api.StepFailure):
   """Error class for when there are no files to upload as a FirmwareArchive."""
-  pass
 
 
 # The age of the branches is such that we do not even have a Build API for the

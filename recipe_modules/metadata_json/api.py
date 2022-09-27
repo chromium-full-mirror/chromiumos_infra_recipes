@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -184,12 +184,10 @@ class MetadataJsonApi(RecipeApi):
           status=common_pb2.SUCCESS,
           start_time=timestamp_pb2.Timestamp(seconds=1586287057),
           end_time=timestamp_pb2.Timestamp(seconds=1586280057))
-    else:  # pragma: nocover
-      for step in build_steps:
-        if step.name == 'run ebuild tests':
-          return step
-
-      return None
+    for step in build_steps:  # pragma: nocover
+      if step.name == 'run ebuild tests':
+        return step
+    return None  # pragma: nocover
 
   def add_stage_results(self):
     """Add stage results for DebugSymbols and Unittest stages."""

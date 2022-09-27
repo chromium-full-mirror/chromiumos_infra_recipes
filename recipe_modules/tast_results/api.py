@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -68,7 +68,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     with self.m.step.nest('process tast output'):
       test_results = self._read_results_json(test_results_path)
       test_cases = [self.convert_to_testcaseresult(r) for r in test_results]
-      reported_tests = set([tc.name for tc in test_cases])
+      reported_tests = {tc.name for tc in test_cases}
       missing_test_names = [
           test for test in tests if test not in reported_tests
       ]

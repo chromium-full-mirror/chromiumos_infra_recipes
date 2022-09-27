@@ -1,4 +1,4 @@
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -72,11 +72,9 @@ def GenTests(api):
   yield api.test(
       'basic-no-max-batch-size',
       api.properties(
-          paygen_requests=tuple([
-              r.SerializeToString() for r in [
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              ]
+          paygen_requests=tuple(r.SerializeToString() for r in [
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
           ])),
       api.properties(
           expected_batches=tuple([[
@@ -89,12 +87,10 @@ def GenTests(api):
   yield api.test(
       'chunked-schedule-requests',
       api.properties(
-          paygen_requests=tuple([
-              r.SerializeToString() for r in [
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              ] * 300
-          ])),
+          paygen_requests=tuple(r.SerializeToString() for r in [
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+          ] * 300)),
       api.properties(
           expected_batches=tuple([[
               r.SerializeToString() for r in [
@@ -106,11 +102,9 @@ def GenTests(api):
   yield api.test(
       'max-batch-size-1', api.properties(max_batch_size=1),
       api.properties(
-          paygen_requests=tuple([
-              r.SerializeToString() for r in [
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              ]
+          paygen_requests=tuple(r.SerializeToString() for r in [
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
           ])),
       api.properties(
           expected_batches=tuple(
@@ -126,14 +120,12 @@ def GenTests(api):
   yield api.test(
       'last-batch-smaller-than-max', api.properties(max_batch_size=2),
       api.properties(
-          paygen_requests=tuple([
-              r.SerializeToString() for r in [
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              ]
+          paygen_requests=tuple(r.SerializeToString() for r in [
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
           ])),
       api.properties(
           expected_batches=tuple(
@@ -157,12 +149,9 @@ def GenTests(api):
   yield api.test(
       'n2n-batches-alongside-full',
       api.properties(
-          paygen_requests=tuple([
-              r.SerializeToString() for r in [
-                  api.paygen_orchestration
-                  .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-              ]
+          paygen_requests=tuple(r.SerializeToString() for r in [
+              api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+              api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
           ])),
       api.properties(
           expected_batches=tuple([[

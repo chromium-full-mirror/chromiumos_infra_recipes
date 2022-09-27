@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -12,7 +12,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
   # Number of seconds to wait on gitiles file download.
   gitiles_timeout_seconds = 3 * 60
 
-  def test(self, name, manifest_branch='snapshot', *args, **kwargs):
+  def test(self, name, manifest_branch, *args, **kwargs):  # pylint: disable=arguments-differ
     """Create a test with properties.
 
     Args:
@@ -23,7 +23,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
         - cq = True.
         - revision = arbitrary sha.
         - git_repo = internal manifest url.
-        - git_ref = refs/heads/snapshot (if not cq).
+        - git_ref = refs/heads/${manifest_branch} (if not cq).
 
     Returns:
       (TestData) the build with cros_source properties included.

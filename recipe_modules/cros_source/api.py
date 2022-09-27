@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -556,7 +556,7 @@ class CrosSourceApi(RecipeApi):
     """
     if not checkout_internal and not checkout_external:
       # Nothing to do in this case!
-      return
+      return None
     i_manifest = self.m.src_state.internal_manifest
     e_manifest = self.m.src_state.external_manifest
     working_manifest = i_manifest if checkout_internal else e_manifest

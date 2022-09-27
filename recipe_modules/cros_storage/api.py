@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=protected-access,redefined-variable-type
+# pylint: disable=protected-access
 
 """API featuring shared helpers for locating and naming stored artifacts.
 
@@ -30,7 +30,6 @@ GSUTIL_TIMEOUT_SECONDS = 30 * 60
 
 class UnsupportedImageTypeException(Exception):
   """Throw this if trying to create image with unsuported ImageType."""
-  pass
 
 
 class ArtifactRoot(object):
@@ -407,15 +406,6 @@ class FullPayload(Payload):
       return None
     return FullPayload(tgt_image, values['unique_id'])
 
-  def __init__(self, tgt_image, unique_id):
-    """Construct a FullPayload instance.
-
-    Args:
-      tgt_image (Image): A representation of the image the payload updates to.
-      unique_id (str): A random value appended to payloads at generation time.
-    """
-    super(FullPayload, self).__init__(tgt_image, unique_id)
-
   @property
   def basename(self):
     """The basename portion of the path of a FullPayload."""
@@ -520,10 +510,6 @@ class DLCPayload(Payload):
                      self._tgt_image._dlc_id, self._tgt_image._dlc_package,
                      self.basename)
 
-  def __init__(self, *args, **kwargs):
-    """Initialize a DLCPayload."""
-    super(DLCPayload, self).__init__(*args, **kwargs)
-
 
 class FullDLCPayload(DLCPayload):
   """A full dlc payload resident in storage."""
@@ -569,15 +555,6 @@ class FullDLCPayload(DLCPayload):
         'channel': artifact_root.channel,
         'unique_id': self._unique_id,
     }
-
-  def __init__(self, tgt_image, unique_id):
-    """Construct a FullDLCPayload instance.
-
-    Args:
-      tgt_image (Image): A representation of the image the payload updates to.
-      unique_id (str): A random value appended to payloads at generation time.
-    """
-    super(FullDLCPayload, self).__init__(tgt_image, unique_id)
 
 
 class DeltaDLCPayload(DLCPayload):

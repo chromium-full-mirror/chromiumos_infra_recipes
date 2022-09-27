@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -26,8 +26,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
     """Returns a Path to the base work directory for this module."""
     if self.random_work_path:
       return self.m.path.mkdtemp()
-    else:
-      return self.m.path['cleanup'].join('overlayfs')
+    return self.m.path['cleanup'].join('overlayfs')
 
   def _set_cache_status(self, upperdir):
     """Returns bool of whether the path contains overlay directories."""

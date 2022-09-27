@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -10,9 +10,6 @@ from recipe_engine import recipe_api
 
 class LvfsMirror(recipe_api.RecipeApi):
   """A module for the LvfsMirror script."""
-
-  def __init__(self, *args, **kwargs):
-    super(LvfsMirror, self).__init__(*args, **kwargs)
 
   def configure(self, mirror_address, gs_uri):
     """Configure the LvfsMirror script module.

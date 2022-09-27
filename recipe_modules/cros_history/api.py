@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -145,7 +145,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         if test.get('status') == 'FAILURE' and test.get('critical')
     ]
     # Test names are of the form `{builder_name}.{test_type}.{suite_name}`.
-    return set([test.split('.')[0] for test in critical_failed_test_names])
+    return {test.split('.')[0] for test in critical_failed_test_names}
 
   def get_passed_tests(self):
     """Find all tests that have passed with the given patches.
@@ -354,5 +354,4 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     if statuses:
       return [build for build in builds if build.status in statuses]
-    else:
-      return builds
+    return builds

@@ -1,4 +1,4 @@
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -106,7 +106,7 @@ def GenTests(api):
     au_fsi_testing_models = au_fsi_testing_models or []
     gen_req_ser = gen_req.SerializeToString()
     expected_test_configs_ser = tuple(
-        [etc.SerializeToString() for etc in expected_test_configs])
+        etc.SerializeToString() for etc in expected_test_configs)
     return api.properties(
         gen_req_ser=gen_req_ser,
         expected_test_configs_ser=expected_test_configs_ser,

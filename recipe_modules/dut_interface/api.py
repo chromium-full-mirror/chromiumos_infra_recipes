@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -21,5 +21,4 @@ class DUTInterface(recipe_api.RecipeApi):
     """
     if properties.cft_is_enabled:
       return crostoolrunner_interface.CrosToolRunnerInterface(api, properties)
-    else:
-      return phosphorus_interface.PhosphorusInterface(api, properties)
+    return phosphorus_interface.PhosphorusInterface(api, properties)

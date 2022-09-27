@@ -1,6 +1,6 @@
 #!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -26,17 +26,18 @@ class RepositoryUtilTest(unittest.TestCase):
       if commands == ['git', 'rev-parse', '--show-prefix']:
         if cwd == '/src/repo/package':
           return 'package/'
-        elif cwd == '/src/dir1/repo':
+        if cwd == '/src/dir1/repo':
           return ''
       elif commands[:-1] == [
           'git', 'log', '-n', '1', '--pretty=format:%H:%ct', '--'
       ]:
         if commands[-1] == 'package/file1.cc' and cwd == '/src/repo':
           return 'file1hash:12345'
-        elif commands[-1] == 'file2.cc' and cwd == '/src/dir1/repo':
+        if commands[-1] == 'file2.cc' and cwd == '/src/dir1/repo':
           return 'file2hash:12345'
 
       assert False, 'Unexpected subprocess call'
+      return ''
 
     mock_subprocess.side_effect = mock_subprocess_side_effect
 

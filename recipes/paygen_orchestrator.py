@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -143,9 +143,8 @@ def RunSteps(api, properties):
 
     if not gen_reqs:
       pres.step_text = 'No payload pairs (src->tgt) found.'
-      return
-    else:
-      pres.step_text = '%s payloads found.' % len(gen_reqs)
+      return None
+    pres.step_text = '%s payloads found.' % len(gen_reqs)
 
   # Determine hardware tests to run for each payload.
   paygen_reqs = []
@@ -182,6 +181,7 @@ def RunSteps(api, properties):
         status=common_pb2.FAILURE,
         summary_markdown='{}\n{}'.format(pres.step_text,
                                          _summarize_failed_builds(fail)))
+  return None
 
 
 def _summarize_failed_builds(failures):

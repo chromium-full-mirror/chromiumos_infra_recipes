@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -598,8 +598,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                 except recipe_api.StepFailure as ex:
                   if ex.had_timeout and retries < max_retries - 1:
                     continue
-                  else:
-                    raise
+                  raise
               published[aname].append({
                   'gs_location': publish_loc,
                   'files': files
@@ -729,8 +728,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         except recipe_api.StepFailure as ex:
           if ex.had_timeout and retries < 2:
             continue
-          else:
-            raise
+          raise
 
       uploaded_artifacts = UploadedArtifacts(gs_bucket, gs_path,
                                              files_by_artifact)
@@ -834,7 +832,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       uploaded_artifacts (UploadedArtifacts): The uploaded artifacts
     """
-    these_artifacts = {k: v for k, v in uploaded_artifacts._asdict().items()}
+    these_artifacts = dict(uploaded_artifacts._asdict().items())
     self.m.easy.set_properties_step(artifacts=these_artifacts,
                                     step_name='output artifact GS paths')
 

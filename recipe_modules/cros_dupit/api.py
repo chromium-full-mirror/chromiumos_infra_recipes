@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -10,9 +10,6 @@ from recipe_engine import recipe_api
 
 class DupItApi(recipe_api.RecipeApi):
   """A module for the DupIt script."""
-
-  def __init__(self, *args, **kwargs):
-    super(DupItApi, self).__init__(*args, **kwargs)
 
   def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
                 gs_distfiles_uri, ignore_missing_args=False,

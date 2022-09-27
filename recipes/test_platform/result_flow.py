@@ -1,4 +1,4 @@
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -48,6 +48,7 @@ def _verify_flow(config, flow):
   if flow == 'ctp_flow':
     return (config.ctp.pubsub.subscription and config.ctp.bb.builder and
             config.test_plan_run.bq.table)
+  raise ValueError(flow)  # pragma:nocover
 
 
 def RunSteps(api, properties):

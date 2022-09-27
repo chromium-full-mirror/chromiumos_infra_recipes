@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -31,7 +31,6 @@ class DUTPrejobResponse(object):  # pragma: no cover
 
     Returns: bool
     """
-    pass
 
   @staticmethod
   @abstractmethod
@@ -43,7 +42,6 @@ class DUTPrejobResponse(object):  # pragma: no cover
 
     Returns: DUTPrejobResponse
     """
-    pass
 
   @abstractmethod
   def get_state_name(self):
@@ -51,7 +49,6 @@ class DUTPrejobResponse(object):  # pragma: no cover
 
     Returns: str
     """
-    pass
 
 
 class DUTTestResponse(object):  # pragma: no cover
@@ -73,7 +70,6 @@ class DUTTestResponse(object):  # pragma: no cover
 
     Returns: bool
     """
-    pass
 
   @staticmethod
   @abstractmethod
@@ -85,7 +81,6 @@ class DUTTestResponse(object):  # pragma: no cover
 
     Returns: DUTTestResponse
     """
-    pass
 
   @abstractmethod
   def get_state_name(self):
@@ -93,7 +88,6 @@ class DUTTestResponse(object):  # pragma: no cover
 
     Returns: str
     """
-    pass
 
 
 class DUTFetchCrashResponse(object):  # pragma: no cover
@@ -153,7 +147,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: bool
     """
-    pass
 
   @abstractmethod
   def update_log_urls(self, metadata):
@@ -163,7 +156,6 @@ class DUTResult(object):  # pragma: no cover
     * metadata (dut_interface.DUTTestMetadata): Unique information for a
     single test.
     """
-    pass
 
   @abstractmethod
   def get_stainless_log_url(self):
@@ -171,7 +163,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: str
     """
-    pass
 
   @abstractmethod
   def get_prejob_steps(self):
@@ -179,7 +170,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: List[Result.Prejob.Step]
     """
-    pass
 
   @abstractmethod
   def is_test_incomplete(self):
@@ -187,7 +177,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: bool
     """
-    pass
 
   @abstractmethod
   def get_test_results(self):
@@ -195,7 +184,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: Iterable[(str, Result.Autotest)]
     """
-    pass
 
   @abstractmethod
   def serialize(self):
@@ -203,7 +191,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: str
     """
-    pass
 
   @abstractmethod
   def add_prejob_response(self, response):
@@ -213,7 +200,6 @@ class DUTResult(object):  # pragma: no cover
     * response (DUTPrejobResponse): response to a prejob to add to this
     overall response.
     """
-    pass
 
   @abstractmethod
   def add_test_response(self, response):
@@ -223,7 +209,6 @@ class DUTResult(object):  # pragma: no cover
     * response (DUTTestResponse): response to a test to add to this overall
     response.
     """
-    pass
 
   @abstractmethod
   def add_result(self, test_id, result):
@@ -232,7 +217,6 @@ class DUTResult(object):  # pragma: no cover
     Args:
     * result (DUTResult): Overall result to add to overall response.
     """
-    pass
 
   @abstractmethod
   def get_dut_state(self):
@@ -240,7 +224,6 @@ class DUTResult(object):  # pragma: no cover
 
     Returns: str
     """
-    pass
 
   def get_failed_tests(self):
     """Retrieves all tests which have a failed status.

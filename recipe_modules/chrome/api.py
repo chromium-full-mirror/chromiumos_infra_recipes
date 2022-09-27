@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -308,12 +308,10 @@ class ChromeApi(recipe_api.RecipeApi):
       ]
 
       # If any follower packages lack prebuilts, return True.
-      any_lack_pb = any([
-          not self.m.cros_build_api.PackageService.HasPrebuilt(
-              HasPrebuiltRequest(build_target=build_target, chroot=chroot,
-                                 package_info=p)).has_prebuilt
-          for p in packageInfos
-      ])
+      any_lack_pb = any(not self.m.cros_build_api.PackageService.HasPrebuilt(
+          HasPrebuiltRequest(build_target=build_target, chroot=chroot,
+                             package_info=p)).has_prebuilt
+                        for p in packageInfos)
       pres.step_text = str(any_lack_pb)
       return any_lack_pb
 

@@ -1,4 +1,4 @@
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -13,11 +13,11 @@ def PylintCheck(input_api, output_api):
 
   pylint_errors = []
 
-  # Find pylint (currently v1.5).
+  # Find pylint (currently v2.7).
   canned_checks_path = input_api.canned_checks.__file__
   canned_checks_path = input_api.os_path.abspath(canned_checks_path)
   depot_tools_path = input_api.os_path.dirname(canned_checks_path)
-  pylint_path = input_api.os_path.join(depot_tools_path, 'pylint-1.5')
+  pylint_path = input_api.os_path.join(depot_tools_path, 'pylint-2.7')
 
   for affected in input_api.AffectedFiles(include_deletes=False):
     affected_str = str(affected)
@@ -58,6 +58,7 @@ def FormatCheck(input_api, output_api):
     return input_api.canned_checks.CheckPatchFormatted(
         input_api, output_api, check_python=True, check_clang_format=False,
         result_factory=output_api.PresubmitError)
+  return None
 
 
 def CommitChecks(input_api, output_api):

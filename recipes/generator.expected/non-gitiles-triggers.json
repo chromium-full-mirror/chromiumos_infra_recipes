@@ -217,7 +217,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('found non-gitiles trigger: %r')"
+      "humanReason": "found non-gitiles trigger: id: \"456\"\nwebui {\n}\n"
     },
     "name": "$result"
   }

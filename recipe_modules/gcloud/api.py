@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.gcloud.gcloud import (SourceCacheAction)
-
-from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
 import contextlib
 import datetime
 import json
@@ -14,6 +10,10 @@ import os
 import re
 
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine import recipe_api
+
+from PB.recipe_modules.chromeos.gcloud.gcloud import (SourceCacheAction)
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
@@ -909,40 +909,40 @@ class GcloudApi(recipe_api.RecipeApi):
       if self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
         with self.m.step.nest('create disk with empty checkout'):
           self._setup_empty_cache_disk(disk_type)
+        return None
 
-      else:
-        with self.m.step.nest('create disk from snapshot image'):
-          snapshot = remote_version
-          # Notice here that we check for image existence (even in cases where
-          # the config requests the latest image or a specific image) and if
-          # said image does not exist, we fall back on the snapshot image.
-          if not self.image_exists(image=snapshot):
-            snapshot = recovery_snapshot
-          self.m.easy.set_properties_step(snapshot_version=snapshot)
-          disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
-          if disk_exists and (recipe_mount or self._not_latest_sync):
-            if disk_exists and self._not_latest_sync:
-              with self.m.step.nest('discarding mounted cache') as pres:
-                pres.text = 'skipping reuse of mounted cache'
-            if self.disk_attached(disk_name=self._short_name):
-              self.detach_disk(instance=self.infra_host, disk=self._disk,
-                               zone=self._zone)
-            self.delete_disk(disk=self._disk, zone=self._zone)
-            disk_exists = False
+      with self.m.step.nest('create disk from snapshot image'):
+        snapshot = remote_version
+        # Notice here that we check for image existence (even in cases where
+        # the config requests the latest image or a specific image) and if
+        # said image does not exist, we fall back on the snapshot image.
+        if not self.image_exists(image=snapshot):
+          snapshot = recovery_snapshot
+        self.m.easy.set_properties_step(snapshot_version=snapshot)
+        disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
+        if disk_exists and (recipe_mount or self._not_latest_sync):
+          if disk_exists and self._not_latest_sync:
+            with self.m.step.nest('discarding mounted cache') as pres:
+              pres.text = 'skipping reuse of mounted cache'
+          if self.disk_attached(disk_name=self._short_name):
+            self.detach_disk(instance=self.infra_host, disk=self._disk,
+                             zone=self._zone)
+          self.delete_disk(disk=self._disk, zone=self._zone)
+          disk_exists = False
 
-          if not disk_exists:
-            # Create the disk but in the event of a stockout of SSD, catch the
-            # exception and create a standard spinning disk. Also catch if the
-            # disk is perhaps already in existance (false 404 from earlier check).
-            try:
+        if not disk_exists:
+          # Create the disk but in the event of a stockout of SSD, catch the
+          # exception and create a standard spinning disk. Also catch if the
+          # disk is perhaps already in existance (false 404 from earlier check).
+          try:
+            self.create_disk(disk=self._disk, zone=self._zone, image=snapshot,
+                             disk_type=disk_type)
+          except self.m.step.StepFailure as e:
+            if not e.result.stdout or not _RE_DISK_EXISTS.search(
+                e.result.stdout.decode('utf-8')):
               self.create_disk(disk=self._disk, zone=self._zone, image=snapshot,
-                               disk_type=disk_type)
-            except self.m.step.StepFailure as e:
-              if not e.result.stdout or not _RE_DISK_EXISTS.search(
-                  e.result.stdout.decode('utf-8')):
-                self.create_disk(disk=self._disk, zone=self._zone,
-                                 image=snapshot, disk_type='pd-standard')
-        return snapshot or None
+                               disk_type='pd-standard')
+      return snapshot or None
 
   def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
     """Perform cache setup when mount is allowed to be outside the path.

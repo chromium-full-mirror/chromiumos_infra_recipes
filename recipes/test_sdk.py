@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -63,6 +63,7 @@ def RunSteps(api):
 
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()
+    return None
 
 
 def GenTests(api):

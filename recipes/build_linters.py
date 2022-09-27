@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -15,7 +15,6 @@ from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from PB.recipe_engine.result import RawResult
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/step',
@@ -214,7 +213,7 @@ def RunSteps(api, properties):
       return DoRunSteps(api, config, relevant_patchsets_by_linter, properties)
 
 
-def DoRunSteps(api, config, relevant_patchsets_by_linter, _properties):
+def DoRunSteps(api, config, relevant_patchsets_by_linter, _properties):  # pylint: disable=inconsistent-return-statements
   api.build_menu.setup_sysroot_and_determine_relevance()
   try:
     all_linter_output = []
@@ -244,8 +243,6 @@ def DoRunSteps(api, config, relevant_patchsets_by_linter, _properties):
     if comment_count:
       return RawResult(status=SUCCESS,
                        summary_markdown='Wrote %d findings.' % comment_count)
-  except StepFailure:
-    raise
   finally:
     api.build_menu.upload_artifacts(config)
 

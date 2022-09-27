@@ -1,4 +1,4 @@
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -108,7 +108,8 @@ def make_into_installer(api, image_path):
             # Delete the original partition.
             '--delete={}'.format(root_b_num),
             # Make a new one in the same place but with a size of one block.
-            '--new={}:{}:{}'.format(root_b_num, first_sector, first_sector),
+            '--new={root_b_num}:{first_sector}:{first_sector}'.format(
+                root_b_num=root_b_num, first_sector=first_sector),
             # Set the partition's type GUID.
             '--typecode={}:{}'.format(root_b_num, type_guid),
             # Set the partition's name.

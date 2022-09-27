@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -17,7 +17,7 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
     Args:
       dimensions(dict): Dictionary of dimensions
     """
-    if any(['cq' in dim for dim in dimensions]):
+    if any('cq' in dim for dim in dimensions):
       return {
           "busy": "21",
           "count": "23",

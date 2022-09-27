@@ -1,6 +1,6 @@
 #!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -83,7 +83,7 @@ def extract_coverage_info(segments):
       return _has_count(segment) and _is_region_entry(segment)
 
     line_starts_new_region = any(
-        [_is_start_of_region(segment) for segment in current_line_segments])
+        _is_start_of_region(segment) for segment in current_line_segments)
     is_start_of_skipped_region = (
         current_line_segments and not _has_count(current_line_segments[0]) and
         _is_region_entry(current_line_segments[0]))
@@ -134,7 +134,7 @@ def _to_compressed_format(line_data, block_data):
   lines = []
   # Aggregate contiguous blocks of lines with the exact same hit count.
   last_index = 0
-  for i in xrange(1, len(line_data) + 1):
+  for i in range(1, len(line_data) + 1):
     is_continous_line = (
         i < len(line_data) and line_data[i][0] == line_data[i - 1][0] + 1)
     has_same_count = (

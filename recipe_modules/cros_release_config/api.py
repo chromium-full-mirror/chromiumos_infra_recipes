@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -149,7 +149,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         raise StepFailure("couldn't parse release block")
 
       builder_block = legacy_block[len("RELEASES = ["):-1].strip()
-      builders = [x for x in builder_block.split("),")]
+      builders = builder_block.split("),")
       # Filter out empty strings.
       builders = [x for x in builders if x]
       # Add back ), to end of blocks.

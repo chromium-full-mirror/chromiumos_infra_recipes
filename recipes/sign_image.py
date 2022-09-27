@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -287,6 +287,7 @@ def RunSteps(api, properties):
       presentation.step_text = 'trigger uploaded'
     else:
       presentation.step_text = "skipped in staging"
+  return None
 
 
 def GenTests(api):

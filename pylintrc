@@ -1,4 +1,4 @@
-# Copyright 2011 The ChromiumOS Authors
+# Copyright 2011 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -50,11 +50,15 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 #   wrong-import-order
 #   wrong-import-position
 #   line-too-long
+#   raise-missing-from <-- when our recipes are py3-only
+#   super-with-arguments <-- when our recipes are py3-only
+#   useless-object-inheritance <-- when our recipes are py3-only
 #   ...and more based on case by case and workload.
 disable=
     attribute-defined-outside-init,
     bad-continuation,
     consider-iterating-dictionary,
+    duplicate-code,
     file-ignored,
     fixme,
     import-error,
@@ -65,7 +69,9 @@ disable=
     missing-docstring,
     no-member,
     no-self-use,
+    raise-missing-from,
     relative-import,
+    super-with-arguments,
     too-few-public-methods,
     too-many-arguments,
     too-many-boolean-expressions,
@@ -77,6 +83,7 @@ disable=
     too-many-public-methods,
     too-many-return-statements,
     too-many-statements,
+    useless-object-inheritance,
     wrong-import-order,
     wrong-import-position,
 

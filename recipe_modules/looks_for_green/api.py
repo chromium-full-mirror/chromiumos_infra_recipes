@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -14,9 +14,6 @@ from recipe_engine import recipe_api
 
 class CqLooksApi(recipe_api.RecipeApi):
   """A module to look for green CQ snapshots."""
-
-  def __init__(self, *args, **kwargs):
-    super(CqLooksApi, self).__init__(*args, **kwargs)
 
   def get_unfinished_or_failed_snapshot_ids(self, snapshot_ids):
     """Returns a set of unfinished or failed snapshot ids.
@@ -87,7 +84,7 @@ class CqLooksApi(recipe_api.RecipeApi):
               .format(sid, LOOKBACK_HOURS))
           unfinished.add(sid)
 
-      if len(unfinished) or len(failed):
+      if unfinished or failed:
         cqlooks_log.append(
             "CQ looks: Found {} unfinished and {} failed snapshots.".format(
                 len(unfinished), len(failed)))

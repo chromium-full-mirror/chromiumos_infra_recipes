@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -38,9 +38,8 @@ def RunSteps(api):
         api.build_menu.setup_workspace_and_chroot() as is_relevant:
       if is_relevant:
         return DoRunSteps(api, config)
-      else:
-        return RawResult(status=common.SUCCESS,
-                         summary_markdown='Build was not relevant.')
+      return RawResult(status=common.SUCCESS,
+                       summary_markdown='Build was not relevant.')
   finally:
     # If the parent build is cancelled, by default the child build will have an
     # INFRA_FAILURE status. Check if this build was cancelled because its
@@ -97,6 +96,7 @@ def DoRunSteps(api, config):
   # the upload succeeded, raise that exception.
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
+  return None
 
 
 def GenTests(api):

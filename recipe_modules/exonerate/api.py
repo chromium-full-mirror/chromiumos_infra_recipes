@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -51,8 +51,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         repo=CONFIG_INTERNAL_REPO, step_test_data=mock_data)
     if bin_proto:
       return TestDisablementCfg.FromString(six.ensure_binary(bin_proto))
-    else:
-      return TestDisablementCfg()
+    return TestDisablementCfg()
 
   def get_tastless_name(self, test_name):
     """Return test_name without the tast prefix."""

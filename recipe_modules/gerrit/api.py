@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -200,8 +200,8 @@ class LabelConstraintType(enum.Enum):
 # regarding the status of votes on labels: for example, requiring that a label
 # be approved or unapproved.
 # Args:
-#   label: Label
-#   type: LabelConstraintType
+#   label (Label)
+#   type (LabelConstraintType)
 LabelConstraint = collections.namedtuple('LabelConstraint', ('label', 'type'))
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -334,6 +334,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     if gen_req.HasField('tgt_dlc_image'):
       return self.m.cros_release_util.channel_long_string_to_enum(
           gen_req.tgt_dlc_image.build.channel)
+    return None  #pragma: nocover
 
   def create_paygen_build_report_payload(self, req, payload_uri):
     """Prepare payload information for the release pubsub.
@@ -348,7 +349,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
 
     # If paygen was skipped (minios) this will be empty, so skip it.
     if not payload_uri:
-      return
+      return None
 
     # Assign generation request for shorthand access.
     gen_req = req.generation_request
@@ -562,7 +563,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         paygen_test_configs)
 
     if not tagged_requests:
-      return
+      return None
 
     # This is definitely an inefficient loop to break the requests up,
     # but N should remain small. See doc string for why we do this.

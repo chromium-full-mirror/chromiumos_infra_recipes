@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -83,7 +83,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
               sort_keys=True))
       if not send_response:
         self.m.easy.step(subcommand, cmd, stdin=stdin)
-        return
+        return None
       cmd += [
           '-output_json',
           '/dev/stdout',

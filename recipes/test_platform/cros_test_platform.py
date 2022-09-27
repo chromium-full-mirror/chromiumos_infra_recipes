@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -238,6 +238,7 @@ def _get_scheduling_error(request):
               'Got priority: %d and qs_account: %s' % (priority, qs_account))
     if priority < 50 or priority > 255:
       return 'priority %d is out of valid range [50, 255]' % priority
+  return None
 
 
 def enumerate_tests(api, requests, error_in_requests):
@@ -745,7 +746,7 @@ def _classify_request_failure(consolidated_results):
     if all(t.state.life_cycle == TaskState.LIFE_CYCLE_REJECTED
            for t in result.attempts):
       return _REQUEST_REJECTED_PARAMETERS
-    elif all(_is_incomplete_result(t) for t in result.attempts):
+    if all(_is_incomplete_result(t) for t in result.attempts):
       # If any enumeration only produced incomplete results, the entire request
       # will be classified as incomplete, so we don't have to continue looking
       # at the other results.
@@ -888,9 +889,9 @@ _TaskResultsByState = collections.namedtuple(
     '_TaskResultsByState', _SUCCESSFUL_TASK_STATES + _UNSUCCESSFUL_TASK_STATES)
 
 
-def _log_task_results(api, task_results):
+def _log_task_results(api, unsorted_task_results):
   """Report task results for a request on the UI."""
-  task_results_by_state = sort_task_results_by_state(task_results)
+  task_results_by_state = sort_task_results_by_state(unsorted_task_results)
 
   for task_state, task_results in task_results_by_state._asdict().items():
     if task_results:
@@ -917,7 +918,7 @@ def sort_task_results_by_state(task_results):
     # know if they passed on retry or not.
     unsuccessful_at_least_once.append(tr)
 
-  passed_set = set([x.name for x in task_results_by_state.passed])
+  passed_set = {x.name for x in task_results_by_state.passed}
   for tr in unsuccessful_at_least_once:
     if tr.name in passed_set:
       task_results_by_state.flaked.append(tr)
@@ -989,8 +990,10 @@ def _emit_link(step, prefix, link_name, task_name, link_url):
   if link_url:
     step.links['{} ({})  {}'.format(prefix, link_name, task_name)] = link_url
   else:
-    step.links['{} ({})  {} (no {} link)'.format(prefix, link_name, task_name,
-                                                 link_name)] = 'broken-link'
+    step.links[
+        '{prefix} ({link_name})  {task_name} (no {link_name} link)'.format(
+            prefix=prefix, link_name=link_name,
+            task_name=task_name)] = 'broken-link'
 
 
 def _test_scheduling():
@@ -1036,11 +1039,10 @@ def _test_request(request_name_tag, build_target="foo-build-target",
                 autotest=Request.Test.Autotest(name='%s-test' %
                                                request_name_tag))
         ]))
-  else:
-    return Request(
-        params=params, test_plan=Request.TestPlan(
-            suite=[Request.Suite(name='%s-suite' % request_name_tag)],
-            tag_criteria=tag_criteria))
+  return Request(
+      params=params, test_plan=Request.TestPlan(
+          suite=[Request.Suite(name='%s-suite' % request_name_tag)],
+          tag_criteria=tag_criteria))
 
 
 def _cft_test_request(request_name, build_target="foo-build-target",

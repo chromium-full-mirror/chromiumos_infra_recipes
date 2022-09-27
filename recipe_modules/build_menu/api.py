@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -682,7 +682,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           information and trigger Spike to upload the provenance.
 
     Returns:
-      (UploadedArtifacts) information about uploaded artifacts.
+      (Option[UploadedArtifacts]) information about uploaded artifacts, if any
+            exist.
     """
     config = config or self.config_or_default
     sysroot = sysroot or self.sysroot or Sysroot(build_target=self.build_target)
@@ -692,13 +693,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
         config.unit_tests.ebuilds_run_spec)
     run_upload_coverage = self.packages_installed and unit_test_configured
 
+    uploaded = None
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
-      return self.m.cros_artifacts.upload_artifacts(
+      uploaded = self.m.cros_artifacts.upload_artifacts(
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, private_bundle_func=private_bundle_func,
           report_to_spike=report_to_spike, upload_coverage=run_upload_coverage)
+    return uploaded
 
   def artifacts_gs_path(self):
     """Get the standard artifacts GS path for the builder (including bucket).
@@ -858,13 +861,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """
     current_build = self.m.buildbucket.build
     # Do not want to search child builds for led job.
+    children = []
     if current_build.id:
       fields = frozenset({'id'})
       predicate = builds_service_pb2.BuildPredicate(
           tags=self.m.buildbucket.tags(
               parent_buildbucket_id=str(current_build.id)))
       predicate.builder.project = current_build.builder.project
-      return self.m.buildbucket.search(predicate, fields=fields)
+      children = self.m.buildbucket.search(predicate, fields=fields)
+    return children
 
   def add_child_build_ids_to_output_property(self):
     """

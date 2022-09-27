@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 from future.standard_library import install_aliases
 install_aliases()
 
+from urllib.parse import urljoin
+
 from recipe_engine import recipe_api
 
-# pylint: disable=no-name-in-module1
-from urllib.parse import urljoin
 
 KEY_PREFIX = 'chromeos.buildbucket:'
 

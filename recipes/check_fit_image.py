@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -73,7 +73,7 @@ def parse_versions_file(step_name, api, path):
 
   def is_all_char(string, char):
     """Return true if a string is composed entirely of one character"""
-    return string and all([c == char for c in string])
+    return string and all(c == char for c in string)
 
   contents = api.file.read_text(step_name, path).splitlines()
 
@@ -123,7 +123,7 @@ def RunSteps(api, properties):
     Return:
       map of name => path indicating where each project is synced"""
 
-    projects = sorted(list(set([gc.project for gc in gerrit_changes])))
+    projects = sorted(list({gc.project for gc in gerrit_changes}))
 
     verbose = dict(verbose=True)
     api.cros_source.ensure_synced_cache(

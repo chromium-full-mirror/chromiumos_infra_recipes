@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -22,7 +22,7 @@ from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
 PROPERTIES = AfdoProcessProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api, properties):  # pylint: disable=inconsistent-return-statements
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot() as is_relevant:
     if is_relevant:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -451,7 +451,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       force_relevant_targets = self.m.git_footers.get_footer_values(
           gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER)
       pres.logs['found footer builders'] = 'found build(s): %s' % ','.join(
-          sorted([x for x in force_relevant_targets]))
+          sorted(force_relevant_targets))
       # Handle forcing relevance via footer value.
       f_rel = [
           cfg.id.name

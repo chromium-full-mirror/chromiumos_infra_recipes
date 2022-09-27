@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -68,7 +68,7 @@ DEPS = [
     'result_flow',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestRunnerProperties
 _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
@@ -78,12 +78,6 @@ _24_HOURS = 24 * 60 * 60
 
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 TAST_TEST_NAME_PREFIX = 'tast.'
-
-# TODO(b/217973414): remove this py2 compatibility workaround.
-try:
-  FileNotFoundError
-except NameError:
-  FileNotFoundError = IOError
 
 
 # API STEP HELPERS
@@ -242,8 +236,8 @@ def _collect_tests_for_phosphorus(request):
     * request (Request): skylab_test_runner request instance.
 
     Returns: dictionary of skylab_test_runner.Request.Test instances
-    """
-  tests = {i: t for (i, t) in request.tests.items()}
+  """
+  tests = dict(request.tests.items())
   if request.HasField('test'):
     tests[_DUMMY_TEST_ID] = request.test
   return tests
@@ -753,8 +747,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       config[
           'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
               base_dir, result_format, artifact_directory)
-    return api.cros_resultdb.upload(
-        config, step_name='upload chromium test results to rdb')
+    api.cros_resultdb.upload(config,
+                             step_name='upload chromium test results to rdb')
+    return
 
   first_test_case_name = ''
   tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
@@ -1501,8 +1496,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   def _misc_properties(cft_is_enabled=False):
     if cft_is_enabled:
       return _misc_properties_for_ctr()
-    else:
-      return _misc_properties_for_phosphorus()
+    return _misc_properties_for_phosphorus()
 
   def _misc_properties_for_ctr():
     return (api.properties(

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -206,11 +206,9 @@ class SkylabApi(recipe_api.RecipeApi):
                   "Execution via container requested, " + \
                   "but no container metadata for build target '{}'".format(build_target)
                 continue
-              else:
-                request.params.run_via_cft = True
-                request.test_plan.tag_criteria.CopyFrom(
-                    uht.hw_test.tag_criteria)
-                configure_step.step_summary_text = "(Executing via CFT)"
+              request.params.run_via_cft = True
+              request.test_plan.tag_criteria.CopyFrom(uht.hw_test.tag_criteria)
+              configure_step.step_summary_text = "(Executing via CFT)"
 
             # TODO (b/217973414): Replace with MessageToJson once we don't need
             # to fix the separator spacing between py2 and py3 MessageToJson.
@@ -244,7 +242,6 @@ class SkylabApi(recipe_api.RecipeApi):
       scheduling.managed_pool = Request.Params.Scheduling.MANAGED_POOL_QUOTA
     else:
       scheduling.unmanaged_pool = pool_name
-    return
 
   def _set_license_labels(self, request, licenses):
     """Set params on request for licenses."""

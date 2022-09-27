@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -44,7 +44,7 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(config, api.orch_menu.config)
     if not config:
       api.assertions.assertTrue(properties.expect_missing_config)
-      return
+      return None
     api.assertions.assertIsNotNone(config)
 
     api.assertions.assertEqual(api.orch_menu.is_release_orchestrator,

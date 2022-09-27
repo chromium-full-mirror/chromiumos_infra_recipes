@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -262,6 +262,7 @@ Cr-Automation-Id: {}""" \
                 'test_plan_filtering/filter')
 
     api.git.commit(message)
+    return None
 
   # END INTERNAL METHOD DEFINITIONS
 

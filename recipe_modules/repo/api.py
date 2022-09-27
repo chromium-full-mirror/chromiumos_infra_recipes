@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -165,8 +165,7 @@ class RepoApi(recipe_api.RecipeApi):
     if return_version:
       match = re.match(r'repo version v([0-9.]+)', output.stdout)
       return match.group(1) if match else ''
-    else:
-      return output
+    return output
 
   def version_at_least(self, version_string):
     """Checks to make sure repo version is as least the specified version.

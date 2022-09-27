@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -300,15 +300,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     staging_prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     if '!informational' in ''.join(expressions):
       return staging_prefix + build_target.name + '-direct-tast-vm'
-    else:
-      return staging_prefix + build_target.name + '-tast-vm-informational'
+    return staging_prefix + build_target.name + '-tast-vm-informational'
 
   def _tast_gce_builder(self, build_target, expressions):
     """Returns the GCE builder name for the given build_target and expressions."""
     if '!informational' in ''.join(expressions):
       return build_target.name + '-tast-gce'
-    else:
-      return build_target.name + '-tast-gce-informational'
+    return build_target.name + '-tast-gce-informational'
 
   def _get_non_informational(self, tast_unit):
     test_cfg = tast_unit.tast_vm_test_cfg
@@ -525,7 +523,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       if tests_to_run:
         # If we aren't scheduling per build_target, flatten into one invocation.
         if not task_per_build_target:
-          tests_to_run = {_ALL_BUILD_TARGETS: sum(tests_to_run.values(), [])}  #pylint: disable=redefined-variable-type
+          tests_to_run = {_ALL_BUILD_TARGETS: sum(tests_to_run.values(), [])}
         for test_build_target, bt_tests_to_run in sorted(tests_to_run.items()):
           skylab_tasks.extend(
               self.m.skylab.schedule_suites(

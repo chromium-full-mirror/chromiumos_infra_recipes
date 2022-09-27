@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -128,8 +128,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     for b in self._config['delta']:
       b = self._flatten_config(b)
       if b['builder_name'].lower() == builder_name.lower():
-        if all(
-            [k in b and b[k].lower() == v.lower() for k, v in kwargs.items()]):
+        if all(k in b and b[k].lower() == v.lower() for k, v in kwargs.items()):
           match_boards.append(b)
     return match_boards
 
@@ -206,7 +205,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             src.build.version != payload_def['chrome_os_version']):
           continue  # pragma: nocover
 
-        elif isinstance(src, SignedImage_pb2):
+        if isinstance(src, SignedImage_pb2):
           reqs.append(
               GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
@@ -321,14 +320,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                                                         au_testing_models,
                                                         au_fsi_testing_models,
                                                         force_tests=force_tests)
-    else:
-      if delta_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
-        return []
-      force_tests = delta_test_override == \
-          PaygenOrchestratorProperties.FORCE_TESTS
-      return self._get_au_test_configs_for_delta_payload(
-          gen_req, configured_payloads, au_testing_models,
-          au_fsi_testing_models, force_tests=force_tests)
+    if delta_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
+      return []
+    force_tests = delta_test_override == \
+        PaygenOrchestratorProperties.FORCE_TESTS
+    return self._get_au_test_configs_for_delta_payload(gen_req,
+                                                       configured_payloads,
+                                                       au_testing_models,
+                                                       au_fsi_testing_models,
+                                                       force_tests=force_tests)
 
   def run_paygen_builders(self, paygen_reqs):
     """Launch paygen builders to generate payloads and run configured tests.

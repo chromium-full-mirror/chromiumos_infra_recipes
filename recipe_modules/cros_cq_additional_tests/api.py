@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
-from PB.testplans.generate_test_plan import BuildPayload, TestUnitCommon
 from PB.chromiumos.common import BuildTarget
-from PB.testplans.target_test_requirements_config import TestSuiteCommon
+from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.testplans.target_test_requirements_config import TestSuiteCommon
 
 CROS_ADDITIONAL_TEST_SUITES = 'Cros-Add-Test-Suites'
 CROS_ADDITIONAL_TS_BOARDS_BUILDTARGET = 'Cros-Add-TS-Boards-BuildTarget'
@@ -120,8 +121,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
               ' as part of cq: %s') % not_run_for_build_targets_str
           raise CrosCqAddnlTestsMissingBuildTargetsError(
               self._not_runnable_addtnl_tests)
-        else:
-          pres.step_text = 'Additional TestSuite added to test plan'
+        pres.step_text = 'Additional TestSuite added to test plan'
 
   def _read_additional_test_suites_related_footers(self, gerrit_changes):
     """Reads additional test suites related Git footers. Below footers are read.
@@ -181,7 +181,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
         addition_hw_test = self._create_hw_test_entry(ts, build_target, board,
                                                       pool)
         #check if build target already has tests.
-        if existing_hw_test_cfg != None:
+        if existing_hw_test_cfg is not None:
           matched_hw_test = bt_tests_map.get(build_target + ts + board + pool)
           #check if test is already configured for build target
           #the matching is done by build target,board,pool and ts

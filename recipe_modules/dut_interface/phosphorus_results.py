@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -17,16 +17,6 @@ from PB.test_platform.skylab_test_runner.result import Result
 class PhosphorusPrejobDUTResponse(dut_results.DUTPrejobResponse
                                  ):  # pragma: no cover
 
-  def __init__(self, test_id, data):
-    """Phosphorus response for a DUT pre-job submit.
-
-    Args:
-    * test_id (str): Test identifier for a single test.
-    * data (phosphorus.prejob.PrejobResponse): Phosphorus metadata for the
-    response.
-    """
-    super(PhosphorusPrejobDUTResponse, self).__init__(test_id, data)
-
   def is_failure(self):
     return (self.data and
             self.data.state != phosphorus.prejob.PrejobResponse.SUCCEEDED)
@@ -43,15 +33,6 @@ class PhosphorusPrejobDUTResponse(dut_results.DUTPrejobResponse
 
 class PhosphorusTestDUTResponse(dut_results.DUTTestResponse
                                ):  # pragma: no cover
-
-  def __init__(self, test_id, data):
-    """Phosphorus response for a test.
-
-    Args:
-    * test_id (str): Unique identifier for a single test.
-    * data (dut_results.DUTTestResponse): Phosphorus metadata for the response.
-    """
-    super(PhosphorusTestDUTResponse, self).__init__(test_id, data)
 
   def is_failure(self):
     return (self.data and
@@ -74,7 +55,7 @@ class PhosphorusFetchCrashDUTResponse(dut_results.DUTFetchCrashResponse
 
 class PhosphorusResult(dut_results.DUTResult):  # pragma: no cover
 
-  def __init__(self, data=None):
+  def __init__(self, data=None):  # pylint: disable=useless-super-delegation
     """Phosphorus metatada container for all test responses.
 
     Stores within:

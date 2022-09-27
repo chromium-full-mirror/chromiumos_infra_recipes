@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -26,16 +26,6 @@ class InvalidTestResponseStateException(Exception):
 class CrosToolRunnerPrejobDUTResponse(dut_results.DUTPrejobResponse
                                      ):  # pragma: no cover
   PREJOB_FAILURE = 'failure'
-
-  def __init__(self, test_id, data):
-    """CrosToolRunner response for a DUT pre-job submit.
-
-    Args:
-    * test_id (str): Test identifier for a single test.
-    * data (phosphorus.prejob.PrejobResponse): Phosphorus metadata for the
-    response.
-    """
-    super(CrosToolRunnerPrejobDUTResponse, self).__init__(test_id, data)
 
   def is_failure(self):
     """Whether the job has failed.
@@ -73,15 +63,6 @@ class CrosToolRunnerPrejobDUTResponse(dut_results.DUTPrejobResponse
 class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
                                    ):  # pragma: no cover
   TEST_FAILURE = 'fail'
-
-  def __init__(self, test_id, data):
-    """CrosToolRunner response for a test.
-
-    Args:
-    * test_id (str): Unique identifier for a single test.
-    * data (dut_results.DUTTestResponse): CrosToolRunner metadata for the response.
-    """
-    super(CrosToolRunnerTestDUTResponse, self).__init__(test_id, data)
 
   def is_failure(self):
     """Whether the job has failed.

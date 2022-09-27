@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -41,7 +41,7 @@ class exponential_retry(object):
   def __call__(self, f):
 
     @functools.wraps(f)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # pylint: disable=inconsistent-return-statements
       retry_delay = self.delay
       for i in range(self.retries):
         try:

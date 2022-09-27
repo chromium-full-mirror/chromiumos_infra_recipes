@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -479,7 +479,7 @@ class OrchMenuApi(RecipeApi):
       running_builds = [b for b in running_builds if b.id != my_build.id]
 
       # Is a run of the same configuration ongoing? If so, inform and join().
-      if not len(running_builds):
+      if not running_builds:
         pres.step_text = 'found no inflight run'
         return
 

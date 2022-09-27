@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -73,7 +73,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     if not branch or branch.type == Branch.UNSPECIFIED:
       raise StepFailure('Branch type is required.')
     # Custom branch. Check for name.
-    elif branch.type == Branch.CUSTOM:
+    if branch.type == Branch.CUSTOM:
       if branch.name:
         cmd.extend(['--custom', branch.name])
       else:

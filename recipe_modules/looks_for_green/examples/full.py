@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -28,13 +28,12 @@ def RunSteps(api, properties):
       snapshot_ids)
   api.assertions.assertCountEqual(properties.expected_failed_snapshots, failed)
   api.assertions.assertEqual(
-      sorted(properties.expected_failed_snapshots), sorted([x for x in failed]))
+      sorted(properties.expected_failed_snapshots), sorted(failed))
 
   api.assertions.assertCountEqual(properties.expected_unfinished_snapshots,
                                   unfinished)
   api.assertions.assertEqual(
-      sorted(properties.expected_unfinished_snapshots),
-      sorted([x for x in unfinished]))
+      sorted(properties.expected_unfinished_snapshots), sorted(unfinished))
 
 
 def GenTests(api):

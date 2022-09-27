@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -23,13 +23,10 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
 
     Returns: bool
     """
-    return self._cipd_label != None
+    return self._cipd_label is not None
 
   def execute_luciexe(self):
-    """Execute work via cros_test_runner luciexe binary.
-
-    Returns: None
-    """
+    """Execute work via cros_test_runner luciexe binary."""
     self.ensure_cros_test_runner()
     build = build_pb2.Build()
     build.CopyFrom(self.m.buildbucket.build)
@@ -37,8 +34,6 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
       build.ClearField(ofield)
     cmd = self._cipd_dir.join('cros_test_runner')
     self.m.step.sub_build('go cros_test_runner', [cmd], build)
-
-    return None
 
   def ensure_cros_test_runner(self):
     """Ensure the cros_test_runner CLI is installed."""

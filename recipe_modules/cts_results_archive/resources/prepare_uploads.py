@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -9,10 +9,8 @@
 #
 # pylint: disable=anomalous-backslash-in-string
 # pylint: disable=redefined-builtin
-# pylint: disable=redefined-variable-type
 # pylint: disable=undefined-variable
 # pylint: disable=unused-import
-# pylint: disable=bad-builtin
 
 import argparse
 import glob
@@ -301,7 +299,7 @@ def _find_toplevel_job_dir(start_dir):
     @param start_dir: starting directing for the upward search"""
   job_dir = start_dir
   while not os.path.exists(os.path.join(job_dir, ".autoserv_execute")):
-    if job_dir == "/" or job_dir == '':
+    if job_dir in ('/', ''):
       return None
     job_dir = os.path.dirname(job_dir)
   return job_dir
@@ -376,4 +374,4 @@ def _deserialize_labels_from_host_info(path):
 
 
 if __name__ == '__main__':
-  exit(main())
+  sys.exit(main())
