@@ -21,8 +21,11 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb
 from PB.chromiumos.common import ArtifactsByService
 
-# The base image tar, used for generating provenance.
+# The base image tar filename, used for generating provenance.
 BASE_IMAGE_TAR = 'chromiumos_base_image.tar.xz'
+# The recovery image tar filename, used for generating provenance.
+RECOVERY_IMAGE_TAR = 'recovery_image.tar.xz'
+
 
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
 # the appropriate services.
@@ -691,11 +694,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                       artifact_link=upload_uri)
 
       if report_to_spike and kind == BuilderConfig.Id.Type.RELEASE:
-        images = files_by_artifact.get('IMAGE_ARCHIVES', [])
+        image_archives = files_by_artifact.get('IMAGE_ARCHIVES', [])
 
         artifact_basenames = []
-        if images:
-          artifact_basenames = [self.m.path.basename(i) for i in images]
+        if image_archives:
+          artifact_basenames.extend(
+              [self.m.path.basename(i) for i in image_archives])
         else:
           presentation.logs[
               'report_to_spike'] = 'IMAGE_ARCHIVES not in files_by_artifact'
@@ -703,7 +707,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         # The artifact to generate provenance for.
         # This list will be expanded as more artifacts are enrolled in
         # provenance generation.
-        artifacts_to_report = [BASE_IMAGE_TAR]
+        artifacts_to_report = [BASE_IMAGE_TAR, RECOVERY_IMAGE_TAR]
 
         paths_to_hash = {
             self.m.path.join(outpath, i): i

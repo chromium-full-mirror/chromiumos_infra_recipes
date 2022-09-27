@@ -45,10 +45,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "snoopy: start"
-  },
-  {
     "cmd": [
       "cipd",
       "ensure",
@@ -73,9 +69,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoopy: start.ensure_installed",
+    "name": "ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -112,10 +107,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoopy: start.report_stage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "report_stage"
   },
   {
     "cmd": [],
@@ -4171,10 +4163,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "snoopy: fetch"
-  },
-  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -4197,10 +4185,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoopy: fetch.report_stage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "report_stage (2)"
   },
   {
     "cmd": [],
@@ -5681,13 +5666,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "determine build and model metadata.snoopy: compile",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -5710,9 +5688,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine build and model metadata.snoopy: compile.report_stage",
+    "name": "determine build and model metadata.report_stage",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -6201,10 +6179,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "snoopy: upload"
-  },
-  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -6227,10 +6201,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoopy: upload.report_stage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "report_stage (3)"
   },
   {
     "cmd": [],
