@@ -290,12 +290,14 @@ def _populate_additional_info_for_autotest_result(api, result,
 
     # Sets the start time and end time.
     if autotest_keyval_file:
-      test_case.start_time.CopyFrom(
-          timestamp_pb2.Timestamp(
-              seconds=int(autotest_keyval_file.get('job_started'))))
-      test_case.end_time.CopyFrom(
-          timestamp_pb2.Timestamp(
-              seconds=int(autotest_keyval_file.get('job_finished'))))
+      if 'job_started' in autotest_keyval_file:
+        test_case.start_time.CopyFrom(
+            timestamp_pb2.Timestamp(
+                seconds=int(autotest_keyval_file.get('job_started'))))
+      if 'job_finished' in autotest_keyval_file:
+        test_case.end_time.CopyFrom(
+            timestamp_pb2.Timestamp(
+                seconds=int(autotest_keyval_file.get('job_finished'))))
 
   return autotest_result
 
@@ -1374,6 +1376,29 @@ job_started=1651467359
 status_version=0
 user=test-user
 job_finished=1651468010
+tast_missing_test.0=foo.SomeTest
+tast_missing_test.1=foo.SomeOtherTest
+tast_missing_test.2=bar.DifferentTest
+tast_missing_test.3=bar.YetAnotherTest
+    """))
+
+  def _autotest_keyval_file_step_data_no_timestamps():
+    return api.step_data(
+        'execution steps.original_test.read autotest keyval file',
+        api.file.read_text("""
+parent_job_id=58067d9ab42aca11
+build=board-cq/R00-0.0.0
+suite=sweet-cq
+synchronous_log_data_stainless_url=https://path/to/stainless
+synchronous_log_data_url=gs://path/to/test/logs
+branch=main
+label=board-cq/R00-0.0.0/sweet-cq/test-case
+build_config=eve-release
+master_build_config=master-release
+drone=skylab-drone-xyz
+hostname=chromeos0-row0-rack0-host0
+status_version=0
+user=test-user
 tast_missing_test.0=foo.SomeTest
 tast_missing_test.1=foo.SomeOtherTest
 tast_missing_test.2=bar.DifferentTest
@@ -2488,6 +2513,35 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       'success-with-timestamp-in-results',
       _set_build(bid=42),
       _autotest_keyval_file_step_data(),
+      _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS),
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_2',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS)
+                      ]))))),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-without-timestamps-in-results',
+      _set_build(bid=42),
+      _autotest_keyval_file_step_data_no_timestamps(),
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
