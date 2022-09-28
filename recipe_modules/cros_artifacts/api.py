@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -743,7 +743,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
       if upload_coverage:
-        for fname in files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', []):
+        cov_files = files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', [])
+        cov_files.extend(
+            files_by_artifact.get('CODE_COVERAGE_RUST_LLVM_JSON', []))
+        for fname in cov_files:
           self.m.code_coverage.upload_code_coverage_llvm_json(
               outpath.join(fname))
 
