@@ -57,7 +57,17 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
     }, {
         "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-lmno-cros-internal",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
             "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+        "zone":
+            "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
+    }, {
+        "name":
+            "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
         "zone":
             "https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b",
     }, {

@@ -59,9 +59,13 @@ def RunSteps(api):
     instance_list = api.gcloud.list_all_instances()
     disks_to_delete = api.gcloud.determine_disks_to_delete(
         disks=disk_list, instances=instance_list)
-    api.assertions.assertEqual(
-        disks_to_delete,
-        {'chromeos-ci-infra-us-central1-b-x16-0-lmno-cros': 'us-central1-b'})
+    api.assertions.assertDictEqual(
+        disks_to_delete, {
+            'chromeos-ci-infra-us-central1-b-x16-0-lmno-cros':
+                'us-central1-b',
+            'chromeos-ci-infra-us-central1-b-x16-0-lmno-cros-internal':
+                'us-central1-b'
+        })
 
   # Empty context
   with api.gcloud.cleanup_gce_disks(), \

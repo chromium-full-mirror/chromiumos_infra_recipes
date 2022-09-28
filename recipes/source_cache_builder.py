@@ -132,7 +132,10 @@ def RunSteps(api, properties):
     api.easy.set_properties_step(orphaned_disks=disks_to_delete)
     if not is_staging:
       futures = []
-      for disk, zone in disks_to_delete.items():
+      # We need to sort to make the test results deterministic
+      for disk, zone in [
+          (d, disks_to_delete[d]) for d in sorted(disks_to_delete.keys())
+      ]:
         futures.append(
             api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
       api.futures.wait(futures)

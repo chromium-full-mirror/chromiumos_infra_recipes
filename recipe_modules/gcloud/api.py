@@ -741,7 +741,7 @@ class GcloudApi(recipe_api.RecipeApi):
       # mean that a standard disk is nine nodes long, anything
       # longer means the disk is a cache disk.
       if len(disk.split('-')) > 9:
-        if disk.rsplit('-', 1)[0] not in instances:
+        if '-'.join(disk.split('-')[0:9]) not in instances:
           disks_to_delete[disk] = zone
     return disks_to_delete
 

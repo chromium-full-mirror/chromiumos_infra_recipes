@@ -2759,7 +2759,15 @@
       "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros-internal\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal\", @@@",
       "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-bot/zones/us-central1-b\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
       "@@@STEP_LOG_LINE@json.output@  {@@@",
@@ -2809,7 +2817,7 @@
     "name": "delete orphaned disks.set orphaned_disks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros\": \"us-central1-b\"}@@@"
+      "@@@SET_BUILD_PROPERTY@orphaned_disks@{\"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros\": \"us-central1-b\", \"chromeos-ci-infra-us-central1-b-x16-0-lmno-cros-internal\": \"us-central1-b\"}@@@"
     ]
   },
   {
@@ -2827,6 +2835,25 @@
     },
     "infra_step": true,
     "name": "delete orphaned disks.delete disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "disks",
+      "delete",
+      "chromeos-ci-infra-us-central1-b-x16-0-lmno-cros-internal",
+      "--zone=us-central1-b",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "delete orphaned disks.delete disk (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
