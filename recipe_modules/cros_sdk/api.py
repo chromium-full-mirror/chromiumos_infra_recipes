@@ -393,12 +393,12 @@ class CrosSdkApi(RecipeApi):
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
                     sdk_version=None, timeout_sec='DEFAULT', test_data=None,
-                    test_toolchain_cls=None, name=None):
+                    test_toolchain_cls=None, name=None, replace=False):
     """Initialize the chroot and link it into the workspace.
 
     Create a chroot if one does not already exist in the chroot path. If one
     already exists, but is not reusable by this build (see _ensure_cache_state)
-    delete the existing chroot and create a new one.
+    or replace is True, delete the existing chroot and create a new one.
 
     Args:
       version (int): Required SDK cache version, if any.  Some recipes do not
@@ -413,6 +413,8 @@ class CrosSdkApi(RecipeApi):
           None to use the default in cros_build_api/test_api.py.
       test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
       name (str): Step name.  Default: 'init sdk'.
+      replace (boolean): Whether to replace the chroot if it already exists.
+          Default: False.
 
     Returns:
       chromiumos_pb2.Chroot protobuf for the chroot.
@@ -430,7 +432,8 @@ class CrosSdkApi(RecipeApi):
         # Determine whether a cached root could be reused.
         # If we're requesting a specific SDK version, we probably want to
         # rebuild the chroot regardless.
-        no_replace = self._check_sdk_cache_state(version) and not sdk_version
+        no_replace = self._check_sdk_cache_state(
+            version) and not sdk_version and not replace
         # SdkService/Create will create a chroot if one does not already exist
         # or no_replace is False.
         response = self.m.cros_build_api.SdkService.Create(

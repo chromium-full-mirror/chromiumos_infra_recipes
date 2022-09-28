@@ -301,7 +301,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   @contextlib.contextmanager
   def setup_workspace_and_chroot(self, no_chroot_timeout=False,
-                                 cherry_pick_changes=True):
+                                 cherry_pick_changes=True, replace=False):
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
@@ -312,12 +312,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
       cherry_pick_changes (bool): whether to apply gerrit changes on top of the
           checkout using cherry-pick. If set to False, will directly checkout
           the changes using the gerrit fetch refs.
+      replace (boolean): Whether to replace the chroot if it already exists.
+          Default: False.
 
     Returns:
       (bool): Whether the build is relevant.
     """
     with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
-      yield self.setup_chroot(no_chroot_timeout)
+      yield self.setup_chroot(no_chroot_timeout, replace=replace)
 
   @contextlib.contextmanager
   def setup_workspace(self, cherry_pick_changes=True):
@@ -350,7 +352,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
       yield
 
-  def setup_chroot(self, no_chroot_timeout=False, sdk_version=None):
+  def setup_chroot(self, no_chroot_timeout=False, sdk_version=None,
+                   replace=False):
     """Setup the chroot for the builder.
 
     Args:
@@ -358,6 +361,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           chroot.
       sdk_version (string): Optional. Specific SDK version to include in
         the sdk CreateRequest, e.g. 2022.01.20.073008.
+      replace (boolean):  Whether to replace the chroot if it already exists.
+          Default: False.
 
     Returns:
       (bool): Whether the build is relevant.
@@ -378,7 +383,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           version=config.general.sdk_cache_version, use_image=self.is_staging,
           sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
-          no_chroot_timeout else 'DEFAULT')
+          no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True
 
       # Avoid passing empty BuildTarget message when we don't have one,
