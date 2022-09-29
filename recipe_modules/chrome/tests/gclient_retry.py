@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,12 +16,6 @@ DEPS = [
     'recipe_engine/step',
     'chrome',
 ]
-
-from recipe_engine import post_process
-
-from PB.chromiumos.common import Chroot
-from PB.chromiumos.common import BuildTarget
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

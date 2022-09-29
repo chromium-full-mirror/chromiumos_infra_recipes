@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_cq_additional_tests.cros_cq_additional_tests import CrosCQAdditionalTestsProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -19,9 +21,6 @@ DEPS = [
     'src_state',
     'git_footers',
 ]
-
-from PB.recipe_modules.chromeos.cros_cq_additional_tests.cros_cq_additional_tests import (
-    CrosCQAdditionalTestsProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

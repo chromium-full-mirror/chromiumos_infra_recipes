@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
+from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,9 +13,6 @@ DEPS = [
     'cros_source',
     'repo',
 ]
-
-from recipe_engine import post_process
-from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

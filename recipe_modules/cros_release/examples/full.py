@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf.json_format import MessageToJson
+
+from recipe_engine import post_process
+
+from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos import common as common_pb2
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
+from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -15,18 +27,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from google.protobuf.json_format import MessageToJson
-
-from recipe_engine import post_process
-
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos import common as common_pb2
-from PB.chromite.api.sysroot import Sysroot
-from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
-from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 
 def RunSteps(api):

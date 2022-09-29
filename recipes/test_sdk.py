@@ -8,6 +8,11 @@
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
+from PB.chromite.api.test import BuildTargetUnitTestRequest
+from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine.result import RawResult
+
 from recipe_engine import post_process
 
 DEPS = [
@@ -22,11 +27,6 @@ DEPS = [
     'cros_sdk',
     'failures',
 ]
-
-from PB.chromite.api.test import BuildTargetUnitTestRequest
-from PB.chromiumos.common import BuildTarget
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipe_engine.result import RawResult
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

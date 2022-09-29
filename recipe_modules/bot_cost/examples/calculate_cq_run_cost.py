@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 # pylint: disable=protected-access
+
+from google.protobuf import timestamp_pb2
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,11 +18,6 @@ DEPS = [
     'bot_cost',
     'cros_tags',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-from google.protobuf import timestamp_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

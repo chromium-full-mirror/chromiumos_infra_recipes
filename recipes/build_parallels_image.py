@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -15,13 +15,16 @@ for more details.
 
 This recipe is invoked as part of uprev_parallels_pin.
 """
+
 from collections import namedtuple
+
+from PB.recipes.chromeos.build_parallels_image import BuildParallelsImageProperties
+from PB.test_platform.taskstate import TaskState
+from PB.testplans.generate_test_plan import BuildPayload
 
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
-from PB.test_platform.taskstate import TaskState
-from PB.testplans.generate_test_plan import BuildPayload
 
 DEPS = [
     'depot_tools/gsutil',
@@ -37,9 +40,6 @@ DEPS = [
     'tast_results',
     'test_util',
 ]
-
-from PB.recipes.chromeos.build_parallels_image import \
-    BuildParallelsImageProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

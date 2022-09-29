@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -9,14 +9,14 @@ Automatically updates binary config files and updates Goldeneye config
 json files.
 """
 
+from PB.chromiumos.dut_tracking import MAX_PEND_TIME
+
 DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'easy',
     'swarming_cli',
 ]
-
-from PB.chromiumos.dut_tracking import MAX_PEND_TIME
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

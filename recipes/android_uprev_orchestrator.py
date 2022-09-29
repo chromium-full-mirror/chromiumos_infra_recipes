@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -13,6 +13,11 @@ Once all builds and tests passed, it submits a CL to update the Android LKGB
 file. The change will in turn trigger the PUpr generator to publish an actual
 Android uprev.
 """
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+
+from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -29,10 +34,6 @@ DEPS = [
     'orch_menu',
     'repo',
 ]
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

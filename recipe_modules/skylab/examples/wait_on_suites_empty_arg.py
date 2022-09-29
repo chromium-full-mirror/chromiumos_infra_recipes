@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import duration_pb2
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'skylab',
 ]
-
-from google.protobuf import duration_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

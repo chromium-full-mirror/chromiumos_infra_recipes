@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+import six
+
+from google.protobuf import json_format
+from PB.recipe_modules.chromeos.repo.examples.branching import BranchingProperties
+from PB.recipe_modules.chromeos.repo.examples.branching import BranchProjects
 
 DEPS = [
     'recipe_engine/context',
@@ -10,13 +16,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'repo',
 ]
-
-import six
-
-from google.protobuf import json_format
-
-from PB.recipe_modules.chromeos.repo.examples.branching import (
-    BranchingProperties, BranchProjects)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

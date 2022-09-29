@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf.json_format import ParseDict
+
+from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
+from PB.recipe_modules.chromeos.test_util.examples.full import TestProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,13 +17,6 @@ DEPS = [
     'cros_tags',
     'test_util',
 ]
-
-from google.protobuf.json_format import ParseDict
-
-from PB.chromiumos.common import BuildTarget
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
-from PB.recipe_modules.chromeos.test_util.examples.full import TestProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

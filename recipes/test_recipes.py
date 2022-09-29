@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Tests a recipe CL by running ChromeOS builders."""
+
+from collections import OrderedDict
+import contextlib
+import six
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.builds_service import BuildPredicate
+from PB.go.chromium.org.luci.led.job import job as job_pb2
+from PB.recipes.chromeos.test_recipes import TestRecipesProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -24,21 +37,6 @@ DEPS = [
     'naming',
     'recipe_analyze',
 ]
-
-from collections import OrderedDict
-import contextlib
-import six
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
-    BuildPredicate)
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.led.job import job as job_pb2
-
-from PB.recipes.chromeos.test_recipes import TestRecipesProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -5,6 +5,21 @@
 
 """Recipe that builds chromeos-firmware on a firmware branch."""
 
+from collections import defaultdict
+from contextlib import contextmanager
+import re
+
+from recipe_engine import post_process
+from recipe_engine import recipe_api
+
+from PB.chromite.api.firmware import FirmwareArtifactInfo
+from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos import common as common_pb2
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
+
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/cq',
@@ -28,21 +43,6 @@ DEPS = [
     'src_state',
     'test_util',
 ]
-
-from collections import defaultdict
-from contextlib import contextmanager
-import re
-
-from recipe_engine import post_process
-from recipe_engine import recipe_api
-
-from PB.recipe_engine import result as result_pb2
-from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
-from PB.chromite.api.firmware import FirmwareArtifactInfo
-from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

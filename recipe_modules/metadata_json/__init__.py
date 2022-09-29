@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.metadata_json.metadata_json import MetadataJsonProperties
 
 DEPS = [
     'depot_tools/gsutil',
@@ -19,9 +21,6 @@ DEPS = [
     'urls',
     'util',
 ]
-
-from PB.recipe_modules.chromeos.metadata_json.metadata_json import (
-    MetadataJsonProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

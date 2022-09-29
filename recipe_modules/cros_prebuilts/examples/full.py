@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget, Profile
+from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuiltsProperties
+from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import FullProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+
+from recipe_engine.post_process import MustRun, DoesNotRun
 
 DEPS = [
     'recipe_engine/assertions',
@@ -14,17 +22,6 @@ DEPS = [
     'src_state',
     'test_util',
 ]
-
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget, Profile
-from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
-    CrosPrebuiltsProperties)
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
-from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import (
-    FullProperties)
-
-from recipe_engine.post_process import MustRun, DoesNotRun
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

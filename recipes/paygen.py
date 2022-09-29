@@ -5,10 +5,21 @@
 
 """Recipe for generating ChromeOS payloads (AU deltas etc)."""
 
+from collections import namedtuple
 import datetime
 import json
 
+from google.protobuf.json_format import MessageToDict, MessageToJson
+
+from PB.chromite.api.payload import GenerationResponse
+import PB.chromiumos.common as common_pb2
+from PB.recipes.chromeos.paygen import AutoupdateTestConfig
+from PB.recipes.chromeos.paygen import PaygenProperties
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
+
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -36,20 +47,6 @@ DEPS = [
     'src_state',
     'workspace_util',
 ]
-
-from collections import namedtuple
-
-from google.protobuf.json_format import MessageToDict, MessageToJson
-
-from recipe_engine.recipe_api import StepFailure
-from recipe_engine import post_process
-
-import PB.chromiumos.common as common_pb2
-from PB.chromite.api.payload import GenerationResponse
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
-from PB.recipes.chromeos.paygen import PaygenProperties
-from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
-    CrosInfraConfigProperties)
 
 PROPERTIES = PaygenProperties
 

@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 # pylint: disable=protected-access
+
+from collections import namedtuple
+
+from PB.chromiumos.common import BuildTarget, PackageIndexInfo, Profile
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuiltsProperties
+from PB.recipe_modules.chromeos.cros_prebuilts.tests.get_pkg_idx_info import GetPkgIdxInfoProperties
+from PB.recipe_modules.chromeos.cros_prebuilts.tests.get_pkg_idx_info import TestDataMap
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,15 +20,6 @@ DEPS = [
     'cros_prebuilts',
     'test_util',
 ]
-
-from collections import namedtuple
-
-from PB.chromiumos.common import BuildTarget, PackageIndexInfo, Profile
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
-from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
-    CrosPrebuiltsProperties)
-from PB.recipe_modules.chromeos.cros_prebuilts.tests.get_pkg_idx_info import (
-    GetPkgIdxInfoProperties, TestDataMap)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

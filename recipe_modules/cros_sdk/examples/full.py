@@ -1,7 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos import common
+from PB.chromiumos.sdk_cache_state import SdkCacheState
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
+from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
+from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,16 +23,6 @@ DEPS = [
     'remoteexec',
     'workspace_util',
 ]
-
-from PB.chromiumos import common
-from PB.chromiumos.sdk_cache_state import SdkCacheState
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
-from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
-from PB.recipe_modules.chromeos.cros_sdk.examples.test import (
-    TestInputProperties)
-from PB.testplans.pointless_build import PointlessBuildCheckResponse
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

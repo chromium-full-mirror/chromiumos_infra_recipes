@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api.artifacts import PrepareForBuildResponse
+from PB.recipe_modules.chromeos.sysroot_util.tests.test import TestInputProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,10 +13,6 @@ DEPS = [
     'cros_sdk',
     'sysroot_util',
 ]
-
-from PB.chromite.api.artifacts import PrepareForBuildResponse
-from PB.recipe_modules.chromeos.sysroot_util.tests.test import (
-    TestInputProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

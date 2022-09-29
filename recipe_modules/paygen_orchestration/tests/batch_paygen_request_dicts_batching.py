@@ -4,17 +4,17 @@
 
 # pylint: disable=protected-access
 
+from PB.chromite.api.payload import GenerationRequest
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/step',
     'paygen_orchestration',
 ]
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
-from PB.chromite.api.payload import GenerationRequest
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 

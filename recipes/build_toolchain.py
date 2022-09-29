@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Builds and uploads the Chromium OS toolchain."""
+
+from PB.chromite.api.sdk import BuildPrebuiltsRequest
+from PB.chromite.api.sdk import CreateBinhostCLsRequest
+from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/step',
@@ -19,10 +25,6 @@ PREBUILT_UPLOAD_BUCKET = 'gs://chromeos-prebuilt'
 # The chromeos-sdk builder uses 'chroot' as VERSION_PREFIX.
 # We use a different prefix to avoid conflicts.
 VERSION_PREFIX = 'build_toolchain'
-
-from recipe_engine import post_process
-from PB.chromite.api.sdk import BuildPrebuiltsRequest, \
-  CreateBinhostCLsRequest, UploadPrebuiltPackagesRequest
 
 
 def RunSteps(api):

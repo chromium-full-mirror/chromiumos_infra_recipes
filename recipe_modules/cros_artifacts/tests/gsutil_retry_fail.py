@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
-DEPS = [
-    'recipe_engine/assertions',
-    'recipe_engine/buildbucket',
-    'cros_artifacts',
-]
 
 from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 
 from recipe_engine.recipe_api import StepFailure
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'cros_artifacts',
+]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

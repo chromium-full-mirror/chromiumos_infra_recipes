@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_source.examples.sync_cache import SyncCacheProperties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/path',
@@ -11,11 +15,6 @@ DEPS = [
     'gcloud',
     'src_state',
 ]
-
-from recipe_engine import post_process
-
-from PB.recipe_modules.chromeos.cros_source.examples.sync_cache import (
-    SyncCacheProperties)
 
 PROPERTIES = SyncCacheProperties
 

@@ -6,14 +6,15 @@
 """API for working with CrOS's Schedule."""
 
 from datetime import datetime
-from google.protobuf.json_format import Parse
 import json
 import six
 
+from google.protobuf.json_format import Parse
+
+from PB.chromiumos.chromiumdash import FetchMilestoneScheduleResponse
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
-
-from PB.chromiumos.chromiumdash import (FetchMilestoneScheduleResponse)
 
 
 class CrosScheduleApi(recipe_api.RecipeApi):

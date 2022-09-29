@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
+
+from PB.recipe_modules.chromeos.cros_source.examples.checkout_branch import CheckoutBranchProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,11 +16,6 @@ DEPS = [
     'cros_source',
     'src_state',
 ]
-
-from recipe_engine import post_process
-
-from PB.recipe_modules.chromeos.cros_source.examples.checkout_branch import (
-    CheckoutBranchProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

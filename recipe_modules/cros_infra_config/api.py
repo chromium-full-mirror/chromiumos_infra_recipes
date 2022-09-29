@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 import six
 
-from google.protobuf.json_format import MessageToDict, Parse, ParseDict
-from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import Parse
+from google.protobuf.json_format import ParseDict
 
-from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
-    CrosInfraConfigProperties)
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
 from PB.chromiumos.bot_scaling import BotPolicyCfg
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
-from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
-                                                              GitilesCommit,
-                                                              Trinary)
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
+
+from recipe_engine import recipe_api
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 CHROME_OS_INFRA_CONFIG_REPO_URL = (
     'https://chrome-internal.googlesource.com/chromeos/infra/config')

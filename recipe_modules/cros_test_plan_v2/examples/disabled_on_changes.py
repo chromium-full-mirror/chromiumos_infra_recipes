@@ -1,6 +1,11 @@
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -8,11 +13,6 @@ DEPS = [
     'cros_test_plan_v2',
     'gerrit',
 ]
-
-from recipe_engine import post_process
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

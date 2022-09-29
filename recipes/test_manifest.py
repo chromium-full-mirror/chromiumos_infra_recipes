@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Verifies a repo manifest."""
+
+import contextlib
+
+from PB.chromiumos.branch import Branch
+from PB.recipes.chromeos.test_manifest import TestManifestProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -19,12 +25,6 @@ DEPS = [
     'repo',
     'src_state',
 ]
-
-import contextlib
-
-from recipe_engine import post_process
-from PB.recipes.chromeos.test_manifest import TestManifestProperties
-from PB.chromiumos.branch import Branch
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

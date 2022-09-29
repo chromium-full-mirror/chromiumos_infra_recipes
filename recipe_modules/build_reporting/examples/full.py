@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api.packages import GetTargetVersionsResponse
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.common import Channel
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,11 +15,6 @@ DEPS = [
     'build_reporting',
     'cros_sdk',
 ]
-
-from PB.chromite.api.packages import GetTargetVersionsResponse
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.chromiumos.common import Channel
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

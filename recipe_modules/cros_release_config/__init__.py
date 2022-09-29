@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import CrosReleaseConfigProperties
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -19,8 +21,5 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import (
-    CrosReleaseConfigProperties)
 
 PROPERTIES = CrosReleaseConfigProperties

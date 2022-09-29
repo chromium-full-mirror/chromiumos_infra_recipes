@@ -1,6 +1,14 @@
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import text_format, json_format
+
+from PB.chromiumos.test.api.coverage_rule import CoverageRule
+from PB.chromiumos.test.api.v1.plan import HWTestPlan
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -8,14 +16,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'cros_test_plan_v2',
 ]
-
-from recipe_engine import post_process
-
-from google.protobuf import text_format, json_format
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.chromiumos.test.api.coverage_rule import CoverageRule
-from PB.chromiumos.test.api.v1.plan import HWTestPlan
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

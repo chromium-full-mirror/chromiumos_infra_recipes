@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 
 DEPS = [
     'recipe_engine/context',
@@ -21,8 +23,6 @@ DEPS = [
     'src_state',
     'workspace_util',
 ]
-
-from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

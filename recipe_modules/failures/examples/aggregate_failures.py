@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'failures',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

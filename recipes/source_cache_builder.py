@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe for generating ChromeOS source cache snapshots."""
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.source_cache_builder import SourceCacheBuilderProperties
+
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -27,13 +33,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine.recipe_api import StepFailure
-
-from PB.recipe_engine import result as result_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipes.chromeos.source_cache_builder import (
-    SourceCacheBuilderProperties)
 
 PROPERTIES = SourceCacheBuilderProperties
 

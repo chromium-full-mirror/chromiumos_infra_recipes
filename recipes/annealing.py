@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -16,12 +16,11 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 """
 
+import base64
 import collections
 import json
-
-from six.moves import urllib
-import base64
 import zlib
+from six.moves import urllib
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties

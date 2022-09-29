@@ -12,25 +12,24 @@ This recipe involves booting up Windows in a virtual machine. The
 caller is responsible for ensuring this is only invoked in contexts
 where the necessary license(s) have been obtained.
 """
-from collections import namedtuple
-from google.protobuf import json_format
-from google.protobuf import timestamp_pb2
 
+from collections import namedtuple
 import json
 import re
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
+
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
-from PB.recipes.chromeos.build_parallels_image import (
-    BuildParallelsImageProperties)
+from PB.recipes.chromeos.build_parallels_image import BuildParallelsImageProperties
 from PB.recipes.chromeos.uprev_parallels_pin import UprevParallelsPinProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'

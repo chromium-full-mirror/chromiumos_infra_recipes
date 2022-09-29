@@ -1,6 +1,8 @@
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
 
 DEPS = [
     'infra/docker',
@@ -16,9 +18,6 @@ DEPS = [
     'gerrit',
     'gitiles',
 ]
-
-from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import (
-    CrosTestPlanV2Properties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
+from PB.chromiumos.common import PackageInfo
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,10 +13,6 @@ DEPS = [
     'chrome',
     'cros_build_api',
 ]
-
-from PB.chromiumos.common import Chroot
-from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import PackageInfo
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

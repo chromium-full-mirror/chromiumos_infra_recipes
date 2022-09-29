@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.src_state.src_state import SrcStateProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -18,7 +20,5 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 # All of those have a '/' in the name.
 assert [x for x in DEPS if '/' not in x] == [], \
     'src_state depends on Chrome OS modules'
-
-from PB.recipe_modules.chromeos.src_state.src_state import SrcStateProperties
 
 PROPERTIES = SrcStateProperties

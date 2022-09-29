@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
+from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import CrosReleaseConfigProperties
+from PB.recipe_modules.chromeos.cros_release_config.examples.full import TestProperties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/file',
@@ -14,8 +20,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
 
 
 def construct_legacy_config(*blocks):
@@ -177,10 +181,6 @@ builders {
   }
 }
 """
-
-from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import (
-    Email, CrosReleaseConfigProperties)
-from PB.recipe_modules.chromeos.cros_release_config.examples.full import TestProperties
 
 PROPERTIES = TestProperties
 

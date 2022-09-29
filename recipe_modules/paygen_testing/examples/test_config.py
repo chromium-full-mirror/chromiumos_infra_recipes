@@ -4,6 +4,12 @@
 
 # pylint: disable=protected-access
 
+from PB.chromiumos.common import DeltaType
+from PB.chromiumos.common import ImageType
+from PB.recipe_modules.chromeos.paygen_testing.examples.test import TestPaygenProperties
+
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -13,10 +19,6 @@ DEPS = [
     'cros_storage',
     'gitiles',
 ]
-
-from recipe_engine import post_process
-from PB.chromiumos.common import DeltaType, ImageType
-from PB.recipe_modules.chromeos.paygen_testing.examples.test import TestPaygenProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

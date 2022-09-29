@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -14,16 +14,14 @@
 # Any resulting changes are then committed to the configured destination.
 
 import collections
-from six.moves.urllib import parse as urlparse
 import textwrap
+from six.moves.urllib import parse as urlparse
 
 from recipe_engine import post_process
 
-# import protos
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2

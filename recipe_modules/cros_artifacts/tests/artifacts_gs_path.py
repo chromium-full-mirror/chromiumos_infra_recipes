@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.recipe_modules.chromeos.cros_artifacts.tests.artifacts_gs_path import ArtifactsGsPathProperties
+
 from recipe_engine import post_process
 
 DEPS = [
@@ -10,15 +17,6 @@ DEPS = [
     'recipe_engine/properties',
     'cros_artifacts',
 ]
-
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget
-
-from PB.recipe_modules.chromeos.cros_artifacts.tests.artifacts_gs_path import (
-    ArtifactsGsPathProperties)
-from PB.go.chromium.org.luci.buildbucket.proto import (build as build_pb2,
-                                                       builder_common as
-                                                       builder_common_pb2)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

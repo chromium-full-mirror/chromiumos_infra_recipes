@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -13,8 +15,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
 
 
 def RunSteps(api):

@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import duration_pb2
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,10 +14,6 @@ DEPS = [
     'cros_test_plan',
     'skylab',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.test_platform.taskstate import TaskState
-from google.protobuf import duration_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

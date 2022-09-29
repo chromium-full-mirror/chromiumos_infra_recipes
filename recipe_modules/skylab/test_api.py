@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 import base64
 import json
-import six
 import zlib
-from RECIPE_MODULES.chromeos.skylab import structs
+import six
 
-from recipe_engine import recipe_test_api
+from google.protobuf import struct_pb2
+from google.protobuf import json_format
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -22,8 +22,8 @@ from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 
-from google.protobuf import struct_pb2
-from google.protobuf import json_format
+from RECIPE_MODULES.chromeos.skylab import structs
+from recipe_engine import recipe_test_api
 
 
 class SkylabTestApi(recipe_test_api.RecipeTestApi):

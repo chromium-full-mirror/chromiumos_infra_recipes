@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_lkgm.examples.do_lkgm import DoLkgmProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -14,13 +19,6 @@ DEPS = [
     'cros_release',
     'test_util',
 ]
-
-from recipe_engine import post_process
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-from PB.recipe_modules.chromeos.cros_lkgm.examples.do_lkgm import (
-    DoLkgmProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 PROPERTIES = DoLkgmProperties

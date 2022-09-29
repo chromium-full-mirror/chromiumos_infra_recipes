@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.bot_scaling import BotPolicy
+from PB.chromiumos.bot_scaling import ScalingAction
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'bot_scaling',
 ]
-
-from PB.chromiumos.bot_scaling import BotPolicy, ScalingAction
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

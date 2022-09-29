@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """APIs for dealing with Gitiles."""
 
+# TODO (b/217973414): Remove future aliases and reenable these pylint checks
+# when Py2 compatibility has been removed.
+# pylint: disable=wrong-import-order,wrong-import-position
 from future.standard_library import install_aliases
 install_aliases()
 
 import base64
 import binascii
-# pylint: disable=no-name-in-module
-from urllib.parse import urlunparse
+from urllib.parse import urlunparse  # pylint: disable=no-name-in-module
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure

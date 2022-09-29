@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.bot_scaling import BotPolicyCfg
+from PB.chromiumos.bot_scaling import ScalingAction
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,9 +13,6 @@ DEPS = [
     'bot_scaling',
     'cros_infra_config',
 ]
-
-from PB.chromiumos.bot_scaling import BotPolicyCfg
-from PB.chromiumos.bot_scaling import ScalingAction
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

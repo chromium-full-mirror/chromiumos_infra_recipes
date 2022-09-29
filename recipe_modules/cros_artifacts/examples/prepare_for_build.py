@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api import sysroot as sysroot_pb
+from PB.chromite.api.artifacts import BuildSetupResponse
+from PB.chromiumos import common
+from PB.recipe_modules.chromeos.cros_artifacts.examples.test import TestInputProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,14 +15,6 @@ DEPS = [
     'cros_artifacts',
     'cros_build_api',
 ]
-
-from PB.chromite.api import sysroot as sysroot_pb
-from PB.chromite.api.artifacts import BuildSetupResponse
-
-from PB.chromiumos import common
-
-from PB.recipe_modules.chromeos.cros_artifacts.examples.test import (
-    TestInputProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

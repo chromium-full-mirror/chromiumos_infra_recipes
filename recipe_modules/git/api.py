@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """API for working with git."""
 
+# TODO (b/217973414): Remove future aliases and reenable these pylint checks
+# when Py2 compatibility has been removed.
+# pylint: disable=wrong-import-order,wrong-import-position
 from future.standard_library import install_aliases
 install_aliases()
 
+from collections import namedtuple
 import contextlib
 from datetime import timedelta
 import six
-from collections import namedtuple
-# pylint: disable=no-name-in-module
-from urllib.parse import urlparse
+from urllib.parse import urlparse  # pylint: disable=no-name-in-module
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 
 class GitApi(recipe_api.RecipeApi):

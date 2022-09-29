@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.orch_menu.tests.collect import CollectProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,9 +15,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.recipe_modules.chromeos.orch_menu.tests.collect import CollectProperties
 
 PROPERTIES = CollectProperties
 

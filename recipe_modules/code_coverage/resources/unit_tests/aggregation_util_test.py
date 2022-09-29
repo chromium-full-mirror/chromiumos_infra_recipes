@@ -1,6 +1,6 @@
 #!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(THIS_DIR, os.pardir)))
 
-import aggregation_util
+import aggregation_util  # pylint: disable=wrong-import-position
 
 
 class AggregationUtilTest(unittest.TestCase):

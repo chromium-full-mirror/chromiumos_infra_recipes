@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.common import ArtifactsByService
 
 DEPS = [
     'recipe_engine/assertions',
     'cros_artifacts',
 ]
-
-from PB.chromiumos.common import ArtifactsByService
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

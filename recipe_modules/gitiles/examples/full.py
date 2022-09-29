@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,10 +13,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine.recipe_api import StepFailure
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 
 def RunSteps(api):

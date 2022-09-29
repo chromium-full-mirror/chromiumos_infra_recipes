@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+import json
+
+from PB.chromiumos import common
+from PB.recipe_modules.chromeos.sysroot_util.examples.full import FullTestProperties
+from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
+
 from recipe_engine import post_process
 
 DEPS = [
@@ -13,13 +20,6 @@ DEPS = [
     'sysroot_util',
     'test_util',
 ]
-
-import json
-
-from PB.chromiumos import common
-from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
-from PB.recipe_modules.chromeos.sysroot_util.examples.full import (
-    FullTestProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

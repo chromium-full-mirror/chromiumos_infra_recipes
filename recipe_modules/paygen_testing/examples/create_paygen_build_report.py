@@ -2,19 +2,22 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.chromite.api.payload import Build
+from PB.chromite.api.payload import DLCImage
+from PB.chromite.api.payload import GenerationRequest
+from PB.chromite.api.payload import SignedImage
+from PB.chromite.api.payload import UnsignedImage
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import URI
+import PB.chromiumos.common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'paygen_testing',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-
-from PB.chromite.api.payload import Build, DLCImage, GenerationRequest, SignedImage, UnsignedImage
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.chromiumos.build_report import URI
-import PB.chromiumos.common as common_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

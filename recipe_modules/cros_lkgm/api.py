@@ -4,15 +4,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf.json_format import MessageToDict
 import re
 
-from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
+from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+
+from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 CHROMIUM_SRC_PROJECT = 'chromium/src'
 CHROMIUM_SRC_URL = 'https://chromium.googlesource.com/{}'.format(

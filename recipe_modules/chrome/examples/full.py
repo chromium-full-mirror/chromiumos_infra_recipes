@@ -1,7 +1,20 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from collections import namedtuple
+import json
+
+from PB.chromiumos.common import Chroot
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageInfo
+from PB.chromiumos.common import UseFlag
+from PB.chromite.api import depgraph
+from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromite.api.sysroot import Sysroot
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
+from PB.recipe_modules.chromeos.chrome.examples.test import TestInputProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -14,20 +27,6 @@ DEPS = [
     'cros_build_api',
     'gerrit',
 ]
-
-from collections import namedtuple
-import json
-
-from PB.chromiumos.common import Chroot
-from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import PackageInfo
-from PB.chromiumos.common import UseFlag
-from PB.chromite.api import depgraph
-from PB.chromite.api.sysroot import InstallPackagesRequest
-from PB.chromite.api.sysroot import Sysroot
-
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
-from PB.recipe_modules.chromeos.chrome.examples.test import TestInputProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

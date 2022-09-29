@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """API for calling 'recipes.py analyze'"""
 
-from recipe_engine.recipe_api import RecipeApi, StepFailure
+import json
 
 from google.protobuf import json_format as jsonpb
 from PB.recipe_engine import analyze as analyze_pb
-
-import json
+from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 
 class RecipeAnalyzeApi(RecipeApi):

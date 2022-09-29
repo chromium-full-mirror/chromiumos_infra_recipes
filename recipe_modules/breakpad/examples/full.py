@@ -1,6 +1,9 @@
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult
+from PB.test_platform.common.task import TaskLogData
 
 DEPS = [
     'breakpad',
@@ -9,9 +12,6 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
 ]
-
-from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult
-from PB.test_platform.common.task import TaskLogData
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

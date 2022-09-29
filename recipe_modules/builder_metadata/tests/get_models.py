@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Tests to verify builder_metadata.get_models."""
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,8 +13,6 @@ DEPS = [
     'build_menu',
     'builder_metadata',
 ]
-
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

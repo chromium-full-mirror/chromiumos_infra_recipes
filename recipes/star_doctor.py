@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -12,6 +12,7 @@ json files.
 import base64
 import functools
 import json
+import six
 
 from google.protobuf.text_format import MessageToString
 from PB.recipes.chromeos.star_doctor import RemoteConfigFile
@@ -21,7 +22,6 @@ from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraint
 from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintType
-import six
 
 
 DEPS = [

@@ -4,21 +4,21 @@
 
 # pylint: disable=protected-access
 
+import json
+
+from PB.chromite.api.payload import GenerationRequest
+from PB.recipes.chromeos.paygen import AutoupdateTestConfig
+from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/step',
     'paygen_orchestration',
 ]
-
-import json
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
-from PB.chromite.api.payload import GenerationRequest
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
-from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 

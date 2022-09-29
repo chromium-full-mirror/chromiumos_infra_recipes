@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.testplans.target_test_requirements_config import TestSuiteCommon
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'failures',
 ]
-
-from PB.testplans.target_test_requirements_config import HwTestCfg
-from PB.testplans.target_test_requirements_config import TestSuiteCommon
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from PB.recipe_modules.chromeos.cros_source.examples.full import FullProperties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -21,13 +28,6 @@ DEPS = [
     'src_state',
     'test_util',
 ]
-
-from recipe_engine import post_process
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties, ManifestLocation)
-from PB.recipe_modules.chromeos.cros_source.examples.full import FullProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
+
+from PB.chromiumos.builder_config import BuilderConfigs
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_modules.chromeos.cros_source.examples.configure_builder import ConfigureBuilderProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,14 +18,6 @@ DEPS = [
     'gerrit',
     'src_state',
 ]
-
-from recipe_engine import post_process
-
-from PB.chromiumos.builder_config import BuilderConfigs
-from PB.go.chromium.org.luci.buildbucket.proto.common import (GerritChange,
-                                                              GitilesCommit)
-from PB.recipe_modules.chromeos.cros_source.examples.configure_builder import (
-    ConfigureBuilderProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

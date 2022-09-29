@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import json_format as jsonpb
+from google.protobuf import struct_pb2
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import CrosBisectProperties
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_bisect',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
-    CrosBisectProperties)
-
-from google.protobuf import json_format as jsonpb
-from google.protobuf import struct_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

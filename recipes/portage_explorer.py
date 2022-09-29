@@ -1,4 +1,4 @@
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,6 +7,13 @@
 Portage Explorer calls the RunSpiders endpoint from the PortageExplorerService
 and uploads the output from calling the endpoint to GS.
 """
+
+import json
+
+from google.protobuf import json_format
+from PB.chromite.api.portage_explorer import RunSpidersRequest
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'depot_tools/gsutil',
@@ -24,13 +31,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-from PB.chromite.api.portage_explorer import RunSpidersRequest
-
-import json
-from google.protobuf import json_format
 
 
 def RunSteps(api):

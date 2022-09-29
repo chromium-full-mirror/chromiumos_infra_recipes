@@ -1,8 +1,9 @@
 #!/usr/bin/env vpython
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 import json
 import os
 import shutil
@@ -12,7 +13,7 @@ import unittest
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(THIS_DIR, os.pardir)))
-import chunk_coverage_file
+import chunk_coverage_file  # pylint: disable=wrong-import-position
 
 
 class ChunkLlvmCoverageFileTest(unittest.TestCase):

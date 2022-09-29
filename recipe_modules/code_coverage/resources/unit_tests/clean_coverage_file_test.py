@@ -1,8 +1,9 @@
 #!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 import os
 import shutil
 import sys
@@ -15,8 +16,8 @@ import mock
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(THIS_DIR, os.pardir)))
 
-import clean_coverage_file
-import code_coverage_util
+import clean_coverage_file  # pylint: disable=wrong-import-position
+import code_coverage_util  # pylint: disable=wrong-import-position
 
 
 class CleanFilePathsTest(unittest.TestCase):

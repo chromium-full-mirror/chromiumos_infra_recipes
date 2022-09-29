@@ -4,16 +4,16 @@
 
 # pylint: disable=protected-access
 
+from PB.recipes.chromeos.paygen import PaygenProperties
+
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'paygen_orchestration',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-from recipe_engine import post_process
-
-from PB.recipes.chromeos.paygen import PaygenProperties
 
 
 def RunSteps(api):

@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.repo.examples.project_infos import ProjectInfo
+from PB.recipe_modules.chromeos.repo.examples.project_infos import ProjectInfosProperties
+
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,10 +16,6 @@ DEPS = [
     'repo',
     'src_state',
 ]
-
-from PB.recipe_modules.chromeos.repo.examples.project_infos import (
-    ProjectInfo, ProjectInfosProperties)
-from recipe_engine.recipe_api import StepFailure
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

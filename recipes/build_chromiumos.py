@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe for building public ChromiumOS images."""
+
+from google.protobuf.json_format import MessageToDict
+
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from PB.recipes.chromeos.build_chromiumos import BuildChromiumosProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/properties',
@@ -17,15 +27,6 @@ DEPS = [
     'debug_symbols',
     'easy',
 ]
-
-from google.protobuf.json_format import MessageToDict
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-
-from PB.recipes.chromeos.build_chromiumos import BuildChromiumosProperties
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties, ManifestLocation)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

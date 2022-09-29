@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -9,15 +9,15 @@ This module provides helpers to make testing Chrome OS recipes simpler and more
 consistent.
 """
 
-from google.protobuf.json_format import MessageToDict
-
 from collections import namedtuple
 
-from recipe_engine import recipe_test_api
+from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
+
+from recipe_engine import recipe_test_api
 
 
 class TestUtilApi(recipe_test_api.RecipeTestApi):

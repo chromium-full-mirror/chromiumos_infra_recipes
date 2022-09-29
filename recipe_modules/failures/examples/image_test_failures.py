@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api.image import Image
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import IMAGE_TYPE_TEST
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'failures',
 ]
-
-from PB.chromite.api.image import Image
-from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import IMAGE_TYPE_TEST
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

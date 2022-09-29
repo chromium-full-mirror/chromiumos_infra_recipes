@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos import common
 
 DEPS = [
     'recipe_engine/assertions',
     'test_util',
 ]
-
-from PB.chromiumos import common
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

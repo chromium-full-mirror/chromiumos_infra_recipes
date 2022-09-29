@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -14,9 +14,10 @@ from google.protobuf import json_format
 from google.protobuf import reflection
 from google.protobuf import timestamp_pb2
 
-from recipe_engine.recipe_api import RecipeApi, StepFailure
-
 from PB.chromite.api import api as meta_api
+
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 
 
 def _verify_proto_endpoint(instance, method):

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf.wrappers_pb2 import Int32Value
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,8 +11,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'easy',
 ]
-
-from google.protobuf.wrappers_pb2 import Int32Value
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

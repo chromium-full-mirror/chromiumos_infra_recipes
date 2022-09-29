@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_schedule.examples.test import TestInputProperties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/properties',
@@ -11,11 +15,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
-
-from PB.recipe_modules.chromeos.cros_schedule.examples.test import (
-    TestInputProperties)
 
 PROPERTIES = TestInputProperties
 

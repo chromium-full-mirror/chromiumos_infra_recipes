@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,6 +7,16 @@
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
+
+from google.protobuf.json_format import MessageToDict
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+
+from PB.chromite.api.firmware import BuildAllFirmwareRequest
+from PB.chromite.api.firmware import TestAllFirmwareRequest
+import PB.chromiumos.common as common_pb2
+from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -23,15 +33,6 @@ DEPS = [
     'src_state',
     'test_util',
 ]
-
-from google.protobuf.json_format import MessageToDict
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-
-from PB.chromite.api.firmware import (BuildAllFirmwareRequest,
-                                      TestAllFirmwareRequest)
-import PB.chromiumos.common as common_pb2
-from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

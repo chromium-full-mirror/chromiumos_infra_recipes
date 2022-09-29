@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)
 
 DEPS = [
     'depot_tools/gsutil',
@@ -14,8 +16,6 @@ DEPS = [
     'tast_results',
     'util',
 ]
-
-from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

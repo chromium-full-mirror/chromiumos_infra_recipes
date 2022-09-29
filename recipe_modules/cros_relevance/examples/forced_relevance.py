@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.cros_relevance.examples.forced_relevance import ForcedRelevanceTest
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,10 +13,6 @@ DEPS = [
     'cros_relevance',
     'git_footers',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.recipe_modules.chromeos.cros_relevance.examples.forced_relevance import ForcedRelevanceTest
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

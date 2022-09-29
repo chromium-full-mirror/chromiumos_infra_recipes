@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.common import PackageInfo
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import CrosBisectProperties
+from PB.recipe_modules.chromeos.cros_bisect.examples.test import TestInputProperties
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_bisect',
 ]
-
-from PB.chromiumos.common import PackageInfo
-
-from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
-    CrosBisectProperties)
-from PB.recipe_modules.chromeos.cros_bisect.examples.test import (
-    TestInputProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
+
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/properties',
     'cros_relevance',
     'gerrit',
 ]
-
-from recipe_engine.recipe_api import Property
-
-from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import Chroot
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import duration_pb2
+
+from PB.chromiumos.test.api import test_suite as ctr_test_suite
+from PB.lab import license as license_pb2
+from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,12 +18,6 @@ DEPS = [
     'metadata',
     'skylab',
 ]
-
-from google.protobuf import duration_pb2
-
-from PB.lab import license as license_pb2
-from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
-from PB.chromiumos.test.api import test_suite as ctr_test_suite
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,16 +1,18 @@
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
-from recipe_engine.recipe_api import (AggregatedStepFailure, InfraFailure,
-                                      StepFailure)
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_engine import result as result_pb2
-from PB.recipes.chromeos.chromeos_cbuildbot import (ChromeosCbuildbotProperties)
 
 import json
 import re
 import six
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.chromeos_cbuildbot import (ChromeosCbuildbotProperties)
+
+from recipe_engine.recipe_api import AggregatedStepFailure
+from recipe_engine.recipe_api import InfraFailure
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/legacy_annotation',

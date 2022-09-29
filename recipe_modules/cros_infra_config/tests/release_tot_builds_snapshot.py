@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,9 +12,6 @@ DEPS = [
     'recipe_engine/properties',
     'cros_infra_config',
 ]
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

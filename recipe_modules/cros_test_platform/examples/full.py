@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import CrosTestPlatformModuleProperties
+from PB.test_platform.steps.enumeration import EnumerationRequests
+from PB.test_platform.steps.enumeration import EnumerationResponses
+from PB.test_platform.steps.execution import ExecuteRequests
+from PB.test_platform.steps.execution import ExecuteResponses
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,12 +17,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
-  CrosTestPlatformModuleProperties
-from PB.test_platform.steps.enumeration import \
-  EnumerationRequests, EnumerationResponses
-from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
 
 
 def RunSteps(api):

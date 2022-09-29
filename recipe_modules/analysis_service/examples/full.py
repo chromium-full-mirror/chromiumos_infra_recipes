@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
+
+from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromite.api.sysroot import InstallPackagesResponse
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
 
 DEPS = [
     'recipe_engine/assertions', 'recipe_engine/buildbucket',
     'recipe_engine/properties', 'recipe_engine/raw_io', 'recipe_engine/step',
     'analysis_service'
 ]
-
-from PB.chromite.api.sysroot import InstallPackagesRequest, InstallPackagesResponse
-from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
-    AnalysisServiceProperties)
-
-from google.protobuf import json_format
-from google.protobuf import timestamp_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

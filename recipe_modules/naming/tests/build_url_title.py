@@ -1,6 +1,21 @@
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from copy import deepcopy
+
+from google.protobuf.json_format import MessageToDict
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
+
+from PB.chromite.api.payload import Build
+from PB.chromite.api.payload import DLCImage
+from PB.chromite.api.payload import GenerationRequest
+from PB.chromite.api.payload import SignedImage
+from PB.chromite.api.payload import UnsignedImage
+from PB.chromiumos.common import ImageType
+from PB.recipes.chromeos.paygen import PaygenProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,21 +25,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from copy import deepcopy
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
-from google.protobuf.json_format import MessageToDict
-
-from PB.chromiumos.common import ImageType
-from PB.chromite.api.payload import Build
-from PB.chromite.api.payload import DLCImage
-from PB.chromite.api.payload import GenerationRequest
-from PB.chromite.api.payload import SignedImage
-from PB.chromite.api.payload import UnsignedImage
-from PB.recipes.chromeos.paygen import PaygenProperties
 
 PaygenRequest = PaygenProperties.PaygenRequest
 

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.common import IMAGE_TYPE_BASE
+from PB.chromiumos.common import IMAGE_TYPE_TEST_GUEST_VM
+from PB.chromiumos.common import IMAGE_TYPE_FIRMWARE
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,9 +14,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.chromiumos.common import (IMAGE_TYPE_BASE, IMAGE_TYPE_TEST_GUEST_VM,
-                                  IMAGE_TYPE_FIRMWARE)
 
 
 def RunSteps(api):

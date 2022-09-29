@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import json_format
+
+from PB.test_platform import skylab_local_state
+from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
+from PB.test_platform.phosphorus.prejob import PrejobRequest
+from PB.test_platform.phosphorus.runtest import RunTestRequest
+from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
+from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,15 +20,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.test_platform import skylab_local_state
-from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
-from PB.test_platform.phosphorus.prejob import PrejobRequest
-from PB.test_platform.phosphorus.runtest import RunTestRequest
-from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
-from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
-
-from google.protobuf import json_format
 
 
 def RunSteps(api):

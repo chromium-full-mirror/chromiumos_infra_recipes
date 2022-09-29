@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
-from google.protobuf import timestamp_pb2
-
-from recipe_engine.recipe_api import RecipeApi, StepFailure
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 import contextlib
 import datetime
 import email.utils
 import time
+
+from google.protobuf import timestamp_pb2
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
+
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 
 
 class MetadataJsonApi(RecipeApi):

@@ -5,20 +5,21 @@
 
 """Recipe for orchestrating ChromeOS payloads (AU deltas etc)."""
 
-from google.protobuf.json_format import MessageToDict, MessageToJson
 import itertools
 import json
 from os import path
 
-from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-from PB.recipes.chromeos.paygen import PaygenProperties
-from PB.chromite.api.payload import Build, GenerationRequest, SignedImage
-from PB.chromiumos.common import DeltaType
+from google.protobuf.json_format import MessageToDict, MessageToJson
 
+from PB.chromite.api.payload import Build
+from PB.chromite.api.payload import GenerationRequest
+from PB.chromite.api.payload import SignedImage
+from PB.chromiumos.common import DeltaType
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-
 from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
+from PB.recipes.chromeos.paygen import PaygenProperties
 
 from recipe_engine import post_process
 

@@ -1,6 +1,9 @@
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_branch.cros_branch import CrosBranchProperties
+
 DEPS = [
     'depot_tools/depot_tools',
     'recipe_engine/cipd',
@@ -13,8 +16,5 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.recipe_modules.chromeos.cros_branch.cros_branch import (
-    CrosBranchProperties)
 
 PROPERTIES = CrosBranchProperties

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-from PB.chromiumos.builder_config import BuilderConfig
-
-from recipe_engine import recipe_api
 from collections import defaultdict
 from datetime import datetime
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
+from recipe_engine import recipe_api
 
 EXTERNAL_REVIEW_HOST = 'chromium-review.googlesource.com'
 

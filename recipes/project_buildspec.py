@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe for invoking the per project buildspec tool."""
 
+from PB.recipes.chromeos.project_buildspec import ProjectBuildspecProperties
 from recipe_engine import post_process
 
 DEPS = [
@@ -17,8 +18,6 @@ DEPS = [
     'cros_infra_config',
     'manifest_doctor',
 ]
-
-from PB.recipes.chromeos.project_buildspec import ProjectBuildspecProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

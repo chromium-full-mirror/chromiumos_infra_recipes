@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 import json
+
+from google.protobuf import json_format
+
+from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromite.api.packages import UprevVersionedPackageResponse
+
+# pylint: disable=unused-import
+from PB.recipe_modules.chromeos.cros_build_api.examples.set_api_return import SetReturnProperties as PROPERTIES
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,15 +21,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from google.protobuf import json_format
-
-from PB.chromite.api.packages import UprevVersionedPackageRequest
-from PB.chromite.api.packages import UprevVersionedPackageResponse
-
-# pylint: disable=unused-import
-from PB.recipe_modules.chromeos.cros_build_api.examples.set_api_return import (
-    SetReturnProperties as PROPERTIES)
 
 
 def RunSteps(api, properties):

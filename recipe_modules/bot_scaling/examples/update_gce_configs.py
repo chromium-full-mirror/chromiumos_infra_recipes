@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Configs
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,8 +13,6 @@ DEPS = [
     'bot_scaling',
     'cros_infra_config',
 ]
-
-from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

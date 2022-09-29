@@ -4,12 +4,12 @@
 
 # pylint: disable=protected-access
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'paygen_orchestration',
 ]
-
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 

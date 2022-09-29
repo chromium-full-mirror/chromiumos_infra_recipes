@@ -5,6 +5,11 @@
 
 """Recipe for building an AFDO benchmark profile."""
 
+from google.protobuf.json_format import MessageToDict
+
+from PB.chromiumos.common import ArtifactsByService
+from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
+
 DEPS = [
     'build_menu',
     'cros_sdk',
@@ -13,11 +18,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from google.protobuf.json_format import MessageToDict
-
-from PB.chromiumos.common import ArtifactsByService
-from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
 
 PROPERTIES = AfdoProcessProperties
 

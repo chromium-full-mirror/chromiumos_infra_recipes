@@ -5,6 +5,12 @@
 
 """Recipe for building a BuildTarget image for Postsubmit."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine.result import RawResult
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
@@ -13,11 +19,6 @@ DEPS = [
     'cros_history',
     'cros_infra_config',
 ]
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipe_engine.result import RawResult
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

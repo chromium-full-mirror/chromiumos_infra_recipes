@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf import json_format
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
+from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.taskstate import TaskState
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'exonerate',
 ]
-
-from recipe_engine import post_process
-from google.protobuf import json_format
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
-from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
-from PB.test_platform.steps.execution import ExecuteResponse
-from PB.test_platform.taskstate import TaskState
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """APIs for logging step output to Google Storage."""
 
-from recipe_engine import recipe_api
-
 import contextlib
+
+from recipe_engine import recipe_api
 
 
 class GSStepLoggingApi(recipe_api.RecipeApi):

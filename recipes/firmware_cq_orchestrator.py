@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe that schedules child builders and watches for failures.
-"""
+"""Recipe that schedules child builders and watches for failures."""
+
+from recipe_engine.post_process import PropertyEquals
+from recipe_engine.post_process import StatusFailure
+from recipe_engine.post_process import StatusSuccess
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -21,9 +24,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine.post_process import (PropertyEquals, StatusSuccess,
-                                        StatusFailure)
 
 
 def RunSteps(api):

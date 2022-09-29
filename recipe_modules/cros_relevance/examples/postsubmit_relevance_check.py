@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api import depgraph
+from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageInfo
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,16 +19,6 @@ DEPS = [
     'cros_history',
     'cros_relevance',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-
-from PB.chromite.api import depgraph
-from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import PackageInfo
-
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

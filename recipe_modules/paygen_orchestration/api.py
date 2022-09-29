@@ -6,14 +6,13 @@
 # pylint: disable=protected-access
 
 """API for orchestrating payload generation. Used by paygen_orchestrator."""
-import collections
 
-from google.protobuf.json_format import MessageToDict
+import collections
 from copy import deepcopy
 import json
 import math
-from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
+
+from google.protobuf.json_format import MessageToDict
 
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import GenerationRequest
@@ -22,6 +21,9 @@ from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 import PB.chromiumos.common as common_pb2
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
+
+from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 DEFAULT_DELTA_TYPES = [
     common_pb2.STEPPING_STONE, common_pb2.OMAHA, common_pb2.NO_DELTA,

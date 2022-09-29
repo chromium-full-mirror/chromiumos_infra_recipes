@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -14,15 +14,16 @@ for example:
 }
 """
 
+from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+
 DEPS = [
     'recipe_engine/properties',
     'android',
     'build_menu',
 ]
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

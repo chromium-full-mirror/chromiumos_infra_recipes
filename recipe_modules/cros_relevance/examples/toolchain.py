@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.common import Chroot
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+from PB.recipe_modules.chromeos.cros_relevance.examples.toolchain import ToolchainTest
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_relevance',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-from PB.chromiumos.common import Chroot
-from PB.recipe_modules.chromeos.cros_relevance.examples.toolchain import (
-    ToolchainTest)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

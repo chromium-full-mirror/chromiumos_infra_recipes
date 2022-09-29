@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api import binhost
+from PB.chromiumos.common import BuildTarget
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
+from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildApiProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,14 +15,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.chromite.api import binhost
-from PB.chromiumos.common import BuildTarget
-
-from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
-    AnalysisServiceProperties)
-from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
-    CrosBuildApiProperties)
 
 
 def RunSteps(api):

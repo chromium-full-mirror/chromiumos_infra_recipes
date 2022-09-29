@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
+from PB.test_platform import service_version
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,10 +13,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.recipe_modules.chromeos.service_version.service_version import \
-  ServiceVersionProperties
-from PB.test_platform import service_version
 
 
 def RunSteps(api):

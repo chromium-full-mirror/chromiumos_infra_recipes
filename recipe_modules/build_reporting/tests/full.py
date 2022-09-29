@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+import datetime
 import json
 import os
+
+from PB.chromite.api.packages import GetBuilderMetadataResponse
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.common import Channel
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,14 +18,6 @@ DEPS = [
     'recipe_engine/time',
     'build_reporting',
 ]
-
-import datetime
-
-# infra/proto/src/chromiumos/builder_report.proto
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.chromiumos.common import Channel
-from PB.chromite.api.packages import GetBuilderMetadataResponse
-from recipe_engine.recipe_api import StepFailure
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

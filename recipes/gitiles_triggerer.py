@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe that schedules jobs based on its triggers."""
+
+from collections import namedtuple
+
+from google.protobuf.json_format import MessageToDict
+
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
+from PB.recipes.chromeos.gitiles_triggerer import GitilesTriggererProperties
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -13,14 +23,6 @@ DEPS = [
     'recipe_engine/time',
     'test_util',
 ]
-
-from collections import namedtuple
-from google.protobuf.json_format import MessageToDict
-
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
-    GitilesTrigger, Trigger)
-from PB.recipes.chromeos.gitiles_triggerer import GitilesTriggererProperties
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

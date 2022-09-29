@@ -1,7 +1,13 @@
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 import json
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
+
+from PB.recipes.chromeos.paygen import PaygenProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,11 +17,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
-from PB.recipes.chromeos.paygen import PaygenProperties
 
 PaygenRequest = PaygenProperties.PaygenRequest
 

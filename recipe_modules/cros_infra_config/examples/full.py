@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
+
+from PB.chromiumos.builder_config import BuilderConfigs
+from PB.recipe_modules.chromeos.cros_infra_config.examples.full import FullProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,12 +15,6 @@ DEPS = [
     'cros_infra_config',
     'test_util',
 ]
-
-from recipe_engine import post_process
-
-from PB.chromiumos.builder_config import BuilderConfigs
-from PB.recipe_modules.chromeos.cros_infra_config.examples.full import (
-    FullProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

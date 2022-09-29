@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_test_plan.cros_test_plan import CrosTestPlanProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -18,9 +20,6 @@ DEPS = [
     'repo',
     'src_state',
 ]
-
-from PB.recipe_modules.chromeos.cros_test_plan.cros_test_plan import (
-    CrosTestPlanProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

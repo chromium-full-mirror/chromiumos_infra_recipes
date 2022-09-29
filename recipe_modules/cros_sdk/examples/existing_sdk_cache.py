@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.sdk_cache_state import SdkCacheState
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,8 +11,6 @@ DEPS = [
     'recipe_engine/path',
     'cros_sdk',
 ]
-
-from PB.chromiumos.sdk_cache_state import SdkCacheState
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

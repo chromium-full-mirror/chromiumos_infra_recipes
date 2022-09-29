@@ -1,15 +1,14 @@
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 import base64
+from collections import namedtuple
 import json
 import re
 import six
 
 from recipe_engine import recipe_api
-
-from collections import namedtuple
 
 from google.protobuf import json_format
 from google.protobuf import text_format

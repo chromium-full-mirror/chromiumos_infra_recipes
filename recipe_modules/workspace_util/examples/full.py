@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.workspace_util.examples.test import TestInputProperties
+from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 DEPS = [
     'recipe_engine/assertions',
@@ -15,10 +18,6 @@ DEPS = [
     'test_util',
     'workspace_util',
 ]
-
-from PB.recipe_modules.chromeos.workspace_util.examples.test import (
-    TestInputProperties)
-from PB.testplans.pointless_build import PointlessBuildCheckResponse
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
+from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.taskstate import TaskState
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -10,13 +16,6 @@ DEPS = [
     'exonerate',
     'skylab',
 ]
-
-from recipe_engine import post_process
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
-from PB.test_platform.steps.execution import ExecuteResponse
-from PB.test_platform.taskstate import TaskState
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

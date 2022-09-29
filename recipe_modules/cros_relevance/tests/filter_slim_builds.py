@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 # pylint: disable=protected-access
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,10 +15,6 @@ DEPS = [
     'cros_relevance',
     'git_footers',
 ]
-
-from recipe_engine.recipe_api import Property
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -10,16 +10,16 @@ import six
 
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
-
 from PB.chromite.api import artifacts
 from PB.chromite.api import firmware
 from PB.chromite.api import toolchain
 from PB.chromite.api.image import PushImageRequest
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
+
+from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 # The base image tar filename, used for generating provenance.
 BASE_IMAGE_TAR = 'chromiumos_base_image.tar.xz'

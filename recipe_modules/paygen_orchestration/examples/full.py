@@ -2,17 +2,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import PB.chromiumos.common as common_pb2
+from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import TestPaygenProperties
+
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'paygen_orchestration',
 ]
-
-from recipe_engine import post_process
-
-import PB.chromiumos.common as common_pb2
-
-from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import TestPaygenProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 

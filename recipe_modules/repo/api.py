@@ -8,20 +8,20 @@
 See: https://chromium.googlesource.com/external/repo/
 """
 
-from google.protobuf.json_format import MessageToDict
-from collections import defaultdict, namedtuple
-# There's a bug in the version of pylint used for python 2 presubmit checks, so
-# disable the import check. https://github.com/PyCQA/pylint/issues/5645.
-import distutils.version  # pylint: disable=no-name-in-module
+from collections import defaultdict
+from collections import namedtuple
+import distutils.version
 import json
 import re
+from xml.etree import cElementTree as ElementTree
+
 import six
 
+from google.protobuf.json_format import MessageToDict
 from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import StepFailure
-from xml.etree import cElementTree as ElementTree
 
 MANIFEST_MOCK = """
     <manifest>

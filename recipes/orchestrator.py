@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,6 +7,14 @@
 
 All builders run against the same source tree.
 """
+
+import json
+
+from google.protobuf.json_format import MessageToDict
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
+from recipe_engine import post_process
 
 DEPS = [
     'build_menu',
@@ -19,15 +27,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
 ]
-
-from google.protobuf.json_format import MessageToDict
-
-import json
-
-from recipe_engine import post_process
-from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
-from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
-from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

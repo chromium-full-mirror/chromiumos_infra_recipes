@@ -1,6 +1,8 @@
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 
 DEPS = {
     'archive': 'recipe_engine/archive',
@@ -29,9 +31,6 @@ DEPS = {
     'test_util': 'test_util',
     'util': 'util',
 }
-
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -5,6 +5,12 @@
 
 """Recipe for building and testing a BuildTarget's packages."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine.result import RawResult
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/runtime',
@@ -20,11 +26,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipe_engine.result import RawResult
 
 
 def RunSteps(api):

@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe for building images for release."""
+
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
+
+from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_engine.result import RawResult
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
+from PB.recipe_modules.chromeos.cros_signing.cros_signing import CrosSigningProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from PB.recipes.chromeos.build_release import BuildReleaseProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/bcid_reporter',
@@ -28,22 +44,6 @@ DEPS = [
     'easy',
     'failures',
 ]
-
-from google.protobuf.json_format import MessageToDict, MessageToJson
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipe_engine.result import RawResult
-from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import (
-    CrosArtifactsProperties)
-from PB.recipes.chromeos.build_release import BuildReleaseProperties
-from PB.recipe_modules.chromeos.cros_signing.cros_signing import \
-  CrosSigningProperties
-from PB.recipe_modules.chromeos.cros_source.cros_source import (
-    CrosSourceProperties, ManifestLocation)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

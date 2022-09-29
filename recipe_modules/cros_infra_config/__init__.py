@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
 
 DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
@@ -18,9 +20,6 @@ DEPS = {
     'src_state': 'src_state',
     'util': 'util',
 }
-
-from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
-    CrosInfraConfigProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

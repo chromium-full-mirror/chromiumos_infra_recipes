@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 import json
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
 ]
-
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

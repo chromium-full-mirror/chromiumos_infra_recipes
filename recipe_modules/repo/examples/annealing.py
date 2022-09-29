@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from textwrap import dedent
+
+from google.protobuf.json_format import MessageToDict
+from PB.chromiumos.repo_cache_state import RepoState
+from PB.recipe_modules.chromeos.repo.examples import common
+from PB.recipe_modules.chromeos.repo.examples.annealing import AnnealingProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,14 +19,6 @@ DEPS = [
     'easy',
     'repo',
 ]
-
-from textwrap import dedent
-
-from google.protobuf.json_format import MessageToDict
-from PB.recipe_modules.chromeos.repo.examples import common
-from PB.chromiumos.repo_cache_state import RepoState
-from PB.recipe_modules.chromeos.repo.examples.annealing import (
-    AnnealingProperties)
 
 PROPERTIES = AnnealingProperties
 

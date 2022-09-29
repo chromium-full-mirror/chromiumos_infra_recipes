@@ -11,29 +11,45 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
+
+from collections import defaultdict
+from collections import namedtuple
 import json
-
-import six
-from google.protobuf.json_format import MessageToDict
-
-from collections import defaultdict, namedtuple
 import re
+import six
 from six.moves.urllib import parse as urlparse
+
+from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
-
-# pylint: disable=unused-import
-from PB.recipes.chromeos.generator import (
-    SendToCqPolicy, DO_NOTHING, DRY_RUN, FULL_RUN, ABANDON, SUBMIT,
-    OutdatedClsPolicy, OUTDATED_DO_NOTHING, OUTDATED_LEAVE_COMMENT,
-    OUTDATED_ABANDON, RetryClPolicy, NO_RETRY, RETRY_LATEST_OR_LATEST_PINNED,
-    RETRY_LATEST_PINNED, BranchPolicy, Reviewer, GeneratorProperties, RetryRef,
-    GitilesFetchInfo)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import (
-    CronTrigger, GitilesTrigger, Trigger, WebUITrigger)
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import CronTrigger
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import WebUITrigger
+# pylint: disable=unused-import
+from PB.recipes.chromeos.generator import ABANDON
+from PB.recipes.chromeos.generator import BranchPolicy
+from PB.recipes.chromeos.generator import DO_NOTHING
+from PB.recipes.chromeos.generator import DRY_RUN
+from PB.recipes.chromeos.generator import FULL_RUN
+from PB.recipes.chromeos.generator import NO_RETRY
+from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
+from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
+from PB.recipes.chromeos.generator import OUTDATED_ABANDON
+from PB.recipes.chromeos.generator import OutdatedClsPolicy
+from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
+from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
+from PB.recipes.chromeos.generator import RetryClPolicy
+from PB.recipes.chromeos.generator import RetryRef
+from PB.recipes.chromeos.generator import Reviewer
+from PB.recipes.chromeos.generator import SUBMIT
+from PB.recipes.chromeos.generator import SendToCqPolicy
+from PB.recipes.chromeos.generator import GeneratorProperties
+from PB.recipes.chromeos.generator import GitilesFetchInfo
+
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 

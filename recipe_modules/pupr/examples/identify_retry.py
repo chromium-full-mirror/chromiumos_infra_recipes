@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+import collections
+
+from PB.recipes.chromeos.generator import DRY_RUN
+from PB.recipes.chromeos.generator import FULL_RUN
+from PB.recipes.chromeos.generator import NO_RETRY
+from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
+from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
 
 DEPS = [
     'recipe_engine/assertions',
     'gerrit',
     'pupr',
 ]
-
-import collections
-
-from PB.recipes.chromeos.generator import (
-    NO_RETRY,
-    RETRY_LATEST_OR_LATEST_PINNED,
-    RETRY_LATEST_PINNED,
-    FULL_RUN,
-    DRY_RUN,
-)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

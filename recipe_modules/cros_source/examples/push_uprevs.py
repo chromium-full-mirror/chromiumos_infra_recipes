@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromite.api.packages import UprevPackagesResponse
+from PB.recipe_modules.chromeos.cros_source.examples.push_uprevs import PushUprevsArgs
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/path',
@@ -10,12 +15,6 @@ DEPS = [
     'cros_source',
     'repo',
 ]
-from PB.chromite.api.packages import UprevPackagesResponse
-
-from PB.recipe_modules.chromeos.cros_source.examples.push_uprevs import (
-    PushUprevsArgs)
-
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

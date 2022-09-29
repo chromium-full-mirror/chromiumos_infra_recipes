@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from google.protobuf.json_format import MessageToDict
+from PB.recipe_modules.chromeos.repo.examples import common
+from PB.recipe_modules.chromeos.repo.examples.image_builder import ImageBuilderProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -11,11 +15,6 @@ DEPS = [
     'recipe_engine/step',
     'repo',
 ]
-
-from google.protobuf.json_format import MessageToDict
-from PB.recipe_modules.chromeos.repo.examples.image_builder import (
-    ImageBuilderProperties)
-from PB.recipe_modules.chromeos.repo.examples import common
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

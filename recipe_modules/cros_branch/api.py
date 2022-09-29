@@ -8,10 +8,10 @@
 import re
 import six
 
+from PB.chromiumos.branch import Branch
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
-
-from PB.chromiumos.branch import Branch
 
 BRANCH_UTIL_REGEX = r"Creating branch: (?P<branch>.*)\s*"
 

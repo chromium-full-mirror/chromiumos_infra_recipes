@@ -5,9 +5,10 @@
 
 """Recipe to enforce go/kernel-upstream-tracking-process"""
 
+import re
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
-import re
 
 DEPS = {
     'step': 'recipe_engine/step',

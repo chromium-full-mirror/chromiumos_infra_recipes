@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 DEPS = [
     'recipe_engine/cas',
@@ -19,8 +21,6 @@ DEPS = [
     'portage',
     'workspace_util',
 ]
-
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -3,6 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
+from PB.chromiumos import common
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
+from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import CrosBisectProperties
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -18,15 +26,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
-
-from PB.chromiumos import common
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
-from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
-    CrosBisectProperties)
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 PROPERTIES = FullProperties
 

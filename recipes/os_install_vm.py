@@ -37,11 +37,12 @@
       installation succeeded.
 """
 
+import copy
+import gevent
+
+from PB.recipes.chromeos.os_install_vm import OsInstallVmProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
-from PB.recipes.chromeos.os_install_vm import OsInstallVmProperties
-import gevent
-import copy
 
 DEPS = [
     'recipe_engine/file',

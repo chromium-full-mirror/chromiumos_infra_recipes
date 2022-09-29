@@ -5,6 +5,9 @@
 
 """Recipe for running presubmit on multiple CLs."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -25,9 +28,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
 
 PROPERTIES = PresubmitTestsProperties
 

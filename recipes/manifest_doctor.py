@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe for performing various manipulations on ChromeOS manifests."""
+
+from PB.recipes.chromeos.manifest_doctor import ManifestDoctorProperties
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -23,8 +25,6 @@ DEPS = [
     'repo',
     'workspace_util',
 ]
-
-from PB.recipes.chromeos.manifest_doctor import ManifestDoctorProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

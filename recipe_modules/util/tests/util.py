@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from RECIPE_MODULES.chromeos.util import util
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'util',
 ]
-
-from RECIPE_MODULES.chromeos.util import util
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -4,42 +4,41 @@
 # found in the LICENSE file.
 
 """Recipe for the ChromeOS Test Frontend."""
+
+import collections
+import json
+import re
 import six
 
-from PB.recipes.chromeos.test_platform.cros_test_platform import \
-  CrosTestPlatformProperties
-from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
-  CrosTestPostprocessRequest
-from PB.recipes.chromeos.test_platform.cros_test_postprocess import \
-  TestResult as PostProcessTestResult
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
-  import CrosToolRunnerProperties
-from PB.recipe_modules.chromeos.service_version.service_version import \
-  ServiceVersionProperties
-from PB.test_platform import result_flow as result_flow_pb2
-from PB.test_platform import service_version as service_version_pb
-from PB.test_platform.steps.enumeration import \
-  EnumerationRequest, EnumerationRequests, EnumerationResponse, EnumerationResponses
-from PB.test_platform.steps.execution import ExecuteRequest, ExecuteRequests
-from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
-from PB.test_platform.request import Request
-from PB.test_platform.taskstate import TaskState
-from PB.test_platform.config.config import Config
-from PB.test_platform.steps.execute.build import Build
-from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from google.protobuf import duration_pb2
+from google.protobuf import json_format
+
 from PB.chromite.api import test_metadata
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.test.api import test_case as ctr_test_case
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
-
-import collections
-import json
-import re
-
-from google.protobuf import duration_pb2
-from google.protobuf import json_format
+from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformProperties
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult as PostProcessTestResult
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import CrosToolRunnerProperties
+from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
+from PB.test_platform import result_flow as result_flow_pb2
+from PB.test_platform import service_version as service_version_pb
+from PB.test_platform.steps.enumeration import EnumerationRequest
+from PB.test_platform.steps.enumeration import EnumerationRequests
+from PB.test_platform.steps.enumeration import EnumerationResponse
+from PB.test_platform.steps.enumeration import EnumerationResponses
+from PB.test_platform.steps.execution import ExecuteRequest
+from PB.test_platform.steps.execution import ExecuteRequests
+from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.steps.execution import ExecuteResponses
+from PB.test_platform.request import Request
+from PB.test_platform.taskstate import TaskState
+from PB.test_platform.config.config import Config
+from PB.test_platform.steps.execute.build import Build
 
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process

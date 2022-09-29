@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
+from PB.recipe_modules.chromeos.cros_relevance.examples.build_plan import BuildPlanTest
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,12 +19,6 @@ DEPS = [
     'cros_source',
     'src_state',
 ]
-
-from PB.chromiumos.builder_config import BuilderConfig
-from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-from PB.recipe_modules.chromeos.cros_relevance.examples.build_plan import (
-    BuildPlanTest)
-from recipe_engine import post_process
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

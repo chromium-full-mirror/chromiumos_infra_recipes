@@ -1,7 +1,9 @@
 #  -*- coding: utf-8 -*-
-# Copyright 2018 The ChromiumOS Authors
+# Copyright 2018 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,8 +15,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from recipe_engine import post_process
 
 # TODO(crbug/1098567): Refactor this to be actual examples, and move the tests
 # into tests/.

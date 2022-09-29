@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
-DEPS = [
-    'recipe_engine/assertions',
-    'recipe_engine/properties',
-    'cros_build_api',
-]
-
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 import json
 
 from google.protobuf import empty_pb2
 
-from PB.chromite.api import api as meta_api
 from PB.chromite.api import android
+from PB.chromite.api import api as meta_api
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
+from PB.chromite.api import build_api_test
 from PB.chromite.api import depgraph
 from PB.chromite.api import firmware
 from PB.chromite.api import image
@@ -29,13 +22,17 @@ from PB.chromite.api import sdk
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
 from PB.chromite.api import toolchain
-from PB.chromite.api import build_api_test
 from PB.chromiumos.common import BuildTarget
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
+from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildApiProperties
 
-from PB.recipe_modules.chromeos.analysis_service.analysis_service import (
-    AnalysisServiceProperties)
-from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import (
-    CrosBuildApiProperties)
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/properties',
+    'cros_build_api',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):

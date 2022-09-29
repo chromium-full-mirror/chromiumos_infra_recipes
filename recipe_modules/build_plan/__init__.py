@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -17,8 +19,6 @@ DEPS = [
     'git_footers',
     'test_util',
 ]
-
-from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

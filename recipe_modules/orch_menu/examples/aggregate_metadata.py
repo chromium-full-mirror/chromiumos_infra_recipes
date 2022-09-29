@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+import functools
+import json
+
+from recipe_engine import post_process
+
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.orch_menu.examples.aggregate_metadata import AggregateProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,18 +20,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-import functools
-import json
-
-# Recipe engine imports
-from recipe_engine import post_process
-
-# External imports
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-# Local imports
-from PB.recipe_modules.chromeos.orch_menu.examples.aggregate_metadata import AggregateProperties
 
 PROPERTIES = AggregateProperties
 

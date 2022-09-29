@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors
+# Copyright 2021 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusEnvProperties
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusProperties
+from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import CrosToolRunnerProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import CrosToolRunnerEnvProperties
 
 DEPS = [
     'recipe_engine/buildbucket', 'recipe_engine/context',
@@ -10,16 +16,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.recipe_modules.chromeos.phosphorus.phosphorus \
-  import PhosphorusProperties
-from PB.recipe_modules.chromeos.phosphorus.phosphorus \
-  import PhosphorusEnvProperties
-from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
-    import CrosToolRunnerProperties
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner\
-    import CrosToolRunnerEnvProperties
 
 PROPERTIES = TestRunnerProperties
 

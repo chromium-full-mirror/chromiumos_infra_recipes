@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+import collections
+
+from PB.chromiumos import builder_config
+from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
+from PB.recipe_modules.chromeos.failures.examples.build_failures import BuildProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,14 +19,6 @@ DEPS = [
     'urls',
     'test_util',
 ]
-
-import collections
-
-from PB.chromiumos import builder_config
-from PB.recipe_modules.chromeos.failures.examples.build_failures import (
-    BuildProperties)
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

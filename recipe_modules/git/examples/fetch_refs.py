@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_modules.chromeos.git.examples.fetch_refs import FetchProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -12,9 +15,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.recipe_modules.chromeos.git.examples.fetch_refs import FetchProperties
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 PROPERTIES = FetchProperties
 

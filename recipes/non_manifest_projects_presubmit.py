@@ -5,6 +5,11 @@
 
 """Recipe for running presubmit on CLs for projects not in the manifest."""
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
+
+from recipe_engine.recipe_api import StepFailure
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -17,10 +22,6 @@ DEPS = [
     'gerrit',
     'git',
 ]
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
-from recipe_engine.recipe_api import StepFailure
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

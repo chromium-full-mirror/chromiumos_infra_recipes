@@ -1,10 +1,10 @@
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import recipe_test_api
-
 import json
+
+from recipe_engine import recipe_test_api
 
 
 class CrosSomTestApi(recipe_test_api.RecipeTestApi):

@@ -3,12 +3,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# TODO (b/217973414): Remove future aliases and reenable these pylint checks
+# when Py2 compatibility has been removed.
+# pylint: disable=wrong-import-order,wrong-import-position
 from future.standard_library import install_aliases
 install_aliases()
 
 from urllib.parse import urljoin
 
 from recipe_engine import recipe_api
+
 
 
 KEY_PREFIX = 'chromeos.buildbucket:'

@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
-DEPS = [
-    'recipe_engine/assertions',
-    'tast_results',
-]
 
 from google.protobuf import json_format as jsonpb
 
 from PB.test_platform.taskstate import TaskState
 from PB.tast.test_result import TestResult
+
+DEPS = [
+    'recipe_engine/assertions',
+    'tast_results',
+]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

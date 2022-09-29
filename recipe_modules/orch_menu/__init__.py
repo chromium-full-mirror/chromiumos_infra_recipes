@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 DEPS = [
     'depot_tools/gsutil',
@@ -44,8 +46,6 @@ DEPS = [
     'test_util',
     'workspace_util',
 ]
-
-from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

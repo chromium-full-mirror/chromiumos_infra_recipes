@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors
+# Copyright 2020 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -15,11 +15,15 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
-from collections import namedtuple, OrderedDict
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from collections import namedtuple
+from collections import OrderedDict
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -39,8 +43,6 @@ DEPS = [
     'src_state',
     'workspace_util',
 ]
-
-from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors
+# Copyright 2022 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.cros_infra_config.tests.test import DetermineIfStagingProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -9,9 +11,6 @@ DEPS = [
     'recipe_engine/properties',
     'cros_infra_config',
 ]
-
-from PB.recipe_modules.chromeos.cros_infra_config.tests.test import (
-    DetermineIfStagingProperties)
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 

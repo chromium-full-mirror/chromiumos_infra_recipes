@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2019 The ChromiumOS Authors.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,6 +7,9 @@
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
+
+from PB.chromite.api.test import ChromitePytestRequest
+from PB.chromite.api.test import ChromiteUnitTestRequest
 
 DEPS = [
     'build_menu',
@@ -16,8 +19,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
-
-from PB.chromite.api.test import ChromitePytestRequest, ChromiteUnitTestRequest
 
 
 def RunSteps(api):
