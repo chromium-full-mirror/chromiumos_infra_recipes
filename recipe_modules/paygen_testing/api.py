@@ -18,6 +18,7 @@ from google.protobuf.json_format import MessageToDict
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api import test_metadata
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import URI
 from PB.test_platform.request import Request
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -374,7 +375,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     return BuildReport.Payload(
         payload=BuildReport.BuildArtifact(
             type=is_delta,
-            uri=BuildReport.BuildArtifact.URI(gcs=payload_uri),
+            uri=URI(gcs=payload_uri),
             sha256=payload_info['sha256_hex'],
         ), payload_type=payload_type, appid=payload_info['appid'],
         channel=self._get_channel_from_paygen_request(gen_req),

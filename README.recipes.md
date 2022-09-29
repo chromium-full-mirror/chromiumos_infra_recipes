@@ -7112,17 +7112,17 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for working with Paygen testing. Used by paygen.py.
 
-#### **class [CrosPaygenApi](/recipe_modules/paygen_testing/api.py#296)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPaygenApi](/recipe_modules/paygen_testing/api.py#297)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#512)(self, paygen_test_configs):**
+&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#513)(self, paygen_test_configs):**
 
 Takes in paygen test configs and creates au test requests.
 
 This is its own method mainly for testing.
 
-&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/paygen_testing/api.py#339)(self, req, payload_uri):**
+&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/paygen_testing/api.py#340)(self, req, payload_uri):**
 
 Prepare payload information for the release pubsub.
 
@@ -7133,7 +7133,7 @@ Args:
 Returns:
   A list[BuildReport.Payload] containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/paygen_testing/api.py#416)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None, src_bucket=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/paygen_testing/api.py#417)(self, tgt_payload, delta_type, src_version=None, src_channel=None, applicable_models=None, src_bucket=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -7156,7 +7156,7 @@ Returns:
   A PaygenTestConfig or None if no source payload exists or unsupported
   Payload provided.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#544)(self, paygen_test_configs):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#545)(self, paygen_test_configs):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -11450,7 +11450,7 @@ Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_testing/examples/create_paygen_build_report.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_testing/examples/create_paygen_build_report.py#22)(api):**
 ### *recipes* / [paygen\_testing:examples/schedule\_au\_tests](/recipe_modules/paygen_testing/examples/schedule_au_tests.py)
 
 [DEPS](/recipe_modules/paygen_testing/examples/schedule_au_tests.py#14): [paygen\_testing](#recipe_modules-paygen_testing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -13,6 +13,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 from PB.chromite.api.payload import Build, DLCImage, GenerationRequest, SignedImage, UnsignedImage
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import URI
 import PB.chromiumos.common as common_pb2
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
@@ -67,8 +68,7 @@ def RunSteps(api):
   expected_build_report = [
       BuildReport.Payload(
           payload=BuildReport.BuildArtifact(
-              uri=BuildReport.BuildArtifact.URI(
-                  gcs='gs://path/to/standard/payload'),
+              uri=URI(gcs='gs://path/to/standard/payload'),
               type=BuildReport.BuildArtifact.Type.PAYLOAD_DELTA,
               sha256='deadbeef',
           ),
@@ -83,8 +83,7 @@ def RunSteps(api):
       ), None, None,
       BuildReport.Payload(
           payload=BuildReport.BuildArtifact(
-              uri=BuildReport.BuildArtifact.URI(
-                  gcs='gs://path/to/minios/payload'),
+              uri=URI(gcs='gs://path/to/minios/payload'),
               type=BuildReport.BuildArtifact.Type.PAYLOAD_DELTA,
               sha256='deadbeef',
           ),
@@ -99,7 +98,7 @@ def RunSteps(api):
       ),
       BuildReport.Payload(
           payload=BuildReport.BuildArtifact(
-              uri=BuildReport.BuildArtifact.URI(gcs='gs://path/to/dlc/payload'),
+              uri=URI(gcs='gs://path/to/dlc/payload'),
               type=BuildReport.BuildArtifact.Type.PAYLOAD_DELTA,
               sha256='deadbeef',
           ),
