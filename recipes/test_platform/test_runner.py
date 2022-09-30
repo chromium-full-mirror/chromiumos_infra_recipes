@@ -474,6 +474,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "5.4.151-16902-g93699f4e73de"
     * hwid_sku:
         e.g. "katsu_MT8183_0B"
+    * carrier:
+        e.g. "CARRIER_ESIM"
 
 
     Args:
@@ -634,6 +636,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
 
   if kernel_version:
     base_tags.append(('kernel_version', kernel_version))
+
+  carrier = api.cros_tags.get_values(
+      'label-carrier', api.buildbucket.build.infra.swarming.bot_dimensions)
+  if carrier:
+    base_tags.append(('carrier', carrier[0]))
 
   return base_tags
 
@@ -2315,6 +2322,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-wifi_chip': 'marvell',
               'label-hwid_sku': 'katsu_MT8183_0B',
               'label-pool': 'DUT_POOL_QUOTA',
+              'label-carrier': 'fake-carrier',
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
