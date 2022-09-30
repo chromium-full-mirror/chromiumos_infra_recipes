@@ -37,7 +37,7 @@ def RunSteps(api):
       name='arc.Notification', verdict=TaskState.VERDICT_PASSED)
   passed_test_case_dict = json_format.MessageToDict(passed_test_case_result)
   build.output.properties.update(
-      {'all_test_cases': [failed_test_case_dict, passed_test_case_dict]})
+      {'failed_test_cases': [failed_test_case_dict, passed_test_case_dict]})
   build.input.properties.update(
       {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
   suite_name = 'betty.tast_vm.tast_vm_default'
@@ -51,7 +51,7 @@ def RunSteps(api):
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
   api.assertions.assertIn(
       'VERDICT_FAILED',
-      str(exonerated_vm_builds[0].output.properties['all_test_cases']))
+      str(exonerated_vm_builds[0].output.properties['failed_test_cases']))
 
 
 def GenTests(api):

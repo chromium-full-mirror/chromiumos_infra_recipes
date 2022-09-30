@@ -4812,7 +4812,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#393)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#394)(self):**
 
 Return markdown style info about suites that were exonerated.
 
@@ -4822,7 +4822,7 @@ Returns: str in markdown style.
 
 Return test_name without the tast prefix.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#376)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#377)(self, test_result):**
 
 Whether the test_result was exonerated.
 

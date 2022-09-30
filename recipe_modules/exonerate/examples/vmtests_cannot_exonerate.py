@@ -33,7 +33,7 @@ def RunSteps(api):
       human_readable_summary='Unexonerable message')
   failed_test_case_dict2 = json_format.MessageToDict(failed_test_case_result2)
   build.output.properties.update(
-      {'all_test_cases': [failed_test_case_dict1, failed_test_case_dict2]})
+      {'failed_test_cases': [failed_test_case_dict1, failed_test_case_dict2]})
   build.input.properties.update(
       {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
   suite_name = 'betty.tast_vm.tast_vm_default'

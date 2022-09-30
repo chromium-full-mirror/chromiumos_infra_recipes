@@ -346,19 +346,20 @@ class ExonerateApi(recipe_api.RecipeApi):
         if build.status == common_pb2.SUCCESS or build.critical == common_pb2.NO:
           # If the test suite passed, do nothing.
           new_vm_builds.append(build)
-        elif 'all_test_cases' not in build.output.properties:
+        elif 'failed_test_cases' not in build.output.properties:
           # If the test results are missing, do nothing.
           new_vm_builds.append(build)
         else:
           new_build = build_pb2.Build()
           new_build.CopyFrom(build)
           build_target = self.m.cros_infra_config.get_build_target_name(build)
-          prop_struct = build.output.properties['all_test_cases']
+          prop_struct = build.output.properties['failed_test_cases']
           all_test_cases = json_format.MessageToDict(prop_struct)
           new_test_cases, new_status = self.exonerate_vm_testcases(
               all_test_cases, build_target)
           new_build.status = new_status
-          new_build.output.properties.update({'all_test_cases': new_test_cases})
+          new_build.output.properties.update(
+              {'failed_test_cases': new_test_cases})
           if new_status == common_pb2.SUCCESS:
             suite_name = self.m.naming.get_vm_test_title(build)
             link_text = '{}.{}'.format(build_target, suite_name)

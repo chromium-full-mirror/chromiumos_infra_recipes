@@ -32,14 +32,8 @@ def RunSteps(api):
       name='test2', verdict=TaskState.VERDICT_FAILED,
       human_readable_summary='something also wrong here')
   failed_test_case_dict2 = json_format.MessageToDict(failed_test_case_result2)
-  passed_test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
-      name='arc.Notification', verdict=TaskState.VERDICT_PASSED)
-  passed_test_case_dict = json_format.MessageToDict(passed_test_case_result)
-  build.output.properties.update({
-      'all_test_cases': [
-          failed_test_case_dict1, failed_test_case_dict2, passed_test_case_dict
-      ]
-  })
+  build.output.properties.update(
+      {'failed_test_cases': [failed_test_case_dict1, failed_test_case_dict2]})
   build.input.properties.update(
       {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
   suite_name = 'betty.tast_vm.tast_vm_default'
@@ -51,7 +45,7 @@ def RunSteps(api):
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.SUCCESS)
   api.assertions.assertNotIn(
       'VERDICT_FAILED',
-      str(exonerated_vm_builds[0].output.properties['all_test_cases']))
+      str(exonerated_vm_builds[0].output.properties['failed_test_cases']))
 
   # Case where the VM test is non-critical
   build.critical = common_pb2.NO
@@ -61,11 +55,11 @@ def RunSteps(api):
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
   api.assertions.assertIn(
       'VERDICT_FAILED',
-      str(exonerated_vm_builds[0].output.properties['all_test_cases']))
+      str(exonerated_vm_builds[0].output.properties['failed_test_cases']))
 
-  # Test empty all_test_cases.
+  # Test empty failed_test_cases.
   build = api.exonerate.test_api.fake_vm_build()
-  build.output.properties.update({'all_test_cases': []})
+  build.output.properties.update({'failed_test_cases': []})
   build.input.properties.update(
       {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
   suite_name = 'betty.tast_vm.tast_vm_default'

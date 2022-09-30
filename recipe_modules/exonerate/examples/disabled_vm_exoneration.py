@@ -29,7 +29,7 @@ def RunSteps(api):
   test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Boot', verdict=TaskState.VERDICT_FAILED)
   test_case_dict = json_format.MessageToDict(test_case_result)
-  build.output.properties.update({'all_test_cases': [test_case_dict]})
+  build.output.properties.update({'failed_test_cases': [test_case_dict]})
   vm_builds = [build]
   # Testing the case of disabled exoneration.
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(

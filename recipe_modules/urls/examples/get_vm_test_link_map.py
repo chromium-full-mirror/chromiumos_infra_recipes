@@ -28,7 +28,7 @@ def RunSteps(api):
   test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='arc.Boot', verdict=TaskState.VERDICT_FAILED)
   test_case_dict = json_format.MessageToDict(test_case_result)
-  build.output.properties.update({'all_test_cases': [test_case_dict]})
+  build.output.properties.update({'failed_test_cases': [test_case_dict]})
   link_map = api.urls.get_vm_test_link_map(build)
   api.assertions.assertEqual(link_map['arc.Boot'],
                              'https://cr-buildbucket.appspot.com/build/123')
