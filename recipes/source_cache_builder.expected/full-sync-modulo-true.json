@@ -25,14 +25,14 @@
     "cmd": [],
     "name": "determine if full sync",
     "~followup_annotations": [
-      "@@@STEP_TEXT@full_sync_modulo not set, never full syncing@@@"
+      "@@@STEP_TEXT@cron generation id 15224 % 1 == 0, doing full sync@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set full_sync",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@full_sync@false@@@"
+      "@@@SET_BUILD_PROPERTY@full_sync@true@@@"
     ]
   },
   {
@@ -78,73 +78,9 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.source cache.setup source cache disk.retrieve image version from storage",
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cat",
-      "gs://chromeos-bot-cache/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
-    ],
-    "infra_step": true,
-    "name": "source cache update.source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "list",
-      "--format",
-      "json(name)",
-      "--filter",
-      "name="
-    ],
-    "infra_step": true,
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.set snapshot_version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"chromeos_default_recovery_snapshot\"@@@"
     ]
   },
   {
@@ -153,24 +89,24 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
     ],
     "infra_step": true,
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.look up device name to device id map",
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.look up device name to device id map",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -182,7 +118,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -190,10 +126,10 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.detach disk",
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90]@@@"
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros]@@@"
     ]
   },
   {
@@ -202,7 +138,7 @@
       "compute",
       "disks",
       "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -210,7 +146,7 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.delete disk",
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.delete disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -221,18 +157,48 @@
       "compute",
       "disks",
       "create",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
       "--quiet",
-      "--image=chromeos_default_recovery_snapshot",
-      "--type=pd-ssd"
+      "--type=pd-ssd",
+      "--size=200GB"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.create disk from image",
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.create empty disk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.look up device name to device id map (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.look up device name to device id map (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "mkfs.ext4",
+      "-m",
+      "0",
+      "-E",
+      "lazy_itable_init=0,lazy_journal_init=0,discard",
+      "/dev/sdz"
+    ],
+    "infra_step": true,
+    "name": "source cache update.source cache.setup source cache disk.create disk with empty checkout.format empty disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -271,35 +237,140 @@
       "mount",
       "-o",
       "discard,defaults",
-      "/dev/sdy",
+      "/dev/sdz",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "source cache update.source cache.mount disk crosr90",
+    "name": "source cache update.source cache.mount disk cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "chromeos_default_recovery_snapshot",
-      "[CACHE]/infra_versions/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
+      "sudo",
+      "chown",
+      "-R",
+      "chrome-bot:chrome-bot",
+      "[CLEANUP]/snapshot/chromiumos"
     ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
     "infra_step": true,
-    "name": "source cache update.source cache.write version file",
+    "name": "source cache update.source cache.chown the disk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@chromeos_default_recovery_snapshot@@@",
-      "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--repo-rev=stable",
+      "--verbose"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.source cache.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.source cache.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.source cache.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos/.repo/repo",
+    "infra_step": true,
+    "name": "source cache update.source cache.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.source cache.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.source cache.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -314,7 +385,7 @@
     "name": "source cache update.sync mounted cache directories.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"release-R90-13816.B\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_CLEAN\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -325,7 +396,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"release-R90-13816.B\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/snapshot/chromiumos/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
@@ -334,9 +405,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"release-R90-13816.B\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
       "@@@STEP_LOG_END@.recipes_state.json@@@"
     ]
@@ -380,7 +451,7 @@
     "name": "source cache update.sync mounted cache directories.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@cache tracking \"release-R90-13816.B\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
     ]
   },
   {
@@ -411,7 +482,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R90-13816.B",
+      "snapshot",
       "--repo-rev=stable",
       "--verbose"
     ],
@@ -432,8 +503,19 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update",
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -441,7 +523,19 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "version"
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
@@ -453,28 +547,29 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.repo version",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.clear git locks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
       "git",
-      "checkout",
-      "--force"
-    ],
-    "cwd": "[CLEANUP]/snapshot/chromiumos/.repo/repo",
-    "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
+      "reset",
+      "--hard"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
@@ -486,15 +581,25 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.repo selfupdate",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "version"
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-x",
+      "-d",
+      "-f"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
     "env_suffixes": {
@@ -506,9 +611,10 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.repo binary update.repo version (2)",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -624,7 +730,7 @@
   },
   {
     "cmd": [],
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -651,7 +757,7 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout (2).repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -681,7 +787,7 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout.repo forall (2)",
+    "name": "source cache update.sync mounted cache directories.ensure synced checkout.ensure clean checkout (2).repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -695,7 +801,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"release-R90-13816.B\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/snapshot/chromiumos/.recipes_state.json"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",
@@ -704,7 +810,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"release-R90-13816.B\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -760,7 +866,7 @@
     "cmd": [
       "sudo",
       "sync",
-      "/dev/sdy"
+      "/dev/sdz"
     ],
     "env": {
       "VIRTUAL_ENV": "1"
@@ -807,7 +913,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -833,8 +939,8 @@
       "compute",
       "images",
       "create",
-      "chromiumos-release-r90-13816-b-13370000",
-      "--source-disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromiumos-main-13370000",
+      "--source-disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--source-disk-zone=us-central1-b"
     ],
     "env": {
@@ -861,15 +967,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "chromiumos-release-r90-13816-b-13370000",
-      "[CLEANUP]/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
+      "chromiumos-main-13370000",
+      "[CLEANUP]/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "name": "source cache update.upload updated version file.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@chromiumos-release-r90-13816-b-13370000@@@",
-      "@@@STEP_LOG_END@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@chromiumos-main-cache-snapshot-version.txt@chromiumos-main-13370000@@@",
+      "@@@STEP_LOG_END@chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -881,22 +987,22 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/chromiumos-release-r90-13816-b-cache-snapshot-version.txt",
-      "gs://chromeos-bot-cache/chromiumos-release-r90-13816-b-cache-snapshot-version.txt"
+      "[CLEANUP]/chromiumos-main-cache-snapshot-version.txt",
+      "gs://chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
-    "name": "source cache update.upload updated version file.gsutil upload chromiumos-release-r90-13816-b-cache-snapshot-version.txt",
+    "name": "source cache update.upload updated version file.gsutil upload chromiumos-main-cache-snapshot-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/chromiumos-release-r90-13816-b-cache-snapshot-version.txt@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-bot-cache/chromiumos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "source cache update.upload updated version file.set chromiumos-release-r90-13816-b-cache-snapshot-version.txt",
+    "name": "source cache update.upload updated version file.set chromiumos-main-cache-snapshot-version.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@chromiumos-release-r90-13816-b-cache-snapshot-version.txt@\"chromiumos-release-r90-13816-b-13370000\"@@@"
+      "@@@SET_BUILD_PROPERTY@chromiumos-main-cache-snapshot-version.txt@\"chromiumos-main-13370000\"@@@"
     ]
   },
   {
@@ -912,7 +1018,7 @@
       "compute",
       "disks",
       "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-crosr90",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -938,10 +1044,10 @@
       "--format",
       "json",
       "--filter",
-      "creationTimestamp<2012-05-07 AND name~chromiumos-release-r90-13816-b-.*"
+      "creationTimestamp<2012-05-07 AND name~chromiumos-main-.*"
     ],
     "infra_step": true,
-    "name": "cleanup expired images.list images with filter chromiumos-release-r90-13816-b",
+    "name": "cleanup expired images.list images with filter chromiumos-main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",

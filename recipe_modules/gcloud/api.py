@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 The ChromiumOS Authors.
+# Copyright 2020 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -63,12 +63,20 @@ class GcloudApi(recipe_api.RecipeApi):
         properties.source_cache_action or
         SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE)
     self._specific_image_to_mount = properties.specific_image_to_mount
-    self._not_latest_sync = self._cache_action is not SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE
+    self._not_latest_sync = self.cache_action is not SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE
 
   def initialize(self):
     self._infra_host = (
         _DEFAULT_TEST_BOT_ID
         if self._test_data.enabled else self.m.swarming.bot_id)
+
+  @property
+  def cache_action(self):
+    return self._cache_action
+
+  @cache_action.setter
+  def cache_action(self, val):
+    self._cache_action = val
 
   @property
   def infra_host(self):
@@ -832,7 +840,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     # If cache action is latest cache image, look that image up from the
     # version file.
-    if self._cache_action is SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE:
+    if self.cache_action is SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE:
       with self.m.step.nest('retrieve image version from storage'):
         try:
           return self.m.gsutil.cat(
@@ -848,13 +856,13 @@ class GcloudApi(recipe_api.RecipeApi):
             pres.logs['version file not found'] = self._version_file
             return recovery_snapshot
     # If cache action is recovery image, use the provided snapshot image.
-    elif self._cache_action is SourceCacheAction.MOUNT_RECOVERY_IMAGE:
+    elif self.cache_action is SourceCacheAction.MOUNT_RECOVERY_IMAGE:
       with self.m.step.nest(
           'retrieve initial snapshot image from storage') as pres:
         pres.logs['snapshot_image'] = recovery_snapshot
         return recovery_snapshot
     # If a specific image is provided, use that.
-    elif self._cache_action is SourceCacheAction.MOUNT_SPECIFIC_IMAGE:
+    elif self.cache_action is SourceCacheAction.MOUNT_SPECIFIC_IMAGE:
       with self.m.step.nest('retrieve specific image from storage') as pres:
         pres.logs['snapshot_image'] = self._specific_image_to_mount
         return self._specific_image_to_mount
@@ -934,7 +942,7 @@ class GcloudApi(recipe_api.RecipeApi):
           recovery_snapshot or 'initial-{}-source-snapshot'.format(cache_name))
       remote_version = self._get_image_version(recovery_snapshot)
 
-      if self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
+      if self.cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
         with self.m.step.nest('create disk with empty checkout'):
           self._setup_empty_cache_disk(disk_type)
         return None
@@ -1017,8 +1025,8 @@ class GcloudApi(recipe_api.RecipeApi):
   def _verify_cache_config(self):
     """Verifies that the config props for source cache are valid combos."""
     if (self._specific_image_to_mount and
-        self._cache_action is not SourceCacheAction.MOUNT_SPECIFIC_IMAGE) or (
-            self._cache_action is SourceCacheAction.MOUNT_SPECIFIC_IMAGE and
+        self.cache_action is not SourceCacheAction.MOUNT_SPECIFIC_IMAGE) or (
+            self.cache_action is SourceCacheAction.MOUNT_SPECIFIC_IMAGE and
             not self._specific_image_to_mount):
       raise StepFailure(
           'specific_image_to_mount must be provided with cache action MOUNT_SPECIFIC_IMAGE'
@@ -1101,7 +1109,7 @@ class GcloudApi(recipe_api.RecipeApi):
             # been newly created and formatted by root. In that case, we will
             # need to chown the mount point to ensure the bot user has proper
             # permissions to repo init later on.
-            chown=self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE)
+            chown=self.cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE)
         if not recipe_mount:
           self._setup_new_cache_mount_outside_path(recipe_mount_path)
 
@@ -1114,7 +1122,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
       # Special case for when there is no cache mounted, we need to make sure
       # we repo init that disk.
-      if self._cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
+      if self.cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
         # Make sure we repo init in the correct directory.
         with self.m.context(
             cwd=self.m.path.abs_to_path(

@@ -35,6 +35,20 @@
   },
   {
     "cmd": [],
+    "name": "determine if full sync",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@full_sync_modulo not set, never full syncing@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set full_sync",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@full_sync@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "source cache update"
   },
   {

@@ -5,6 +5,8 @@
 
 # pylint: disable=protected-access
 
+from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
+
 DEPS = [
     'recipe_engine/assertions',
     'gcloud',
@@ -111,6 +113,11 @@ def RunSteps(api):
   for test, result in scrubbing_tests.items():
     new_branch = api.gcloud._scrub_special_characters(test)
     api.assertions.assertEqual(result, new_branch)
+
+  # Assert the default is set via @property.
+  api.gcloud.cache_action = SourceCacheAction.MOUNT_SPECIFIC_IMAGE
+  api.assertions.assertTrue(
+      api.gcloud.cache_action == SourceCacheAction.MOUNT_SPECIFIC_IMAGE)
 
 
 def GenTests(api):

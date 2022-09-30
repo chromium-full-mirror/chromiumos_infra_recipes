@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """Recipe for generating ChromeOS source cache snapshots."""
 
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_engine import result as result_pb2
-from PB.recipes.chromeos.source_cache_builder import SourceCacheBuilderProperties
-
+from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+
+from PB.recipe_engine import result as result_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipes.chromeos.source_cache_builder import (
+    SourceCacheBuilderProperties)
+from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -18,6 +21,7 @@ DEPS = [
     'recipe_engine/futures',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/scheduler',
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'chrome',
@@ -37,7 +41,34 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 PROPERTIES = SourceCacheBuilderProperties
 
 
+def _determine_if_full_sync(api, fsm):
+  """Inspect the trigger properties to determine if we full sync."""
+  with api.step.nest('determine if full sync') as pres:
+    if fsm == 0:
+      pres.step_text = 'full_sync_modulo not set, never full syncing'
+      return False
+
+    cron_triggers = [
+        x for x in api.scheduler.triggers if x.WhichOneof('payload') == 'cron'
+    ]
+    if cron_triggers:
+      last_trig = sorted([x.cron.generation for x in cron_triggers])[-1]
+      pres.step_text = 'cron generation id {} % {} '.format(last_trig, fsm)
+      if last_trig % fsm == 0:
+        pres.step_text += '== 0, doing full sync'
+        return True
+      pres.step_text += '!= 0, not doing full sync'
+      return False
+    pres.step_text = 'no cron triggers, not doing full sync'
+    return False
+
+
 def RunSteps(api, properties):
+  full_sync = _determine_if_full_sync(api, properties.full_sync_modulo)
+  api.easy.set_properties_step(full_sync=full_sync)
+  if full_sync:
+    api.gcloud.cache_action = SourceCacheAction.DONT_MOUNT_ANY_CACHE
+
   with api.step.nest('source cache update'):
     snapshot_prefixes = []
     image_prefixes = []
@@ -243,3 +274,155 @@ def GenTests(api):
           'source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)'
       ), retcode=3),
   )
+
+  yield api.test(
+      'full-sync-modulo-false',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          full_sync_modulo=1337,  # Not going to match this modulo.
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [
+                      {
+                          "cron": {
+                              "generation": "1335"
+                          },
+                          "id": "cron:v1:1335"
+                      },
+                      {
+                          "webui": {},  # Here we add an unassociated trigger.
+                      },
+                      {
+                          "cron": {
+                              "generation": "1336"
+                          },
+                          "id": "cron:v1:1336"
+                      }
+                  ]
+              }
+          }),
+      api.post_check(post_process.DoesNotRunRE,
+                     r'.+create disk with empty checkout$'))
+
+  yield api.test(
+      'full-sync-modulo-true',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          full_sync_modulo=1,  # Always full sync when mod == 1.
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [{
+                      "cron": {
+                          "generation": "15221"
+                      },
+                      "id": "cron:v1:15221"
+                  }, {
+                      "cron": {
+                          "generation": "15224"
+                      },
+                      "id": "cron:v1:15224"
+                  }]
+              }
+          }),
+      api.post_check(post_process.MustRunRE,
+                     r'.+create disk with empty checkout$'))
+
+  yield api.test(
+      'full-sync-modulo-no-trigger',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          full_sync_modulo=1,  # Always full sync when mod == 1.
+      ),
+      api.post_check(post_process.DoesNotRunRE,
+                     r'.+create disk with empty checkout$'))
+
+  yield api.test(
+      'full-sync-modulo-unspecified',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='repo',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          full_sync_modulo=0,  # Full sync unspecified (default proto val == 0).
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [{
+                      "cron": {
+                          "generation": "15221"
+                      },
+                      "id": "cron:v1:15221"
+                  }, {
+                      "cron": {
+                          "generation": "15224"
+                      },
+                      "id": "cron:v1:15224"
+                  }]
+              }
+          }),
+      api.post_check(post_process.DoesNotRunRE,
+                     r'.+create disk with empty checkout$'))
