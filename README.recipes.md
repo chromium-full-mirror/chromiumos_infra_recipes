@@ -2453,7 +2453,7 @@ API for DupIt script. See the design of this recipe in go/cros-dupit.
 
 A module for the DupIt script.
 
-&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#14)(self, rsync_mirror_address, rsync_mirror_rate_limit, gs_distfiles_uri, ignore_missing_args=False, filter_missing_links=False, regex_for_additional_file_syncs=None, gs_uri_for_regex_archive=None):**
+&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#14)(self, rsync_mirror_address, rsync_mirror_rate_limit, gs_distfiles_uri, ignore_missing_args=False, filter_missing_links=False, regex_for_archival_sync=None, gs_uri_for_archival_sync=None, path_datetime_for_archival_sync=None):**
 
 Configure the DupIt script module.
 
@@ -2467,18 +2467,23 @@ Args:
     synchronization.
   * filter_missing_links: filter out symlinks that are missing (such
     as directories).
-  * regex_for_additional_file_syncs: if this string is non-empty,
+  * regex_for_archival_sync: if this string is non-empty,
     sync any files from the remote mirror that match the regex.
+  * gs_uri_for_archival_sync: the base GS URI used for syncing
+    files matching 'regex_for_archival_sync'.
+  * path_datetime_for_archival_sync: an additional path for archival
+    syncing that is interpreted by datetime strftime (using UTC). Gets
+    added to the end of 'gs_uri_for_archival_sync'.
 
-&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#473)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#503)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#465)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#495)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#469)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#499)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#461)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#491)(self):**
 
-&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#477)(self):**
+&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#507)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

@@ -277,6 +277,43 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "2012/05/14/125321500000/",
+      "[CLEANUP]/tmp_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.write string contents to tempfile",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@tmp_tmp_2@2012/05/14/125321500000/@@@",
+      "@@@STEP_LOG_END@tmp_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_2",
+      "gs://stark-trek/the-ultimate-computer/distfiles-archive/latest_sync"
+    ],
+    "infra_step": true,
+    "name": "copy new distfiles to gs.gsutil create latest_sync at gs://stark-trek/the-ultimate-computer/distfiles-archive/latest_sync",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

@@ -39,9 +39,10 @@ def RunSteps(api, properties):
             gs_distfiles_uri=properties.gs_uri,
             ignore_missing_args=properties.ignore_missing_args,
             filter_missing_links=properties.filter_missing_links,
-            regex_for_additional_file_syncs=properties
-            .regex_for_additional_file_syncs,
-            gs_uri_for_regex_archive=properties.gs_uri_for_regex_archive,
+            regex_for_archival_sync=properties.regex_for_archival_sync,
+            gs_uri_for_archival_sync=properties.gs_uri_for_archival_sync,
+            path_datetime_for_archival_sync=properties
+            .path_datetime_for_archival_sync,
         )
         api.cros_dupit.run()
         mirror_success = True
@@ -70,7 +71,6 @@ def GenTests(api):
       'gs_uri': 'gs://chromeos-mirror-test/gentoo/distfiles/',
       'ignore_missing_args': False,
       'filter_missing_links': False,
-      'regex_for_additional_file_syncs': "",
   }
   arch_props = {
       'mirrors': [
@@ -89,10 +89,12 @@ def GenTests(api):
           True,
       'filter_missing_links':
           True,
-      'regex_for_additional_file_syncs':
+      'regex_for_archival_sync':
           "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
-      'gs_uri_for_regex_archive':
-          'gs://chromeos-mirror/archlinux-archive/repos/%Y/%m/%d/%H%M%S%f/',
+      'gs_uri_for_archival_sync':
+          'gs://chromeos-mirror/archlinux-archive/repos/',
+      'path_datetime_for_archival_sync':
+          '%Y/%m/%d/%H%M%S%f/',
   }
 
   props = good_props.copy()

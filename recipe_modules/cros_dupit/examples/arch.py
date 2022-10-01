@@ -19,9 +19,9 @@ def RunSteps(api):
       rsync_mirror_rate_limit='1m',
       gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
       ignore_missing_args=True, filter_missing_links=True,
-      regex_for_additional_file_syncs="^.+[.](db|db.tar.gz|files|files.tar.gz)$",
-      gs_uri_for_regex_archive='gs://stark-trek/the-ultimate-computer/distfiles-archive/%Y/%m/%d/%H%M%S%f/'
-  )
+      regex_for_archival_sync="^.+[.](db|db.tar.gz|files|files.tar.gz)$",
+      gs_uri_for_archival_sync='gs://stark-trek/the-ultimate-computer/distfiles-archive/',
+      path_datetime_for_archival_sync='%Y/%m/%d/%H%M%S%f/')
   api.cros_dupit.run()
 
 

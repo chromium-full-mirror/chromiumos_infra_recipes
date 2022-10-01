@@ -13,9 +13,9 @@ class DupItApi(recipe_api.RecipeApi):
 
   def configure(self, rsync_mirror_address, rsync_mirror_rate_limit,
                 gs_distfiles_uri, ignore_missing_args=False,
-                filter_missing_links=False,
-                regex_for_additional_file_syncs=None,
-                gs_uri_for_regex_archive=None):
+                filter_missing_links=False, regex_for_archival_sync=None,
+                gs_uri_for_archival_sync=None,
+                path_datetime_for_archival_sync=None):
     """Configure the DupIt script module.
 
     Args:
@@ -28,8 +28,13 @@ class DupItApi(recipe_api.RecipeApi):
         synchronization.
       * filter_missing_links: filter out symlinks that are missing (such
         as directories).
-      * regex_for_additional_file_syncs: if this string is non-empty,
+      * regex_for_archival_sync: if this string is non-empty,
         sync any files from the remote mirror that match the regex.
+      * gs_uri_for_archival_sync: the base GS URI used for syncing
+        files matching 'regex_for_archival_sync'.
+      * path_datetime_for_archival_sync: an additional path for archival
+        syncing that is interpreted by datetime strftime (using UTC). Gets
+        added to the end of 'gs_uri_for_archival_sync'.
     """
     assert (rsync_mirror_address.endswith('distfiles') or
             rsync_mirror_address.endswith('distfiles/') or
@@ -44,8 +49,9 @@ class DupItApi(recipe_api.RecipeApi):
         'additional_regex_matches_file.txt')
     self._ignore_missing_args = ignore_missing_args
     self._filter_missing_links = filter_missing_links
-    self._regex_for_additional_file_syncs = regex_for_additional_file_syncs
-    self._gs_uri_for_regex_archive = gs_uri_for_regex_archive
+    self._regex_for_archival_sync = regex_for_archival_sync
+    self._gs_uri_for_archival_sync = gs_uri_for_archival_sync
+    self._path_datetime_for_archival_sync = path_datetime_for_archival_sync
 
   def _get_list_of_gs_distfiles(self):
     """Get relative, sorted list of distfile paths from Google Storage bucket"""
@@ -165,7 +171,7 @@ class DupItApi(recipe_api.RecipeApi):
     """Populate relative list of all files matching the additional regex.
 
     Extracts the list of files matching the regex supplied by
-    'regex_for_additional_file_syncs' expression and stores it in
+    'regex_for_archival_sync' expression and stores it in
     the tempfile 'self._additional_regex_matches_file'.
 
     Args:
@@ -174,7 +180,7 @@ class DupItApi(recipe_api.RecipeApi):
     grep_cmd = [
         'egrep',
         # Show only lines matching the properties-provided regex
-        self._regex_for_additional_file_syncs,
+        self._regex_for_archival_sync,
         distfiles,
     ]
     grep_name = 'get list of files matching additional regex'
@@ -271,7 +277,7 @@ class DupItApi(recipe_api.RecipeApi):
     self.m.step(cmd=comm_cmd, infra_step=True, name=comm_name,
                 stdout=comm_stdout)
 
-    if self._regex_for_additional_file_syncs:
+    if self._regex_for_archival_sync:
       # Populate our list of regex matches
       self._populate_list_of_additional_regex_matches(gentoo_distfiles)
       # Add additional regex files to the list of distfiles to be rsync'd
@@ -319,7 +325,21 @@ class DupItApi(recipe_api.RecipeApi):
     tempfile = self.m.path.mkstemp()
     self.m.gsutil(cmd=['cp', tempfile, gs_path], name=step_name)
 
-  def _archive_distfiles_to_gs(self, gs_uri, distfiles,
+  def _write_string_to_gs_file(self, gs_path, contents, step_name):
+    """Creates a text file with 'contents' and then copies to gs_path.
+
+    Args:
+      * gs_path: Google Cloud Storage URI to upload the empty file to. Filename
+        should be included in this.
+      * contents: a string to be written to the body of the file.
+      * step_name: name of the gsutil upload step to be shown in LUCI.
+    """
+    tempfile = self.m.path.mkstemp()
+    self.m.file.write_text('write string contents to tempfile', tempfile,
+                           contents)
+    self.m.gsutil(cmd=['cp', tempfile, gs_path], name=step_name)
+
+  def _archive_distfiles_to_gs(self, gs_uri, path_datetime, distfiles,
                                files_description='distfiles',
                                donefile_name='.done'):
     """Upload an additional copy of distfiles for archival.
@@ -333,8 +353,10 @@ class DupItApi(recipe_api.RecipeApi):
     ensure the upload was completed successfully.
 
     Args:
-      * gs_uri: Google Cloud Storage URI to upload to -- interpreted by
-        datetime's strftime (using UTC time).
+      * gs_uri: Google Cloud Storage URI to upload to (path_datetime is
+        appeneded to this URL)
+      * path_datetime: path to append to gs_uri. This is interpreted by
+        datetime's strftime before appending.
       * distfiles: Path to the distfiles to be archived.
       * files_description: used in the step name to allow the step to be more
         descriptive (default='distfiles').
@@ -343,7 +365,8 @@ class DupItApi(recipe_api.RecipeApi):
     """
     # Interpret timecodes in the archive URI.
     time_now_utc = self.m.time.utcnow()
-    gs_uri_dated = time_now_utc.strftime(gs_uri)
+    date_path = time_now_utc.strftime(path_datetime)
+    gs_uri_dated = self.m.path.join(gs_uri, date_path)
 
     gsutil_cp_cmd = [
         'cp',
@@ -366,6 +389,12 @@ class DupItApi(recipe_api.RecipeApi):
     donefile_step_name = 'create donefile at %s' % donefile_gs_uri
     self._write_empty_file_to_gs(gs_path=donefile_gs_uri,
                                  step_name=donefile_step_name)
+
+    # Write the latest sync file to gs://gs_uri/latest_sync
+    latestsync_gs_uri = self.m.path.join(gs_uri, 'latest_sync')
+    latestsync_step_name = 'create latest_sync at %s' % latestsync_gs_uri
+    self._write_string_to_gs_file(latestsync_gs_uri, date_path,
+                                  latestsync_step_name)
 
   def _sync_additional_regex_matches_to_gs(self):
     """Copy files matching the additional regex from tmpdir to gs"""
@@ -415,8 +444,9 @@ class DupItApi(recipe_api.RecipeApi):
     self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True, name=gsutil_cp_name,
                   parallel_upload=True)
 
-    if self._gs_uri_for_regex_archive:
-      self._archive_distfiles_to_gs(self._gs_uri_for_regex_archive,
+    if self._gs_uri_for_archival_sync:
+      self._archive_distfiles_to_gs(self._gs_uri_for_archival_sync,
+                                    self._path_datetime_for_archival_sync,
                                     tmp_regexfiles_path,
                                     files_description='additional regex files',
                                     donefile_name='.dupit_done')
@@ -453,7 +483,7 @@ class DupItApi(recipe_api.RecipeApi):
         self.m.gsutil(cmd=gsutil_cp_cmd, multithreaded=True,
                       name=gsutil_cp_name, parallel_upload=True)
 
-        if self._regex_for_additional_file_syncs:
+        if self._regex_for_archival_sync:
           self._sync_additional_regex_matches_to_gs()
       else:
         presentation.step_text = 'No new distfiles to upload'
