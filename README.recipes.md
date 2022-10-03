@@ -448,7 +448,6 @@
   * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image) (Python3 ✅)
   * [phosphorus:examples/full](#recipes-phosphorus_examples_full) (Python3 ✅)
   * [portage:examples/full](#recipes-portage_examples_full) (Python3 ✅)
-  * [portage:tests/prebuilt_metrics](#recipes-portage_tests_prebuilt_metrics) (Python3 ✅)
   * [portage_explorer](#recipes-portage_explorer) (Python3 ✅) &mdash; Recipe for Portage Explorer.
   * [presubmit_cq](#recipes-presubmit_cq) (Python3 ✅) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) (Python3 ✅) &mdash; Recipe for running presubmit on multiple CLs.
@@ -2134,7 +2133,7 @@ Args:
     Accepts the same keyword arguments as __call__.
 ### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
 
-[DEPS](/recipe_modules/cros_build_api/__init__.py#8): [analysis\_service](#recipe_modules-analysis_service), [portage](#recipe_modules-portage), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_build_api/__init__.py#8): [analysis\_service](#recipe_modules-analysis_service), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
@@ -2243,7 +2242,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#536)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#534)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2274,7 +2273,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#533)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#531)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#238)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -7292,44 +7291,23 @@ Args:
   request: an UploadToTkoRequest.
 ### *recipe_modules* / [portage](/recipe_modules/portage)
 
-[DEPS](/recipe_modules/portage/__init__.py#6): [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/portage/__init__.py#6): [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 APIs for CrOS Portage.
 
-#### **class [PortageApi](/recipe_modules/portage/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PortageApi](/recipe_modules/portage/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS Portage steps.
 
-&mdash; **def [commit\_package\_uprevs](/recipe_modules/portage/api.py#27)(self):**
+&mdash; **def [commit\_package\_uprevs](/recipe_modules/portage/api.py#17)(self):**
 
 Uprevs portage packages for all boards.
 
 Must be run with cwd inside a chromiumos source root.
 
-&mdash; **def [initialize](/recipe_modules/portage/api.py#19)(self):**
-
-&mdash; **def [publish\_prebuilt\_stats](/recipe_modules/portage/api.py#65)(self, step_name, step_stdout):**
-
-Reads portage stdout and tries to gleen facts about emerge method.
-
-Portage gives us a stdout stream and outputs a formatted representation of
-number of packages that it will emerge, and the method in which it will
-emerge them. In liu of a _good_ system (a db insert, formatted output, etc)
-we can sniff through this stdout and gather facts about prebuilt use,
-among other things. We produce an accumulating tally keyed on the provided
-step_name.
-
-Internally maintain an output prop with a dictionary which we update on
-each call, and reset the output prop each time.
-
-Args:
-  step_name (str): A unique step name (e.g. the bapi's step) and will be
-      used as the output key in the metrics dictionary.
-  step_stdout (str): The full standard out for the bapi call.
-
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [push\_package\_uprevs](/recipe_modules/portage/api.py#44)(self, dryrun=False):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [push\_package\_uprevs](/recipe_modules/portage/api.py#34)(self, dryrun=False):**
 
 Pushes the changes generated by |uprev_portage_packages| to remote.
 
@@ -11488,13 +11466,6 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/portage/examples/full.py#16)(api):**
-### *recipes* / [portage:tests/prebuilt\_metrics](/recipe_modules/portage/tests/prebuilt_metrics.py)
-
-[DEPS](/recipe_modules/portage/tests/prebuilt_metrics.py#6): [portage](#recipe_modules-portage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-&mdash; **def [RunSteps](/recipe_modules/portage/tests/prebuilt_metrics.py#47)(api, properties):**
 ### *recipes* / [portage\_explorer](/recipes/portage_explorer.py)
 
 [DEPS](/recipes/portage_explorer.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
