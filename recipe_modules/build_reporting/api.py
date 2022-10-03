@@ -24,16 +24,14 @@ import base64
 import contextlib
 import json
 import six
-
-from google.protobuf.json_format import MessageToDict
-
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
+from google.protobuf.json_format import MessageToDict
 
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReportBeta as BuildReport
-
 from recipe_engine import recipe_api
-from recipe_engine.recipe_api import InfraFailure, StepFailure
+from recipe_engine.recipe_api import InfraFailure
+from recipe_engine.recipe_api import StepFailure
 
 # TODO(b/200713946): Lookup the builder region and use that endpoint
 PUBSUB_ENDPOINT = "us-central1-pubsub.googleapis.com:443"
@@ -499,5 +497,20 @@ class BuildReportingApi(recipe_api.RecipeApi):
     build_report.sdk_version = getattr(toolchain_info, 'sdk_version')
     build_report.toolchain_url = getattr(toolchain_info, 'toolchain_url')
     build_report.toolchains.extend(getattr(toolchain_info, 'toolchains'))
+
+    self.publish(build_report)
+
+  def publish_dlcs(self, dlc_locations):
+    """Publish DLC locations to pubsub.
+
+    Args:
+      dlc_locations (List[str]): List of DLC locations in GS.
+    """
+
+    build_report = BuildReport()
+
+    for location in dlc_locations:
+      dlc_artifact = build_report.dlcs.dlc_artifacts.add()
+      dlc_artifact.gcs = location
 
     self.publish(build_report)

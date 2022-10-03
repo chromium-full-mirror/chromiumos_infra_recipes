@@ -1,0 +1,15 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.dlc_utils;
+
+message DlcUtilsProperties {
+  // The directories within the path we want to look for DLCs in. Defaults to:
+  // ['dlc'].
+  repeated string dlc_directories = 1;
+  // The file names within the path we consider DLCs. Defaults to: ['dlc.img'].
+  repeated string dlc_file_names = 2;
+}

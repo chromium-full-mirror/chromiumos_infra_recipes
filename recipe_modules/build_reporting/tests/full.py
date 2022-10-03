@@ -19,7 +19,7 @@ DEPS = [
     'build_reporting',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 BuildStatus = BuildReport.BuildStatus
 
@@ -132,6 +132,12 @@ def RunSteps(api):
   # Signed build metadata verifying.
   api.build_reporting.publish_signed_build_metadata(
       [json.loads(_read_test_file('test_signed_build.json')), {}])
+
+  # DLCs.
+  api.build_reporting.publish_dlcs([
+      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
+      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img'
+  ])
 
   # ...
 

@@ -41,11 +41,12 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'debug_symbols',
+    'dlc_utils',
     'easy',
     'failures',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildReleaseProperties
 
@@ -161,6 +162,10 @@ def DoRunSteps(api, config, properties):
 
   gs_image_dir, instructions = api.cros_release.push_and_sign_images(
       config, api.build_menu.sysroot)
+
+  with api.step.nest("publish DLCs to pubsub"):
+    dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
+    api.build_reporting.publish_dlcs(dlc_locations)
 
   with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
     with api.step.nest("upload debug symbols"):
