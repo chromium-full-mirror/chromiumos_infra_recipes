@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -30,6 +30,9 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     self._images_file_path = None
     # container metadata for last created image file.
     self.container_metadata = None
+    # Temporary hack: make it public for minimum code change.
+    # TODO(b/250615010): clean up
+    self.bot_id = env_vars.SWARMING_BOT_ID
 
   def create_file_with_container_metadata(self, container_metadata):
     """Create a temp file with provided container metadata.

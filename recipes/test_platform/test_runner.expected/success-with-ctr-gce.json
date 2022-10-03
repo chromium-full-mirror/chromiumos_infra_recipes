@@ -338,6 +338,111 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "list",
+      "--format",
+      "json(name)"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.get a list of all instances",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"ctstest-crossk-dummy-r105-1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"ctstest-crossk-other-r105-1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "ctstest-crossk-dummy-r105-1",
+      "--quiet",
+      "--zone=us-west2-a",
+      "--project=betty-cloud-prototype"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.delete instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "delete",
+      "ctstest-crossk-dummy-r105-1",
+      "--quiet"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.delete image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.Prototype GCE provision.create image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -349,7 +454,7 @@
       "compute",
       "images",
       "create",
-      "ctstest-betty-arc-r-release-r102-14637-42",
+      "ctstest-crossk-dummy-r102-14637-42",
       "--source-uri=https://storage.googleapis.com/chromeos-image-archive/betty-arc-r-release/R102-14637.0.0/chromiumos_test_image_gce.tar.gz",
       "--licenses=https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
     ],
@@ -380,8 +485,8 @@
       "compute",
       "instances",
       "create",
-      "ctstest-betty-arc-r-release-r102-14637-42",
-      "--image=ctstest-betty-arc-r-release-r102-14637-42",
+      "ctstest-crossk-dummy-r102-14637-42",
+      "--image=ctstest-crossk-dummy-r102-14637-42",
       "--project=betty-cloud-prototype",
       "--machine-type=n2-standard-4",
       "--no-scopes",
@@ -825,7 +930,7 @@
       "compute",
       "images",
       "delete",
-      "ctstest-betty-arc-r-release-r102-14637-42",
+      "ctstest-crossk-dummy-r102-14637-42",
       "--quiet"
     ],
     "env": {

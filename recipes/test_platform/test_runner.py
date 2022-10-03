@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -3464,7 +3464,15 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _kernel_log_file_step_data_for_ctr(),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),
-      _successful_run_test_step_for_ctr())
+      _successful_run_test_step_for_ctr(),
+      api.step_data(
+          'execution steps.Prototype GCE provision.clean up orphan instances.get a list of all instances',
+          stdout=api.raw_io.output_text(
+              json.dumps([{
+                  'name': 'ctstest-crossk-dummy-r105-1'
+              }, {
+                  'name': 'ctstest-crossk-other-r105-1'
+              }]))))
 
   yield api.test(
       'within-deadline-ctr', api.time.seed(2369692800), _misc_properties(True),

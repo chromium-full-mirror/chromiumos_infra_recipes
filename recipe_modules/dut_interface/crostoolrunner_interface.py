@@ -158,13 +158,31 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       suffix = self._api.random.randint(1000000, 9999999)
 
     build = metadata.autotest_keyvals['build']
-    gce_image = 'ctstest-{}-{}'.format(
-        build[0:30].replace('/', '-').replace('.', '-').lower(), suffix)
+    # Hack: for minimum code change, access bot_id from cros_tool_runner, rather
+    # than setting up env_vars/metadata for crostoolrunner_interface
+    # TODO(b/250615010): clean ups.
+    bot_name = self._api.cros_tool_runner.bot_id
+    gce_image = 'ctstest-{}-{}-{}'.format(
+        # bot name
+        bot_name,
+        # Drop betty-arc-r-release/ to save some length since image name length
+        # is capped at 63 characters.
+        '-'.join(build.split('/')[1:]).lower()[0:10],
+        # buildbucket id
+        suffix)
 
     source_uri = 'https://storage.googleapis.com/chromeos-image-archive/{}/chromiumos_test_image_gce.tar.gz'.format(
         build)
 
     self._vm_provisioned = {}
+
+    with self._api.step.nest('clean up orphan instances'):
+      for orphance_instance in self._api.gcloud.list_all_instances():
+        if orphance_instance.startswith('ctstest-{}-'.format(bot_name)):
+          # recipe_modules/gcloud uses the same name for instances and images.
+          self._api.gcloud.delete_instance(orphance_instance, project,
+                                           'us-west2-a')
+          self._api.gcloud.delete_image(orphance_instance)
 
     self._api.gcloud.create_image(
         gce_image, source_uri=source_uri, licenses=[

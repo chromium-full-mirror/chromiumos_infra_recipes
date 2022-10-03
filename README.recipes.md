@@ -4462,43 +4462,43 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Module for issuing CrosToolRunner commands
 
-&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#34)(self, container_metadata):**
+&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#37)(self, container_metadata):**
 
 Create a temp file with provided container metadata.
 
 Args:
   container_metadata: (ContainerMetadata) container metadata.
 
-&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#193)(self):**
+&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#196)(self):**
 
 Ensure the CrosToolRunner CLI is installed.
 
-&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#127)(self, request):**
+&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#130)(self, request):**
 
 Find tests via `test-finder` subcommand.
 
 Args:
   request: a CrosToolRunnerTestFinderRequest.
 
-&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#118)(self, request):**
+&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#121)(self, request):**
 
 Run provision via `provision` subcommand.
 
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#231)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#234)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#137)(self, request):**
+&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#140)(self, request):**
 
 Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#146)(self, autotest_dir, results_dir):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#149)(self, autotest_dir, results_dir):**
 
 Upload test results to TKO via tko-parse.
 This command does not call into CTR. It directly invokes tko-parse in autotest.
