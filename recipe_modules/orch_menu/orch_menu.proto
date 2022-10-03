@@ -45,8 +45,8 @@ message OrchMenuProperties {
   // referencing or setting status on test results.
   bool run_tests_async = 6;
 
-  // GS path to upload buildspecs to. Only used for release builders.
-  // Defaults to 'gs://chromeos-manifest-versions/release/'.
+  // GS path to upload buildspecs to. Only used for release orchestrators.
+  // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
   string buildspec_gs_path = 7;
 
   // Whether to bump the version for a release builder. Will be ignored if

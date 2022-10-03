@@ -40,4 +40,8 @@ message BuildLegacyFwProperties {
 
   // Feature flag: chroot outside of tree
   bool chroot_outside = 11;
+
+  // GS path to upload buildspecs to.
+  // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
+  string buildspec_gs_path = 12;
 }

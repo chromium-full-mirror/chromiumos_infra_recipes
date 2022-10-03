@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2021 The ChromiumOS Authors.
+# Copyright 2021 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -162,7 +162,8 @@ class FirmwareBuilder(object):
             self.m.src_state.workspace_path.join('src/scripts/setup_board'))
 
         if self.properties.bump_version:
-          self._bump_version()
+          self._bump_version(
+              buildspec_gs_path=self.properties.buildspec_gs_path)
         self._bcs_version = self.m.cros_version.version
 
         entries = dict(
@@ -181,7 +182,7 @@ class FirmwareBuilder(object):
           self._set_firmware_version()
           yield
 
-  def _bump_version(self):
+  def _bump_version(self, buildspec_gs_path=None):
     dry_run = self._is_staging or self.m.cq.active
     self.m.cros_version.bump_version(dry_run=dry_run)
     if self.m.cq.active:
@@ -192,7 +193,8 @@ class FirmwareBuilder(object):
     # create_buildspec branch=None to use the default branch, whatever it is.
     self.m.cros_release.create_buildspec(branch=None,
                                          step_name='create buildspec',
-                                         dry_run=dry_run)
+                                         dry_run=dry_run,
+                                         gs_location=buildspec_gs_path)
     # Only these builds are valid for suite_scheduling to find.
     self._suite_scheduling = (
         self.properties.set_suite_scheduling and not dry_run)
@@ -539,7 +541,9 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-releases']),
-      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+      input_properties=dict(
+          bump_version=True, set_suite_scheduling=True,
+          buildspec_gs_path='gs://chromeos-manifest-versions/buildspecs/'))
 
   yield test(
       'staging-release',
@@ -556,7 +560,9 @@ def GenTests(api):
                      'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-throw-away-bucket']),
       api.post_check(post_process.StatusSuccess), bucket='staging',
-      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+      input_properties=dict(
+          bump_version=True, set_suite_scheduling=True,
+          buildspec_gs_path='gs://chromeos-manifest-versions/staging/'))
 
   yield test(
       'old-staging-release',
