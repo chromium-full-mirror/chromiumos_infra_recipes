@@ -1,5 +1,5 @@
 #!/usr/bin/env vpython3
-# Copyright 2022 The ChromiumOS Authors.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -187,7 +187,7 @@ def cipd_ref_to_instance_id(ref: CipdRef) -> CipdInstance:
   p = subprocess.run(['cipd', 'resolve', '-version', ref, RECIPE_BUNDLE],
                      capture_output=True, text=True, check=True)
   stdout = [line.strip() for line in p.stdout.split('\n') if line]
-  instance_id = stdout[-1]
+  instance_id = stdout[-1].split(':')[-1]
   assert len(instance_id.split()) == 1, instance_id
   return CipdInstance(instance_id)
 
