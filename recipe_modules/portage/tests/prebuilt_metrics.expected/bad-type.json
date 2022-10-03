@@ -1,0 +1,15 @@
+[
+  {
+    "cmd": [],
+    "name": "adding prebuilt metrics",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Failure to publish prebuilt stats@@@",
+      "@@@STEP_LOG_LINE@exception@expected string or bytes-like object@@@",
+      "@@@STEP_LOG_END@exception@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

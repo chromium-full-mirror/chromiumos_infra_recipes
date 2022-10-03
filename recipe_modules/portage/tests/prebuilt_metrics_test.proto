@@ -1,0 +1,19 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.portage.tests;
+
+message TestMetricsInputProperties {
+  // The step_name to test.
+  string step_name = 1;
+
+  oneof test_oneof {
+    // The build api stdout to feed to the test.
+    string bapi_stdout = 2;
+    // Tests exception handling.
+    int32 bad_input = 3;
+  }
+}

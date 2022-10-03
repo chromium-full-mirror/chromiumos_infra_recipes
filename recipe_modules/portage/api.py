@@ -6,6 +6,8 @@
 """APIs for CrOS Portage."""
 
 import datetime
+from collections import defaultdict
+import re
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
@@ -13,6 +15,15 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 class PortageApi(recipe_api.RecipeApi):
   """A module for CrOS Portage steps."""
+
+  def initialize(self):
+    # Default dict of [step_name][emerge_type] -> count.
+    self._portage_emerge_types = defaultdict(lambda: defaultdict(lambda: 0))
+
+    # Compiled regex that group matches props.
+    self._PORTAGE_EMERGE_TYPE_RE = re.compile(
+        r'\n\[(?P<emerge_type>\w+)[ NSUDrRFfIBb#*~]{1,12}\] ' +
+        r'(?P<package_name>[^ ]+)')
 
   def commit_package_uprevs(self):
     """Uprevs portage packages for all boards.
@@ -51,3 +62,34 @@ class PortageApi(recipe_api.RecipeApi):
     if dryrun:
       cmd.append('--dryrun')
     return self.m.step('push portage package uprevs', cmd)
+
+  def publish_prebuilt_stats(self, step_name, step_stdout):
+    """Reads portage stdout and tries to glean facts about emerge method.
+
+    Portage gives us a stdout stream and outputs a formatted representation of
+    number of packages that it will emerge, and the method in which it will
+    emerge them. In liu of a _good_ system (a db insert, formatted output, etc)
+    we can sniff through this stdout and gather facts about prebuilt use,
+    among other things. We produce an accumulating tally keyed on the provided
+    step_name.
+
+    Internally maintain an output prop with a dictionary which we update on
+    each call, and reset the output prop each time.
+
+    Args:
+      step_name (str): A unique step name (e.g. the bapi's step) and will be
+          used as the output key in the metrics dictionary.
+      step_stdout (str): The full standard out for the bapi call.
+    """
+    # Gathering/setting these metrics shouldn't be allowed to fail the build.
+    with self.m.step.nest('adding prebuilt metrics') as pres:
+      try:
+        for m in self._PORTAGE_EMERGE_TYPE_RE.finditer(step_stdout):
+          self._portage_emerge_types[step_name][m.group('emerge_type')] += 1
+        self.m.easy.set_properties_step(
+            'set portage prebuilt stats',
+            prebuilt_stats=self._portage_emerge_types)
+      except Exception as e:  # pylint: disable=broad-except
+        pres.status = self.m.step.INFRA_FAILURE
+        pres.step_summary_text = 'Failure to publish prebuilt stats'
+        pres.logs['exception'] = str(e)
