@@ -162,7 +162,7 @@ def cipd_version_to_githash(version: CipdVersion) -> GitHash:
   p = subprocess.run(cmd, text=True, capture_output=True, check=True)
   lines = p.stdout.split('\n')
   git_rev_lines = [line for line in lines if 'git_revision' in line]
-  assert len(git_rev_lines) == 1, lines
+  assert len(git_rev_lines) >= 1, lines
   git_rev_line = git_rev_lines[0]
   assert git_rev_line.count(':') == 1, git_rev_line
   githash = git_rev_line.strip().split(':')[1]
