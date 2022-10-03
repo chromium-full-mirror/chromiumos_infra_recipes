@@ -22,5 +22,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'get-annealing-from-snapshot',
+      api.step_data('buildbucket.search', retcode=1),
+      api.step_data('buildbucket.search (2)', retcode=1),
       api.buildbucket.simulated_search_results(
-          [api.cros_history.build_with_uprev_response()]))
+          [api.cros_history.build_with_uprev_response()],
+          step_name='buildbucket.search (3)'))

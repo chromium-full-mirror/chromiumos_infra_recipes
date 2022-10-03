@@ -2474,11 +2474,11 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#47)(self, snapshot_id):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#49)(self, snapshot_id):**
 
 Find the annealing build that created snapshot with given ID.
 
@@ -2488,7 +2488,7 @@ Args:
 Returns:
   build_pb2.Build of the annealing build or None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#228)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#231)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -2501,7 +2501,7 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#79)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#82)(self, tags=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -2511,14 +2511,14 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with the most recent build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#150)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#153)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#189)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#192)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -2534,14 +2534,14 @@ Args:
 Returns:
   list[Build] builds with the same snapshot and additional filtering.
 
-&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#120)(self):**
+&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#123)(self):**
 
 Get builders with the given patches that failed tests in the last run.
 
 Returns:
   set[str]: Names of builders with HW or VM testing failures, if any.
 
-&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#64)(self, annealing_build):**
+&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#67)(self, annealing_build):**
 
 Retrieve the packages upreved by the annealing build.
 
@@ -2551,14 +2551,14 @@ Args:
 Returns:
   list(PackageCPV) of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#256)(self):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#259)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#174)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#177)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -2568,7 +2568,7 @@ have passed and which have not.
 Args:
   tests (sequence[str]): (Unique) names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#44)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
