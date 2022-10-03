@@ -2651,7 +2651,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/39/6301.202.4.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/39/6301.202.4-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -2667,7 +2667,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.write buildspecs/39/6301.202.4.xml",
+    "name": "create buildspec.write buildspecs/39/6301.202.4-8945511751514863184.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2692,7 +2692,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/39/6301.202.4.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/39/6301.202.4-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -2719,7 +2719,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/39/6301.202.4.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/39/6301.202.4-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,

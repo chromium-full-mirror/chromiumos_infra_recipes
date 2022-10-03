@@ -490,7 +490,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -506,7 +506,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.write buildspecs/99/1234.56.0.xml",
+    "name": "create buildspec.write buildspecs/99/1234.56.0-8945511751514863184.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -531,7 +531,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -558,7 +558,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -581,7 +581,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec.upload buildspecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create buildspec.upload buildspecs/99/1234.56.0-8945511751514863184.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -595,8 +595,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml",
-      "gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml",
+      "gs://chromeos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -612,10 +612,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.upload buildspecs/99/1234.56.0.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0.xml.gsutil upload",
+    "name": "create buildspec.upload buildspecs/99/1234.56.0-8945511751514863184.xml to gs://chromeos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/buildspecs/99/1234.56.0.xml@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml@@@"
     ]
   },
   {
@@ -673,7 +673,7 @@
       "[START_DIR]/cipd/manifest_doctor",
       "public-buildspec",
       "--paths",
-      "buildspecs/99/1234.56.0.xml",
+      "buildspecs/99/1234.56.0-8945511751514863184.xml",
       "--push"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
@@ -689,7 +689,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml",
+    "name": "create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -719,7 +719,7 @@
       }
     },
     "name": "schedule public build.running public builder",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-public-main-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"YES\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"manifestGsPath\": \"gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-public-main-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"YES\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"manifestGsPath\": \"gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -763,7 +763,7 @@
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_source\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"syncToManifest\": {@@@",
-      "@@@STEP_LOG_LINE@request@              \"manifestGsPath\": \"gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml\"@@@",
+      "@@@STEP_LOG_LINE@request@              \"manifestGsPath\": \"gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0-8945511751514863184.xml\"@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",

@@ -30,19 +30,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-
-  api.cros_release.create_buildspec()
-  api.assertions.assertIsNotNone(api.cros_release.buildspec)
-
-  api.cros_release.create_buildspec(gs_location='bucket/foo/')
-  api.assertions.assertIsNotNone(api.cros_release.buildspec)
-
-  api.cros_release.create_buildspec(gs_location='gs://bucket/foo/')
-  api.assertions.assertIsNotNone(api.cros_release.buildspec)
-
-  api.cros_release.create_buildspec(gs_location='bucket/foo/bar.xml')
-  api.assertions.assertIsNotNone(api.cros_release.buildspec)
-
   # Manufacture the minimal builder config.
   config = BuilderConfig(
       id=BuilderConfig.Id(name='amd64-generic-release',
@@ -90,7 +77,7 @@ def GenTests(api):
           **{
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
-          }), api.git.diff_check(True),
+          }),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),

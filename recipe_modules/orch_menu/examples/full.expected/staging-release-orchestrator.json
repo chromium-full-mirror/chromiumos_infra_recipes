@@ -3151,7 +3151,7 @@
       "/path/to/tmp/json",
       "copy",
       "<manifest></manifest>",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -3167,7 +3167,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create buildspec.write buildspecs/99/1234.56.0.xml",
+    "name": "set up orchestrator.create buildspec.write buildspecs/99/1234.56.0-8945511751514863184.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3192,7 +3192,7 @@
       "git",
       "ls-files",
       "--error-unmatch",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -3219,7 +3219,7 @@
       "diff",
       "--quiet",
       "HEAD",
-      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0.xml"
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99/1234.56.0-8945511751514863184.xml"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,

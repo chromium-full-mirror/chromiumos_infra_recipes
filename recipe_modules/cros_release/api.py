@@ -95,7 +95,13 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           branch = branch or self.m.git.current_branch()
 
         version = self.m.cros_version.version
-        manifest_file = self.m.path.join(specs_dir, version.buildspec_filename)
+        buildspec_filename = version.buildspec_filename
+        # If the build is a staging build, suffix the buildspec with the BBID to avoid
+        # clobbering. See b/250670854 for context.
+        if self.m.build_menu.is_staging:
+          buildspec_filename = buildspec_filename.replace(
+              '.xml', '-{}.xml'.format(self.m.buildbucket.build.id))
+        manifest_file = self.m.path.join(specs_dir, buildspec_filename)
         manifest_path = self.m.path.join(manifest_versions_checkout,
                                          manifest_file)
         manifest_dir = self.m.path.dirname(manifest_path)
@@ -151,7 +157,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           gs_bucket = gs_toks[0]
           gs_path = self.m.path.join(
               gs_toks[1],
-              self.m.path.basename(gs_location) or version.buildspec_filename)
+              self.m.path.basename(gs_location) or buildspec_filename)
           manifest_gs_path = 'gs://{}/{}'.format(gs_bucket, gs_path)
           with self.m.step.nest('upload {} to {}'.format(
               manifest_file, manifest_gs_path)):
