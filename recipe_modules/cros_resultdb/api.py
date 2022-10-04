@@ -337,9 +337,6 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
       return is_non_critical and contains_variant_filter
 
-    def _is_exonerated(test_result):
-      self.m.exonerate.is_exonerated(test_result)
-
     # ResultDB test_id represents the name of the test case.
     inv_bundle = self.m.resultdb.query(
         inv_ids=invocation_ids, variants_with_unexpected_results=True,
@@ -361,6 +358,31 @@ class ResultDBCommand(recipe_api.RecipeApi):
           if not result.expected and result.status != test_result_pb2.PASS and
           _is_non_critical(result)
       ])
+    self.m.resultdb.exonerate(test_exonerations,
+                              step_name="exonerate non-critical failures")
+
+  def apply_exonerated_exonerations(self, invocation_ids):
+    """Exonerate already exonerated test failures for the given invocations.
+
+    Args:
+      invocation_ids (list(str)): The ids of the invocation whose results we
+        should try to exonerate.
+    """
+    if not (self.m.resultdb.enabled and invocation_ids):
+      return
+
+    def _is_exonerated(test_result):
+      return self.m.exonerate.is_exonerated(test_result)
+
+    # ResultDB test_id represents the name of the test case.
+    inv_bundle = self.m.resultdb.query(
+        inv_ids=invocation_ids, variants_with_unexpected_results=True,
+        tr_fields=['variant', 'testId', 'status', 'expected'])
+
+    test_exonerations = []
+    for x in inv_bundle.values():
+      unexpected_results = x.test_results
+
       test_exonerations.extend([
           test_result_pb2.TestExoneration(
               test_id=result.test_id, variant=result.variant,
@@ -372,8 +394,13 @@ class ResultDBCommand(recipe_api.RecipeApi):
               test_result_pb2.PASS,
               test_result_pb2.SKIP) and _is_exonerated(result)
       ])
-    self.m.resultdb.exonerate(test_exonerations,
-                              step_name="exonerate non-critical failures")
+
+    try:
+      # Don't fail orchestrator if exonerate cmd fails.
+      self.m.resultdb.exonerate(test_exonerations,
+                                step_name="exonerate exonerated failures")
+    except self.m.step.StepFailure:
+      pass
 
   def report_missing_test_cases(self, test_names, base_variant):
     """Upload test results for missing test cases to ResultDB. These missing

@@ -320,6 +320,8 @@ class OrchMenuApi(RecipeApi):
                                      self.builds_status.completed_builds,
                                      self.builds_status.failures)
       self._non_critical_test_check()
+      self.m.cros_resultdb.apply_exonerated_exonerations(
+          [self.m.cros_resultdb.current_invocation_id])
       self.m.greenness.print_step()
       self.m.exonerate.print_stats()
       # Set child output ids if any

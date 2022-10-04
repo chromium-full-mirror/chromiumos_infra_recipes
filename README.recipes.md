@@ -272,6 +272,7 @@
   * [cros_relevance:examples/toolchain](#recipes-cros_relevance_examples_toolchain) (Python3 ✅)
   * [cros_relevance:tests/filter_slim_builds](#recipes-cros_relevance_tests_filter_slim_builds) (Python3 ✅)
   * [cros_resultdb:examples/full](#recipes-cros_resultdb_examples_full) (Python3 ✅)
+  * [cros_resultdb:tests/apply_exonerated_exonerations](#recipes-cros_resultdb_tests_apply_exonerated_exonerations) (Python3 ✅)
   * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations) (Python3 ✅)
   * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings) (Python3 ✅)
   * [cros_resultdb:tests/upload](#recipes-cros_resultdb_tests_upload) (Python3 ✅)
@@ -3214,6 +3215,14 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 Module for chromium tests on skylab to upload result to Result DB.
 
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#364)(self, invocation_ids):**
+
+Exonerate already exonerated test failures for the given invocations.
+
+Args:
+  invocation_ids (list(str)): The ids of the invocation whose results we
+    should try to exonerate.
+
 &mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#274)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
@@ -3310,7 +3319,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#378)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#405)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -6816,7 +6825,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#844)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#846)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6868,7 +6877,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#166)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#502)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#504)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -6882,7 +6891,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#773)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#775)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6897,11 +6906,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#701)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#703)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#707)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#709)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -10123,6 +10132,13 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/examples/full.py#22)(api):**
+### *recipes* / [cros\_resultdb:tests/apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/tests/apply_exonerated_exonerations.py)
+
+[DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerated_exonerations.py#17): [cros\_resultdb](#recipe_modules-cros_resultdb), [exonerate](#recipe_modules-exonerate), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/apply_exonerated_exonerations.py#29)(api):**
 ### *recipes* / [cros\_resultdb:tests/apply\_exonerations](/recipe_modules/cros_resultdb/tests/apply_exonerations.py)
 
 [DEPS](/recipe_modules/cros_resultdb/tests/apply_exonerations.py#16): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
