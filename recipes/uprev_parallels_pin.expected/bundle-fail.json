@@ -558,7 +558,7 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
@@ -576,11 +576,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build chromiumos with upreved Parallels.source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+    "name": "build chromiumos with upreved Parallels.source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -644,7 +644,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build chromiumos with upreved Parallels.source cache.mount disk cros-internal",
+    "name": "build chromiumos with upreved Parallels.source cache.mount disk internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -747,7 +747,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b"
     ],
     "env": {

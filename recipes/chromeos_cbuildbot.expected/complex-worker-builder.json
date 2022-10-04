@@ -339,7 +339,7 @@
       "compute",
       "disks",
       "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--format",
       "json(name)"
@@ -350,11 +350,11 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+    "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -373,7 +373,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -389,7 +389,7 @@
     "name": "source cache.setup source cache disk.create disk from snapshot image.detach disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal]@@@"
+      "@@@STEP_TEXT@<br/>[WARNING: gcloud delete disk bookkeeping error for chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros]@@@"
     ]
   },
   {
@@ -398,7 +398,7 @@
       "compute",
       "disks",
       "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -422,7 +422,7 @@
       "compute",
       "disks",
       "create",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--image-project=chromeos-bot",
       "--quiet",
@@ -494,7 +494,7 @@
       ]
     },
     "infra_step": true,
-    "name": "source cache.mount disk cros-internal",
+    "name": "source cache.mount disk internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -505,7 +505,7 @@
       "compute",
       "disks",
       "resize",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--size=1024GB",
       "--zone=us-central1-b",
       "--quiet"
@@ -806,7 +806,7 @@
       ]
     },
     "infra_step": true,
-    "name": "clean up mounted compute disk.unmount disk cros-internal",
+    "name": "clean up mounted compute disk.unmount disk internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -822,7 +822,7 @@
       "instances",
       "detach-disk",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
@@ -846,7 +846,7 @@
       "compute",
       "disks",
       "delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cros-internal",
+      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
       "--zone=us-central1-b",
       "--quiet"
     ],
