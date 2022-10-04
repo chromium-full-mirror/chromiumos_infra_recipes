@@ -43,4 +43,8 @@ message CrosTestPlanProperties {
     // Whether or not to generate target rest requirements at runtime from
     // src/config-internal. Takes precedent over all other properties.
     bool generate_target_test_requirements_from_source = 9;
+
+    // Whether staging should use testing config from the corresponding
+    // production builder(s) instead of staging config. Used for tryjobs.
+    bool use_prod_config = 10;
 }

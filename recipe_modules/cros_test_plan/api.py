@@ -195,6 +195,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           config_internal_path = self.m.src_state.workspace_path.join(
               CONFIG_INTERNAL_CHECKOUT)
           cmd.extend(['--target_test_requirements_repo', config_internal_path])
+      if self._properties.use_prod_config:
+        cmd.append('--use_prod_config')
 
       self.m.step('call test_planner', cmd, infra_step=True)
 

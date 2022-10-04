@@ -151,6 +151,8 @@ def GenTests(api):
                       'release-R93-14092.B',
                   'generate_target_test_requirements_from_source':
                       True,
+                  'use_prod_config':
+                      True,
               }
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',

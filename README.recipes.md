@@ -4220,7 +4220,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#223)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#225)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
