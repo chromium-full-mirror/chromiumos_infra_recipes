@@ -311,7 +311,7 @@ def get_timestamp(fmt: str = ''):
   if fmt:
     cmd.append(f'+{fmt}')
   p = subprocess.run(cmd, capture_output=True, text=True, env=env, check=True)
-  return p.stdout
+  return p.stdout.strip()
 
 
 def print_email_link(pending_changes: List[Commit]):
