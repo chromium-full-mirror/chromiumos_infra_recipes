@@ -1011,13 +1011,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache update.sync mounted cache directories.git clone manifest-versions",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -1041,9 +1034,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "source cache update.sync mounted cache directories.git clone manifest-versions.Removing previous directory [CLEANUP]/snapshot/chromiumos/manifest-versions-internal",
+    "name": "source cache update.sync mounted cache directories.Removing previous directory [CLEANUP]/snapshot/chromiumos/manifest-versions-internal",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories.git clone manifest-versions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2164,13 +2164,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache update.sync mounted cache directories (2).git clone manifest-versions",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -2194,9 +2187,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "source cache update.sync mounted cache directories (2).git clone manifest-versions.Removing previous directory [CLEANUP]/snapshot/chromeos/manifest-versions-internal",
+    "name": "source cache update.sync mounted cache directories (2).Removing previous directory [CLEANUP]/snapshot/chromeos/manifest-versions-internal",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories (2).git clone manifest-versions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

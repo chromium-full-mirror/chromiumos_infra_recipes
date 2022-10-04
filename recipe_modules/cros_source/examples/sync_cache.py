@@ -69,5 +69,8 @@ def GenTests(api):
       api.properties(
           SyncCacheProperties(manifest_url=api.src_state.external_manifest.url,
                               cache_path_override='chromiumos')),
-      api.post_check(verify_manifest_url, external_url),
+      api.properties(
+          **{'$chromeos/cros_source': {
+              'use_external_source_cache': True,
+          }}), api.post_check(verify_manifest_url, external_url),
       api.post_check(post_process.StatusSuccess))

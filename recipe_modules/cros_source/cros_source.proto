@@ -43,6 +43,10 @@ message CrosSourceProperties {
   ManifestLocation sync_to_manifest = 5;
 
   // Recovery source cache snapshot to fall back to.
-  // If not set, `initial-chromiumos-source-snapshot` will be used.
+  // If not set, `initial-chromeos-source-snapshot` will be used.
   string recovery_source_cache_snapshot = 6;
+
+  // If set, will use the external `chromiumos` source cache instead of the
+  // `chromeos` source cache.
+  bool use_external_source_cache = 7;
 }

@@ -113,16 +113,17 @@ def RunSteps(api, properties):
                                               init_opts=init_opts,
                                               sync_opts=sync_opts,
                                               final_cleanup=True, sanitize=True)
-              with api.step.nest('git clone manifest-versions'):
-                manifest_dir = 'manifest-versions-internal'
-                manifest_path = mount_path.join(manifest_dir)
-                api.path.mock_add_paths(manifest_path)
-                if api.path.exists(manifest_path):
-                  api.file.rmtree(
-                      'Removing previous directory {}'.format(manifest_path),
-                      manifest_path)
-                api.git.clone(repo_url=api.cros_release.MANIFEST_VERSIONS_URL,
-                              target_path=manifest_dir)
+              manifest_dir = 'manifest-versions-internal'
+              manifest_path = mount_path.join(manifest_dir)
+              api.path.mock_add_paths(manifest_path)
+              if api.path.exists(manifest_path):
+                api.file.rmtree(
+                    'Removing previous directory {}'.format(manifest_path),
+                    manifest_path)
+              if not cache.external_source:
+                with api.step.nest('git clone manifest-versions'):
+                  api.git.clone(repo_url=api.cros_release.MANIFEST_VERSIONS_URL,
+                                target_path=manifest_dir)
           if cache.command == 'gclient':
             # Chrome cache consists of a local repo cache and src,
             # both mounted via a single disk. We change into the
