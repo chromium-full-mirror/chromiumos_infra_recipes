@@ -585,18 +585,17 @@ class OrchMenuApi(RecipeApi):
     Returns:
       (list[BuilderConfig.Orchestrator.ChildSpec]) The list of child_specs.
     """
-    child_specs = [
+    return [
+        BuilderConfig.Orchestrator.ChildSpec(
+            name=cb,
+            collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT)
+        for cb in self._properties.child_builds
+    ] or [
         BuilderConfig.Orchestrator.ChildSpec(
             name=cb,
             collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT)
         for cb in self.m.cros_bisect.get_test_child_builders()
     ] or self.config.orchestrator.child_specs
-    if self._properties.filter_child_builds:
-      return [
-          cs for cs in child_specs
-          if cs.name in self._properties.filter_child_builds
-      ]
-    return child_specs
 
   def _filter_schedule_wait_builds(self, parent_step, child_specs,
                                    extra_props=None):

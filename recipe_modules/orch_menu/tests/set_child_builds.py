@@ -32,32 +32,19 @@ def GenTests(api):
     return '.'.join(['run builds', 'schedule new builds', builder_name])
 
   yield api.orch_menu.test(
-      'no-filtering',
+      'child-builds',
       api.orch_menu.standard_test_data().ctp_normal,
+      api.properties(**{
+          '$chromeos/orch_menu': {
+              'child_builds': ['amd64-generic-postsubmit',],
+          }
+      }),
       api.post_check(post_process.MustRun,
-                     schedule_build_step('grunt-postsubmit')),
-      api.post_check(post_process.MustRun,
-                     schedule_build_step('arm-generic-postsubmit')),
-      api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.orch_menu.test(
-      'with-filtering',
-      api.orch_menu.standard_test_data().ctp_normal,
-      api.post_check(post_process.StatusSuccess),
-      api.properties(
-          **{
-              '$chromeos/orch_menu': {
-                  'filter_child_builds': ['grunt-postsubmit', 'fake-builder']
-              }
-          }),
-      api.post_check(post_process.MustRun,
-                     schedule_build_step('grunt-postsubmit')),
+                     schedule_build_step('amd64-generic-postsubmit')),
       api.post_check(post_process.DoesNotRun,
                      schedule_build_step('arm-generic-postsubmit')),
       api.post_check(post_process.DoesNotRun,
-                     schedule_build_step('fake-builder')),
+                     schedule_build_step('grunt-postsubmit')),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -57,8 +57,10 @@ message OrchMenuProperties {
   // Defaults to 'release'.
   string manifest_versions_branch = 9;
 
-  // If non-empty, only launch child builders with child_spec.name listed here.
-  repeated string filter_child_builds = 10;
+  // If non-empty, launch this list of child builds instead of those listed
+  // in builder config. Should be the full builder name, e.g.
+  // "eve-release-main".
+  repeated string child_builds = 10;
 
   // Whether to skip paygen. Only used for release builders.
   bool skip_paygen = 11;
