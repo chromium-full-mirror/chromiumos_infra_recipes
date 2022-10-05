@@ -35,6 +35,7 @@ STAGING_CHECKS = (
     "staging-manifest-doctor",
     "staging-release-main-orchestrator",
     "staging-RoboCrop",
+    "staging_SourceCacheBuilder",
     "staging-StarDoctor",
 )
 
