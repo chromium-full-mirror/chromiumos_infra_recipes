@@ -7,6 +7,7 @@ from PB.chromiumos import common
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
+from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
@@ -76,8 +77,6 @@ def RunSteps(api, properties):
 
       goma = api.cros_sdk.goma_config()
       api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
-      api.assertions.assertEqual(goma.goma_client_json,
-                                 str(api.goma.goma_client_json))
       api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
       api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
 
@@ -96,10 +95,25 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }))
 
   yield api.test(
       'versioned',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data(
           'init sdk.check SDK in named cache.read sdk cache state json',
           api.file.read_proto(SdkCacheState(version=2))))
@@ -107,11 +121,25 @@ def GenTests(api):
   yield api.test(
       'with-changes',
       api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
+      api.properties(
           TestInputProperties(
               gerrit_changes=[common_pb2.GerritChange(change=1234)])))
 
   yield api.test(
       'with-toolchain-changes',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data(
           'init sdk.detect toolchain change.path relevancy check.'
           'read output file',
@@ -123,6 +151,13 @@ def GenTests(api):
 
   yield api.test(
       'with-toolchain-changes-and-force-no-toolchain-cls',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data(
           'init sdk.detect toolchain change.path relevancy check.'
           'read output file',
@@ -136,42 +171,97 @@ def GenTests(api):
 
   yield api.test(
       'failed-step-init-sdk',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data(
           'init sdk.call chromite.api.SdkService/'
           'Create.call build API script', retcode=1))
 
   yield api.test(
       'failed-step-update-sdk',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data(
           'update sdk.call chromite.api.SdkService/'
           'Update.call build API script', retcode=1))
 
   yield api.test(
       'failed-step-destroy-chroot-tests',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data('link chroot in workspace.ensure workspace', retcode=1))
 
   yield api.test(
       'failed-restore-to-snapshot-test',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.step_data(
           ('restoring chroot from snapshot.call chromite.api.SdkService/'
            'RestoreSnapshot.call build API script'), retcode=1))
 
   yield api.test(
       'mount-cache-off',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.post_check(post_process.DoesNotRun, 'mount overlay cros_chroot'))
 
   yield api.test(
       'mount-cache-on',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.properties(
           **{"$chromeos/cros_sdk": CrosSdkProperties(mount_named_cache=True)}),
       api.post_check(post_process.MustRun, 'mount overlay cros_chroot'))
 
   yield api.test(
       'remaining-test-data', api.cros_sdk.is_chroot_usable([False, True]),
-      api.post_check(post_process.StepFailure, 'clean up SDK chroot'))
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }), api.post_check(post_process.StepFailure, 'clean up SDK chroot'))
 
   yield api.test(
       'preload-does-not-exists', api.cros_sdk.preload_path_exists(False),
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
       api.post_check(post_process.DoesNotRun,
                      'configure chroot path.create preload path'))
 

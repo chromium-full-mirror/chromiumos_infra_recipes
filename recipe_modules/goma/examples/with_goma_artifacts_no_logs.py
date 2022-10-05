@@ -22,15 +22,15 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
+  api.assertions.assertEqual(api.goma.goma_approach,
+                             properties.expected_goma_approach)
+  if properties.expected_goma_approach == common.GomaConfig.GOMA_APPROACH_UNSPECIFIED:
+    api.assertions.assertEqual(api.goma.goma_dir, None)
+    return
   api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
 
   # Expectations should show it didn't fetch again.
   api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
-  api.assertions.assertEqual(
-      str(api.goma.goma_client_json),
-      '/creds/service_accounts/service-account-goma-client.json')
-  api.assertions.assertEqual(api.goma.goma_approach,
-                             properties.expected_goma_approach)
   api.assertions.assertEqual(
       api.goma.process_artifacts(InstallPackagesResponse(), 'goma_log_dir',
                                  'build_target'), None)
@@ -55,7 +55,8 @@ def GenTests(api):
       'basic',
       api.properties(
           TestInputProperties(
-              expected_goma_approach=common.GomaConfig.DEFAULT,
+              expected_goma_approach=common.GomaConfig
+              .GOMA_APPROACH_UNSPECIFIED,
           )),
   )
 
