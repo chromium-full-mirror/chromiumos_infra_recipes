@@ -5610,6 +5610,7 @@
       "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"counterzFile\": \"counterz.binaryproto\",@@@",
       "@@@STEP_LOG_LINE@request@    \"gomaApproach\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\",@@@",
       "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
       "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
@@ -5652,7 +5653,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"flags\": {\n    \"dryrun\": true,\n    \"useGoma\": true\n  },\n  \"gomaConfig\": {\n    \"counterzFile\": \"counterz.binaryproto\",\n    \"gomaApproach\": 1,\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\"\n  },\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    },\n    {\n      \"category\": \"virtual\",\n      \"packageName\": \"implicit-system\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    },\n    \"path\": \"/build/atlas-slim\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"flags\": {\n    \"dryrun\": true,\n    \"useGoma\": true\n  },\n  \"gomaConfig\": {\n    \"counterzFile\": \"counterz.binaryproto\",\n    \"gomaApproach\": 1,\n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\",\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\"\n  },\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    },\n    {\n      \"category\": \"virtual\",\n      \"packageName\": \"implicit-system\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    },\n    \"path\": \"/build/atlas-slim\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5767,7 +5768,7 @@
     "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"installPackagesRequest\":{\"chroot\":{\"chromeDir\":\"[START_DIR]/chrome\",\"path\":\"[CACHE]/cros_chroot/chroot\"},\"flags\":{\"dryrun\":true,\"useGoma\":true},\"gomaConfig\":{\"counterzFile\":\"counterz.binaryproto\",\"gomaApproach\":\"DEFAULT\",\"gomaDir\":\"[START_DIR]/cipd/goma\",\"logDir\":{\"dir\":\"[CLEANUP]/goma-logs-_tmp_1\"},\"statsFile\":\"stats.binaryproto\"},\"packages\":[{\"category\":\"chromeos-base\",\"packageName\":\"chrome-icu\",\"version\":\"1-r52\"},{\"category\":\"chromeos-base\",\"packageName\":\"arc-setup\",\"version\":\"1-r123\"},{\"category\":\"virtual\",\"packageName\":\"implicit-system\"}],\"sysroot\":{\"buildTarget\":{\"name\":\"atlas-slim\"},\"path\":\"/build/atlas-slim\"}},\"installPackagesResponse\":{},\"requestTime\":\"2012-05-14T12:54:02Z\",\"responseTime\":\"2012-05-14T12:54:03.500Z\",\"stepName\":\"Determine which packages to build|Attempt to resolve package list|call chromite.api.SysrootService/InstallPackages|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"installPackagesRequest\":{\"chroot\":{\"chromeDir\":\"[START_DIR]/chrome\",\"path\":\"[CACHE]/cros_chroot/chroot\"},\"flags\":{\"dryrun\":true,\"useGoma\":true},\"gomaConfig\":{\"counterzFile\":\"counterz.binaryproto\",\"gomaApproach\":\"DEFAULT\",\"gomaClientJson\":\"/creds/service_accounts/service-account-goma-client.json\",\"gomaDir\":\"[START_DIR]/cipd/goma\",\"logDir\":{\"dir\":\"[CLEANUP]/goma-logs-_tmp_1\"},\"statsFile\":\"stats.binaryproto\"},\"packages\":[{\"category\":\"chromeos-base\",\"packageName\":\"chrome-icu\",\"version\":\"1-r52\"},{\"category\":\"chromeos-base\",\"packageName\":\"arc-setup\",\"version\":\"1-r123\"},{\"category\":\"virtual\",\"packageName\":\"implicit-system\"}],\"sysroot\":{\"buildTarget\":{\"name\":\"atlas-slim\"},\"path\":\"/build/atlas-slim\"}},\"installPackagesResponse\":{},\"requestTime\":\"2012-05-14T12:54:02Z\",\"responseTime\":\"2012-05-14T12:54:03.500Z\",\"stepName\":\"Determine which packages to build|Attempt to resolve package list|call chromite.api.SysrootService/InstallPackages|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -5776,7 +5777,7 @@
     "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CqECCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SBBgBKAEaIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaIgoJYXJjLXNldHVwEg1jaHJvbWVvcy1iYXNlGgYxLXIxMjMaGgoPaW1wbGljaXQtc3lzdGVtEgd2aXJ0dWFsIjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUyYAoVW1NUQVJUX0RJUl0vY2lwZC9nb21hIAEqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90bxIAGgYI6oDE/QQiDAjrgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKIAURldGVybWluZSB3aGljaCBwYWNrYWdlcyB0byBidWlsZHxBdHRlbXB0IHRvIHJlc29sdmUgcGFja2FnZSBsaXN0fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CtwCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SBBgBKAEaIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaIgoJYXJjLXNldHVwEg1jaHJvbWVvcy1iYXNlGgYxLXIxMjMaGgoPaW1wbGljaXQtc3lzdGVtEgd2aXJ0dWFsIjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUymgEKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYRI4L2NyZWRzL3NlcnZpY2VfYWNjb3VudHMvc2VydmljZS1hY2NvdW50LWdvbWEtY2xpZW50Lmpzb24gASocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvEgAaBgjqgMT9BCIMCOuAxP0EEIDKte4B0ALQ7IDZrvG1knzaAogBRGV0ZXJtaW5lIHdoaWNoIHBhY2thZ2VzIHRvIGJ1aWxkfEF0dGVtcHQgdG8gcmVzb2x2ZSBwYWNrYWdlIGxpc3R8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -5811,7 +5812,7 @@
       }
     },
     "name": "Determine which packages to build.Attempt to resolve package list.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CqECCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SBBgBKAEaIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaIgoJYXJjLXNldHVwEg1jaHJvbWVvcy1iYXNlGgYxLXIxMjMaGgoPaW1wbGljaXQtc3lzdGVtEgd2aXJ0dWFsIjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUyYAoVW1NUQVJUX0RJUl0vY2lwZC9nb21hIAEqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90bxIAGgYI6oDE/QQiDAjrgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gKIAURldGVybWluZSB3aGljaCBwYWNrYWdlcyB0byBidWlsZHxBdHRlbXB0IHRvIHJlc29sdmUgcGFja2FnZSBsaXN0fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CtwCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SBBgBKAEaIgoKY2hyb21lLWljdRINY2hyb21lb3MtYmFzZRoFMS1yNTIaIgoJYXJjLXNldHVwEg1jaHJvbWVvcy1iYXNlGgYxLXIxMjMaGgoPaW1wbGljaXQtc3lzdGVtEgd2aXJ0dWFsIjAKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUymgEKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYRI4L2NyZWRzL3NlcnZpY2VfYWNjb3VudHMvc2VydmljZS1hY2NvdW50LWdvbWEtY2xpZW50Lmpzb24gASocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvEgAaBgjqgMT9BCIMCOuAxP0EEIDKte4B0ALQ7IDZrvG1knzaAogBRGV0ZXJtaW5lIHdoaWNoIHBhY2thZ2VzIHRvIGJ1aWxkfEF0dGVtcHQgdG8gcmVzb2x2ZSBwYWNrYWdlIGxpc3R8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6056,6 +6057,7 @@
       "@@@STEP_LOG_LINE@request@    \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"counterzFile\": \"counterz.binaryproto\",@@@",
       "@@@STEP_LOG_LINE@request@      \"gomaApproach\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@      \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\",@@@",
       "@@@STEP_LOG_LINE@request@      \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
       "@@@STEP_LOG_LINE@request@      \"logDir\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
@@ -6099,7 +6101,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"installRequest\": {\n    \"chroot\": {\n      \"chromeDir\": \"[START_DIR]/chrome\",\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    },\n    \"flags\": {\n      \"useGoma\": true\n    },\n    \"gomaConfig\": {\n      \"counterzFile\": \"counterz.binaryproto\",\n      \"gomaApproach\": 1,\n      \"gomaDir\": \"[START_DIR]/cipd/goma\",\n      \"logDir\": {\n        \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n      },\n      \"statsFile\": \"stats.binaryproto\"\n    },\n    \"packages\": [\n      {\n        \"category\": \"chromeos-base\",\n        \"packageName\": \"chrome-icu\",\n        \"version\": \"1-r52\"\n      },\n      {\n        \"category\": \"chromeos-base\",\n        \"packageName\": \"arc-setup\",\n        \"version\": \"1-r123\"\n      },\n      {\n        \"category\": \"virtual\",\n        \"packageName\": \"implicit-system\"\n      }\n    ],\n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"atlas-slim\"\n      },\n      \"path\": \"/build/atlas-slim\"\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"installRequest\": {\n    \"chroot\": {\n      \"chromeDir\": \"[START_DIR]/chrome\",\n      \"path\": \"[CACHE]/cros_chroot/chroot\"\n    },\n    \"flags\": {\n      \"useGoma\": true\n    },\n    \"gomaConfig\": {\n      \"counterzFile\": \"counterz.binaryproto\",\n      \"gomaApproach\": 1,\n      \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\",\n      \"gomaDir\": \"[START_DIR]/cipd/goma\",\n      \"logDir\": {\n        \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n      },\n      \"statsFile\": \"stats.binaryproto\"\n    },\n    \"packages\": [\n      {\n        \"category\": \"chromeos-base\",\n        \"packageName\": \"chrome-icu\",\n        \"version\": \"1-r52\"\n      },\n      {\n        \"category\": \"chromeos-base\",\n        \"packageName\": \"arc-setup\",\n        \"version\": \"1-r123\"\n      },\n      {\n        \"category\": \"virtual\",\n        \"packageName\": \"implicit-system\"\n      }\n    ],\n    \"sysroot\": {\n      \"buildTarget\": {\n        \"name\": \"atlas-slim\"\n      },\n      \"path\": \"/build/atlas-slim\"\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6744,6 +6746,7 @@
       "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"counterzFile\": \"counterz.binaryproto\",@@@",
       "@@@STEP_LOG_LINE@request@    \"gomaApproach\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\",@@@",
       "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
       "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_2\"@@@",
@@ -6787,7 +6790,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"flags\": {\n    \"useGoma\": true\n  },\n  \"gomaConfig\": {\n    \"counterzFile\": \"counterz.binaryproto\",\n    \"gomaApproach\": 1,\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_2\"\n    },\n    \"statsFile\": \"stats.binaryproto\"\n  },\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    },\n    {\n      \"category\": \"virtual\",\n      \"packageName\": \"implicit-system\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    },\n    \"path\": \"/build/atlas-slim\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"flags\": {\n    \"useGoma\": true\n  },\n  \"gomaConfig\": {\n    \"counterzFile\": \"counterz.binaryproto\",\n    \"gomaApproach\": 1,\n    \"gomaClientJson\": \"/creds/service_accounts/service-account-goma-client.json\",\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_2\"\n    },\n    \"statsFile\": \"stats.binaryproto\"\n  },\n  \"packages\": [\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"chrome-icu\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"category\": \"chromeos-base\",\n      \"packageName\": \"arc-setup\",\n      \"version\": \"1-r123\"\n    },\n    {\n      \"category\": \"virtual\",\n      \"packageName\": \"implicit-system\"\n    }\n  ],\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"atlas-slim\"\n    },\n    \"path\": \"/build/atlas-slim\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6856,7 +6859,7 @@
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"installPackagesRequest\":{\"chroot\":{\"chromeDir\":\"[START_DIR]/chrome\",\"path\":\"[CACHE]/cros_chroot/chroot\"},\"flags\":{\"useGoma\":true},\"gomaConfig\":{\"counterzFile\":\"counterz.binaryproto\",\"gomaApproach\":\"DEFAULT\",\"gomaDir\":\"[START_DIR]/cipd/goma\",\"logDir\":{\"dir\":\"[CLEANUP]/goma-logs-_tmp_2\"},\"statsFile\":\"stats.binaryproto\"},\"packages\":[{\"category\":\"chromeos-base\",\"packageName\":\"chrome-icu\",\"version\":\"1-r52\"},{\"category\":\"chromeos-base\",\"packageName\":\"arc-setup\",\"version\":\"1-r123\"},{\"category\":\"virtual\",\"packageName\":\"implicit-system\"}],\"sysroot\":{\"buildTarget\":{\"name\":\"atlas-slim\"},\"path\":\"/build/atlas-slim\"}},\"installPackagesResponse\":{},\"requestTime\":\"2012-05-14T12:54:17Z\",\"responseTime\":\"2012-05-14T12:54:18.500Z\",\"stepExecutionResult\":{\"retcode\":1},\"stepName\":\"install packages|call chromite.api.SysrootService/InstallPackages|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"installPackagesRequest\":{\"chroot\":{\"chromeDir\":\"[START_DIR]/chrome\",\"path\":\"[CACHE]/cros_chroot/chroot\"},\"flags\":{\"useGoma\":true},\"gomaConfig\":{\"counterzFile\":\"counterz.binaryproto\",\"gomaApproach\":\"DEFAULT\",\"gomaClientJson\":\"/creds/service_accounts/service-account-goma-client.json\",\"gomaDir\":\"[START_DIR]/cipd/goma\",\"logDir\":{\"dir\":\"[CLEANUP]/goma-logs-_tmp_2\"},\"statsFile\":\"stats.binaryproto\"},\"packages\":[{\"category\":\"chromeos-base\",\"packageName\":\"chrome-icu\",\"version\":\"1-r52\"},{\"category\":\"chromeos-base\",\"packageName\":\"arc-setup\",\"version\":\"1-r123\"},{\"category\":\"virtual\",\"packageName\":\"implicit-system\"}],\"sysroot\":{\"buildTarget\":{\"name\":\"atlas-slim\"},\"path\":\"/build/atlas-slim\"}},\"installPackagesResponse\":{},\"requestTime\":\"2012-05-14T12:54:17Z\",\"responseTime\":\"2012-05-14T12:54:18.500Z\",\"stepExecutionResult\":{\"retcode\":1},\"stepName\":\"install packages|call chromite.api.SysrootService/InstallPackages|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -6865,7 +6868,7 @@
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'Cp8CCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2UaBTEtcjUyGiIKCWFyYy1zZXR1cBINY2hyb21lb3MtYmFzZRoGMS1yMTIzGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMmAKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYSABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8yMhFzdGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SABoGCPmAxP0EIgwI+oDE/QQQgMq17gHQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdKIDAggB',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CtoCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2UaBTEtcjUyGiIKCWFyYy1zZXR1cBINY2hyb21lb3MtYmFzZRoGMS1yMTIzGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMpoBChVbU1RBUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3VudC1nb21hLWNsaWVudC5qc29uIAEqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzIyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90bxIAGgYI+YDE/QQiDAj6gMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ogMCCAE=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -6900,7 +6903,7 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"Cp8CCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2UaBTEtcjUyGiIKCWFyYy1zZXR1cBINY2hyb21lb3MtYmFzZRoGMS1yMTIzGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMmAKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYSABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8yMhFzdGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG8SABoGCPmAxP0EIgwI+oDE/QQQgMq17gHQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdKIDAggB\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CtoCCiEKES9idWlsZC9hdGxhcy1zbGltEgwKCmF0bGFzLXNsaW0SAhgBGiIKCmNocm9tZS1pY3USDWNocm9tZW9zLWJhc2UaBTEtcjUyGiIKCWFyYy1zZXR1cBINY2hyb21lb3MtYmFzZRoGMS1yMTIzGhoKD2ltcGxpY2l0LXN5c3RlbRIHdmlydHVhbCIwChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMpoBChVbU1RBUlRfRElSXS9jaXBkL2dvbWESOC9jcmVkcy9zZXJ2aWNlX2FjY291bnRzL3NlcnZpY2UtYWNjb3VudC1nb21hLWNsaWVudC5qc29uIAEqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzIyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90bxIAGgYI+YDE/QQiDAj6gMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ogMCCAE=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
