@@ -14,6 +14,7 @@ from google.protobuf.json_format import MessageToDict
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
+from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 from recipe_engine import post_process
 
 DEPS = [
@@ -58,6 +59,8 @@ def DoRunSteps(api):
   elif api.orch_menu.is_release_orchestrator:
     extra_child_props['$chromeos/cros_source'] = MessageToDict(
         CrosSourceProperties(sync_to_manifest=api.cros_release.buildspec))
+    if api.orch_menu.skip_paygen:
+      extra_child_props['skip_paygen'] = True
 
   if api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['commit_overlay_binhost'] = True
@@ -111,11 +114,13 @@ def GenTests(api):
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True)
 
-  yield api.orch_menu.test('release-orchestrator', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
-                           builder='release-main-orchestrator',
-                           with_history=True, collect_builds=data.builds,
-                           with_manifest_refs=True, bot_size='medium')
+  yield api.orch_menu.test(
+      'release-orchestrator', data.ctp_normal,
+      api.properties(
+          **{"$chromeos/orch_menu": OrchMenuProperties(skip_paygen=True)}),
+      api.post_check(post_process.StatusSuccess),
+      builder='release-main-orchestrator', with_history=True,
+      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test(
       'public-orchestrator',

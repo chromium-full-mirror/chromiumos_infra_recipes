@@ -183,6 +183,10 @@ class OrchMenuApi(RecipeApi):
   def chromium_src_ref_cl_tag(self):
     return self._chromium_src_ref_cl_tag
 
+  @property
+  def skip_paygen(self):
+    return self._properties.skip_paygen
+
   def chrome_module_child_props(self):
     return json_format.MessageToDict(
         ChromeProperties(version=self._chromium_src_ref_cl_tag))

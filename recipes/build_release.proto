@@ -25,4 +25,7 @@ message BuildReleaseProperties {
 
   // GS path (or template) to upload LATEST files to, e.g. {target}-release
   string latest_files_gs_path = 3;
+
+  // Whether to skip paygen. Used by tryjobs.
+  bool skip_paygen = 4;
 }

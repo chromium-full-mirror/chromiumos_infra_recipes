@@ -48,6 +48,9 @@ def RunSteps(api, properties):
       return None
     api.assertions.assertIsNotNone(config)
 
+    api.assertions.assertEqual(api.orch_menu.skip_paygen,
+                               properties.skip_paygen)
+
     api.assertions.assertEqual(api.orch_menu.is_release_orchestrator,
                                properties.is_release_orchestrator)
     _ = api.orch_menu.is_public_orchestrator
@@ -141,7 +144,7 @@ def GenTests(api):
       api.properties(
           FullProperties(
               is_release_orchestrator=True, use_extra_props=True,
-              expected_recipe_result=RawResult(
+              skip_paygen=True, expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown='Full version: R99-1234.56.0'))),
       api.post_check(post_process.StatusSuccess),
@@ -163,7 +166,8 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='master'),
+          bump_version=True, manifest_versions_branch='master',
+          skip_paygen=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,

@@ -199,7 +199,7 @@ def DoRunSteps(api, config, properties):
 
   # With signing complete, we can start payload generation (only if there were
   # signed images generated). We _do_ want this in staging.
-  if instructions:
+  if not properties.skip_paygen and instructions:
     api.cros_release.run_payload_generation()
   else:
     with api.step.nest('skipping payloads') as pres:
@@ -475,6 +475,33 @@ def GenTests(api):
       bucket='release',
   )
 
+  yield api.build_menu.test(
+      'skip-paygen',
+      api.properties(
+          **{
+              'skip_paygen':
+                  True,
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
+      api.cros_signing.setup_mocks(),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'generate payloads'),
+      api.post_check(post_process.StatusSuccess),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
   yield api.build_menu.test(
       'parent-cancelled',
       api.runtime.global_shutdown_on_step(

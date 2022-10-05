@@ -34,4 +34,7 @@ message FullProperties {
 
   // Whether or not to include extra_props.
   bool use_extra_props = 8;
+
+  // Whether to skip paygen.
+  bool skip_paygen = 9;
 }
