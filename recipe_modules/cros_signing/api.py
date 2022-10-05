@@ -7,7 +7,7 @@ import json
 import re
 
 from recipe_engine import recipe_api
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 
 BuildConfig = BuildReport.BuildConfig
 

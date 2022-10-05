@@ -7,7 +7,7 @@
 
 from google.protobuf.json_format import MessageToDict
 
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipes.chromeos.build_chromiumos import BuildChromiumosProperties

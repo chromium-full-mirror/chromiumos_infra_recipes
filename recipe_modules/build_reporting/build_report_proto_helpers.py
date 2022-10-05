@@ -5,7 +5,7 @@
 
 """Various helper methods for creating/populating BuildReport instances."""
 from recipe_engine.recipe_api import StepFailure
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import Channel, ImageType
 
 BuildConfig = BuildReport.BuildConfig

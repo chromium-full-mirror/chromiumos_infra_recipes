@@ -9,7 +9,7 @@ from recipe_engine import post_process
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common as common_pb2
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties

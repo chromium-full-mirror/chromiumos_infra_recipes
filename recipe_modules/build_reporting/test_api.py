@@ -6,7 +6,7 @@
 from recipe_engine import recipe_test_api
 
 # infra/proto/src/chromiumos/builder_report.proto
-# from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+# from PB.chromiumos.build_report import BuildReport
 
 
 class BuildReportingTestApi(recipe_test_api.RecipeTestApi):

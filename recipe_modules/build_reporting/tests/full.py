@@ -8,7 +8,7 @@ import json
 import os
 
 from PB.chromite.api.packages import GetBuilderMetadataResponse
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import Channel
 from recipe_engine.recipe_api import StepFailure
 

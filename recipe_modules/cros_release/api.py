@@ -12,7 +12,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_USBPD,

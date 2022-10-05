@@ -28,7 +28,7 @@ from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers a
 from google.protobuf.json_format import MessageToDict
 
 # infra/proto/src/chromiumos/builder_report.proto
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure

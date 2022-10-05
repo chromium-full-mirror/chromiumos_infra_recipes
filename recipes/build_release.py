@@ -8,7 +8,7 @@
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine.result import RawResult

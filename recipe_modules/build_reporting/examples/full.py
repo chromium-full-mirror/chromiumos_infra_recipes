@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 from PB.chromite.api.packages import GetTargetVersionsResponse
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 

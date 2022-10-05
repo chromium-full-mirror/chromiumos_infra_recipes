@@ -7,7 +7,7 @@ from PB.chromite.api.payload import DLCImage
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage
 from PB.chromite.api.payload import UnsignedImage
-from PB.chromiumos.build_report import BuildReportBeta as BuildReport
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.build_report import URI
 import PB.chromiumos.common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
