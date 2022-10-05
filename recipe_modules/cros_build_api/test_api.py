@@ -374,7 +374,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         snapshot_token={'value': 'TEST_SNAPSHOT'})
     responses['RestoreSnapshot'] = '{}'
     responses['BuildPrebuilts'] = '{}'
-    responses['CreateBinhostCLs'] = '{}'
+    responses['CreateBinhostCLs'] = jsonify(cls=[
+        'https://test-review.googlesource.com/c/binhostcls/+/1',
+        'https://test-review.googlesource.com/c/binhostcls/+/8',
+    ])
     responses['UploadPrebuiltPackages'] = '{}'
     return responses
 
