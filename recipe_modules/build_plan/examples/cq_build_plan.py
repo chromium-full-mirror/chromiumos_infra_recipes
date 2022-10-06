@@ -32,7 +32,7 @@ PROPERTIES = CqBuildPlanProperties
 
 def RunSteps(api, properties):
   child_specs = api.cros_infra_config.get_builder_config(
-      'cq-orchestrator').orchestrator.child_specs
+      'cq-orchestrator', bucket='cq').orchestrator.child_specs
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
       child_specs, True, api.cros_infra_config.gerrit_changes,
       common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
@@ -73,17 +73,32 @@ def GenTests(api):
                       status=common_pb2.FAILURE,
                       input=input_proto(None, 'arm-generic')),
       # Broken before private builder.
-      build_pb2.Build(id=8922054662172514004,
-                      builder={'builder': 'atlas-slim-cq'},
-                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+      build_pb2.Build(id=8922054662172514004, builder={
+          'builder': 'atlas-slim-cq',
+          'bucket': 'cq'
+      }, start_time=timestamp_pb2.Timestamp(seconds=1562475245),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'atlas-slim')),
-      build_pb2.Build(id=8922054662172514005, builder={'builder': 'atlas-cq'},
-                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+      build_pb2.Build(id=8922054662172514005, builder={
+          'builder': 'atlas-cq',
+          'bucket': 'cq'
+      }, start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'atlas')),
+      build_pb2.Build(id=8922054662172514006, builder={
+          'builder': 'atlas-slim-cq',
+          'bucket': 'atlas'
+      }, start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      status=common_pb2.SUCCESS,
+                      input=input_proto(None, 'atlas-slim')),
+      build_pb2.Build(id=8922054662172514007, builder={
+          'builder': 'atlas-cq',
+          'bucket': 'atlas'
+      }, start_time=timestamp_pb2.Timestamp(seconds=1562475245),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'atlas')),
       # Broken before public builder.
-      build_pb2.Build(id=8922054662172514006,
+      build_pb2.Build(id=8922054662172514008,
                       builder={'builder': 'arm64-generic-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562475245),
                       status=common_pb2.SUCCESS,
@@ -102,6 +117,7 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
+              'atlas-cq',
               'atlas-cq',
               'arm64-generic-cq',
           ],
@@ -137,6 +153,7 @@ def GenTests(api):
       api.properties(
           expected_build_requests=[
               'atlas-cq',
+              'atlas-cq',
               'cave-cq',
           ],
           expected_completed_builds=[],
@@ -163,6 +180,7 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
+              'atlas-cq',
               'atlas-cq',
               'arm64-generic-cq',
               'eve-cq',
@@ -196,6 +214,7 @@ def GenTests(api):
       api.properties(
           expected_build_requests=[
               'atlas-cq',
+              'atlas-cq',
               'arm64-generic-cq',
               'coral-cq',
           ],
@@ -228,6 +247,7 @@ def GenTests(api):
       api.properties(
           expected_build_requests=[
               'atlas-cq',
+              'atlas-cq',
               'arm64-generic-cq',
               'coral-cq',
               'arm-generic-cq',
@@ -256,6 +276,7 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
+              'atlas-cq',
               'atlas-cq',
               'arm64-generic-cq',
               'coral-cq',
@@ -297,6 +318,7 @@ def GenTests(api):
           ],
           expected_build_requests=[
               'atlas-cq',
+              'atlas-cq',
               'arm64-generic-cq',
           ],
           expected_completed_builds=[
@@ -330,6 +352,7 @@ def GenTests(api):
           bucket='staging', builder='staging-cq-orchestrator'),
       api.properties(
           expected_build_requests=[
+              'atlas-cq',
               'atlas-cq',
               'arm64-generic-cq',
           ], expected_completed_builds=[
@@ -365,6 +388,7 @@ def GenTests(api):
       api.properties(
           expected_experiments=[], expected_build_requests=[
               'atlas-slim-cq',
+              'atlas-slim-cq',
               'arm64-generic-cq',
           ], expected_completed_builds=[
               'amd64-generic-slim-cq',
@@ -394,6 +418,7 @@ def GenTests(api):
           experiments=['chromeos.cros_infra_config.cq_looks']),
       api.properties(
           expected_build_requests=[
+              'atlas-cq',
               'atlas-cq',
               'arm64-generic-cq',
           ], expected_completed_builds=[

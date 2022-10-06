@@ -113,7 +113,9 @@ class BuildsStatus(object):
   def _is_testable(self, build):
     """Whether the build is testable."""
     return (build.status == common_pb2.SUCCESS and
-            self._configs.get(build.builder.builder))
+            (self._configs.get('{}/{}'.format(build.builder.bucket,
+                                              build.builder.builder)) or
+             self._configs.get(build.builder.builder)))
 
 
 class OrchMenuApi(RecipeApi):
@@ -463,7 +465,7 @@ class OrchMenuApi(RecipeApi):
     with self.m.step.nest(step_name) as presentation:
       self.m.cros_infra_config.force_reload()
       configs = self.m.cros_infra_config.safe_get_builder_configs(
-          [b.builder.builder for b in builds])
+          [b.builder for b in builds])
       failures = self.m.failures.update_non_critical_build_failures(
           failures, configs, presentation)
       self.builds_status.update(failures=failures, configs=configs)

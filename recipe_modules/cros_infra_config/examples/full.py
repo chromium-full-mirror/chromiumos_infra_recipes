@@ -22,12 +22,25 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
-  builder = api.buildbucket.build.builder.builder
-  builder_config = api.cros_infra_config.get_builder_config(builder)
-  api.cros_infra_config.force_reload()
-  api.cros_infra_config.safe_get_builder_configs([builder])
+  builder_id = api.buildbucket.build.builder
 
-  api.assertions.assertEqual(builder_config.id.name, builder)
+  # Verify that the config can be fetched.
+  builder_config = api.cros_infra_config.get_builder_config(
+      builder_id.builder, bucket=builder_id.bucket)
+  api.assertions.assertEqual(builder_config.id.name, builder_id.builder)
+
+  # Verify that the config can also be fetched without specifying the bucket.
+  builder_config = api.cros_infra_config.get_builder_config(builder_id.builder)
+  api.assertions.assertEqual(builder_config.id.name, builder_id.builder)
+
+  # Verify that the config can also be fetched with an incorrect bucket
+  # specified (which should fall back to querying by builder name only).
+  builder_config = api.cros_infra_config.get_builder_config(
+      builder_id.builder, bucket="bad-bucket")
+  api.assertions.assertEqual(builder_config.id.name, builder_id.builder)
+
+  api.cros_infra_config.force_reload()
+  api.cros_infra_config.safe_get_builder_configs([builder_id])
 
   # Verify that the jsonpb was parsed.
   child_specs = builder_config.orchestrator.child_specs

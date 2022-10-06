@@ -39,7 +39,7 @@ def RunSteps(api):
         branch.replace('.B', '-cq'))
     api.easy.set_properties_step(child_verifier=builder)
     child_config = api.cros_infra_config.get_builder_config(
-        builder, missing_ok=True)
+        builder, bucket='cq', missing_ok=True)
     if child_config:
       api.orch_menu.schedule_wait_build(builder, await_completion=True,
                                         check_failures=True,

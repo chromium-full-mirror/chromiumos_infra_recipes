@@ -127,8 +127,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       BuilderConfig for this builder.
     """
-    return self.get_builder_config(self.m.buildbucket.build.builder.builder,
-                                   missing_ok=True)
+    return self.get_builder_config(
+        self.m.buildbucket.build.builder.builder,
+        bucket=self.m.buildbucket.build.builder.bucket, missing_ok=True)
 
   @property
   def config_or_default(self):
@@ -141,7 +142,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       - build.use_flags = 'chrome_internal'
     """
     return self.config or BuilderConfig(
-        id=BuilderConfig.Id(name=self.m.buildbucket.build.builder.builder),
+        id=BuilderConfig.Id(name=self.m.buildbucket.build.builder.builder,
+                            bucket=self.m.buildbucket.build.builder.bucket),
         chrome=BuilderConfig.Chrome(internal=True), build=BuilderConfig.Build(
             install_packages=BuilderConfig.Build.InstallPackages(
                 run_spec=BuilderConfig.RUN),
@@ -245,7 +247,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             self._fetch_builder_configs())
       configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
+        # Add the config to the dict under two different keys: one using just
+        # the builder name, and one using 'bucket/buildername' format.
+        # TODO(jsca): Migrate all users to query by bucket/buildername, and
+        # remove the name-only key.
         name_to_builder_config[config.id.name] = config
+        if config.id.bucket:
+          name_to_builder_config['{}/{}'.format(config.id.bucket,
+                                                config.id.name)] = config
       # Override the ref from generated builder_config for (staging-)
       # release-main-orchestrator if experiment is enabled.
       if self._properties.release_tot_builds_snapshot:
@@ -257,7 +266,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config
 
-  def get_builder_config(self, builder_name, missing_ok=False):
+  def get_builder_config(self, builder_name, bucket=None, missing_ok=False):
     """Gets the BuilderConfig for the specified builder from HEAD.
 
     Finds the BuilderConfig whose id.name matches the specified Buildbucket
@@ -271,6 +280,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Args:
       * builder_name (str): The Buildbucket builder to look for, matched against
         BuilderConfig's id.name.
+      * bucket (str): Bucket the builder lives in. If unspecified, will look up
+        the builder config by name only. This may return the wrong config if
+        there are multiple builders with the same name.
       * missing_ok (boolean): Whether to allow a missing config.
 
     Returns:
@@ -280,28 +292,41 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       A LookupError if a BuilderConfig is not found for the specified builder.
 
     """
-    config = self._get_name_to_builder_config().get(builder_name)
+    builder_key = '{}/{}'.format(bucket,
+                                 builder_name) if bucket else builder_name
+    d = self._get_name_to_builder_config()
+    # If the "bucket/builder" key isn't found, fall back to lookup by the
+    # builder name only. Once the bucket is included in the key everywhere,
+    # we could consider removing this.
+    config = d.get(builder_key) or d.get(builder_name)
     if not config and not missing_ok:
       raise LookupError('No BuilderConfig for builder {}'.format(builder_name))
     return config
 
-  def safe_get_builder_configs(self, builder_names):
+  def safe_get_builder_configs(self, builder_ids):
     """Gets the BuilderConfigs for the specified builder names from HEAD.
 
     The returned dict will not contain key/values for builder names that could
     not be found in config.
 
     Args:
-      * builder_names (list[str]): Buildbucket builders to look for, matched
-        against BuilderConfig id.name.
+      * builder_ids (list[BuilderID]): Buildbucket builders to look for, matched
+        against BuilderConfig id.name and id.bucket.
 
     Returns:
-      dict(str, BuilderConfig) of found BuilderConfigs.
+      dict(str, BuilderConfig) of found BuilderConfigs. The dict will contain
+          each config twice, once keyed by the builder name and once keyed by
+          '{bucket}/{buildername}' for cases where there are multiple builders
+          with the same name in different buckets.
     """
     builder_configs = {}
-    for name in builder_names:
+    for builder_id in builder_ids:
       try:
-        builder_configs[name] = self.get_builder_config(name)
+        c = self.get_builder_config(builder_id.builder,
+                                    bucket=builder_id.bucket)
+        builder_configs[builder_id.builder] = c
+        builder_configs['{}/{}'.format(builder_id.bucket,
+                                       builder_id.builder)] = c
       except LookupError:
         # Carry on if the builder doesn't exist anymore.
         pass

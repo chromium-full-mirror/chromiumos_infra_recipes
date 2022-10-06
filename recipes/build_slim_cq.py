@@ -76,7 +76,8 @@ def DoRunSteps(api, config):
   install_all_packages = _should_install_all_packages(api, config, packages)
   if api.cros_relevance.toolchain_cls_applied:
     config = api.cros_infra_config.get_builder_config(
-        api.buildbucket.build.builder.builder.replace('-slim-cq', '-cq'))
+        api.buildbucket.build.builder.builder.replace('-slim-cq', '-cq'),
+        bucket=api.buildbucket.build.builder.bucket)
 
   failing_build_exception = None
   try:
