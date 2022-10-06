@@ -203,7 +203,10 @@ def DoRunSteps(api, config, properties):
     api.cros_release.run_payload_generation()
   else:
     with api.step.nest('skipping payloads') as pres:
-      pres.step_text = 'no payloads generated since no signed images'
+      if properties.skip_paygen:
+        pres.step_text = 'property `skip_paygen` was set'
+      else:
+        pres.step_text = 'no payloads generated since no signed images'
 
   if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,

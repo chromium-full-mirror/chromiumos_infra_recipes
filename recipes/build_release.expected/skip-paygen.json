@@ -10607,7 +10607,7 @@
     "cmd": [],
     "name": "skipping payloads",
     "~followup_annotations": [
-      "@@@STEP_TEXT@no payloads generated since no signed images@@@"
+      "@@@STEP_TEXT@property `skip_paygen` was set@@@"
     ]
   },
   {
