@@ -274,7 +274,8 @@ class OrchMenuApi(RecipeApi):
           # Need to sync to buildspec in the public orchestrator so that
           # chromeos_version.sh accurately reflects the version.
           # b/238330273 for context.
-          self.m.workspace_util.sync_to_commit(staging=is_staging)
+          with self.m.workspace_util.sync_to_commit(staging=is_staging):
+            pass
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):

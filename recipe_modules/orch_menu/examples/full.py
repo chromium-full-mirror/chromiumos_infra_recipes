@@ -228,6 +228,18 @@ def GenTests(api):
   yield api.orch_menu.test(
       'public-orchestrator',
       data.ctp_normal,
+      api.properties(
+          **{
+              "$chromeos/cros_source": {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromiumos-manifest-versions/buildspecs/108/15156.0.0.xml"
+                  }
+              }
+          }),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.sync to specified manifest'),
+      api.post_check(post_process.StatusSuccess),
       builder='public-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
