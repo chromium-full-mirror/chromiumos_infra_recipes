@@ -10118,13 +10118,6 @@
   },
   {
     "cmd": [],
-    "name": "get signed build metadata.wait for signing to complete.sleep 300",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "get signed build metadata.parse metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

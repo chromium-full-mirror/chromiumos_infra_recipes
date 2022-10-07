@@ -3637,13 +3637,13 @@ Returns:
 
 [DEPS](/recipe_modules/cros_signing/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
-PYTHON_VERSION_COMPATIBILITY: PY2+3
+PYTHON_VERSION_COMPATIBILITY: PY3
 
 #### **class [CrosSigningApi](/recipe_modules/cros_signing/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to encapsulate communication with the signing fleet.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/cros_signing/api.py#108)(self, instructions_metadata):**
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/cros_signing/api.py#112)(self, instructions_metadata):**
 
 Get the metadata of the signed build.
 
@@ -3656,7 +3656,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#150)(instructions):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/cros_signing/api.py#154)(instructions):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -3666,7 +3666,7 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#138)(metadata):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/cros_signing/api.py#142)(metadata):**
 
 Whether the provided metadata contains a successful signing operation.
 
@@ -3676,7 +3676,7 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/cros_signing/api.py#130)(self, instructions_metadata):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/cros_signing/api.py#134)(self, instructions_metadata):**
 
 Verifies that the signing operation succeeded.
 
@@ -10230,7 +10230,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 [DEPS](/recipe_modules/cros_signing/tests/full.py#14): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2+3
+PYTHON_VERSION_COMPATIBILITY: PY3
 
 Success workflow tests for the cros_signing recipe module.
 
@@ -10239,7 +10239,7 @@ Success workflow tests for the cros_signing recipe module.
 
 [DEPS](/recipe_modules/cros_signing/tests/invalid_file_format.py#10): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2+3
+PYTHON_VERSION_COMPATIBILITY: PY3
 
 Verify that instructions files are in the appropriate format.
 
@@ -10248,7 +10248,7 @@ Verify that instructions files are in the appropriate format.
 
 [DEPS](/recipe_modules/cros_signing/tests/sequence_error.py#11): [cros\_signing](#recipe_modules-cros_signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-PYTHON_VERSION_COMPATIBILITY: PY2+3
+PYTHON_VERSION_COMPATIBILITY: PY3
 
 Verify that wait_for_signing is required before retrieving signed build
 metadata.

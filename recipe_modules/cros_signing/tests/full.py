@@ -19,7 +19,7 @@ DEPS = [
     'cros_signing',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 _RUNNING = {
     'status': {
@@ -110,6 +110,26 @@ def GenTests(api):
       step_passed('verify results.parse metadata'),
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, _PASSED_COMPLETE]),
+      api.post_check(post_process.MustRun,
+                     'wait for signing to complete.sleep 300'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no-sleep-if-first-poll-succeeds',
+      api.properties(
+          **{"$chromeos/cros_signing": CrosSigningProperties(timeout=5)}),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _PASSED),
+      api.cros_signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _PASSED),
+      step_passed('verify results.parse metadata'),
+      api.post_check(StepMetaEquals, 'verify results',
+                     [_PASSED_COMPLETE, _PASSED_COMPLETE]),
+      api.post_check(post_process.DoesNotRun,
+                     'wait for signing to complete.sleep 300'),
       api.post_process(post_process.DropExpectation),
   )
 

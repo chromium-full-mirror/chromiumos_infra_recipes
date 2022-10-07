@@ -59,7 +59,8 @@ class CrosSigningApi(recipe_api.RecipeApi):
         instructions_metadata[instructions] = None
 
       # Start poller.
-      while self._any_empty(instructions_metadata):
+      keep_polling = True
+      while keep_polling:
         # Check against timeout.
         duration = self.m.time.utcnow() - start_time
         if duration.total_seconds() > self._timeout:
@@ -100,8 +101,11 @@ class CrosSigningApi(recipe_api.RecipeApi):
 
             instructions_metadata[instructions] = instructions_info
 
-        # Sleep.
-        self.m.time.sleep(self._sleep_duration)
+        # Determine if we need to keep polling.
+        keep_polling = self._any_empty(instructions_metadata)
+        # Sleep as long as we need to poll again.
+        if keep_polling:
+          self.m.time.sleep(self._sleep_duration)
 
     return instructions_metadata
 
