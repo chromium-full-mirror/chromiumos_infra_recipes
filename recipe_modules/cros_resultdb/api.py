@@ -223,10 +223,25 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # result file from the test runs.
     rdb_cmd = result_adapter + ['--'] + ['echo']
 
+    realm = ''
+    board = ''
+    model = ''
+    base_tags = config.get('base_tags', [])
+    for tag in base_tags:
+      k, v = tag
+      if k == 'board':
+        board = v
+      if k == 'model':
+        model = v
+    # TODO(b/251688396): remove this hardcoded model for testing and replace
+    # with a general solution for all models.
+    if board == 'brya' and model == 'taeko':
+      realm = 'brya-taeko'
+
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
         rdb_cmd,
-        base_tags=config.get('base_tags', []),
+        base_tags=base_tags,
         base_variant=config.get('base_variant', {}),
         coerce_negative_duration=config.get('coerce_negative_duration', True),
         test_id_prefix=config.get('test_id_prefix', ''),
@@ -234,6 +249,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
         location_tags_file=config.get('location_tags_file'),
         require_build_inv=True,
         exonerate_unexpected_pass=config.get('exonerate_unexpected_pass', True),
+        include=(realm != ''),
+        realm=realm,
     )
     # Even rdb failed we should complete the test runner build, so that
     # the we could return the stainless log link to upstream builders.
