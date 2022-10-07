@@ -25,6 +25,7 @@ DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/futures',
     'recipe_engine/properties',
     'recipe_engine/runtime',
     'recipe_engine/step',
@@ -142,7 +143,7 @@ def DoRunSteps(api, config, properties):
     api.build_menu.upload_artifacts(config, report_to_spike=True)
   except StepFailure as sf:
     # If uploading artifacts threw an exception, surface that exception unless
-    # build_and_test_images above threw an exception, in which case we want to
+    # build_images above threw an exception, in which case we want to
     # surface *that* exception for accuracy in reporting the build (and it's
     # likely that upload artifacts failed as a result of those previous issues).
     raise failing_build_exception or sf
@@ -171,8 +172,13 @@ def DoRunSteps(api, config, properties):
     with api.step.nest("upload debug symbols"):
       api.debug_symbols.upload_debug_symbols(gs_image_dir)
 
-  with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
-    api.build_menu.unit_test_images(config)
+  # Launch unit tests asynchronously. Wait for results after paygen.
+  def _run_and_report_unit_tests():
+    """Helper function to run unit tests in a step_reporting wrapper."""
+    with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
+      return api.build_menu.unit_test_images(config=config)
+
+  unit_test_future = api.futures.spawn(_run_and_report_unit_tests)
 
   # Signing does not work in staging, so we shouldn't wait for it in that case.
   # We also can't sign anything if push_and_sign_images returned 0 instructions.
@@ -207,6 +213,9 @@ def DoRunSteps(api, config, properties):
         pres.step_text = 'property `skip_paygen` was set'
       else:
         pres.step_text = 'no payloads generated since no signed images'
+
+  # Wait for unit tests to finish.
+  unit_test_future.result()
 
   if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,
