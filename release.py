@@ -34,6 +34,7 @@ STAGING_CHECKS = (
     "staging-firmware-ti50-postsubmit",
     "staging-manifest-doctor",
     "staging-release-main-orchestrator",
+    "staging-release-triggerer",
     "staging-RoboCrop",
     "staging_SourceCacheBuilder",
     "staging-StarDoctor",
