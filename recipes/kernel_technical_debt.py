@@ -68,7 +68,9 @@ def RunSteps(api):
 
   with api.step.nest('check tag') as presentation:
     message = patch_set.commit_info.get('message')
-    if not re.search(r'\nUPSTREAM-TASK=b:\d+[ \t]*\n', message):
+    buganizer = r'b:[0-9]{7,}'
+    tag_line = r'\nUPSTREAM-TASK=%s([, ]+%s)*[ \t]*\n' % (buganizer, buganizer)
+    if not re.search(tag_line, message):
       api.tricium.add_comment('Technical debt', TECH_DEBT_MSG_TAG,
                               '/COMMIT_MSG')
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
@@ -189,7 +191,7 @@ def GenTests(api):
       test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
           'fetch patch set', changes,
-          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:123456\n',
+          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:1234567\n',
                          'Makefile')) +
       api.step_data(
           'get reviewers.gerrit raw_get_reviewers',
@@ -200,11 +202,27 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
+      'downstream_with_multitag_alias_already_added',
+      test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets(
+              'CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:1234567, b:7777777\n',
+              'Makefile')) + api.step_data(
+                  'get reviewers.gerrit raw_get_reviewers',
+                  api.depot_gerrit.m.json.output([{
+                      'email': 'cros-kernel-upstream-debt-review@google.com'
+                  }])), api.post_check(post_process.StepSuccess,
+                                       'get reviewers'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
       'downstream_with_tag_alias_not_added',
       test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
           'fetch patch set', changes,
-          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:123456\n',
+          gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:1234567\n',
                          'Makefile')) +
       api.step_data('get reviewers.gerrit raw_get_reviewers',
                     api.depot_gerrit.m.json.output([])),
