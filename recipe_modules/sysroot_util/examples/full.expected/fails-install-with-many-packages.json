@@ -1108,7 +1108,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -1183,7 +1183,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",

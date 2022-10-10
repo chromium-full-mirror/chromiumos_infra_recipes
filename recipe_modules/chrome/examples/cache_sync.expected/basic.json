@@ -72,7 +72,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -95,7 +95,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "RECIPE_REPO[depot_tools]/git_cache.py",
       "populate",
       "-v",
@@ -121,12 +121,13 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--reset",
       "--with_branch_heads",
-      "--with_tags"
+      "--with_tags",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/snapshot_chrome/src",
     "env_suffixes": {
