@@ -19,7 +19,7 @@ DEPS = {
     'test_util': 'test_util',
 }
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TECH_DEBT_ALIAS = 'cros-kernel-upstream-debt-review@google.com'
 TECH_DEBT_MSG_TAG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it. A member of the review committee will review the CL. Thank you.'
