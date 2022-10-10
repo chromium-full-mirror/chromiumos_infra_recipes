@@ -1,0 +1,20 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.observability_image_size.tests;
+
+import "chromiumos/common.proto";
+
+message PublishTestProperties {
+  // Image types to have been built.
+  repeated chromiumos.ImageType image_types = 1;
+  // Name of the test builder config to use.
+  string builder_name = 2;
+  // milestone, platform, and full versions.
+  string milestone = 3;
+  string platform_version = 4;
+  string full_version = 5;
+}

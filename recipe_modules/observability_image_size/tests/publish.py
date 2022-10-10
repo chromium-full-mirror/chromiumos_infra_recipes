@@ -1,0 +1,209 @@
+# -*- coding: utf-8 -*-
+# Copyright 2022 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import json
+
+from PB.chromite.api.image import Image
+from PB.chromite.api.packages import GetTargetVersionsResponse
+from PB.chromiumos import common as common_pb2
+from PB.recipe_modules.chromeos.observability_image_size.tests.publish import PublishTestProperties
+
+from recipe_engine import post_process
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/properties',
+    'cros_build_api',
+    'cros_infra_config',
+    'observability_image_size',
+    'test_util',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+
+PROPERTIES = PublishTestProperties
+
+
+def RunSteps(api, properties):
+  # add_target_versions.
+  milestone = properties.milestone or '100'
+  platform_version = properties.platform_version or '12345.6.7'
+  full_version = properties.full_version or 'R{}-{}'.format(
+      milestone, platform_version)
+  target_versions = GetTargetVersionsResponse(
+      full_version=full_version,
+      milestone_version=milestone,
+      platform_version=platform_version,
+  )
+
+  # add_builder_metadata.
+  name = properties.builder_name or 'amd64-generic-postsubmit'
+  config = api.cros_infra_config.get_builder_config(name)
+
+  # get_image_size_data.
+  build_target = common_pb2.BuildTarget(name='amd64-generic')
+  images = []
+  if common_pb2.IMAGE_TYPE_BASE in properties.image_types:
+    images.append(
+        Image(path='/tmp/base-image.bin', type=common_pb2.IMAGE_TYPE_BASE,
+              build_target=build_target))
+  if common_pb2.IMAGE_TYPE_BASE in properties.image_types:
+    images.append(
+        Image(path='/tmp/test-image.bin', type=common_pb2.IMAGE_TYPE_TEST,
+              build_target=build_target))
+
+  api.observability_image_size.publish(config, build_target, target_versions,
+                                       images)
+
+
+def GenTests(api):
+
+  def test_build(build_target='amd64-generic', **kwargs):
+    """Helper for creating build."""
+    return api.test_util.test_child_build(build_target, **kwargs).build
+
+  def _partition_data(name, pkgs):
+    apparent = 0
+    disk_utilization = 0
+    for pkg in pkgs:
+      apparent += pkg['apparent_size']
+      disk_utilization += pkg['disk_utilization_size']
+    return {
+        'partition_name': name,
+        'packages': pkgs,
+        'partition_apparent_size': apparent,
+        'partition_disk_utilization_size': disk_utilization,
+    }
+
+  def _base_image_data(rootfs_pkgs):
+    return {
+        'image_type': common_pb2.IMAGE_TYPE_BASE,
+        'image_partition_data': [_partition_data('rootfs', rootfs_pkgs)]
+    }
+
+  def _test_image_data(rootfs_pkgs, stateful_pkgs):
+    return {
+        'image_type':
+            common_pb2.IMAGE_TYPE_TEST,
+        'image_partition_data': [
+            _partition_data('rootfs', rootfs_pkgs),
+            _partition_data('stateful', stateful_pkgs),
+        ]
+    }
+
+  def image_size_data(rootfs_pkgs, stateful_pkgs=None):
+    if not rootfs_pkgs:
+      return json.dumps({'image_data': []})
+    ret = [_base_image_data(rootfs_pkgs)]
+    if stateful_pkgs:
+      ret.append(_test_image_data(rootfs_pkgs, stateful_pkgs))
+    return json.dumps({'image_data': ret}, sort_keys=True)
+
+  def pkg_data(category, package, major=0, minor=None, patch=None,
+               extended=None, revision=0, apparent=0, disk_utilization=0):
+    full_components = [
+        str(x) for x in [major, minor, patch, extended] if x is not None
+    ]
+    revision_suffix = '' if not revision else '-r%s' % revision
+    return {
+        'identifier': {
+            'package_name': {
+                'atom': '%s/%s' % (category, package),
+                'category': category,
+                'package': package,
+            },
+            'package_version': {
+                'major':
+                    major,
+                'minor':
+                    minor or 0,
+                'patch':
+                    patch or 0,
+                'extended':
+                    extended or 0,
+                'revision':
+                    revision,
+                'full_version':
+                    '%s%s' % ('.'.join(full_components), revision_suffix),
+            },
+        },
+        'apparent_size': apparent,
+        'disk_utilization_size': disk_utilization,
+    }
+
+  yield api.test('basic', test_build())
+
+  yield api.test('cq-build', test_build(cq=True))
+
+  yield api.test('bad-platform-version', test_build(),
+                 api.properties(PublishTestProperties(
+                     platform_version='1.2',
+                 )), api.expect_exception('ValueError'),
+                 api.post_check(post_process.StatusAnyFailure),
+                 api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'valid-platform-version', test_build(),
+      api.properties(
+          PublishTestProperties(milestone='1', platform_version='2.3.4')),
+      api.post_process(post_process.LogContains, 'collect image size data',
+                       'image_data.json', [
+                           '"milestone": 1',
+                           '"platformBuild": 2',
+                           '"platformBranch": 3',
+                           '"platformPatch": 4',
+                       ]), api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'no-packages', test_build(),
+      api.properties(image_types=[common_pb2.IMAGE_TYPE_BASE]),
+      api.cros_build_api.set_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData',
+          image_size_data(rootfs_pkgs=[])))
+
+  yield api.test(
+      'base-image', test_build(),
+      api.properties(image_types=[common_pb2.IMAGE_TYPE_BASE]),
+      api.cros_build_api.set_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData',
+          image_size_data(rootfs_pkgs=[
+              pkg_data('cat', 'foo', major=0, minor=0, patch=1, revision=1234,
+                       apparent=1, disk_utilization=4096),
+              pkg_data('cat', 'bar', major=1, apparent=1,
+                       disk_utilization=4096),
+              pkg_data('virtual', 'baz', major=2, minor=1),
+          ])))
+
+  yield api.test(
+      'test-image', test_build(),
+      api.properties(image_types=[common_pb2.IMAGE_TYPE_TEST]),
+      api.cros_build_api.set_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData',
+          image_size_data(
+              rootfs_pkgs=[
+                  pkg_data('cat', 'foo', major=0, minor=0, patch=1,
+                           revision=1234, apparent=1, disk_utilization=4096),
+                  pkg_data('cat', 'bar', major=1, apparent=1,
+                           disk_utilization=4096),
+                  pkg_data('virtual', 'baz', major=2, minor=1),
+              ], stateful_pkgs=[
+                  pkg_data('cat', 'testlib', major=1, minor=2, patch=3,
+                           extended=4, revision=5, apparent=1,
+                           disk_utilization=4096),
+                  pkg_data('cat', 'tests', major=6, apparent=1,
+                           disk_utilization=4096),
+                  pkg_data('cat', 'othertestlib', major=1, apparent=1,
+                           disk_utilization=4096),
+              ])),
+      api.post_process(post_process.LogContains, 'collect image size data',
+                       'image_data.json', [
+                           '"partitionApparentSize": "2"',
+                           '"partitionDiskUtilizationSize": "8192"',
+                           '"partitionApparentSize": "3"',
+                           '"partitionDiskUtilizationSize": "12288"',
+                       ]), api.post_process(post_process.DropExpectation))

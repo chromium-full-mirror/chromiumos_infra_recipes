@@ -100,6 +100,10 @@ class FirmwareService(Stub):
   """Stub for FirmwareService."""
 
 
+class ObservabilityService(Stub):
+  """Stub for ObservabilityService."""
+
+
 class ImageService(Stub):
   """Stub for ImageService."""
 

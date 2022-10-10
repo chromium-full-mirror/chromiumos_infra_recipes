@@ -15,6 +15,7 @@ from PB.chromite.api import build_api_test
 from PB.chromite.api import depgraph
 from PB.chromite.api import firmware
 from PB.chromite.api import image
+from PB.chromite.api import observability
 from PB.chromite.api import packages
 from PB.chromite.api import payload
 from PB.chromite.api import portage_explorer
@@ -125,6 +126,9 @@ def RunSteps(api):
       },
       'MethodService': {
           'Get': meta_api.MethodGetResponse,
+      },
+      'ObservabilityService': {
+          'GetImageSizeData': observability.GetImageSizeDataResponse,
       },
       'PackageService': {
           'BuildsChrome': packages.BuildsChromeResponse,

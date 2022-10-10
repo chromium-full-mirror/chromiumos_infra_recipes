@@ -1,0 +1,18 @@
+# Copyright 2022 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from PB.recipe_modules.chromeos.observability_image_size.observability_image_size import ObservabilityImageSizeProperties
+
+DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/step',
+    'cloud_pubsub',
+    'cros_build_api',
+    'cros_infra_config',
+    'cros_version',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = ObservabilityImageSizeProperties

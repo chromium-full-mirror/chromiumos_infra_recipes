@@ -1,0 +1,395 @@
+[
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@image_data.json@{@@@",
+      "@@@STEP_LOG_LINE@image_data.json@  \"buildVersionData\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"milestone\": 100,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"platformVersion\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      \"platformBranch\": 6,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      \"platformBuild\": 12345,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      \"platformPatch\": 7@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@  },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@  \"builderMetadata\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"annealingCommitId\": 101,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"buildConfigName\": \"amd64-generic-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"buildType\": \"POSTSUBMIT\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    \"startTimestamp\": \"1970-01-01T00:00:00Z\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@  },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@  \"imageData\": [@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      \"imagePartitionData\": [@@@",
+      "@@@STEP_LOG_LINE@image_data.json@        {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@          \"packages\": [@@@",
+      "@@@STEP_LOG_LINE@image_data.json@            {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"apparentSize\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"diskUtilizationSize\": \"4096\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"identifier\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                \"packageName\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"atom\": \"cat/foo\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"category\": \"cat\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"packageName\": \"foo\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                \"packageVersion\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"fullVersion\": \"1-r1\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"major\": 1,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"revision\": 1@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@            },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@            {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"apparentSize\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"diskUtilizationSize\": \"4096\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"identifier\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                \"packageName\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"atom\": \"cat/bar\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"category\": \"cat\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"packageName\": \"bar\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                \"packageVersion\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"extended\": 4,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"fullVersion\": \"1.2.3.4-r5\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"major\": 1,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"minor\": 2,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"patch\": 3,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"revision\": 5@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@            },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@            {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              \"identifier\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                \"packageName\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"atom\": \"virtual/target\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"category\": \"virtual\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"packageName\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                },@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                \"packageVersion\": {@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"fullVersion\": \"0.0.1-r234\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"patch\": 1,@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                  \"revision\": 234@@@",
+      "@@@STEP_LOG_LINE@image_data.json@                }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@              }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@            }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@          ],@@@",
+      "@@@STEP_LOG_LINE@image_data.json@          \"partitionApparentSize\": \"2\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@          \"partitionDiskUtilizationSize\": \"8192\",@@@",
+      "@@@STEP_LOG_LINE@image_data.json@          \"partitionName\": \"rootfs\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@        }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      ],@@@",
+      "@@@STEP_LOG_LINE@image_data.json@      \"imageType\": \"IMAGE_TYPE_BASE\"@@@",
+      "@@@STEP_LOG_LINE@image_data.json@    }@@@",
+      "@@@STEP_LOG_LINE@image_data.json@  ]@@@",
+      "@@@STEP_LOG_LINE@image_data.json@}@@@",
+      "@@@STEP_LOG_END@image_data.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add version data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add metadata from builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add metadata from builder.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add metadata from builder.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add metadata from builder.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add metadata from builder.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add metadata from builder.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "2d72510e447ab60a9728aeea2362d8be2cbd7789",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add metadata from builder.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add data from images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"image_data\": [{\"image_partition_data\": [{\"packages\": [{\"apparent_size\": 1, \"disk_utilization_size\": 4096, \"identifier\": {\"package_name\": {\"atom\": \"cat/foo\", \"category\": \"cat\", \"package_name\": \"foo\"}, \"package_version\": {\"full_version\": \"1-r1\", \"major\": 1, \"revision\": 1}}}, {\"apparent_size\": 1, \"disk_utilization_size\": 4096, \"identifier\": {\"package_name\": {\"atom\": \"cat/bar\", \"category\": \"cat\", \"package_name\": \"bar\"}, \"package_version\": {\"extended\": 4, \"full_version\": \"1.2.3.4-r5\", \"major\": 1, \"minor\": 2, \"patch\": 3, \"revision\": 5}}}, {\"apparent_size\": 0, \"disk_utilization_size\": 0, \"identifier\": {\"package_name\": {\"atom\": \"virtual/target\", \"category\": \"virtual\", \"package_name\": \"target\"}, \"package_version\": {\"full_version\": \"0.0.1-r234\", \"major\": 0, \"minor\": 0, \"patch\": 1, \"revision\": 234}}}], \"partition_apparent_size\": 2, \"partition_disk_utilization_size\": 8192, \"partition_name\": \"rootfs\"}], \"image_type\": \"IMAGE_TYPE_BASE\"}]}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ObservabilityService/GetImageSizeData"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.publish image size data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

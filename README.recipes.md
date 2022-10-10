@@ -78,6 +78,7 @@
   * [metadata](#recipe_modules-metadata) (Python3 ✅) &mdash; API to support metadata generation and wrangling.
   * [metadata_json](#recipe_modules-metadata_json) (Python3 ✅)
   * [naming](#recipe_modules-naming) (Python3 ✅) &mdash; API featuring shared helpers for naming things.
+  * [observability_image_size](#recipe_modules-observability_image_size) (Python3 ✅)
   * [orch_menu](#recipe_modules-orch_menu) (Python3 ✅) &mdash; API providing a menu for orchestrator steps.
   * [overlayfs](#recipe_modules-overlayfs) (Python3 ✅) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [paygen_orchestration](#recipe_modules-paygen_orchestration) (Python3 ✅) &mdash; API for orchestrating payload generation.
@@ -440,6 +441,7 @@
   * [naming:tests/build_url_title](#recipes-naming_tests_build_url_title) (Python3 ✅)
   * [naming:tests/get_generation_request_title](#recipes-naming_tests_get_generation_request_title) (Python3 ✅)
   * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) (Python3 ✅) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
+  * [observability_image_size:tests/publish](#recipes-observability_image_size_tests_publish) (Python3 ✅)
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata) (Python3 ✅)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full) (Python3 ✅)
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status) (Python3 ✅)
@@ -2177,7 +2179,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#145)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#149)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -2194,7 +2196,7 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform some validation and then call the build API command.
 
-&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#267)(self, test_data=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#271)(self, test_data=None):**
 
 Get the Build API version.
 
@@ -2203,7 +2205,7 @@ The version is always queried, and the result cached.
 Returns:
   CrosBuildApi.Version, the version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#377)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None, step_text=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#381)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None, step_text=None):**
 
 Call the build API with the given input proto.
 
@@ -2234,7 +2236,7 @@ Args:
 Returns:
   google.protobuf: The parsed response proto.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#319)(output_proto):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#323)(output_proto):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2248,7 +2250,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#288)(input_proto, output_proto, read_raw_fn):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#292)(input_proto, output_proto, read_raw_fn):**
 
 Function to cat log file and retrieve package name.
 
@@ -2266,7 +2268,7 @@ Args:
 Returns:
   A list of tuples containing the package name and corresponding build log.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#348)(output_proto):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#352)(output_proto):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2280,7 +2282,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#536)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#540)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2291,11 +2293,11 @@ Args:
 Returns:
   bool: Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#203)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#207)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#254)(self, major=1, minor=0, bug=0):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#258)(self, major=1, minor=0, bug=0):**
 
 Is the Build API at least |major|.|minor|.|bug|.
 
@@ -2307,13 +2309,13 @@ Args:
 Returns:
   bool, whether the version is a least the required value.
 
-&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#216)(self):**
+&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#220)(self):**
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#533)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#537)(self, output_proto, response_lambda):**
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#238)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#242)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -6949,6 +6951,19 @@ Args:
 
 Returns:
   str: A string describing the VM test.
+### *recipe_modules* / [observability\_image\_size](/recipe_modules/observability_image_size)
+
+[DEPS](/recipe_modules/observability_image_size/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [ObservabilityImageSizeApi](/recipe_modules/observability_image_size/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Collect image size data.
+
+&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#80)(self, config, build_target, target_versions, built_images):**
+
+Collect and publish the image size data.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
 
 [DEPS](/recipe_modules/orch_menu/__init__.py#8): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_bisect](#recipe_modules-cros_bisect), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -9905,11 +9920,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/failed_pkg_names.py#18)(api):**
 ### *recipes* / [cros\_build\_api:tests/misc](/recipe_modules/cros_build_api/tests/misc.py)
 
-[DEPS](/recipe_modules/cros_build_api/tests/misc.py#29): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_build_api/tests/misc.py#30): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#38)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#39)(api):**
 ### *recipes* / [cros\_build\_api:tests/publish\_events\_throws](/recipe_modules/cros_build_api/tests/publish_events_throws.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -11647,6 +11662,13 @@ Args:
 Returns:
   project_to_patchest_map (dict{str:list[PatchSet]}): Dict mapping the name of
       the Gerrit project to a list of relevant PatchSets.
+### *recipes* / [observability\_image\_size:tests/publish](/recipe_modules/observability_image_size/tests/publish.py)
+
+[DEPS](/recipe_modules/observability_image_size/tests/publish.py#15): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [observability\_image\_size](#recipe_modules-observability_image_size), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY2+3
+
+&mdash; **def [RunSteps](/recipe_modules/observability_image_size/tests/publish.py#29)(api, properties):**
 ### *recipes* / [orch\_menu:examples/aggregate\_metadata](/recipe_modules/orch_menu/examples/aggregate_metadata.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/aggregate_metadata.py#14): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

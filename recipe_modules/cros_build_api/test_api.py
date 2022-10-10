@@ -255,6 +255,79 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def observability_service_responses(self):
+    """Generate responses for ObservabilityService."""
+    responses = {
+        'GetImageSizeData':
+            jsonify(image_data=[{
+                'image_type':
+                    'IMAGE_TYPE_BASE',
+                'image_partition_data': [{
+                    'partition_name': 'rootfs',
+                    'packages': [
+                        {
+                            'identifier': {
+                                'package_name': {
+                                    'atom': 'cat/foo',
+                                    'category': 'cat',
+                                    'package_name': 'foo',
+                                },
+                                'package_version': {
+                                    'major': 1,
+                                    'revision': 1,
+                                    'full_version': '1-r1',
+                                }
+                            },
+                            'apparent_size': 1,
+                            'disk_utilization_size': 4096,
+                        },
+                        {
+                            'identifier': {
+                                'package_name': {
+                                    'atom': 'cat/bar',
+                                    'category': 'cat',
+                                    'package_name': 'bar',
+                                },
+                                'package_version': {
+                                    'major': 1,
+                                    'minor': 2,
+                                    'patch': 3,
+                                    'extended': 4,
+                                    'revision': 5,
+                                    'full_version': '1.2.3.4-r5',
+                                }
+                            },
+                            'apparent_size': 1,
+                            'disk_utilization_size': 4096,
+                        },
+                        {
+                            'identifier': {
+                                'package_name': {
+                                    'atom': 'virtual/target',
+                                    'category': 'virtual',
+                                    'package_name': 'target',
+                                },
+                                'package_version': {
+                                    'major': 0,
+                                    'minor': 0,
+                                    'patch': 1,
+                                    'revision': 234,
+                                    'full_version': '0.0.1-r234',
+                                }
+                            },
+                            'apparent_size': 0,
+                            'disk_utilization_size': 0,
+                        },
+                    ],
+                    'partition_apparent_size': 2,
+                    'partition_disk_utilization_size': 8192,
+                }]
+            }])
+    }
+
+    return responses
+
+  @property
   def method_service_responses(self):
     """Generate responses for MethodService."""
     methods = []
@@ -458,6 +531,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'DependencyService': self.dependency_service_responses,
         'FirmwareService': self.firmware_service_responses,
         'ImageService': self.image_service_responses,
+        'ObservabilityService': self.observability_service_responses,
         'PackageService': self.package_service_responses,
         'PayloadService': self.payload_service_responses,
         'PortageExplorerService': self.portage_explorer_service_responses,
