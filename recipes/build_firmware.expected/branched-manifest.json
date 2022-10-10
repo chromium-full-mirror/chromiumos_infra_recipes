@@ -110,6 +110,7 @@
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"firmware-ti50-cq\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
+      "@@@STEP_LOG_LINE@builder config@  bucket: \"cq\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  firmware_location: PLATFORM_TI50@@@",

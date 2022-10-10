@@ -620,6 +620,7 @@
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"public-main-orchestrator\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: PUBLIC@@@",
+      "@@@STEP_LOG_LINE@builder config@  bucket: \"chromiumos\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",

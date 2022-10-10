@@ -45,6 +45,7 @@
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-bisect\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
+      "@@@STEP_LOG_LINE@builder config@  bucket: \"postsubmit\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",

@@ -45,6 +45,7 @@
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"cloudready-release-R90-13816.B-release\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: RELEASE@@@",
+      "@@@STEP_LOG_LINE@builder config@  bucket: \"release\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",

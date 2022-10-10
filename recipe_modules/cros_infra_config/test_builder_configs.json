@@ -2,7 +2,8 @@
   "builderConfigs": [
     {
       "id": {
-        "name": "amd64-generic-asan"
+        "name": "amd64-generic-asan",
+        "bucket": "informational"
       },
       "general": {
         "manifest": "PUBLIC"
@@ -27,7 +28,8 @@
     {
       "id": {
         "name": "amd64-generic-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true,
@@ -78,7 +80,8 @@
     {
       "id": {
         "name": "amd64-generic-postsubmit-remoteexec",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true,
@@ -130,7 +133,8 @@
     {
       "id": {
         "name": "amd64-generic-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -181,7 +185,8 @@
     {
       "id": {
         "name": "amd64-generic-slim-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -224,7 +229,8 @@
     {
       "id": {
         "name": "staging-amd64-generic-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -276,7 +282,8 @@
     {
       "id": {
         "name": "amd64-generic-snapshot",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -326,7 +333,8 @@
     {
       "id": {
         "name": "amd64-generic-build-exit-after-unittests",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -380,7 +388,8 @@
     {
       "id": {
         "name": "arm-generic-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -413,7 +422,8 @@
     {
       "id": {
         "name": "arm-generic-slim-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -450,7 +460,8 @@
     {
       "id": {
         "name": "arm-generic-pointless-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -483,7 +494,8 @@
     {
       "id": {
         "name": "staging-arm-generic-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -517,7 +529,8 @@
     {
       "id": {
         "name": "arm64-generic-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -544,7 +557,8 @@
     {
       "id": {
         "name": "bisecting-orchestrator",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true,
@@ -585,7 +599,8 @@
     {
       "id": {
         "name": "amd64-generic-bisect",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true,
@@ -605,7 +620,8 @@
     {
       "id": {
         "name": "sarien-bisect",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true
@@ -624,7 +640,8 @@
     {
       "id": {
         "name": "arm-generic-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": false,
@@ -640,7 +657,8 @@
     {
       "id": {
         "name": "arm-generic-v42-buildtest-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": false,
@@ -663,7 +681,8 @@
     {
       "id": {
         "name": "atlas-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "atlas"
       },
       "general": {
         "critical": true,
@@ -716,7 +735,8 @@
     {
       "id": {
         "name": "atlas-slim-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -766,7 +786,8 @@
     {
       "id": {
         "name": "coral-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -823,7 +844,8 @@
     {
       "id": {
         "name": "eve-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -875,7 +897,8 @@
     {
       "id": {
         "name": "target-baseline",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false,
@@ -896,7 +919,8 @@
     {
       "id": {
         "name": "grunt-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": false,
@@ -917,7 +941,8 @@
     {
       "id": {
         "name": "grunt-unittest-only-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": false,
@@ -938,7 +963,8 @@
     {
       "id": {
         "name": "toolchain-orchestrator",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": true,
@@ -964,7 +990,8 @@
     {
       "id": {
         "name": "clang-tidy-toolchain",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": false,
@@ -1057,7 +1084,8 @@
     {
       "id": {
         "name": "staging-clang-tidy-toolchain",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": false,
@@ -1150,7 +1178,8 @@
     {
       "id": {
         "name": "orderfile-generate-orchestrator",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": true,
@@ -1184,7 +1213,8 @@
     {
       "id": {
         "name": "benchmark-afdo-process",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": true,
@@ -1263,7 +1293,8 @@
     {
       "id": {
         "name": "atlas-llvm-next",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": true,
@@ -1325,7 +1356,8 @@
     {
       "id": {
         "name": "orderfile-generate-toolchain",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": true,
@@ -1427,7 +1459,8 @@
     {
       "id": {
         "name": "orderfile-verify-toolchain",
-        "type": "TOOLCHAIN"
+        "type": "TOOLCHAIN",
+        "bucket": "toolchain"
       },
       "general": {
         "critical": true,
@@ -1540,7 +1573,8 @@
     {
       "id": {
         "name": "postsubmit-orchestrator",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true,
@@ -1565,7 +1599,8 @@
     {
       "id": {
         "name": "release-main-orchestrator",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": true,
@@ -1592,7 +1627,8 @@
     {
       "id": {
         "name": "eve-release-main",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": true,
@@ -1610,7 +1646,8 @@
     {
       "id": {
         "name": "eve-kernelnext-release-main",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": false,
@@ -1628,7 +1665,8 @@
     {
       "id": {
         "name": "kukui-release-main",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": true,
@@ -1718,7 +1756,8 @@
     {
       "id": {
         "name": "cloudready-release-R90-13816.B-release",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": true,
@@ -1792,7 +1831,8 @@
     {
       "id": {
         "name": "staging-release-main-orchestrator",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": true,
@@ -1811,7 +1851,8 @@
     {
       "id": {
         "name": "staging-eve-release-main",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "release"
       },
       "general": {
         "critical": true,
@@ -1829,7 +1870,8 @@
     {
       "id": {
         "name": "staging-cq-orchestrator",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "staging"
       },
       "general": {
         "critical": true,
@@ -1854,7 +1896,8 @@
             "collectHandling": "COLLECT"
           },
           {
-            "name": "atlas-cq"
+            "name": "atlas-cq",
+            "bucket": "atlas"
           },
           {
             "name": "cave-cq",
@@ -1866,7 +1909,8 @@
     {
       "id": {
         "name": "public-main-orchestrator",
-        "type": "PUBLIC"
+        "type": "PUBLIC",
+        "bucket": "chromiumos"
       },
       "general": {
         "critical": true,
@@ -1889,7 +1933,8 @@
     {
       "id": {
         "name": "eve-main-public",
-        "type": "PUBLIC"
+        "type": "PUBLIC",
+        "bucket": "chromiumos"
       },
       "general": {
         "critical": true,
@@ -1973,7 +2018,8 @@
     {
       "id": {
         "name": "cq-orchestrator",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -2019,7 +2065,8 @@
     {
       "id": {
         "name": "release-R90-13816.B-cq-orchestrator",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -2044,7 +2091,8 @@
             "collectHandling": "COLLECT"
           },
           {
-            "name": "atlas-cq"
+            "name": "atlas-cq",
+            "bucket": "atlas"
           },
           {
             "name": "cave-cq",
@@ -2056,7 +2104,8 @@
     {
       "id": {
         "name": "chromite-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -2069,7 +2118,8 @@
     {
       "id": {
         "name": "host-packages-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -2082,7 +2132,8 @@
     {
       "id": {
         "name": "rules-cros-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true,
@@ -2095,7 +2146,8 @@
     {
       "id": {
         "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "critical": true,
@@ -2164,7 +2216,8 @@
     {
       "id": {
         "name": "sarien-code-coverage-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": false
@@ -2236,7 +2289,8 @@
     {
       "id": {
         "name": "sarien-code-coverage-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "cq"
       },
       "general": {
         "critical": false
@@ -2271,7 +2325,8 @@
     {
       "id": {
         "name": "cave-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "chrome": {
         "internal": true
@@ -2302,7 +2357,8 @@
     {
       "id": {
         "name": "cave-slim-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cave"
       },
       "chrome": {
         "internal": true
@@ -2331,7 +2387,8 @@
     {
       "id": {
         "name": "fw-ec-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "firmwareLocation": "PLATFORM_EC"
@@ -2360,7 +2417,8 @@
     {
       "id": {
         "name": "fw-ec-postsubmit",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "firmwareLocation": "PLATFORM_EC"
@@ -2386,7 +2444,8 @@
     {
       "id": {
         "name": "firmware-ti50-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "firmwareLocation": "PLATFORM_TI50"
@@ -2415,7 +2474,8 @@
     {
       "id": {
         "name": "firmware-board-5555-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true
@@ -2455,7 +2515,8 @@
     {
       "id": {
         "name": "staging-firmware-board-5555-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "critical": true
@@ -2495,7 +2556,8 @@
     {
       "id": {
         "name": "fw-atlas-cq",
-        "type": "CQ"
+        "type": "CQ",
+        "bucket": "cq"
       },
       "general": {
         "firmwareLocation": "PLATFORM_EC"
@@ -2535,7 +2597,8 @@
     {
       "id": {
         "name": "fw-atlas-postsubmit",
-        "type": "POSTSUBMIT"
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
       },
       "general": {
         "firmwareLocation": "PLATFORM_EC"
@@ -2580,7 +2643,8 @@
     {
       "id": {
         "name": "kukui-public-main",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "chromiumos"
       },
       "general": {
         "critical": true,
@@ -2670,7 +2734,8 @@
     {
       "id": {
         "name": "staging-eve-public-main",
-        "type": "RELEASE"
+        "type": "RELEASE",
+        "bucket": "staging"
       },
       "general": {
         "critical": true,
