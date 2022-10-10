@@ -10,6 +10,7 @@ from __future__ import division
 import json
 from collections import defaultdict, namedtuple
 import contextlib
+import re
 
 from google.protobuf import json_format
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -524,10 +525,10 @@ class OrchMenuApi(RecipeApi):
     with self.m.step.nest(run_step_name or 'run builds') as pres:
       # Don't run builds if testing LTS chrome. https://crbug.com/1186358
       # Delete this hack once https://crbug.com/1186852 is fixed.
-      if (self.m.buildbucket.build.builder.builder.startswith('lts-cq-') and
-          self.m.cros_tags.has_entry('cq_cl_tag',
-                                     'pupr:chromeos-base/chromeos-chrome',
-                                     self.m.buildbucket.build.tags)):
+      if (re.match('^release-.*-cq-', self.m.buildbucket.build.builder.builder)
+          and self.m.cros_tags.has_entry('cq_cl_tag',
+                                         'pupr:chromeos-base/chromeos-chrome',
+                                         self.m.buildbucket.build.tags)):
         return self._builds_status
       completed_builds, collect_after = self._filter_schedule_wait_builds(
           pres, self._get_child_specs(), extra_props=extra_child_props)

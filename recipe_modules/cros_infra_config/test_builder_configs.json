@@ -2018,7 +2018,7 @@
     },
     {
       "id": {
-        "name": "lts-cq-release-R90-13816.B-orchestrator",
+        "name": "release-R90-13816.B-cq-orchestrator",
         "type": "CQ"
       },
       "general": {

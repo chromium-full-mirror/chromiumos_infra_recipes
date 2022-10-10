@@ -67,9 +67,8 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.gitiles.get_file(TEST_TARGET_TEST_REQUIREMENTS_DATA),
-      api.buildbucket.try_build(
-          project='chromeos', bucket='cq',
-          builder='lts-cq-release-R90-13816.B-orchestrator'),
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='release-R90-13816.B-cq-orchestrator'),
       api.post_check(post_process.StepCommandContains,
                      'generate test plan.ensure test_planner.ensure_installed',
                      ['chromiumos/infra/test_plan_generator/${platform} prod']),
