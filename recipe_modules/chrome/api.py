@@ -123,6 +123,7 @@ class ChromeApi(recipe_api.RecipeApi):
             '--reset',
             '--with_branch_heads',
             '--with_tags',
+            '--verbose',
         ]
         self.m.step(
             'gclient sync',

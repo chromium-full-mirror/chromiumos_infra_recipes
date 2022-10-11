@@ -126,7 +126,8 @@
       "sync",
       "--reset",
       "--with_branch_heads",
-      "--with_tags"
+      "--with_tags",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/snapshot_chrome/src",
     "env_suffixes": {
