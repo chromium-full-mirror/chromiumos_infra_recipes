@@ -104,7 +104,7 @@ class ChromeApi(recipe_api.RecipeApi):
           ]
           self.m.step(
               'gclient config',
-              ['python3', self.m.depot_tools.root.join('gclient.py')] +
+              ['python', self.m.depot_tools.root.join('gclient.py')] +
               gclient_config_cmd, infra_step=True)
         cache_cmd = [
             'populate',
@@ -116,18 +116,17 @@ class ChromeApi(recipe_api.RecipeApi):
         ]
         self.m.step(
             'populate git cache',
-            ['python3', self.m.depot_tools.root.join('git_cache.py')] +
+            ['python', self.m.depot_tools.root.join('git_cache.py')] +
             cache_cmd, infra_step=True)
         gclient_sync_cmd = [
             'sync',
             '--reset',
             '--with_branch_heads',
             '--with_tags',
-            '--verbose',
         ]
         self.m.step(
             'gclient sync',
-            ['python3', self.m.depot_tools.root.join('gclient.py')] +
+            ['python', self.m.depot_tools.root.join('gclient.py')] +
             gclient_sync_cmd, infra_step=True,
             timeout=self.gclient_sync_timeout_seconds)
 
@@ -201,7 +200,7 @@ class ChromeApi(recipe_api.RecipeApi):
               # Writes out the .gclient file.
               self.m.step(
                   'gclient config',
-                  ['python3',
+                  ['python',
                    self.m.depot_tools.root.join('gclient.py')] + config_cmd,
                   infra_step=True)
 
@@ -215,7 +214,7 @@ class ChromeApi(recipe_api.RecipeApi):
               # Finally, start the sync.
               self.m.step(
                   'gclient sync',
-                  ['python3',
+                  ['python',
                    self.m.depot_tools.root.join('gclient.py')] + sync_cmd,
                   infra_step=True, timeout=self.gclient_sync_timeout_seconds)
             except StepFailure:
