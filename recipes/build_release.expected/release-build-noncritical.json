@@ -107,7 +107,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -4240,7 +4240,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage (2)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
@@ -5098,7 +5098,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine build and model metadata.report_stage",
+    "name": "determine build and model metadata.snoop: report_stage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -5133,7 +5133,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage (3)"
+    "name": "snoop: report_stage (3)"
   },
   {
     "cmd": [
@@ -5158,7 +5158,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage (4)"
+    "name": "snoop: report_stage (4)"
   },
   {
     "cmd": [],

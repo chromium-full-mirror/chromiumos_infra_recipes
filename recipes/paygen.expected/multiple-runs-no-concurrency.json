@@ -64,7 +64,7 @@
       "-pid",
       "12345"
     ],
-    "name": "report_stage"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -640,7 +640,7 @@
       "-stage",
       "fetch"
     ],
-    "name": "report_stage (2)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
@@ -1498,7 +1498,7 @@
       "-stage",
       "compile"
     ],
-    "name": "doing paygen.report_stage",
+    "name": "doing paygen.snoop: report_stage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1671,7 +1671,7 @@
       "-gcs-uri",
       ""
     ],
-    "name": "doing paygen.running paygen operations in parallel.report_gcs",
+    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1804,7 +1804,7 @@
       "-gcs-uri",
       "gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc"
     ],
-    "name": "doing paygen.running paygen operations in parallel.report_gcs (2)",
+    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1876,7 +1876,7 @@
       "-stage",
       "upload-complete"
     ],
-    "name": "report_stage (3)"
+    "name": "snoop: report_stage (3)"
   },
   {
     "cmd": [],

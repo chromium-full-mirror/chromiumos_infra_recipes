@@ -96,7 +96,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -3040,7 +3040,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage (2)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],

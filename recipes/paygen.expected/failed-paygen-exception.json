@@ -64,7 +64,7 @@
       "-pid",
       "12345"
     ],
-    "name": "report_stage"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -640,7 +640,7 @@
       "-stage",
       "fetch"
     ],
-    "name": "report_stage (2)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
@@ -1499,7 +1499,7 @@
       "-stage",
       "compile"
     ],
-    "name": "doing paygen.report_stage",
+    "name": "doing paygen.snoop: report_stage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

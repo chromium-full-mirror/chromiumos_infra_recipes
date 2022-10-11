@@ -83,14 +83,16 @@ def GenTests(api):
                   'path': 'chromiumos_base_image.tar.xz',
               }],
           }, sort_keys=True)),
-      api.post_process(post_process.MustRun, 'upload artifacts.report_gcs'),
+      api.post_process(post_process.MustRun,
+                       'upload artifacts.snoop: report_gcs'),
       api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
       'image-archives-does-not-exist',
       api.properties(exclude_image_archives=True),
-      api.post_process(post_process.DoesNotRun, 'upload artifacts.report_gcs'),
+      api.post_process(post_process.DoesNotRun,
+                       'upload artifacts.snoop: report_gcs'),
       api.post_process(post_process.LogEquals, 'upload artifacts',
                        'report_to_spike',
                        'IMAGE_ARCHIVES not in files_by_artifact'),

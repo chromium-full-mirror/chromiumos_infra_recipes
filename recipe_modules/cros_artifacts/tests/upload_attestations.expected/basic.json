@@ -730,7 +730,7 @@
       "-gcs-uri",
       "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
     ],
-    "name": "upload artifacts.report_gcs",
+    "name": "upload artifacts.snoop: report_gcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

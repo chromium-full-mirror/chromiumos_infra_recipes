@@ -100,7 +100,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -1115,7 +1115,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage (2)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
@@ -2380,7 +2380,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "doing paygen.report_stage",
+    "name": "doing paygen.snoop: report_stage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2613,7 +2613,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "doing paygen.running paygen operations in parallel.report_gcs",
+    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2661,7 +2661,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "report_stage (3)"
+    "name": "snoop: report_stage (3)"
   },
   {
     "cmd": [],
