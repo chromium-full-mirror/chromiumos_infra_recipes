@@ -22,6 +22,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api, properties):
+  _ = api.cros_source.use_external_source_cache
   api.cros_source.configure_builder(default_main=True)
   path = None
   if properties.cache_path_override:

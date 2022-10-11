@@ -60,6 +60,7 @@ class CrosSourceApi(RecipeApi):
     self._enable_custom_overlays = properties.enable_custom_overlays
     self._sync_to_manifest = properties.sync_to_manifest
     self._recovery_snapshot = properties.recovery_source_cache_snapshot
+    self._use_external_source_cache = properties.use_external_source_cache
     self._cache_name = 'chromiumos' if properties.use_external_source_cache else 'chromeos'
     # The currently active branch of the manifest.  Empty unless we switched
     # branches.
@@ -204,6 +205,11 @@ class CrosSourceApi(RecipeApi):
   def snapshot_cas_digest(self):
     """Returns the snapshot digest in use or None."""
     return self._snapshot_cas.digest if self._snapshot_cas else None
+
+  @property
+  def use_external_source_cache(self):
+    """Returns whether the builder is configured to use the external cache."""
+    return self._use_external_source_cache
 
   def _determine_sync_jobs(self):
     """Determines the number of jobs to use for sync based on CPUs."""

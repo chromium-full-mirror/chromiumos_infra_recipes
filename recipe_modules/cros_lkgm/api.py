@@ -78,7 +78,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                   MessageToDict(
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
-                              manifest_gs_path=buildspec_location))),
+                              manifest_gs_path=buildspec_location),
+                          use_external_source_cache=True)),
           },
           can_outlive_parent=True,
           tags=self.m.buildbucket.tags(

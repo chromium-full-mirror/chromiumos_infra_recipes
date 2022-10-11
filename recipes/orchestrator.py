@@ -75,6 +75,12 @@ def DoRunSteps(api):
     extra_child_props[
         '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()
 
+  if api.cros_source.use_external_source_cache:
+    if '$chromeos/cros_source' not in extra_child_props:
+      extra_child_props['$chromeos/cros_source'] = {}
+    extra_child_props['$chromeos/cros_source'][
+        'use_external_source_cache'] = True
+
   builds_status = api.orch_menu.plan_and_run_children(
       extra_child_props=extra_child_props,
   )
@@ -129,7 +135,19 @@ def GenTests(api):
               "$chromeos/cros_source":
                   CrosSourceProperties(
                       sync_to_manifest=ManifestLocation(
-                          manifest_gs_path='gs://foo/bar.xml'))
+                          manifest_gs_path='gs://foo/bar.xml'),
+                      use_external_source_cache=True)
+          }), api.post_check(post_process.StatusSuccess),
+      builder='public-main-orchestrator', with_history=True,
+      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
+
+  # Needed to check `cros_source` instantiation in extra_child_props.
+  yield api.orch_menu.test(
+      'public-orchestrator-no-manifest',
+      api.properties(
+          **{
+              "$chromeos/cros_source":
+                  CrosSourceProperties(use_external_source_cache=True)
           }), api.post_check(post_process.StatusSuccess),
       builder='public-main-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
