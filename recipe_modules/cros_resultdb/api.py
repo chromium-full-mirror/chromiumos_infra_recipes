@@ -236,7 +236,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # TODO(b/251688396): remove this hardcoded model for testing and replace
     # with a general solution for all models.
     if board == 'brya' and model == 'taeko':
-      realm = 'brya-taeko'
+      realm = 'chromeos:brya-taeko'
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
