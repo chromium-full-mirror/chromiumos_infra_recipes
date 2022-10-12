@@ -33,6 +33,10 @@ def RunSteps(api, properties):
   image_types = properties.image_types or [
       common.IMAGE_TYPE_BASE, common.IMAGE_TYPE_TEST
   ]
+  # Use UNDEFINED as a "no types" indicator.
+  if image_types == [common.IMAGE_TYPE_UNDEFINED]:
+    image_types = []
+
   image_test_json = properties.image_test_json
 
   name = properties.builder_name or 'amd64-generic-postsubmit'
@@ -112,6 +116,11 @@ def GenTests(api):
   yield api.test('basic', test_build())
 
   yield api.test('cq-build', test_build(cq=True))
+
+  yield api.test(
+      'no-image-types', test_build(),
+      api.properties(
+          FullTestProperties(image_types=[common.IMAGE_TYPE_UNDEFINED])))
 
   yield api.test(
       'sdk-test-build',

@@ -38,14 +38,13 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       version_data_response (GetTargetVersionsResponse): The response from
         PackageService/GetTargetVersions.
     """
-    with self.m.step.nest('add version data') as pres:
+    with self.m.step.nest('add version data'):
       self._data_proto.build_version_data.milestone = int(
           version_data_response.milestone_version)
       pv = [int(x) for x in version_data_response.platform_version.split('.')]
       if len(pv) != 3:
-        pres.step_text = 'Invalid platform version {}'.format(
-            version_data_response.platform_version)
-        raise ValueError('wrong format for platform version')
+        raise recipe_api.StepFailure('Invalid platform version {}'.format(
+            version_data_response.platform_version))
       build, branch, patch = pv
       self._data_proto.build_version_data.platform_version.platform_build = build
       self._data_proto.build_version_data.platform_version.platform_branch = branch
@@ -80,6 +79,13 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
   def publish(self, config, build_target, target_versions, built_images):
     """Collect and publish the image size data."""
     with self.m.step.nest('collect image size data') as pres:
+      if not config.general.publish_image_sizes:
+        pres.step_text = 'Skipped: Image size publishing disabled.'
+        return
+
+      if not built_images:
+        raise recipe_api.StepFailure('No images provided.')
+
       self._add_target_versions(target_versions)
       self._add_builder_metadata(config, build_target)
       self._get_image_size_data(built_images)

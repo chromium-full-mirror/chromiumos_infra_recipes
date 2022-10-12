@@ -69,6 +69,8 @@ def DoRunSteps(api, config, properties):
       api.build_menu.upload_artifacts()
       api.build_menu.create_containers()
       api.build_menu.add_child_build_ids_to_output_property()
+      if properties.publish_image_sizes:
+        api.build_menu.publish_image_size_data(config)
 
     # Sometimes these are RepeatedCompositeFieldContainter, sometimes they are
     # list.  Cast them.
@@ -226,15 +228,16 @@ def GenTests(api):
   yield api.build_menu.test(
       'postsubmit-with-snapshot-prebuilts',
       api.properties(
-          FullProperties(artifact_build=True, upload_prebuilts=True)),
-      input_properties={
-          '$chromeos/build_menu':
-              dict(artifact_build=True),
-          '$chromeos/cros_relevance':
-              dict(force_postsubmit_relevance=True),
-          '$chromeos/cros_prebuilts':
-              dict(enable_snapshot_prebuilts=True, send_snapshot_prebuilts=1)
-      })
+          FullProperties(artifact_build=True, upload_prebuilts=True,
+                         publish_image_sizes=True)), input_properties={
+                             '$chromeos/build_menu':
+                                 dict(artifact_build=True),
+                             '$chromeos/cros_relevance':
+                                 dict(force_postsubmit_relevance=True),
+                             '$chromeos/cros_prebuilts':
+                                 dict(enable_snapshot_prebuilts=True,
+                                      send_snapshot_prebuilts=1)
+                         })
 
   for forced in False, True:
     yield api.build_menu.test(

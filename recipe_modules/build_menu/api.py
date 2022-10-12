@@ -64,6 +64,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Installed packages can be a prereq for methods in other modules, such as
     # builder_metadata.
     self.packages_installed = False
+    self._built_images = None
 
   def initialize(self):
     self._force_empty_toolchain_targets |= (
@@ -581,7 +582,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       extra_kwargs['version'] = str(version.platform_version)
 
-    self.m.sysroot_util.build_images(
+    self._built_images = self.m.sysroot_util.build_images(
         build_images.image_types, builder_path,
         build_images.disable_rootfs_verification, build_images.disk_layout,
         build_images.base_is_recovery,
@@ -959,3 +960,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                                       template=gs_path)
 
     self.m.cros_artifacts.publish_latest_files(gs_bucket, gs_path)
+
+  def publish_image_size_data(self, config):
+    """Retrieve, assemble, and publish information about package and image size.
+
+    Only expected to produce results after a successful completion of
+    ImageService/Create and PackageService/GetTargetVersions.
+
+    Args:
+      config: A BuilderConfig object.
+    """
+    with self.m.failures.ignore_exceptions():
+      self.m.observability_image_size.publish(config, self.build_target,
+                                              self.target_versions,
+                                              self._built_images)

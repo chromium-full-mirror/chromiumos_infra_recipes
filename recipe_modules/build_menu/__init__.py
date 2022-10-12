@@ -27,6 +27,7 @@ DEPS = [
     'failures',
     'metadata',
     'metadata_json',
+    'observability_image_size',
     'src_state',
     'sysroot_util',
     'test_util',

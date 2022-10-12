@@ -17,4 +17,6 @@ message PublishTestProperties {
   string milestone = 3;
   string platform_version = 4;
   string full_version = 5;
+  // Whether to skip publishing the image size data.
+  bool skip_publish_image_sizes = 6;
 }

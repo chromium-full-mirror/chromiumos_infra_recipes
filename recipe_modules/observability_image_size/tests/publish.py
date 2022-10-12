@@ -41,6 +41,7 @@ def RunSteps(api, properties):
   # add_builder_metadata.
   name = properties.builder_name or 'amd64-generic-postsubmit'
   config = api.cros_infra_config.get_builder_config(name)
+  config.general.publish_image_sizes = not properties.skip_publish_image_sizes
 
   # get_image_size_data.
   build_target = common_pb2.BuildTarget(name='amd64-generic')
@@ -49,7 +50,7 @@ def RunSteps(api, properties):
     images.append(
         Image(path='/tmp/base-image.bin', type=common_pb2.IMAGE_TYPE_BASE,
               build_target=build_target))
-  if common_pb2.IMAGE_TYPE_BASE in properties.image_types:
+  if common_pb2.IMAGE_TYPE_TEST in properties.image_types:
     images.append(
         Image(path='/tmp/test-image.bin', type=common_pb2.IMAGE_TYPE_TEST,
               build_target=build_target))
@@ -94,8 +95,6 @@ def GenTests(api):
     }
 
   def image_size_data(rootfs_pkgs, stateful_pkgs=None):
-    if not rootfs_pkgs:
-      return json.dumps({'image_data': []})
     ret = [_base_image_data(rootfs_pkgs)]
     if stateful_pkgs:
       ret.append(_test_image_data(rootfs_pkgs, stateful_pkgs))
@@ -133,21 +132,42 @@ def GenTests(api):
         'disk_utilization_size': disk_utilization,
     }
 
+  def simple_pkg():
+    return pkg_data('foo', 'bar', major=1, apparent=1, disk_utilization=4096)
+
   yield api.test('basic', test_build())
 
   yield api.test('cq-build', test_build(cq=True))
 
-  yield api.test('bad-platform-version', test_build(),
-                 api.properties(PublishTestProperties(
-                     platform_version='1.2',
-                 )), api.expect_exception('ValueError'),
-                 api.post_check(post_process.StatusAnyFailure),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'skip-publish', test_build(),
+      api.properties(PublishTestProperties(
+          skip_publish_image_sizes=True,
+      )),
+      api.post_check(post_process.StepTextEquals, 'collect image size data',
+                     'Skipped: Image size publishing disabled.'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'bad-platform-version', test_build(),
+      api.properties(
+          PublishTestProperties(
+              image_types=[common_pb2.IMAGE_TYPE_BASE],
+              platform_version='1.2',
+          )), api.post_check(post_process.StepFailure,
+                             'collect image size data'),
+      api.post_process(post_process.DropExpectation),
+      api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'valid-platform-version', test_build(),
       api.properties(
-          PublishTestProperties(milestone='1', platform_version='2.3.4')),
+          PublishTestProperties(image_types=[common_pb2.IMAGE_TYPE_BASE],
+                                milestone='1', platform_version='2.3.4')),
+      api.cros_build_api.set_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData',
+          image_size_data(rootfs_pkgs=[simple_pkg()])),
       api.post_process(post_process.LogContains, 'collect image size data',
                        'image_data.json', [
                            '"milestone": 1',
@@ -163,6 +183,11 @@ def GenTests(api):
           'collect image size data.add data from images',
           'ObservabilityService/GetImageSizeData',
           image_size_data(rootfs_pkgs=[])))
+
+  yield api.test(
+      'no-images', test_build(),
+      api.post_process(post_process.StepFailure, 'collect image size data'),
+      api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'base-image', test_build(),

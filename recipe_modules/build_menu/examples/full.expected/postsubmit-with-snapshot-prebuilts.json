@@ -7702,6 +7702,13 @@
   },
   {
     "cmd": [],
+    "name": "collect image size data",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Skipped: Image size publishing disabled.@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {

@@ -39,4 +39,7 @@ message FullProperties {
 
   // Whether to call upload_devinstall_prebuilts.
   bool upload_devinstall_prebuilts = 10;
+
+  // Whether to publish image size data.
+  bool publish_image_sizes = 11;
 }
