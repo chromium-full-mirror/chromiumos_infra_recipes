@@ -10512,6 +10512,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "clean up orchestrator.exonerate exonerated failures",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "rdb",
       "query",
@@ -10536,9 +10543,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "clean up orchestrator.rdb query",
+    "name": "clean up orchestrator.exonerate exonerated failures.rdb query",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

@@ -10,7 +10,9 @@
       "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
       "@@@STEP_LOG_END@configs@@@",
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated arc.Boot on betty@@@",
-      "@@@STEP_LOG_END@exoneration logs@@@"
+      "@@@STEP_LOG_END@exoneration logs@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@arc.Boot:\t['betty']@@@",
+      "@@@STEP_LOG_END@exonerated tests@@@"
     ]
   },
   {

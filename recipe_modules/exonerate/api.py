@@ -78,6 +78,15 @@ class ExonerateApi(recipe_api.RecipeApi):
     """Add log line (str) to global list."""
     self._global_log_lines.append(line)
 
+  def _rdb_map_to_string(self):
+    """Return exonerated tests as it will be sent to ResultDB."""
+    lines = []
+    for test in sorted(self._exonerated_tests.keys()):
+      targets = [str(t) for t in self._exonerated_tests[test]]
+      lines.append('{}:\t{}'.format(test, targets))
+
+    return '\n'.join(lines)
+
   def _print_logs(self, pres):
     """Print all saved logs to pres.logs and empty list after."""
     dry_run_text = 'Exoneration is running in DRY_RUN mode.\n' if self._dry_run else ''
@@ -86,6 +95,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     else:
       pres.logs['exoneration logs'] = (
           dry_run_text + '\n'.join(self._global_log_lines))
+      pres.logs['exonerated tests'] = self._rdb_map_to_string()
       self._global_log_lines = []
 
   def _get_printable_configs(self):

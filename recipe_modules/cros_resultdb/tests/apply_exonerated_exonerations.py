@@ -64,14 +64,21 @@ def GenTests(api):
                   test_id='test/2', expected=False,
                   status=test_result_pb2.SKIP, variant=json_format.Parse(
                       variant_json, common_pb2.Variant())),
+              test_result_pb2.TestResult(
+                  test_id='test/exp', expected=True,
+                  status=test_result_pb2.SKIP, variant=json_format.Parse(
+                      variant_json, common_pb2.Variant())),
+              test_result_pb2.TestResult(
+                  test_id='arc.Boot2', expected=False,
+                  status=test_result_pb2.FAIL, variant=json_format.Parse(
+                      variant_json, common_pb2.Variant())),
           ]),
   }
 
   yield api.test(
       'not-enabled',
-      api.post_process(
-          post_process.DoesNotRun,
-          'exonerate ResultDB results.exonerate non-critical failures'),
+      api.post_process(post_process.DoesNotRun,
+                       'exonerate exonerated failures'),
   )
 
   yield api.test(
@@ -81,8 +88,9 @@ def GenTests(api):
           **
           {'$chromeos/exonerate': ExonerateProperties(
               enable_exoneration=True)}),
-      api.resultdb.query(inv_bundle, step_name='rdb query'),
-      api.step_data('exonerate exonerated failures', retcode=1),
+      api.resultdb.query(inv_bundle,
+                         step_name='exonerate exonerated failures.rdb query'),
+      api.step_data('exonerate exonerated failures.exonerate', retcode=1),
   )
 
   yield api.test(
@@ -92,7 +100,8 @@ def GenTests(api):
           **
           {'$chromeos/exonerate': ExonerateProperties(
               enable_exoneration=True)}),
-      api.resultdb.query(inv_bundle, step_name='rdb query'),
+      api.resultdb.query(inv_bundle,
+                         step_name='exonerate exonerated failures.rdb query'),
       api.post_process(post_process.StepSuccess,
                        'exonerate exonerated failures'),
   )

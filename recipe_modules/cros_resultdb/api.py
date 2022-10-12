@@ -391,33 +391,43 @@ class ResultDBCommand(recipe_api.RecipeApi):
     def _is_exonerated(test_result):
       return self.m.exonerate.is_exonerated(test_result)
 
-    # ResultDB test_id represents the name of the test case.
-    inv_bundle = self.m.resultdb.query(
-        inv_ids=invocation_ids, variants_with_unexpected_results=True,
-        tr_fields=['variant', 'testId', 'status', 'expected'])
+    with self.m.step.nest('exonerate exonerated failures') as pres:
+      # ResultDB test_id represents the name of the test case.
+      inv_bundle = self.m.resultdb.query(
+          inv_ids=invocation_ids, variants_with_unexpected_results=True,
+          tr_fields=['variant', 'testId', 'status', 'expected'])
 
-    test_exonerations = []
-    for x in inv_bundle.values():
-      unexpected_results = x.test_results
+      test_exonerations = []
+      log_lines = []
+      for x in inv_bundle.values():
+        unexpected_results = x.test_results
 
-      test_exonerations.extend([
-          test_result_pb2.TestExoneration(
-              test_id=result.test_id, variant=result.variant,
-              explanation_html='failed but is exonerated',
-              reason=test_result_pb2.ExonerationReason.OCCURS_ON_OTHER_CLS)
-          for result in unexpected_results
-          # Unexpected passes are currently exonerated by default.
-          if not result.expected and result.status not in (
-              test_result_pb2.PASS,
-              test_result_pb2.SKIP) and _is_exonerated(result)
-      ])
+        for result in unexpected_results:
+          build_target = getattr(result.variant, 'def')['build_target']
+          log_line = '{} on {}: '.format(result.test_id, build_target)
+          if result.expected:
+            log_line += 'expected result'
+          elif result.status in (test_result_pb2.PASS, test_result_pb2.SKIP):
+            log_line += 'passed or skipped'
+          elif _is_exonerated(result):
+            log_line += 'exonerated'
+            test_exonerations.append(
+                test_result_pb2.TestExoneration(
+                    test_id=result.test_id, variant=result.variant,
+                    explanation_html='failed but is exonerated',
+                    reason=test_result_pb2.ExonerationReason.OCCURS_ON_OTHER_CLS
+                ))
+          else:
+            log_line += 'not exonerated'
+          log_lines.append(log_line)
 
-    try:
-      # Don't fail orchestrator if exonerate cmd fails.
-      self.m.resultdb.exonerate(test_exonerations,
-                                step_name="exonerate exonerated failures")
-    except self.m.step.StepFailure:
-      pass
+      if log_lines:
+        pres.logs['exoneration_logs'] = '\n'.join(log_lines)
+      try:
+        # Don't fail orchestrator if exonerate cmd fails.
+        self.m.resultdb.exonerate(test_exonerations, step_name="exonerate")
+      except self.m.step.StepFailure:
+        pass
 
   def report_missing_test_cases(self, test_names, base_variant):
     """Upload test results for missing test cases to ResultDB. These missing

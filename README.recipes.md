@@ -3326,7 +3326,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#422)(self, test_names, base_variant):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#432)(self, test_names, base_variant):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -4781,7 +4781,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#222)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#232)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -4792,7 +4792,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#265)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#275)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -4803,7 +4803,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#293)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#303)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4815,7 +4815,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#324)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#334)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -4835,7 +4835,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#394)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#404)(self):**
 
 Return markdown style info about suites that were exonerated.
 
@@ -4845,7 +4845,7 @@ Returns: str in markdown style.
 
 Return test_name without the tast prefix.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#377)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#387)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -4854,7 +4854,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#100)(self):**
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#110)(self):**
 
 Write exoneration stats to output properties.
 ### *recipe_modules* / [failures](/recipe_modules/failures)

@@ -27,7 +27,11 @@
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated test2 on build_target_name@@@",
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated test3 on build_target_name@@@",
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated test4 on build_target_name@@@",
-      "@@@STEP_LOG_END@exoneration logs@@@"
+      "@@@STEP_LOG_END@exoneration logs@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@test2:\t['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@test3:\t['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@test4:\t['build_target_name']@@@",
+      "@@@STEP_LOG_END@exonerated tests@@@"
     ]
   },
   {
