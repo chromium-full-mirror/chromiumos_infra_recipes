@@ -340,7 +340,7 @@ class FailuresApi(RecipeApi):
     if refresh_configs:
       self.m.cros_infra_config.force_reload()
       child_configs = self.m.cros_infra_config.safe_get_builder_configs(
-          [b.builder for b in builds])
+          [b.builder.builder for b in builds])
       ret = self.update_non_critical_build_failures(ret, child_configs)
     return ret
 
@@ -515,9 +515,6 @@ class FailuresApi(RecipeApi):
     for f in failures:
       fatal = f.fatal
       if f.kind == 'build':
-        # TODO(jsca): the below check should include the bucket in the failure ID,
-        # otherwise it might return the wrong config in cases where there are
-        # two builders with the same name.
         if f.id in fresh_builder_configs:
           cfg = fresh_builder_configs[f.id]
           non_critical = cfg.general.critical and not cfg.general.critical.value

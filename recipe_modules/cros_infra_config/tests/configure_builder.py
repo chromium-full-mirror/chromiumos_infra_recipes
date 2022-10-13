@@ -6,7 +6,6 @@
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto.builder_common import BuilderID
 from PB.recipe_modules.chromeos.cros_infra_config.tests.test import TestInputProperties
 
 DEPS = [
@@ -29,8 +28,7 @@ def RunSteps(api, properties):
                                                    changes=changes)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
   api.assertions.assertEqual(
-      api.cros_infra_config.safe_get_builder_configs(
-          [BuilderID(builder='abc', bucket='def')]), {})
+      api.cros_infra_config.safe_get_builder_configs(['abc']), {})
 
   api.assertions.assertEqual(
       len(api.cros_infra_config.gerrit_changes),

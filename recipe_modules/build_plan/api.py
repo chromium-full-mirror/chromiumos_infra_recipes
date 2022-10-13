@@ -56,11 +56,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
     filter_log = []
     completed_builds, snapshot_builds, new_build_requests = [], [], []
     is_retry = False
-    orchestrator_bucket = self.m.buildbucket.build.builder.bucket
 
     builder_configs = [
-        self.m.cros_infra_config.get_builder_config(
-            b.name, bucket=b.bucket or orchestrator_bucket) for b in child_specs
+        self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = [b.id.name for b in builder_configs]
     if gerrit_changes and not self._properties.disable_build_plan_pruning:
@@ -150,9 +148,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_skip_for_source_rules += 1
           continue
 
-        child_bucket = child_spec.bucket or orchestrator_bucket
         child_builder_config = self.m.cros_infra_config.get_builder_config(
-            child_builder_name, bucket=child_bucket)
+            child_builder_name)
         critical = child_builder_config.general.critical.value
         force_rebuild = child_builder_name in forced_rebuilds or 'all' in forced_rebuilds
         force_relevant = child_builder_name in forced_relevant
@@ -225,8 +222,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # test bisection should find all builds already completed or in flight
         # as *-snapshot builds. If it does need to schedule such a build, those
         # builders run in the postsubmit bucket.
-        if child_bucket == 'bisect':
-          child_bucket = 'postsubmit'
+        bucket = child_spec.bucket or self.m.buildbucket.build.builder.bucket
+        if bucket == 'bisect':
+          bucket = 'postsubmit'
         parent_run_id = None
         can_outlive_parent = True
         if (child_spec.collect_handling !=
@@ -248,7 +246,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=child_build_snapshot, inherit_buildsets=False,
-                builder=child_builder_name, bucket=child_bucket,
+                builder=child_builder_name, bucket=bucket,
                 gerrit_changes=gerrit_changes, critical=critical, tags=tags,
                 properties=properties, experiments=child_exps,
                 swarming_parent_run_id=parent_run_id,
@@ -322,7 +320,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           continue
 
         builder_config = self.m.cros_infra_config.get_builder_config(
-            build.builder.builder, bucket=build.builder.bucket)
+            build.builder.builder)
         # If the build ran before a known bug was fixed, don't reuse it.
         if build.start_time.seconds < builder_config.general.broken_before.seconds:
           count_broken_before_rebuilds += 1
