@@ -20,6 +20,7 @@ DEPS = [
     'recipe_engine/time',
     'depot_tools/depot_tools',
     'build_menu',
+    'cros_sdk',
     'cros_source',
     'gerrit',
     'git',
@@ -60,7 +61,10 @@ def RunSteps(api, properties):
     commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
 
   with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
-    api.build_menu.setup_workspace_and_chroot():
+    api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
+    api.cros_sdk.create_chroot(version=None, use_image=False, timeout_sec=None)
+    api.cros_sdk.update_chroot(None, None, timeout_sec=None)
+
     return DoRunSteps(api, properties)
 
 
