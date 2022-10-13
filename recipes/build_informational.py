@@ -8,6 +8,8 @@
 This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles."""
 
+from recipe_engine import post_process
+
 DEPS = [
     'build_menu',
     'test_util',
@@ -15,16 +17,19 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
-
 def RunSteps(api):
-  with api.build_menu.configure_builder(), \
+  with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    return
+    env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+    api.build_menu.install_packages(config, env_info.packages)
+    api.build_menu.build_and_test_images(config, include_version=True)
+    api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):
 
-  def test(name, **kwargs):
-    return api.test(name, api.test_util.test_child_build(None, **kwargs).build)
-
-  yield test('basic', builder='amd64-generic-asan')
+  yield api.build_menu.test(
+      'basic', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      builder='amd64-generic-asan')
