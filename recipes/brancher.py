@@ -34,7 +34,6 @@ def RunSteps(api, properties):
     if properties.branch_info.type not in [Branch.RELEASE, Branch.STABILIZE]:
       raise StepFailure("unsupported branch type: {}".format(
           properties.branch_info.type))
-    branch_type = properties.branch_info.type
 
   # Create branch.
   with api.step.nest('create branch') as presentation:
@@ -46,14 +45,11 @@ def RunSteps(api, properties):
     presentation.step_text = "Created branch {}".format(branch_name)
     api.easy.set_properties_step(branch_name=branch_name)
 
-  if branch_type == Branch.RELEASE:
-    with api.workspace_util.setup_workspace():
-      api.cros_source.ensure_synced_cache(projects=[
-          api.cros_release_config.LEGACY_CONFIG_PROJECT,
-          api.cros_release_config.CONFIG_PROJECT
-      ])
+  with api.workspace_util.setup_workspace():
+    api.cros_source.ensure_synced_cache(
+        projects=[api.cros_release_config.CONFIG_PROJECT])
 
-      api.cros_release_config.update_config(branch_name)
+    api.cros_release_config.update_config(branch_name)
 
 
 def GenTests(api):

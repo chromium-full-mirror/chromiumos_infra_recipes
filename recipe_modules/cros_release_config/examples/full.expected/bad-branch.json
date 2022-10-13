@@ -23,7 +23,7 @@
   },
   {
     "cmd": [],
-    "name": "validate release_branch",
+    "name": "validate branch",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
@@ -31,7 +31,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "bad release_branch"
+      "humanReason": "factory-foo.B is not a release or stabilize branch"
     },
     "name": "$result"
   }

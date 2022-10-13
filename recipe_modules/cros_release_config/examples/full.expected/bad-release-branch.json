@@ -23,26 +23,23 @@
   },
   {
     "cmd": [],
-    "name": "validate branch"
+    "name": "validate branch",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
     "name": "validate branch.validate release branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "validate CL settings",
-    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "failure": {
       "failure": {},
-      "humanReason": "no reviewers specified and auto submit is false"
+      "humanReason": "bad release branch"
     },
     "name": "$result"
   }

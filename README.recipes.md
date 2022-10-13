@@ -2996,9 +2996,9 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#57)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#221)(self, release_branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#129)(self, branch):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -3006,7 +3006,8 @@ While Rubik is being turned-up, this endpoint modifies both the legacy
 config in chromite as well as the Rubik starlark config in infra/config.
 
 Args:
-release_branch (str): Release branch, e.g. "release-R89-13729.B".
+branch (str): Release or stabilize branch, e.g. "release-R89-13729.B" or
+  "stabilize-15129.B".
 ### *recipe_modules* / [cros\_release\_util](/recipe_modules/cros_release_util)
 
 [DEPS](/recipe_modules/cros_release_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source)
@@ -10064,13 +10065,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#188)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#130)(api, properties):**
 
-&mdash; **def [construct\_legacy\_config](/recipe_modules/cros_release_config/examples/full.py#25)(\*blocks):**
+&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#25)(\*blocks):**
 
-&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#94)(\*blocks):**
+&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#83)(number, branch_name, expiration_date=None):**
 
-&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#146)(number, branch_name, expiration_date=None):**
+&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#91)(branch_name):**
 ### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_util/examples/full.py#8): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

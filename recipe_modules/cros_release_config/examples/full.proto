@@ -9,6 +9,6 @@ package recipe_modules.chromeos.cros_release_config.examples;
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message TestProperties {
-    // Release branch name to use.
-    string release_branch = 1;
+    // Branch name to use.
+    string branch = 1;
 }

@@ -22,75 +22,6 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
-def construct_legacy_config(*blocks):
-  return """
-  ...
-  # BOT-TAG:RELEASES_START
-  RELEASES = [%s  ]
-  # BOT-TAG:RELEASES_END
-  ...
-""" % "".join(blocks)
-
-
-LEGACY_BLOCK_NEW = """
-        (
-            "{}",
-            [],
-            "",
-            [],
-            [],
-            config_lib.LUCI_BUILDER_LEGACY_RELEASE,
-        ),
-"""
-
-LEGACY_BLOCK_4 = """
-      # This is a branch.
-      ('release-R04-13729.B',
-       ['grunt-android-pi-pre-flight-branch',
-        'hatch-android-rvc-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
-"""
-
-LEGACY_BLOCK_3 = """
-      # This is another branch!
-
-      ('release-R03-13597.B',
-       ['grunt-android-pi-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
-"""
-
-LEGACY_BLOCK_2 = """
-      ('release-R02-13505.B',
-       ['grunt-android-pi-pre-flight-branch'],
-       '',
-       [],
-       [],
-       config_lib.LUCI_BUILDER_LEGACY_RELEASE),
-"""
-
-LEGACY_BLOCK_1 = """
-
-      # LTS branch, please do not delete. Contact: cros-lts-team@google.com.
-      # BOT-TAG:NO_PRUNE
-      ("release-R01-13421.B",
-       ['grunt-android-pi-pre-flight-branch'],
-       'chell-chrome-no-afdo-uprev-pre-flight-branch',
-       ['orderfile-generate-toolchain',
-        'orderfile-verify-toolchain'],
-       ['benchmark-afdo-generate',
-        'chrome-silvermont-release-afdo-verify',
-        'chrome-airmont-release-afdo-verify',
-        'chrome-broadwell-release-afdo-verify'],
-       config_lib.LUCI_BUILDER_LTS_RELEASE ),
-"""
-
-
 def expected_config(*blocks):
   return "".join(blocks)
 
@@ -141,6 +72,12 @@ EXPIRATION_SECTION_TEMPLATE = """
     value: "%s"
   }"""
 
+BLOCK_NEW_STABILIZE = """builders {
+  milestone {
+    branch_name: "%s"
+  }
+}
+"""
 
 # Return a block of config to be included in textpb expecations.
 def new_block(number, branch_name, expiration_date=None):
@@ -148,6 +85,11 @@ def new_block(number, branch_name, expiration_date=None):
   if expiration_date:
     expiration_block = EXPIRATION_SECTION_TEMPLATE % expiration_date
   return BLOCK_NEW % (number, branch_name, expiration_block)
+
+
+# Return a block of config to be included in textpb expecations.
+def new_stabilize_block(branch_name):
+  return BLOCK_NEW_STABILIZE % (branch_name)
 
 
 BLOCK_EXPIRATION = """builders {
@@ -186,23 +128,18 @@ PROPERTIES = TestProperties
 
 
 def RunSteps(api, properties):
-  api.cros_release_config.update_config(properties.release_branch)
+  api.cros_release_config.update_config(properties.branch)
 
 
 def GenTests(api):
   branch = 'release-R05-00004.B'
   branch_milestone = 5
 
-  legacy_config_test_data = construct_legacy_config(LEGACY_BLOCK_2,
-                                                    LEGACY_BLOCK_4,
-                                                    LEGACY_BLOCK_3,
-                                                    LEGACY_BLOCK_1)
-
   yield api.test(
       'basic',
       api.properties(
           **{
-              'release_branch':
+              'branch':
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(
@@ -210,20 +147,12 @@ def GenTests(api):
                       ccs=[Email(
                           email="engeg@google.com")], keep_n_milestones=4)
           }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
       api.step_data(
           'update config.fetch chromiumdash schedule.curl fetch_milestone_schedule',
           api.raw_io.stream_output(
               api.cros_schedule.test_chromiumdash_fetch_response(
                   start_mstone=5, fetch_n=1,
                   ltr_last_refresh_date='2023-01-01T00:00:00'))),
-      api.post_process(post_process.StepCommandContains,
-                       'update legacy config.write config/chromeos_config.py', [
-                           construct_legacy_config(
-                               LEGACY_BLOCK_NEW.format(branch), LEGACY_BLOCK_2,
-                               LEGACY_BLOCK_4, LEGACY_BLOCK_3, LEGACY_BLOCK_1)
-                       ]),
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
@@ -233,14 +162,41 @@ def GenTests(api):
           ]), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
-      'bad-branch', api.properties(**{
-          'release_branch': 'release-foo.B',
-      }), api.post_check(post_process.StepFailure, 'validate release_branch'),
+      'stabilize-branch',
+      api.properties(
+          **{
+              'branch':
+                  'stabilize-12345.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email="jackneus@google.com")],
+                      ccs=[Email(
+                          email="engeg@google.com")], keep_n_milestones=4)
+          }),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/stabilize_builders.textpb', [
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
+                              new_stabilize_block('stabilize-12345.B'), BLOCK_3,
+                              BLOCK_2, BLOCK_1)
+          ]), api.post_check(post_process.StatusSuccess))
+
+  yield api.test('bad-branch', api.properties(**{
+      'branch': 'factory-foo.B',
+  }), api.post_check(post_process.StepFailure, 'validate branch'),
+                 api.post_check(post_process.StatusFailure))
+
+  yield api.test(
+      'bad-release-branch', api.properties(**{
+          'branch': 'release-foo.B',
+      }),
+      api.post_check(post_process.StepFailure,
+                     'validate branch.validate release branch'),
       api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'no-reviewers-no-autosubmit', api.properties(**{
-          'release_branch': branch,
+          'branch': branch,
       }), api.post_check(post_process.StepFailure, 'validate CL settings'),
       api.post_check(post_process.StatusFailure))
 
@@ -248,33 +204,22 @@ def GenTests(api):
       'auto-submit',
       api.properties(
           **{
-              'release_branch':
+              'branch':
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(auto_submit=True),
-          }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
-      api.post_check(post_process.StatusSuccess))
+          }), api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'prune',
       api.properties(
           **{
-              'release_branch':
+              'branch':
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(auto_submit=True,
                                               keep_n_milestones=2),
           }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
-      api.post_process(post_process.StepCommandContains,
-                       'update legacy config.write config/chromeos_config.py', [
-                           construct_legacy_config(
-                               LEGACY_BLOCK_NEW.format(branch), LEGACY_BLOCK_4,
-                               LEGACY_BLOCK_1)
-                       ]),
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/release_builders.textpb', [
@@ -282,75 +227,15 @@ def GenTests(api):
                               new_block(branch_milestone, branch), BLOCK_3)
           ]), api.post_check(post_process.StatusSuccess))
 
-  legacy_config_test_data = 'foo'
-  yield api.test(
-      'bad-legacy-config',
-      api.properties(
-          **{
-              'release_branch':
-                  branch,
-              '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(auto_submit=True,
-                                              keep_n_milestones=2),
-          }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
-      api.post_check(post_process.StepFailure,
-                     'update legacy config.prune legacy config'),
-      api.post_check(post_process.StatusFailure))
-
-  legacy_config_test_data = '# BOT-TAG:RELEASES_START\nfoo\n# BOT-TAG:RELEASES_END'
-  yield api.test(
-      'bad-legacy-config2',
-      api.properties(
-          **{
-              'release_branch':
-                  branch,
-              '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(auto_submit=True,
-                                              keep_n_milestones=2),
-          }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
-      api.post_check(post_process.StepFailure,
-                     'update legacy config.prune legacy config'),
-      api.post_check(post_process.StatusFailure))
-
-  legacy_config_test_data = """
-  # BOT-TAG:RELEASES_START
-  RELEASES = [
-    (foo),
-    (bar),
-  ]
-  # BOT-TAG:RELEASES_END'
-  """
-  yield api.test(
-      'bad-legacy-config3',
-      api.properties(
-          **{
-              'release_branch':
-                  branch,
-              '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(auto_submit=True,
-                                              keep_n_milestones=2),
-          }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
-      api.post_check(post_process.StepFailure,
-                     'update legacy config.prune legacy config'),
-      api.post_check(post_process.StatusFailure))
-
   yield api.test(
       'with-build-creator',
       api.properties(
           **{
-              'release_branch':
+              'branch':
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(auto_submit=True),
           }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
       api.post_check(post_process.StatusSuccess))
@@ -359,15 +244,13 @@ def GenTests(api):
       'with-build-creator-duplicate-email',
       api.properties(
           **{
-              'release_branch':
+              'branch':
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(
                       reviewers=[Email(email="fakedeveloper@chromium.org")],
                       ccs=[Email(email="fakedeveloper@google.com")])
           }),
-      api.step_data('update legacy config.read config/chromeos_config.py',
-                    api.file.read_raw(legacy_config_test_data)),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
       api.post_check(post_process.StatusSuccess))

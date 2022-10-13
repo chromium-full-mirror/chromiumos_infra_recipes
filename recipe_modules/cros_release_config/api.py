@@ -5,11 +5,8 @@
 
 """An API for managing release config."""
 
-from collections import namedtuple
 import datetime
 import re
-
-import six
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -17,20 +14,8 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.common import ReleaseBuilder, ReleaseBuilders
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 
-LEGACY_CONFIG = "config/chromeos_config.py"
 CONFIG = "release/release_builders.textpb"
-CHROMITE_ANDROID = "lib/constants.py"
-
-LEGACY_RELEASE_BLOCK_TEMPLATE = """
-        (
-            "{}",
-            [],
-            "",
-            [],
-            [],
-            config_lib.LUCI_BUILDER_LEGACY_RELEASE,
-        ),
-"""
+STABILIZE_CONFIG = "release/stabilize_builders.textpb"
 
 TEST_DATA = ReleaseBuilders(builders=[
     ReleaseBuilder(
@@ -122,83 +107,6 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                reverse=True)[:self._keep_n_milestones])
     return ReleaseBuilders(builders=to_keep)
 
-  def _prune_legacy_config(self, file_contents):
-    """ Prune the list of builders in legacy config.
-
-    Prunes down to keep_n_milestones builders for release branches.
-    Builders preceded by a '# BOT-TAG:NO_PRUNE' comment will not be counted
-    towards the quota, nor will non-release branches (e.g. main).
-
-    Args:
-    file_contents (string): Legacy config file contents.
-    """
-    if not self._keep_n_milestones:
-      return file_contents
-
-    with self.m.step.nest("prune legacy config"):
-      LEGACY_REGEX = r'# BOT-TAG:RELEASES_START.*\n'\
-        r'(?P<releases>(\n|.)*)# BOT-TAG:RELEASES_END'
-      res = re.search(LEGACY_REGEX, file_contents)
-      if not res:
-        raise StepFailure("couldn't find release block")
-
-      # Isolate 'RELEASES = [' section.
-      legacy_block = res.group('releases').strip()
-      if not legacy_block.startswith(
-          "RELEASES = [") or not legacy_block.endswith("]"):
-        raise StepFailure("couldn't parse release block")
-
-      builder_block = legacy_block[len("RELEASES = ["):-1].strip()
-      builders = builder_block.split("),")
-      # Filter out empty strings.
-      builders = [x for x in builders if x]
-      # Add back ), to end of blocks.
-      builders = [x + ")," for x in builders]
-
-      def get_builder_info(builder_text):
-        # This regex collects any leading comments as well as the branch name
-        # (which should be the first item in the tuple).
-        BRANCH_NAME_REGEX = r'(?P<cmts>(#.*\s*)*)\s*\n*\([\n\s]*[\'\"](?P<branch>.*)[\'\"]'
-        res = re.search(BRANCH_NAME_REGEX, builder_text)
-        if not res:
-          return None
-        comment_block = (res.group('cmts') or "").strip()
-        comments = [x.strip() for x in comment_block.split('\n')]
-        BuilderInfo = namedtuple('BuilderInfo',
-                                 ['comments', 'branch_name', 'milestone'])
-        branch_name = res.group('branch')
-        milestone = -1
-        if re.match(RELEASE_BRANCH_REGEX, branch_name):
-          milestone = self._extract_milestone(branch_name)
-        # e.g. (['# foo', '# BOT-TAG:NO_PRUNE'], 'release-R88-13597.B', 88)
-        return BuilderInfo(comments=comments, branch_name=branch_name,
-                           milestone=milestone)
-
-      pruneable = []
-      builder_info = {}
-      for builder in builders:
-        info = get_builder_info(builder)
-        if not info:
-          raise StepFailure("couldn't get builder info")
-        builder_info[builder] = info
-        if info.milestone > 0 and "# BOT-TAG:NO_PRUNE" not in info.comments:
-          pruneable.append(builder)
-
-      if len(pruneable) <= self._keep_n_milestones:
-        return file_contents
-
-      pruneable = sorted(pruneable, key=lambda b: builder_info[b].milestone)
-      # Prune appopriate number of builders in ascending order of milestone.
-      for i in range(len(pruneable) - self._keep_n_milestones):
-        new_legacy_block = legacy_block.replace(pruneable[i], '')
-        file_contents = file_contents.replace(legacy_block, new_legacy_block)
-        legacy_block = new_legacy_block
-      # Clean up leading newlines in case we pruned the leading block.
-      file_contents = re.sub(r'RELEASES = \[(\s*\n)*', 'RELEASES = [\n',
-                             file_contents)
-
-      return file_contents
-
   def _create_change(self, project, project_path, commit_message):
     with self.m.step.nest(
         'commit in {}'.format(project)), self.m.context(cwd=project_path):
@@ -218,84 +126,75 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
           self.m.gerrit.Label.COMMIT_QUEUE: 2,
       })
 
-  def update_config(self, release_branch):
+  def update_config(self, branch):
     """Creates CLs updating config file to include new release branch.
 
     While Rubik is being turned-up, this endpoint modifies both the legacy
     config in chromite as well as the Rubik starlark config in infra/config.
 
     Args:
-    release_branch (str): Release branch, e.g. "release-R89-13729.B".
+    branch (str): Release or stabilize branch, e.g. "release-R89-13729.B" or
+      "stabilize-15129.B".
 
     """
-    workpath = self.m.cros_source.workspace_path
+    milestone = None
+    with self.m.step.nest('validate branch'):
+      if not branch.startswith('release-') and not branch.startswith(
+          'stabilize-'):
+        raise StepFailure(
+            "{} is not a release or stabilize branch".format(branch))
 
-    projects = [self.LEGACY_CONFIG_PROJECT, self.CONFIG_PROJECT]
-    project_path = {}
-
-    with self.m.step.nest('validate release_branch'):
-      milestone = self._extract_milestone(release_branch)
-      if not milestone:
-        raise StepFailure("bad release_branch")
+      is_release_branch = branch.startswith('release-')
+      if is_release_branch:
+        with self.m.step.nest('validate release branch'):
+          milestone = self._extract_milestone(branch)
+          if not milestone:
+            raise StepFailure("bad release branch")
 
     with self.m.step.nest('validate CL settings'):
       if not self._reviewers and not self._auto_submit:
         raise StepFailure("no reviewers specified and auto submit is false")
 
+    workpath = self.m.cros_source.workspace_path
+    projects = [self.CONFIG_PROJECT]
+    project_path = {}
     with self.m.step.nest('get project info'):
       with self.m.context(cwd=workpath):
         project_infos = self.m.repo.project_infos(projects=projects)
         for project in project_infos:
           project_path[project.name] = workpath.join(project.path)
 
-    with self.m.step.nest('update legacy config'):
-      legacy_path = project_path[self.LEGACY_CONFIG_PROJECT]
-      with self.m.context(cwd=legacy_path):
-        file_path = legacy_path.join(LEGACY_CONFIG)
-        contents = six.ensure_str(
-            self.m.file.read_raw('read {}'.format(LEGACY_CONFIG), file_path))
-
-        p = re.compile(r'RELEASES = \[\n')
-        contents = p.sub(
-            "RELEASES = [{}\n".format(
-                LEGACY_RELEASE_BLOCK_TEMPLATE.format(release_branch)), contents)
-        contents = self._prune_legacy_config(contents)
-        self.m.file.write_raw('write {}'.format(LEGACY_CONFIG), file_path,
-                              contents)
-
-        # Refresh generated files.
-        self.m.step('./config/refresh_generated_files',
-                    ['./config/refresh_generated_files'])
-
     with self.m.step.nest('update config'):
       config_path = project_path[self.CONFIG_PROJECT]
       with self.m.context(cwd=config_path):
-        file_path = config_path.join(CONFIG)
+        config_file = CONFIG if is_release_branch else STABILIZE_CONFIG
+        file_path = config_path.join(config_file)
 
-        release_builders = self.m.file.read_proto('read {}'.format(CONFIG),
+        release_builders = self.m.file.read_proto('read {}'.format(config_file),
                                                   file_path, ReleaseBuilders,
                                                   'TEXTPB',
                                                   test_proto=TEST_DATA)
-        # Query chromiumdash to see if the branch is LTS.
-        branch_metadata = self.m.cros_schedule.json_to_proto(
-            self.m.cros_schedule.fetch_chromiumdash_schedule(
-                start_mstone=milestone, fetch_n=1)).mstones[0]
         expiration_date = None
-        if branch_metadata.ltr_last_refresh_date and branch_metadata.ltr_last_refresh_date.ToSeconds(
-        ):
-          expiration_date = ReleaseBuilder.Date(
-              value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
-                     datetime.timedelta(days=14)).strftime("%Y-%m-%d"))
+        if is_release_branch:
+          # Query chromiumdash to see if the branch is LTS.
+          branch_metadata = self.m.cros_schedule.json_to_proto(
+              self.m.cros_schedule.fetch_chromiumdash_schedule(
+                  start_mstone=milestone, fetch_n=1)).mstones[0]
+          if branch_metadata.ltr_last_refresh_date and branch_metadata.ltr_last_refresh_date.ToSeconds(
+          ):
+            expiration_date = ReleaseBuilder.Date(
+                value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
+                       datetime.timedelta(days=14)).strftime("%Y-%m-%d"))
 
         # Append new builder for specified branch.
         new_builder = ReleaseBuilder(
-            milestone=ReleaseBuilder.Milestone(branch_name=release_branch,
+            milestone=ReleaseBuilder.Milestone(branch_name=branch,
                                                number=milestone),
             expiration_date=expiration_date)
         release_builders = ReleaseBuilders(
             builders=list(release_builders.builders) + [new_builder])
         release_builders = self._prune_builders(release_builders)
-        self.m.file.write_proto('write {}'.format(CONFIG), file_path,
+        self.m.file.write_proto('write {}'.format(config_file), file_path,
                                 release_builders, 'TEXTPB')
 
         # Regenerate config.
@@ -308,7 +207,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         for project in projects:
           proj_path = project_path[project]
           commit_lines = [
-              'Update config to include {}'.format(release_branch),
+              'Update config to include {}'.format(branch),
               '',
               'Generated by brancher, see {} for job details.'.format(
                   self.m.buildbucket.build_url()),
@@ -318,36 +217,3 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
           ]
           commit_message = '\n'.join(commit_lines) + '\n'
           self._create_change(project, proj_path, commit_message)
-
-    # Have to do this step after so as to not conflict with the ToT chromite
-    # changes.
-    with self.m.step.nest('update R%d chromite android config' % milestone):
-      chromite_path = project_path[self.LEGACY_CONFIG_PROJECT]
-      with self.m.context(cwd=chromite_path):
-        with self.m.git.head_context():
-          self.m.git.fetch('cros', refs=[release_branch])
-          self.m.git.checkout(release_branch)
-
-          self.m.step('update ANDROID_PI_BUILD_BRANCH', [
-              'sed', '-i',
-              's/git_pi-arc/git_pi-arc-m%d/g' % milestone, CHROMITE_ANDROID
-          ])
-          self.m.step('update ANDROID_VMRVC_BUILD_BRANCH', [
-              'sed', '-i',
-              's/git_rvc-arc/git_rvc-arc-m%d/g' % milestone, CHROMITE_ANDROID
-          ])
-          self.m.step('./config/refresh_generated_files',
-                      ['./config/refresh_generated_files'])
-          commit_lines = [
-              'Point M{0} ARC to pi-arc-m{0} and rvc-arc-m{0}'.format(
-                  milestone),
-              '',
-              'Generated by brancher, see {} for job details.'.format(
-                  self.m.buildbucket.build_url()),
-              '',
-              'BUG=None',
-              'TEST=None',
-          ]
-          commit_message = '\n'.join(commit_lines) + '\n'
-          self._create_change(self.LEGACY_CONFIG_PROJECT, chromite_path,
-                              commit_message)
