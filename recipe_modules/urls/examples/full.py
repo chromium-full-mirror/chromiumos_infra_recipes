@@ -88,7 +88,7 @@ def RunSteps(api):
   task_state = TaskState(life_cycle=TaskState.LIFE_CYCLE_ABORTED,
                          verdict=TaskState.VERDICT_FAILED)
   api.assertions.assertEqual(
-      api.urls.get_state_suffix(task_state), " (was aborted)")
+      api.urls.get_state_suffix(task_state), " (canceled while running)")
   for life_cycle in [
       TaskState.LIFE_CYCLE_CANCELLED, TaskState.LIFE_CYCLE_RUNNING,
       TaskState.LIFE_CYCLE_ABORTED, TaskState.LIFE_CYCLE_REJECTED,

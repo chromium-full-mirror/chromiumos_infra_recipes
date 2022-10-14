@@ -108,13 +108,13 @@ class UrlsApi(recipe_api.RecipeApi):
       str, denoting more information about the task.
     """
     if task_state.life_cycle == TaskState.LIFE_CYCLE_CANCELLED:
-      return ' (was cancelled)'
+      return ' (canceled before starting)'
     if task_state.life_cycle == TaskState.LIFE_CYCLE_RUNNING:
-      return ' (timed out)'
+      return ' (timed out while running)'
     if task_state.life_cycle == TaskState.LIFE_CYCLE_ABORTED:
-      return ' (was aborted)'
+      return ' (canceled while running)'
     if task_state.life_cycle == TaskState.LIFE_CYCLE_REJECTED:
-      return ' (was rejected)'
+      return ' (never ran, due to no DUT capacity)'
     if task_state.life_cycle == TaskState.LIFE_CYCLE_PENDING:
       return ' (timed out waiting for available DUT)'
     return ''
