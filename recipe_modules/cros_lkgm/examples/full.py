@@ -27,6 +27,7 @@ def RunSteps(api):
   api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
   build = api.cros_lkgm.schedule_public_build()
+  api.assertions.assertTrue(api.cros_lkgm.has_public_build)
   is_staging = api.cros_infra_config.is_staging
   if is_staging:
     api.assertions.assertEqual(build.builder.builder,

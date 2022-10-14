@@ -2807,13 +2807,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#93)(self):**
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#98)(self):**
 
 Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#121)(self, release_build_results, use_branch=False):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#126)(self, release_build_results, use_branch=False):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 
@@ -2825,7 +2825,11 @@ Args:
   use_branch (bool): if set, upload the LKGM CL to the Chrome branch
     (e.g. refs/branch-heads/5204) instead of ToT.
 
-&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [has\_public\_build](/recipe_modules/cros_lkgm/api.py#48)(self):**
+
+Check if a public build was scheduled.
+
+&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#53)(self):**
 
 Schedules a public build.
 
@@ -6832,7 +6836,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#851)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#855)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6853,7 +6857,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#143)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#306)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#310)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -6884,7 +6888,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#167)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#510)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#514)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -6898,7 +6902,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#780)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#784)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -6913,11 +6917,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#708)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#712)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#714)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#718)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

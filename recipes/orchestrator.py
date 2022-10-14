@@ -95,7 +95,7 @@ def DoRunSteps(api):
     # it requires access to internal repos.
     api.orch_menu.plan_and_run_tests(container_metadata=metadata)
 
-  if api.orch_menu.is_release_orchestrator:
+  if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
     api.cros_lkgm.collect_public_build()
 
     # Publish main-release so SuSch can figure out what ToT is.

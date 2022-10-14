@@ -267,7 +267,11 @@ class OrchMenuApi(RecipeApi):
             self.m.cros_release.create_buildspec(
                 dry_run=is_staging,
                 gs_location=self._properties.buildspec_gs_path, **kwargs)
-            self.m.cros_lkgm.schedule_public_build()
+            branch = config.orchestrator.gitiles_commit.ref
+            if branch.startswith('refs/heads/'):
+              branch = branch[len('refs/heads'):]
+            if self.m.cros_source.is_tot or branch.startswith('release-'):
+              self.m.cros_lkgm.schedule_public_build()
 
         if config and config.id.type == BuilderConfig.Id.PUBLIC:
           self._is_public_orchestrator = True

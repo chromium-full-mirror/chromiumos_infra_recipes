@@ -45,6 +45,11 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     self._public_build_results = None
     super(CrosLkgmApi, self).__init__(*args, **kwargs)
 
+  @property
+  def has_public_build(self):
+    """Check if a public build was scheduled."""
+    return self._public_build is not None
+
   def schedule_public_build(self):
     """Schedules a public build.
 
