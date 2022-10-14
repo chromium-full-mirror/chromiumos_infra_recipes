@@ -1663,7 +1663,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "/tmp/aohiwdadoi/delta.bin"
+      "[CACHE]/cros_chroot/chroot/tmp/aohiwdadoi/delta.bin"
     ],
     "infra_step": true,
     "name": "doing paygen.running paygen operations in parallel.Compute file hash",

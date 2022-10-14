@@ -1571,7 +1571,7 @@
       "@@@STEP_LOG_LINE@request@  \"verify\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"local_path\": \"\", \"remote_uri\": \"\", \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"remote_uri\": \"\", \"success\": true}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1652,7 +1652,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "."
+      "[CACHE]/cros_chroot/chroot/tmp/aohiwdadoi/delta.bin"
     ],
     "infra_step": true,
     "name": "doing paygen.running paygen operations in parallel.Compute file hash",
@@ -1784,7 +1784,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "/tmp/aohiwdadoi/delta.bin"
+      "[CACHE]/cros_chroot/chroot/tmp/aohiwdadoi/delta.bin"
     ],
     "infra_step": true,
     "name": "doing paygen.running paygen operations in parallel.Compute file hash (2)",

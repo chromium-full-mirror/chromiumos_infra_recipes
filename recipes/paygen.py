@@ -114,9 +114,9 @@ def DoRunSteps(api, properties):
         pres.logs['request'] = MessageToJson(request)
 
         paygen_parallel_runner.run_function_async(
-            do_a_paygen, request,
-            success_handler=lambda resp: report_paygen_success_to_snoopy(
-                api, resp) if resp.success else None,
+            do_a_paygen, request, success_handler=lambda resp, req=request,
+            api=api: report_paygen_success_to_snoopy(api, req, resp)
+            if resp.success and not resp.failure_reason else None,
             try_count=_PAYGEN_TRY_COUNT)
 
     errors, total_retries = [], 0
@@ -212,9 +212,10 @@ def initialize_directories(api):
     _retry_chroot_init_wrapper()
 
 
-def report_paygen_success_to_snoopy(api, resp):
+def report_paygen_success_to_snoopy(api, req, resp):
   with api.failures.ignore_exceptions():
-    abspath = api.path.abspath(resp.local_path)
+    abspath = api.path.join(req.generation_request.chroot.path,
+                            resp.local_path.lstrip('/'))
     file_hash = api.file.file_hash(abspath, test_data='deadbeef')
     api.bcid_reporter.report_gcs(file_hash, resp.remote_uri)
 
@@ -278,7 +279,7 @@ def GenTests(api):
               "$chromeos/cros_infra_config":
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
-      generate_payload_response(api),
+      generate_payload_response(api, local_path='/tmp/aohiwdadoi/delta.bin'),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
@@ -307,7 +308,7 @@ def GenTests(api):
                                            applicable_models=['woomax'])
                   ])
           ])),
-      generate_payload_response(api),
+      generate_payload_response(api, local_path='/tmp/aohiwdadoi/delta.bin'),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -354,7 +355,7 @@ def GenTests(api):
                                                applicable_models=['woomax'])
                       ])
               ], max_concurrent_requests=1)),
-      generate_payload_response(api),
+      generate_payload_response(api, local_path='/tmp/aohiwdadoi/delta.bin'),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
