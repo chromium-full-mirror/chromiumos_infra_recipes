@@ -184,6 +184,65 @@ class ResultDBCommand(recipe_api.RecipeApi):
     with self.m.step.nest(step_name):
       self._upload(config, stainless_url)
 
+  def _is_base_build(self, board, image):
+    """Returns True if an image is a base build or False if it's a variant.
+
+    Examples:
+      "brya-cq/R11-123.45" is a base build
+      "brya-kernelnext-cq/R11-123.45" is a variant build
+
+    Args:
+      board (str): e.g. "brya"
+      image (str): e.g. "brya-cq/R11-123.45"
+    """
+    base_build_re = re.compile(r'^([a-z]+)-[a-z]+/R[0-9.\-]+$')
+    match = re.match(base_build_re, image)
+    if not match:
+      return False
+    # Check that the board name is what we expected.
+    if match.group(1) != board:
+      return False
+    return True
+
+  def _get_board_model_realm(self, base_tags):
+    """Gets the board-model realm for this test result.
+
+    Returns '' if no appropriate board-model realm was found.
+
+    Args:
+      base_tags (list): A list of tags for the build.
+    """
+    board = ''
+    model = ''
+    image = ''
+    for tag in base_tags:
+      k, v = tag
+      if k == 'board':
+        board = v
+      if k == 'model':
+        model = v
+      if k == 'image':
+        image = v
+
+    # Exit early if we don't know the board, model, or image.
+    if board == '' or model == '' or image == '':
+      return ''
+
+    # If the image is running a variant, don't use the board-model realm.
+    # TODO(b/251688396): Share board variants once we've audited them.
+    if not self._is_base_build(board, image):
+      return ''
+
+    # TODO(b/251688396): Also handle multi-DUT tests.
+
+    available_realms = self.m.cros_infra_config.get_realms_list()
+    realm = '{}-{}'.format(board, model)
+
+    if realm in available_realms:
+      return 'chromeos:' + realm
+
+    return ''
+
   def _upload(self, config, stainless_url=None):
     """Call the ResultDB module to upload test result
 
@@ -223,20 +282,10 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # result file from the test runs.
     rdb_cmd = result_adapter + ['--'] + ['echo']
 
-    realm = ''
-    board = ''
-    model = ''
     base_tags = config.get('base_tags', [])
-    for tag in base_tags:
-      k, v = tag
-      if k == 'board':
-        board = v
-      if k == 'model':
-        model = v
-    # TODO(b/251688396): remove this hardcoded model for testing and replace
-    # with a general solution for all models.
-    if board == 'brya' and model == 'taeko':
-      realm = 'chromeos:brya-taeko'
+    # See if this test result should be uploaded into a board-model realm
+    # so that partners working on that model can see it.
+    realm = self._get_board_model_realm(base_tags)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(

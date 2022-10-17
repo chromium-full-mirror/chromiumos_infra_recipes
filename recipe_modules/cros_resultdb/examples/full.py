@@ -84,9 +84,81 @@ def GenTests(api):
       api.properties(
           rdb_config=api.json.dumps({
               'result_format': 'gtest',
-              'base_tags': [('test_suite',
-                             'fake-suite'), ('board', 'brya'), ('model',
-                                                                'taeko')],
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'brya'),
+                  ('model', 'taeko'),
+                  ('image', 'brya-cq/R11-123.45'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'brya',
+                  'build': 'brya-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'variant-per-model-realm',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'gtest',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'brya'),
+                  ('model', 'taeko'),
+                  ('image', 'brya-arc-r-cq/R11-123.45'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'brya',
+                  'build': 'brya-arc-r-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'mismatched-image-and-board',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'gtest',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'brya'),
+                  ('model', 'taeko'),
+                  ('image', 'eve-cq/R11-123.45'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'brya',
+                  'build': 'eve-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'missing-per-model-realm',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'gtest',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'brya'),
+                  ('model', 'badmodel'),
+                  ('image', 'brya-cq/R11-123.45'),
+              ],
               'base_variant': {
                   'test_suite': 'fake-suite',
                   'board': 'brya',

@@ -8,6 +8,7 @@ import six
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
 from google.protobuf.json_format import ParseDict
+from google.protobuf.text_format import Parse as TextFormatParse
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
 from PB.chromiumos.bot_scaling import BotPolicyCfg
@@ -19,6 +20,7 @@ from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
+from PB.go.chromium.org.luci.common.proto.realms.realms_config import RealmsCfg
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
@@ -215,6 +217,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         repo, filename + '.binaryproto', branch=self._config_ref,
         step_test_data=step_test_data, timeout=timeout or
         self.test_api.gitiles_timeout_seconds)
+
+  @exponential_retry(retries=3,
+                     condition=lambda e: getattr(e, 'had_timeout', False))
+  def get_realms_list(self):
+    """Helper method to fetch the list of chromeos realms from gitiles."""
+    data = self.m.depot_gitiles.download_file(
+        CHROME_OS_INFRA_CONFIG_REPO_URL, 'generated/realms.cfg',
+        branch=self._config_ref,
+        step_test_data=self.test_api.realms_cfg_step_test_data,
+        timeout=self.test_api.gitiles_timeout_seconds)
+    cfg = TextFormatParse(data, RealmsCfg())
+    return [r.name for r in cfg.realms]
 
   def _fetch_builder_configs(self):
     """Helper method to fetch the builder configs file.

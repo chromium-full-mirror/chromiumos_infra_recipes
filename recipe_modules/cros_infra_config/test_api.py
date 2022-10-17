@@ -54,6 +54,15 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     # Humans can edit the JSON file for test data, impl reads binary proto.
     return self._read_config('test_builder_configs.json', BuilderConfigs())
 
+  def realms_cfg_step_test_data(self):
+    """A function for step_test_data to generate LUCI realms."""
+    with open(
+        os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            'test_model_realms.cfg')) as f:
+      data = f.read().strip()
+    return self.m.depot_gitiles.make_encoded_file(data)
+
   def bot_policy_test_data(self):
     """A function for step_test_data to generate BotPolicies."""
     # Humans can edit the JSON file for test data, impl reads binary proto.
