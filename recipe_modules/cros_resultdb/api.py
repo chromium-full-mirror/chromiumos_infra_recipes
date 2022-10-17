@@ -184,6 +184,37 @@ class ResultDBCommand(recipe_api.RecipeApi):
     with self.m.step.nest(step_name):
       self._upload(config, stainless_url)
 
+  def _get_board_model_realm(self, base_tags):
+    """Gets the board-model realm for this test result.
+
+    Returns '' if no appropriate board-model realm was found.
+
+    Args:
+      base_tags (list): A list of tags for the build.
+    """
+    board = ''
+    model = ''
+    for tag in base_tags:
+      k, v = tag
+      if k == 'board':
+        board = v
+      if k == 'model':
+        model = v
+
+    # Exit early if we don't know the board or model.
+    if board == '' or model == '':
+      return ''
+
+    # TODO(b/251688396): Also handle board variants and multi-DUT tests.
+
+    available_realms = self.m.cros_infra_config.get_realms_list()
+    realm = '{}-{}'.format(board, model)
+
+    if realm in available_realms:
+      return 'chromeos:' + realm
+
+    return ''
+
   def _upload(self, config, stainless_url=None):
     """Call the ResultDB module to upload test result
 
@@ -223,20 +254,10 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # result file from the test runs.
     rdb_cmd = result_adapter + ['--'] + ['echo']
 
-    realm = ''
-    board = ''
-    model = ''
     base_tags = config.get('base_tags', [])
-    for tag in base_tags:
-      k, v = tag
-      if k == 'board':
-        board = v
-      if k == 'model':
-        model = v
-    # TODO(b/251688396): remove this hardcoded model for testing and replace
-    # with a general solution for all models.
-    if board == 'brya' and model == 'taeko':
-      realm = 'chromeos:brya-taeko'
+    # See if this test result should be uploaded into a board-model realm
+    # so that partners working on that model can see it.
+    realm = self._get_board_model_realm(base_tags)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
