@@ -1332,6 +1332,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
   """
   result = None
   run_test_response = None
+  results_dir = ""
 
   try:
     prejob_response = interface.submit_pre_job(test_metadata, max_duration_sec)
@@ -1347,7 +1348,6 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       #  /recipe_cleanup/output_dirWVny4f
       #  /cros-test/artifact/tauto
       #  /results-1-bluetooth_AdapterAdvHealth.adv_reboot_advertising_test"
-      results_dir = ""
       if len(run_test_response.test_dut_responses) > 0:
         ctr_test_response = run_test_response.test_dut_responses[0].data
         results_dir = ctr_test_response.result_dir_path.path
@@ -1381,8 +1381,9 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     interface.submit_post_job()
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
                      result=result)
-    api.cts_results_archive.archive(
-        interface.get_results_directory(test_metadata))
+    # TODO(b/252945582): Handle multiple test results if needed
+    if results_dir:
+      api.cts_results_archive.archive(results_dir)
 
     interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
