@@ -59,6 +59,7 @@
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
   * [exonerate](#recipe_modules-exonerate) (Python3 ✅)
   * [failures](#recipe_modules-failures) (Python3 ✅) &mdash; API for raising failures and presenting them in cute ways.
+  * [future_utils](#recipe_modules-future_utils) (Python3 ✅)
   * [gce_provider](#recipe_modules-gce_provider) (Python3 ✅)
   * [gcloud](#recipe_modules-gcloud) (Python3 ✅)
   * [gerrit](#recipe_modules-gerrit) (Python3 ✅) &mdash; APIs for managing Gerrit changes.
@@ -356,6 +357,10 @@
   * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures) (Python3 ✅)
   * [failures:examples/vm_test_failures](#recipes-failures_examples_vm_test_failures) (Python3 ✅)
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) (Python3 ✅) &mdash; Recipe that schedules child builders and watches for failures.
+  * [future_utils:tests/error_handler](#recipes-future_utils_tests_error_handler) (Python3 ✅) &mdash; Tests to verify future_utils error handling.
+  * [future_utils:tests/happy_path](#recipes-future_utils_tests_happy_path) (Python3 ✅) &mdash; Tests to verify future_utils happy path.
+  * [future_utils:tests/retries](#recipes-future_utils_tests_retries) (Python3 ✅) &mdash; Tests to verify future_utils retries.
+  * [future_utils:tests/success_handler](#recipes-future_utils_tests_success_handler) (Python3 ✅) &mdash; Tests to verify future_utils success handler.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) (Python3 ✅) &mdash; An experimental recipe for running GCE tests.
@@ -450,6 +455,7 @@
   * [paygen_testing:examples/create_paygen_build_report](#recipes-paygen_testing_examples_create_paygen_build_report) (Python3 ✅)
   * [paygen_testing:examples/schedule_au_tests](#recipes-paygen_testing_examples_schedule_au_tests) (Python3 ✅)
   * [paygen_testing:examples/test_config](#recipes-paygen_testing_examples_test_config) (Python3 ✅)
+  * [paygen_testing:tests/set_up_paygen_test_configs](#recipes-paygen_testing_tests_set_up_paygen_test_configs) (Python3 ✅) &mdash; Tests to verify paygen_testing.
   * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image) (Python3 ✅)
   * [phosphorus:examples/full](#recipes-phosphorus_examples_full) (Python3 ✅)
   * [portage:examples/full](#recipes-portage_examples_full) (Python3 ✅)
@@ -5042,6 +5048,77 @@ Args:
 Returns:
   updated_failures (list[Failure]): The list of Failures with 'fatal'
     statuses possibly updated.
+### *recipe_modules* / [future\_utils](/recipe_modules/future_utils)
+
+[DEPS](/recipe_modules/future_utils/__init__.py#6): [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [FutureUtilsApi](/recipe_modules/future_utils/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to run things in parallel.
+
+This module is intended to be used by any task that should run async. It
+supports maximum concurrency, and also waits for responses if asked to.
+
+The biggest draw of using this module is the pairing of request object to
+response object. As such, it differs from the futures interface by requiring
+request be a single object. This object could easily be a dict for multiple
+inputs if needed.
+
+Usage:
+```
+runner = api.future_utils.create_parallel_runner(2)
+# First function.
+runner.run_function_async(
+  lambda req, _: "response 1",
+  "request 1",
+)
+# Second function (in parallel).
+runner.run_function_async(
+  lambda req, _: "response 2",
+  "request 2",
+)
+# Third function (will run after one of the first two completes).
+runner.run_function_async(
+  lambda req, _: "response 3",
+  "request 3",
+)
+# Get responses.
+responses = runner.wait_for_and_get_responses()
+assert responses == [
+  CallResponse('request 1', 'response 1', 1),
+  CallResponse('request 2', 'response 2', 1),
+  CallResponse('request 3', 'response 3', 1),
+]
+```
+
+For more options, read the docs of ParallelRunner below.
+
+&emsp; **@staticmethod**<br>&mdash; **def [create\_custom\_response](/recipe_modules/future_utils/api.py#75)(req, resp, call_count, errored=False):**
+
+Create a custom CallResponse, for convenience in logic.
+
+Args:
+  req: request object to include.
+  resp: response object to include.
+  call_count: number of calls.
+  errored: whether the call errored or not.
+
+Returns:
+  A custom CallResponse for the given properties.
+
+&mdash; **def [create\_parallel\_runner](/recipe_modules/future_utils/api.py#56)(self, max_concurrent_requests=None):**
+
+Create a parallel runner, bounded to the provided number of concurrency.
+
+Args:
+  max_concurrent_requests: max number of requests to run in parallel.
+    Defaults to None, which means unlimited.
+
+Returns:
+  A ParallelRunner that can be used to kick off async jobs, and wait for
+    them to resolve.
 ### *recipe_modules* / [gce\_provider](/recipe_modules/gce_provider)
 
 [DEPS](/recipe_modules/gce_provider/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/futures][recipe_engine/recipe_modules/futures]
@@ -7172,7 +7249,7 @@ API for working with Paygen testing. Used by paygen.py.
 
 A module for CrOS-specific paygen steps.
 
-&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#513)(self, paygen_test_configs):**
+&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#568)(self, paygen_test_configs):**
 
 Takes in paygen test configs and creates au test requests.
 
@@ -7212,7 +7289,7 @@ Returns:
   A PaygenTestConfig or None if no source payload exists or unsupported
   Payload provided.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#545)(self, paygen_test_configs):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#600)(self, paygen_test_configs):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -7227,6 +7304,22 @@ Args:
 
 Returns:
   The scheduled buildbucket build.
+
+&mdash; **def [set\_up\_paygen\_test\_configs](/recipe_modules/paygen_testing/api.py#513)(self, request, response):**
+
+Set up test configs for a paygen response, if applicable.
+
+Given a PaygenRequest and a GenerationResponse, determine if this payload
+should have testing applied and if so set up and return the test configs
+to be scheduled.
+
+Args:
+  api (RecipeApi): recipe api to use for step operations.
+  request (PaygenRequest): request object to introspect.
+  response (GenerationResponse): response from payload generation.
+
+Returns:
+  [PaygenTestConfig] list of paygen test configs to schedule.
 ### *recipe_modules* / [phosphorus](/recipe_modules/phosphorus)
 
 [DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -10762,6 +10855,42 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe that schedules child builders and watches for failures.
 
 &mdash; **def [RunSteps](/recipes/firmware_cq_orchestrator.py#29)(api):**
+### *recipes* / [future\_utils:tests/error\_handler](/recipe_modules/future_utils/tests/error_handler.py)
+
+[DEPS](/recipe_modules/future_utils/tests/error_handler.py#9): [future\_utils](#recipe_modules-future_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests to verify future_utils error handling.
+
+&mdash; **def [RunSteps](/recipe_modules/future_utils/tests/error_handler.py#18)(api):**
+### *recipes* / [future\_utils:tests/happy\_path](/recipe_modules/future_utils/tests/happy_path.py)
+
+[DEPS](/recipe_modules/future_utils/tests/happy_path.py#9): [future\_utils](#recipe_modules-future_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests to verify future_utils happy path.
+
+&mdash; **def [RunSteps](/recipe_modules/future_utils/tests/happy_path.py#18)(api):**
+### *recipes* / [future\_utils:tests/retries](/recipe_modules/future_utils/tests/retries.py)
+
+[DEPS](/recipe_modules/future_utils/tests/retries.py#9): [future\_utils](#recipe_modules-future_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests to verify future_utils retries.
+
+&mdash; **def [RunSteps](/recipe_modules/future_utils/tests/retries.py#18)(api):**
+### *recipes* / [future\_utils:tests/success\_handler](/recipe_modules/future_utils/tests/success_handler.py)
+
+[DEPS](/recipe_modules/future_utils/tests/success_handler.py#9): [future\_utils](#recipe_modules-future_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests to verify future_utils success handler.
+
+&mdash; **def [RunSteps](/recipe_modules/future_utils/tests/success_handler.py#18)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#8): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -11465,13 +11594,24 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#16)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#26): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_testing](#recipe_modules-paygen_testing), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_testing](#recipe_modules-paygen_testing), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen.py#112)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/paygen.py#70)(api, properties):**
+
+&mdash; **def [RunSteps](/recipes/paygen.py#55)(api, properties):**
+
+&mdash; **def [initialize\_directories](/recipes/paygen.py#175)(api):**
+
+Set up all the directories needed to do paygen.
+
+Args:
+  api (RecipesApi): api object to use.
+
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#215)(api, resp):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/examples/full.py#10): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11558,6 +11698,15 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 &mdash; **def [RunSteps](/recipe_modules/paygen_testing/examples/test_config.py#28)(api, properties):**
+### *recipes* / [paygen\_testing:tests/set\_up\_paygen\_test\_configs](/recipe_modules/paygen_testing/tests/set_up_paygen_test_configs.py)
+
+[DEPS](/recipe_modules/paygen_testing/tests/set_up_paygen_test_configs.py#12): [cros\_storage](#recipe_modules-cros_storage), [gitiles](#recipe_modules-gitiles), [paygen\_testing](#recipe_modules-paygen_testing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests to verify paygen_testing.set_up_paygen_test_configs.
+
+&mdash; **def [RunSteps](/recipe_modules/paygen_testing/tests/set_up_paygen_test_configs.py#37)(api, properties):**
 ### *recipes* / [phosphorus:examples/build\_parallels\_image](/recipe_modules/phosphorus/examples/build_parallels_image.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/build_parallels_image.py#8): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

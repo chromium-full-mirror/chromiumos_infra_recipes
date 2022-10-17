@@ -14,6 +14,7 @@ from PB.chromite.api.payload import Build as Build_pb2
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import GenerationRequest as GenerationRequest_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
+from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
 from recipe_engine import recipe_test_api
 
@@ -78,6 +79,19 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
 
   TEST_TARGET_TEST_REQUIREMENTS_DATA = TEST_TARGET_TEST_REQUIREMENTS_DATA
 
+  SIGNED_SRC = SignedImage_pb2(
+      build=Build_pb2(
+          build_target=BuildTarget_pb2(name='coral'), version='13421.89.0',
+          bucket='b', channel='stable-channel'),
+      image_type=common_pb2.IMAGE_TYPE_RECOVERY,
+  )
+
+  SIGNED_TGT = SignedImage_pb2(
+      build=Build_pb2(
+          build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
+          bucket='b', channel='stable-channel'),
+      image_type=common_pb2.IMAGE_TYPE_RECOVERY)
+
   UNSIGNED_TGT = UnsignedImage_pb2(
       build=Build_pb2(
           build_target=BuildTarget_pb2(name='coral'), version='13425.90.0',
@@ -135,6 +149,19 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
     ]
 
   @property
+  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_NO_DRYRUN(self):
+    return [
+        GenerationRequest_pb2(
+            full_update=True,
+            tgt_unsigned_image=self.UNSIGNED_TGT,
+            bucket='b',
+            verify=True,
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+        )
+    ]
+
+  @property
   def EXAMPLE_GEN_REQUEST_FULL_DLC(self):
     return [
         GenerationRequest_pb2(
@@ -160,6 +187,23 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
         ),
         GenerationRequest_pb2(src_unsigned_image=self.UNSIGNED_TGT,
                               tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                              verify=True, dryrun=False,
+                              chroot=self.m.cros_sdk.chroot(), minios=True)
+    ]
+
+  @property
+  def EXAMPLE_GEN_REQUESTS_DELTA_SIGNED(self):
+    return [
+        GenerationRequest_pb2(
+            src_signed_image=self.SIGNED_SRC,
+            tgt_signed_image=self.SIGNED_TGT,
+            bucket='b',
+            verify=True,
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+        ),
+        GenerationRequest_pb2(src_signed_image=self.SIGNED_SRC,
+                              tgt_signed_image=self.SIGNED_TGT, bucket='b',
                               verify=True, dryrun=False,
                               chroot=self.m.cros_sdk.chroot(), minios=True)
     ]

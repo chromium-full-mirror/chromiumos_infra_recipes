@@ -122,7 +122,5 @@ def GenTests(api):
   # TODO(b/243580346): While I work on untangling the code here, we have these
   # mock methods being used in paygen.py but not triggering coverage. Call them
   # here so coverage is satisfied.
-  _ = api.paygen_testing.EXAMPLE_GEN_REQUEST_DELTA_DLC
   _ = api.paygen_testing.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED
-  _ = api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC
   _ = api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N

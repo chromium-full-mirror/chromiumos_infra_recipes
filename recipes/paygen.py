@@ -5,7 +5,6 @@
 
 """Recipe for generating ChromeOS payloads (AU deltas etc)."""
 
-from collections import namedtuple
 import datetime
 import json
 
@@ -27,7 +26,6 @@ DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/file',
-    'recipe_engine/futures',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -41,6 +39,7 @@ DEPS = [
     'cros_storage',
     'easy',
     'failures',
+    'future_utils',
     'git',
     'gitiles',
     'naming',
@@ -53,62 +52,6 @@ PROPERTIES = PaygenProperties
 # Number of total tries on individual paygen jobs to attempt.
 _PAYGEN_TRY_COUNT = 2
 
-
-def _set_up_test_configs(api, request, response):
-  """Set up test configs for a paygen response, if applicable.
-
-  Given a PaygenRequest and a GenerationResponse, determine if this payload
-  should have testing applied and if so set up and return the test configs
-  to be scheduled.
-
-  Args:
-    api (RecipeApi): recipe api to use for step operations.
-    request (PaygenRequest): request object to introspect.
-    response (GenerationResponse): response from payload generation.
-
-  Returns:
-    [PaygenTestConfig] list of paygen test configs to schedule.
-  """
-  with api.step.nest('setting up paygen test config') as presentation:
-    if request.generation_request.dryrun:
-      presentation.step_text = 'dry run, skip testing'
-      return None
-    if not request.autoupdate_test_configs:
-      presentation.step_text = 'no test configured, skip testing'
-      return None
-    if request.generation_request.WhichOneof(
-        'tgt_image_oneof') != 'tgt_unsigned_image':
-      raise StepFailure(
-          'autoupdate tests can only be run on payloads with unsigned images')
-
-    paygen_test_configs = []
-
-    milestone = request.generation_request.tgt_unsigned_image.milestone
-    # Since paygen supports being given a bucket for the source image, we need
-    # need to make sure to use that same bucket for testing so we can actually
-    # download the source image and use it. (This primarily impacts staging,
-    # where we may not have older versions in the throwaway bucket so we instead
-    # use the prod bucket.)
-    src_bucket = request.generation_request.src_unsigned_image.build.bucket or \
-                 request.generation_request.tgt_unsigned_image.build.bucket
-    tgt_payload = (
-        # Notice FullPayload doesn't get a bucket. That's because a full payload
-        # source is created in paygen_testing.create_paygen_test_config().
-        api.cros_storage.FullPayload.parse_uri(response.remote_uri, milestone)
-        or api.cros_storage.DeltaPayload.parse_uri(response.remote_uri,
-                                                   milestone, src_bucket))
-    for test_config in request.autoupdate_test_configs:
-      paygen_test_configs.append(
-          api.paygen_testing.create_paygen_test_config(
-              tgt_payload, src_version=test_config.src_version,
-              src_channel=test_config.src_channel,
-              delta_type=test_config.delta_type,
-              applicable_models=test_config.applicable_models,
-              src_bucket=src_bucket))
-
-    return paygen_test_configs
-
-
 def RunSteps(api, properties):
   api.easy.log_parent_step()
   with api.failures.ignore_exceptions():
@@ -120,150 +63,160 @@ def RunSteps(api, properties):
   with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('fetch')
-    with api.step.nest('initialization'):
 
-      # Sync the paygen manifest group.
-      api.cros_source.ensure_synced_cache(
-          init_opts={'groups': ['paygen']},
-          cache_path_override=api.src_state.workspace_path,
-      )
-
-      config_path = api.cros_source.workspace_path.join('src/config-internal')
-
-      # Repo leaves directories around... See: project.py "DeleteWorktree".
-      api.step('remove repo cruft', ['rm', '-rf', config_path])
-
-      config_internal_branch = 'main' if (
-          'snapshot' in api.cros_source.manifest_branch
-      ) else api.cros_source.manifest_branch
-
-      # Pull config-internal seperately. This repo has a huge history that we
-      # can't delete (as it would break manifests). Therefore we want to clone
-      # alone at depth=1.
-      with api.step.nest('clone config-internal from {} branch'.format(
-          config_internal_branch)):
-        api.git.clone(
-            'https://chrome-internal.googlesource.com/chromeos/config-internal',
-            branch=config_internal_branch, target_path=config_path, depth=1)
-
-      # Create chroot, with retries!
-      @exponential_retry(retries=3, delay=datetime.timedelta(seconds=300))
-      def _retry_chroot_init_wrapper():
-        api.cros_sdk.create_chroot(version=None, use_image=False,
-                                   timeout_sec=None)
-
-      _retry_chroot_init_wrapper()
+    DoRunSteps(api, properties)
 
 
-    # Set up holder objects.
-    paygen_test_configs, payloads = [], []
+def DoRunSteps(api, properties):
+  # Set up builder state.
+  initialize_directories(api)
+  # Set up holder objects.
+  paygen_test_configs, payloads = [], []
 
-    CallPair = namedtuple('CallPair', ['req', 'resp', 'call_count'])
-
-    def _execute_paygen(req, semaphore):
-      """Executes a paygen call to build-api, retrying to _PAYGEN_TRY_COUNT
-
-      Returns:
-        CallPair that contains the request and either the response, or the
-            exception that was thrown, followed by the try count.
-      """
-      num_tries = 0
-      last_err = None
-      while num_tries < _PAYGEN_TRY_COUNT:
-        try:
-          with semaphore:
-            suffix = '' if not num_tries else ' retry ({})'.format(num_tries)
-            num_tries += 1
-            # Make the call to generate payload.
-            resp = api.cros_build_api.PayloadService.GeneratePayload(
-                req.generation_request,
-                name='making single payload{}'.format(suffix),
-                step_text=api.naming.get_generation_request_title(
-                    MessageToDict(req).get('generationRequest', {})))
-            if resp.success:
-              with api.failures.ignore_exceptions():
-                abspath = api.path.abspath(resp.local_path)
-                file_hash = api.file.file_hash(abspath, test_data='deadbeef')
-                api.bcid_reporter.report_gcs(file_hash, resp.remote_uri)
-
-            return CallPair(req, resp, num_tries)
-        except StepFailure as e:
-          last_err = e
-      return CallPair(req, last_err, num_tries)
-
-    with api.step.nest('doing paygen') as presentation:
-      with api.failures.ignore_exceptions():
-        api.bcid_reporter.report_stage('compile')
-
-      # Get max number of concurrent requests - None is unlimited.
-      max_concurrent_requests = properties.max_concurrent_requests or len(
-          properties.requests)
-      semaphore_for_requests = api.futures.make_bounded_semaphore(
-          max_concurrent_requests)
-      presentation.step_text = 'number of concurrent requests: {}'.format(
-          max_concurrent_requests)
-
-      # Iterate through every request.
-      futures = []
-      with api.step.nest('running paygen operations in parallel') as pres:
-        for request in properties.requests:
-          pres.logs['request'] = MessageToJson(request)
-          # Execute build api endpoint for paygen.
-          futures.append(
-              api.m.futures.spawn(_execute_paygen, request,
-                                  semaphore_for_requests))
-
-      errors, total_retries = [], 0
-      for f in api.m.futures.iwait(futures):
-        f_result = f.result()
-
-        response = f_result.resp
-        request = f_result.req
-
-        total_retries += f_result.call_count - 1
-
-        # If an exception was thrown, add it to errors and move on to the next
-        # request.
-        if isinstance(response, StepFailure):
-          errors.append(f_result)
-          continue
-
-        if response.failure_reason:
-          # See go/rubik-must-paygen-minios for more info about minios skips.
-          if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
-            presentation.step_text = 'not compatible with miniOS, skipping'
-            continue
-          errors.append(
-              CallPair(request, StepFailure(response.failure_reason),
-                       f_result.call_count))
-
-        report_payload = api.paygen_testing.create_paygen_build_report_payload(
-            request, response.remote_uri)
-        if report_payload:
-          payloads.append(report_payload)
-
-        test_configs = _set_up_test_configs(api, request, response)
-        if test_configs:
-          paygen_test_configs.extend(test_configs)
-
-      api.easy.set_properties_step(
-          payloads=[MessageToDict(payload) for payload in payloads])
-      api.easy.set_properties_step(paygen_retries=total_retries)
-
-      if errors:
-        raise StepFailure('paygen failed with errors: {}'.format('\n'.join([
-            '{request} - {error}'.format(
-                request=api.naming.get_generation_request_title(
-                    MessageToDict(x.req).get('generationRequest', {})),
-                error=x.resp) for x in errors
-        ])))
-
+  with api.step.nest('doing paygen') as presentation:
     with api.failures.ignore_exceptions():
-      api.bcid_reporter.report_stage('upload-complete')
-    if paygen_test_configs:
-      # Test all paygens.
-      with api.step.nest('testing paygen'):
-        api.paygen_testing.schedule_au_tests(paygen_test_configs)
+      api.bcid_reporter.report_stage('compile')
+
+    # Get max number of concurrent requests - None is unlimited.
+    max_concurrent_requests = properties.max_concurrent_requests or len(
+        properties.requests)
+    presentation.step_text = 'number of concurrent requests: {}'.format(
+        max_concurrent_requests)
+    # Create a parallel runner with our max number of requests.
+    paygen_parallel_runner = api.future_utils.create_parallel_runner(
+        max_concurrent_requests)
+
+    # Iterate through every request.
+    with api.step.nest('running paygen operations in parallel') as pres:
+
+      # Function to do a single paygen, given a request object.
+      def do_a_paygen(req, tries):
+        """Generate a single payload, given a request object.
+
+        Args:
+          req (PaygenRequest): the request object to generate for.
+          tries (int): the number try we're on.
+
+        Returns:
+          GenerationResponse from payload generation.
+        """
+        # Number of retries doesn't include the first try.
+        suffix = '' if tries == 1 else ' retry ({})'.format(tries - 1)
+        # Execute build api endpoint for paygen.
+        return api.cros_build_api.PayloadService.GeneratePayload(
+            req.generation_request,
+            name='making single payload{}'.format(suffix),
+            step_text=api.naming.get_generation_request_title(
+                MessageToDict(req).get('generationRequest', {})))
+
+      # Go through each request now and do paygen with our parallel runner.
+      for request in properties.requests:
+        pres.logs['request'] = MessageToJson(request)
+
+        paygen_parallel_runner.run_function_async(
+            do_a_paygen, request,
+            success_handler=lambda resp: report_paygen_success_to_snoopy(
+                api, resp) if resp.success else None,
+            try_count=_PAYGEN_TRY_COUNT)
+
+    errors, total_retries = [], 0
+    for paygen_response in paygen_parallel_runner.wait_for_and_get_responses():
+
+      response = paygen_response.resp
+      request = paygen_response.req
+
+      total_retries += paygen_response.call_count - 1
+
+      # If an exception was thrown, add it to errors and move on to the next
+      # request.
+      if paygen_response.errored:
+        errors.append(paygen_response)
+        continue
+
+      if response.failure_reason:
+        # See go/rubik-must-paygen-minios for more info about minios skips.
+        if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
+          presentation.step_text = 'not compatible with miniOS, skipping'
+          continue
+        errors.append(
+            api.future_utils.create_custom_response(
+                request, StepFailure(response.failure_reason),
+                paygen_response.call_count))
+
+      report_payload = api.paygen_testing.create_paygen_build_report_payload(
+          request, response.remote_uri)
+      if report_payload:
+        payloads.append(report_payload)
+
+      test_configs = api.paygen_testing.set_up_paygen_test_configs(
+          request, response)
+      if test_configs:
+        paygen_test_configs.extend(test_configs)
+
+    api.easy.set_properties_step(
+        payloads=[MessageToDict(payload) for payload in payloads])
+    api.easy.set_properties_step(paygen_retries=total_retries)
+
+    if errors:
+      raise StepFailure('paygen failed with errors: {}'.format('\n'.join([
+          '{request} - {error}'.format(
+              request=api.naming.get_generation_request_title(
+                  MessageToDict(x.req).get('generationRequest', {})),
+              error=x.resp) for x in errors
+      ])))
+  with api.failures.ignore_exceptions():
+    api.bcid_reporter.report_stage('upload-complete')
+  if paygen_test_configs:
+    # Test all paygens.
+    with api.step.nest('testing paygen'):
+      api.paygen_testing.schedule_au_tests(paygen_test_configs)
+
+
+def initialize_directories(api):
+  """Set up all the directories needed to do paygen.
+
+  Args:
+    api (RecipesApi): api object to use.
+  """
+  with api.step.nest('initialization'):
+    # Sync the paygen manifest group.
+    api.cros_source.ensure_synced_cache(
+        init_opts={'groups': ['paygen']},
+        cache_path_override=api.src_state.workspace_path,
+    )
+
+    config_path = api.cros_source.workspace_path.join('src/config-internal')
+
+    # Repo leaves directories around... See: project.py "DeleteWorktree".
+    api.step('remove repo cruft', ['rm', '-rf', config_path])
+
+    config_internal_branch = 'main' if (
+        'snapshot' in api.cros_source.manifest_branch
+    ) else api.cros_source.manifest_branch
+
+    # Pull config-internal separately. This repo has a huge history that we
+    # can't delete (as it would break manifests). Therefore we want to clone
+    # alone at depth=1.
+    with api.step.nest(
+        'clone config-internal from {} branch'.format(config_internal_branch)):
+      api.git.clone(
+          'https://chrome-internal.googlesource.com/chromeos/config-internal',
+          branch=config_internal_branch, target_path=config_path, depth=1)
+
+    # Create chroot, with retries!
+    @exponential_retry(retries=3, delay=datetime.timedelta(seconds=300))
+    def _retry_chroot_init_wrapper():
+      api.cros_sdk.create_chroot(version=None, use_image=False,
+                                 timeout_sec=None)
+
+    _retry_chroot_init_wrapper()
+
+
+def report_paygen_success_to_snoopy(api, resp):
+  with api.failures.ignore_exceptions():
+    abspath = api.path.abspath(resp.local_path)
+    file_hash = api.file.file_hash(abspath, test_data='deadbeef')
+    api.bcid_reporter.report_gcs(file_hash, resp.remote_uri)
 
 
 # TODO(crbug.com/1157719): Improve testing mock data. There is a disconnect

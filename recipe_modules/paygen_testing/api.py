@@ -510,6 +510,61 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         quota_scheduler_account=self._quota_scheduler_account,
         quota_scheduler_label_pool=self._quota_scheduler_label_pool)
 
+  def set_up_paygen_test_configs(self, request, response):
+    """Set up test configs for a paygen response, if applicable.
+
+    Given a PaygenRequest and a GenerationResponse, determine if this payload
+    should have testing applied and if so set up and return the test configs
+    to be scheduled.
+
+    Args:
+      api (RecipeApi): recipe api to use for step operations.
+      request (PaygenRequest): request object to introspect.
+      response (GenerationResponse): response from payload generation.
+
+    Returns:
+      [PaygenTestConfig] list of paygen test configs to schedule.
+    """
+    with self.m.step.nest('setting up paygen test config') as presentation:
+      if request.generation_request.dryrun:
+        presentation.step_text = 'dry run, skip testing'
+        return None
+      if not request.autoupdate_test_configs:
+        presentation.step_text = 'no test configured, skip testing'
+        return None
+      if request.generation_request.WhichOneof(
+          'tgt_image_oneof') != 'tgt_unsigned_image':
+        raise StepFailure(
+            'autoupdate tests can only be run on payloads with unsigned images')
+
+      paygen_test_configs = []
+
+      milestone = request.generation_request.tgt_unsigned_image.milestone
+      # Since paygen supports being given a bucket for the source image, we need
+      # need to make sure to use that same bucket for testing so we can actually
+      # download the source image and use it. (This primarily impacts staging,
+      # where we may not have older versions in the throwaway bucket so we instead
+      # use the prod bucket.)
+      src_bucket = request.generation_request.src_unsigned_image.build.bucket or \
+                   request.generation_request.tgt_unsigned_image.build.bucket
+      tgt_payload = (
+          # Notice FullPayload doesn't get a bucket. That's because a full payload
+          # source is created in paygen_testing.create_paygen_test_config().
+          self.m.cros_storage.FullPayload.parse_uri(response.remote_uri,
+                                                    milestone) or
+          self.m.cros_storage.DeltaPayload.parse_uri(response.remote_uri,
+                                                     milestone, src_bucket))
+      for test_config in request.autoupdate_test_configs:
+        paygen_test_configs.append(
+            self.create_paygen_test_config(
+                tgt_payload, src_version=test_config.src_version,
+                src_channel=test_config.src_channel,
+                delta_type=test_config.delta_type,
+                applicable_models=test_config.applicable_models,
+                src_bucket=src_bucket))
+
+      return paygen_test_configs
+
   def create_au_test_tagged_requests(self, paygen_test_configs):
     """Takes in paygen test configs and creates au test requests.
 
