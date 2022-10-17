@@ -21,6 +21,7 @@ def RunSteps(api):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+    api.build_menu.bootstrap_sysroot(config)
     api.build_menu.install_packages(config, env_info.packages)
     api.build_menu.build_and_test_images(config, include_version=True)
     api.build_menu.upload_artifacts(config)
