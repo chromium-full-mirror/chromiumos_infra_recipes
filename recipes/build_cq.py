@@ -73,9 +73,16 @@ def DoRunSteps(api, config):
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
       api.build_menu.create_containers(config)
-      # We have no steps following build_and_test_images, so we don't need to
-      # check the return value.
-      api.build_menu.build_and_test_images(config)
+      # TODO(b/253642578): Experiment running unit tests on only packages
+      # which are affected by the CLs in the CQ run.
+      if api.cros_infra_config.is_staging:
+        api.build_menu.build_images(config)
+        api.build_menu.run_unittests_cl_affected_deps(config)
+        api.build_menu.unit_test_images(config)
+      else:
+        # We have no steps following build_and_test_images, so we don't need to
+        # check the return value.
+        api.build_menu.build_and_test_images(config)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (as stated above there is value in uploading the artifact even
@@ -187,3 +194,19 @@ def GenTests(api):
       cq=True,
       build_target='coral',
   )
+
+  # This covers any staging-specific logic.
+  yield api.build_menu.test(
+      'staging-cq-build',
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      # TODO(b/253642578): Remove check when experiment is done.
+      api.post_check(post_process.MustRun,
+                     'run ebuild tests for cl affected packages'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.StatusSuccess),
+      cq=True,
+      build_target='staging-amd64-generic',
+      pointless=False)

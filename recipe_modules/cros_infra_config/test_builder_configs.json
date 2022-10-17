@@ -305,6 +305,12 @@
             "flag": "chrome_internal"
           }
         ],
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
         "installPackages": {
           "runSpec": "RUN",
           "dependencies": "ALL_DEPENDENCIES"

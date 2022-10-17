@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
