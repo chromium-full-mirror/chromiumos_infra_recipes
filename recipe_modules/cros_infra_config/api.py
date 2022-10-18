@@ -29,7 +29,7 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 CHROME_OS_INFRA_CONFIG_REPO_URL = (
     'https://chrome-internal.googlesource.com/chromeos/infra/config')
-CHROME_CONFIG_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
+INFRADATA_CONFIG_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
 
 
 def ConvertPB(inpb, typ):
@@ -338,16 +338,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       BotPolicyCfg as defined in the config repo.
     """
-    if application == 'Chrome':
-      return BotPolicyCfg.FromString(
-          self.download_binproto('configs/bot-scaling/generated/bot_policy',
-                                 self.test_api.bot_policy_test_data_chrome,
-                                 repo=CHROME_CONFIG_REPO_URL,
-                                 message=BotPolicyCfg()))
+    test_data = (
+        self.test_api.bot_policy_test_data_chrome
+        if application == "Chrome" else self.test_api.bot_policy_test_data)
     return BotPolicyCfg.FromString(
-        self.download_binproto('bot_scaling/generated/bot_policy',
-                               self.test_api.bot_policy_test_data,
-                               message=BotPolicyCfg()))
+        self.download_binproto(
+            'configs/bot-scaling/generated/bot_policy_%s' % application.lower(),
+            test_data, repo=INFRADATA_CONFIG_REPO_URL, message=BotPolicyCfg()))
 
   def get_vm_retry_config(self):
     """Get SuiteRetryCfg as defined in infra/config for tast vm.

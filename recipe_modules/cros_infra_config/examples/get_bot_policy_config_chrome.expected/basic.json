@@ -7,11 +7,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy.binaryproto",
+      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy_chrome.binaryproto",
       "--format",
       "text"
     ],
-    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy.binaryproto",
+    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy_chrome.binaryproto",
     "timeout": 180
   },
   {
