@@ -63,8 +63,6 @@ def RunSpiders(api):
     gs_path = api.path.join(
         today.strftime('%Y/%m/%d/'), builder_id, 'portage_explorer.json')
     api.gsutil.upload(output_path, 'portage_explorer', str(gs_path))
-    api.easy.set_properties_step('Output to output.properties',
-                                 portage_explorer_output=output)
     presentation.logs['response'] = [output_json]
 
 
