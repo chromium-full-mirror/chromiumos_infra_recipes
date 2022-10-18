@@ -1609,6 +1609,24 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "builders",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-nopage",
+      "-n",
+      "0",
+      "chromeos/release"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.buildbucket.builders",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
@@ -1694,7 +1712,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "unable to find latest build for tatl-release"
+      "humanReason": "unable to find builds for tatl"
     },
     "name": "$result"
   }

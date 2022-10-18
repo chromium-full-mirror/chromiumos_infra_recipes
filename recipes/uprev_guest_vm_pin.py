@@ -53,6 +53,10 @@ PROPERTIES = UprevGuestVmPinProperties
 _base_vm_name = 'guest-vm-base'
 _test_vm_name = 'guest-vm-test'
 
+_legacy_release_branches = [
+    'release-R102-14695.B', 'release-R106-15054.B', 'release-R107-15117.B'
+]
+
 
 def _gs_path(bucket, path):
   """Returns the full gs:// path for bucket and path."""
@@ -117,16 +121,13 @@ def FindPostsubmitBuilds(api, board, version_build_map):
                   seconds=api.buildbucket.build.create_time.ToSeconds() -
                   36 * 60 * 60)), status=bb_common.SUCCESS))
 
-  if not builds:
-    raise StepFailure(
-        'unable to find latest build for {}-postsubmit'.format(board))
-
   for build in builds:
     branch = build.input.gitiles_commit.ref.split('/')[-1]
     version = build.output.properties['chromeos_version']
     version_build_map[branch][version][board] = build
 
 
+# TODO(b/253353543) Remove code relating to legacy release builds once M102 is no longer supported.
 def FindLegacyReleaseBuilds(api, board, version_build_map):
   # For release builds we're interested in builds from multiple
   # branches that don't all build equally often, so instead ask for
@@ -143,14 +144,57 @@ def FindLegacyReleaseBuilds(api, board, version_build_map):
                   seconds=api.buildbucket.build.create_time.ToSeconds() -
                   72 * 60 * 60)), status=bb_common.SUCCESS))
 
-  if not builds:
-    raise StepFailure(
-        'unable to find latest build for {}-release'.format(board))
-
   for build in builds:
     branch = build.input.properties['cbb_branch']
+
+    # Only look at builds for active branches we don't do Rubik uprevs for.
+    if branch not in _legacy_release_branches:
+      continue
+
     version = build.input.properties['full_version']
     version_build_map[branch][version][board] = build
+
+
+def FindRubikReleaseBuilds(api, board, version_build_map):
+  prefix = '{}-'.format(board)
+  for builder in api.buildbucket.list_builders('chromeos', 'release'):
+    if not builder.startswith(prefix):
+      # Unrelated builder, skip.
+      continue
+
+    # Builders get named '{board}-release-{branch}', except if the
+    # branch starts with 'release-' in which case the extra 'release-'
+    # is dropped. This strictly isn't a reversable transformation, but
+    # in practice release branches always have 'R' as the next
+    # character and nothing else does, so we use that to find the
+    # actual branch name.
+    suffix = builder[len(prefix):]
+    if suffix.startswith('release-R'):
+      branch = suffix
+    else:
+      # Drop 'release-' for main and stabilize branches.
+      branch = suffix[8:]
+
+    # Skip branches we use legacy release builders for.
+    # TODO(b/253353543) Remove code relating to legacy release builds once M102 is no longer supported.
+    if branch in _legacy_release_branches:
+      continue
+
+    with api.step.nest(branch):
+      builds = api.buildbucket.search(
+          predicate=bb_service.BuildPredicate(
+              builder=bb_builder_common.BuilderID(
+                  project='chromeos',
+                  bucket='release',
+                  builder=builder,
+              ), create_time=bb_common.TimeRange(
+                  start_time=timestamp_pb2.Timestamp(
+                      seconds=api.buildbucket.build.create_time.ToSeconds() -
+                      72 * 60 * 60)), status=bb_common.SUCCESS))
+
+      for build in builds:
+        version = build.output.properties['chromeos_version']
+        version_build_map[branch][version][board] = build
 
 
 def CopyPostsubmitImage(api, board, build, vm_property_map, sanitized_version):
@@ -181,8 +225,7 @@ def CopyPostsubmitImage(api, board, build, vm_property_map, sanitized_version):
     api.gsutil.upload("*.tbz", dst_bucket, dst_path)
 
 
-def CopyLegacyReleaseImage(api, board, build, vm_property_map,
-                           sanitized_version):
+def CopyReleaseImage(api, board, build, vm_property_map, sanitized_version):
   build_artifact_path = build.output.properties['artifact_link']
 
   # The gsutil API takes the bucket name and object path as seperate
@@ -200,11 +243,13 @@ def CopyLegacyReleaseImage(api, board, build, vm_property_map,
   dst_path = '{}/{}'.format(vm_property_map[board].destination_gs_path,
                             sanitized_version)
 
-  api.gsutil.copy(src_bucket, '{}/{}.tbz'.format(src_path, _base_vm_name),
-                  dst_bucket, '{}/{}.tbz'.format(dst_path, _base_vm_name),
+  # TODO(b/253353543) Replace wildcards with 'tar.xz' once we no
+  # longer need to handle builds with different extensions.
+  api.gsutil.copy(src_bucket, '{}/{}.*'.format(src_path, _base_vm_name),
+                  dst_bucket, '{}/'.format(dst_path),
                   name='copy {} base image'.format(board))
-  api.gsutil.copy(src_bucket, '{}/{}.tbz'.format(src_path, _test_vm_name),
-                  dst_bucket, '{}/{}.tbz'.format(dst_path, _test_vm_name),
+  api.gsutil.copy(src_bucket, '{}/{}.*'.format(src_path, _test_vm_name),
+                  dst_bucket, '{}/'.format(dst_path),
                   name='copy {} test image'.format(board))
 
 
@@ -235,6 +280,10 @@ def RunSteps(api, properties):
             FindPostsubmitBuilds(api, board, version_build_map)
           elif properties.builder_type == bc.Id.RELEASE:
             FindLegacyReleaseBuilds(api, board, version_build_map)
+            FindRubikReleaseBuilds(api, board, version_build_map)
+
+          if len(version_build_map) == 0:
+            raise StepFailure('unable to find builds for {}'.format(board))
 
       # Find the highest common version for all the VMs on each branch.
       version_map = {}
@@ -298,8 +347,8 @@ def RunSteps(api, properties):
               CopyPostsubmitImage(api, board, build, vm_property_map,
                                   sanitized_version)
             elif properties.builder_type == bc.Id.RELEASE:
-              CopyLegacyReleaseImage(api, board, build, vm_property_map,
-                                     sanitized_version)
+              CopyReleaseImage(api, board, build, vm_property_map,
+                               sanitized_version)
 
             if properties.user_acls or properties.group_acls:
               with api.step.nest(
@@ -412,25 +461,30 @@ def GenTests(api):
 
   tatl_release_builds_success = _generate_legacy_release_build_set(
       'tatl', {
-          89: [10, 8, 6, 5],
-          88: [5, 4, 2]
+          'release-R102-14695.B': [10, 8, 6, 5],
+          'release-R106-15054.B': [5, 4, 2],
       })
   tael_release_builds_success = _generate_legacy_release_build_set(
       'tael', {
-          89: [9, 7, 5],
-          88: [6, 4, 1]
+          'release-R102-14695.B': [9, 7, 5],
+          'release-R106-15054.B': [6, 4, 1]
       })
 
   tael_release_builds_no_match = _generate_legacy_release_build_set(
       'tael', {
-          89: [9, 7, 4],
-          88: [6, 3, 1]
+          'release-R102-14695.B': [9, 7, 4],
+          'release-R106-15054.B': [6, 3, 1]
       })
 
   tael_release_builds_partial_match = _generate_legacy_release_build_set(
       'tael', {
-          89: [9, 7, 5],
-          88: [6, 3, 1]
+          'release-R102-14695.B': [9, 7, 5],
+          'release-R106-15054.B': [6, 3, 1]
+      })
+
+  tatl_release_builds_too_recent = _generate_legacy_release_build_set(
+      'tatl', {
+          'release-R108-15183.B': [13, 12, 11],
       })
 
   mock_tatl_release_build_search_success = api.buildbucket.simulated_search_results(
@@ -448,6 +502,56 @@ def GenTests(api):
   mock_tael_release_build_search_partial_match = api.buildbucket.simulated_search_results(
       tael_release_builds_partial_match,
       step_name=buildbucket_search_step.format('tael'))
+
+  mock_tatl_release_builds_too_recent = api.buildbucket.simulated_search_results(
+      tatl_release_builds_too_recent,
+      step_name=buildbucket_search_step.format('tatl'))
+
+  buildbucket_builder_list_step = 'get latest build version.query-{}.buildbucket.builders'
+
+  mock_builder_list = [
+      'tatl-release-main',
+      'tael-release-main',
+      'tatl-release-R108-15183.B',
+      'tael-release-R108-15183.B',
+      'tatl-release-R107-15117.B',
+      'tael-release-R107-15117.B',
+      'tatl-release-R102-14695.B',
+      'tael-release-R102-14695.B',
+      'tatl-release-stabilize-15129.B',
+      'tael-release-stabilize-15129.B',
+      'tatl-release-stabilize-15185.B',
+      'tael-release-stabilize-15185.B',
+      'eve-release-main',
+  ]
+
+  mock_builder_list_tatl = api.buildbucket.simulated_list_builders(
+      mock_builder_list, step_name=buildbucket_builder_list_step.format('tatl'))
+
+  mock_builder_list_tael = api.buildbucket.simulated_list_builders(
+      mock_builder_list, step_name=buildbucket_builder_list_step.format('tael'))
+
+  buildbucket_rubik_search_step = 'get latest build version.query-{}.{}.buildbucket.search'
+
+  mock_tatl_rubik_main_search = api.buildbucket.simulated_search_results(
+      _generate_rubik_release_build_set('tatl', 'main', [1, 2, 3]),
+      step_name=buildbucket_rubik_search_step.format('tatl', 'main'))
+
+  mock_tael_rubik_main_search = api.buildbucket.simulated_search_results(
+      _generate_rubik_release_build_set('tael', 'main', [1, 2, 3]),
+      step_name=buildbucket_rubik_search_step.format('tael', 'main'))
+
+  mock_tatl_rubik_R108_search = api.buildbucket.simulated_search_results(
+      _generate_rubik_release_build_set('tatl', 'release-R108-15183.B',
+                                        [1, 2, 3]),
+      step_name=buildbucket_rubik_search_step.format('tatl',
+                                                     'release-R108-15183.B'))
+
+  mock_tael_rubik_R108_search = api.buildbucket.simulated_search_results(
+      _generate_rubik_release_build_set('tael', 'release-R108-15183.B',
+                                        [1, 2, 3]),
+      step_name=buildbucket_rubik_search_step.format('tael',
+                                                     'release-R108-15183.B'))
 
   yield api.test(
       'uprev-sludge',
@@ -525,6 +629,19 @@ def GenTests(api):
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_partial_match,
       api.post_check(post_process.StatusFailure),
+  )
+
+  yield api.test(
+      'uprev-termina-rubik-success',
+      api.properties(**termina_release_properties),
+      api.git.diff_check(True),
+      mock_builder_list_tatl,
+      mock_builder_list_tael,
+      mock_tatl_rubik_main_search,
+      mock_tael_rubik_main_search,
+      mock_tatl_rubik_R108_search,
+      mock_tael_rubik_R108_search,
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -617,6 +734,13 @@ def GenTests(api):
   )
 
   yield api.test(
+      'legacy-release-wrong-branch',
+      api.properties(**termina_release_properties),
+      mock_tatl_release_builds_too_recent,
+      api.post_check(post_process.StatusFailure),
+  )
+
+  yield api.test(
       'no-acls',
       api.properties(**sludge_properties),
       api.properties(userAcls=[], groupAcls=[]),
@@ -654,8 +778,8 @@ def _generate_legacy_release_build_set(board, ids_by_branch):
   for (branch, build_ids) in sorted(ids_by_branch.items()):
     for build_id in build_ids:
       input_ = Struct()
-      input_['cbb_branch'] = 'release-R{}-12345.B'.format(branch)
-      input_['full_version'] = 'R{}-1.2.{}'.format(branch, build_id)
+      input_['cbb_branch'] = branch
+      input_['full_version'] = '{}-1.2.{}'.format(branch[8:-8], build_id)
       output = Struct()
       output['artifact_link'] = \
         'gs://chromeos-image-archive/{}-release/{}' \
@@ -666,5 +790,23 @@ def _generate_legacy_release_build_set(board, ids_by_branch):
                          input=bb_build.Build.Input(properties=input_),
                          output=bb_build.Build.Output(properties=output)))
       idx += 1
+
+  return builds
+
+
+def _generate_rubik_release_build_set(board, branch, ids):
+  builds = []
+  for idx, build_id in enumerate(ids, 1):
+    input_ = Struct()
+    output = Struct()
+    output['chromeos_version'] = '{}-1.2.{}'.format(branch[8:-8], build_id)
+    output['artifact_link'] = \
+      'gs://chromeos-image-archive/{}-release/{}' \
+      .format(board, output['chromeos_version'])
+
+    builds.append(
+        bb_build.Build(id=idx, status=bb_common.SUCCESS,
+                       input=bb_build.Build.Input(properties=input_),
+                       output=bb_build.Build.Output(properties=output)))
 
   return builds

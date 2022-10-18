@@ -1601,21 +1601,7 @@
     "name": "get latest build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.10\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.10\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.8\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.8\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"7\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.2\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
-      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
-      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@",
-      "@@@STEP_LINK@4@https://cr-buildbucket.appspot.com/build/4@@@",
-      "@@@STEP_LINK@5@https://cr-buildbucket.appspot.com/build/5@@@",
-      "@@@STEP_LINK@6@https://cr-buildbucket.appspot.com/build/6@@@",
-      "@@@STEP_LINK@7@https://cr-buildbucket.appspot.com/build/7@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1633,6 +1619,147 @@
     "name": "get latest build version.query-tatl.buildbucket.builders",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-R108-15183.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-R108-15183.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-R107-15117.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-R107-15117.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-R102-14695.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-R102-14695.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-stabilize-15129.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-stabilize-15129.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-stabilize-15185.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-stabilize-15185.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@eve-release-main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tatl.main",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tatl-release-main\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.main.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/-1.2.1\", \"chromeos_version\": \"-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/-1.2.2\", \"chromeos_version\": \"-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/-1.2.3\", \"chromeos_version\": \"-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
+      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tatl.release-R108-15183.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tatl-release-R108-15183.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.release-R108-15183.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R108-1.2.1\", \"chromeos_version\": \"R108-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R108-1.2.2\", \"chromeos_version\": \"R108-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R108-1.2.3\", \"chromeos_version\": \"R108-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
+      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tatl.stabilize-15129.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tatl-release-stabilize-15129.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.stabilize-15129.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tatl.stabilize-15185.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tatl-release-stabilize-15185.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.stabilize-15185.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -1662,19 +1789,7 @@
     "name": "get latest build version.query-tael.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.9\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.7\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.7\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.1\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
-      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
-      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@",
-      "@@@STEP_LINK@4@https://cr-buildbucket.appspot.com/build/4@@@",
-      "@@@STEP_LINK@5@https://cr-buildbucket.appspot.com/build/5@@@",
-      "@@@STEP_LINK@6@https://cr-buildbucket.appspot.com/build/6@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1692,26 +1807,167 @@
     "name": "get latest build version.query-tael.buildbucket.builders",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-R108-15183.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-R108-15183.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-R107-15117.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-R107-15117.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-R102-14695.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-R102-14695.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-stabilize-15129.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-stabilize-15129.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tatl-release-stabilize-15185.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@tael-release-stabilize-15185.B@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@eve-release-main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B"
+    "name": "get latest build version.query-tael.main",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tael-release-main\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.main.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/-1.2.1\", \"chromeos_version\": \"-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/-1.2.2\", \"chromeos_version\": \"-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/-1.2.3\", \"chromeos_version\": \"-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
+      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B",
+    "name": "get latest build version.query-tael.release-R108-15183.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tael-release-R108-15183.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.release-R108-15183.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R108-1.2.1\", \"chromeos_version\": \"R108-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R108-1.2.2\", \"chromeos_version\": \"R108-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R108-1.2.3\", \"chromeos_version\": \"R108-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
+      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tael.stabilize-15129.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tael-release-stabilize-15129.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.stabilize-15129.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tael.stabilize-15185.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tael-release-stabilize-15185.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.stabilize-15185.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch main"
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch main.checkout branch main",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.set manifest_branch",
+    "name": "upreving pin for branch main.checkout branch main.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R102-14695.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"main\"@@@"
     ]
   },
   {
@@ -1723,7 +1979,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R102-14695.B",
+      "main",
       "--repo-rev=stable",
       "--verbose"
     ],
@@ -1737,7 +1993,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo init",
+    "name": "upreving pin for branch main.checkout branch main.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1768,7 +2024,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo sync",
+    "name": "upreving pin for branch main.checkout branch main.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1776,7 +2032,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats",
+    "name": "upreving pin for branch main.checkout branch main.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1803,7 +2059,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats.event-log",
+    "name": "upreving pin for branch main.checkout branch main.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@event_log__tmp_3@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1819,7 +2075,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats.set repo_retries",
+    "name": "upreving pin for branch main.checkout branch main.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 15}@@@"
@@ -1827,7 +2083,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats.set slowest_repos",
+    "name": "upreving pin for branch main.checkout branch main.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}}@@@"
@@ -1835,7 +2091,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo info",
+    "name": "upreving pin for branch main.checkout branch main.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -1848,14 +2104,14 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo info.repo info",
+    "name": "upreving pin for branch main.checkout branch main.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.ensure manifest is pinned",
+    "name": "upreving pin for branch main.checkout branch main.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -1879,7 +2135,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.ensure manifest is pinned.repo forall",
+    "name": "upreving pin for branch main.checkout branch main.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -1904,7 +2160,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.ensure manifest is pinned.repo manifest",
+    "name": "upreving pin for branch main.checkout branch main.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -1913,7 +2169,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.try uprev version file",
+    "name": "upreving pin for branch main.try uprev version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1926,25 +2182,25 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "102.1.2.5",
+      "1.2.3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.try uprev version file.version file",
+    "name": "upreving pin for branch main.try uprev version file.version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.try uprev version file.diff check",
+    "name": "upreving pin for branch main.try uprev version file.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev",
+    "name": "upreving pin for branch main.commit uprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1957,7 +2213,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev.git rev-parse",
+    "name": "upreving pin for branch main.commit uprev.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1980,7 +2236,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev.repo forall",
+    "name": "upreving pin for branch main.commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -1991,7 +2247,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "uprev-guest-vm-release-R102-14695.B",
+      "uprev-guest-vm-main",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
@@ -2004,7 +2260,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev.repo start",
+    "name": "upreving pin for branch main.commit uprev.repo start",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2017,7 +2273,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev.git add",
+    "name": "upreving pin for branch main.commit uprev.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2030,15 +2286,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "termina-dlc: updating version pin to latest - 102.1.2.5\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
+      "termina-dlc: updating version pin to latest - 1.2.3\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev.write commit message",
+    "name": "upreving pin for branch main.commit uprev.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@termina-dlc: updating version pin to latest - 102.1.2.5@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@termina-dlc: updating version pin to latest - 1.2.3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@CL generated by job https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
@@ -2053,14 +2309,14 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.commit uprev.git commit",
+    "name": "upreving pin for branch main.commit uprev.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket",
+    "name": "upreving pin for branch main.copy images to destination bucket",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2074,14 +2330,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/R102-1.2.5/guest-vm-base.*",
-      "gs://termina-component-testing/uprev-test/amd64/102.1.2.5/"
+      "gs://chromeos-image-archive/tatl-release/-1.2.3/guest-vm-base.*",
+      "gs://termina-component-testing/uprev-test/amd64/1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.gsutil copy tatl base image",
+    "name": "upreving pin for branch main.copy images to destination bucket.gsutil copy tatl base image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/102.1.2.5/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/1.2.3/@@@"
     ]
   },
   {
@@ -2093,19 +2349,19 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/R102-1.2.5/guest-vm-test.*",
-      "gs://termina-component-testing/uprev-test/amd64/102.1.2.5/"
+      "gs://chromeos-image-archive/tatl-release/-1.2.3/guest-vm-test.*",
+      "gs://termina-component-testing/uprev-test/amd64/1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.gsutil copy tatl test image",
+    "name": "upreving pin for branch main.copy images to destination bucket.gsutil copy tatl test image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/102.1.2.5/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/1.2.3/@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.set image permissions on destination for tatl",
+    "name": "upreving pin for branch main.copy images to destination bucket.set image permissions on destination for tatl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2127,10 +2383,10 @@
       "bighead@google.com:READ",
       "-g",
       "koolkids@google.com:READ",
-      "gs://termina-component-testing/uprev-test/amd64/102.1.2.5/"
+      "gs://termina-component-testing/uprev-test/amd64/1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.set image permissions on destination for tatl.gsutil acl",
+    "name": "upreving pin for branch main.copy images to destination bucket.set image permissions on destination for tatl.gsutil acl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2144,14 +2400,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/R102-1.2.5/guest-vm-base.*",
-      "gs://termina-component-testing/uprev-test/arm/102.1.2.5/"
+      "gs://chromeos-image-archive/tael-release/-1.2.3/guest-vm-base.*",
+      "gs://termina-component-testing/uprev-test/arm/1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.gsutil copy tael base image",
+    "name": "upreving pin for branch main.copy images to destination bucket.gsutil copy tael base image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/102.1.2.5/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/1.2.3/@@@"
     ]
   },
   {
@@ -2163,19 +2419,19 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/R102-1.2.5/guest-vm-test.*",
-      "gs://termina-component-testing/uprev-test/arm/102.1.2.5/"
+      "gs://chromeos-image-archive/tael-release/-1.2.3/guest-vm-test.*",
+      "gs://termina-component-testing/uprev-test/arm/1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.gsutil copy tael test image",
+    "name": "upreving pin for branch main.copy images to destination bucket.gsutil copy tael test image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/102.1.2.5/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/1.2.3/@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.set image permissions on destination for tael",
+    "name": "upreving pin for branch main.copy images to destination bucket.set image permissions on destination for tael",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2197,24 +2453,24 @@
       "bighead@google.com:READ",
       "-g",
       "koolkids@google.com:READ",
-      "gs://termina-component-testing/uprev-test/arm/102.1.2.5/"
+      "gs://termina-component-testing/uprev-test/arm/1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.copy images to destination bucket.set image permissions on destination for tael.gsutil acl",
+    "name": "upreving pin for branch main.copy images to destination bucket.set image permissions on destination for tael.gsutil acl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.generate CL",
+    "name": "upreving pin for branch main.generate CL",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2222,7 +2478,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists",
+    "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2243,7 +2499,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists.repo info",
+    "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -2267,7 +2523,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
+    "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -2294,7 +2550,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
+    "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2317,14 +2573,14 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
+    "name": "upreving pin for branch main.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.set labels on CL 1",
+    "name": "upreving pin for branch main.generate CL.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
@@ -2350,7 +2606,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.set labels on CL 1.repo forall",
+    "name": "upreving pin for branch main.generate CL.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -2365,7 +2621,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.set labels on CL 1.git rebase",
+    "name": "upreving pin for branch main.generate CL.set labels on CL 1.git rebase",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2379,28 +2635,28 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R102-14695.B.generate CL.set labels on CL 1.git push",
+    "name": "upreving pin for branch main.generate CL.set labels on CL 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B"
+    "name": "upreving pin for branch release-R108-15183.B"
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.set manifest_branch",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R106-15054.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R108-15183.B\"@@@"
     ]
   },
   {
@@ -2412,7 +2668,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R106-15054.B",
+      "release-R108-15183.B",
       "--repo-rev=stable",
       "--verbose"
     ],
@@ -2426,7 +2682,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo init",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2457,7 +2713,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo sync",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2465,7 +2721,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -2492,7 +2748,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats.event-log",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@event_log__tmp_4@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -2508,7 +2764,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats.set repo_retries",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 20}@@@"
@@ -2516,7 +2772,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats.set slowest_repos",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"3\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"4\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}}@@@"
@@ -2524,7 +2780,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo info",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -2537,14 +2793,14 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo info.repo info",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.ensure manifest is pinned",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -2568,7 +2824,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.ensure manifest is pinned.repo forall",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -2593,7 +2849,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.ensure manifest is pinned.repo manifest",
+    "name": "upreving pin for branch release-R108-15183.B.checkout branch release-R108-15183.B.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -2602,7 +2858,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.try uprev version file",
+    "name": "upreving pin for branch release-R108-15183.B.try uprev version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2615,25 +2871,25 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "106.1.2.4",
+      "108.1.2.3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.try uprev version file.version file",
+    "name": "upreving pin for branch release-R108-15183.B.try uprev version file.version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.try uprev version file.diff check",
+    "name": "upreving pin for branch release-R108-15183.B.try uprev version file.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2646,7 +2902,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev.git rev-parse",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2669,7 +2925,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev.repo forall",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -2680,7 +2936,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "uprev-guest-vm-release-R106-15054.B",
+      "uprev-guest-vm-release-R108-15183.B",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
@@ -2693,7 +2949,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev.repo start",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev.repo start",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2706,7 +2962,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev.git add",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2719,15 +2975,15 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "termina-dlc: updating version pin to latest - 106.1.2.4\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
+      "termina-dlc: updating version pin to latest - 108.1.2.3\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev.write commit message",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@termina-dlc: updating version pin to latest - 106.1.2.4@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@termina-dlc: updating version pin to latest - 108.1.2.3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@CL generated by job https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
@@ -2742,14 +2998,14 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.commit uprev.git commit",
+    "name": "upreving pin for branch release-R108-15183.B.commit uprev.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2763,14 +3019,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/R106-1.2.4/guest-vm-base.*",
-      "gs://termina-component-testing/uprev-test/amd64/106.1.2.4/"
+      "gs://chromeos-image-archive/tatl-release/R108-1.2.3/guest-vm-base.*",
+      "gs://termina-component-testing/uprev-test/amd64/108.1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.gsutil copy tatl base image",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.gsutil copy tatl base image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/106.1.2.4/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/108.1.2.3/@@@"
     ]
   },
   {
@@ -2782,19 +3038,19 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/R106-1.2.4/guest-vm-test.*",
-      "gs://termina-component-testing/uprev-test/amd64/106.1.2.4/"
+      "gs://chromeos-image-archive/tatl-release/R108-1.2.3/guest-vm-test.*",
+      "gs://termina-component-testing/uprev-test/amd64/108.1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.gsutil copy tatl test image",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.gsutil copy tatl test image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/106.1.2.4/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/amd64/108.1.2.3/@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.set image permissions on destination for tatl",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.set image permissions on destination for tatl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2816,10 +3072,10 @@
       "bighead@google.com:READ",
       "-g",
       "koolkids@google.com:READ",
-      "gs://termina-component-testing/uprev-test/amd64/106.1.2.4/"
+      "gs://termina-component-testing/uprev-test/amd64/108.1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.set image permissions on destination for tatl.gsutil acl",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.set image permissions on destination for tatl.gsutil acl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2833,14 +3089,14 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/R106-1.2.4/guest-vm-base.*",
-      "gs://termina-component-testing/uprev-test/arm/106.1.2.4/"
+      "gs://chromeos-image-archive/tael-release/R108-1.2.3/guest-vm-base.*",
+      "gs://termina-component-testing/uprev-test/arm/108.1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.gsutil copy tael base image",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.gsutil copy tael base image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/106.1.2.4/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/108.1.2.3/@@@"
     ]
   },
   {
@@ -2852,19 +3108,19 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/R106-1.2.4/guest-vm-test.*",
-      "gs://termina-component-testing/uprev-test/arm/106.1.2.4/"
+      "gs://chromeos-image-archive/tael-release/R108-1.2.3/guest-vm-test.*",
+      "gs://termina-component-testing/uprev-test/arm/108.1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.gsutil copy tael test image",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.gsutil copy tael test image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/106.1.2.4/@@@"
+      "@@@STEP_LINK@gsutil.copy@https://storage.cloud.google.com/termina-component-testing/uprev-test/arm/108.1.2.3/@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.set image permissions on destination for tael",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.set image permissions on destination for tael",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2886,24 +3142,24 @@
       "bighead@google.com:READ",
       "-g",
       "koolkids@google.com:READ",
-      "gs://termina-component-testing/uprev-test/arm/106.1.2.4/"
+      "gs://termina-component-testing/uprev-test/arm/108.1.2.3/"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.copy images to destination bucket.set image permissions on destination for tael.gsutil acl",
+    "name": "upreving pin for branch release-R108-15183.B.copy images to destination bucket.set image permissions on destination for tael.gsutil acl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.generate CL",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2911,7 +3167,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2932,7 +3188,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists.repo info",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.check if project [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -2956,7 +3212,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -2983,7 +3239,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3006,14 +3262,14 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.set labels on CL 1",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
@@ -3039,7 +3295,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.set labels on CL 1.repo forall",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -3054,7 +3310,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.set labels on CL 1.git rebase",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.set labels on CL 1.git rebase",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3068,7 +3324,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc",
     "infra_step": true,
-    "name": "upreving pin for branch release-R106-15054.B.generate CL.set labels on CL 1.git push",
+    "name": "upreving pin for branch release-R108-15183.B.generate CL.set labels on CL 1.git push",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -3077,7 +3333,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"release-R106-15054.B\", \"call\": \"checkout_branch\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"release-R108-15183.B\", \"call\": \"checkout_branch\"}@@@"
     ]
   },
   {

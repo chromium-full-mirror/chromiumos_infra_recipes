@@ -12520,15 +12520,17 @@ Recipe for Upreving Guest VM version pin files.
 This recipe copies a VM image artifact from the chromeos-image-archive to the
 localmirror and then modifies the Guest VM's version pin to match this version.
 
-&mdash; **def [CopyLegacyReleaseImage](/recipes/uprev_guest_vm_pin.py#184)(api, board, build, vm_property_map, sanitized_version):**
+&mdash; **def [CopyPostsubmitImage](/recipes/uprev_guest_vm_pin.py#200)(api, board, build, vm_property_map, sanitized_version):**
 
-&mdash; **def [CopyPostsubmitImage](/recipes/uprev_guest_vm_pin.py#156)(api, board, build, vm_property_map, sanitized_version):**
+&mdash; **def [CopyReleaseImage](/recipes/uprev_guest_vm_pin.py#228)(api, board, build, vm_property_map, sanitized_version):**
 
-&mdash; **def [FindLegacyReleaseBuilds](/recipes/uprev_guest_vm_pin.py#130)(api, board, version_build_map):**
+&mdash; **def [FindLegacyReleaseBuilds](/recipes/uprev_guest_vm_pin.py#131)(api, board, version_build_map):**
 
-&mdash; **def [FindPostsubmitBuilds](/recipes/uprev_guest_vm_pin.py#105)(api, board, version_build_map):**
+&mdash; **def [FindPostsubmitBuilds](/recipes/uprev_guest_vm_pin.py#109)(api, board, version_build_map):**
 
-&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#211)(api, properties):**
+&mdash; **def [FindRubikReleaseBuilds](/recipes/uprev_guest_vm_pin.py#158)(api, board, version_build_map):**
+
+&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#256)(api, properties):**
 ### *recipes* / [uprev\_parallels\_pin](/recipes/uprev_parallels_pin.py)
 
 [DEPS](/recipes/uprev_parallels_pin.py#37): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]

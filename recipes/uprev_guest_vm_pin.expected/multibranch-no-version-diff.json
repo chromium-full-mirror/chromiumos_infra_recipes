@@ -1601,13 +1601,13 @@
     "name": "get latest build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R88-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R88-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.2\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R88-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.10\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.10\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.8\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.8\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"7\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.10\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.10\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.8\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.8\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"7\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.2\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
@@ -1616,6 +1616,24 @@
       "@@@STEP_LINK@5@https://cr-buildbucket.appspot.com/build/5@@@",
       "@@@STEP_LINK@6@https://cr-buildbucket.appspot.com/build/6@@@",
       "@@@STEP_LINK@7@https://cr-buildbucket.appspot.com/build/7@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "builders",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-nopage",
+      "-n",
+      "0",
+      "chromeos/release"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.buildbucket.builders",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1644,12 +1662,12 @@
     "name": "get latest build version.query-tael.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R88-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R88-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.1\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R88-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.9\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R89-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.7\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R89-1.2.7\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R89-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.9\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.7\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.7\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.1\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
@@ -1660,22 +1678,40 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B"
+    "cmd": [
+      "bb",
+      "builders",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-nopage",
+      "-n",
+      "0",
+      "chromeos/release"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.buildbucket.builders",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B",
+    "name": "upreving pin for branch release-R102-14695.B"
+  },
+  {
+    "cmd": [],
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.set manifest_branch",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R88-12345.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R102-14695.B\"@@@"
     ]
   },
   {
@@ -1687,7 +1723,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R88-12345.B",
+      "release-R102-14695.B",
       "--repo-rev=stable",
       "--verbose"
     ],
@@ -1701,7 +1737,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo init",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1732,7 +1768,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo sync",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1740,7 +1776,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo stats",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1767,7 +1803,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo stats.event-log",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@event_log__tmp_3@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1783,7 +1819,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo stats.set repo_retries",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 15}@@@"
@@ -1791,7 +1827,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo stats.set slowest_repos",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}}@@@"
@@ -1799,7 +1835,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo info",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -1812,14 +1848,14 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.repo info.repo info",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.ensure manifest is pinned",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -1843,7 +1879,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.ensure manifest is pinned.repo forall",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -1868,7 +1904,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.checkout branch release-R88-12345.B.ensure manifest is pinned.repo manifest",
+    "name": "upreving pin for branch release-R102-14695.B.checkout branch release-R102-14695.B.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -1877,10 +1913,10 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.try uprev version file",
+    "name": "upreving pin for branch release-R102-14695.B.try uprev version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@skipping uprev for termina-dlc on release-R88-12345.B, version unchanged@@@"
+      "@@@STEP_TEXT@skipping uprev for termina-dlc on release-R102-14695.B, version unchanged@@@"
     ]
   },
   {
@@ -1891,39 +1927,39 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "88.1.2.4",
+      "102.1.2.5",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R88-12345.B.try uprev version file.version file",
+    "name": "upreving pin for branch release-R102-14695.B.try uprev version file.version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R88-12345.B.try uprev version file.diff check",
+    "name": "upreving pin for branch release-R102-14695.B.try uprev version file.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B"
+    "name": "upreving pin for branch release-R106-15054.B"
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.set manifest_branch",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R89-12345.B\"@@@"
+      "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R106-15054.B\"@@@"
     ]
   },
   {
@@ -1935,7 +1971,7 @@
       "--groups",
       "all",
       "--manifest-branch",
-      "release-R89-12345.B",
+      "release-R106-15054.B",
       "--repo-rev=stable",
       "--verbose"
     ],
@@ -1949,7 +1985,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo init",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1980,7 +2016,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo sync",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1988,7 +2024,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo stats",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -2015,7 +2051,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo stats.event-log",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@event_log__tmp_4@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -2031,7 +2067,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo stats.set repo_retries",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 20}@@@"
@@ -2039,7 +2075,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo stats.set slowest_repos",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"3\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"4\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}}@@@"
@@ -2047,7 +2083,7 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo info",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -2060,14 +2096,14 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.repo info.repo info",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.ensure manifest is pinned",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -2091,7 +2127,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.ensure manifest is pinned.repo forall",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -2116,7 +2152,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.checkout branch release-R89-12345.B.ensure manifest is pinned.repo manifest",
+    "name": "upreving pin for branch release-R106-15054.B.checkout branch release-R106-15054.B.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
@@ -2125,10 +2161,10 @@
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.try uprev version file",
+    "name": "upreving pin for branch release-R106-15054.B.try uprev version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@skipping uprev for termina-dlc on release-R89-12345.B, version unchanged@@@"
+      "@@@STEP_TEXT@skipping uprev for termina-dlc on release-R106-15054.B, version unchanged@@@"
     ]
   },
   {
@@ -2139,18 +2175,18 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "89.1.2.5",
+      "106.1.2.4",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
-    "name": "upreving pin for branch release-R89-12345.B.try uprev version file.version file",
+    "name": "upreving pin for branch release-R106-15054.B.try uprev version file.version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upreving pin for branch release-R89-12345.B.try uprev version file.diff check",
+    "name": "upreving pin for branch release-R106-15054.B.try uprev version file.diff check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2159,7 +2195,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"release-R89-12345.B\", \"call\": \"checkout_branch\"}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"release-R106-15054.B\", \"call\": \"checkout_branch\"}@@@"
     ]
   },
   {

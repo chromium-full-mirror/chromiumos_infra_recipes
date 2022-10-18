@@ -1604,13 +1604,13 @@
     "name": "get latest build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R88-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R88-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.2\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R88-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.10\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.10\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.8\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.8\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"7\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R89-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.10\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.10\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.8\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.8\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R102-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.4\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.4\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"7\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.2\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tatl-release/R106-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
@@ -1619,6 +1619,24 @@
       "@@@STEP_LINK@5@https://cr-buildbucket.appspot.com/build/5@@@",
       "@@@STEP_LINK@6@https://cr-buildbucket.appspot.com/build/6@@@",
       "@@@STEP_LINK@7@https://cr-buildbucket.appspot.com/build/7@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "builders",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-nopage",
+      "-n",
+      "0",
+      "chromeos/release"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.buildbucket.builders",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1647,12 +1665,12 @@
     "name": "get latest build version.query-tael.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R88-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.3\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R88-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R88-12345.B\", \"full_version\": \"R88-1.2.1\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R88-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.9\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R89-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.7\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R89-1.2.7\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R89-12345.B\", \"full_version\": \"R89-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R89-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.9\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.7\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.7\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R102-14695.B\", \"full_version\": \"R102-1.2.5\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R102-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.6\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"5\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.3\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"6\", \"input\": {\"properties\": {\"cbb_branch\": \"release-R106-15054.B\", \"full_version\": \"R106-1.2.1\"}}, \"output\": {\"properties\": {\"artifact_link\": \"gs://chromeos-image-archive/tael-release/R106-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
@@ -1660,6 +1678,24 @@
       "@@@STEP_LINK@4@https://cr-buildbucket.appspot.com/build/4@@@",
       "@@@STEP_LINK@5@https://cr-buildbucket.appspot.com/build/5@@@",
       "@@@STEP_LINK@6@https://cr-buildbucket.appspot.com/build/6@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "builders",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-nopage",
+      "-n",
+      "0",
+      "chromeos/release"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.buildbucket.builders",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1748,7 +1784,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "unable to find common build on branch release-R88-12345.B for all boards"
+      "humanReason": "unable to find common build on branch release-R106-15054.B for all boards"
     },
     "name": "$result"
   }
