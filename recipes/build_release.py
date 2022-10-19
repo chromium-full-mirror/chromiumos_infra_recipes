@@ -114,17 +114,17 @@ def DoRunSteps(api, config, properties):
           step.status = api.step.FAILURE
           step.step_summary_text = 'One or more test service containers failed to build.'
 
+      with api.failures.ignore_exceptions():
+        api.bcid_reporter.report_stage('compile')
+
+      api.build_menu.build_images(config, include_version=True)
+      # Now that the image is built, we should have all metadata available.
       with api.step.nest('determine build and model metadata'):
         # First look up builder metadata from build-api.
         builder_metadata = api.builder_metadata.look_up_builder_metadata()
         # Then fire off a pub/sub call with that builder meta.
         api.build_reporting.publish_build_target_and_model_metadata(
             api.cros_source.manifest_branch, builder_metadata)
-
-        with api.failures.ignore_exceptions():
-          api.bcid_reporter.report_stage('compile')
-
-      api.build_menu.build_images(config, include_version=True)
       # We upload devinstall prebuilts at this stage instead of earlier on
       # because ImageService/Create (which is called in build_images above) is
       # the call that generates the package list that the devinstall prebuilts

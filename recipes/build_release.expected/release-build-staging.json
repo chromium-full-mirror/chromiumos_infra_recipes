@@ -4345,6 +4345,31 @@
     "name": "try creating test service containers"
   },
   {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "compile"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "snoop: report_stage (3)"
+  },
+  {
     "cmd": [],
     "name": "determine build and model metadata"
   },
@@ -4711,34 +4736,6 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-stage",
-      "-stage",
-      "compile"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "determine build and model metadata.snoop: report_stage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "upload devinstall prebuilts",
     "~followup_annotations": [
@@ -4768,7 +4765,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (3)"
+    "name": "snoop: report_stage (4)"
   },
   {
     "cmd": [
@@ -4793,7 +4790,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (4)"
+    "name": "snoop: report_stage (5)"
   },
   {
     "cmd": [],
