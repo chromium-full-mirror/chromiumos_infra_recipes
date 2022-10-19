@@ -376,6 +376,7 @@ def RunSteps(api, properties):
               api.gerrit.Label.COMMIT_QUEUE: 2,
           }
           api.gerrit.set_change_labels(change, labels)
+          api.gerrit.submit_change(change)
 
 
 def GenTests(api):

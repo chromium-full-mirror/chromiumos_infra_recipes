@@ -2252,6 +2252,82 @@
   },
   {
     "cmd": [],
+    "name": "upreving pin for branch main.generate CL.submit CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upreving pin for branch main.generate CL.submit CL 1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "upreving pin for branch main.generate CL.submit CL 1.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "land",
+      "-f",
+      "1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "upreving pin for branch main.generate CL.submit CL 1.git_cl land",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"branch\": \"main\", \"call\": \"checkout_branch\"}@@@"
