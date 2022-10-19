@@ -98,26 +98,6 @@ def GenTests(api):
                        'upload test results to rdb.run rdb'),
   )
 
-  yield api.test(
-      'missing-per-model-realm',
-      api.buildbucket.ci_build(),
-      api.properties(
-          rdb_config=api.json.dumps({
-              'result_format': 'gtest',
-              'base_tags': [('test_suite',
-                             'fake-suite'), ('board',
-                                             'brya'), ('model', 'badmodel')],
-              'base_variant': {
-                  'test_suite': 'fake-suite',
-                  'board': 'brya',
-                  'build': 'brya-cq/R11-123.45',
-              },
-          })),
-      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
-      api.post_process(post_process.MustRun,
-                       'upload test results to rdb.run rdb'),
-  )
-
   rdb_config['result_format'] = 'gtest'
   rdb_config_json = api.json.dumps(rdb_config)
 
