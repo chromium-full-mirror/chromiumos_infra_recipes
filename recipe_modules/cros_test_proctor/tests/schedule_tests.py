@@ -35,7 +35,7 @@ def RunSteps(api, passed_tests, is_retry, expected_tests_run_count):
   tasks = api.cros_test_proctor.schedule_tests(test_plan,
                                                list(set(passed_tests)),
                                                api.cros_test_proctor.timeout,
-                                               {}, snapshot, is_retry=is_retry)
+                                               snapshot, is_retry=is_retry)
   tests_run_count = len(tasks.skylab) + len(tasks.autotest_vm) + len(
       tasks.tast_vm)
   api.assertions.assertEqual(tests_run_count, expected_tests_run_count)

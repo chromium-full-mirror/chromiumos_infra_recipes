@@ -4390,7 +4390,7 @@ PYTHON_VERSION_COMPATIBILITY: PY2+3
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#463)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#456)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4434,7 +4434,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#382)(self, test_plan, passed_tests, timeout, test_to_build_map=None, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#380)(self, test_plan, passed_tests, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4444,8 +4444,6 @@ Args:
   passed_tests (list[string]): A list of names for the tests that
       have passed before.
   timeout (Duration): Timeout in duration_pb2.Duration.
-  test_to_build_map (dict{string->string}): Map of test names to
-      build_targets to be populated.
   snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
       the included builds were created.
   is_retry (bool): Whether this is a CQ retry.

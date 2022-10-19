@@ -185,12 +185,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           is_retry = (self.m.cq.active and self.m.cros_history.is_retry())
           previously_passed_tests = self.m.cros_history.get_passed_tests()
 
-        test_to_build_target_map = {}
         test_tasks = self.schedule_tests(
             test_plan,
             previously_passed_tests,
             self.timeout,
-            test_to_build_target_map,
             snapshot,
             is_retry=is_retry,
             run_async=run_async,
@@ -379,9 +377,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     return test_plan
 
-  def schedule_tests(self, test_plan, passed_tests, timeout,
-                     test_to_build_map=None, snapshot=None, is_retry=False,
-                     run_async=False, container_metadata=None,
+  def schedule_tests(self, test_plan, passed_tests, timeout, snapshot=None,
+                     is_retry=False, run_async=False, container_metadata=None,
                      require_stable_devices=False):
     """Schedule all tests from the test_plan.
 
@@ -391,8 +388,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
       timeout (Duration): Timeout in duration_pb2.Duration.
-      test_to_build_map (dict{string->string}): Map of test names to
-          build_targets to be populated.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
       is_retry (bool): Whether this is a CQ retry.
@@ -411,7 +406,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_plan,
         passed_tests,
         timeout,
-        test_to_build_map,
         is_retry,
         run_async=run_async,
         container_metadata=container_metadata,
@@ -419,12 +413,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         task_per_build_target=self._skylab_task_per_build_target,
     )
     tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
-                                                 snapshot, test_to_build_map,
-                                                 is_retry, run_async=run_async)
+                                                 snapshot, is_retry,
+                                                 run_async=run_async)
 
     tast_gce_tests = self._schedule_tast_gce_tests(test_plan, passed_tests,
-                                                   snapshot, test_to_build_map,
-                                                   is_retry,
+                                                   snapshot, is_retry,
                                                    run_async=run_async)
 
     return self.MetaTestTuple(skylab=skylab_tasks or [], autotest_vm=[],
@@ -474,8 +467,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
-                             test_to_build_map=None, is_retry=False,
-                             run_async=False, container_metadata=None,
+                             is_retry=False, run_async=False,
+                             container_metadata=None,
                              require_stable_devices=False,
                              task_per_build_target=False):
     """Schedule skylab tests from the test_plan.
@@ -486,8 +479,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
       timeout (Duration): Timeout in duration_pb2.Duration.
-      test_to_build_map (dict{string->string}): Map of test names to
-          build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
       run_async (bool): Should the tests be ran async and not cancel
           on the termination of the parent (this caller).
@@ -502,7 +493,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[SkylabTask] of the tests scheduled.
     """
     skylab_tasks = []
-    test_to_build_map = {} if test_to_build_map is None else test_to_build_map
     with self.m.step.nest('schedule hardware tests'):
       # A map from {build_target_name: [test_name]}.
       tests_to_run = defaultdict(list)
@@ -514,7 +504,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             continue
           if test.common.display_name not in passed_tests:
             build_target = unit.common.build_target
-            test_to_build_map[test.common.display_name] = build_target.name
             tests_to_run[build_target.name].append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             hw_build_targets.add(build_target.name)
@@ -542,8 +531,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return skylab_tasks
 
   def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,
-                              test_to_build_map=None, is_retry=False,
-                              run_async=False):
+                              is_retry=False, run_async=False):
     """Schedule tast VM Tests from the test_plan.
 
     Args:
@@ -552,8 +540,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
-      test_to_build_map (dict{string->string}): Map of test names to
-          build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
       run_async (bool): Should the tests be ran async and not cancel
           on the termination of the parent (this caller).
@@ -562,7 +548,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[Build] objects of the VM tests scheduled.
     """
     requests = []
-    test_to_build_map = {} if test_to_build_map is None else test_to_build_map
 
     exps = self.m.cros_infra_config.experiments_for_child_build
     footer_exps = self.m.git_footers.get_footer_values(
@@ -578,7 +563,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target
-          test_to_build_map[test_name] = build_target.name
           expressions = [t.test_expr for t in test.tast_test_expr]
           requests.append(
               self.m.buildbucket.schedule_request(
@@ -600,8 +584,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return vm_tests
 
   def _schedule_tast_gce_tests(self, test_plan, passed_tests, snapshot,
-                               test_to_build_map=None, is_retry=False,
-                               run_async=False):
+                               is_retry=False, run_async=False):
     """Schedule tast GCE Tests from the test_plan.
 
     Args:
@@ -610,8 +593,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
-      test_to_build_map (dict{string->string}): Map of test names to
-          build_targets to be populated.
       is_retry (bool): Whether this is a CQ retry.
       run_async (bool): Should the tests be ran async and not cancel
           on the termination of the parent (this caller).
@@ -620,7 +601,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[Build] objects of the GCE tests scheduled.
     """
     requests = []
-    test_to_build_map = {} if test_to_build_map is None else test_to_build_map
 
     for unit in test_plan.tast_gce_test_units:
       for test in unit.tast_gce_test_cfg.tast_gce_test:
@@ -630,7 +610,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if test.common.display_name not in passed_tests:
           test_name = test.common.display_name
           build_target = unit.common.build_target
-          test_to_build_map[test_name] = build_target.name
           expressions = [t.test_expr for t in test.tast_test_expr]
           gce_metadata = test.gce_metadata
           properties_gce_metadata = GceTestProperties.GceMetadata(
