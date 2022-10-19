@@ -310,7 +310,8 @@ class BotScalingApi(recipe_api.RecipeApi):
         the RoboCrop.
 
     Returns:
-      list(Config), GCE Provider config definitions.
+      ConfigResponse (named_tuple), GCE Provider config definitions and missing
+        configs.
     """
     prefixes = []
     for policy in bot_policy_config.bot_policies:

@@ -735,9 +735,10 @@ Args:
     the RoboCrop.
 
 Returns:
-  list(Config), GCE Provider config definitions.
+  ConfigResponse (named_tuple), GCE Provider config definitions and missing
+    configs.
 
-&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#321)(self, region_restrictions, config_map):**
+&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#322)(self, region_restrictions, config_map):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -813,7 +814,7 @@ Args:
 Returns:
   SwarmingStats:  bot and task stats named tuple.
 
-&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#361)(self, bot_policy_config):**
+&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#362)(self, bot_policy_config):**
 
 Reduces bot_policy_config fields prior to sending to bb tables.
 
@@ -825,7 +826,7 @@ Returns:
   str, scaled down config that only includes data needed
   for plx
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#414)(self, dimensions):**
+&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#415)(self, dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -835,7 +836,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#338)(self, bot_policy_config, configs):**
+&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#339)(self, bot_policy_config, configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -847,7 +848,7 @@ Args:
 Returns:
   BotPolicy, updated to reflect ScalingRestriction values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#385)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#386)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -5134,14 +5135,14 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY2+3
 
-#### **class [GceProvider](/recipe_modules/gce_provider/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GceProvider](/recipe_modules/gce_provider/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that interacts with the GCE Provider config service.
 
 Depends on 'prpc' binary available in $PATH:
 https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
-&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#70)(self, ids):**
+&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#65)(self, ids):**
 
 Function to retrieve the current config from GCE Provider.
 
@@ -5149,12 +5150,11 @@ Args:
   ids (list): A list of all the config prefixes to retrieve.
 
 Returns:
-  Configs, list of GCE Provide Config objects.
+  ConfigResponse containing:
+    configs: Configs, list of GCE Provide Config objects.
+    missing_configs: list[str] of ids for which there is no config.
 
-Raises:
-  NoneConfigFailure: If the GCE Provider Get call returns None.
-
-&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#33)(self, bid, config):**
+&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#27)(self, bid, config):**
 
 Function to update the config in GCE Provider.
 

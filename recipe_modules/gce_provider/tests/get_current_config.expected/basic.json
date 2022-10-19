@@ -12,7 +12,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "getting config for prefix-first.gce-provider.config.Get",
+    "name": "getting config for prefix-first.gce-provider.config.Get (prefix: prefix-first)",
     "stdin": "{\"id\": \"prefix-first\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

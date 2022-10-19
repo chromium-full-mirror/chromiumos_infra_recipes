@@ -16,7 +16,7 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       config(dict)|None: Dictionary of GCE Provider config
     """
-    if prefix == "prefix-should-return-none":
+    if prefix in ("prefix-should-return-none", "prefix-fifth"):
       return None
     return {
         "amount": {
@@ -55,7 +55,7 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
         "lifetime": {
             "seconds": "86400"
         },
-        "prefix": "prefix-first",
+        "prefix": prefix,
         "revision": "4414d646bb94ed7b9129aa980bdf0794cc5ebc59",
         "swarming": "https://chromeos-swarming.appspot.com"
     }

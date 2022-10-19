@@ -33,12 +33,18 @@ def RunSteps(api, properties):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config(
           application=application)
     with api.step.nest('get current GCE config') as pres:
-      gce_config = api.bot_scaling.get_current_gce_config(bot_policy_config)
+      gce_config_tuple = api.bot_scaling.get_current_gce_config(
+          bot_policy_config)
+      gce_config = gce_config_tuple.configs
       # TODO(b/217973414): Replace with MessageToJson once we don't need to
       # fix the spacing between py2 and py3 MessageToJson.
       pres.logs['gce_config'] = json.dumps(
           jsonpb.MessageToDict(gce_config), sort_keys=True,
           separators=(',', ':'), indent=2)
+      if gce_config_tuple.missing_configs:
+        pres.status = api.step.FAILURE
+        pres.step_summary_text = "No config found for prefix(s): {}".format(
+            ','.join(gce_config_tuple.missing_configs))
     with api.step.nest('update bot policies') as pres:
       updated_bot_policy = api.bot_scaling.update_bot_policy_limits(
           bot_policy_config, gce_config)

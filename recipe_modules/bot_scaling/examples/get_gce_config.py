@@ -16,7 +16,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 def RunSteps(api):
   gce_config = api.bot_scaling.get_current_gce_config(
       api.cros_infra_config.get_bot_policy_config())
-  api.assertions.assertEqual(len(gce_config.vms), 4)
+  api.assertions.assertEqual(len(gce_config.configs.vms), 4)
+  api.assertions.assertEqual(len(gce_config.missing_configs), 1)
 
 
 def GenTests(api):

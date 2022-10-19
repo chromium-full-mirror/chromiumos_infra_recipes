@@ -8,7 +8,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Get",
+    "name": "gce-provider.config.Get (prefix: prefix-first)",
     "stdin": "{\"id\": \"prefix-first\"}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",

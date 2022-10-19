@@ -3,6 +3,7 @@
 # Copyright 2020 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from collections import namedtuple
 
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
 #from PB.go.chromium.org.luci.gce.api.config.v1 import service as service_pb2
@@ -12,13 +13,7 @@ from google.protobuf import json_format
 
 GCE_PROVIDER_URL = 'gce-provider.appspot.com'
 
-
-class NoneConfigFailure(recipe_api.StepFailure):
-  """Error class for when GCE Provider returns None for a Configuration.Get"""
-
-  def __init__(self, config_prefix):
-    super(NoneConfigFailure,
-          self).__init__("No config found for prefix {}".format(config_prefix))
+ConfigResponse = namedtuple('ConfigResponse', ['configs', 'missing_configs'])
 
 
 class GceProvider(recipe_api.RecipeApi):
@@ -28,7 +23,6 @@ class GceProvider(recipe_api.RecipeApi):
   https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
   """
-  NoneConfigFailure = NoneConfigFailure
 
   def update_gce_config(self, bid, config):
     """Function to update the config in GCE Provider.
@@ -63,8 +57,9 @@ class GceProvider(recipe_api.RecipeApi):
     """
     req = {'id': prefix}
     step = self._run(
-        'Get', req, test_stdout=lambda: self.test_api.
-        get_current_config_step_test_data(prefix))
+        'Get', req,
+        test_stdout=lambda: self.test_api.get_current_config_step_test_data(
+            prefix), step_suffix=' (prefix: {})'.format(prefix))
     return step
 
   def get_current_config(self, ids):
@@ -74,12 +69,12 @@ class GceProvider(recipe_api.RecipeApi):
       ids (list): A list of all the config prefixes to retrieve.
 
     Returns:
-      Configs, list of GCE Provide Config objects.
-
-    Raises:
-      NoneConfigFailure: If the GCE Provider Get call returns None.
+      ConfigResponse containing:
+        configs: Configs, list of GCE Provide Config objects.
+        missing_configs: list[str] of ids for which there is no config.
     """
     configs = []
+    missing_configs = []
     futures = {}
     for prefix in ids:
       fut = self.m.futures.spawn(self._make_gce_config_call, prefix=prefix)
@@ -87,12 +82,14 @@ class GceProvider(recipe_api.RecipeApi):
     for fut in self.m.futures.iwait(futures.keys()):
       stdout = fut.result()
       if stdout is None:
-        raise NoneConfigFailure(futures[fut])
+        missing_configs.append(futures[fut])
+        continue
       configs.append(
           json_format.ParseDict(stdout, Config(), ignore_unknown_fields=True))
-    return Configs(vms=configs)
+    return ConfigResponse(Configs(vms=configs), missing_configs)
 
-  def _run(self, method, stdin_json, step_name=None, test_stdout=None):
+  def _run(self, method, stdin_json, step_name=None, test_stdout=None,
+           step_suffix=''):
     """Return a swarming command step.
 
     Args:
@@ -101,7 +98,8 @@ class GceProvider(recipe_api.RecipeApi):
       step_name (str): Presentation name for step.
       test_stdout (dict): dictionary based test data.
     """
-    step_name = step_name or ('gce-provider.config.' + method)
+    step_name = step_name or ('gce-provider.config.{}{}'.format(
+        method, step_suffix))
     cmd = [
         'prpc', 'call', '-format=json', GCE_PROVIDER_URL,
         'config.Configuration.' + method

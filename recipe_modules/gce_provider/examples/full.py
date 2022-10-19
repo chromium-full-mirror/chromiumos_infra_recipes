@@ -14,7 +14,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 
 def RunSteps(api):
-  config = api.gce_provider.get_current_config(['prefix-first'])
+  config = api.gce_provider.get_current_config(['prefix-first']).configs
   api.assertions.assertEqual(len(config.vms), 1)
 
   prefix_map = {'prefix-first': 20, 'prefix-second': 25}

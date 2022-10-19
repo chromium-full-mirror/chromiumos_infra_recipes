@@ -1,10 +1,7 @@
 [
   {
     "cmd": [],
-    "name": "getting config for prefix-should-return-none",
-    "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
-    ]
+    "name": "getting config for prefix-should-return-none"
   },
   {
     "cmd": [
@@ -15,7 +12,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "getting config for prefix-should-return-none.gce-provider.config.Get",
+    "name": "getting config for prefix-should-return-none.gce-provider.config.Get (prefix: prefix-should-return-none)",
     "stdin": "{\"id\": \"prefix-should-return-none\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -24,10 +21,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "No config found for prefix prefix-should-return-none"
-    },
     "name": "$result"
   }
 ]

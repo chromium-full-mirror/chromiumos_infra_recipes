@@ -33,6 +33,11 @@
           "region": "us-west1-b",
           "prefix": "prefix-fourth",
           "weight": 0.2
+        },
+        {
+          "region": "us-west1-b",
+          "prefix": "prefix-fifth",
+          "weight": 0.0
         }
       ],
       "swarmingDimensions": [

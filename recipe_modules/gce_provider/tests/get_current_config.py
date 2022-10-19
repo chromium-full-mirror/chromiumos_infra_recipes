@@ -34,5 +34,5 @@ def GenTests(api):
       'prefix-with-no-config',
       api.properties(
           GetCurrentConfigProperties(prefix="prefix-should-return-none")),
-      api.post_process(post_process.StepException,
+      api.post_process(post_process.StepSuccess,
                        'getting config for prefix-should-return-none'))

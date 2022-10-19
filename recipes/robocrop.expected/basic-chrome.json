@@ -82,7 +82,7 @@
       "@@@STEP_LOG_LINE@gce_config@      \"lifetime\":{@@@",
       "@@@STEP_LOG_LINE@gce_config@        \"seconds\":\"86400\"@@@",
       "@@@STEP_LOG_LINE@gce_config@      },@@@",
-      "@@@STEP_LOG_LINE@gce_config@      \"prefix\":\"prefix-first\",@@@",
+      "@@@STEP_LOG_LINE@gce_config@      \"prefix\":\"chrome-robocrop-xenial-us-central1-c\",@@@",
       "@@@STEP_LOG_LINE@gce_config@      \"revision\":\"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\",@@@",
       "@@@STEP_LOG_LINE@gce_config@      \"swarming\":\"https://chromeos-swarming.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@gce_config@    }@@@",
@@ -100,7 +100,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current GCE config.gce-provider.config.Get",
+    "name": "scale bot groups.get current GCE config.gce-provider.config.Get (prefix: chrome-robocrop-xenial-us-central1-c)",
     "stdin": "{\"id\": \"chrome-robocrop-xenial-us-central1-c\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -148,7 +148,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"lifetime\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"seconds\": \"86400\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"chrome-robocrop-xenial-us-central1-c\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"swarming\": \"https://chromeos-swarming.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -182,7 +182,9 @@
       "@@@STEP_LOG_LINE@bot_policy_config@      ],@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@      \"scalingMode\":\"DEMAND\",@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@      \"scalingRestriction\":{@@@",
+      "@@@STEP_LOG_LINE@bot_policy_config@        \"botCeiling\":100,@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@        \"botFallback\":100,@@@",
+      "@@@STEP_LOG_LINE@bot_policy_config@        \"botFloor\":15,@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@        \"minIdle\":10@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@      },@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@      \"swarmingDimensions\":[@@@",
@@ -213,7 +215,7 @@
     "name": "scale bot groups.get current swarming stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@swarming_stats@SwarmingStats(bot_stats=[BotStats(bot_group='try-test', busy=0, count=0, dead=0, maintenance=0, quarantined=0, min=0, max=0)], task_stats=[TaskStats(bot_group='try-test', task_state='RUNNING', count=0), TaskStats(bot_group='try-test', task_state='PENDING', count=0)])@@@",
+      "@@@STEP_LOG_LINE@swarming_stats@SwarmingStats(bot_stats=[BotStats(bot_group='try-test', busy=0, count=0, dead=0, maintenance=0, quarantined=0, min=15, max=100)], task_stats=[TaskStats(bot_group='try-test', task_state='RUNNING', count=0), TaskStats(bot_group='try-test', task_state='PENDING', count=0)])@@@",
       "@@@STEP_LOG_END@swarming_stats@@@"
     ]
   },
@@ -321,7 +323,7 @@
     "name": "scale bot groups.get current swarming stats.set swarming_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@swarming_stats@[[[\"try-test\", 0, 0, 0, 0, 0, 0, 0]], [[\"try-test\", \"RUNNING\", 0], [\"try-test\", \"PENDING\", 0]]]@@@"
+      "@@@SET_BUILD_PROPERTY@swarming_stats@[[[\"try-test\", 0, 0, 0, 0, 0, 15, 100]], [[\"try-test\", \"RUNNING\", 0], [\"try-test\", \"PENDING\", 0]]]@@@"
     ]
   },
   {
@@ -335,7 +337,20 @@
       "@@@STEP_LOG_LINE@robocrop_action@      \"application\":\"chrome\",@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      \"resourceUtilization\":[@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
-      "@@@STEP_LOG_LINE@robocrop_action@          \"region\":\"global\"@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"cpus\":120.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"diskGb\":11250.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"maxCpus\":800.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"memoryGb\":480.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"region\":\"global\",@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"vms\":15@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@        },@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"cpus\":120.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"diskGb\":11250.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"maxCpus\":800.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"memoryGb\":480.0,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"region\":\"us-central1-c\",@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"vms\":15@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        }@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      ]@@@",
       "@@@STEP_LOG_LINE@robocrop_action@    }@@@",
@@ -345,14 +360,19 @@
       "@@@STEP_LOG_LINE@robocrop_action@      \"actionable\":\"NO\",@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      \"application\":\"chrome\",@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      \"botGroup\":\"try-test\",@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"botMax\":100,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"botMin\":15,@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      \"botType\":{@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"botSize\":\"e2-standard-8\",@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"coresPerBot\":8.0,@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"hourlyCost\":0.0804,@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        \"memoryGb\":32.0@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      },@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"botsRequested\":15,@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@      \"estimatedSavings\":1.1412779,@@@",
       "@@@STEP_LOG_LINE@robocrop_action@      \"regionalActions\":[@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        {@@@",
+      "@@@STEP_LOG_LINE@robocrop_action@          \"botsRequested\":15,@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"prefix\":\"chrome-robocrop-xenial-us-central1-c\",@@@",
       "@@@STEP_LOG_LINE@robocrop_action@          \"region\":\"us-central1-c\"@@@",
       "@@@STEP_LOG_LINE@robocrop_action@        }@@@",
@@ -400,7 +420,7 @@
     "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chrome\", \"resourceUtilization\": [{\"region\": \"global\"}]}], \"scalingActions\": [{\"actionable\": \"NO\", \"application\": \"chrome\", \"botGroup\": \"try-test\", \"botType\": {\"botSize\": \"e2-standard-8\", \"coresPerBot\": 8.0, \"hourlyCost\": 0.0804, \"memoryGb\": 32.0}, \"regionalActions\": [{\"prefix\": \"chrome-robocrop-xenial-us-central1-c\", \"region\": \"us-central1-c\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chrome\", \"resourceUtilization\": [{\"cpus\": 120.0, \"diskGb\": 11250.0, \"maxCpus\": 800.0, \"memoryGb\": 480.0, \"region\": \"global\", \"vms\": 15}, {\"cpus\": 120.0, \"diskGb\": 11250.0, \"maxCpus\": 800.0, \"memoryGb\": 480.0, \"region\": \"us-central1-c\", \"vms\": 15}]}], \"scalingActions\": [{\"actionable\": \"NO\", \"application\": \"chrome\", \"botGroup\": \"try-test\", \"botMax\": 100, \"botMin\": 15, \"botType\": {\"botSize\": \"e2-standard-8\", \"coresPerBot\": 8.0, \"hourlyCost\": 0.0804, \"memoryGb\": 32.0}, \"botsRequested\": 15, \"estimatedSavings\": 1.1412779, \"regionalActions\": [{\"botsRequested\": 15, \"prefix\": \"chrome-robocrop-xenial-us-central1-c\", \"region\": \"us-central1-c\"}]}]}@@@"
     ]
   },
   {

@@ -23,7 +23,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Get",
+    "name": "gce-provider.config.Get (prefix: prefix-first)",
     "stdin": "{\"id\": \"prefix-first\"}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -86,7 +86,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Get (2)",
+    "name": "gce-provider.config.Get (prefix: prefix-second)",
     "stdin": "{\"id\": \"prefix-second\"}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -133,7 +133,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"lifetime\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"seconds\": \"86400\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-second\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"swarming\": \"https://chromeos-swarming.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -149,7 +149,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Get (3)",
+    "name": "gce-provider.config.Get (prefix: prefix-third)",
     "stdin": "{\"id\": \"prefix-third\"}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -196,7 +196,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"lifetime\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"seconds\": \"86400\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-third\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"swarming\": \"https://chromeos-swarming.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -212,7 +212,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Get (4)",
+    "name": "gce-provider.config.Get (prefix: prefix-fourth)",
     "stdin": "{\"id\": \"prefix-fourth\"}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -259,10 +259,26 @@
       "@@@STEP_LOG_LINE@json.output@  \"lifetime\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"seconds\": \"86400\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-first\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"prefix\": \"prefix-fourth\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", @@@",
       "@@@STEP_LOG_LINE@json.output@  \"swarming\": \"https://chromeos-swarming.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "-format=json",
+      "gce-provider.appspot.com",
+      "config.Configuration.Get"
+    ],
+    "infra_step": true,
+    "name": "gce-provider.config.Get (prefix: prefix-fifth)",
+    "stdin": "{\"id\": \"prefix-fifth\"}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@null@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
