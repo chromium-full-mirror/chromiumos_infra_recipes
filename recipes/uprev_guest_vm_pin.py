@@ -28,7 +28,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
 from PB.recipes.chromeos.uprev_guest_vm_pin import \
   (UprevGuestVmPinProperties, VmBoardImage)
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'recipe_engine/archive',

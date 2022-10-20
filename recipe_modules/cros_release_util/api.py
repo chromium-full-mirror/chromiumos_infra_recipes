@@ -9,7 +9,7 @@ from recipe_engine import recipe_api
 
 from PB.chromiumos.common import Channel
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 class CrosReleaseUtilApi(recipe_api.RecipeApi):

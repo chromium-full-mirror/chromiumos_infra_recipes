@@ -58,7 +58,7 @@ DEPS = [
     'tast_results',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = OsInstallVmProperties
 
@@ -189,7 +189,8 @@ def RunSteps(api, properties):
       # Start a polling loop waiting for the VM to exit. The current
       # greenlet will be mostly blocked during this loop.
       with api.step.nest('wait for install to complete'):
-        while True:
+        loop = True
+        while loop:
           done_futures = api.futures.wait([tast_future],
                                           timeout=poll_interval_in_seconds)
           if done_futures:
@@ -197,7 +198,7 @@ def RunSteps(api, properties):
 
           # Exit the loop once the VM process is done.
           if not api.tast_exec.is_vm_running(vm.pid_file):
-            break
+            loop = False
 
     with api.step.nest('boot installed system'):
       # Create a new VM. This one has just the target installation

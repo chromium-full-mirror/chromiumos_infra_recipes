@@ -17,7 +17,7 @@ DEPS = [
     'cros_test_plan',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = {
     'passed_tests': Property(default=[]),

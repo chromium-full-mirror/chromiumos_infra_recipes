@@ -16,7 +16,7 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 _LIBCHROME_ECLASS_PATH = 'eclass/libchrome-version.eclass'
 

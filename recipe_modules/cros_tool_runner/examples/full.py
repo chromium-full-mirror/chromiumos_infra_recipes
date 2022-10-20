@@ -13,7 +13,7 @@ DEPS = [
     'cros_tool_runner',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def mock_metadata(target="test-target"):

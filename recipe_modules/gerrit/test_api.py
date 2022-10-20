@@ -2,6 +2,7 @@
 # Copyright 2018 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+import six
 
 from recipe_engine import recipe_test_api
 
@@ -154,8 +155,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     return {
         'changes':
             list(
-                map(self.test_fetch_changes_response, request['changes'],
-                    gerrit_changes))
+                map(lambda a: self.test_fetch_changes_response(*a),
+                    six.moves.zip_longest(request['changes'], gerrit_changes)))
     }
 
   def test_patch_set(self):

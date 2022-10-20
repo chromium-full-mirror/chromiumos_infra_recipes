@@ -26,7 +26,7 @@ DEPS = [
     'cros_build_api',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api, exclude_image_archives):

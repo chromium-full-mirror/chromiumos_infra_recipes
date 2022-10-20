@@ -14,7 +14,7 @@ from PB.chromiumos.test.api.v1.plan import HWTestPlan
 from PB.chromiumos.test.plan.source_test_plan import SourceTestPlan
 from PB.testplans.board_priorities import BoardPriorityList, BoardPriority
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 BuildMetadata = SystemImage.BuildMetadata
 BuildMetadataList = SystemImage.BuildMetadataList

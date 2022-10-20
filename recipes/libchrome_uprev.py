@@ -21,7 +21,7 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PUSH_OPTION_LABEL_RE = re.compile(
     r'(Auto-Submit|Verified|Commit-Queue)([+-][12])')

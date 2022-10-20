@@ -31,7 +31,7 @@ DEPS = [
     'workspace_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # TODO(dburger): Rename this recipe. Initially it centered around syncing to a
 # local manifest, but that is optional now.

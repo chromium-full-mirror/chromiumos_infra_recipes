@@ -54,7 +54,7 @@ DEPS = [
     'workspace_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 _CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
 _CHANGE_ID_REGEX = re.compile(r'^Change-Id: ', re.MULTILINE)

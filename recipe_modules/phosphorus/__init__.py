@@ -18,7 +18,7 @@ DEPS = [
     'easy',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = PhosphorusProperties
 ENV_PROPERTIES = PhosphorusEnvProperties

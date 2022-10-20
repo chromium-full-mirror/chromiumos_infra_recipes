@@ -64,7 +64,7 @@ DEPS = [
     'skylab',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Each CIPD package instance of cros_test_platform that has been promoted to
 # staging or prod is tagged with a timestamped release version.

@@ -32,7 +32,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'depot_tools/gsutil',
