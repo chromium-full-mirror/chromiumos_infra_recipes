@@ -1383,7 +1383,10 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
                      result=result)
     # TODO(b/252945582): Handle multiple test results if needed
     if results_dir:
-      api.cts_results_archive.archive(results_dir)
+      # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
+      # results. To align with that, we need to pass the directory
+      # .../cros-test/artifacts/tauto/, not its sub directory.
+      api.cts_results_archive.archive(os.path.dirname(results_dir))
 
     interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
