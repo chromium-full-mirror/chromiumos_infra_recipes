@@ -78,7 +78,8 @@ def GenTests(api):
   def test_data(private=False, use_staging=False,
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
                 commit_overlay_binhost=True, profile=None,
-                expected_package_indexes=None, dirty_source=False):
+                expected_package_indexes=None, dirty_source=False,
+                max_binhost_uris=1):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
@@ -110,7 +111,9 @@ def GenTests(api):
                 enable_snapshot_prebuilts=enable_snapshot_prebuilts,
                 send_snapshot_prebuilts=send_snapshot_prebuilts),
         'commit_overlay_binhost':
-            commit_overlay_binhost
+            commit_overlay_binhost,
+        'max_binhost_uris':
+            max_binhost_uris,
     }
 
     # Forcing cros_source to claim dirty source.
@@ -167,8 +170,9 @@ def GenTests(api):
   yield api.test('disable-overlay-commits',
                  test_data(commit_overlay_binhost=False))
 
-  yield api.test('with-profile',
-                 test_data(profile=Profile(name='generic_build')))
+  yield api.test(
+      'with-profile',
+      test_data(profile=Profile(name='generic_build'), max_binhost_uris=2))
 
   # This test forces dirty source and thus tests the code path of
   # upload_target_prebuilts skipping binhost commit and metadata

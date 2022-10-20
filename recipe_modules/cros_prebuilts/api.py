@@ -29,6 +29,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     self._enable_snapshot_prebuilts = properties.enable_snapshot_prebuilts
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
     self._commit_overlay_binhost = global_props.commit_overlay_binhost
+    self._max_binhost_uris = global_props.max_binhost_uris
+    if self._max_binhost_uris is None or self._max_binhost_uris == 0:
+      self._max_binhost_uris = 1
 
   @property
   def _build_id(self):
@@ -375,7 +378,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('update binhost conf file'):
       request = binhost_pb.SetBinhostRequest(build_target=target,
-                                             private=private, key=key, uri=uri)
+                                             private=private, key=key, uri=uri,
+                                             max_uris=self._max_binhost_uris)
       response = self.m.cros_build_api.BinhostService.SetBinhost(
           request, infra_step=True)
       binhost_path = self.m.path.abs_to_path(response.output_file)

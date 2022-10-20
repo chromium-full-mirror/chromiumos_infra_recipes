@@ -1133,6 +1133,7 @@
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"key\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@  \"maxUris\": 1,@@@",
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -1148,7 +1149,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"maxUris\": 1,\n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
@@ -1251,7 +1252,7 @@
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"requestTime\":\"2012-05-14T12:53:29Z\",\"responseTime\":\"2012-05-14T12:53:30.500Z\",\"setBinhostRequest\":{\"buildTarget\":{\"name\":\"amd64-generic\"},\"key\":\"POSTSUBMIT_BINHOST\",\"uri\":\"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"},\"setBinhostResponse\":{\"outputFile\":\"[START_DIR]/BINHOST.conf\"},\"stepName\":\"upload prebuilts|update binhost conf file|call chromite.api.BinhostService/SetBinhost|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{\"buildId\":\"8945511751514863184\",\"requestTime\":\"2012-05-14T12:53:29Z\",\"responseTime\":\"2012-05-14T12:53:30.500Z\",\"setBinhostRequest\":{\"buildTarget\":{\"name\":\"amd64-generic\"},\"key\":\"POSTSUBMIT_BINHOST\",\"maxUris\":1,\"uri\":\"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\"},\"setBinhostResponse\":{\"outputFile\":\"[START_DIR]/BINHOST.conf\"},\"stepName\":\"upload prebuilts|update binhost conf file|call chromite.api.BinhostService/SetBinhost|call build API script\"}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
@@ -1260,7 +1261,7 @@
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIyYDE/QQiDAjKgMT9BBCAyrXuAXJ3Cg8KDWFtZDY0LWdlbmVyaWMYASJiZ3M6Ly9wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXN6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAmt1cGxvYWQgcHJlYnVpbHRzfHVwZGF0ZSBiaW5ob3N0IGNvbmYgZmlsZXxjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIyYDE/QQiDAjKgMT9BBCAyrXuAXJ5Cg8KDWFtZDY0LWdlbmVyaWMYASJiZ3M6Ly9wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXMoAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbQAtDsgNmu8bWSfNoCa3VwbG9hZCBwcmVidWlsdHN8dXBkYXRlIGJpbmhvc3QgY29uZiBmaWxlfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -1291,7 +1292,7 @@
       }
     },
     "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIyYDE/QQiDAjKgMT9BBCAyrXuAXJ3Cg8KDWFtZDY0LWdlbmVyaWMYASJiZ3M6Ly9wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXN6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAmt1cGxvYWQgcHJlYnVpbHRzfHVwZGF0ZSBiaW5ob3N0IGNvbmYgZmlsZXxjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIyYDE/QQiDAjKgMT9BBCAyrXuAXJ5Cg8KDWFtZDY0LWdlbmVyaWMYASJiZ3M6Ly9wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXMoAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbQAtDsgNmu8bWSfNoCa3VwbG9hZCBwcmVidWlsdHN8dXBkYXRlIGJpbmhvc3QgY29uZiBmaWxlfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
