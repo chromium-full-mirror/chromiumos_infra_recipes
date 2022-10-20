@@ -376,6 +376,9 @@ def _enumerate_cft_tests(api, requests):
                       for dep in test_case.dependencies
                   ],
                   execution_environment=1,
+                  # TODO (b/254684984): Remove these default values in long term
+                  allow_retries=True,
+                  max_retries=1,
               ),
           )
           autotest_invocations.append(autotest_invocation)
