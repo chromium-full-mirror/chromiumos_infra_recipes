@@ -5,6 +5,8 @@
 
 """Recipe for building a Borealis rootfs image."""
 
+import re
+
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.build_borealis_rootfs import (
@@ -86,10 +88,12 @@ def DoRunSteps(api, properties):
     # Version the archive.
     version = api.time.utcnow().strftime('%Y.%m.%d.%H%M%S')
     if properties.manifest_branch:
-      # Replace all forward slashes with underscores for filename validity
-      manifest_branch = properties.manifest_branch.replace('/', '_')
-      # Prepend the branch name into the version
-      version = manifest_branch + '-' + version
+      # Extract the version number from the provided manifest branch
+      milestone_number_regex = r"^release-R([0-9]+)-"
+      match = re.search(milestone_number_regex, properties.manifest_branch)
+      milestone_number = match.group(1)
+      # Prepend the milestone into the version in a way ebuilds can uprev
+      version = milestone_number + '.' + version
 
     package_name = properties.package_info.package_name
     archive_name = package_name + '-' + version + '.tar.xz'
@@ -202,4 +206,18 @@ def GenTests(api):
               '--manifest-branch',
               'release-R105-14989.B',
           ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload VM imaage.uprev_dlc',
+          [
+              '--archive',
+              'borealis-dlc-105.2012.05.14.125330.tar.xz',
+          ],
       ), api.post_check(post_process.StatusSuccess))
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'abcdefg'
+  yield api.test('bad-manifest-branch', api.properties(**props),
+                 api.expect_exception('AttributeError'),
+                 api.post_check(post_process.StatusException))
