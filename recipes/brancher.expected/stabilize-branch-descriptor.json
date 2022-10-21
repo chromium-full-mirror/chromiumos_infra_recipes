@@ -26,6 +26,23 @@
     "name": "validate properties"
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "stat",
+      "gs://chromeos-image-archive/atlas-kernelnext-release/R89-13729.0.0/build_report.json"
+    ],
+    "infra_step": true,
+    "name": "validate properties.gsutil stat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "create branch",
     "~followup_annotations": [

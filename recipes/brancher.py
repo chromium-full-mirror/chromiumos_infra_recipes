@@ -18,6 +18,7 @@ DEPS = [
     'cros_branch',
     'cros_release_config',
     'cros_source',
+    'depot_tools/gsutil',
     'easy',
     'workspace_util',
 ]
@@ -27,6 +28,16 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BrancherProperties
 
 
+def IsRubikBuild(api, source_version):
+  # Legacy build does not generate build_report.json but Rubik build does.
+  # The gsutil will fail with URL matched no objects exception on a legacy
+  # build.
+  gs_path = 'gs://chromeos-image-archive/atlas-kernelnext-release/{}/build_report.json'.format(
+      source_version)
+  ret = api.gsutil.stat(gs_path, ok_ret='any')
+  return ret.retcode == 0
+
+
 def RunSteps(api, properties):
   with api.step.nest('validate properties'):
     if not properties.source_version:
@@ -34,6 +45,13 @@ def RunSteps(api, properties):
     if properties.branch_info.type not in [Branch.RELEASE, Branch.STABILIZE]:
       raise StepFailure("unsupported branch type: {}".format(
           properties.branch_info.type))
+    # Legacy tryjob CLI does not work on branches created from Rubik buildspecs,
+    # see b/252809202.
+    if properties.branch_info.type == Branch.STABILIZE:
+      if IsRubikBuild(api, properties.source_version):
+        raise StepFailure(
+            "temporary: do not cut stabilize branches from Rubik buildspecs "
+            "(b/252809202 for context)")
 
   # Create branch.
   with api.step.nest('create branch') as presentation:
@@ -76,6 +94,7 @@ def GenTests(api):
 
   yield api.test(
       'stabilize-branch-descriptor',
+      api.step_data('validate properties.gsutil stat', retcode=1),
       api.step_data(
           'create branch'
           '.create branch from buildspec manifest 89/13729.0.0.xml',
@@ -106,6 +125,15 @@ def GenTests(api):
       api.properties(
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.FACTORY))),
+      api.post_check(post_process.StepFailure, 'validate properties'),
+  )
+
+  yield api.test(
+      'bad-branch-stablize-rubik-build',
+      api.step_data('validate properties.gsutil stat', retcode=0),
+      api.properties(
+          BrancherProperties(source_version='R109-15194.0.0',
+                             branch_info=Branch(type=Branch.STABILIZE))),
       api.post_check(post_process.StepFailure, 'validate properties'),
   )
 
