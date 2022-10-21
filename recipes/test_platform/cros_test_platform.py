@@ -351,6 +351,7 @@ def _enumerate_cft_tests(api, requests):
   if not requests:
     return {}
   tagged_responses = {}
+  taggged_responses_json = {}
   with api.step.nest('enumerate CFT tests') as step:
     for t, r in requests.items():
       api.cros_tool_runner.create_file_with_container_metadata(
@@ -364,6 +365,9 @@ def _enumerate_cft_tests(api, requests):
       test_finder_request = ctr.CrosToolRunnerTestFinderRequest(
           test_suites=[_ctr_test_suite(r)], container_metadata_key=build_target)
       test_finder_result = api.cros_tool_runner.find_tests(test_finder_request)
+      suite_name = ''
+      if r.test_plan.suite:
+        suite_name = r.test_plan.suite[0].name
 
       autotest_invocations = []
       for test_suite in test_finder_result.test_suites:
@@ -380,13 +384,18 @@ def _enumerate_cft_tests(api, requests):
                   allow_retries=True,
                   max_retries=1,
               ),
+              result_keyvals={'suite': suite_name},
           )
           autotest_invocations.append(autotest_invocation)
       if autotest_invocations:
         tagged_responses[t] = EnumerationResponse(
             autotest_invocations=autotest_invocations)
+        taggged_responses_json[t] = json_format.MessageToDict(
+            tagged_responses[t])
       else:
         tagged_responses[t] = EnumerationResponse(error_summary='no test found')
+        taggged_responses_json[t] = json_format.MessageToDict(
+            tagged_responses[t])
 
     for tag, response in sorted(tagged_responses.items()):
       _log_enumeration_errors(api, response, tag)
@@ -394,6 +403,10 @@ def _enumerate_cft_tests(api, requests):
       step.presentation.logs[name] = json.dumps(
           _enumeration_log(response), separators=(',', ': '), indent=2,
           sort_keys=True)
+
+    step.presentation.logs['constructed cft enumeration response'] = json.dumps(
+        taggged_responses_json, separators=(',', ': '), indent=2,
+        sort_keys=True)
 
     return tagged_responses
 

@@ -170,6 +170,12 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@autotest tests for default@[]@@@",
       "@@@STEP_LOG_END@autotest tests for default@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@{@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@  \"default\": {@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@    \"errorSummary\": \"no test found\"@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@  }@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@}@@@",
+      "@@@STEP_LOG_END@constructed cft enumeration response@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
