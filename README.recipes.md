@@ -11146,7 +11146,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [py2\_MessageToJson](/recipes/generator.py#92)(obj):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#456)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#460)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 
