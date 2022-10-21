@@ -250,6 +250,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     with self._api.step.nest('CrosToolRunner: run provision') as step:
       with self._api.context(infra_steps=True):
+        self.cft_test_request.primary_dut.provision_state.update_firmware = \
+          self.should_update_os_bundled_firmware(self.cft_test_request.primary_dut)
         provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
             ctr.CrosToolRunnerProvisionRequest.Device(
                 dut=metadata.primary_dut, provision_state=self.cft_test_request
@@ -823,3 +825,27 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       if test_dut_resp.is_failure():
         any_test_failed = True
     return RunTestResponsesTuple(test_dut_responses, any_test_failed)
+
+  def should_update_os_bundled_firmware(self, device):
+    fw_config = self._properties.common_config.cros_firmware_update_config
+    if not fw_config.enabled:
+      return False
+    # If there is specific firmware requested, then we should skip update
+    # os bundled firmware as the DUT's firmware will be updated to the
+    # specified version during firmware provisioning.
+    if (device.provision_state.firmware.main_rw_payload.firmware_image_path.path
+        or
+        device.provision_state.firmware.main_ro_payload.firmware_image_path.path
+       ):
+      return False
+    # There will be only one of list(allow/block) at a given time, so the order
+    # of below blocks doesn't matters.
+    if fw_config.HasField("allow_list"):
+      return (device.dut_model.build_target in fw_config.allow_list.boards or
+              device.dut_model.model_name in fw_config.allow_list.models)
+    if fw_config.HasField("block_list"):
+      return (device.dut_model.build_target not in fw_config.block_list.boards
+              and
+              device.dut_model.model_name not in fw_config.block_list.models)
+    # We shouldn't hit here ever, but for safe we return False if it happens.
+    return False
