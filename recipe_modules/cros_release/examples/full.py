@@ -112,4 +112,32 @@ def GenTests(api):
       api.post_check(post_process.StepFailure, 'generate payloads'),
       api.post_check(post_process.StepFailure,
                      'generate payloads.inspect failure'),
+      api.post_check(post_process.StatusFailure),
       api.test_util.test_child_build('amd64-generic').build)
+
+  yield api.build_menu.test(
+      'paygen-infra-failure',
+      api.properties(
+          **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/cros_release':
+                  CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA],
+                                        src_paygen_bucket='chromeos-releases'),
+          }),
+      api.post_check(
+          post_process.LogContains,
+          'push images.call chromite.api.ImageService/PushImage', 'request',
+          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+      api.buildbucket.simulated_collect_output([
+          build_pb2.Build(
+              id=8922054662172514000, status='INFRA_FAILURE',
+              summary_markdown='1 of 2 passed\n\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567'
+          )
+      ], 'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.StepException, 'generate payloads'),
+      api.post_check(post_process.StepException,
+                     'generate payloads.inspect failure'),
+      api.post_check(post_process.StatusException),
+      api.test_util.test_child_build('amd64-generic').build,
+      api.post_process(post_process.DropExpectation))

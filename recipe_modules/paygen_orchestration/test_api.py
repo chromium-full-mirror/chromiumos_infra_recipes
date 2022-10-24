@@ -9,6 +9,7 @@ This module provides helpers to make testing Chrome OS recipes simpler and more
 consistent.
 """
 
+import json
 import os
 from recipe_engine import recipe_test_api
 
@@ -38,11 +39,21 @@ def _read_test_file(filename):
     return f.read().strip()
 
 
+def _example_big_config():
+  """Multiply paygen config for summary markdown truncate testing."""
+  data = json.loads(_read_test_file('test_paygen.json'))
+  # 99 total.
+  data['delta'] = data['delta'] * 33
+  return json.dumps(data)
+
+
 class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
   """Helper class for testing Chrome OS Paygen Recipes."""
 
   EXAMPLE_PAYGEN_JSON = _read_test_file('test_paygen.json')
   NO_DELTA_PAYGEN_JSON = _read_test_file('test_no_deltas.json')
+
+  EXAMPLE_PAYGEN_JSON_BIG = _example_big_config()
 
   EXAMPLE_EMPTY_JSON = "{}"
   EXAMPLE_NOT_EVEN_JSON = "dawiojdoiawjdioawjdow"

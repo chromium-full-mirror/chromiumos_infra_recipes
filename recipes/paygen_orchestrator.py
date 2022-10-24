@@ -177,11 +177,22 @@ def RunSteps(api, properties):
       api.easy.set_properties_step(payloads=payloads_json)
 
   if fail:
+    infra_fail = [x for x in fail if x.status == common_pb2.INFRA_FAILURE]
+    fail = [x for x in fail if x.status != common_pb2.INFRA_FAILURE]
+
+    infra_summary = 'infra_failure: {}\n'.format(
+        _summarize_failed_builds(infra_fail)) if infra_fail else ''
+    summary_markdown = '{}\n{}{}'.format(pres.step_text, infra_summary,
+                                         _summarize_failed_builds(fail))
+    # Truncate the list of failures per section to keep the summary under
+    # Buildbucket's 4000 byte limit on the summary_markdown field.
+    # To be removed when https://crbug.com/1063398 is resolved.
+    if len(summary_markdown) >= 4000:
+      summary_markdown = summary_markdown[:3995] + "\n..."
     # Give a failure markdown with the failed paygen jobs.
     return result_pb2.RawResult(
-        status=common_pb2.FAILURE,
-        summary_markdown='{}\n{}'.format(pres.step_text,
-                                         _summarize_failed_builds(fail)))
+        status=common_pb2.INFRA_FAILURE if infra_fail else common_pb2.FAILURE,
+        summary_markdown=summary_markdown)
   return None
 
 
@@ -192,12 +203,7 @@ def _summarize_failed_builds(failures):
   summary_markdown = ''
   for failure in failures:
     line = 'https://cr-buildbucket.appspot.com/build/{}'.format(failure.id)
-    if len(summary_markdown) + len(line) < 3990:
-      summary_markdown += ('\n' + line)
-    else:
-      # Abruptly truncate to avoid INFRA_FAILURE.
-      summary_markdown += '\n...'
-      break
+    summary_markdown += ('\n' + line)
   return summary_markdown
 
 
@@ -440,6 +446,11 @@ def GenTests(api):
 
     return paygen_child_data
 
+  def SummaryMarkdownLength(check, step_odict):
+    """Assert that the summary markdown is less than 4000 chars."""
+    summary_markdown = step_odict['$result']['failure']['humanReason']
+    check('summary markdown < 4000 chars', len(summary_markdown) < 4000)
+
   yield api.test(
       'basic',
       get_props(),
@@ -474,10 +485,44 @@ def GenTests(api):
           build_pb2.Build(id=8922054662172514000 + x,
                           status=('FAILURE' if x % 2 == 0 else 'SUCCESS'))
           for x in range(21)
-      ], 'running children.collect'),
+      ], 'running children.collect'), api.post_check(SummaryMarkdownLength),
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'))
+
+  yield api.test(
+      'truncate-failures',
+      get_props(),
+      api.paygen_orchestration.test_paygen(
+          'discovering payload configuration.get paygen json.gsutil cat',
+          api.paygen_orchestration.EXAMPLE_PAYGEN_JSON_BIG),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.buildbucket.simulated_collect_output(
+          [
+              build_pb2.Build(
+                  id=8922054662172514000 + x,
+                  status=('INFRA_FAILURE' if x % 2 == 0 else 'SUCCESS'))
+              for x in range(10)
+          ] + [
+              build_pb2.Build(id=8922054662172514000 + 10 + x,
+                              status=('FAILURE' if x % 2 == 0 else 'SUCCESS'))
+              for x in range(
+                  300
+              )  # Make sure to include more results than payloads to avoid KeyErrors.
+          ],
+          'running children.collect'),
+      api.post_check(SummaryMarkdownLength),
+      api.post_check(post_process.StatusException),
+      api.post_check(post_process.MustRun, 'pairing artifacts'),
+      api.post_check(post_process.MustRun, 'results'),
+      api.post_process(post_process.DropExpectation))
 
   yield api.test('no-payloads', get_props(builder_name='goobolywhobbly'),
                  good_paygen_cfg, api.post_check(post_process.StatusSuccess))
@@ -496,11 +541,6 @@ def GenTests(api):
           'ChromeOS-factory-R87-13505.15.0-coral.tar.xz'),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))
-
-  # Verify many builds failing gets truncated.
-  summary = _summarize_failed_builds(
-      [build_pb2.Build(id=8922054662172514000, status='FAILURE')] * 70)
-  assert len(summary) < 4000
 
   yield api.test(
       'no-deltas',

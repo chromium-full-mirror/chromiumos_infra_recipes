@@ -9,7 +9,7 @@ import json
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_api import InfraFailure, StepFailure
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build_report import BuildReport
@@ -217,11 +217,17 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       if paygen_orch_build.status != common_pb2.SUCCESS:
         build_url = 'https://cr-buildbucket.appspot.com/build/{}'.format(
             paygen_orch_build.id)
+        failure = None
         with self.m.step.nest('inspect failure') as presentation:
           presentation.step_text = paygen_orch_build.summary_markdown
           presentation.links[build_url] = build_url
-          presentation.status = self.m.step.FAILURE
-        raise StepFailure('paygen orchestrator failed\n{}'.format(build_url))
+          if paygen_orch_build.status == common_pb2.INFRA_FAILURE:
+            presentation.status = self.m.step.INFRA_FAILURE
+            failure = InfraFailure
+          else:
+            presentation.status = self.m.step.FAILURE
+            failure = StepFailure
+        raise failure('paygen orchestrator failed\n{}'.format(build_url))
 
       if 'payloads' in paygen_orch_build.output.properties:
         payload_information = paygen_orch_build.output.properties['payloads']
