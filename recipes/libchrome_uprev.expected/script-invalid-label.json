@@ -2008,6 +2008,13 @@
   },
   {
     "cmd": [],
+    "name": "validate push options",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {
@@ -2389,7 +2396,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "only Auto-Submit, Verified, Commit-Queue labels with value are allowed"
+      "humanReason": "invalid label-type push option (\"Code-Review+1\"): only Auto-Submit, Verified, Commit-Queue labels with value are allowed"
     },
     "name": "$result"
   }

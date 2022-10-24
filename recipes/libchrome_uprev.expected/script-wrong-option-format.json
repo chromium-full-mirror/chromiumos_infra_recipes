@@ -2008,6 +2008,13 @@
   },
   {
     "cmd": [],
+    "name": "validate push options",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {
@@ -2389,7 +2396,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "push options should start with %"
+      "humanReason": "invalid push options (\"r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,\"): should start with %"
     },
     "name": "$result"
   }

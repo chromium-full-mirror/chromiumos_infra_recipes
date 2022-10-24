@@ -2007,15 +2007,26 @@
     "name": "generate uprev commit"
   },
   {
+    "cmd": [],
+    "name": "validate push options"
+  },
+  {
+    "cmd": [],
+    "name": "push uprev commit"
+  },
+  {
     "cmd": [
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/main%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1"
+      "HEAD:refs/for/main%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,
-    "name": "git push"
+    "name": "push uprev commit.git push",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],

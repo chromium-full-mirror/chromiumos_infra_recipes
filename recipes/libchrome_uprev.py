@@ -7,6 +7,7 @@
 
 import re
 
+from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
@@ -47,21 +48,30 @@ def RunSteps(api):
         ], stdout=api.raw_io.output_text())
 
         push_options = step_data.stdout.strip()
-        if not push_options.startswith('%'):
-          raise StepFailure('push options should start with %')
-        for option in push_options[1:].split(','):
-          option = option.split('=')
-          if option[0] not in ['r', 'topic', 'l']:
-            raise StepFailure(
-                'only r(eviewer), topic, l(abel) options are allowed')
-          if option[0] == 'l' and (len(option) < 2 or
-                                   not PUSH_OPTION_LABEL_RE.match(option[1])):
-            raise StepFailure(
-                'only Auto-Submit, Verified, Commit-Queue labels with value are allowed'
-            )
 
-        api.git.push(project_info.remote, 'HEAD:refs/for/main' + push_options,
-                     dry_run=api.build_menu.is_staging)
+        with api.step.nest('validate push options'):
+          if not push_options.startswith('%'):
+            raise StepFailure(
+                'invalid push options ("{}"): should start with %'.format(
+                    push_options))
+          for option in push_options[1:].split(','):
+            if not option:
+              continue
+            option = option.split('=')
+            if option[0] not in ['r', 'topic', 'l']:
+              raise StepFailure(
+                  'invalid push option ("{}"): only r(eviewer), topic, l(abel) '
+                  'options are allowed'.format(option))
+            if option[0] == 'l' and (len(option) < 2 or
+                                     not PUSH_OPTION_LABEL_RE.match(option[1])):
+              raise StepFailure(
+                  'invalid label-type push option ("{}"): '
+                  'only Auto-Submit, Verified, Commit-Queue labels with value '
+                  'are allowed'.format(option[1]))
+
+        with api.step.nest('push uprev commit'):
+          api.git.push(project_info.remote, 'HEAD:refs/for/main' + push_options,
+                       dry_run=api.build_menu.is_staging)
 
 
 def GenTests(api):
@@ -69,33 +79,31 @@ def GenTests(api):
       'script-success',
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              '%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1'
-          )))
+              '%r=fqj@google.com,r=hidehiko@google.com,'
+              'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
+  )
 
   yield api.test(
       'script-wrong-option-format',
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              'r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1'
-          )))
+              'r=fqj@google.com,r=hidehiko@google.com,'
+              'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
+      api.post_check(post_process.StepFailure, 'validate push options'))
 
   yield api.test(
       'script-invalid-option',
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              '%submit,r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1'
-          )))
+              '%submit,r=fqj@google.com,r=hidehiko@google.com,'
+              'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
+      api.post_check(post_process.StepFailure, 'validate push options'))
 
   yield api.test(
       'script-invalid-label',
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              '%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,l=Code-Review+1'
-          )))
-
-  yield api.test(
-      'script-git-merge-failed',
-      api.step_data(
-          'generate uprev commit',
-          stderr=api.raw_io.output_text('git merge failed.\nError: \n'),
-          retcode=1))
+              '%r=fqj@google.com,r=hidehiko@google.com,'
+              'topic=libchrome-automated-uprev,'
+              'l=Auto-Submit+1,l=Verified+1,l=Code-Review+1,')),
+      api.post_check(post_process.StepFailure, 'validate push options'))
