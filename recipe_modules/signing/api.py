@@ -16,16 +16,18 @@ _PASSED = 'passed'
 _FAILED = 'failed'
 _TERMINAL_STATES = [_PASSED, _FAILED]
 
-_STATUS = 'status'
+_STATUS_OBJECT = 'status'
+_SIGNING_STATUS = 'status'
+_DETAILS = 'details'
 
 INSTRUCTIONS_PATTERN = re.compile(r'^gs://[^/]+/(.*)/[^/]+\.instructions$')
 
 
-class CrosSigningApi(recipe_api.RecipeApi):
+class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate communication with the signing fleet."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosSigningApi, self).__init__(*args, **kwargs)
+    super(SigningApi, self).__init__(*args, **kwargs)
     self._timeout = properties.timeout or 4 * 60 * 60
     self._sleep_duration = properties.sleep_duration or 5 * 60
 
@@ -131,13 +133,26 @@ class CrosSigningApi(recipe_api.RecipeApi):
 
     return list(instructions_metadata.values())
 
-  def verify_signing_success(self, instructions_metadata):
+  def verify_signing_success(self, instructions_metadata, pres):
     """Verifies that the signing operation succeeded."""
-    for metadata in instructions_metadata.values():
+    failed = False
+    for (instructions, metadata) in instructions_metadata.items():
+      # Once we've waited our timeout period, signing can be in one of a variety
+      # of states: succeeded, failed, still running (i.e. timed out), still
+      # pending (i.e. also timed out), or other partial states (i.e. timed out).
+      # We consider "passed" success, "failed" a failure, and anything else
+      # "Timed Out".
       if not self.signing_succeeded(metadata):
-        raise recipe_api.StepFailure(
-            'One or more signing requests failed or timed out. '
-            'See full metadata in step "parse metadata".')
+        failed = True
+        if self.signing_failed(metadata):
+          pres.logs[instructions] = self.get_failure(metadata)
+        else:
+          pres.logs[instructions] = 'Timed Out.'
+    if failed:
+      raise recipe_api.StepFailure(
+          'One or more signing requests failed or timed out. '
+          'See output in step "get signed build metadata" or full metadata in '
+          'step "parse metadata".')
 
   @staticmethod
   def signing_succeeded(metadata):
@@ -149,7 +164,19 @@ class CrosSigningApi(recipe_api.RecipeApi):
     Returns:
       True/False whether the signing succeeded.
     """
-    return CrosSigningApi.get_status_from_instructions(metadata) == _PASSED
+    return SigningApi.get_status_from_instructions(metadata) == _PASSED
+
+  @staticmethod
+  def signing_failed(metadata):
+    """Whether the provided metadata contains a failed signing operation.
+
+    Args:
+      metadata (dict): Metadata from the instructions file.
+
+    Returns:
+      True/False whether the signing failed.
+    """
+    return SigningApi.get_status_from_instructions(metadata) == _FAILED
 
   @staticmethod
   def get_status_from_instructions(instructions):
@@ -161,9 +188,25 @@ class CrosSigningApi(recipe_api.RecipeApi):
     Returns:
       The status of the signing, or None if not available.
     """
-    if instructions is None or not _STATUS in instructions:
+    if instructions is None or not _STATUS_OBJECT in instructions or not _SIGNING_STATUS in instructions[
+        _STATUS_OBJECT]:
       return None
-    return instructions[_STATUS][_STATUS]
+    return instructions[_STATUS_OBJECT][_SIGNING_STATUS]
+
+  @staticmethod
+  def get_failure(instructions):
+    """Given an instructions file, pull out the failure of signing.
+
+    Args:
+      instructions (dict): An instructions metadata file.
+
+    Returns:
+      The failure of the signing, or None if not available.
+    """
+    if instructions is None or not _STATUS_OBJECT in instructions or not _DETAILS in instructions[
+        _STATUS_OBJECT]:
+      return None
+    return instructions[_STATUS_OBJECT][_DETAILS]
 
   @staticmethod
   def _any_empty(instructions_meta):

@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Success workflow tests for the cros_signing recipe module."""
+"""Success workflow tests for the signing recipe module."""
 
 from recipe_engine import post_process
 

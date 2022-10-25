@@ -6,7 +6,7 @@ import json
 from recipe_engine import recipe_test_api
 
 
-class CrosSigningTestApi(recipe_test_api.RecipeTestApi):
+class SigningTestApi(recipe_test_api.RecipeTestApi):
 
   def setup_mocks(self):
     data = []

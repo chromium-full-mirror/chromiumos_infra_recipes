@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.cros_signing;
+package recipe_modules.chromeos.signing;
 
-message CrosSigningProperties {
+message SigningProperties {
   // Timeout for waiting for signing to fully complete (in seconds) for all
   // signing operations.
   int32 timeout = 1;

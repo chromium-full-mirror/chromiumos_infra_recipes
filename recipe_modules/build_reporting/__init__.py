@@ -14,7 +14,7 @@ DEPS = [
     'recipe_engine/time',
     'build_menu',
     'cloud_pubsub',
-    'cros_signing',
+    'signing',
     'cros_tags',
 ]
 

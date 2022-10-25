@@ -13,7 +13,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
-from PB.recipe_modules.chromeos.cros_signing.cros_signing import CrosSigningProperties
+from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
@@ -38,7 +38,7 @@ DEPS = [
     'cros_prebuilts',
     'cros_release',
     'cros_sdk',
-    'cros_signing',
+    'signing',
     'cros_source',
     'cros_tags',
     'debug_symbols',
@@ -184,12 +184,12 @@ def DoRunSteps(api, config, properties):
   # We also can't sign anything if push_and_sign_images returned 0 instructions.
   # Otherwise, wait for signing to complete.
   if not api.cros_infra_config.is_staging and instructions:
-    with api.step.nest('get signed build metadata'):
+    with api.step.nest('get signed build metadata') as pres:
       # Wait for signing to complete. Note - "complete" does not mean "passed",
       # it means "signing returned a terminal state or timed out".
-      metadata = api.cros_signing.wait_for_signing(instructions)
+      metadata = api.signing.wait_for_signing(instructions)
       # Get the signed build metadata now that it is complete.
-      signed_build_metadata_list = api.cros_signing.get_signed_build_metadata(
+      signed_build_metadata_list = api.signing.get_signed_build_metadata(
           metadata)
       # Publish any signed build metadata we have on the pubsub.
       api.build_reporting.publish_signed_build_metadata(
@@ -197,7 +197,7 @@ def DoRunSteps(api, config, properties):
 
       # Now that we've published informational artifacts, we need to fail the
       # build if the outcome was anything other than "passed".
-      api.cros_signing.verify_signing_success(metadata)
+      api.signing.verify_signing_success(metadata, pres)
 
   elif not instructions:
     with api.step.nest('skipping signing') as pres:
@@ -268,10 +268,10 @@ def GenTests(api):
                   'retry_quota': 1000,
                   'dryrun': False
               },
-              '$chromeos/cros_signing':
-                  MessageToDict(CrosSigningProperties(timeout=5))
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(timeout=5))
           }),
-      api.cros_signing.setup_mocks(),
+      api.signing.setup_mocks(),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
@@ -332,10 +332,10 @@ def GenTests(api):
                   'retry_quota': 1000,
                   'dryrun': False
               },
-              '$chromeos/cros_signing':
-                  MessageToDict(CrosSigningProperties(timeout=5))
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(timeout=5))
           }),
-      api.cros_signing.setup_mocks(),
+      api.signing.setup_mocks(),
       api.post_process(post_process.PropertyEquals, 'critical', '0'),
       api.post_check(post_process.StatusSuccess),
       build_target='eve',
@@ -361,8 +361,8 @@ def GenTests(api):
                   'retry_quota': 1000,
                   'dryrun': False
               },
-              '$chromeos/cros_signing':
-                  MessageToDict(CrosSigningProperties(timeout=5))
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(timeout=5))
           }),
       api.cros_build_api.set_api_return(parent_step_name='push images',
                                         endpoint='ImageService/PushImage',
@@ -469,7 +469,7 @@ def GenTests(api):
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
-      api.cros_signing.setup_mocks(),
+      api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -503,7 +503,7 @@ def GenTests(api):
                               manifest_repo_url=manifest_url, branch='release',
                               manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
-      api.cros_signing.setup_mocks(),
+      api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'sync to specified manifest'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -546,7 +546,7 @@ def GenTests(api):
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
           }),
-      api.cros_signing.setup_mocks(),
+      api.signing.setup_mocks(),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
