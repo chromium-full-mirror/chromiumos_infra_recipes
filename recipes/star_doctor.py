@@ -382,8 +382,9 @@ def _regenerate_configs(api):
     cipd_dir = _ensure_cipd_packages(api)
     with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
       with api.context(cwd=INFRA_CONFIG.checkout_path):
+        # Increase the timeout to 4 minutes. http://b/255585759
         api.step('regenerate configs',
-                 ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=3 * 60)
+                 ['/bin/bash', 'regenerate_configs.sh', '-b'], timeout=4 * 60)
       with api.context(cwd=CONFIG_INTERNAL.checkout_path):
         api.step('regenerate test configs', ['./board_config/generate', '-b'],
                  timeout=3 * 60)
