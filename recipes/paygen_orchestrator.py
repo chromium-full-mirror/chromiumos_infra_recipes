@@ -180,7 +180,7 @@ def RunSteps(api, properties):
     infra_fail = [x for x in fail if x.status == common_pb2.INFRA_FAILURE]
     fail = [x for x in fail if x.status != common_pb2.INFRA_FAILURE]
 
-    infra_summary = 'infra_failure: {}\n'.format(
+    infra_summary = '\ninfra_failure: {}\n'.format(
         _summarize_failed_builds(infra_fail)) if infra_fail else ''
     summary_markdown = '{}\n{}{}'.format(pres.step_text, infra_summary,
                                          _summarize_failed_builds(fail))
