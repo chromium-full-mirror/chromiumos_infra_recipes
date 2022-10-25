@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.remoteexec;
 
-import "chromiumos/common.proto";
-
 message RemoteexecProperties {
   // cipd rbe client version to ensure.
   string reclient_version = 1;

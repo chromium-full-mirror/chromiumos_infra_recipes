@@ -6,7 +6,6 @@ syntax = "proto3";
 
 package recipes.chromeos.build_legacy_fw;
 
-import "chromite/api/firmware.proto";
 import "chromiumos/common.proto";
 
 message BuildLegacyFwProperties {

@@ -154,6 +154,7 @@
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2) (Python3 ✅)
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full) (Python3 ✅)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full) (Python3 ✅)
+  * [build_sdk](#recipes-build_sdk) (Python3 ✅) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
   * [build_slim_cq](#recipes-build_slim_cq) (Python3 ✅) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_toolchain](#recipes-build_toolchain) (Python3 ✅) &mdash; Builds and uploads the Chromium OS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand) (Python3 ✅)
@@ -9220,6 +9221,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#42)(api):**
+### *recipes* / [build\_sdk](/recipes/build_sdk.py)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe that builds a ChromiumOS SDK and cross-compilers.
+
+&mdash; **def [RunSteps](/recipes/build_sdk.py#15)(api, properties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

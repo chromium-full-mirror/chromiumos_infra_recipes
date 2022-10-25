@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_release_config.examples;
 
-import "go.chromium.org/luci/buildbucket/proto/common.proto";
-
 message TestProperties {
     // Branch name to use.
     string branch = 1;

@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package recipe_modules.chromeos.gce_provider.tests;
+package recipes.chromeos.build_sdk;
 
-message GetCurrentConfigProperties {
-  // The prefix to search for.
-  string prefix = 1;
+message BuildSDKProperties {
+  // Whether to build the SDK with the llvm-next USE flag
+  bool use_llvm_next = 1;
 }
