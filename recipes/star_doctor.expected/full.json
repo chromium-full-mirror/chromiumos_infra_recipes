@@ -2404,7 +2404,6 @@
       ]
     },
     "name": "generate binary config.regenerate configs",
-    "timeout": 240,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
