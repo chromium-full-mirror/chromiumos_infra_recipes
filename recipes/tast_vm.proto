@@ -22,5 +22,13 @@ message TastVmProperties {
   // Expressions describing tests to run. It is either a test name
   // ("example.Pass") or involves tast attributes (see go/tast-attr).
   repeated string expressions = 4;
-}
 
+  // TotalShards is the total number of shards to be used in a test run.
+  // Note: Each build will only run one shard. It is up to the caller to
+  // schedule one build per shard with the appropriate shard_index values.
+  int64 total_shards = 5;
+
+  // ShardIndex specifies the index of the shard to used in the current run.
+  // Note: This value is 0-indexed.
+  int64 shard_index = 6;
+}

@@ -35,16 +35,21 @@ class TastExecApi(RecipeApi):
       test_artifacts_dir (Path): Dir containing test artifacts.
       build_payload (BuildPayload): Where the build artifact is on GS.
       private_key_path (Path): Path to private key.
-      run_args (list[str]): Additional arguments to pass to tast (optional).
+      run_args (list[str]): Additional arguments to pass to the `tast run`
+          command (optional).
+      shard_args (list[str]): Arguments that indicate how the test should be
+          sharded (optional). Note that this is split from run_args since these
+          args need to be passed to both `tast run` and `tast list`.
     """
 
     def __init__(self, expressions, test_artifacts_dir, build_payload,
-                 private_key_path=None, run_args=None):
+                 private_key_path=None, run_args=None, shard_args=None):
       self.expressions = expressions
       self.test_artifacts_dir = test_artifacts_dir
       self.build_payload = build_payload
       self.private_key_path = private_key_path
       self.run_args = run_args or []
+      self.shard_args = shard_args or []
 
     def copy(self):
       """Make a new TastInputs with the same field values."""
@@ -320,6 +325,7 @@ class TastExecApi(RecipeApi):
         '-remoterunner={}'.format(
             str(tast_dir.join('remote_test_runner')))] + \
     keyfile_args + \
+    tast_inputs.shard_args + \
     [dut_name] + \
     list(tast_inputs.expressions), timeout=5 * 60).decode('utf-8')
 
@@ -375,6 +381,7 @@ class TastExecApi(RecipeApi):
         keyfile_args + \
         maybemissingvars_args + \
         tast_inputs.run_args + \
+        tast_inputs.shard_args + \
         [dut_name] + \
         list(tast_inputs.expressions), ok_ret='any', timeout=self._exec_timeout)
 
