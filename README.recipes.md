@@ -8929,9 +8929,9 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for creating a new ChromeOS branch.
 
-&mdash; **def [IsRubikBuild](/recipes/brancher.py#31)(api, source_version):**
+&mdash; **def [RunSteps](/recipes/brancher.py#46)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/brancher.py#41)(api, properties):**
+&mdash; **def [is\_unsupported\_rubik\_build](/recipes/brancher.py#31)(api, source_version):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#8): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

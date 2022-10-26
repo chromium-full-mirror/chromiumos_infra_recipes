@@ -28,7 +28,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BrancherProperties
 
 
-def IsRubikBuild(api, source_version):
+def is_unsupported_rubik_build(api, source_version):
+  major = int(source_version.split('-')[1].split('.')[0])
+  # Support all builds associated with milestones >= 108.
+  if major >= 15183:
+    return False
+  # Otherwise, only allow legacy builds.
   # Legacy build does not generate build_report.json but Rubik build does.
   # The gsutil will fail with URL matched no objects exception on a legacy
   # build.
@@ -48,7 +53,7 @@ def RunSteps(api, properties):
     # Legacy tryjob CLI does not work on branches created from Rubik buildspecs,
     # see b/252809202.
     if properties.branch_info.type == Branch.STABILIZE:
-      if IsRubikBuild(api, properties.source_version):
+      if is_unsupported_rubik_build(api, properties.source_version):
         raise StepFailure(
             "temporary: do not cut stabilize branches from Rubik buildspecs "
             "(b/252809202 for context)")
@@ -132,9 +137,21 @@ def GenTests(api):
       'bad-branch-stablize-rubik-build',
       api.step_data('validate properties.gsutil stat', retcode=0),
       api.properties(
-          BrancherProperties(source_version='R109-15194.0.0',
+          BrancherProperties(source_version='R107-15000.0.0',
                              branch_info=Branch(type=Branch.STABILIZE))),
       api.post_check(post_process.StepFailure, 'validate properties'),
+  )
+
+  yield api.test(
+      'good-branch-stablize-rubik-build',
+      api.properties(
+          BrancherProperties(source_version='R109-15194.0.0',
+                             branch_info=Branch(type=Branch.STABILIZE))),
+      api.step_data(
+          'create branch'
+          '.create branch from buildspec manifest 109/15194.0.0.xml',
+          stdout=api.raw_io.output_text(TEST_STDOUT)),
+      api.post_check(post_process.StepSuccess, 'validate properties'),
   )
 
   yield api.test(

@@ -37,7 +37,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-image-archive/atlas-kernelnext-release/R109-15194.0.0/build_report.json"
+      "gs://chromeos-image-archive/atlas-kernelnext-release/R107-15000.0.0/build_report.json"
     ],
     "infra_step": true,
     "name": "validate properties.gsutil stat",
