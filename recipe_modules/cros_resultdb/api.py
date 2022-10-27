@@ -437,6 +437,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
     if not (self.m.resultdb.enabled and invocation_ids):
       return
 
+    if not self.m.exonerate.is_enabled:
+      return
+
     def _is_exonerated(test_result):
       return self.m.exonerate.is_exonerated(test_result)
 

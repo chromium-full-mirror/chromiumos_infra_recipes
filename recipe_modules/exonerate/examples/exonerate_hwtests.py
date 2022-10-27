@@ -21,6 +21,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
+  api.assertions.assertTrue(api.exonerate.is_enabled)
   api.exonerate.fetch_config(api.exonerate.test_api.empty_config_file_contents)
   pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)
   fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)

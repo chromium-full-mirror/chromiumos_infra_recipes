@@ -76,7 +76,14 @@ def GenTests(api):
   }
 
   yield api.test(
-      'not-enabled',
+      'rdb-not-enabled',
+      api.post_process(post_process.DoesNotRun,
+                       'exonerate exonerated failures'),
+  )
+
+  yield api.test(
+      'exonerate-not-enabled',
+      api.buildbucket.try_build(build_id=123),
       api.post_process(post_process.DoesNotRun,
                        'exonerate exonerated failures'),
   )

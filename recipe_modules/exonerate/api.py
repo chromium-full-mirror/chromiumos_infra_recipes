@@ -36,6 +36,11 @@ class ExonerateApi(recipe_api.RecipeApi):
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
+  @property
+  def is_enabled(self):
+    """Returns whether exoneration is enabled."""
+    return self._enable_exoneration
+
   def fetch_config(self, mock_data=None):
     """Download config file and return the extracted config proto.
 
