@@ -185,6 +185,10 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             expiration_date = ReleaseBuilder.Date(
                 value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
                        datetime.timedelta(days=14)).strftime("%Y-%m-%d"))
+        else:
+          # Default expiration date for stabilize branches is 6 months.
+          date = datetime.datetime.today() + datetime.timedelta(days=30 * 6)
+          expiration_date = ReleaseBuilder.Date(value=date.strftime("%Y-%m-%d"))
 
         # Append new builder for specified branch.
         new_builder = ReleaseBuilder(

@@ -10212,17 +10212,17 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#19)(api):**
 ### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release_config/examples/full.py#12): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_schedule](#recipe_modules-cros_schedule), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_release_config/examples/full.py#14): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_schedule](#recipe_modules-cros_schedule), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#130)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#135)(api, properties):**
 
-&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#25)(\*blocks):**
+&mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#27)(\*blocks):**
 
-&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#83)(number, branch_name, expiration_date=None):**
+&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#85)(number, branch_name, expiration_date=None):**
 
-&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#91)(branch_name):**
+&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#93)(branch_name, expiration_date=None):**
 ### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_util/examples/full.py#8): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

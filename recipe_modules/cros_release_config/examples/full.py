@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import datetime
+
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import CrosReleaseConfigProperties
 from PB.recipe_modules.chromeos.cros_release_config.examples.full import TestProperties
@@ -75,7 +77,7 @@ EXPIRATION_SECTION_TEMPLATE = """
 BLOCK_NEW_STABILIZE = """builders {
   milestone {
     branch_name: "%s"
-  }
+  }%s
 }
 """
 
@@ -88,8 +90,11 @@ def new_block(number, branch_name, expiration_date=None):
 
 
 # Return a block of config to be included in textpb expecations.
-def new_stabilize_block(branch_name):
-  return BLOCK_NEW_STABILIZE % (branch_name)
+def new_stabilize_block(branch_name, expiration_date=None):
+  expiration_block = ''
+  if expiration_date:
+    expiration_block = EXPIRATION_SECTION_TEMPLATE % expiration_date
+  return BLOCK_NEW_STABILIZE % (branch_name, expiration_block)
 
 
 BLOCK_EXPIRATION = """builders {
@@ -161,6 +166,9 @@ def GenTests(api):
                               BLOCK_3, BLOCK_2, BLOCK_1)
           ]), api.post_check(post_process.StatusSuccess))
 
+  six_months_out = (datetime.datetime.today() +
+                    datetime.timedelta(days=30 * 6)).strftime("%Y-%m-%d")
+
   yield api.test(
       'stabilize-branch',
       api.properties(
@@ -176,10 +184,12 @@ def GenTests(api):
       api.post_process(
           post_process.StepCommandContains,
           'update config.write release/stabilize_builders.textpb', [
-              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
-                              new_stabilize_block('stabilize-12345.B'), BLOCK_3,
-                              BLOCK_2, BLOCK_1)
-          ]), api.post_check(post_process.StatusSuccess))
+              expected_config(
+                  MAIN_BLOCK, BLOCK_EXPIRATION,
+                  new_stabilize_block('stabilize-12345.B', six_months_out),
+                  BLOCK_3, BLOCK_2, BLOCK_1)
+          ]), api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
 
   yield api.test('bad-branch', api.properties(**{
       'branch': 'factory-foo.B',
