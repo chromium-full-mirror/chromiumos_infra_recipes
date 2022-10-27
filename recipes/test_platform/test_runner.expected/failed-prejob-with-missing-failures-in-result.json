@@ -39,7 +39,7 @@
       "@@@STEP_LOG_LINE@request@        \"parent_job_id\":\"5d39c90af9d1ab11\",@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\":\"bvt-perbuild\"@@@",
       "@@@STEP_LOG_LINE@request@      },@@@",
-      "@@@STEP_LOG_LINE@request@      \"name\":\"dummy_name\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\":\"tauto\",@@@",
       "@@@STEP_LOG_LINE@request@      \"testArgs\":\"foo=bar\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
