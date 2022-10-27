@@ -486,7 +486,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -523,7 +523,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "-r"
@@ -556,7 +556,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -698,7 +698,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "1"
@@ -731,7 +731,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
       "-f",
@@ -1094,7 +1094,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -1131,7 +1131,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "-r"
@@ -1164,7 +1164,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -1306,7 +1306,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "1"
@@ -1339,7 +1339,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
       "-f",
@@ -1817,7 +1817,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -1854,7 +1854,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "-r"
@@ -1887,7 +1887,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -2029,7 +2029,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "1"
@@ -2062,7 +2062,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
       "-f",
@@ -2490,7 +2490,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
@@ -2527,7 +2527,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "-r"
@@ -2560,7 +2560,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "status",
       "--field",
@@ -2702,7 +2702,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "issue",
       "1"
@@ -2735,7 +2735,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "land",
       "-f",
