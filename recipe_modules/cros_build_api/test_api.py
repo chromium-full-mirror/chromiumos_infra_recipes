@@ -246,6 +246,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         ],
         failed_packages=[],
     )
+    responses['CreateNetboot'] = '{}'
+
     responses['PushImage'] = jsonify(
         instructions=[{
             "instructions_file_path": file_name

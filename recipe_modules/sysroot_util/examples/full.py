@@ -231,6 +231,15 @@ def GenTests(api):
       'no-base-image', test_build(),
       api.properties(FullTestProperties(image_types=[common.IMAGE_TYPE_TEST])))
 
+  yield api.test(
+      'with-factory-image', test_build(),
+      api.properties(
+          FullTestProperties(image_types=[
+              common.IMAGE_TYPE_BASE,
+              common.IMAGE_TYPE_TEST,
+              common.IMAGE_TYPE_FACTORY,
+          ])))
+
   yield api.test('base-is-recovery', test_build(),
                  api.properties(base_is_recovery=True))
 

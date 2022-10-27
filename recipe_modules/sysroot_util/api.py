@@ -15,6 +15,7 @@ from google.protobuf import json_format
 from PB.chromite.api.artifacts import BuildSetupResponse
 from PB.chromite.api.image import CreateImageRequest
 from PB.chromite.api.image import CreateImageResult
+from PB.chromite.api.image import CreateNetbootRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.image import TestImageRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
@@ -24,6 +25,7 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos.common import IMAGE_TYPE_BASE
+from PB.chromiumos.common import IMAGE_TYPE_FACTORY
 from PB.chromiumos.common import ImageType
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
@@ -315,6 +317,17 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           test_output_data=build_test_data)
       self.m.failures.set_compile_failed_packages(
           pres, [(p, '') for p in response.failed_packages])
+
+      # b/239795601: We can't currently finish the factory image inside of the
+      # previous Create call because the image doesn't have network access and
+      # packages are attempting downloads when we're adding the netbook kernel.
+      # In the future this should be rolled into the Create() call above.
+      if IMAGE_TYPE_FACTORY in image_types:
+        request = CreateNetbootRequest(chroot=self.m.cros_sdk.chroot,
+                                       build_target=self.sysroot.build_target,
+                                       factory_shim_path='')
+        _ = self.m.cros_build_api.ImageService.CreateNetboot(request)
+
 
       # Hack warning. Add the rootfs size to the output properties to make
       # image size regressions easy to calculate until we have the proper
