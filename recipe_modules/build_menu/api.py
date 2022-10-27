@@ -700,6 +700,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
             list(config.unit_tests.packages)
         ]
 
+      if not relevant_testable_packages:
+        presentation.step_text = 'no relevant packages'
+        return
+
       request = BuildTargetUnitTestRequest(
           build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
           package_blocklist=config.unit_tests.package_blocklist,

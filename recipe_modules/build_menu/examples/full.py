@@ -8,6 +8,7 @@ from recipe_engine import post_process
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
 from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import CrosBisectProperties
 
@@ -480,7 +481,12 @@ def GenTests(api):
 
   yield api.test(
     'unit-test-experiment',
-    api.buildbucket.try_build(builder='staging-amd64-generic-cq'),
+    api.buildbucket.try_build(builder='staging-amd64-generic-cq',
+      gerrit_changes=[
+      GerritChange(host='chrome-internal-review.googlesource.com',
+          project='project-a', change=1235)
+      ]
+    ),
     api.properties(
       **api.test_util.build_menu_properties(
         build_target_name='staging-amd64-generic',
@@ -504,4 +510,47 @@ def GenTests(api):
       endpoint='TestService/BuildTargetUnitTest',
       data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
     ),
+    api.post_check(
+          post_process.MustRun,
+          'get package dependencies'
+      ),
+    api.post_check(
+          post_process.MustRun,
+          'run ebuild tests for cl affected packages'
+      ),
+  )
+
+  yield api.test(
+    'unit-test-experiment-no-relevant-packages',
+    api.buildbucket.try_build(builder='staging-amd64-generic-cq',
+      gerrit_changes=[
+      GerritChange(host='chrome-internal-review.googlesource.com',
+          project='project-a', change=1235)
+      ]
+    ),
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='staging-amd64-generic',
+        container_version_format=\
+        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+      )
+    ),
+    api.properties(
+          **{
+              '$recipe_engine/cq':
+                  {'active': True}
+          }),
+    api.cros_build_api.set_api_return(
+      'get package dependencies',
+      endpoint='DependencyService/List',
+      data='{}'
+    ),
+    api.post_check(
+          post_process.MustRun,
+          'get package dependencies'
+      ),
+    api.post_check(
+          post_process.DoesNotRun,
+          'run ebuild tests for cl affected packages|call chromite.api.TestService/BuildTargetUnitTest'
+      ),
   )
