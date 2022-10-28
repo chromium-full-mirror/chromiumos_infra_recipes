@@ -42,6 +42,7 @@ def RunSteps(api):
   api.git.commit('Updated README\n\nMuch better now.', files=['README.md'],
                  author='John Doe <john.doe@example.com>')
   api.git.amend_head_message('Updating README\n\nMuch better now.')
+  api.git.stash()
 
   api.assertions.assertEqual(api.git.remote_url(),
                              "https://chromium.googlesource.com")

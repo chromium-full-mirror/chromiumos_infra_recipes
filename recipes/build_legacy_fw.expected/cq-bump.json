@@ -2726,6 +2726,30 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "stash"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.git stash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "bump version.read updated version",
     "~followup_annotations": [

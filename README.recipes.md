@@ -6210,6 +6210,10 @@ Args:
 
 Returns:
   (str): The contents of the file, None if the file does not exist in |rev|.
+
+&mdash; **def [stash](/recipe_modules/git/api.py#849)(self):**
+
+Stash changes.
 ### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
 
 [DEPS](/recipe_modules/git_cl/__init__.py#5): [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/git\_cl][depot_tools/recipe_modules/git_cl], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

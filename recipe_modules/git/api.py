@@ -845,3 +845,7 @@ class GitApi(recipe_api.RecipeApi):
     result = self._step(['branch'], stdout=self.m.raw_io.output_text())
     branches = [b.lstrip('* ') for b in result.stdout.strip().split('\n')]
     return branch in branches
+
+  def stash(self):
+    """Stash changes."""
+    self._step(['stash'])

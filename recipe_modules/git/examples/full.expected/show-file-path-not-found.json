@@ -257,6 +257,14 @@
   {
     "cmd": [
       "git",
+      "stash"
+    ],
+    "infra_step": true,
+    "name": "git stash"
+  },
+  {
+    "cmd": [
+      "git",
       "remote",
       "get-url",
       "origin"

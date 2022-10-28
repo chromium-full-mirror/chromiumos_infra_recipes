@@ -163,6 +163,13 @@ class CrosVersionApi(RecipeApi):
       ]
       self.m.step('go version_bumper', cmd)
 
+      # If dry-run (i.e. staging) we aren't going to commit this change.
+      # All we want to do is exercise this code path, so stash the results
+      # afterwards to restore the version to the original one.
+      if dry_run:
+        with self.m.context(cwd=overlay_path):
+          self.m.git.stash()
+
       # Update the version in output properties.
       new_version = self.read_workspace_version(name='read updated version')
       self.m.easy.set_properties_step(
