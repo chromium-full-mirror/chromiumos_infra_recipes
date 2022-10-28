@@ -38,6 +38,7 @@ DEPS = [
     'cros_prebuilts',
     'cros_release',
     'cros_sdk',
+    'cros_test_plan',
     'signing',
     'cros_source',
     'cros_tags',
@@ -74,6 +75,15 @@ def RunSteps(api, properties):
                                                 raise_on_failed_publish=True):
           with api.build_menu.configure_builder() as config, \
               api.build_menu.setup_workspace_and_chroot():
+            with api.step.nest('check that test config exists'):
+              try:
+                api.cros_test_plan.generate_target_test_requirements_config(
+                    paygen=True)
+              except:
+                raise StepFailure(
+                    "testing config doesn't exist for this build target, see go/onboard-to-rubik"
+                )
+
             return DoRunSteps(api, config, properties)
   finally:
     # If the parent build is cancelled, by default the child build will have an
@@ -303,6 +313,19 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # Release build missing test config should exit early.
+  yield api.build_menu.test(
+      'no-test-config',
+      api.step_data(
+          'check that test config exists.generate target test requirements.generate_test_config',
+          retcode=1),
+      api.post_check(post_process.StepFailure, 'check that test config exists'),
+      api.post_check(post_process.StatusFailure),
+      build_target='eve',
+      builder='eve-kernelnext-release-main',
       bucket='release',
   )
 
