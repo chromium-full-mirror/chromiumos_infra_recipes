@@ -45,41 +45,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "check that test config exists"
-  },
-  {
-    "cmd": [],
-    "name": "check that test config exists.generate target test requirements",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "kukui-release-main",
-      "--paygen"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "check that test config exists.generate target test requirements.generate_test_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "cipd",
       "ensure",

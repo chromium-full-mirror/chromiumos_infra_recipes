@@ -38,7 +38,6 @@ DEPS = [
     'cros_prebuilts',
     'cros_release',
     'cros_sdk',
-    'cros_test_plan',
     'signing',
     'cros_source',
     'cros_tags',
@@ -64,14 +63,6 @@ def RunSteps(api, properties):
   try:
     api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
                                        api.build_menu.build_target.name)
-
-    with api.step.nest('check that test config exists'):
-      try:
-        api.cros_test_plan.generate_target_test_requirements_config(paygen=True)
-      except:
-        raise StepFailure(
-            "testing config doesn't exist for this build target, see go/onboard-to-rubik"
-        )
 
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('start')
@@ -312,19 +303,6 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
-      bucket='release',
-  )
-
-  # Release build missing test config should exit early.
-  yield api.build_menu.test(
-      'no-test-config',
-      api.step_data(
-          'check that test config exists.generate target test requirements.generate_test_config',
-          retcode=1),
-      api.post_check(post_process.StepFailure, 'check that test config exists'),
-      api.post_check(post_process.StatusFailure),
-      build_target='eve',
-      builder='eve-kernelnext-release-main',
       bucket='release',
   )
 
