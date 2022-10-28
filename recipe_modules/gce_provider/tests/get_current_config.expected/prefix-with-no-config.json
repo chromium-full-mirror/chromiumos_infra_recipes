@@ -21,6 +21,19 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "getting config for prefix-should-return-none.deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@caught exception@NoneConfigFailure('No config found for prefix prefix-should-return-none')@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "No config found for prefix prefix-should-return-none"
+    },
     "name": "$result"
   }
 ]

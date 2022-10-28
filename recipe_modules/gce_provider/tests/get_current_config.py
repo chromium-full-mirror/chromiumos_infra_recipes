@@ -8,8 +8,11 @@ from PB.recipe_modules.chromeos.gce_provider.tests.get_current_config import Get
 from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/assertions', 'recipe_engine/properties',
-    'recipe_engine/step', 'gce_provider'
+    'recipe_engine/assertions',
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'deferrals',
+    'gce_provider',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -18,9 +21,10 @@ PROPERTIES = GetCurrentConfigProperties
 
 
 def RunSteps(api, properties):
-  prefix = properties.prefix
-  with api.step.nest('getting config for {}'.format(prefix)):
-    api.gce_provider.get_current_config([prefix])
+  with api.deferrals.raise_exceptions_at_end():
+    prefix = properties.prefix
+    with api.step.nest('getting config for {}'.format(prefix)):
+      api.gce_provider.get_current_config([prefix])
 
 
 def GenTests(api):
@@ -35,4 +39,5 @@ def GenTests(api):
       api.properties(
           GetCurrentConfigProperties(prefix="prefix-should-return-none")),
       api.post_process(post_process.StepSuccess,
-                       'getting config for prefix-should-return-none'))
+                       'getting config for prefix-should-return-none'),
+      api.post_check(post_process.StatusFailure))

@@ -52,6 +52,7 @@
   * [cros_version](#recipe_modules-cros_version) (Python3 ✅) &mdash; API for working with CrOS version numbers.
   * [cts_results_archive](#recipe_modules-cts_results_archive) (Python3 ✅) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) (Python3 ✅) &mdash; Module for working with debug symbols.
+  * [deferrals](#recipe_modules-deferrals) (Python3 ✅) &mdash; API for deferring things (mainly failures).
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
   * [dlc_utils](#recipe_modules-dlc_utils) (Python3 ✅)
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
@@ -325,6 +326,12 @@
   * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version) (Python3 ✅)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full) (Python3 ✅)
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full) (Python3 ✅)
+  * [deferrals:tests/defer_exceptions](#recipes-deferrals_tests_defer_exceptions) (Python3 ✅)
+  * [deferrals:tests/defer_exceptions_block](#recipes-deferrals_tests_defer_exceptions_block) (Python3 ✅)
+  * [deferrals:tests/defer_exceptions_block_incorrect](#recipes-deferrals_tests_defer_exceptions_block_incorrect) (Python3 ✅)
+  * [deferrals:tests/defer_exceptions_by_type](#recipes-deferrals_tests_defer_exceptions_by_type) (Python3 ✅)
+  * [deferrals:tests/defer_exceptions_infra_fail](#recipes-deferrals_tests_defer_exceptions_infra_fail) (Python3 ✅)
+  * [deferrals:tests/defer_exceptions_uncaught](#recipes-deferrals_tests_defer_exceptions_uncaught) (Python3 ✅)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
   * [dlc_utils:tests/get_dlcs_in_path](#recipes-dlc_utils_tests_get_dlcs_in_path) (Python3 ✅) &mdash; Tests to verify dlc_utils.
   * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -4582,6 +4589,91 @@ Returns:
 &mdash; **def [upload\_debug\_symbols](/recipe_modules/debug_symbols/api.py#46)(self, gs_path=None):**
 
 Upload debug symbols to the crash service.
+### *recipe_modules* / [deferrals](/recipe_modules/deferrals)
+
+[DEPS](/recipe_modules/deferrals/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+API for deferring things (mainly failures).
+
+Usage:
+
+# context mode:
+with api.deferrals.raise_exceptions_at_end():
+  with api.deferrals.defer_exceptions():
+    do_a_thing_that_raises_an_exception()
+  do_another_thing_that_should_happen_regardless()
+# exception raised at this point
+
+# explicit mode:
+api.deferrals.defer_exception(StepFailure('error'))
+do_another_thing_that_should_happen_regardless()
+api.deferrals.raise_exceptions() # <- this raises the exception
+
+# combo mode:
+with api.deferrals.defer_exceptions():
+  do_a_thing_that_raises_an_exception()
+do_another_thing_that_should_happen_regardless()
+api.deferrals.raise_exceptions() # <- this raises the exception
+
+# specific exception mode:
+with api.deferrals.raise_exceptions_at_end():
+  with api.deferrals.defer_exceptions(exception_types=[StepFailure]):
+    raise StepFailure('error') # <- deferred
+  with api.deferrals.defer_exceptions(exception_types=[StepFailure]):
+    raise InfraFailure('error') # <- not deferred and raises immediately.
+
+#### **class [DeferralsApi](/recipe_modules/deferrals/api.py#59)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for deferring actions, such as raising Exceptions.
+
+&mdash; **def [defer\_exception](/recipe_modules/deferrals/api.py#95)(self, exception):**
+
+Takes an exception and defers it until raised (see usage above).
+
+Should be used either in conjunction with deferrals.raise_exceptions_at_end
+or deferrals.raise_exceptions or this will essentially just swallow
+exceptions (and if that's your intent, we prefer
+`api.failures.ignore_exceptions`).
+
+Args:
+  exception (Exception): the exception to raise later.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [defer\_exceptions](/recipe_modules/deferrals/api.py#66)(self, exception_types=None):**
+
+Catches exceptions and defers them until raised (see usage above).
+
+Should be used either in conjunction with deferrals.raise_exceptions_at_end
+or deferrals.raise_exceptions or this will essentially just swallow
+exceptions (and if that's your intent, we prefer
+`api.failures.ignore_exceptions`).
+
+Note: this can only catch a single exception, so if the intent is for
+exceptions to be swallowed by a long block of code, be aware that every
+step that can throw should be wrapped.
+
+For more on this see `examples/defer_exceptions_block_incorrect.py`.
+
+Args:
+  exception_types (Optional[List[Type]]): types of exceptions to defer
+    (allowing all others through).
+
+&mdash; **def [raise\_exceptions](/recipe_modules/deferrals/api.py#131)(self):**
+
+Explicitly raise any deferred exceptions.
+
+This is the non-context manager approach to using this module. Simply call
+this method at the point where you want deferred exceptions to be raised.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [raise\_exceptions\_at\_end](/recipe_modules/deferrals/api.py#110)(self):**
+
+Sets up a context manager to raise deferred failures at the end.
+
+Note: while using this context manager, if an exception is thrown that is
+*not* caught by the defer_exceptions call above, that exception will take
+precendence over the deferred one. However, the deferred one will still be
+logged.
 ### *recipe_modules* / [disk\_usage](/recipe_modules/disk_usage)
 
 [DEPS](/recipe_modules/disk_usage/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -5079,18 +5171,18 @@ Returns:
     them to resolve.
 ### *recipe_modules* / [gce\_provider](/recipe_modules/gce_provider)
 
-[DEPS](/recipe_modules/gce_provider/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/futures][recipe_engine/recipe_modules/futures]
+[DEPS](/recipe_modules/gce_provider/__init__.py#6): [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [recipe\_engine/futures][recipe_engine/recipe_modules/futures]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [GceProvider](/recipe_modules/gce_provider/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GceProvider](/recipe_modules/gce_provider/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that interacts with the GCE Provider config service.
 
 Depends on 'prpc' binary available in $PATH:
 https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
-&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#65)(self, ids):**
+&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#74)(self, ids):**
 
 Function to retrieve the current config from GCE Provider.
 
@@ -5102,7 +5194,7 @@ Returns:
     configs: Configs, list of GCE Provide Config objects.
     missing_configs: list[str] of ids for which there is no config.
 
-&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#27)(self, bid, config):**
+&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#36)(self, bid, config):**
 
 Function to update the config in GCE Provider.
 
@@ -10647,6 +10739,48 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/debug_symbols/examples/full.py#16)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions](/recipe_modules/deferrals/tests/defer_exceptions.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions.py#8): [deferrals](#recipe_modules-deferrals), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions.py#16)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions\_block](/recipe_modules/deferrals/tests/defer_exceptions_block.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions_block.py#11): [deferrals](#recipe_modules-deferrals), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_block.py#19)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions\_block\_incorrect](/recipe_modules/deferrals/tests/defer_exceptions_block_incorrect.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions_block_incorrect.py#15): [deferrals](#recipe_modules-deferrals), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_block_incorrect.py#23)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions\_by\_type](/recipe_modules/deferrals/tests/defer_exceptions_by_type.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions_by_type.py#8): [deferrals](#recipe_modules-deferrals), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_by_type.py#21)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions\_infra\_fail](/recipe_modules/deferrals/tests/defer_exceptions_infra_fail.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions_infra_fail.py#12): [deferrals](#recipe_modules-deferrals), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_infra_fail.py#20)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions\_uncaught](/recipe_modules/deferrals/tests/defer_exceptions_uncaught.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions_uncaught.py#9): [deferrals](#recipe_modules-deferrals), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_uncaught.py#17)(api):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#6): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -10926,11 +11060,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#16)(api):**
 ### *recipes* / [gce\_provider:tests/get\_current\_config](/recipe_modules/gce_provider/tests/get_current_config.py)
 
-[DEPS](/recipe_modules/gce_provider/tests/get_current_config.py#10): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gce_provider/tests/get_current_config.py#10): [deferrals](#recipe_modules-deferrals), [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/gce_provider/tests/get_current_config.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/gce_provider/tests/get_current_config.py#23)(api, properties):**
 ### *recipes* / [gce\_test](/recipes/gce_test.py)
 
 [DEPS](/recipes/gce_test.py#10): [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -11973,13 +12107,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/result_flow/examples/full.py#21)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for scaling bots in Chrome and Chrome OS pools.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#29)(api, properties):**
 ### *recipes* / [service\_version:examples/full](/recipe_modules/service_version/examples/full.py)
 
 [DEPS](/recipe_modules/service_version/examples/full.py#9): [service\_version](#recipe_modules-service_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

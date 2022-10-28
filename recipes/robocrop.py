@@ -18,6 +18,7 @@ DEPS = [
     'bot_scaling',
     'cros_infra_config',
     'easy',
+    'deferrals',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -28,7 +29,8 @@ PROPERTIES = RoboCropProperties
 def RunSteps(api, properties):
   application = properties.application or 'ChromeOS'
 
-  with api.step.nest('scale bot groups'):
+  with api.deferrals.raise_exceptions_at_end(), api.step.nest(
+      'scale bot groups'):
     with api.step.nest('read bot policies'):
       bot_policy_config = api.cros_infra_config.get_bot_policy_config(
           application=application)

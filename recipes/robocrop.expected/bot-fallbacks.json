@@ -512,6 +512,15 @@
   },
   {
     "cmd": [],
+    "name": "scale bot groups.get current GCE config.deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@caught exception@NoneConfigFailure('No config found for prefix prefix-fifth')@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "scale bot groups.update bot policies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

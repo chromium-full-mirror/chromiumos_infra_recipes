@@ -283,6 +283,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@NoneConfigFailure('No config found for prefix prefix-fifth')@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

@@ -13,6 +13,15 @@ from google.protobuf import json_format
 
 GCE_PROVIDER_URL = 'gce-provider.appspot.com'
 
+
+class NoneConfigFailure(recipe_api.StepFailure):
+  """Error class for when GCE Provider returns None for a Configuration.Get"""
+
+  def __init__(self, config_prefix):
+    super(NoneConfigFailure,
+          self).__init__("No config found for prefix {}".format(config_prefix))
+
+
 ConfigResponse = namedtuple('ConfigResponse', ['configs', 'missing_configs'])
 
 
@@ -82,7 +91,9 @@ class GceProvider(recipe_api.RecipeApi):
     for fut in self.m.futures.iwait(futures.keys()):
       stdout = fut.result()
       if stdout is None:
-        missing_configs.append(futures[fut])
+        pref = futures[fut]
+        missing_configs.append(pref)
+        self.m.deferrals.defer_exception(NoneConfigFailure(pref))
         continue
       configs.append(
           json_format.ParseDict(stdout, Config(), ignore_unknown_fields=True))
