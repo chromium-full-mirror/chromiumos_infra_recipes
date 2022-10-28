@@ -95,9 +95,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       current_builder_id = build.builder
       passed_builders = set([current_builder_id.builder])
       patches = build.input.gerrit_changes
-      # We don't want to specify the builder, but, we should specify the bucket
+      # Search across all buckets as builders have been moved to their own individual buckets.
       builder_shell = builder_common_pb2.BuilderID(
-          project=current_builder_id.project, bucket=current_builder_id.bucket)
+          project=current_builder_id.project)
       all_passed_builds = self._get_patch_history(patches,
                                                   builder=builder_shell,
                                                   statuses=[common_pb2.SUCCESS],
