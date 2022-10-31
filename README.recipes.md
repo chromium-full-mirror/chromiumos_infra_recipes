@@ -11701,11 +11701,11 @@ Returns:
       the Gerrit project to a list of relevant PatchSets.
 ### *recipes* / [observability\_image\_size:tests/publish](/recipe_modules/observability_image_size/tests/publish.py)
 
-[DEPS](/recipe_modules/observability_image_size/tests/publish.py#14): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [observability\_image\_size](#recipe_modules-observability_image_size), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/observability_image_size/tests/publish.py#14): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [observability\_image\_size](#recipe_modules-observability_image_size), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/observability_image_size/tests/publish.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/observability_image_size/tests/publish.py#27)(api, properties):**
 ### *recipes* / [orch\_menu:examples/aggregate\_metadata](/recipe_modules/orch_menu/examples/aggregate_metadata.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/aggregate_metadata.py#14): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

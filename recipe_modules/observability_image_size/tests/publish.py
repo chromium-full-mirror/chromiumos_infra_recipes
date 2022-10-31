@@ -12,7 +12,6 @@ from PB.recipe_modules.chromeos.observability_image_size.tests.publish import Pu
 from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_build_api',
     'cros_infra_config',
@@ -40,7 +39,11 @@ def RunSteps(api, properties):
   # add_builder_metadata.
   name = properties.builder_name or 'amd64-generic-postsubmit'
   config = api.cros_infra_config.get_builder_config(name)
-  config.general.publish_image_sizes = not properties.skip_publish_image_sizes
+
+  if properties.skip_publish_image_sizes:
+    config.general.publish_image_sizes = False
+  elif name.endswith('postsubmit'):
+    config.general.publish_image_sizes = True
 
   # get_image_size_data.
   build_target = common_pb2.BuildTarget(name='amd64-generic')
@@ -134,12 +137,8 @@ def GenTests(api):
   def simple_pkg():
     return pkg_data('foo', 'bar', major=1, apparent=1, disk_utilization=4096)
 
-  yield api.test('basic', test_build())
-
-  yield api.test('cq-build', test_build(cq=True))
-
   yield api.test(
-      'skip-publish', test_build(),
+      'basic', test_build(),
       api.properties(PublishTestProperties(
           skip_publish_image_sizes=True,
       )),
@@ -148,14 +147,30 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
+      'cq-build', test_build(cq=True),
+      api.properties(PublishTestProperties(
+          builder_name='amd64-generic-cq',
+      )),
+      api.post_check(post_process.StepTextEquals, 'collect image size data',
+                     'Skipped: Image size publishing disabled.'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'no-data-fails', test_build(),
+      api.post_check(post_process.StepFailure, 'collect image size data'),
+      api.post_check(post_process.ResultReason, 'No images provided.'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
       'bad-platform-version', test_build(),
       api.properties(
           PublishTestProperties(
               image_types=[common_pb2.IMAGE_TYPE_BASE],
               platform_version='1.2',
-          )), api.post_check(post_process.StepFailure,
-                             'collect image size data'),
-      api.post_process(post_process.DropExpectation),
+          )),
+      api.post_check(post_process.StepFailure,
+                     'collect image size data.add version data'),
+      api.post_check(post_process.ResultReason, 'Invalid platform version 1.2'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -181,7 +196,14 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'collect image size data.add data from images',
           'ObservabilityService/GetImageSizeData',
-          image_size_data(rootfs_pkgs=[])))
+          image_size_data(rootfs_pkgs=[])),
+      api.post_process(post_process.LogDoesNotContain,
+                       'collect image size data', 'image_data.json', [
+                           '"apparentSize":',
+                           '"diskUtilizationSize":',
+                           '"partitionApparentSize":',
+                           '"partitionDiskUtilizationSize":',
+                       ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'no-images', test_build(),
@@ -197,10 +219,19 @@ def GenTests(api):
           image_size_data(rootfs_pkgs=[
               pkg_data('cat', 'foo', major=0, minor=0, patch=1, revision=1234,
                        apparent=1, disk_utilization=4096),
-              pkg_data('cat', 'bar', major=1, apparent=1,
+              pkg_data('cat', 'bar', major=1, apparent=2,
                        disk_utilization=4096),
               pkg_data('virtual', 'baz', major=2, minor=1),
-          ])))
+          ])),
+      api.post_process(post_process.LogContains, 'collect image size data',
+                       'image_data.json', [
+                           '"apparentSize": "1"',
+                           '"diskUtilizationSize": "4096"',
+                           '"apparentSize": "2"',
+                           '"diskUtilizationSize": "4096"',
+                           '"partitionApparentSize": "3"',
+                           '"partitionDiskUtilizationSize": "8192"',
+                       ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'test-image', test_build(),
