@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import base64
+
 from google.protobuf.json_format import MessageToJson
 
 from PB.chromite.api.observability import GetImageSizeDataRequest
@@ -80,5 +82,11 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       self._get_image_size_data(built_images)
       pres.logs['image_data.json'] = MessageToJson(self._data_proto)
       with self.m.step.nest('publish image size data'):
-        # TODO(build): implement publication of image size proto
-        pass
+        # Data is passed to the publish-message support binary via JSON. The
+        # serialized proto must be base64 encoded to prevent UnicodeDecodeErrors.
+        # It will be unencoded by the publish-message support binary before it
+        # is published.
+        data_serialized = self._data_proto.SerializeToString(deterministic=True)
+        data_b64 = base64.b64encode(data_serialized).decode()
+        self.m.cloud_pubsub.publish_message(self._pubsub_project_id,
+                                            self._pubsub_topic_id, data_b64)
