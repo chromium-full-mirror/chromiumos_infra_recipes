@@ -282,23 +282,21 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.cros_bisect.set_bisect_builder(self.build_target.name)
       if config:
         self.m.cros_sdk.set_use_flags(config.build.use_flags)
-      if config or missing_ok:
-        with self.m.workspace_util.setup_workspace(), \
-            _maybe_context(None if disable_sdk
-                           else self.m.cros_sdk.cleanup_context):
-          with _maybe_context(self.m.metadata_json.context if config else None,
-                              config, targets):
-            yield config
-
-          # If we have applied patches and the SDK was not validated, then we
-          # need to do so before leaving the context.
-          if (self._chroot_created and not self._dep_graph and
-              self.m.workspace_util.patch_sets):
-            self.get_dep_graph([])
-      else:
-        # No config, and missing_ok is False.
+      if not config and not missing_ok:
         raise recipe_api.StepFailure('Missing configuration for {}'.format(
             build.builder.builder))
+      with self.m.workspace_util.setup_workspace(), \
+          _maybe_context(None if disable_sdk
+                         else self.m.cros_sdk.cleanup_context):
+        with _maybe_context(self.m.metadata_json.context if config else None,
+                            config, targets):
+          yield config
+
+        # If we have applied patches and the SDK was not validated, then we
+        # need to do so before leaving the context.
+        if (self._chroot_created and not self._dep_graph and
+            self.m.workspace_util.patch_sets):
+          self.get_dep_graph([])
 
   @contextlib.contextmanager
   def setup_workspace_and_chroot(self, no_chroot_timeout=False,
