@@ -428,13 +428,9 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """
     _dep_graph = namedtuple('_dep_graph', ['target', 'sdk'])
     with self.m.step.nest('dependency graph calculation'):
-      # TODO(crbug/1081828): drop build_target once no longer needed by bisect
-      # builders, after 2020-11-30.
-      build_target = None if not sysroot else sysroot.build_target
       resp = self.m.cros_build_api.DependencyService.GetBuildDependencyGraph(
-          GetBuildDependencyGraphRequest(sysroot=sysroot,
-                                         build_target=build_target,
-                                         chroot=chroot, packages=packages))
+          GetBuildDependencyGraphRequest(sysroot=sysroot, chroot=chroot,
+                                         packages=packages))
       return _dep_graph(target=resp.dep_graph, sdk=resp.sdk_dep_graph)
 
   def check_force_relevance_footer(self, gerrit_changes, configs):
