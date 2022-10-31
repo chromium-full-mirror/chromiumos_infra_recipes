@@ -50,6 +50,26 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
     ])
 
   @staticmethod
+  def fallback_default_source_test_plan():
+    return SourceTestPlan(test_plan_starlark_files=[
+        TestPlanStarlarkFile(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/config-internal',
+            path='test/plans/v2/ctpv1_compatible/legacy_default_tast_hw.star',
+        ),
+        TestPlanStarlarkFile(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/config-internal',
+            path='test/plans/v2/ctpv1_compatible/legacy_default_autotest_hw.star',
+        ),
+        TestPlanStarlarkFile(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/config-internal',
+            path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
+        )
+    ])
+
+  @staticmethod
   def build_metadata_list():
     return BuildMetadataList(values=[
         BuildMetadata(

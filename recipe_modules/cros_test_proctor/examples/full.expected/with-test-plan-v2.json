@@ -17,7 +17,30 @@
     "cmd": [],
     "name": "run tests.schedule tests.find relevant plans",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoA\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"a/b/kernel1.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoB\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"kernel2.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@,test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoA\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"a/b/kernel1.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoB\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"kernel2.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_END@relevant_plans@@@"
     ]
   },
   {
@@ -41,6 +64,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.find relevant plans.ensure test_plan.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -58,18 +93,39 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans.chromeos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/test_plan",
       "relevant-plans",
       "-loglevel",
       "debug",
+      "-cl",
+      "https://chromium-review.googlesource.com/c/chromeos/+/123456/7",
       "-out",
       "[CLEANUP]/test_plan_tmp_1"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.find relevant plans.call test_plan",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.find relevant plans.chromeos.call test_plan",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -83,9 +139,21 @@
       "[CLEANUP]/test_plan_tmp_1"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.find relevant plans.list output files",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.find relevant plans.chromeos.list output files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_1.star@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_2.star@@@",
       "@@@STEP_LOG_END@listdir@@@"
@@ -103,9 +171,21 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.star",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.find relevant plans.chromeos.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -120,9 +200,21 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.star",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.find relevant plans.chromeos.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.star",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -138,6 +230,18 @@
       "--progress"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -156,6 +260,18 @@
       "--progress"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.git clone (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -4339,6 +4455,18 @@
       "which",
       "docker"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.ensure docker image.ensure docker installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4349,6 +4477,18 @@
       "docker",
       "version"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -4365,6 +4505,18 @@
       "3m"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.ensure docker image.get access token for default account",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4382,6 +4534,18 @@
       "--config-file",
       "[CLEANUP]/.docker"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker login",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4395,6 +4559,18 @@
       "pull",
       "us-docker.pkg.dev/cros-registry/test-services/testplan:prod"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.ensure docker image.docker pull testplan:prod",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4433,6 +4609,18 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
@@ -4450,6 +4638,18 @@
       "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.write build_metadata.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4481,6 +4681,18 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
@@ -4498,6 +4710,18 @@
       "[CLEANUP]/tmp_tmp_3/configs.jsonproto"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.write configs.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4527,6 +4751,18 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
@@ -4544,6 +4780,18 @@
       "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.write dut_attributes.jsonproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4572,6 +4820,18 @@
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
@@ -4589,6 +4849,18 @@
       "[CLEANUP]/tmp_tmp_3/board_priority.cfg"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write input files.write board_priority.cfg",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -4606,6 +4878,18 @@
       "[CLEANUP]/tmp_tmp_3/generatetestplanreq.binaryproto"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.write generatetestplanreq binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -4624,6 +4908,18 @@
       "[CLEANUP]/tmp_tmp_3/testrepoA"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -4642,6 +4938,18 @@
       "[CLEANUP]/tmp_tmp_3/testrepoB"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -4682,6 +4990,18 @@
       "-plan",
       "/input/testrepoB/kernel2.star"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.docker run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -4699,9 +5019,71 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.generate hw test plans.read output [CLEANUP]/tmp_tmp_3/generatetestplanresp.binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.get change test history",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found no previously passed tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.get change test history.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.get change test history.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -4809,6 +5191,18 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.create test requests.configure test-builder.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -4990,6 +5384,186 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.get CL 123456 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@description text@a quick description@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/+/123456/7@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
+      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
+      "/path/to/tmp/json"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.get CL 123456 description.read deploy_cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cros-recipes-support",
+      "-ensure-file",
+      "pkg inst",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.get CL 123456 description.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cros-recipes-support/cipd-bin/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.get CL 123456 description.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromeos\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromeos\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Cros-Experiments"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",
@@ -4997,8 +5571,20 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"requests\": {\"htarget.hw.bvt-cq\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:DUT_POOL_QUOTA\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:bvt-cq\", \"label-model:model\"]}, \"hardwareAttributes\": {\"model\": \"model\"}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}, \"htarget.hw.bvt-inline\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:another_target\", \"suite:bvt-inline\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"another_target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}, \"htarget.hw.some-other-suite\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-other-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-other-suite\"}]}}, \"htarget.hw.some-suite\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"NON_CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-suite\"}]}}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"snapshot\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}], \"priority\": 30, \"properties\": {\"requests\": {\"htarget.hw.bvt-cq\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:DUT_POOL_QUOTA\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:bvt-cq\", \"label-model:model\"]}, \"hardwareAttributes\": {\"model\": \"model\"}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}, \"htarget.hw.bvt-inline\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:another_target\", \"suite:bvt-inline\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"another_target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}, \"htarget.hw.some-other-suite\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-other-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-other-suite\"}]}}, \"htarget.hw.some-suite\": {\"params\": {\"decorations\": {\"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"NON_CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-suite\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5021,7 +5607,8 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"testplatform\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"cros_test_platform\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"cros_test_platform\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
@@ -5029,6 +5616,15 @@
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"123456\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"requests\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"htarget.hw.bvt-cq\": {@@@",
@@ -5236,7 +5832,7 @@
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -5246,12 +5842,16 @@
       "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"false\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"hide-test-results-in-gerrit\", @@@",
       "@@@STEP_LOG_LINE@request@            \"value\": \"true\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\"@@@",
@@ -5287,14 +5887,52 @@
   },
   {
     "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Cros-Experiments"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "bb",
       "batch",
       "-host",
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.schedule tast vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-direct-tast-vm\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-vm-informational\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-direct-tast-vm\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-vm-informational\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5303,7 +5941,8 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-direct-tast-vm\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514001\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -5312,7 +5951,8 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-vm-informational\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-vm-informational\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -5326,7 +5966,8 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-direct-tast-vm\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
@@ -5335,12 +5976,21 @@
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"123456\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"deadbeef\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"buildPayload\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"artifactsGsBucket\": \"chromeos-image-archive\", @@@",
@@ -5503,7 +6153,7 @@
       "@@@STEP_LOG_LINE@request@          ], @@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000133a\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -5513,12 +6163,16 @@
       "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"false\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"hide-test-results-in-gerrit\", @@@",
       "@@@STEP_LOG_LINE@request@            \"value\": \"true\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\", @@@",
@@ -5535,7 +6189,8 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-tast-vm-informational\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-tast-vm-informational\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\", @@@",
@@ -5544,12 +6199,21 @@
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"123456\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"deadbeef\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"buildPayload\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"artifactsGsBucket\": \"chromeos-image-archive\", @@@",
@@ -5712,7 +6376,7 @@
       "@@@STEP_LOG_LINE@request@          ], @@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -5722,12 +6386,16 @@
       "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"false\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"hide-test-results-in-gerrit\", @@@",
       "@@@STEP_LOG_LINE@request@            \"value\": \"true\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\", @@@",
@@ -5755,8 +6423,20 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.schedule tests.schedule tast GCE tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001340\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce-informational\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001343\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001340\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce-informational\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_CLANG_WARNINGS_FILE\": [\"chrome_clang_warnings_file.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"CPE_REPORT\": [\"cpe_report.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"unverified_chrome_llvm_orderfile.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"UNVERIFIED_LLVM_PGO_FILE\": [\"unverified_llvm_pgo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_LLVM_ORDERFILE\": [\"verified_chrome_llvm_orderfile.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast.sweet\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001343\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"deadbeef\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5765,7 +6445,8 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-gce\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-gce\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -5774,7 +6455,8 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-gce-informational\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-gce-informational\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514004\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -5788,7 +6470,8 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-tast-gce\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-tast-gce\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\", @@@",
@@ -5797,12 +6480,21 @@
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"123456\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"deadbeef\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"buildPayload\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"artifactsGsBucket\": \"chromeos-image-archive\", @@@",
@@ -5972,7 +6664,7 @@
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001340\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001340\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -5982,12 +6674,16 @@
       "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"false\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"hide-test-results-in-gerrit\", @@@",
       "@@@STEP_LOG_LINE@request@            \"value\": \"true\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\", @@@",
@@ -6004,7 +6700,8 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"staging\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-tast-gce-informational\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"target-tast-gce-informational\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\", @@@",
@@ -6013,12 +6710,21 @@
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"123456\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ], @@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\", @@@",
       "@@@STEP_LOG_LINE@request@          \"id\": \"deadbeef\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\", @@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"buildPayload\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"artifactsGsBucket\": \"chromeos-image-archive\", @@@",
@@ -6188,7 +6894,7 @@
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001343\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001343\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
@@ -6198,12 +6904,16 @@
       "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"false\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"hide-test-results-in-gerrit\", @@@",
       "@@@STEP_LOG_LINE@request@            \"value\": \"true\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@          }, @@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\", @@@",
@@ -8394,6 +9104,18 @@
       "1234"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.wait",
     "timeout": 34200,
     "~followup_annotations": [
@@ -8408,6 +9130,18 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"1234\"}}]}",
     "~followup_annotations": [
@@ -8515,6 +9249,18 @@
       "8922054662172514002"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.collect tests.collect tast vm tests.wait",
     "timeout": 32400,
     "~followup_annotations": [
@@ -8529,6 +9275,18 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.collect tests.collect tast vm tests.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514002\"}}]}",
     "~followup_annotations": [
@@ -8573,6 +9331,18 @@
       "8922054662172514004"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.collect tests.collect tast GCE tests.wait",
     "timeout": 32400,
     "~followup_annotations": [
@@ -8587,6 +9357,18 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run tests.collect tests.collect tast GCE tests.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514003\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514004\"}}]}",
     "~followup_annotations": [

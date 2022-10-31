@@ -62,6 +62,12 @@ message CrosTestPlanV2Properties {
     // path string.
     repeated string file_allowlist_regexps = 3;
     repeated string file_blocklist_regexps = 4;
+
+    // If true, if no SourceTestPlans are found for this project, the default
+    // set of files will be used ("legacy_default*.star" files). If false, if
+    // no SourceTestPlans are found for this project, no tests will be run. If
+    // any SourceTestPlans are found, this field has no effect.
+    bool fallback_to_default = 9;
   }
 
   // Projects to be migrated to v2 test planning. Note that a CQ run will use v2

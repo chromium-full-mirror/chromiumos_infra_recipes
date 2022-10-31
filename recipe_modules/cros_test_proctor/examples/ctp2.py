@@ -40,7 +40,11 @@ def GenTests(api):
   yield api.test(
       'no-starlark-files',
       api.step_data(
-          'run tests.schedule tests.find relevant plans.list output files',
+          'run tests.schedule tests.find relevant plans.src/projectA.list output files',
+          api.file.listdir([]),
+      ),
+      api.step_data(
+          'run tests.schedule tests.find relevant plans.src/projectB.list output files',
           api.file.listdir([]),
       ),
   )

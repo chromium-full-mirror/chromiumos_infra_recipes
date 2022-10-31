@@ -19,7 +19,9 @@
     "cmd": [],
     "name": "run tests.schedule tests.find relevant plans",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@@@@",
+      "@@@STEP_LOG_END@relevant_plans@@@"
     ]
   },
   {
@@ -60,6 +62,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans.src/projectA",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/test_plan",
       "relevant-plans",
@@ -67,15 +76,13 @@
       "debug",
       "-cl",
       "https://chromium-review.googlesource.com/c/src/projectA/+/123/3",
-      "-cl",
-      "https://chromium-review.googlesource.com/c/src/projectB/+/456/7",
       "-out",
       "[CLEANUP]/test_plan_tmp_1"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.find relevant plans.call test_plan",
+    "name": "run tests.schedule tests.find relevant plans.src/projectA.call test_plan",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -89,9 +96,50 @@
       "[CLEANUP]/test_plan_tmp_1"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.find relevant plans.list output files",
+    "name": "run tests.schedule tests.find relevant plans.src/projectA.list output files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans.src/projectB",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/test_plan",
+      "relevant-plans",
+      "-loglevel",
+      "debug",
+      "-cl",
+      "https://chromium-review.googlesource.com/c/src/projectB/+/456/7",
+      "-out",
+      "[CLEANUP]/test_plan_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.src/projectB.call test_plan",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/test_plan_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.find relevant plans.src/projectB.list output files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },

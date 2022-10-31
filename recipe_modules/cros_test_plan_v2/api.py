@@ -4,7 +4,7 @@
 
 import base64
 import re
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 import six
 from google.protobuf import json_format
@@ -16,6 +16,27 @@ from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from recipe_engine import recipe_api
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+# SourceTestPlan pointing to the legacy_default Starlark files, will be used
+# when MigrationConfigs set fallback_to_default and no relevant plans are found.
+FALLBACK_DEFAULT_SOURCE_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
+    test_plan_starlark_files=[
+        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/config-internal',
+            path='test/plans/v2/ctpv1_compatible/legacy_default_tast_hw.star',
+        ),
+        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/config-internal',
+            path='test/plans/v2/ctpv1_compatible/legacy_default_autotest_hw.star',
+        ),
+        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
+            host='chrome-internal.googlesource.com',
+            project='chromeos/config-internal',
+            path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
+        )
+    ])
 
 
 class CrosTestPlanV2Api(recipe_api.RecipeApi):
@@ -145,44 +166,70 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     Returns:
       A list of relevant SourceTestPlans
     """
-    with self.m.step.nest('find relevant plans'), \
+    with self.m.step.nest('find relevant plans') as pres, \
        self.m.context(infra_steps=True):
       self._ensure_test_plan()
 
-      cmd = [
-          self._test_plan_path,
-          'relevant-plans',
-          '-loglevel',
-          'debug',
-      ]
-
+      # Split up the input gerrit_changes by (host, project), and run test_plan
+      # separately on them. If test_plan returns no relevant plans for a given
+      # (host, project), lookup the MigrationConfig and return
+      # FALLBACK_DEFAULT_SOURCE_TEST_PLAN if fallback_to_default is set.
+      host_project_to_gerrit_changes = defaultdict(list)
       for gc in gerrit_changes:
-        cmd += ['-cl', self.m.gerrit.parse_gerrit_change_url(gc)]
+        host_project_to_gerrit_changes[(gc.host, gc.project)].append(gc)
 
-      output = self.m.path.mkdtemp(prefix='test_plan')
-
-      cmd += ['-out', output]
-
-      self.m.step('call test_plan', cmd)
-
-      # Output contains relevant plans in separate textproto files.
-      output_files = self.m.file.listdir(
-          'list output files', output,
-          test_data=['relevant_plan_1.textpb', 'relevant_plan_2.textpb'])
       relevant_plans = []
+      for (host, project), gcs in host_project_to_gerrit_changes.items():
+        with self.m.step.nest(project) as inner_pres:
+          cmd = [
+              self._test_plan_path,
+              'relevant-plans',
+              '-loglevel',
+              'debug',
+          ]
 
-      for f in output_files:
-        output_raw = self.m.file.read_raw(
-            'read output {}'.format(f),
-            f,
-            test_data=text_format.MessageToString(
-                self.test_api.kernel_source_test_plan()),
-        )
+          for gc in gcs:
+            cmd += ['-cl', self.m.gerrit.parse_gerrit_change_url(gc)]
 
-        plan = source_test_plan_pb2.SourceTestPlan()
-        text_format.Parse(output_raw, plan, allow_unknown_field=True)
-        relevant_plans.append(plan)
+          output = self.m.path.mkdtemp(prefix='test_plan')
 
+          cmd += ['-out', output]
+
+          self.m.step('call test_plan', cmd)
+
+          # Output contains relevant plans in separate textproto files.
+          output_files = self.m.file.listdir(
+              'list output files', output,
+              test_data=['relevant_plan_1.textpb', 'relevant_plan_2.textpb'])
+
+          for f in output_files:
+            output_raw = self.m.file.read_raw(
+                'read output {}'.format(f),
+                f,
+                test_data=text_format.MessageToString(
+                    self.test_api.kernel_source_test_plan()),
+            )
+
+            plan = source_test_plan_pb2.SourceTestPlan()
+            text_format.Parse(output_raw, plan, allow_unknown_field=True)
+            relevant_plans.append(plan)
+
+          migration_config = self._get_project_migration_config(host, project)
+          # The (host, project) should have a migration config defined if
+          # relevant_plans is being called, because enabled_on_changes should be
+          # called before (which returns false if any (host, project) doesn't
+          # have a migration config). Check anyway, consider asserting this in
+          # the future.
+          if (not output_files and migration_config and
+              migration_config.fallback_to_default):
+            inner_pres.step_text = (
+                'No relevant plans found for ({}, {}), but fallback_to_default is set on MigrationConfig'
+                .format(host, project))
+            if FALLBACK_DEFAULT_SOURCE_TEST_PLAN not in relevant_plans:
+              relevant_plans.append(FALLBACK_DEFAULT_SOURCE_TEST_PLAN)
+
+      pres.logs['relevant_plans'] = '\n\n,'.join(
+          text_format.MessageToString(p) for p in relevant_plans)
       return relevant_plans
 
   def _ensure_test_plan(self):

@@ -2735,7 +2735,30 @@
     "cmd": [],
     "name": "run tests.schedule tests.find relevant plans",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoA\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"a/b/kernel1.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoB\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"kernel2.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@,test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoA\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"a/b/kernel1.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@test_plan_starlark_files {@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  host: \"chromium.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  project: \"platform/testrepoB\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@  path: \"kernel2.star\"@@@",
+      "@@@STEP_LOG_LINE@relevant_plans@}@@@",
+      "@@@STEP_LOG_END@relevant_plans@@@"
     ]
   },
   {
@@ -2788,6 +2811,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans.chromiumos/platform",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/test_plan",
       "relevant-plans",
@@ -2811,9 +2841,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.find relevant plans.call test_plan",
+    "name": "run tests.schedule tests.find relevant plans.chromiumos/platform.call test_plan",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2839,9 +2869,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.find relevant plans.list output files",
+    "name": "run tests.schedule tests.find relevant plans.chromiumos/platform.list output files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb@@@",
       "@@@STEP_LOG_END@listdir@@@"
@@ -2871,9 +2901,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb",
+    "name": "run tests.schedule tests.find relevant plans.chromiumos/platform.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2900,9 +2930,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.find relevant plans.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb",
+    "name": "run tests.schedule tests.find relevant plans.chromiumos/platform.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_2.textpb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

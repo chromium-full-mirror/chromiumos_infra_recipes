@@ -3,10 +3,8 @@
 # found in the LICENSE file.
 
 from google.protobuf import text_format
-
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.testplans.common import ProtoBytes
-from PB.testplans.generate_test_plan import GenerateTestPlanRequest
+from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
 
 from recipe_engine import post_process
 
@@ -22,6 +20,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
+  # projectA will not match any files, but its MigrationConfig has
+  # fallback_to_default set, so it uses fallback_default_source_test_plan.
   relevant_plans = api.cros_test_plan_v2.relevant_plans([
       GerritChange(
           host="chromium-review.googlesource.com",
@@ -40,60 +40,30 @@ def RunSteps(api):
   api.assertions.assertListEqual(
       relevant_plans,
       [
-          api.cros_test_plan_v2.test_api.kernel_source_test_plan(),
+          api.cros_test_plan_v2.test_api.fallback_default_source_test_plan(),
           api.cros_test_plan_v2.test_api.fp_source_test_plan(),
       ],
   )
-
-  generate_test_plan_resp = api.cros_test_plan_v2.generate_hw_test_plans(
-      [
-          api.cros_test_plan_v2.StarlarkPackage(root='root1',
-                                                main='example1.star'),
-          api.cros_test_plan_v2.StarlarkPackage(root='root2',
-                                                main="example2.star"),
-      ],
-      generate_test_plan_request=GenerateTestPlanRequest(
-          buildbucket_protos=[ProtoBytes(serialized_proto=b'abc123')],
-      ),
-  )
-
-  api.assertions.assertEqual(
-      api.cros_test_plan_v2.test_api.generate_test_plan_response(),
-      generate_test_plan_resp,
-  )
-
-  with api.assertions.assertRaisesRegexp(
-      ValueError,
-      'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
-  ):
-    api.cros_test_plan_v2.generate_hw_test_plans([
-        api.cros_test_plan_v2.StarlarkPackage(root='root1',
-                                              main='example1.star'),
-        api.cros_test_plan_v2.StarlarkPackage(root='root2',
-                                              main="example2.star"),
-    ],
-                                                )
 
 
 def GenTests(api):
 
   yield api.test(
-      'basic',
+      'fallback-to-default',
       api.properties(
-          **{'$chromeos/cros_test_plan_v2': {
-              'generate_ctpv1_format': True
-          }}),
+          **{
+              '$chromeos/cros_test_plan_v2':
+                  CrosTestPlanV2Properties(migration_configs=[
+                      CrosTestPlanV2Properties.ProjectMigrationConfig(
+                          host="chromium-review.googlesource.com",
+                          project="src/projectA",
+                          fallback_to_default=True,
+                      ),
+                  ])
+          }),
       api.step_data(
           'find relevant plans.src/projectA.list output files',
-          api.file.listdir(['relevant_plan_1.textpb']),
-      ),
-      api.step_data(
-          'find relevant plans.src/projectA.read output [CLEANUP]/test_plan_tmp_1/relevant_plan_1.textpb',
-          api.raw_io.output(
-              text_format.MessageToString(
-                  api.cros_test_plan_v2.kernel_source_test_plan(),
-              ),
-          ),
+          api.file.listdir(['']),
       ),
       api.step_data(
           'find relevant plans.src/projectB.list output files',
@@ -133,25 +103,6 @@ def GenTests(api):
               'https://chromium-review.googlesource.com/c/src/projectB/+/456/7',
               '-out',
               '[CLEANUP]/test_plan_tmp_2',
-          ],
-      ),
-      api.post_process(
-          post_process.StepCommandContains,
-          'generate hw test plans.docker run',
-          [
-              '-ctpv1',
-              "-boardprioritylist",
-              "/input/board_priority.cfg",
-              "-buildmetadata",
-              "/input/build_metadata.jsonproto",
-              "-configbundlelist",
-              "/input/configs.jsonproto",
-              "-dutattributes",
-              "/input/dut_attributes.jsonproto",
-              "-generatetestplanreq",
-              "/input/generatetestplanreq.binaryproto",
-              "-out",
-              "/input/generatetestplanresp.binaryproto",
           ],
       ),
       api.post_check(post_process.StatusSuccess),

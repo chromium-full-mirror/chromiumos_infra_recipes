@@ -310,7 +310,7 @@ def GenTests(api):
           'collect skylab tasks v2.buildbucket.collect'))
 
   yield api.test(
-      'with-test-plan-v2',
+      'with-test-plan-v2', cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           need_tests_builds_serialized=serialize_builds(builds),
           use_test_plan_v2=True, **{
@@ -324,7 +324,7 @@ def GenTests(api):
               },
           }),
       api.step_data(
-          'run tests.schedule tests.find relevant plans.list output files',
+          'run tests.schedule tests.find relevant plans.chromeos.list output files',
           api.file.listdir(['relevant_plan_1.star', 'relevant_plan_2.star']),
       ),
       api.buildbucket.simulated_schedule_output(

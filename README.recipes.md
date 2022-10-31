@@ -313,6 +313,7 @@
   * [cros_test_plan_v2:examples/ctpv1_compatible](#recipes-cros_test_plan_v2_examples_ctpv1_compatible) (Python3 ✅)
   * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes) (Python3 ✅)
   * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes) (Python3 ✅)
+  * [cros_test_plan_v2:examples/fallback_to_default](#recipes-cros_test_plan_v2_examples_fallback_to_default) (Python3 ✅)
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full) (Python3 ✅)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full) (Python3 ✅)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full) (Python3 ✅)
@@ -4233,20 +4234,20 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#61)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#82)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#67)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#251)(self, starlark_packages, generate_test_plan_request=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#298)(self, starlark_packages, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4263,9 +4264,9 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#28)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#49)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#138)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#159)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -10664,13 +10665,20 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/enabled_on_changes.py#35)(api):**
-### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
+### *recipes* / [cros\_test\_plan\_v2:examples/fallback\_to\_default](/recipe_modules/cros_test_plan_v2/examples/fallback_to_default.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#13): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/fallback_to_default.py#11): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/fallback_to_default.py#22)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#13): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#24)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#12): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
