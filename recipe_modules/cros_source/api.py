@@ -1450,8 +1450,8 @@ class CrosSourceApi(RecipeApi):
                   manifest_file=manifest.path.join('default.xml'),
                   pinned=False))
 
-  def uprev_packages(self, workspace_path, build_targets=None,
-                     timeout_sec=(10 * 60), name='uprev ebuilds'):
+  def uprev_packages(self, workspace_path=None, build_targets=None,
+                     timeout_sec=(10 * 60), name='uprev packages'):
     """Uprev packages.
 
     Args:

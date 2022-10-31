@@ -378,7 +378,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           None, config.artifacts, force_relevance=self._force_relevant_build)
 
     if not self.artifact_build or relevance != Relevance.POINTLESS:
-      self.m.cros_sdk.uprev_packages()
+      self.m.cros_source.uprev_packages()
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, use_image=self.is_staging,
           sdk_version=sdk_version,

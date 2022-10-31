@@ -323,7 +323,7 @@ def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
   is_staging = not properties.publish_uprevs
   uprev_info = []
   with api.step.nest('uprev packages'):
-    response = api.cros_source.uprev_packages(workspace_path)
+    response = api.cros_source.uprev_packages(workspace_path=workspace_path)
     compressed_response = base64.b64encode(
         zlib.compress(response.SerializeToString()))
     api.easy.set_properties_step(compressed_uprev_response=compressed_response)

@@ -14,20 +14,18 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  _ = api.cros_source.uprev_packages(api.src_state.workspace_path)
+  api.cros_source.uprev_packages(workspace_path=api.src_state.workspace_path)
 
 
 # add post checks
 def GenTests(api):
   yield api.test(
-      'basic',
-      api.post_check(post_process.MustRun, 'uprev ebuilds'),
+      'basic', api.post_check(post_process.MustRun, 'uprev packages'),
       api.post_check(
           post_process.MustRun,
-          ('uprev ebuilds.call chromite.api.PackageService/Uprev.write '
+          ('uprev packages.call chromite.api.PackageService/Uprev.write '
            'input file')),
       api.post_check(
           post_process.MustRun,
-          ('uprev ebuilds.call chromite.api.PackageService/Uprev.call '
-           'build API script')),
-  )
+          ('uprev packages.call chromite.api.PackageService/Uprev.call '
+           'build API script')), api.post_process(post_process.DropExpectation))

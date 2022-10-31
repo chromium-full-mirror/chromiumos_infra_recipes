@@ -48,8 +48,6 @@ def RunSteps(api, properties):
     api.cros_sdk.update_chroot(properties.gitiles_commit,
                                properties.gerrit_changes)
 
-    api.cros_sdk.uprev_packages()
-
     api.assertions.assertEqual(api.cros_sdk.long_timeouts,
                                api.workspace_util.toolchain_cls_applied)
 

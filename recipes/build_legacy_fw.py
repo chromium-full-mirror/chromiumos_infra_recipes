@@ -202,8 +202,8 @@ class FirmwareBuilder(object):
 
   def _uprev(self):
     # TODO(b/181786185): Once we have a good "push the uprevs" method, we should
-    # switch to calling cros_sdk.uprev_packages, and pushing them, for branches
-    # that are new enough.
+    # switch to calling cros_source.uprev_packages, and pushing them, for
+    # branches that are new enough.
 
     with self.m.step.nest('uprev packages') as pres:
       # The build team supports using the tip-of-tree cros_mark_as_stable to
