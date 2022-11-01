@@ -612,7 +612,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 #### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#114)(self, android_package):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#115)(self, android_package):**
 
 Retrieves the latest Android version for the given Android package.
 
@@ -622,7 +622,7 @@ Args:
 Returns:
   str: The latest Android version (build ID).
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#80)(self, chroot, sysroot, android_package, android_version):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#81)(self, chroot, sysroot, android_package, android_version):**
 
 Uprev the given Android package to the given version.
 
@@ -644,7 +644,7 @@ Args:
   sysroot (Sysroot): The Sysroot being used.
   patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
 
-&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#131)(self, android_package, android_version):**
+&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#132)(self, android_package, android_version):**
 
 Sets LKGB of given Android package to given version.
 

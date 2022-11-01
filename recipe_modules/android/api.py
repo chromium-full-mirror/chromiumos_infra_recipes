@@ -74,8 +74,9 @@ class AndroidApi(recipe_api.RecipeApi):
 
       pres.step_text = '%s caused an android uprev' % unstable_ebuild
 
-    if not self.uprev(chroot, sysroot, android_package, android_version):
-      raise StepFailure('Android did not uprev, check log for details')
+    # We don't care if there's an actual uprev as long as there's no error. For
+    # example, uprev is skipped when the CL itself includes a manual uprev.
+    self.uprev(chroot, sysroot, android_package, android_version)
 
   def uprev(self, chroot, sysroot, android_package, android_version):
     """Uprev the given Android package to the given version.

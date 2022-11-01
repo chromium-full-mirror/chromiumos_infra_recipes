@@ -189,10 +189,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Android did not uprev, check log for details"
-    },
     "name": "$result"
   }
 ]
