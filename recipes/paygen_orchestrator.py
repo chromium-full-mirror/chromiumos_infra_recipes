@@ -9,11 +9,12 @@ import itertools
 import json
 from os import path
 
-from google.protobuf.json_format import MessageToDict, MessageToJson
+from google.protobuf.json_format import MessageToDict, MessageToJson, Parse
 
 from PB.chromite.api.payload import Build
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import DeltaType
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -28,10 +29,11 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'paygen_orchestration',
+    'build_reporting',
     'cros_release_util',
     'cros_storage',
     'easy',
+    'paygen_orchestration',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -176,6 +178,16 @@ def RunSteps(api, properties):
       payloads_json = [MessageToJson(payload) for payload in payloads]
       api.easy.set_properties_step(payloads=payloads_json)
 
+  if properties.publish_to_pubsub:
+    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_PAYGEN, '')
+    with api.build_reporting.step_reporting(
+        BuildReport.StepDetails.STEP_OVERALL, raise_on_failed_publish=True):
+      api.build_reporting.publish(
+          BuildReport(payloads=[
+              Parse(MessageToJson(payload), BuildReport.Payload())
+              for payload in payloads
+          ]), override_buildbucket_id=properties.rerun_buildbucket_id)
+
   if fail:
     infra_fail = [x for x in fail if x.status == common_pb2.INFRA_FAILURE]
     fail = [x for x in fail if x.status != common_pb2.INFRA_FAILURE]
@@ -210,12 +222,14 @@ def _summarize_failed_builds(failures):
 def GenTests(api):
 
   def get_props(delta_types=None, builder_name='coral',
-                target_chromeos_version='13505.15.0', channels=None):
+                target_chromeos_version='13505.15.0', channels=None,
+                pubsub=False, bbid=None):
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
     return api.properties(delta_types=delta_types, builder_name=builder_name,
                           target_chromeos_version=target_chromeos_version,
-                          channels=channels)
+                          channels=channels, publish_to_pubsub=pubsub,
+                          rerun_buildbucket_id=bbid)
 
   good_paygen_cfg = api.paygen_orchestration.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
@@ -466,6 +480,35 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data(x) for x in range(23)],
+          'running children.collect'),
+  )
+
+  yield api.test(
+      'basic-with-pubsub',
+      get_props(pubsub=True, bbid=54321),
+      good_paygen_cfg,
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun, 'pairing artifacts'),
+      api.post_check(post_process.MustRun, 'results'),
+      # Status overall started.
+      api.post_check(post_process.MustRun,
+                     'build status pubsub update.publish message'),
+      # Paygen.
+      api.post_check(post_process.MustRun,
+                     'build status pubsub update (2).publish message'),
+      # Status overall completed.
+      api.post_check(post_process.MustRun,
+                     'build status pubsub update (3).publish message'),
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(23)],
           'running children.collect'),

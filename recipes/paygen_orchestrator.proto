@@ -55,4 +55,13 @@ message PaygenOrchestratorProperties {
   // The models which should run AU testing for FSI payloads.
   // If empty, behavior will be the same as for empty au_testing_models.
   repeated string au_fsi_testing_models = 11;
+
+  // Whether or not to publish a payload update to the pubsub topic. Defaults to
+  // False because when called via a release builder, the release builder owns
+  // publishing.
+  bool publish_to_pubsub = 12;
+
+  // The bbid of the release job that we're rerunning the paygen of, so
+  // GoldenEye can look up the job metadata.
+  int64 rerun_buildbucket_id = 13;
 }

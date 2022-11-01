@@ -156,13 +156,15 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._build_report = BuildReport()
     self._step_order = make_oneup()
     self._msg_counter = make_oneup()
+    self._override_buildbucket_id = None
 
   def py_MessageToJson(self, build_report):
     return json.dumps(
         MessageToDict(build_report), separators=(',', ':'), indent=2,
         sort_keys=True)
 
-  def publish(self, build_report, raise_on_failed_publish=False):
+  def publish(self, build_report, raise_on_failed_publish=False,
+              override_buildbucket_id=None):
     """Send a BuildReport to the pubsub topic.
 
     Also aggregates the published BuildReport which is then available through
@@ -172,6 +174,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
       build_report (BuildReport): Instance to send to pub/sub.
       raise_on_failed_publish (bool): Should this publish fail, fail the whole
           build.
+      override_buildbucket_id (int): BuildBucketID to publish and override the
+          current build's ID. This is used for paygen reruns jobs, to merge up
+          with the old job to be rerun.
 
     Return:
       Reference to BuildReport input message.
@@ -179,7 +184,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
     if not isinstance(build_report, BuildReport):
       raise TypeError("Can only publish BuildReport messages.")
 
-    build_report.buildbucket_id = self.m.buildbucket.build.id
+    # Persist the override ID for all subsequent publishes.
+    if override_buildbucket_id:
+      self._override_buildbucket_id = override_buildbucket_id
+
+    build_report.buildbucket_id = self._override_buildbucket_id or self.m.buildbucket.build.id
 
     # If we haven't sent preamble info yet, add it to the first message.
     if not self._build_preamble_sent:
