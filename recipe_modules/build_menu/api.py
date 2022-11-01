@@ -671,6 +671,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
     """
+    if not self.m.cros_infra_config.should_run(
+        config.unit_tests.ebuilds_run_spec):
+      return
+
     with self.m.step.nest(
         'run ebuild tests for cl affected packages') as presentation:
 

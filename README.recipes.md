@@ -911,13 +911,13 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#926)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#930)(self):**
 
 Add child build ids to output property of current build.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#71)(self):**
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#757)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#761)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
@@ -994,7 +994,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#771)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#775)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1081,7 +1081,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#143)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#955)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#959)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1091,7 +1091,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#935)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#939)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1195,7 +1195,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#719)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#723)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False):**
 
 Upload artifacts from the build.
 
@@ -1213,14 +1213,14 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#894)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#898)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#875)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#879)(self, config=None):**
 
 Upload prebuilts from the build.
 

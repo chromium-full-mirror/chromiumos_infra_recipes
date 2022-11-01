@@ -5322,13 +5322,6 @@
   },
   {
     "cmd": [],
-    "name": "run ebuild tests for cl affected packages",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no relevant packages@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/orderfile-generate-toolchain/R99-1234.56.0-101-8945511751514863184@@@",
