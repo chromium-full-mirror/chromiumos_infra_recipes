@@ -3,14 +3,16 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@No artifacts found.@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
     "name": "upload artifacts.call artifacts service",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Failed to generate: SIMPLE_CHROME_SYSROOT@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -34,7 +36,19 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"artifactType\": 40,@@@",
+      "@@@STEP_LOG_LINE@response@          \"failed\": true,@@@",
+      "@@@STEP_LOG_LINE@response@          \"failureReason\": \"return code: 1; ...\"@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -109,6 +123,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "Failed to generate: SIMPLE_CHROME_SYSROOT"
+    },
     "name": "$result"
   }
 ]
