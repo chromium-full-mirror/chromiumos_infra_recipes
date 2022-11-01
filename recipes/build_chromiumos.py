@@ -237,8 +237,9 @@ def GenTests(api):
       api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.build_menu.set_build_api_return('upload artifacts',
-                                          'ArtifactsService/Get', retcode=1),
+      api.build_menu.set_build_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          retcode=1),
       bucket='release',
       builder='kukui-public-main',
       build_target='kukui',
@@ -263,8 +264,9 @@ def GenTests(api):
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
-      api.build_menu.set_build_api_return('upload artifacts',
-                                          'ArtifactsService/Get', retcode=1),
+      api.build_menu.set_build_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          retcode=1),
       bucket='release',
       builder='kukui-public-main',
       build_target='kukui',

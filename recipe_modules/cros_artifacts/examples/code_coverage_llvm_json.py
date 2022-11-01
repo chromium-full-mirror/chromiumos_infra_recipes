@@ -27,7 +27,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'basic',
       api.cros_build_api.set_api_return(
-          'upload artifacts', 'ArtifactsService/Get',
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           json.dumps(
               {
                   'artifacts': {

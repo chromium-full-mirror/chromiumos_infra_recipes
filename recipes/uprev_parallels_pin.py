@@ -583,8 +583,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return(
-          _BUILD_STEP_NAME + '.upload artifacts', 'ArtifactsService/Get',
-          retcode=1))
+          _BUILD_STEP_NAME + '.upload artifacts.call artifacts service',
+          'ArtifactsService/Get', retcode=1))
 
   yield api.build_menu.test(
       'install-packages-and-bundle-fail', api.properties(**good_props),
@@ -601,8 +601,8 @@ def GenTests(api):
           _BUILD_STEP_NAME + '.install packages',
           'SysrootService/InstallPackages', retcode=1),
       api.build_menu.set_build_api_return(
-          _BUILD_STEP_NAME + '.upload artifacts', 'ArtifactsService/Get',
-          retcode=1))
+          _BUILD_STEP_NAME + '.upload artifacts.call artifacts service',
+          'ArtifactsService/Get', retcode=1))
 
   # Build image fails to schedule (infra failure)
   yield api.build_menu.test(

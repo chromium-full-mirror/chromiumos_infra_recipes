@@ -5574,9 +5574,16 @@
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.upload artifacts.call chromite.api.ArtifactsService/Get",
+    "name": "build chromiumos with upreved Parallels.upload artifacts.call artifacts service",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build chromiumos with upreved Parallels.upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
@@ -5643,9 +5650,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build chromiumos with upreved Parallels.upload artifacts.call chromite.api.ArtifactsService/Get.write input file",
+    "name": "build chromiumos with upreved Parallels.upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -5678,9 +5685,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build chromiumos with upreved Parallels.upload artifacts.call chromite.api.ArtifactsService/Get.call build API script",
+    "name": "build chromiumos with upreved Parallels.upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -5713,16 +5720,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build chromiumos with upreved Parallels.upload artifacts.call chromite.api.ArtifactsService/Get.read output file",
+    "name": "build chromiumos with upreved Parallels.upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.upload artifacts.call chromite.api.ArtifactsService/Get.call response",
+    "name": "build chromiumos with upreved Parallels.upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
