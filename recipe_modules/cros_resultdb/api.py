@@ -223,6 +223,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     board = ''
     model = ''
     image = ''
+    multiduts = ''
     for tag in base_tags:
       k, v = tag
       if k == 'board':
@@ -231,6 +232,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
         model = v
       if k == 'image':
         image = v
+      if k == 'multiduts':
+        multiduts = v
 
     # Exit early if we don't know the board, model, or image.
     if board == '' or model == '' or image == '':
@@ -241,7 +244,10 @@ class ResultDBCommand(recipe_api.RecipeApi):
     if not self._is_base_build(board, image):
       return ''
 
-    # TODO(b/251688396): Also handle multi-DUT tests.
+    # If the test is a multi-DUT test, don't use the board-model realm.
+    # TODO(b/251688396): Handle multi-DUT tests.
+    if multiduts == 'True':
+      return ''
 
     available_realms = self.m.cros_infra_config.get_realms_list()
     realm = '{}-{}'.format(board, model)
