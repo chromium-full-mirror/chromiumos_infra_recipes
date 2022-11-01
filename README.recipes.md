@@ -4746,7 +4746,7 @@ APIs for easy steps.
 
 A module for easy steps.
 
-&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#157)(self, log_if_no_parent=True):**
+&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#163)(self, log_if_no_parent=True):**
 
 Creates a short step to log the current builder's parent build ID.
 
@@ -4769,7 +4769,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#98)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#104)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -4783,7 +4783,7 @@ Args:
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#126)(self, name, cmd, message_type, test_output=None, parse_before_str='', \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#132)(self, name, cmd, message_type, test_output=None, parse_before_str='', \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 

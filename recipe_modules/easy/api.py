@@ -91,8 +91,14 @@ class EasyApi(recipe_api.RecipeApi):
       test_stdout = maybe_lazy_test_data(test_stdout)
       step_test_data = (
           lambda: self.m.raw_io.test_api.stream_output(test_stdout()))
-    step_data = self.step(name, cmd, stdout=self.m.raw_io.output(),
-                          step_test_data=step_test_data, **kwargs)
+    step_data = self.step(
+        name,
+        cmd,
+        stdout=self.m.raw_io.output(),
+        # Used just for caught exceptions.
+        stderr=self.m.raw_io.output(),
+        step_test_data=step_test_data,
+        **kwargs)
     return step_data.stdout
 
   def stdout_json_step(self, name, cmd, step_test_data=None, test_stdout=None,

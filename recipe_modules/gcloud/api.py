@@ -411,12 +411,12 @@ class GcloudApi(recipe_api.RecipeApi):
     try:
       self.create_disk(disk, zone, image, disk_type, size)
     except self.m.step.StepFailure as e:
-      if not e.result.stdout or not _RE_DISK_EXISTS.search(
-          e.result.stdout.decode('utf-8')):
-        self._disk_exists_count += 1
-        self.m.easy.set_properties_step(
-            disk_already_exists_count=self._disk_exists_count)
+      if not e.result.stderr or not _RE_DISK_EXISTS.search(
+          e.result.stderr.decode('utf-8')):
         raise e
+      self._disk_exists_count += 1
+      self.m.easy.set_properties_step(
+          disk_already_exists_count=self._disk_exists_count)
 
   def create_disk(self, disk, zone, image=None, disk_type=None, size=None):
     """Create a GCE disk.

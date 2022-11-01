@@ -173,14 +173,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache.setup source cache disk.create disk from snapshot image.set disk_already_exists_count",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@disk_already_exists_count@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "compute",
