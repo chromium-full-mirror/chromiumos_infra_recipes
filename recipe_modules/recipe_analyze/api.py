@@ -8,8 +8,10 @@
 import json
 
 from google.protobuf import json_format as jsonpb
+
 from PB.recipe_engine import analyze as analyze_pb
-from recipe_engine.recipe_api import RecipeApi, StepFailure
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 
 
 class RecipeAnalyzeApi(RecipeApi):
@@ -50,13 +52,9 @@ class RecipeAnalyzeApi(RecipeApi):
     )
 
     if output_pb.invalid_recipes:
-      # TODO(b/217973414): Remove invalid_recipes_str which is only needed
-      # to ensure py2 and py3 emit the same expectations for unicode strings
-      # within other data structures.
-      invalid_recipes_str = '\', \''.join(output_pb.invalid_recipes)
       raise StepFailure(
-          'recipes analyze failed with invalid recipes: [\'{}\']'.format(
-              invalid_recipes_str))
+          'recipes analyze failed with invalid recipes: {}'.format(
+              output_pb.invalid_recipes))
 
     if output_pb.error:
       raise StepFailure('recipes analyze failed with error: {}'.format(

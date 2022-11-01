@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf import json_format
+
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
@@ -14,11 +16,8 @@ from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
 from PB.test_platform.taskstate import TaskState
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
-
-from google.protobuf import json_format
 
 DEPS = [
     'recipe_engine/assertions',
@@ -102,11 +101,7 @@ def GenTests(api):
             build_target=BuildTarget(name=build_target))).message.input
 
   def serialize_builds(builds):
-    # TODO(b/217973414): No need to ensure deterministic ordering once we no
-    # longer need to ensure parity between PY2 and PY3.
-    return [
-        build_pb2.Build.SerializeToString(b, deterministic=True) for b in builds
-    ]
+    return [build_pb2.Build.SerializeToString(b) for b in builds]
 
   cros_test_platforms = [
       build_pb2.Build(id=1234, builder={'builder': 'cros_test_platform'},

@@ -8,61 +8,61 @@
     "name": "inputs",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"prejob\":{@@@",
-      "@@@STEP_LOG_LINE@request@    \"provisionableLabels\":{@@@",
-      "@@@STEP_LOG_LINE@request@      \"label1\":\"value1\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"label2\":\"value2\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"softwareAttributes\":{@@@",
-      "@@@STEP_LOG_LINE@request@      \"buildTarget\":{@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\":\"fake_board\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"softwareDependencies\":[@@@",
+      "@@@STEP_LOG_LINE@request@  \"prejob\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"chromeosBuild\":\"bob-release/R102-14637.0.0\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"chromeosBuild\": \"bob-release/R102-14637.0.0\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@    ],@@@",
+      "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"label1\": \"value1\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"label2\": \"value2\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"softwareAttributes\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"fake_board\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"tests\":{@@@",
-      "@@@STEP_LOG_LINE@request@    \"multi_test_2\":{@@@",
-      "@@@STEP_LOG_LINE@request@      \"autotest\":{@@@",
-      "@@@STEP_LOG_LINE@request@        \"displayName\":\"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"isClientTest\":true,@@@",
-      "@@@STEP_LOG_LINE@request@        \"keyvals\":{@@@",
-      "@@@STEP_LOG_LINE@request@          \"branch\":\"main\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"build\":\"bob-release/R102-14637.0.0\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"build_config\":\"bob-release\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"cidb_build_id\":\"5141110\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"datastore_parent_key\":\"('Build', 5141110)\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"master_build_config\":\"master-release\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"parent_job_id\":\"59dfe8555444e811\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"suite\":\"bvt-tast-informational\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"tests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"multi_test_2\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotest\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"dummy_name\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"testArgs\": \"foo=bar\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"keyvals\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"build\": \"bob-release/R102-14637.0.0\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"build_config\": \"bob-release\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"cidb_build_id\": \"5141110\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"datastore_parent_key\": \"('Build', 5141110)\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"label\": \"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"master_build_config\": \"master-release\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"parent_job_id\": \"59dfe8555444e811\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"suite\": \"bvt-tast-informational\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\":\"dummy_name\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"testArgs\":\"foo=bar\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"isClientTest\": true,@@@",
+      "@@@STEP_LOG_LINE@request@        \"displayName\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
-      "@@@STEP_LOG_LINE@config@  \"harness\":{@@@",
-      "@@@STEP_LOG_LINE@config@    \"autotestDir\":\"/path/to/autotest\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"prejobDeadlineSeconds\":\"3600\"@@@",
+      "@@@STEP_LOG_LINE@config@  \"lab\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"crosUfsService\": \"ufs-service\"@@@",
       "@@@STEP_LOG_LINE@config@  },@@@",
-      "@@@STEP_LOG_LINE@config@  \"lab\":{@@@",
-      "@@@STEP_LOG_LINE@config@    \"adminService\":\"foo-service\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"crosInventoryService\":\"inv-service\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"crosUfsService\":\"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@config@  \"harness\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"prejobDeadlineSeconds\": \"3600\"@@@",
       "@@@STEP_LOG_LINE@config@  },@@@",
-      "@@@STEP_LOG_LINE@config@  \"output\":{@@@",
-      "@@@STEP_LOG_LINE@config@    \"logDataGsRoot\":\"gs://chromeos-test-logs/common-env\"@@@",
+      "@@@STEP_LOG_LINE@config@  \"output\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"logDataGsRoot\": \"gs://chromeos-test-logs/common-env\"@@@",
       "@@@STEP_LOG_LINE@config@  },@@@",
-      "@@@STEP_LOG_LINE@config@  \"resultFlowPubsub\":{@@@",
-      "@@@STEP_LOG_LINE@config@    \"project\":\"foo-proj\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"topic\":\"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@config@  \"resultFlowPubsub\": {@@@",
+      "@@@STEP_LOG_LINE@config@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"topic\": \"foo-topic\"@@@",
       "@@@STEP_LOG_LINE@config@  }@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@",
@@ -86,7 +86,13 @@
     "name": "execution steps.publish build ID.call `result_flow`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -164,7 +170,7 @@
       }
     },
     "name": "execution steps.publish build ID.call `result_flow`.publish",
-    "stdin": "{\"buildId\":\"42\",\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "stdin": "{\n  \"buildId\": \"42\",\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -195,17 +201,28 @@
     "name": "execution steps.multi_test_2.Phosphorus: load skylab local state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id1\",\"testId\":\"multi_test_2\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"dummy\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id1\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"testId\": \"multi_test_2\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"dutTopology\":[@@@",
+      "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"dutTopology\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"board\":\"fake_board\",@@@",
-      "@@@STEP_LOG_LINE@response@      \"hostname\":\"fake_host\",@@@",
-      "@@@STEP_LOG_LINE@response@      \"model\":\"fake_model\"@@@",
+      "@@@STEP_LOG_LINE@response@      \"hostname\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"board\": \"fake_board\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"model\": \"fake_model\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ],@@@",
-      "@@@STEP_LOG_LINE@response@  \"resultsDir\":\"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -288,7 +305,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: load skylab local state.call `phosphorus`.load",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"dummy\",\"runId\":\"dummy-task-id1\",\"testId\":\"multi_test_2\"}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"dummy\",\n  \"runId\": \"dummy-task-id1\",\n  \"dutId\": \"dummy-dut-id\",\n  \"testId\": \"multi_test_2\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -305,7 +322,18 @@
     "name": "execution steps.multi_test_2.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -330,7 +358,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"dutState\":\"needs_repair\",\"resultsDir\":\"dummy-results-dir\"}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"needs_repair\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -354,10 +382,34 @@
     "name": "execution steps.multi_test_2.Phosphorus: run prejob.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:24Z\",\"desiredProvisionableLabels\":{\"label1\":\"value1\",\"label2\":\"value2\"},\"dutHostname\":\"fake_host\",\"softwareDependencies\":[{\"chromeosBuild\":\"bob-release/R102-14637.0.0\"}]}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"desiredProvisionableLabels\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"label1\": \"value1\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"label2\": \"value2\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:24Z\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"softwareDependencies\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"chromeosBuild\": \"bob-release/R102-14637.0.0\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\":\"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -385,7 +437,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: run prejob.call `phosphorus`.prejob",
-    "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:24Z\",\"desiredProvisionableLabels\":{\"label1\":\"value1\",\"label2\":\"value2\"},\"dutHostname\":\"fake_host\",\"softwareDependencies\":[{\"chromeosBuild\":\"bob-release/R102-14637.0.0\"}]}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\",\n    \"label2\": \"value2\"\n  },\n  \"deadline\": \"2012-05-14T12:53:24Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"bob-release/R102-14637.0.0\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -402,11 +454,48 @@
     "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"autotest\":{\"displayName\":\"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostnames\":[\"fake_host\"]}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutHostnames\": [@@@",
+      "@@@STEP_LOG_LINE@request@    \"fake_host\"@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"autotest\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"dummy_name\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"testArgs\": \"foo=bar\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"displayName\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"isClientTest\": true,@@@",
+      "@@@STEP_LOG_LINE@request@    \"keyvals\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"build\": \"bob-release/R102-14637.0.0\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"build_config\": \"bob-release\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"cidb_build_id\": \"5141110\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"datastore_parent_key\": \"('Build', 5141110)\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"label\": \"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"master_build_config\": \"master-release\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"parent_job_id\": \"59dfe8555444e811\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"suite\": \"bvt-tast-informational\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:27Z\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"containerImageInfo\": {}@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"resultsDir\":\"dummy-results-dir/subdir\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\":\"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"resultsDir\": \"dummy-results-dir/subdir\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -433,7 +522,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\"autotest\":{\"displayName\":\"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\"isClientTest\":true,\"keyvals\":{\"branch\":\"main\",\"build\":\"bob-release/R102-14637.0.0\",\"build_config\":\"bob-release\",\"cidb_build_id\":\"5141110\",\"datastore_parent_key\":\"('Build', 5141110)\",\"label\":\"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\"master_build_config\":\"master-release\",\"parent_job_id\":\"59dfe8555444e811\",\"suite\":\"bvt-tast-informational\",\"synchronous_log_data_stainless_url\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"synchronous_log_data_url\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"},\"name\":\"dummy_name\",\"testArgs\":\"foo=bar\"},\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"containerImageInfo\":{},\"deadline\":\"2012-05-14T12:53:27Z\",\"dutHostnames\":[\"fake_host\"]}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostnames\": [\n    \"fake_host\"\n  ],\n  \"autotest\": {\n    \"name\": \"dummy_name\",\n    \"testArgs\": \"foo=bar\",\n    \"displayName\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\n    \"isClientTest\": true,\n    \"keyvals\": {\n      \"branch\": \"main\",\n      \"build\": \"bob-release/R102-14637.0.0\",\n      \"build_config\": \"bob-release\",\n      \"cidb_build_id\": \"5141110\",\n      \"datastore_parent_key\": \"('Build', 5141110)\",\n      \"label\": \"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\n      \"master_build_config\": \"master-release\",\n      \"parent_job_id\": \"59dfe8555444e811\",\n      \"suite\": \"bvt-tast-informational\",\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }\n  },\n  \"deadline\": \"2012-05-14T12:53:27Z\",\n  \"containerImageInfo\": {}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -450,10 +539,25 @@
     "name": "execution steps.multi_test_2.Phosphorus: fetch crashes.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:29Z\",\"dutHostname\":\"fake_host\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutHostname\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:29Z\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"state\":\"SUCCEEDED\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"state\": \"SUCCEEDED\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -480,7 +584,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: fetch crashes.call `phosphorus`.fetch-crashes",
-    "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"deadline\":\"2012-05-14T12:53:29Z\",\"dutHostname\":\"fake_host\"}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"deadline\": \"2012-05-14T12:53:29Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -504,7 +608,20 @@
     "name": "execution steps.multi_test_2.Phosphorus: upload to TKO.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir/subdir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}}}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir/subdir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -529,7 +646,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: upload to TKO.call `phosphorus`.upload-to-tko",
-    "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir/subdir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}}}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir/subdir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -593,10 +710,25 @@
     "name": "execution steps.multi_test_2.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"gsDirectory\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"localDirectory\":\"dummy-results-dir\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"bot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"autotestDir\": \"/path/to/autotest\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"task\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDataUploadStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"fetchCrashesStep\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"prejobStep\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"dummy-results-dir\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"gsUrl\":\"gs://chromeos-test-logs/common-env/UUID/logs\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"gsUrl\": \"gs://chromeos-test-logs/common-env/UUID/logs\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -624,7 +756,7 @@
       }
     },
     "name": "execution steps.multi_test_2.archive all test logs to Google Storage.Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\"config\":{\"bot\":{\"autotestDir\":\"/path/to/autotest\"},\"fetchCrashesStep\":{},\"logDataUploadStep\":{},\"prejobStep\":{},\"task\":{\"resultsDir\":\"dummy-results-dir\",\"testResultsDir\":\"dummy-results-dir/autoserv_test\"}},\"gsDirectory\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\"localDirectory\":\"dummy-results-dir\"}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"dummy-results-dir\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]
@@ -895,7 +1027,18 @@
     "name": "execution steps.multi_test_2.Phosphorus: save local DUT state.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -920,7 +1063,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: save local DUT state.call `phosphorus`.save",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"dutId\":\"dummy-dut-id\",\"dutName\":\"fake_host\",\"resultsDir\":\"dummy-results-dir\",\"sealResultsDir\":true}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"sealResultsDir\": true\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -937,7 +1080,14 @@
     "name": "execution steps.multi_test_2.publish build ID.call `result_flow`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{\"buildId\":\"42\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -966,7 +1116,7 @@
       }
     },
     "name": "execution steps.multi_test_2.publish build ID.call `result_flow`.publish",
-    "stdin": "{\"buildId\":\"42\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "stdin": "{\n  \"buildId\": \"42\",\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  },\n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -991,7 +1141,15 @@
     "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"runId\":\"dummy-task-id1\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"runId\": \"dummy-task-id1\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -1016,7 +1174,7 @@
       }
     },
     "name": "execution steps.Phosphorus: remove autotest results dir.call `phosphorus`.remove",
-    "stdin": "{\"config\":{\"adminService\":\"foo-service\",\"autotestDir\":\"/path/to/autotest\",\"crosInventoryService\":\"inv-service\",\"crosUfsService\":\"ufs-service\"},\"runId\":\"dummy-task-id1\"}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"runId\": \"dummy-task-id1\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1026,9 +1184,9 @@
     "name": "Results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@JSON output@{@@@",
-      "@@@STEP_LOG_LINE@JSON output@  \"logData\":{@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\":\"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\":\"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@JSON output@  \"logData\": {@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",

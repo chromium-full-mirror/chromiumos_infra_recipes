@@ -12,18 +12,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-package\",@@@",
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"android-version\",@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"build_target\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
-      "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-package\",@@@",
       "@@@STEP_LOG_LINE@request@  \"skipCommit\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"status\": \"MARK_STABLE_STATUS_PINNED\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"status\": \"MARK_STABLE_STATUS_PINNED\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -35,7 +37,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"androidVersion\": \"android-version\",\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ],\n  \"chroot\": {},\n  \"packageName\": \"android-package\",\n  \"skipCommit\": true\n}",
+      "{\n  \"chroot\": {},\n  \"packageName\": \"android-package\",\n  \"androidVersion\": \"android-version\",\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ],\n  \"skipCommit\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

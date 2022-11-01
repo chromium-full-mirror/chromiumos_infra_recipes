@@ -7,29 +7,23 @@
 
 from __future__ import division
 
-import json
-from collections import defaultdict, namedtuple
 import contextlib
 import re
+from collections import defaultdict
+from collections import namedtuple
 
 from google.protobuf import json_format
-from recipe_engine.recipe_api import RecipeApi, StepFailure
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.test_platform.request import Request
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
-
-
-def py2_MessageToJson(obj):
-  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
-  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
-  return json.dumps(
-      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
-      sort_keys=True)
 
 
 class BuildsStatus(object):
@@ -1003,6 +997,6 @@ class OrchMenuApi(RecipeApi):
             ))
 
         aggregate_step.logs['{} metadata (log)'.format(metadata_info.name)] = \
-          py2_MessageToJson(aggregated)
+          json_format.MessageToJson(aggregated)
 
     return aggregated

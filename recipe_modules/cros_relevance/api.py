@@ -5,9 +5,8 @@
 # found in the LICENSE file.
 
 from collections import namedtuple
-import json
-import six
 
+import six
 from google.protobuf import json_format
 
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
@@ -17,11 +16,10 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
+from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.testplans.common import ProtoBytes as testplans_proto_bytes
 from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
-from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-
 from recipe_engine import recipe_api
 
 
@@ -106,13 +104,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='build-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
-      # TODO(b/217973414): Replace with a simple str(request) once we no longer
-      # need to ensure parity between PY2 and PY3 expectation files.
-      presentation.logs['planner_input'] = [
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              sort_keys=True, indent=2)
-      ]
+      presentation.logs['planner_input'] = [json_format.MessageToJson(request)]
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request.SerializeToString())
 

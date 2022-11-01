@@ -176,9 +176,9 @@
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\",@@@",
       "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@request@      },@@@",
       "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
@@ -204,7 +204,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"testMetadataUrl\": \"gs://foo-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -373,7 +373,7 @@
       "@@@STEP_LOG_LINE@output@  }@@@",
       "@@@STEP_LOG_LINE@output@}@@@",
       "@@@STEP_LOG_END@output@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRsqpWKi5JLEkFMXIy01KdK5NzgBwlH08313jnSGcfIOnvG+DjGuLqoqSjVJZalJKZDNSmFOYa5OLpHBIf4BgcDJSqra0FAK9sGzc=\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbNyMtNSnSuTc0A8JR9PN9d450hnHyDp7xvg4xri6qKko6BUllqUkpkM0qoU5hrk4ukcEh/gGBwMlKytrQUADL4b1w==\"@@@",
       "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgBAAo7wPR\"@@@",
       "@@@SET_BUILD_PROPERTY@response@\"{\\n  \\\"state\\\": {\\n    \\\"lifeCycle\\\": \\\"LIFE_CYCLE_COMPLETED\\\",\\n    \\\"verdict\\\": \\\"VERDICT_PASSED\\\"\\n  }\\n}\"@@@"
     ]

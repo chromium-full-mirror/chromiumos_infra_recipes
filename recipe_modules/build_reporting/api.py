@@ -22,10 +22,10 @@ the unfiltered top-level topic for all builds.
 
 import base64
 import contextlib
-import json
+
 import six
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
 
 # infra/proto/src/chromiumos/builder_report.proto
 from PB.chromiumos.build_report import BuildReport
@@ -158,11 +158,6 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._msg_counter = make_oneup()
     self._override_buildbucket_id = None
 
-  def py_MessageToJson(self, build_report):
-    return json.dumps(
-        MessageToDict(build_report), separators=(',', ':'), indent=2,
-        sort_keys=True)
-
   def publish(self, build_report, raise_on_failed_publish=False,
               override_buildbucket_id=None):
     """Send a BuildReport to the pubsub topic.
@@ -211,9 +206,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._build_report.MergeFrom(build_report)
 
     with self.m.step.nest('build status pubsub update') as pres:
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      build_report_json = self.py_MessageToJson(self._build_report)
+      build_report_json = MessageToJson(self._build_report)
       pres.logs['message'] = build_report_json
       self.m.cloud_pubsub.publish_message(
           self.pubsub_project,
@@ -479,7 +472,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     with self.m.step.nest('upload build report to GS') as presentation:
       tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
       tmp_file = tmp_dir.join('build_report.json')
-      build_report_json = self.py_MessageToJson(self._build_report)
+      build_report_json = MessageToJson(self._build_report)
       self.m.file.write_text('write buildreport json to tmp file', tmp_file,
                              build_report_json)
       self.m.gsutil(cmd=['cp', tmp_file, gs_path + '/build_report.json'],

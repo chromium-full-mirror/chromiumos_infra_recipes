@@ -5,10 +5,7 @@
 
 """API for various support functions for building."""
 
-import json
 import re
-
-from recipe_engine import recipe_api
 
 from google.protobuf import json_format
 
@@ -27,8 +24,9 @@ from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos.common import IMAGE_TYPE_BASE
 from PB.chromiumos.common import IMAGE_TYPE_FACTORY
 from PB.chromiumos.common import ImageType
-from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
+from recipe_engine import recipe_api
 
 
 class SysrootUtilApi(recipe_api.RecipeApi):
@@ -98,14 +96,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       Sysroot
     """
     package_indexes = package_indexes or []
-    # TODO(b/217973414): Replace with MessageToJson once we don't need to
-    # fix the separator spacing between py2 and py3 MessageToJson.
-    test_data = test_data or json.dumps(
-        json_format.MessageToDict(
-            SysrootCreateResponse(
-                sysroot=Sysroot(path='/build/%s' %
-                                build_target.name, build_target=build_target))),
-        sort_keys=True, indent=2, separators=(',', ': '))
+    test_data = test_data or json_format.MessageToJson(
+        SysrootCreateResponse(
+            sysroot=Sysroot(path='/build/%s' %
+                            build_target.name, build_target=build_target)))
     if timeout_sec == 'DEFAULT':
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 10 * 60
 
@@ -288,18 +282,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     if not image_types:
       return None
 
-    # TODO(b/217973414): Replace with MessageToJson once we don't need to
-    # fix the separator spacing between py2 and py3 MessageToJson.
-    build_test_data = build_test_data or json.dumps(
-        json_format.MessageToDict(
-            CreateImageResult(
-                success=True, images=[
-                    Image(
-                        type=x, path=str(self.m.path['start_dir'].join(
-                            self._image_type_to_fname(x))),
-                        build_target=self.sysroot.build_target)
-                    for x in image_types
-                ])), sort_keys=True, indent=2, separators=(',', ': '))
+    build_test_data = build_test_data or json_format.MessageToJson(
+        CreateImageResult(
+            success=True, images=[
+                Image(
+                    type=x, path=str(self.m.path['start_dir'].join(
+                        self._image_type_to_fname(x))),
+                    build_target=self.sysroot.build_target) for x in image_types
+            ]))
     with self.m.step.nest(name or 'build images') as pres:
       request = CreateImageRequest(
           build_target=self.sysroot.build_target,

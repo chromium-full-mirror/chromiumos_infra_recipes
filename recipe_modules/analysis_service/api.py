@@ -4,13 +4,11 @@
 # found in the LICENSE file.
 
 import base64
-import json
+
 import six
-
-from PB.analysis_service.analysis_service import AnalysisServiceEvent
-
 from google.protobuf import json_format
 
+from PB.analysis_service.analysis_service import AnalysisServiceEvent
 from recipe_engine import recipe_api
 
 
@@ -260,12 +258,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       analysis_service_event.request_time.CopyFrom(request_time)
       analysis_service_event.response_time.CopyFrom(response_time)
 
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['published event'] = [
-          json.dumps(
-              json_format.MessageToDict(analysis_service_event),
-              separators=(',', ':'), sort_keys=True)
+          json_format.MessageToJson(analysis_service_event)
       ]
 
       # Data is passed to the publish-message support binary via JSON. The

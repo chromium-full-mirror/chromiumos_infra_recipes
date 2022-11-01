@@ -5,10 +5,9 @@
 # found in the LICENSE file.
 
 import json
+
 import six
 from google.protobuf import json_format
-
-from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -16,6 +15,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from recipe_engine import recipe_api
 
 CONFIG_INTERNAL_CHECKOUT = 'src/config-internal'
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
@@ -135,26 +135,19 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or 'generate test plan') as presentation:
       self._ensure_test_planner()
 
-      # TODO(b/217973414): No need to ensure deterministic ordering once we no
-      # longer need to ensure parity between PY2 and PY3.
       request_proto = GenerateTestPlanRequest(
           manifest_commit=manifest_commit.id, gitiles_commit=ProtoBytes(
               serialized_proto=GitilesCommit.SerializeToString(
-                  manifest_commit, deterministic=True)), gerrit_changes=[
-                      ProtoBytes(
-                          serialized_proto=GerritChange.SerializeToString(
-                              gc, deterministic=True))
-                      for gc in gerrit_changes or []
-                  ], buildbucket_protos=[
-                      ProtoBytes(
-                          serialized_proto=Build.SerializeToString(
-                              build, deterministic=True)) for build in builds
-                  ])
-      request_dict = json_format.MessageToDict(request_proto)
-      # TODO(b/217973414): Clean up once we don't need to fix the separator
-      # spacing between py3 and py3 anymore.
+                  manifest_commit)),
+          gerrit_changes=[
+              ProtoBytes(serialized_proto=GerritChange.SerializeToString(gc))
+              for gc in gerrit_changes or []
+          ], buildbucket_protos=[
+              ProtoBytes(serialized_proto=Build.SerializeToString(build))
+              for build in builds
+          ])
       presentation.logs['planner_input'] = [
-          json.dumps(request_dict, separators=(',', ':'), sort_keys=True)
+          json_format.MessageToJson(request_proto)
       ]
 
       messages_path = self.m.path.mkdtemp(prefix='test-plan-')

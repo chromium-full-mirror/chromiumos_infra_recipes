@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf import json_format
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
@@ -41,11 +39,7 @@ def GenTests(api):
   r1.version = '1.2.3'
   r1.additional_commit_info = 'additional info to be rendered on uprev cl.'
 
-  # TODO(b/217973414): Replace with MessageToJson once we don't need to
-  # fix the separator spacing between py2 and py3 MessageToJson.
-  resp_json = json.dumps(
-      json_format.MessageToDict(resp, preserving_proto_field_name=True),
-      separators=(',', ':'), sort_keys=True)
+  resp_json = json_format.MessageToJson(resp, preserving_proto_field_name=True)
   yield api.test(
       'single-ebuild', api.properties(expected_response_json=resp_json),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']))

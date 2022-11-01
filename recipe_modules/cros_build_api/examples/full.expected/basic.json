@@ -87,7 +87,19 @@
     "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@published event@{\"prepareBinhostUploadsRequest\":{\"buildTarget\":{\"name\":\"target\"}},\"prepareBinhostUploadsResponse\":{\"uploadsDir\":\"/binhosts/path\"},\"requestTime\":\"2012-05-14T12:53:21.500Z\",\"responseTime\":\"2012-05-14T12:53:23Z\",\"stepName\":\"call chromite.api.BinhostService/PrepareBinhostsUploads|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"prepareBinhostUploadsRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"prepareBinhostUploadsResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"uploadsDir\": \"/binhosts/path\"@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.BinhostService/PrepareBinhostsUploads|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },

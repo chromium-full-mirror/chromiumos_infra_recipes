@@ -6,23 +6,22 @@
 import base64
 import json
 import zlib
-import six
 
-from google.protobuf import struct_pb2
+import six
+from RECIPE_MODULES.chromeos.skylab import structs
 from google.protobuf import json_format
+from google.protobuf import struct_pb2
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.test_platform.steps.execution import ExecuteResponses
+from PB.test_platform.taskstate import TaskState
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
-from PB.test_platform.steps.execution import ExecuteResponses
-from PB.test_platform.taskstate import TaskState
-
-from RECIPE_MODULES.chromeos.skylab import structs
 from recipe_engine import recipe_test_api
 
 
@@ -83,17 +82,13 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   @staticmethod
   def base64_compress_dict(some_dict):
     """Compress a dict into zlib format, and then base64-encode it."""
-    # TODO(b/217973414): Clean up when we no longer need to fix the separator
-    # spacing between py2 and py3
-    dict_json = json.dumps(some_dict, separators=(',', ':'), sort_keys=True)
+    dict_json = json.dumps(some_dict)
     return base64.b64encode(zlib.compress(six.ensure_binary(dict_json)))
 
   @staticmethod
   def base64_compress_proto(proto):
     """Serialize a proto to binary, compress it into zlib, and b64-encode it."""
-    # TODO(b/217973414): No need to ensure deterministic ordering once we no
-    # longer need to ensure parity between PY2 and PY3.
-    wire_format = proto.SerializeToString(deterministic=True)
+    wire_format = proto.SerializeToString()
     return base64.b64encode(zlib.compress(wire_format))
 
   def test_with_multi_response(

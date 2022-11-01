@@ -4,19 +4,19 @@
     "name": "run tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@hw_test_plans@{@@@",
-      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\":[@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\": [@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
-      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\":\"kernel:4.4\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"kernel:4.4\"@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@    },@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
-      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\":\"kernel:5.2\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"kernel:5.2\"@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@    }@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@  ]@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@}@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@{@@@",
-      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\":[@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@  \"coverageRules\": [@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@    {@@@",
-      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\":\"wifiA\"@@@",
+      "@@@STEP_LOG_LINE@hw_test_plans@      \"name\": \"wifiA\"@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@    }@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@  ]@@@",
       "@@@STEP_LOG_LINE@hw_test_plans@}@@@",
@@ -290,11 +290,11 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"values\":[@@@",
+      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"buildTarget\":{@@@",
-      "@@@STEP_LOG_LINE@data@        \"portageBuildTarget\":{@@@",
-      "@@@STEP_LOG_LINE@data@          \"overlayName\":\"overlayA\"@@@",
+      "@@@STEP_LOG_LINE@data@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"portageBuildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@data@          \"overlayName\": \"overlayA\"@@@",
       "@@@STEP_LOG_LINE@data@        }@@@",
       "@@@STEP_LOG_LINE@data@      }@@@",
       "@@@STEP_LOG_LINE@data@    }@@@",
@@ -323,7 +323,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"values\":[\n    {\n      \"buildTarget\":{\n        \"portageBuildTarget\":{\n          \"overlayName\":\"overlayA\"\n        }\n      }\n    }\n  ]\n}",
+      "{\n  \"values\": [\n    {\n      \"buildTarget\": {\n        \"portageBuildTarget\": {\n          \"overlayName\": \"overlayA\"\n        }\n      }\n    }\n  ]\n}",
       "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto"
     ],
     "infra_step": true,
@@ -338,11 +338,11 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"values\":[@@@",
+      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"designList\":[@@@",
+      "@@@STEP_LOG_LINE@data@      \"designList\": [@@@",
       "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@          \"name\":\"design1\"@@@",
+      "@@@STEP_LOG_LINE@data@          \"name\": \"design1\"@@@",
       "@@@STEP_LOG_LINE@data@        }@@@",
       "@@@STEP_LOG_LINE@data@      ]@@@",
       "@@@STEP_LOG_LINE@data@    }@@@",
@@ -371,7 +371,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"values\":[\n    {\n      \"designList\":[\n        {\n          \"name\":\"design1\"\n        }\n      ]\n    }\n  ]\n}",
+      "{\n  \"values\": [\n    {\n      \"designList\": [\n        {\n          \"name\": \"design1\"\n        }\n      ]\n    }\n  ]\n}",
       "[CLEANUP]/tmp_tmp_3/configs.jsonproto"
     ],
     "infra_step": true,
@@ -386,10 +386,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"dutAttributes\":[@@@",
+      "@@@STEP_LOG_LINE@data@  \"dutAttributes\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"id\":{@@@",
-      "@@@STEP_LOG_LINE@data@        \"value\":\"attribute1\"@@@",
+      "@@@STEP_LOG_LINE@data@      \"id\": {@@@",
+      "@@@STEP_LOG_LINE@data@        \"value\": \"attribute1\"@@@",
       "@@@STEP_LOG_LINE@data@      }@@@",
       "@@@STEP_LOG_LINE@data@    }@@@",
       "@@@STEP_LOG_LINE@data@  ]@@@",
@@ -417,7 +417,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"dutAttributes\":[\n    {\n      \"id\":{\n        \"value\":\"attribute1\"\n      }\n    }\n  ]\n}",
+      "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
       "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
     ],
     "infra_step": true,
@@ -432,10 +432,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"boardPriorities\":[@@@",
+      "@@@STEP_LOG_LINE@data@  \"boardPriorities\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"priority\":-100,@@@",
-      "@@@STEP_LOG_LINE@data@      \"skylabBoard\":\"testboardA\"@@@",
+      "@@@STEP_LOG_LINE@data@      \"skylabBoard\": \"testboardA\",@@@",
+      "@@@STEP_LOG_LINE@data@      \"priority\": -100@@@",
       "@@@STEP_LOG_LINE@data@    }@@@",
       "@@@STEP_LOG_LINE@data@  ]@@@",
       "@@@STEP_LOG_LINE@data@}@@@",
@@ -462,7 +462,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"boardPriorities\":[\n    {\n      \"priority\":-100,\n      \"skylabBoard\":\"testboardA\"\n    }\n  ]\n}",
+      "{\n  \"boardPriorities\": [\n    {\n      \"skylabBoard\": \"testboardA\",\n      \"priority\": -100\n    }\n  ]\n}",
       "[CLEANUP]/tmp_tmp_3/board_priority.cfg"
     ],
     "infra_step": true,
@@ -480,11 +480,11 @@
       "/path/to/tmp/json",
       "copytree",
       "--symlinks",
-      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
-      "[CLEANUP]/tmp_tmp_3/testrepoA"
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/testrepoB"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -498,11 +498,11 @@
       "/path/to/tmp/json",
       "copytree",
       "--symlinks",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
-      "[CLEANUP]/tmp_tmp_3/testrepoB"
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_3/testrepoA"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -535,9 +535,9 @@
       "-out",
       "/input/hw_test_plans.jsonproto",
       "-plan",
-      "/input/testrepoA/a/b/kernel1.star",
+      "/input/testrepoB/kernel2.star",
       "-plan",
-      "/input/testrepoB/kernel2.star"
+      "/input/testrepoA/a/b/kernel1.star"
     ],
     "name": "run tests.schedule tests.generate hw test plans.docker run",
     "~followup_annotations": [

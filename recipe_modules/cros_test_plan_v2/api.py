@@ -3,19 +3,17 @@
 # found in the LICENSE file.
 
 import base64
-from collections import namedtuple
-import json
 import re
+from collections import namedtuple
+
 import six
-
-from recipe_engine import recipe_api
-
 from google.protobuf import json_format
 from google.protobuf import text_format
 
 from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from recipe_engine import recipe_api
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -218,13 +216,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     Returns:
       * Path to the file where the protobuf was written.
     """
-    # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
-    # the separator spacing between py2 and py3 MessageToJson.
     test_output_contents = base64.b64encode(
-        six.ensure_binary(
-            json.dumps(
-                json_format.MessageToDict(test_output_message),
-                separators=(',', ':'), sort_keys=True, indent=2)))
+        six.ensure_binary(json_format.MessageToJson(test_output_message)))
     contents = self.m.gitiles.get_file(host, project, path, public=False,
                                        test_output_data=test_output_contents)
 
@@ -347,11 +340,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       if self.generate_ctpv1_format:
         req_path = host_input_path.join('generatetestplanreq.binaryproto')
-        # TODO(b/217973414): No need to ensure deterministic ordering once we no
-        # longer need to ensure parity between PY2 and PY3.
-        self.m.file.write_raw(
-            'write generatetestplanreq binaryproto', req_path,
-            generate_test_plan_request.SerializeToString(deterministic=True))
+        self.m.file.write_raw('write generatetestplanreq binaryproto', req_path,
+                              generate_test_plan_request.SerializeToString())
         args.append('-ctpv1')
         arg_to_host_path['-generatetestplanreq'] = req_path
 
@@ -371,8 +361,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       # repo. Keep track of which roots have been visited, and don't copy them
       # twice.
       visited_roots = set()
-      # TODO(b/217973414): No need to sort once we're only running PY3.
-      for package in sorted(list(set(starlark_packages))):
+      for package in list(set(starlark_packages)):
         basename = self.m.path.basename(package.root)
 
         if package.root not in visited_roots:

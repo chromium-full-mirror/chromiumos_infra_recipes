@@ -104,7 +104,12 @@
     "cmd": [],
     "name": "call `result_flow` (5)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@request@{\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"ctp\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -120,7 +125,7 @@
       "/dev/stdout"
     ],
     "name": "call `result_flow` (5).publish",
-    "stdin": "{\"ctp\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "stdin": "{\n  \"ctp\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -129,7 +134,14 @@
     "cmd": [],
     "name": "call `result_flow` (6)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@request@{\"parentUid\":\"foo-parent-uid\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true,@@@",
+      "@@@STEP_LOG_LINE@request@  \"parentUid\": \"foo-parent-uid\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -145,7 +157,7 @@
       "/dev/stdout"
     ],
     "name": "call `result_flow` (6).publish",
-    "stdin": "{\"parentUid\":\"foo-parent-uid\",\"shouldPollForCompletion\":true,\"testRunner\":{\"project\":\"foo-proj\",\"topic\":\"foo-topic\"}}",
+    "stdin": "{\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  },\n  \"shouldPollForCompletion\": true,\n  \"parentUid\": \"foo-parent-uid\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

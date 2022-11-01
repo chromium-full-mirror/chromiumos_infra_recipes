@@ -9,7 +9,6 @@ from PB.chromite.api.image import Image
 from PB.chromite.api.packages import GetTargetVersionsResponse
 from PB.chromiumos import common as common_pb2
 from PB.recipe_modules.chromeos.observability_image_size.tests.publish import PublishTestProperties
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -21,7 +20,7 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = PublishTestProperties
 

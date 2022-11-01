@@ -97,7 +97,20 @@
     "name": "call chromite.api.ArtifactsService/BundleFirmware.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@published event@{\"bundleRequest\":{\"buildTarget\":{\"name\":\"target\"}},\"bundleResponse\":{},\"requestTime\":\"2012-05-14T12:53:21.500Z\",\"responseTime\":\"2012-05-14T12:53:23Z\",\"stepExecutionResult\":{\"retcode\":1},\"stepName\":\"call chromite.api.ArtifactsService/BundleFirmware|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"bundleRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"target\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"bundleResponse\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.ArtifactsService/BundleFirmware|call build API script\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepExecutionResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"retcode\": 1@@@",
+      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },

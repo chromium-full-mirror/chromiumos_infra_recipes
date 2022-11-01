@@ -7,30 +7,22 @@
 
 import collections
 import contextlib
-import json
 import re
 
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
-
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
-from PB.chromite.api.test import BuildTargetUnitTestRequest, BuildTestServiceContainersRequest
+from PB.chromite.api.test import BuildTargetUnitTestRequest
+from PB.chromite.api.test import BuildTestServiceContainersRequest
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
-from PB.chromiumos.common import PackageInfo, Profile
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import PackageInfo
+from PB.chromiumos.common import Profile
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
-
-
-def py2_MessageToJson(obj):
-  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
-  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
-  return json.dumps(
-      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
-      sort_keys=True)
+from recipe_engine import recipe_api
 
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -872,8 +864,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   gs_path,
               ))
 
-          presentation.logs['container metadata (log)'] = py2_MessageToJson(
-              container_metadata)
+          presentation.logs[
+              'container metadata (log)'] = json_format.MessageToJson(
+                  container_metadata)
 
           if failed:
             raise recipe_api.StepFailure(

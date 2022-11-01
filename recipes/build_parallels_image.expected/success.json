@@ -77,7 +77,13 @@
     "name": "provision DUT.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"crosUfsService\":\"ufs-service\"},\"dutName\":\"placeholder-dut-name\",\"dutState\":\"needs_repair\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -151,7 +157,7 @@
       }
     },
     "name": "provision DUT.call `phosphorus`.build-parallels-image-save",
-    "stdin": "{\"config\":{\"crosUfsService\":\"ufs-service\"},\"dutName\":\"placeholder-dut-name\",\"dutState\":\"needs_repair\"}",
+    "stdin": "{\n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"placeholder-dut-name\",\n  \"dutState\": \"needs_repair\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -161,7 +167,14 @@
     "name": "provision DUT.call `phosphorus` (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"crosUfsService\":\"ufs-service\"},\"deadline\":\"2012-05-14T14:53:23Z\",\"dutName\":\"placeholder-dut-name\",\"imageGsPath\":\"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T14:53:23Z\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -186,7 +199,7 @@
       }
     },
     "name": "provision DUT.call `phosphorus` (2).build-parallels-image-provision",
-    "stdin": "{\"config\":{\"crosUfsService\":\"ufs-service\"},\"deadline\":\"2012-05-14T14:53:23Z\",\"dutName\":\"placeholder-dut-name\",\"imageGsPath\":\"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\"}",
+    "stdin": "{\n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"placeholder-dut-name\",\n  \"imageGsPath\": \"gs://chromeos-image-archive/uprev-parallels-pin/R88-13547.0.0-11193-12345\",\n  \"deadline\": \"2012-05-14T14:53:23Z\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -670,7 +683,13 @@
     "name": "mark DUT ready.call `phosphorus`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{\"config\":{\"crosUfsService\":\"ufs-service\"},\"dutName\":\"placeholder-dut-name\",\"dutState\":\"ready\"}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-dut-name\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"ready\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -695,7 +714,7 @@
       }
     },
     "name": "mark DUT ready.call `phosphorus`.build-parallels-image-save",
-    "stdin": "{\"config\":{\"crosUfsService\":\"ufs-service\"},\"dutName\":\"placeholder-dut-name\",\"dutState\":\"ready\"}",
+    "stdin": "{\n  \"config\": {\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"placeholder-dut-name\",\n  \"dutState\": \"ready\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

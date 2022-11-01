@@ -3,28 +3,19 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
-
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.test_platform.steps.enumeration import \
-  EnumerationRequests, EnumerationResponses
-from PB.test_platform.steps.execution import ExecuteRequests, ExecuteResponses
+from PB.test_platform.steps.enumeration import EnumerationRequests
+from PB.test_platform.steps.enumeration import EnumerationResponses
+from PB.test_platform.steps.execution import ExecuteRequests
+from PB.test_platform.steps.execution import ExecuteResponses
+from recipe_engine import recipe_api
 
 # This exit code is returned by cros_test_platform runs that had an error but
 # produced a response anyway.
 _RETCODE_PARTIAL_RESPONSE = 2
 
-
-def py2_MessageToJson(obj):
-  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
-  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
-  return json.dumps(
-      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
-      sort_keys=True)
 
 
 class CrosTestPlatformCommand(recipe_api.RecipeApi):
@@ -72,20 +63,18 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       # failure during the command execution (e.g., due to a timeout).
       with self.m.step.nest('pre-execution debug data') as ds:
         ds.logs['cmd'] = [' '.join([str(c) for c in cmd])]
-        ds.logs['request'] = [py2_MessageToJson(request)]
+        ds.logs['request'] = [json_format.MessageToJson(request)]
 
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
-      # the separator spacing between py2 and py3 MessageToJson.
       response = self.m.easy.stdout_jsonpb_step(
           subcommand,
           cmd,
           response_type,
-          stdin=self.m.raw_io.input_text(py2_MessageToJson(request)),
+          stdin=self.m.raw_io.input_text(json_format.MessageToJson(request)),
           test_output=response_type(),
           # TODO(crbug.com/1008921): Surface non-zero return codes as a step
           # warning.
           ok_ret=(0, _RETCODE_PARTIAL_RESPONSE))
-      s.logs['response'] = [py2_MessageToJson(response)]
+      s.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def enumerate(self, request):
@@ -164,7 +153,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           ExecuteResponses,
           'JSONPB',
       )
-      s.logs['responses'] = [py2_MessageToJson(responses)]
+      s.logs['responses'] = [json_format.MessageToJson(responses)]
       return responses
 
   def _ensure_cros_test_platform(self):

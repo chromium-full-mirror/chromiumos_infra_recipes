@@ -3,22 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
-from google.protobuf import json_format
+from google.protobuf.json_format import MessageToJson
 
 from PB.chromite.api.observability import GetImageSizeDataRequest
 from PB.chromite.observability.sizes import ImageSizeObservabilityData
-
 from recipe_engine import recipe_api
-
-
-def py2_MessageToJson(obj):
-  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
-  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
-  return json.dumps(
-      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
-      sort_keys=True)
 
 
 class ObservabilityImageSizeApi(recipe_api.RecipeApi):
@@ -89,7 +78,7 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       self._add_target_versions(target_versions)
       self._add_builder_metadata(config, build_target)
       self._get_image_size_data(built_images)
-      pres.logs['image_data.json'] = py2_MessageToJson(self._data_proto)
+      pres.logs['image_data.json'] = MessageToJson(self._data_proto)
       with self.m.step.nest('publish image size data'):
         # TODO(build): implement publication of image size proto
         pass

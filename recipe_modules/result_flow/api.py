@@ -3,17 +3,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
-
 from PB.test_platform.result_flow.common import PubSubConfig
-from PB.test_platform.result_flow.ctp import CTPRequest, CTPResponse
-from PB.test_platform.result_flow.test_runner import \
-TestRunnerRequest, TestRunnerResponse
-from PB.test_platform.result_flow.publish import PublishRequest, PublishResponse
+from PB.test_platform.result_flow.ctp import CTPRequest
+from PB.test_platform.result_flow.ctp import CTPResponse
+from PB.test_platform.result_flow.publish import PublishRequest
+from PB.test_platform.result_flow.publish import PublishResponse
+from PB.test_platform.result_flow.test_runner import TestRunnerRequest
+from PB.test_platform.result_flow.test_runner import TestRunnerResponse
+from recipe_engine import recipe_api
 
 
 class ResultFlowCommand(recipe_api.RecipeApi):
@@ -41,13 +40,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `result_flow`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['request'] = [
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              sort_keys=True)
-      ]
+      presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_result_flow()
       cmd = [
           self._cmd,
@@ -55,12 +48,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
           '-input_json',
           '/dev/stdin',
       ]
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      stdin = self.m.raw_io.input_text(
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              sort_keys=True))
+      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
       cmd += [
           '-output_json',
           '/dev/stdout',
@@ -69,13 +57,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['response'] = [
-          json.dumps(
-              json_format.MessageToDict(response), separators=(',', ':'),
-              indent=2, sort_keys=True)
-      ]
+      presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def publish(self, project_id, topic_id, build_type,

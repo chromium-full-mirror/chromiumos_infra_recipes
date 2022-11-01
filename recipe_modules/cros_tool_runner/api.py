@@ -3,12 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from recipe_engine import recipe_api
 
 
 class CrosToolRunnerCommand(recipe_api.RecipeApi):
@@ -46,11 +44,8 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     if container_metadata and (self.container_metadata != container_metadata or
                                not self._images_file_path):
       self.container_metadata = container_metadata
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix the separator
-      # spacing between py2 and py3 MessageToJson.
-      container_metadata_output = json.dumps(
-          json_format.MessageToDict(self.container_metadata),
-          separators=(',', ':'), sort_keys=True)
+      container_metadata_output = json_format.MessageToJson(
+          self.container_metadata)
       self._images_file_path = self.m.path.mkstemp(prefix='container_images')
       self.m.file.write_text('writing container metadata to file',
                              self._images_file_path, container_metadata_output)
@@ -72,13 +67,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `cros-tool-runner`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
-      # the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['request'] = [
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              indent=2, sort_keys=True)
-      ]
+      presentation.logs['request'] = [json_format.MessageToJson(request)]
       self.ensure_cros_tool_runner()
       cmd = [
           "sudo",
@@ -92,12 +81,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           '-input',
           '/dev/stdin',
       ]
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
-      # the separator spacing between py2 and py3 MessageToJson.
-      stdin = self.m.raw_io.input_text(
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              indent=2, sort_keys=True))
+      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
       if not send_response:  # pragma: nocover
         self.m.easy.step(subcommand, cmd, stdin=stdin)
         return None
@@ -109,13 +93,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to fix
-      # the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['response'] = [
-          json.dumps(
-              json_format.MessageToDict(response), separators=(',', ':'),
-              indent=2, sort_keys=True)
-      ]
+      presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def provision(self, request):

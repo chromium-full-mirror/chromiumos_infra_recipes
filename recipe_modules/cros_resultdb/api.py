@@ -7,16 +7,16 @@ import os
 import re
 
 import six
-from google.protobuf.json_format import MessageToDict, ParseDict
 from google.protobuf import field_mask_pb2
-
-from recipe_engine import recipe_api
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import ParseDict
 
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.test_platform.request import Request
+from recipe_engine import recipe_api
 
 TestExecutionBehavior = Request.Params.TestExecutionBehavior
 
@@ -511,8 +511,6 @@ class ResultDBCommand(recipe_api.RecipeApi):
           test_result=test_result)
       reqs_list.append(test_result_req)
 
-    # TODO(b/217973414): Remove custom sorting of results after py2 testing
-    # is disabled.
     step_test_data = self.m.json.dumps({
         'testResults': [{
             'name':
@@ -527,7 +525,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
                 False,
             'testId':
                 test,
-        } for test in sorted(test_names)]
+        } for test in test_names]
     })
 
     batched_reqs = [
@@ -547,11 +545,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
           # TODO(mwarton): move this method implementation to the resultdb API class
           # (in chromium src) once it is tested and verified to be working. pylint
           # disable is here to enable upload of WIP CL.
-          # TODO(b/217973414): Remove custom sorting of results after py2 testing
-          # is disabled.
           normalized_req = MessageToDict(req)
-          normalized_req['requests'].sort(
-              key=lambda x: x['testResult']['testId'])
           self.m.resultdb._rpc(  # pylint: disable=protected-access
               'upload missing test cases (count: {})'.format(len(reqs)),
               'luci.resultdb.v1.Recorder', 'BatchCreateTestResults',

@@ -3,12 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf import json_format
 
 from PB.chromite.api.api import VersionGetRequest
 from PB.chromite.api.api import VersionGetResponse
+
 # pylint: disable=unused-import
 from PB.recipe_modules.chromeos.cros_build_api.examples.set_api_return import SetReturnProperties as PROPERTIES
 
@@ -39,11 +38,7 @@ def GenTests(api):
   resp = VersionGetResponse()
   resp.version.minor = 5555
   resp.version.bug = 5555
-  # TODO(b/217973414): Replace with MessageToJson once we don't need to
-  # fix the separator spacing between py2 and py3 MessageToJson.
-  resp_json = json.dumps(
-      json_format.MessageToDict(resp, preserving_proto_field_name=True),
-      separators=(',', ':'), sort_keys=True)
+  resp_json = json_format.MessageToJson(resp, preserving_proto_field_name=True)
 
   yield api.test(
       'basic', api.properties(expected_response_json=resp_json),

@@ -3,29 +3,28 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import json
-
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
-
-from PB.test_platform.skylab_local_state.load import LoadRequest, LoadResponse
+from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
+from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesResponse
+from PB.test_platform.phosphorus.prejob import PrejobRequest
+from PB.test_platform.phosphorus.prejob import PrejobResponse
+from PB.test_platform.phosphorus.runtest import RunTestRequest
+from PB.test_platform.phosphorus.runtest import RunTestResponse
+from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
+from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
+from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
+from PB.test_platform.skylab_local_state.load import LoadRequest
+from PB.test_platform.skylab_local_state.load import LoadResponse
 from PB.test_platform.skylab_local_state.remove import RemoveRequest
 from PB.test_platform.skylab_local_state.save import SaveRequest
+from PB.test_platform.skylab_test_runner.result import Result
 from PB.uprev.build_parallels_image.common import Config as ParallelsConfig
 from PB.uprev.build_parallels_image.provision import ProvisionRequest as \
   ParallelsProvisionRequest
 from PB.uprev.build_parallels_image.save import SaveRequest as \
   ParallelsSaveRequest
-
-from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest, \
-  FetchCrashesResponse
-from PB.test_platform.phosphorus.prejob import PrejobRequest, PrejobResponse
-from PB.test_platform.phosphorus.runtest import RunTestRequest, RunTestResponse
-from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
-from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
-from PB.test_platform.phosphorus.upload_to_gs import UploadToGSResponse
-from PB.test_platform.skylab_test_runner.result import Result
+from recipe_engine import recipe_api
 
 
 class PhosphorusCommand(recipe_api.RecipeApi):
@@ -61,13 +60,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `phosphorus`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['request'] = [
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              sort_keys=True)
-      ]
+      presentation.logs['request'] = [json_format.MessageToJson(request)]
       self._ensure_phosphorus()
       cmd = [
           self._cmd,
@@ -75,12 +68,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
           '-input_json',
           '/dev/stdin',
       ]
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      stdin = self.m.raw_io.input_text(
-          json.dumps(
-              json_format.MessageToDict(request), separators=(',', ':'),
-              sort_keys=True))
+      stdin = self.m.raw_io.input_text(json_format.MessageToJson(request))
       if not send_response:
         self.m.easy.step(subcommand, cmd, stdin=stdin)
         return None
@@ -93,13 +81,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                                                 test_output=response_type(),
                                                 parse_before_str=b'\x00',
                                                 ok_ret=(0,))
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['response'] = [
-          json.dumps(
-              json_format.MessageToDict(response), separators=(',', ':'),
-              indent=2, sort_keys=True)
-      ]
+      presentation.logs['response'] = [json_format.MessageToJson(response)]
       return response
 
   def prejob(self, request):
@@ -165,13 +147,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       ]
       result = self.m.easy.stdout_jsonpb_step('parse', cmd, Result,
                                               test_output=Result())
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      presentation.logs['response'] = [
-          json.dumps(
-              json_format.MessageToDict(result), separators=(',', ':'),
-              indent=2, sort_keys=True)
-      ]
+      presentation.logs['response'] = [json_format.MessageToJson(result)]
       return result
 
   def _ensure_phosphorus(self):

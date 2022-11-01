@@ -5,22 +5,20 @@
 # found in the LICENSE file.
 
 from collections import defaultdict
-import json
-
-from google.protobuf import json_format
-from google.protobuf import duration_pb2
-
-from recipe_engine import recipe_api
 
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
+from google.protobuf import duration_pb2
+from google.protobuf import json_format
 
-from PB.testplans.common import ProtoBytes
-from PB.testplans.generate_test_plan import HwTestUnit
-from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.gce_test import GceTestProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
-from PB.testplans.generate_test_plan import GenerateTestPlanRequest, GenerateTestPlanResponse
+from PB.testplans.common import ProtoBytes
+from PB.testplans.generate_test_plan import GenerateTestPlanRequest
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.target_test_requirements_config import HwTestCfg
+from recipe_engine import recipe_api
 
 TEST_SUMMARY_KEY = 'test_summary'
 SNAPSHOT_HWTEST_SUITES = [
@@ -131,13 +129,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           hw_test_plans = self.m.cros_test_plan_v2.generate_hw_test_plans(
               starlark_files)
 
-          # TODO(b/217973414): Replace with MessageToJson once we don't need to
-          # fix the separator spacing between py2 and py3 MessageToJson.
           pres.logs['hw_test_plans'] = '\n'.join(
-              json.dumps(
-                  json_format.MessageToDict(p), separators=(
-                      ',', ':'), sort_keys=True, indent=2)
-              for p in hw_test_plans)
+              json_format.MessageToJson(p) for p in hw_test_plans)
         else:
           pres.step_text = 'No starlark files found.'
 
@@ -272,11 +265,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       starlark_files = self._fetch_starlark_files(relevant_plans)
 
-      # TODO(b/217973414): No need to ensure deterministic ordering once we no
-      # longer need to ensure parity between PY2 and PY3.
       req = GenerateTestPlanRequest(buildbucket_protos=[
-          ProtoBytes(
-              serialized_proto=build.SerializeToString(deterministic=True))
+          ProtoBytes(serialized_proto=build.SerializeToString())
           for build in builds
       ])
       test_plan = self.m.cros_test_plan_v2.generate_hw_test_plans(

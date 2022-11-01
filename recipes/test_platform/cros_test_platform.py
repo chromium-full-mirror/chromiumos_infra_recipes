@@ -8,7 +8,6 @@
 import collections
 import json
 import re
-import six
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -20,29 +19,28 @@ from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.test.api import test_case as ctr_test_case
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import CrosToolRunnerProperties
+from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
 from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformProperties
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult as PostProcessTestResult
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import CrosToolRunnerProperties
-from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
 from PB.test_platform import result_flow as result_flow_pb2
 from PB.test_platform import service_version as service_version_pb
+from PB.test_platform.config.config import Config
+from PB.test_platform.request import Request
 from PB.test_platform.steps.enumeration import EnumerationRequest
 from PB.test_platform.steps.enumeration import EnumerationRequests
 from PB.test_platform.steps.enumeration import EnumerationResponse
 from PB.test_platform.steps.enumeration import EnumerationResponses
+from PB.test_platform.steps.execute.build import Build
 from PB.test_platform.steps.execution import ExecuteRequest
 from PB.test_platform.steps.execution import ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.steps.execution import ExecuteResponses
-from PB.test_platform.request import Request
 from PB.test_platform.taskstate import TaskState
-from PB.test_platform.config.config import Config
-from PB.test_platform.steps.execute.build import Build
-
-from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'depot_tools/gsutil',
@@ -74,12 +72,7 @@ PROPERTIES = CrosTestPlatformProperties
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
 
 
-def py2_MessageToJson(obj):
-  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
-  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
-  return json.dumps(
-      json_format.MessageToDict(obj), separators=(',', ': '), indent=2,
-      sort_keys=True)
+
 
 
 def output_ctp_release_timestamp_tag(api):
@@ -517,9 +510,7 @@ def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
   missing = (set(requests.keys()) - set(error_in_requests.keys())) - set(
       enumerations.keys())
   if missing:
-    # TODO(b/217973414): stop sorting/listing/ensure_str-ing when py3.
-    raise StepFailure('No enumerations for requests tagged %s' %
-                      [six.ensure_str(x) for x in sorted(list(missing))])
+    raise StepFailure('No enumerations for requests tagged %s' % missing)
 
 
 def RunSteps(api, properties):
@@ -623,7 +614,7 @@ def add_container_metadata(api, requests, error_in_requests):
             if build_target in metadata.containers:
               r.params.execution_param.container_metadata.CopyFrom(metadata)
               step.presentation.logs['container metadata'] = [
-                  py2_MessageToJson(metadata)
+                  json_format.MessageToJson(metadata)
               ]
             else:
               error = "No container information found in container metadata for request '{}', build target '{}', container metadata url '{}'.".format(
@@ -845,7 +836,7 @@ def _top_level_export_to_bigquery(api, force_export):
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
-    step.presentation.logs["output"] = py2_MessageToJson(responses)
+    step.presentation.logs["output"] = json_format.MessageToJson(responses)
     marshalled = api.skylab.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
@@ -1503,7 +1494,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              py2_MessageToJson(
+              json_format.MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
@@ -1521,7 +1512,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              py2_MessageToJson(
+              json_format.MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api),
@@ -1548,7 +1539,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              py2_MessageToJson(
+              json_format.MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api),
@@ -1570,7 +1561,7 @@ def GenTests(api):
       api.step_data(
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
-              py2_MessageToJson(
+              json_format.MessageToJson(
                   result_flow_pb2.publish.PublishResponse(
                       state=result_flow_pb2.common.SUCCEEDED)))),
       _generic_enumerate_response(api),

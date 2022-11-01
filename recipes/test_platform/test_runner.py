@@ -8,37 +8,37 @@ import base64
 import datetime
 import json
 import os
+
 import six
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipe_modules.chromeos.phosphorus.phosphorus \
-  import PhosphorusProperties
-from PB.recipe_modules.chromeos.phosphorus.phosphorus\
-  import PhosphorusEnvProperties
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
-  import CrosToolRunnerProperties
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner\
-  import CrosToolRunnerEnvProperties
-from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
-from PB.test_platform import phosphorus
-from PB.test_platform.request import Request as TestPlatformRequest
-from PB.test_platform import skylab_local_state
-from PB.test_platform.skylab_test_runner.result import Result
-from PB.test_platform.common.task import TaskLogData
-from PB.test_platform.skylab_test_runner.request import Request
-from PB.chromiumos.test import api as ctr_api
-from PB.chromiumos.test.lab import api as lab_api
-from PB.chromiumos.storage_path import StoragePath
-from PB.chromiumos.build.api import container_metadata
-from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
-
+from RECIPE_MODULES.chromeos.dut_interface import dut_interface
+from RECIPE_MODULES.chromeos.dut_interface import error_messages
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
+from PB.chromiumos.build.api import container_metadata
+from PB.chromiumos.storage_path import StoragePath
+from PB.chromiumos.test import api as ctr_api
+from PB.chromiumos.test.lab import api as lab_api
+from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
+  import CrosToolRunnerEnvProperties
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
+  import CrosToolRunnerProperties
+from PB.recipe_modules.chromeos.phosphorus.phosphorus \
+  import PhosphorusEnvProperties
+from PB.recipe_modules.chromeos.phosphorus.phosphorus \
+  import PhosphorusProperties
+from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
+from PB.test_platform import phosphorus
+from PB.test_platform import skylab_local_state
+from PB.test_platform.common.task import TaskLogData
+from PB.test_platform.request import Request as TestPlatformRequest
+from PB.test_platform.skylab_test_runner.request import Request
+from PB.test_platform.skylab_test_runner.result import Result
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
-from RECIPE_MODULES.chromeos.dut_interface import dut_interface, error_messages
 
 TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 
@@ -1184,23 +1184,10 @@ def execution_steps_with_phosphorus(api, properties):
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
-    # TODO(b/217973414): Replace with MessageToJson once we don't need to
-    # fix the separator spacing between py2 and py3 MessageToJson.
-    s_log(
-        step, 'request',
-        json.dumps(
-            json_format.MessageToDict(properties.request),
-            separators=(',', ':'), indent=2, sort_keys=True))
-    s_log(
-        step, 'config',
-        json.dumps(
-            json_format.MessageToDict(properties.config), separators=(',', ':'),
-            indent=2, sort_keys=True))
-    s_log(
-        step, 'common_config',
-        json.dumps(
-            json_format.MessageToDict(properties.common_config),
-            separators=(',', ':'), indent=2, sort_keys=True))
+    s_log(step, 'request', json_format.MessageToJson(properties.request))
+    s_log(step, 'config', json_format.MessageToJson(properties.config))
+    s_log(step, 'common_config',
+          json_format.MessageToJson(properties.common_config))
     # Use parent_build_id rather than the related parent_buildbucket_id tag,
     # since that doesn't seem to work here. https://crbug.com/1171511
     if properties.request.parent_build_id:
@@ -1274,13 +1261,8 @@ def execution_steps_with_ctr(api, properties):
   global_result = interface.build_empty_result()
 
   with api.step.nest('inputs') as step:
-    # TODO(b/217973414): Replace with MessageToJson once we don't need to
-    # fix the separator spacing between py2 and py3 MessageToJson.
-    s_log(
-        step, 'cft_test_request',
-        json.dumps(
-            json_format.MessageToDict(properties.cft_test_request),
-            separators=(',', ':'), indent=2, sort_keys=True))
+    s_log(step, 'cft_test_request',
+          json_format.MessageToJson(properties.cft_test_request))
     if properties.cft_test_request.parent_build_id:
       s_link(
           step=step, name='parent CTP', link=api.buildbucket.build_url(
@@ -1470,13 +1452,7 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
                  ]), autotest_result=autotest_result,
         autotest_results={"original_test": autotest_result},
         state_update=Result.StateUpdate(dut_state=dut_state), log_data=log_data)
-    # TODO(b/217973414): Replace with MessageToJson once we don't need to
-    # fix the separator spacing between py2 and py3 MessageToJson.
-    s_log(
-        step, 'skylab_result',
-        json.dumps(
-            json_format.MessageToDict(skylab_result), separators=(',', ':'),
-            indent=2, sort_keys=True))
+    s_log(step, 'skylab_result', json_format.MessageToJson(skylab_result))
     return skylab_result
 
 

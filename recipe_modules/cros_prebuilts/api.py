@@ -5,15 +5,17 @@
 
 """API for uploading CrOS prebuilts to Google Storage."""
 
-import json
 import os
 
 from google.protobuf import json_format
-from recipe_engine import recipe_api
 
 from PB.chromite.api import binhost as binhost_pb
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget, Path, PackageIndexInfo, Profile
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageIndexInfo
+from PB.chromiumos.common import Path
+from PB.chromiumos.common import Profile
+from recipe_engine import recipe_api
 
 # The trailing / is for gsutil rsync.
 METADATA_GS_DIR_TMPL = 'gs://{gs_bucket}/snapshot/{snapshot}/{target}/{profile}/'
@@ -218,11 +220,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       metadata_file = self.m.path.mkdtemp(
           prefix='metadata').join('PackageIndexInfo.json')
 
-      # TODO(b/217973414): Replace with MessageToJson once we don't need to
-      # fix the separator spacing between py2 and py3 MessageToJson.
-      metadata_json = json.dumps(
-          json_format.MessageToDict(metadata, use_integers_for_enums=True),
-          separators=(',', ':'), sort_keys=True)
+      metadata_json = json_format.MessageToJson(metadata,
+                                                use_integers_for_enums=True)
       self.m.file.write_text('write metadata', metadata_file,
                              '%s\n' % metadata_json)
 

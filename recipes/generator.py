@@ -12,18 +12,19 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
 
-from collections import defaultdict
-from collections import namedtuple
 import json
 import re
+from collections import defaultdict
+from collections import namedtuple
+
 import six
 from six.moves.urllib import parse as urlparse
-
 from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
 
-from PB.chromiumos.common import PackageInfo
-from PB.chromiumos.common import BuildTarget
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import CronTrigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
@@ -35,23 +36,21 @@ from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import DO_NOTHING
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
+from PB.recipes.chromeos.generator import GeneratorProperties
+from PB.recipes.chromeos.generator import GitilesFetchInfo
 from PB.recipes.chromeos.generator import NO_RETRY
+from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
-from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OutdatedClsPolicy
 from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
-from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
 from PB.recipes.chromeos.generator import RetryClPolicy
 from PB.recipes.chromeos.generator import RetryRef
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
 from PB.recipes.chromeos.generator import SendToCqPolicy
-from PB.recipes.chromeos.generator import GeneratorProperties
-from PB.recipes.chromeos.generator import GitilesFetchInfo
-
-from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -87,13 +86,6 @@ PROPERTIES = GeneratorProperties
 # The label written in the commit message to store versions information of
 # upstream repositories given by gitiles trigger.
 UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
-
-
-def py2_MessageToJson(obj):
-  # TODO(b/217973414): Delete once we don't need to fix the separator spacing
-  # between py2 and py3 MessageToJson and replace usages with MessageToJson.
-  return json.dumps(
-      MessageToDict(obj), separators=(',', ': '), indent=2, sort_keys=True)
 
 
 def serializeVersions(versions):
@@ -168,7 +160,7 @@ def RunSteps(api, properties):
           raise StepFailure('found non-gitiles trigger: %r' % trigger)
 
       presentation.step_text = 'found {} good triggers'.format(len(triggers))
-      presentation.logs['list of triggers'] = map(py2_MessageToJson, triggers)
+      presentation.logs['list of triggers'] = map(MessageToJson, triggers)
 
   if properties.HasField('package_info'):
     packages = [properties.package_info]

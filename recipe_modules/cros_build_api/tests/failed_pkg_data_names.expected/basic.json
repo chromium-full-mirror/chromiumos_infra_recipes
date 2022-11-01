@@ -83,7 +83,13 @@
     "name": "call chromite.api.SysrootService/InstallToolchain.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@published event@{\"installToolchainRequest\":{},\"installToolchainResponse\":{},\"requestTime\":\"2012-05-14T12:53:21.500Z\",\"responseTime\":\"2012-05-14T12:53:23Z\",\"stepName\":\"call chromite.api.SysrootService/InstallToolchain|call build API script\"}@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"installToolchainRequest\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@  \"installToolchainResponse\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"call chromite.api.SysrootService/InstallToolchain|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },

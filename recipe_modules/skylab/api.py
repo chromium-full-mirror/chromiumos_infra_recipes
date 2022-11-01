@@ -4,21 +4,19 @@
 # found in the LICENSE file.
 
 import base64
-import json
 import zlib
 
+from RECIPE_MODULES.chromeos.skylab import structs
 from google.protobuf import json_format
 
-from recipe_engine import recipe_api
-
-from RECIPE_MODULES.chromeos.skylab import structs
-
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
-from PB.test_platform.steps.execution import ExecuteResponse, ExecuteResponses
+from PB.test_platform.steps.execution import ExecuteResponse
+from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
+from recipe_engine import recipe_api
 
 
 class SkylabApi(recipe_api.RecipeApi):
@@ -171,20 +169,13 @@ class SkylabApi(recipe_api.RecipeApi):
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
-      # TODO (b/217973414): Replace with MessageToJson once we don't need to fix
-      # the separator spacing between py2 and py3 MessageToJson.
       presentation.logs['container metadata'] = [
-          json.dumps(
-              json_format.MessageToDict(container_metadata),
-              separators=(',', ':'), sort_keys=True, indent=2)
+          json_format.MessageToJson(container_metadata)
       ] if have_container_metadata else '{}'
 
       # str -> (Request dict)
       reqs = {}
       with self.m.step.nest('create test requests'):
-        # TODO(b/217973414): No need to sort once we don't need to ensure parity
-        # between PY2 and PY3 expectation files.
-        unit_hw_tests.sort(key=structs.unit_hw_test_to_str)
         for uht in unit_hw_tests:
           step_name = 'configure {}'.format(uht.unit.common.builder_name)
           skylab_board = uht.hw_test.skylab_board
@@ -210,13 +201,8 @@ class SkylabApi(recipe_api.RecipeApi):
               request.test_plan.tag_criteria.CopyFrom(uht.hw_test.tag_criteria)
               configure_step.step_summary_text = "(Executing via CFT)"
 
-            # TODO (b/217973414): Replace with MessageToJson once we don't need
-            # to fix the separator spacing between py2 and py3 MessageToJson.
-            request.params.decorations.tags.sort()
             configure_step.logs['request'] = [
-                json.dumps(
-                    json_format.MessageToDict(request), separators=(',', ':'),
-                    sort_keys=True, indent=2)
+                json_format.MessageToJson(request)
             ]
             reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(request)
 
@@ -329,9 +315,7 @@ class SkylabApi(recipe_api.RecipeApi):
         results.append(self._translate_result(result, t))
 
       self.m.greenness.update_hwtest_info(results)
-      presentation.logs['return value'] = [
-          structs.skylab_result_to_str(r) for r in results
-      ]
+      presentation.logs['return value'] = [str(r) for r in results]
       return results
 
   def _get_multi_response_binary(self, build):
