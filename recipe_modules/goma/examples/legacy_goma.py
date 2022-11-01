@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.chromiumos import common
-
 DEPS = [
     'recipe_engine/assertions',
     'goma',
@@ -15,9 +13,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
 
 def RunSteps(api):
   api.goma.initialize(also_bq_upload=True)
-  api.assertions.assertEqual(api.goma.goma_approach,
-                             common.GomaConfig.GOMA_APPROACH_UNSPECIFIED)
-  api.assertions.assertEqual(api.goma.goma_dir, None)
+  api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
   api.assertions.assertEqual(
       str(api.goma.default_bqupload_dir), '[CACHE]/goma/bqupload')
 

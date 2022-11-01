@@ -2,9 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.chromiumos import common
-from PB.recipe_modules.chromeos.goma.goma import GomaProperties
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -50,22 +47,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(cbb_config='auron-paladin'),
-      api.buildbucket.try_build(
-          'basic',
-          git_repo='https://chromium.googlesource.com/chromiumos/manifest',
-          revision='deadbeef'),
-  )
-
-  yield api.test(
-      'basic-goma',
-      api.properties(cbb_config='auron-paladin'),
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  )
-          }),
       api.buildbucket.try_build(
           'basic',
           git_repo='https://chromium.googlesource.com/chromiumos/manifest',

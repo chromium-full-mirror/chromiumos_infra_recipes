@@ -7,7 +7,6 @@ import json
 
 from PB.chromiumos import common
 from PB.recipe_modules.chromeos.sysroot_util.examples.full import FullTestProperties
-from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
@@ -198,13 +197,6 @@ def GenTests(api):
 
   yield api.test(
       'with-goma', test_build(),
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }),
       api.cros_build_api.set_api_return('install packages',
                                         'SysrootService/InstallPackages',
                                         goma_artifacts(True)))

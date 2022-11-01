@@ -71,6 +71,7 @@ class CrosSdkApi(RecipeApi):
       self._reproxy_cfg_file = None
       self._remoteexec_config = None
       self._goma_dir = None
+      self._goma_client_json = None
       self._goma_approach = None
       self._goma_log_dir = None
       self._goma_stats_file = None
@@ -195,29 +196,33 @@ class CrosSdkApi(RecipeApi):
 
     Must be run with cwd inside a chromiumos source root.
     """
-    self.set_goma_config(self.m.goma.goma_dir, self.m.goma.goma_approach,
+    self.set_goma_config(self.m.goma.goma_dir, self.m.goma.goma_client_json,
+                         self.m.goma.goma_approach,
                          self.m.path.mkdtemp(prefix='goma-logs-'),
                          'stats.binaryproto', 'counterz.binaryproto')
 
-  def set_goma_config(self, goma_dir, goma_approach, log_dir, stats_file,
-                      counterz_file):
+  def set_goma_config(self, goma_dir, goma_client_json, goma_approach, log_dir,
+                      stats_file, counterz_file):
     """Set the goma config.
 
     Args:
       goma_dir (Path): Path to the goma install location.
+      goma_client_json (Path): Path to the goma client credentials file.
       goma_approach (chromiumos.GomaConfig.GomaApproach): Goma Approach.
       log_dir (Path): Path to the log directory.
       stats_file (str): Name of the goma stats file, relative to log_dir.
       counterz_file (str): Name of the goma counterz file, relative to log_dir.
     """
     self._goma_dir = str(goma_dir)
+    if goma_client_json:
+      self._goma_client_json = str(goma_client_json)
     self._goma_approach = goma_approach
     self._goma_log_dir = str(log_dir)
     self._goma_stats_file = stats_file
     self._goma_counterz_file = counterz_file
 
   def has_goma_config(self):
-    return bool(self._goma_dir) and self._goma_approach
+    return bool(self._goma_dir)
 
   def goma_config(self):
     if not self.has_goma_config():
@@ -225,6 +230,7 @@ class CrosSdkApi(RecipeApi):
 
     return common.GomaConfig(
         goma_dir=str(self._goma_dir),
+        goma_client_json=self._goma_client_json,
         goma_approach=self._goma_approach,
         log_dir=common.SyncedDir(dir=self._goma_log_dir),
         stats_file=self._goma_stats_file,
