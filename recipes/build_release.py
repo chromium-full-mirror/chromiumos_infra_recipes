@@ -150,7 +150,14 @@ def DoRunSteps(api, config, properties):
     api.bcid_reporter.report_stage('upload')
 
   try:
-    api.build_menu.upload_artifacts(config, report_to_spike=True)
+    uploaded_artifacts = api.build_menu.upload_artifacts(
+        config, report_to_spike=True)
+    if uploaded_artifacts:
+      gs_image_dir = 'gs://{bucket}/{path}'.format(
+          bucket=uploaded_artifacts.gs_bucket, path=uploaded_artifacts.gs_path)
+      with api.step.nest("publish DLCs to pubsub"):
+        dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
+        api.build_reporting.publish_dlcs(dlc_locations)
   except StepFailure as sf:
     # If uploading artifacts threw an exception, surface that exception unless
     # build_images above threw an exception, in which case we want to
@@ -173,10 +180,6 @@ def DoRunSteps(api, config, properties):
 
   gs_image_dir, instructions = api.cros_release.push_and_sign_images(
       config, api.build_menu.sysroot)
-
-  with api.step.nest("publish DLCs to pubsub"):
-    dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
-    api.build_reporting.publish_dlcs(dlc_locations)
 
   with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
     with api.step.nest("upload debug symbols"):

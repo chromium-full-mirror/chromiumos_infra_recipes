@@ -156,7 +156,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
       self.m.file.write_raw('write input binaryproto', input_bin_file,
-                            request_proto.SerializeToString())
+                            request_proto.SerializeToString(deterministic=True))
 
       cmd = [
           self._test_planner_path, 'gen-test-plan', '--input_binary_pb',
@@ -198,7 +198,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file,
           test_data=self.test_api.generate_test_plan_response.SerializeToString(
-          ))
+              deterministic=True))
       response_proto = GenerateTestPlanResponse.FromString(response_bin)
 
       presentation.logs['planner_output'] = [str(response_proto)]

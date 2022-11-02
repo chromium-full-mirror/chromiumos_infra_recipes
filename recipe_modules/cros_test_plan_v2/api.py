@@ -362,7 +362,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       # repo. Keep track of which roots have been visited, and don't copy them
       # twice.
       visited_roots = set()
-      for package in list(set(starlark_packages)):
+      for package in sorted(list(set(starlark_packages))):
         basename = self.m.path.basename(package.root)
 
         if package.root not in visited_roots:
@@ -391,7 +391,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             'read output ' + out_path,
             out_path,
             test_data=self.test_api.generate_test_plan_response()
-            .SerializeToString(),
+            .SerializeToString(deterministic=True),
         )
         resp = GenerateTestPlanResponse.FromString(output)
         pres.logs['v1-compatible response'] = [str(resp)]
