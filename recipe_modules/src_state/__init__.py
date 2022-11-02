@@ -12,7 +12,7 @@ DEPS = [
     'recipe_engine/step',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # This module is intended to be something that any of our modules can depend on
 # without causing circular dependencies.  As such, it must only depend on

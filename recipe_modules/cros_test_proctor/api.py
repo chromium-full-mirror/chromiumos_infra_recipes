@@ -266,7 +266,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       starlark_files = self._fetch_starlark_files(relevant_plans)
 
       req = GenerateTestPlanRequest(buildbucket_protos=[
-          ProtoBytes(serialized_proto=build.SerializeToString())
+          ProtoBytes(
+              serialized_proto=build.SerializeToString(deterministic=True))
           for build in builds
       ])
       test_plan = self.m.cros_test_plan_v2.generate_hw_test_plans(

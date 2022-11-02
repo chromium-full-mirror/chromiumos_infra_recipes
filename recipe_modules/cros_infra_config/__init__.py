@@ -21,6 +21,6 @@ DEPS = {
     'util': 'util',
 }
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CrosInfraConfigProperties

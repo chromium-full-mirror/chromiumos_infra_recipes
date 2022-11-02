@@ -10483,7 +10483,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"compressed_json_responses\": \"eJztUu1qwkAQfBXJ7+aiVPohlCIxFiFtRdNCKSLnuSaHSTa9XZUivnvvtFKUgg+gfw72bnZ3Zm7WXsbSpMAiW4nJkn315bVqa48lzQdAi5zJ1p+7izeT28J2cEWtIFCZwQKQfFpJU+gyFbKqqEIWCovANTzq6UPztiFvrifqXjXvGvVG3buqecSSYbsn1zMIv1XuKi/udaNx+BHG9nx97sdREnUcfAlmqhU7yHs06PTCZNxvD4f2cWNfS1lsu1UGwDR+QdYzrSRrLBMgdgNyTI+4Wwa6zIHIcjWVSBHTHLa8JwZXBH/i5IKR7Rzf7OwI9mr9Y2WBW+WgoST4tW1PzrrBJ6UcwoWyhZEikXOgJwOS+xky0okxo83owOF/oN12L3ZQ597R91tTdAmXCJxpBMgK9mmh+RKBs44AcgbmEoQzC8LmB8KMook=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJztkL9KxEAQh0m44tgqBkRQC7EUsrng4Z+AWtqJxbUik3XMLpdk1p2JeQQLK1/TzjcwCoeQVzi7aeb3fXzpW6x2rECoUbQddPUqmXlJvyL1GaXXVsRzmefGBmqROOMBQuu6WoP37Em0oTYX4PWNe7panhdwdlqZS7O8KBbFYn8290l0vGcsovDjHYl7dgbEUbdClpOHzTwLuK5B5nEueF0T1Q3+TleBBsY/PvRCMv5mAblvhPONUDaF5+VczUYzSaLySB3+XNpAiwH0CtbItwFB7i0JcRKlcRKn77HanZQYrVyH/zUGzSMx497Jdtb4iNXBtAaJxbC9Tb4BPA5sgg==\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"compressed_responses\": \"eJzlkr1KxEAUhUnYYpkqBkRQC7EUZrLBxZ+AWm4nFtuKTMZrZtgkd5x7Yx7BwsrXtPMNjAuLkldId5tzvsPHTd9jsWdZhwpY2V6VbyzNa/odia8ovbXMnoosMzZgA0iSeh0a11ZKe08eWRlsMta0uXPPN8vLXF+cl+baLK/yRb44nM19Ep0eGAvA9HSP7F6c0eywXQPx2eOunli7tgaioS54VSFWNWyry4A9wR9fd4w8ZGUA6mqmbDdIjuFZMRezYRknUXEijn8vZXQDQau13gCtAmh+sMhISZTGSZx+xGJ/ZGJY5VqYpI3PWBz9s0EDUSJbCJI6x9N0MvqQrZPJ2vgBliBsgg==\", @@@",
       "@@@STEP_LOG_LINE@json.output@            \"responses\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"htarget.hw.bvt-cq\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"state\": {@@@",

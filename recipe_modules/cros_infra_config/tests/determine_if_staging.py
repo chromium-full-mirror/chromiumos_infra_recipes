@@ -12,7 +12,7 @@ DEPS = [
     'cros_infra_config',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY2+3'
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = DetermineIfStagingProperties
 

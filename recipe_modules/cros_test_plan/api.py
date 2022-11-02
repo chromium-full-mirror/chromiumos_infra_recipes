@@ -138,14 +138,16 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       request_proto = GenerateTestPlanRequest(
           manifest_commit=manifest_commit.id, gitiles_commit=ProtoBytes(
               serialized_proto=GitilesCommit.SerializeToString(
-                  manifest_commit)),
-          gerrit_changes=[
-              ProtoBytes(serialized_proto=GerritChange.SerializeToString(gc))
-              for gc in gerrit_changes or []
-          ], buildbucket_protos=[
-              ProtoBytes(serialized_proto=Build.SerializeToString(build))
-              for build in builds
-          ])
+                  manifest_commit, deterministic=True)), gerrit_changes=[
+                      ProtoBytes(
+                          serialized_proto=GerritChange.SerializeToString(
+                              gc, deterministic=True))
+                      for gc in gerrit_changes or []
+                  ], buildbucket_protos=[
+                      ProtoBytes(
+                          serialized_proto=Build.SerializeToString(
+                              build, deterministic=True)) for build in builds
+                  ])
       presentation.logs['planner_input'] = [
           json_format.MessageToJson(request_proto)
       ]

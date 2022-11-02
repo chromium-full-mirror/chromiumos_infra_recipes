@@ -480,11 +480,11 @@
       "/path/to/tmp/json",
       "copytree",
       "--symlinks",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
-      "[CLEANUP]/tmp_tmp_3/testrepoB"
+      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_3/testrepoA"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -498,11 +498,11 @@
       "/path/to/tmp/json",
       "copytree",
       "--symlinks",
-      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
-      "[CLEANUP]/tmp_tmp_3/testrepoA"
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/testrepoB"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -535,9 +535,9 @@
       "-out",
       "/input/hw_test_plans.jsonproto",
       "-plan",
-      "/input/testrepoB/kernel2.star",
+      "/input/testrepoA/a/b/kernel1.star",
       "-plan",
-      "/input/testrepoA/a/b/kernel1.star"
+      "/input/testrepoB/kernel2.star"
     ],
     "name": "run tests.schedule tests.generate hw test plans.docker run",
     "~followup_annotations": [
