@@ -7592,36 +7592,6 @@
       "/path/to/tmp/json",
       "copytree",
       "--symlinks",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
-      "[CLEANUP]/tmp_tmp_3/testrepoB"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copytree",
-      "--symlinks",
       "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
       "[CLEANUP]/tmp_tmp_3/testrepoA"
     ],
@@ -7639,6 +7609,36 @@
       }
     },
     "name": "run tests.schedule tests.generate hw test plans.copy testrepoA",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copytree",
+      "--symlinks",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/testrepoB"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.copy testrepoB",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -7674,9 +7674,9 @@
       "-out",
       "/input/generatetestplanresp.binaryproto",
       "-plan",
-      "/input/testrepoB/kernel2.star",
+      "/input/testrepoA/a/b/kernel1.star",
       "-plan",
-      "/input/testrepoA/a/b/kernel1.star"
+      "/input/testrepoB/kernel2.star"
     ],
     "luci_context": {
       "realm": {
