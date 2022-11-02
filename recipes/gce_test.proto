@@ -42,5 +42,14 @@ message GceTestProperties {
 
   // GCE-related metadata fields.
   GceMetadata gce_metadata = 5;
+
+  // TotalShards is the total number of shards to be used in a test run.
+  // Note: Each build will only run one shard. It is up to the caller to
+  // schedule one build per shard with the appropriate shard_index values.
+  int64 total_shards = 6;
+
+  // ShardIndex specifies the index of the shard to used in the current run.
+  // Note: This value is 0-indexed.
+  int64 shard_index = 7;
 }
 

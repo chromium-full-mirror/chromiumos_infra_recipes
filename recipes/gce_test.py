@@ -65,11 +65,20 @@ def RunSteps(api, properties):
         subnet=properties.gce_metadata.subnet,
         private_key_path=private_key_path)
 
+    # Only specify shards if there is more than 1.
+    shard_args = []
+    if properties.total_shards > 1:
+      shard_args.extend([
+          '-totalshards={}'.format(properties.total_shards),
+          '-shardindex={}'.format(properties.shard_index)
+      ])
+
     with api.step.nest('run tast tests'):
       failures, empty_result = api.tast_exec.run_vm(
           properties.name, vm_context,
           api.tast_exec.TastInputs(properties.expressions, test_artifacts_dir,
-                                   properties.build_payload, private_key_path))
+                                   properties.build_payload, private_key_path,
+                                   shard_args=shard_args))
 
     api.tast_results.print_results(failures, empty_result)
 
@@ -98,3 +107,6 @@ def GenTests(api):
   yield api.test('basic', props, api.buildbucket.generic_build())
 
   yield api.test('led-build', props, api.buildbucket.generic_build(build_id=0))
+
+  yield api.test('sharded', api.buildbucket.generic_build(build_id=0), props,
+                 api.properties(total_shards=2, shard_index=0))
