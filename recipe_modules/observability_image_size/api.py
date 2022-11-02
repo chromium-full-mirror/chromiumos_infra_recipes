@@ -54,7 +54,7 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       self._data_proto.builder_metadata.build_type = config.id.type
       self._data_proto.builder_metadata.build_config_name = config.id.name
       self._data_proto.builder_metadata.annealing_commit_id = self.m.cros_version.version.snapshot
-      # TODO: get manifest_commit
+      self._data_proto.builder_metadata.manifest_commit = self.m.src_state.gitiles_commit.id
 
   def _get_image_size_data(self, image_data):
     """Get image/partition/package size data."""

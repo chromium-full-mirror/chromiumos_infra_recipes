@@ -6959,7 +6959,7 @@ Returns:
   str: A string describing the VM test.
 ### *recipe_modules* / [observability\_image\_size](/recipe_modules/observability_image_size)
 
-[DEPS](/recipe_modules/observability_image_size/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/observability_image_size/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 

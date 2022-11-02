@@ -11,6 +11,7 @@ DEPS = [
     'cros_build_api',
     'cros_infra_config',
     'cros_version',
+    'src_state',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
