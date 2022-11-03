@@ -573,7 +573,15 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if multiduts and multiduts[0] == 'True':
     base_tags.append(('multiduts', multiduts[0]))
 
-    # Get the secondary boards and models from the buildbucket tags.
+    # Get the primary & secondary boards and models from the buildbucket tags.
+    primary_board = api.cros_tags.get_values('primary_board')
+    if primary_board:
+      base_tags.append(('primary_board', primary_board[0]))
+
+    primary_model = api.cros_tags.get_values('primary_model')
+    if primary_model:
+      base_tags.append(('primary_model', primary_model[0]))
+
     secondary_boards = api.cros_tags.get_values('secondary_boards')
     if secondary_boards:
       base_tags.append(('secondary_boards', secondary_boards[0]))
