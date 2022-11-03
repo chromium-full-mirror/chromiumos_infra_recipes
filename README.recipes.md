@@ -11152,7 +11152,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#110)(api, properties):**
 
-&mdash; **def [response\_has\_changes](/recipes/generator.py#452)(api, response):**
+&mdash; **def [response\_has\_changes](/recipes/generator.py#448)(api, response):**
 
 Returns whether the given `UprevPackagesResponse` contains changes.
 

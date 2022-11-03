@@ -406,11 +406,10 @@ def RunSteps(api, properties):
 def _get_policy(api, policies, tag):
   """Find the applicable policy for the trigger.
 
-  The policy used is the first policy where policy.pattern matches the tag.
-  The remote reference is chosen based on the substitution result:
-  - when it is the empty string, default branch (aka legacy)
-  - otherwise, lookup a remote reference in manifest-internal by the result
-  - if not found, the step fails
+  The policy used is the first policy where policy.pattern matches the tag, and
+  either:
+  - the substitution result is the empty string (default branch, aka legacy), or
+  - a remote reference is in manifest-internal for the substitution result.
 
   Args:
     policies (list(BranchPolicy): The package's branch policy.
@@ -439,10 +438,7 @@ def _get_policy(api, policies, tag):
         if refs:
           raise StepFailure('multiple branches matched {}: {}'.format(
               query, ' '.join(x.ref for x in refs)))
-        # If the reference is not found, it is likely that the given policy
-        # rule (especially, "repl") is wrong.
-        raise StepFailure(
-            'No matching branch found in remote: {}'.format(query))
+        # If we found no references, this policy does not apply.
 
     raise StepFailure('No matching policy found for tag {}'.format(tag))
 
@@ -1021,19 +1017,6 @@ def GenTests(api):
       _props(package_info=package_chrome,
              branch_policies=[branch_policy, _policy()]),
       api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
-      api.post_check(post_process.StatusAnyFailure),
-  )
-
-  # Pattern matched, but expected refs not found. This can happen when `repl`
-  # is inconsistent with the remote branch naming convention.
-  yield api.test(
-      'branch-policies-no-remote-ref',
-      api.properties(triggers=[trigger_prop]),
-      _props(package_info=package_chrome, branch_policies=[branch_policy]),
-      api.step_data('determine branch.git ls-remote',
-                    stdout=api.raw_io.output_text('\n'.join([
-                        '',
-                    ]))),
       api.post_check(post_process.StatusAnyFailure),
   )
 
