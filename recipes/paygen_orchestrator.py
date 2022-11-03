@@ -194,8 +194,8 @@ def RunSteps(api, properties):
 
     infra_summary = '\ninfra_failure: {}\n'.format(
         _summarize_failed_builds(infra_fail)) if infra_fail else ''
-    summary_markdown = '{}\n{}{}'.format(pres.step_text, infra_summary,
-                                         _summarize_failed_builds(fail))
+    summary_markdown = 'paygenie failures\n{}\n{}{}'.format(
+        pres.step_text, infra_summary, _summarize_failed_builds(fail))
     # Truncate the list of failures per section to keep the summary under
     # Buildbucket's 4000 byte limit on the summary_markdown field.
     # To be removed when https://crbug.com/1063398 is resolved.
