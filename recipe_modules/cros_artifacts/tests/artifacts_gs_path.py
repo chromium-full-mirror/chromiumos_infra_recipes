@@ -27,7 +27,10 @@ def RunSteps(api, properties):
   upload_path = api.cros_artifacts.artifacts_gs_path(
       properties.builder_name, target=BuildTarget(name=properties.target_name),
       kind=properties.builder_type, template=properties.template)
-  api.assertions.assertEqual(upload_path, properties.expected_upload_path)
+  expected = properties.expected_upload_path
+  if '{time}' in properties.template:
+    expected = expected % api.cros_artifacts.timestamp_micros
+  api.assertions.assertEqual(upload_path, expected)
 
 
 def GenTests(api):
@@ -44,8 +47,8 @@ def GenTests(api):
               builder_name='atlas-kernelnext-release-main',
               target_name='atlas-kernelnext',
               builder_type=BuilderConfig.Id.RELEASE,
-              expected_upload_path='atlas-kernelnext-release/R99-1234.56.0-101',
-              template='{target}-release/{version}')),
+              expected_upload_path='atlas-kernelnext-release/R99-1234.56.0-101-%s',
+              template='{target}-release/{version}-{time}')),
   )
 
   yield api.test(

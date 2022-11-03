@@ -6,6 +6,7 @@
 """API for uploading CrOS build artifacts to Google Storage."""
 
 import collections
+import time
 import six
 
 from google.protobuf import json_format
@@ -82,6 +83,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
 
     self._gs_upload_path = props.gs_upload_path
+    self._timestamp_micros = int(time.time() * 1000)
 
   def initialize(self):
     # TODO(b/216849056): Remove once go/cros-build-target-builder-parallelization
@@ -92,6 +94,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         self.m.buildbucket.build.input.experiments):
       self._max_concurrent_bundling_requests = (
           _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
+
+  @property
+  def timestamp_micros(self):
+    """Return the value of {time} in GS templates."""
+    return str(self._timestamp_micros)
 
   @property
   def gs_upload_path(self):
@@ -484,6 +491,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             target.name,
         'builder_name':
             builder_name.replace('_', '-'),
+        'time':
+            str(self._timestamp_micros),
     }
     if kind:
       ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
