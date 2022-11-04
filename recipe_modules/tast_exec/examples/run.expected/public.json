@@ -206,6 +206,27 @@
   },
   {
     "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -1076,6 +1097,24 @@
   },
   {
     "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "count online CPUs"
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -1541,6 +1580,24 @@
   },
   {
     "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "count online CPUs (2)"
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",
@@ -1988,6 +2045,27 @@
   {
     "cmd": [],
     "name": "run VM context"
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [

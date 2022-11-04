@@ -129,6 +129,15 @@
   },
   {
     "cmd": [
+      "nproc"
+    ],
+    "name": "run tast tests.first tast iteration.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "/usr/bin/qemu-system-x86_64",
       "-m",
       "8G",

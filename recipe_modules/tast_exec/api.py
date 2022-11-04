@@ -424,10 +424,13 @@ class TastExecApi(RecipeApi):
   @exponential_retry(retries=2)
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,
                  kvm_monitor_serial_file, private_key_path, second_image_path):
+    n_proc = self.m.easy.stdout_step(
+        'count online CPUs', ['nproc'],
+        test_stdout=' 8\n').decode('utf-8').strip()
     qemu_args = [
         '/usr/bin/qemu-system-x86_64', \
         '-m', '8G', \
-        '-smp', '8', \
+        '-smp', n_proc, \
         '-vga', 'virtio', \
         '-daemonize', \
         '-usbdevice', 'tablet', \
