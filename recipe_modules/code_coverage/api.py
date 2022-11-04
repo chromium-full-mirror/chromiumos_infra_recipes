@@ -12,10 +12,10 @@ from recipe_engine.recipe_api import StepFailure
 class CoverageFileSettings(object):
   """Contains parameters used to drive different coverage upload workflows."""
 
-  def __init__(self, should_clean, filter_llvm_json_coverage_to_cl_files,
+  def __init__(self, should_clean, filter_coverage_to_cl_files,
                to_absolute_path):
     self.should_clean = should_clean
-    self.filter_llvm_json_coverage_to_cl_files = filter_llvm_json_coverage_to_cl_files
+    self.filter_coverage_to_cl_files = filter_coverage_to_cl_files
     self.to_absolute_path = to_absolute_path
 
 
@@ -97,14 +97,14 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         absolute_cs_settings=CoverageFileSettings(True, False, True),
     )
 
-  def upload_code_coverage_llvm_json(
-      self, tarfile,
-      step_name='upload code coverage data (code coverage llvm json)'):
-    """Uploads code coverage llvm json.
+  def upload_code_coverage(self, tarfile, coverage_type,
+                           step_name='upload code coverage data'):
+    """Uploads code coverage llvm json and golang.
 
       Args:
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
+        coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
     """
     # Settings for capturing incremental coverage.
     incremental_settings = CoverageFileSettings(False, True, False)
@@ -113,8 +113,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     # Settings for capturing absolute coverage on Chromium dashboard.
     absolute_chromium_settings = CoverageFileSettings(False, False, True)
 
-    self.process_coverage_data(tarfile, 'LLVM', step_name, incremental_settings,
-                               absolute_settings, absolute_chromium_settings)
+    self.process_coverage_data(tarfile, coverage_type, step_name,
+                               incremental_settings, absolute_settings,
+                               absolute_chromium_settings)
 
   def process_coverage_data(self, tarfile, coverage_type,
                             step_name='upload code coverage data',
@@ -125,7 +126,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
       Args:
         tarfile (Path): path to tarfile.
-        coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+        coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
         step_name (str): name for the step.
         incremental_settings (CoverageFileSettings): settings for uploading coverage to gerrit.
         absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
@@ -198,10 +199,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                           include_log=True)
     return cleaned_path_file
 
-  def _filter_llvm_json_coverage_to_cl_files(self, path_to_coverage_file,
-                                             coverage_file_setting):
+  def _filter_coverage_to_cl_files(self, path_to_coverage_file,
+                                   coverage_file_setting):
     # Exit if the file does not need to be filtered.
-    if not coverage_file_setting.filter_llvm_json_coverage_to_cl_files:
+    if not coverage_file_setting.filter_coverage_to_cl_files:
       return path_to_coverage_file
 
     # Filter the data to the changed files.
@@ -347,7 +348,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       incremental_coverage_file = self._write_cleaned_coverage_file(
           fpath, incremental_settings)
 
-      incremental_coverage_file = self._filter_llvm_json_coverage_to_cl_files(
+      incremental_coverage_file = self._filter_coverage_to_cl_files(
           incremental_coverage_file, incremental_settings)
       for change in self.m.cros_infra_config.gerrit_changes:
         self.m.step(

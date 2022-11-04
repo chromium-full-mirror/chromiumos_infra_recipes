@@ -7127,7 +7127,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"test\": {\"artifacts\": [{\"artifact_type\":\"CODE_COVERAGE_LLVM_JSON\",\"paths\": [{\"path\":\"[START_DIR]/code_coverage.tbz2\"}],\"location\": \"PLATFORM_EC\"}]}}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"test\": {\"artifacts\": [{\"artifact_type\":\"CODE_COVERAGE_GOLANG\",\"paths\": [{\"path\":\"[START_DIR]/code_coverage_go.tbz2\"}],\"location\": \"PLATFORM_EC\"}]}}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -7289,7 +7289,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"CODE_COVERAGE_LLVM_JSON\": [\"../../[START_DIR]/code_coverage.tbz2\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"amd64-generic-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"CODE_COVERAGE_GOLANG\": [\"../../[START_DIR]/code_coverage_go.tbz2\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"amd64-generic-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -7359,7 +7359,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/artifacts_tmp_1/../../[START_DIR]/code_coverage.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/artifacts_tmp_1/../../[START_DIR]/code_coverage_go.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
@@ -7376,7 +7376,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data.untar code_coverage.tbz2",
+    "name": "upload artifacts.upload code coverage data.untar code_coverage_go.tbz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
@@ -7614,7 +7614,7 @@
       "--uploader_id",
       "123456_7_8945511751514863184",
       "--format",
-      "LLVM",
+      "GO_COV",
       "--coverage_file",
       "[CLEANUP]/filtered-coverage_tmp_1/filtered.file"
     ],

@@ -1820,25 +1820,26 @@ A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#119)(self, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#120)(self, tarfile, coverage_type, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
 Args:
   tarfile (Path): path to tarfile.
-  coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+  coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
   step_name (str): name for the step.
   incremental_settings (CoverageFileSettings): settings for uploading coverage to gerrit.
   absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
   absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
 
-&mdash; **def [upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/api.py#100)(self, tarfile, step_name='upload code coverage data (code coverage llvm json)'):**
+&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#100)(self, tarfile, coverage_type, step_name='upload code coverage data'):**
 
-Uploads code coverage llvm json.
+Uploads code coverage llvm json and golang.
 
 Args:
   tarfile (Path): path to tarfile.
   step_name (str): name for the step.
+  coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
 
 &mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#83)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
@@ -1878,7 +1879,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#877)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#880)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1893,7 +1894,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#911)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#914)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1924,14 +1925,14 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_artifacts/api.py#88)(self):**
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#854)(self, properties):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#857)(self, properties):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#931)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#934)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1952,7 +1953,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1081)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1084)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1965,7 +1966,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1049)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1052)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -2024,7 +2025,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#808)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#811)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 

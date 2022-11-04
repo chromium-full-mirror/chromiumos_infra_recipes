@@ -43,7 +43,5 @@ def GenTests(api):
                       }
                   }
               }, sort_keys=True)),
-      api.post_check(
-          post_process.MustRun,
-          'upload artifacts.upload code coverage data (code coverage llvm json)'
-      ), cq=True)
+      api.post_check(post_process.MustRun,
+                     'upload artifacts.upload code coverage data'), cq=True)

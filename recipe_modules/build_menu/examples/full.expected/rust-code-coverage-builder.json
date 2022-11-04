@@ -7294,14 +7294,14 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json)",
+    "name": "upload artifacts.upload code coverage data",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).ensure binaries",
+    "name": "upload artifacts.upload code coverage data.ensure binaries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -7333,7 +7333,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).ensure binaries.ensure_installed",
+    "name": "upload artifacts.upload code coverage data.ensure binaries.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -7376,7 +7376,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).untar code_coverage.tbz2",
+    "name": "upload artifacts.upload code coverage data.untar code_coverage.tbz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
@@ -7413,7 +7413,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).listdir",
+    "name": "upload artifacts.upload code coverage data.listdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/ccov-upload_tmp_1/out/coverage.json@@@",
@@ -7422,14 +7422,14 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.filter to changed files only",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@found 1 file changes.@@@",
@@ -7439,7 +7439,7 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.get patch sets",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.filter to changed files only.get patch sets",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -7462,7 +7462,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.get patch sets.gerrit-fetch-changes",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.filter to changed files only.get patch sets.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
     "timeout": 600,
     "~followup_annotations": [
@@ -7539,7 +7539,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.read coverage data from [CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.filter to changed files only.read coverage data from [CLEANUP]/ccov-upload_tmp_1/out/coverage.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@coverage.json@{@@@",
@@ -7586,7 +7586,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.filter to changed files only.write filtered file",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.filter to changed files only.write filtered file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@filtered.file@{\"data\": [{\"files\": [{\"filename\": \"my/fake/file\"}]}], \"type\": \"coverage\", \"version\": \"0.0\"}@@@",
@@ -7631,7 +7631,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (code coverage llvm json).upload incremental coverage to gerrit.upload coverage.json for 123456 (ps #7)",
+    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.upload coverage.json for 123456 (ps #7)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"

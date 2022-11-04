@@ -437,7 +437,7 @@ def GenTests(api):
                 '"paths": [{"path":"[START_DIR]/code_coverage.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),
     api.post_check(post_process.MustRun,
-          'upload artifacts.upload code coverage data (code coverage llvm json)'),
+          'upload artifacts.upload code coverage data'),
     cq=True,
   )
 
@@ -456,7 +456,26 @@ def GenTests(api):
                 '"paths": [{"path":"[START_DIR]/code_coverage.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),
     api.post_check(post_process.MustRun,
-          'upload artifacts.upload code coverage data (code coverage llvm json)'),
+          'upload artifacts.upload code coverage data'),
+    cq=True,
+  )
+
+  yield api.build_menu.test(
+    'golang-code-coverage-builder',
+    api.properties(
+      **api.test_util.build_menu_properties(
+        build_target_name='sarien-code-coverage',
+        container_version_format=\
+        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+      )
+    ),
+    api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          data=('{"artifacts": {"test": {"artifacts": [{"artifact_type":"CODE_COVERAGE_GOLANG",'
+                '"paths": [{"path":"[START_DIR]/code_coverage_go.tbz2"}],'
+                '"location": "PLATFORM_EC"}]}}}')),
+    api.post_check(post_process.MustRun,
+          'upload artifacts.upload code coverage data'),
     cq=True,
   )
 
@@ -477,7 +496,7 @@ def GenTests(api):
     ),
     api.post_check(
           post_process.DoesNotRun,
-          'upload artifacts.upload code coverage data (code coverage llvm json)'
+          'upload artifacts.upload code coverage data'
       ),
     cq=True,
   )

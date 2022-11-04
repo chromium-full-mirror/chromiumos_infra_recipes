@@ -775,12 +775,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
       if upload_coverage:
-        cov_files = files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', [])
-        cov_files.extend(
+        cov_files = {}
+        cov_files['LLVM'] = files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', [])
+        cov_files['LLVM'].extend(
             files_by_artifact.get('CODE_COVERAGE_RUST_LLVM_JSON', []))
-        for fname in cov_files:
-          self.m.code_coverage.upload_code_coverage_llvm_json(
-              outpath.join(fname))
+        cov_files['GO_COV'] = files_by_artifact.get('CODE_COVERAGE_GOLANG', [])
+        for coverage_type, fnames in cov_files.items():
+          for fname in fnames:
+            self.m.code_coverage.upload_code_coverage(
+                outpath.join(fname), coverage_type)
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
