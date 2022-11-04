@@ -74,7 +74,7 @@ def RunSteps(api, properties):
         with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
                                                 raise_on_failed_publish=True):
           with api.build_menu.configure_builder() as config, \
-              api.build_menu.setup_workspace_and_chroot():
+              api.build_menu.setup_workspace_and_chroot(replace=True):
             with api.step.nest('check that test config exists'):
               try:
                 api.cros_test_plan.generate_target_test_requirements_config(
