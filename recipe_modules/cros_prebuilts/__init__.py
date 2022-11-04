@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
-    GlobalProperties, CrosPrebuiltsProperties)
+    CrosPrebuiltsProperties)
 
 DEPS = [
     'depot_tools/gsutil',
@@ -30,4 +30,3 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CrosPrebuiltsProperties
-GLOBAL_PROPERTIES = GlobalProperties

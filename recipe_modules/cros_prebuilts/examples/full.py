@@ -109,11 +109,9 @@ def GenTests(api):
             CrosPrebuiltsProperties(
                 use_staging_branch=use_staging,
                 enable_snapshot_prebuilts=enable_snapshot_prebuilts,
-                send_snapshot_prebuilts=send_snapshot_prebuilts),
-        'commit_overlay_binhost':
-            commit_overlay_binhost,
-        'max_binhost_uris':
-            max_binhost_uris,
+                send_snapshot_prebuilts=send_snapshot_prebuilts,
+                commit_overlay_binhost=commit_overlay_binhost,
+                max_binhost_uris=max_binhost_uris)
     }
 
     # Forcing cros_source to claim dirty source.

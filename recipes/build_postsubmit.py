@@ -167,3 +167,35 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.StatusSuccess), build_target='grunt',
       builder='grunt-postsubmit')
+
+  # Build that does commits overlay binhost.
+  yield api.build_menu.test(
+      'commit-binhosts',
+      api.properties(
+          **{
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              },
+              '$chromeos/cros_prebuilts': {
+                  'commit_overlay_binhost': True
+              }
+          }),
+      api.post_check(post_process.MustRun,
+                     'upload prebuilts.update binhost conf file'),
+      api.post_check(post_process.StatusSuccess))
+
+  # Build that does not commit overlay binhost.
+  yield api.build_menu.test(
+      'no-commit-binhosts',
+      api.properties(
+          **{
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              },
+              '$chromeos/cros_prebuilts': {
+                  'commit_overlay_binhost': False
+              }
+          }),
+      api.post_check(post_process.DoesNotRun,
+                     'upload prebuilts.update binhost conf file'),
+      api.post_check(post_process.StatusSuccess))

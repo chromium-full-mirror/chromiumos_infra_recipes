@@ -25,14 +25,14 @@ METADATA_GS_FILE_TMPL = '{builder}-{build_id}-{kind}.json'
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
-  def __init__(self, properties, global_props, **kwargs):
+  def __init__(self, properties, **kwargs):
     super(CrosPrebuiltsApi, self).__init__(**kwargs)
     self._use_staging_branch = properties.use_staging_branch
     self._enable_snapshot_prebuilts = properties.enable_snapshot_prebuilts
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
-    self._commit_overlay_binhost = global_props.commit_overlay_binhost
-    self._max_binhost_uris = global_props.max_binhost_uris
-    if self._max_binhost_uris is None or self._max_binhost_uris == 0:
+    self._commit_overlay_binhost = properties.commit_overlay_binhost
+    self._max_binhost_uris = properties.max_binhost_uris
+    if not self._max_binhost_uris:
       self._max_binhost_uris = 1
 
   @property

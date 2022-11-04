@@ -63,7 +63,6 @@ def DoRunSteps(api):
       extra_child_props['skip_paygen'] = True
 
   if api.orch_menu.is_postsubmit_orchestrator:
-    extra_child_props['commit_overlay_binhost'] = True
     extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
         CrosRelevanceProperties(force_postsubmit_relevance=True))
 
