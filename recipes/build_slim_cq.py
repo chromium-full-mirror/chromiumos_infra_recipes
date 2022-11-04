@@ -262,9 +262,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.StatusAnyFailure),
-      api.build_menu.set_build_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1),
+      api.build_menu.set_build_api_return('upload artifacts',
+                                          'ArtifactsService/Get', retcode=1),
       build_target='atlas-slim',
       cq=True,
   )

@@ -325,7 +325,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
-      list(str): List of artifacts that failed to generate.
     """
     semaphore = self.m.futures.make_bounded_semaphore(
         self._max_concurrent_bundling_requests)
@@ -342,7 +341,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                              __name='bundle by service'))
 
     files_by_artifact = {}
-    failed_artifacts = []
     for f in self.m.futures.iwait(futures):
       ex = f.exception()
       if ex:
@@ -351,9 +349,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # The _bundle_artifacts_by_service function already returns the
       # artifacts in the correct form.
       if f.name == 'bundle by service':
-        results, failures = f.result()
-        files_by_artifact.update(results)
-        failed_artifacts.extend(failures)
+        files_by_artifact.update(f.result())
         continue
 
       for artifact, files in f.result().items():
@@ -361,7 +357,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             self.m.path.relpath(x, outpath) for x in files
         ]
 
-    return files_by_artifact, failed_artifacts
+    return files_by_artifact
 
   @staticmethod
   def _result_path(path, location=common_pb.Path.OUTSIDE):
@@ -387,39 +383,29 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       dict(str: list[str]): Artifact name, list of artifact file paths
           relative to |outpath|.
-      list(str): List of artifact types that failed to generate.
     """
-    with self.m.step.nest('call artifacts service') as presentation:
-      with semaphore:
-        service = self.m.cros_build_api.ArtifactsService
-        if not self.m.cros_build_api.has_endpoint(service, 'Get'):
-          return {}, []
+    with semaphore:
+      service = self.m.cros_build_api.ArtifactsService
+      if not self.m.cros_build_api.has_endpoint(service, 'Get'):
+        return {}
 
-        req = artifacts.GetRequest(chroot=chroot, sysroot=sysroot,
-                                   artifact_info=artifacts_info,
-                                   result_path=self._result_path(outpath))
+      req = artifacts.GetRequest(chroot=chroot, sysroot=sysroot,
+                                 artifact_info=artifacts_info,
+                                 result_path=self._result_path(outpath))
 
-        test_data = None if not test_data else test_data.replace(
-            '@@DIR@@', str(outpath))
-        resp = service.Get(req, infra_step=True, test_output_data=test_data)
+      test_data = None if not test_data else test_data.replace(
+          '@@DIR@@', str(outpath))
+      resp = service.Get(req, infra_step=True, test_output_data=test_data)
 
-        # Create files_by_artifact.
-        files_by_artifact = {}
-        failed_artifacts = []
-        for service in json_format.MessageToDict(resp.artifacts).values():
-          for paths in service.get('artifacts', []):
-            if paths.get('failed', False):
-              failed_artifacts.append(paths['artifactType'])
-            if 'paths' in paths:
-              files_by_artifact[paths['artifactType']] = [
-                  self.m.path.relpath(f['path'], outpath)
-                  for f in paths['paths']
-              ]
-        if failed_artifacts:
-          presentation.step_text = "Failed to generate: {}".format(
-              ", ".join(failed_artifacts))
-          presentation.status = self.m.step.FAILURE
-        return files_by_artifact, failed_artifacts
+      # Create files_by_artifact.
+      files_by_artifact = {}
+      for service in json_format.MessageToDict(resp.artifacts).values():
+        for paths in service.get('artifacts', []):
+          files_by_artifact[paths['artifactType']] = [
+              self.m.path.relpath(f['path'], outpath) for f in paths['paths']
+          ]
+
+      return files_by_artifact
 
   def _bundle_artifacts_individually(self, chroot, sysroot, artifacts_info,
                                      outpath, semaphore):
@@ -695,22 +681,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts
       try:
-        files_by_artifact = {}
-        failed_artifacts = []
-        result = func(chroot, sysroot, artifacts_info, outpath, test_data)
-        files_by_artifact = result
-        # _bundle_artifacts is the only function that returns failed artifacts.
-        if func.__name__ == "_bundle_artifacts":
-          files_by_artifact, failed_artifacts = result
+        files_by_artifact = func(chroot, sysroot, artifacts_info, outpath,
+                                 test_data)
       except Exception as e:
         self.m.disk_usage.track(step_name='track disk usage', depth=2,
                                 d=self.m.path['cache'])
         raise e
 
       if not files_by_artifact:
-        if failed_artifacts:
-          raise StepFailure("Failed to generate: {}".format(
-              ", ".join(failed_artifacts)))
         presentation.step_text = 'No artifacts found.'
         return uploaded_artifacts
 
@@ -800,9 +778,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                       files_by_artifact)
       for k, v in sorted(links.items()):
         presentation.links[k] = v
-    if failed_artifacts:
-      raise StepFailure("Failed to generate: {}".format(
-          ", ".join(failed_artifacts)))
     return uploaded_artifacts
 
   def upload_metadata(self, name, builder_name, target, gs_bucket, filename,

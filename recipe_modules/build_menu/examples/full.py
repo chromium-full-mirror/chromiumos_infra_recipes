@@ -432,7 +432,7 @@ def GenTests(api):
       )
     ),
     api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          'upload artifacts', 'ArtifactsService/Get',
           data=('{"artifacts": {"test": {"artifacts": [{"artifact_type":"CODE_COVERAGE_LLVM_JSON",'
                 '"paths": [{"path":"[START_DIR]/code_coverage.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),
@@ -451,7 +451,7 @@ def GenTests(api):
       )
     ),
     api.cros_build_api.set_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          'upload artifacts', 'ArtifactsService/Get',
           data=('{"artifacts": {"test": {"artifacts": [{"artifact_type":"CODE_COVERAGE_RUST_LLVM_JSON",'
                 '"paths": [{"path":"[START_DIR]/code_coverage.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),

@@ -162,9 +162,9 @@ def GenTests(api):
       'bundle-fail', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.StatusAnyFailure),
-      api.build_menu.set_build_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), cq=True, build_target='coral')
+      api.build_menu.set_build_api_return('upload artifacts',
+                                          'ArtifactsService/Get', retcode=1),
+      cq=True, build_target='coral')
 
   # CQ build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -176,9 +176,9 @@ def GenTests(api):
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
-      api.build_menu.set_build_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), cq=True, build_target='coral')
+      api.build_menu.set_build_api_return('upload artifacts',
+                                          'ArtifactsService/Get', retcode=1),
+      cq=True, build_target='coral')
 
   yield api.build_menu.test(
       'parent-cancelled',

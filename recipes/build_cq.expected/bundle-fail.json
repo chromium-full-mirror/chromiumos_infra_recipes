@@ -6882,17 +6882,9 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.call artifacts service",
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
@@ -6960,9 +6952,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.write input file",
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -6995,9 +6987,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script",
+    "name": "upload artifacts.call chromite.api.ArtifactsService/Get.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -7839,7 +7831,7 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('upload artifacts.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)"
     },
     "name": "$result"
   }
