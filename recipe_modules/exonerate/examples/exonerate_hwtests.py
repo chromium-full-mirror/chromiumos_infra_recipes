@@ -48,6 +48,9 @@ def RunSteps(api):
           name='test5', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='meh'),
   ]
+  failing_incomplete_test_case = [
+      ExecuteResponse.TaskResult.TestCaseResult(name='test5')
+  ]
   child_results = [
       ExecuteResponse.TaskResult(name='suite1', state=pass_state,
                                  test_cases=passing_test_cases),
@@ -114,6 +117,20 @@ def RunSteps(api):
       api.skylab.test_api.skylab_result(
           task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
           child_results=child_results_with_empty_test_cases)
+  ]
+  hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
+      hw_test_failures)
+  api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(len(hw_test_failures[0].child_results), 1)
+
+  child_results_with_incomplete_test_cases = [
+      ExecuteResponse.TaskResult(name='suite1', state=fail_state,
+                                 test_cases=failing_incomplete_test_case)
+  ]
+  hw_test_failures = [
+      api.skylab.test_api.skylab_result(
+          task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
+          child_results=child_results_with_incomplete_test_cases)
   ]
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)

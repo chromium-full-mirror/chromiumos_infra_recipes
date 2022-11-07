@@ -177,6 +177,8 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     new_test_cases = []
     for test_case in test_cases:
+      if test_case.verdict == TaskState.VERDICT_UNSPECIFIED:
+        test_case.verdict = TaskState.VERDICT_FAILED
       if test_case.verdict != TaskState.VERDICT_FAILED:
         # If test didn't fail, noop.
         new_test_cases.append(test_case)
