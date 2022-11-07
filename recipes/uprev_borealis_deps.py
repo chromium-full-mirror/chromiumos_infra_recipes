@@ -193,7 +193,8 @@ def GenTests(api):
               '--no-run-tests',
               '--skip-termina',
           ],
-      ), api.post_check(post_process.StatusSuccess))
+      ), api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
 
   props = good_props.copy()
   del props['uprev_arch_mirror']
@@ -201,7 +202,8 @@ def GenTests(api):
                  api.post_check(post_process.MustRun, 'Borealis build_full.py'),
                  api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
                  api.post_check(post_process.MustRun, 'PKGBUILDs uprev'),
-                 api.post_check(post_process.StatusSuccess))
+                 api.post_check(post_process.StatusSuccess),
+                 api.post_process(post_process.DropExpectation))
 
   props = good_props.copy()
   del props['uprev_pkgbuilds']
@@ -209,7 +211,8 @@ def GenTests(api):
                  api.post_check(post_process.MustRun, 'Borealis build_full.py'),
                  api.post_check(post_process.MustRun, 'Arch mirror uprev'),
                  api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
-                 api.post_check(post_process.StatusSuccess))
+                 api.post_check(post_process.StatusSuccess),
+                 api.post_process(post_process.DropExpectation))
 
   props = good_props.copy()
   del props['uprev_arch_mirror']
@@ -218,4 +221,5 @@ def GenTests(api):
                  api.post_check(post_process.MustRun, 'Borealis build_full.py'),
                  api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
                  api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
-                 api.post_check(post_process.StatusSuccess))
+                 api.post_check(post_process.StatusSuccess),
+                 api.post_process(post_process.DropExpectation))
