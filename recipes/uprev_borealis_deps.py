@@ -26,6 +26,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = UprevBorealisDepsProperties
+GERRIT_CL_TOPIC = 'borealis-deps'
 
 _BOREALIS_REPO_PATH = 'src/platform/borealis/'
 
@@ -91,12 +92,11 @@ def _CreateCL(api, project, presentation):
   # Upload CL to gerrit as long as not in staging job.
   if not api.build_menu.is_staging:
     with api.step.nest('upload CL to gerrit'):
-      # TODO(pobega): Does this CL need a topic?
-      change = api.gerrit.create_change(project=project.name)
+      change = api.gerrit.create_change(project=project.name,
+                                        topic=GERRIT_CL_TOPIC)
       labels = {
           api.gerrit.Label.BOT_COMMIT: 1,
-          # TODO(pobega): removed for testing, let's not auto commit (:
-          #        api.gerrit.Label.COMMIT_QUEUE: 2,
+          api.gerrit.Label.COMMIT_QUEUE: 2,
       }
       api.gerrit.set_change_labels(change, labels)
       presentation.links['CL'] = api.gerrit.parse_gerrit_change_url(change)

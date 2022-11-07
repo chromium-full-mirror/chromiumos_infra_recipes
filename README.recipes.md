@@ -12751,7 +12751,7 @@ Args:
   step_name: Name of the step to nest operations from.
   commit_message: Git commit message to use.
 
-&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#42)(api, use_cache=True, skip_termina=False, stage=None):**
+&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#43)(api, use_cache=True, skip_termina=False, stage=None):**
 
 Perform a Borealis build_full.
 
@@ -12764,7 +12764,7 @@ Args:
 
 &mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#120)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#33)(api, properties):**
+&mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#34)(api, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#33): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

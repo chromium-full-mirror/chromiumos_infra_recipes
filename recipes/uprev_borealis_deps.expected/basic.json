@@ -2228,6 +2228,8 @@
       "upload",
       "--bypass-hooks",
       "--force",
+      "--topic",
+      "borealis-deps",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
@@ -2276,7 +2278,7 @@
     "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1@@@",
+      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
     ]
@@ -2334,7 +2336,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
     "env_suffixes": {
@@ -2636,6 +2638,8 @@
       "upload",
       "--bypass-hooks",
       "--force",
+      "--topic",
+      "borealis-deps",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
@@ -2684,7 +2688,7 @@
     "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@labels@Bot-Commit+1@@@",
+      "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
     ]
@@ -2742,7 +2746,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/main%l=Bot-Commit+1"
+      "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
     "env_suffixes": {
