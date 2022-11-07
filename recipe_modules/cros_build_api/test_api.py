@@ -476,9 +476,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def test_service_responses(self):
     """Generate responses for TestService."""
     responses = {}
-    responses['BuildTargetUnitTest'] = jsonify(
-        failed_packages=[],
-    )
+    responses['BuildTargetUnitTest'] = jsonify(failed_package_data=[],)
     responses['BuildTestServiceContainers'] = jsonify(
         results=[{
             'success': {},

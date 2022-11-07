@@ -29,9 +29,14 @@ INSTALL_PACKAGES_REQUEST = """
 
 INSTALL_PACKAGES_RESPONSE = """
 {
-   "failed_packages":[
+   "failed_package_data":[
       {
-         "package_name":"A package"
+         "name":{
+             "package_name":"A package"
+         },
+         "log_path":{
+             "path":"/path/to/log"
+         }
       }
    ]
 }
