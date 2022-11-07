@@ -246,8 +246,8 @@ def GenTests(api):
       'quota-scheduler-override', data.ctp_normal,
       api.post_check(post_process.StatusSuccess),
       api.post_check(verify_qs_account_pupr), cq=True, with_history=True,
-      tags=dict(cq_cl_tag='pupr:chromeos-base/chromeos-chrome'), git_footers=[],
-      collect_builds=data.builds)
+      tags=dict(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'),
+      git_footers=[], collect_builds=data.builds)
 
   yield api.orch_menu.test('retry-only-critical-builds', data.ctp_normal,
                            api.post_check(post_process.StatusSuccess), cq=True,

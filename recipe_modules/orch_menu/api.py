@@ -524,9 +524,9 @@ class OrchMenuApi(RecipeApi):
       # Don't run builds if testing LTS chrome. https://crbug.com/1186358
       # Delete this hack once https://crbug.com/1186852 is fixed.
       if (re.match('^release-.*-cq-', self.m.buildbucket.build.builder.builder)
-          and self.m.cros_tags.has_entry('cq_cl_tag',
-                                         'pupr:chromeos-base/chromeos-chrome',
-                                         self.m.buildbucket.build.tags)):
+          and self.m.cros_tags.has_entry(
+              'cq_cl_tag', 'pupr:chromeos-base/lacros-ash-atomic',
+              self.m.buildbucket.build.tags)):
         return self._builds_status
       completed_builds, collect_after = self._filter_schedule_wait_builds(
           pres, self._get_child_specs(), extra_props=extra_child_props)
@@ -791,7 +791,7 @@ class OrchMenuApi(RecipeApi):
     """
     # Is the build tagged as overriding the PCQ quota scheduler account?
     if self.m.cros_tags.has_entry('cq_cl_tag',
-                                  'pupr:chromeos-base/chromeos-chrome',
+                                  'pupr:chromeos-base/lacros-ash-atomic',
                                   self.m.buildbucket.build.tags):
       self.m.skylab.set_qs_account('pupr')
 
