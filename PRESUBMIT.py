@@ -5,6 +5,8 @@
 import git_cl
 from subprocess2 import CalledProcessError
 
+USE_PYTHON3 = True
+
 UNLINTABLE_FILES = set(['recipes.py'])
 
 
