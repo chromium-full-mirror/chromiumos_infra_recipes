@@ -3478,7 +3478,7 @@
       "--",
       "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",
-      "--result=[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out/twister.json",
+      "--result=[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out-llvm/twister.json",
       "--upload=True"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

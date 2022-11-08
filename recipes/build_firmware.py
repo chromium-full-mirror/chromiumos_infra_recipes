@@ -45,7 +45,7 @@ def UploadTestResults(api, location):
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
     test_results = cros_src_path.join(
-        'src/platform/ec/twister-out/twister.json')
+        'src/platform/ec/twister-out-llvm/twister.json')
 
     with api.step.nest('Upload EC Firmware test results') as pres:
       try:
