@@ -487,7 +487,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       except self.m.step.StepFailure:
         pass
 
-  def report_missing_test_cases(self, test_names, base_variant):
+  def report_missing_test_cases(self, test_names, base_variant, base_tags=None):
     """Upload test results for missing test cases to ResultDB. These missing
     test cases should have run but did not unexpectedly, so their result
     status is marked as SKIP and the expected field is False.
@@ -497,6 +497,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
           not.
       base_variant (dict): Variant key-value pairs to attach to the test
           results.
+      base_tags (list[tuples]): List of tags to attach to the test results.
     """
     if not self.m.resultdb.enabled:
       return
@@ -507,11 +508,16 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     variant = ParseDict({'def': base_variant},
                         common_pb2.Variant()) if base_variant else None
+    tags = [
+        common_pb2.StringPair(key=tag[0], value=tag[1]) for tag in base_tags
+    ] if base_tags else None
+
     reqs_list = []
     for test in test_names:
       test_result = test_result_pb2.TestResult(
           test_id=test, result_id=str(self.m.buildbucket.build.id),
-          status=test_result_pb2.SKIP, expected=False, variant=variant)
+          status=test_result_pb2.SKIP, expected=False, variant=variant,
+          tags=tags)
       test_result_req = recorder_pb2.CreateTestResultRequest(
           invocation=self.m.resultdb.current_invocation,
           test_result=test_result)

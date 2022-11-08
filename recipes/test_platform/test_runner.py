@@ -760,13 +760,15 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
   return base_variant
 
 
-def _upload_missing_tast_results(api, base_variant, autotest_keyval_file):
+def _upload_missing_tast_results(api, base_variant, base_tags,
+                                 autotest_keyval_file):
   """Upload test results for missing Tast test cases to ResultDB.
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
     * base_variant (dict): Variant key-value pairs to attach to the test
             results.
+    * base_tags (list[tuples]): List of tags to attach to the test results.
     * autotest_keyval_file (dict): The contents for autotest keyval file
         in logs.
     """
@@ -777,7 +779,8 @@ def _upload_missing_tast_results(api, base_variant, autotest_keyval_file):
       if not value.startswith(TAST_TEST_NAME_PREFIX):
         value = TAST_TEST_NAME_PREFIX + value
       missing_tests.append(value)
-  api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant)
+  api.cros_resultdb.report_missing_test_cases(missing_tests, base_variant,
+                                              base_tags)
 
 
 def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
@@ -1055,7 +1058,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   _upload_incomplete_test_to_resultdb(api, test_metadata, result,
                                       autotest_keyval_file, base_variant,
                                       base_tags)
-  _upload_missing_tast_results(api, base_variant, autotest_keyval_file)
+  _upload_missing_tast_results(api, base_variant, base_tags,
+                               autotest_keyval_file)
   api.cros_resultdb.apply_exonerations(
       [api.cros_resultdb.current_invocation_id],
       properties.request.default_test_execution_behavior)

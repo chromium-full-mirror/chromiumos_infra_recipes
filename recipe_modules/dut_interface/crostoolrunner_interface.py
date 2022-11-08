@@ -538,7 +538,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       # Process missing tast tests if any
       if missing_test_names:
         self._api.cros_resultdb.report_missing_test_cases(
-            missing_test_names, metadata.rdb_base_variant)
+            missing_test_names, metadata.rdb_base_variant,
+            metadata.rdb_base_tags)
       # Apply exonerations
       self._api.cros_resultdb.apply_exonerations(
           [self._api.cros_resultdb.current_invocation_id],
