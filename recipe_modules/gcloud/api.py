@@ -449,7 +449,8 @@ class GcloudApi(recipe_api.RecipeApi):
       cmd.extend(['--size={}'.format(size)])
 
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      return self.m.easy.stdout_step(step_name, cmd, infra_step=True)
+      return self.m.easy.stdout_step(step_name, cmd, infra_step=True,
+                                     stderr=self.m.raw_io.output())
 
   def delete_disk(self, disk, zone):
     """Delete a GCE disk.

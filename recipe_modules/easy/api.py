@@ -95,8 +95,6 @@ class EasyApi(recipe_api.RecipeApi):
         name,
         cmd,
         stdout=self.m.raw_io.output(),
-        # Used just for caught exceptions.
-        stderr=self.m.raw_io.output(),
         step_test_data=step_test_data,
         **kwargs)
     return step_data.stdout
