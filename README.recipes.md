@@ -5278,7 +5278,7 @@ Wrap disk cleanup in a context handler to ensure they are unmounted.
 Upon exiting the context manager, each mounted disk is then iterated
 through and unmounted.
 
-&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#421)(self, disk, zone, image=None, disk_type=None, size=None):**
+&mdash; **def [create\_disk](/recipe_modules/gcloud/api.py#420)(self, disk, zone, image=None, disk_type=None, size=None):**
 
 Create a GCE disk.
 

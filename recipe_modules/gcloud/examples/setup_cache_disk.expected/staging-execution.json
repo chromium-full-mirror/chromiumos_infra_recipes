@@ -813,7 +813,8 @@
     },
     "name": "source cache (2).setup source cache disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1215,7 +1216,8 @@
     },
     "name": "source cache (3).setup source cache disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2093,7 +2095,8 @@
     },
     "name": "source cache (5).setup source cache disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

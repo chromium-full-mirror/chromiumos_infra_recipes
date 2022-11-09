@@ -237,7 +237,8 @@
     "infra_step": true,
     "name": "source cache update.source cache.setup source cache disk.create disk from snapshot image.create disk from image",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

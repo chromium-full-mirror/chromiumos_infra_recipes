@@ -152,6 +152,7 @@
     "name": "source cache.setup source cache disk.create disk with empty checkout.create empty disk",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -174,7 +175,8 @@
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk with empty checkout.create empty disk (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

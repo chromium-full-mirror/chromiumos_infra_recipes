@@ -411,8 +411,7 @@ class GcloudApi(recipe_api.RecipeApi):
     try:
       self.create_disk(disk, zone, image, disk_type, size)
     except self.m.step.StepFailure as e:
-      if not e.result.stderr or not _RE_DISK_EXISTS.search(
-          e.result.stderr.decode('utf-8')):
+      if not e.result.stderr or not _RE_DISK_EXISTS.search(e.result.stderr):
         raise e
       self._disk_exists_count += 1
       self.m.easy.set_properties_step(
@@ -449,8 +448,9 @@ class GcloudApi(recipe_api.RecipeApi):
       cmd.extend(['--size={}'.format(size)])
 
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      return self.m.easy.stdout_step(step_name, cmd, infra_step=True,
-                                     stderr=self.m.raw_io.output())
+      return self.m.easy.stdout_step(
+          step_name, cmd, infra_step=True,
+          stderr=self.m.raw_io.output_text(add_output_log=True))
 
   def delete_disk(self, disk, zone):
     """Delete a GCE disk.

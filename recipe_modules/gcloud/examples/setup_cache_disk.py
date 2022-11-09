@@ -180,7 +180,7 @@ def GenTests(api):
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.step_data(
           'source cache (5).setup source cache disk.create disk from snapshot image.create disk from image',
-          stderr=api.raw_io.output(
+          stderr=api.raw_io.output_text(
               'Some non-sequitur message to disk existing.\n'
               'The resource \'a/big/resource/thing\' already exists'),
           retcode=404),

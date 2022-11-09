@@ -16,7 +16,10 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create disk from image"
+    "name": "create disk from image",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [],
@@ -47,7 +50,10 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create disk from image (2)"
+    "name": "create disk from image (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [],
@@ -78,7 +84,10 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create disk from image (3)"
+    "name": "create disk from image (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [],
