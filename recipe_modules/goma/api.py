@@ -39,7 +39,7 @@ class GomaApi(recipe_api.RecipeApi):
     super(GomaApi, self).__init__(*args, **kwargs)
     self._client_version = properties.client_version or 'release'
     self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
-    self._disable_goma_client_json = properties.disable_goma_client_json
+    self._enable_goma_client_json = properties.enable_goma_client_json
     self._upload_goma_logs = not properties.disable_goma_logs_upload
     self._upload_stats_counterz = (not properties.disable_stats_counterz_upload)
     self._bigquery_project_id = properties.bigquery_project_id or 'goma-logs'
@@ -55,7 +55,7 @@ class GomaApi(recipe_api.RecipeApi):
 
   @property
   def goma_client_json(self):
-    if self._disable_goma_client_json:
+    if not self._enable_goma_client_json:
       return None
     return self.m.path.join('/creds/service_accounts',
                             'service-account-%s.json' % 'goma-client')
@@ -63,6 +63,8 @@ class GomaApi(recipe_api.RecipeApi):
   @property
   def goma_dir(self):
     """Lazily fetches the goma client and returns its path."""
+    if self._goma_approach <= common.GomaConfig.DEFAULT:
+      return None
     if self._goma_dir:
       return self._goma_dir
     self._ensure_goma()

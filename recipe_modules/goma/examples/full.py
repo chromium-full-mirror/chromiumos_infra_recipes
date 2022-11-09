@@ -22,10 +22,16 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
+  if properties.expected_goma_approach > common.GomaConfig.DEFAULT:
+    api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
+  else:
+    api.assertions.assertEqual(api.goma.goma_dir, None)
 
   # Expectations should show it didn't fetch again.
-  api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
+  if properties.expected_goma_approach > common.GomaConfig.DEFAULT:
+    api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
+  else:
+    api.assertions.assertEqual(api.goma.goma_dir, None)
   if properties.expected_goma_client_json:
     api.assertions.assertEqual(api.goma.goma_client_json,
                                properties.expected_goma_client_json)
@@ -57,7 +63,6 @@ def GenTests(api):
       api.properties(
           TestInputProperties(
               expected_goma_approach=common.GomaConfig.DEFAULT,
-              expected_goma_client_json=expected_goma_client_json,
           )),
   )
 
@@ -74,16 +79,20 @@ def GenTests(api):
       api.properties(
           TestInputProperties(
               expected_goma_approach=common.GomaConfig.RBE_STAGING,
-              expected_goma_client_json=expected_goma_client_json,
           )),
   )
   yield api.test(
-      'goma-client-json-disabled',
+      'goma-client-json-enabled',
       api.properties(
-          **{'$chromeos/goma': GomaProperties(
-              disable_goma_client_json=True,
-          )}),
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                      enable_goma_client_json=True,
+                  )
+          }),
       api.properties(
           TestInputProperties(
-              expected_goma_approach=common.GomaConfig.DEFAULT,
+              expected_goma_approach=common.GomaConfig.RBE_PROD,
+              expected_goma_client_json=expected_goma_client_json,
           )), api.post_process(post_process.DropExpectation))
