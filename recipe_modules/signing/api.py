@@ -2,12 +2,14 @@
 # Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 import json
 import re
+from typing import Any, Dict, List, NewType, Optional
 
-from recipe_engine import recipe_api
 from PB.chromiumos.build_report import BuildReport
+from PB.recipe_modules.chromeos.signing.signing import SigningProperties
+from recipe_engine import recipe_api
+from recipe_engine.engine_types import StepPresentation
 
 BuildConfig = BuildReport.BuildConfig
 
@@ -22,16 +24,19 @@ _DETAILS = 'details'
 
 INSTRUCTIONS_PATTERN = re.compile(r'^gs://[^/]+/(.*)/[^/]+\.instructions$')
 
+InstructionsMetadata = NewType('InstructionsMetadata', Any)
+
 
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate communication with the signing fleet."""
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, properties: SigningProperties, *args, **kwargs):
     super(SigningApi, self).__init__(*args, **kwargs)
-    self._timeout = properties.timeout or 4 * 60 * 60
-    self._sleep_duration = properties.sleep_duration or 5 * 60
+    self._timeout: int = properties.timeout or 4 * 60 * 60
+    self._sleep_duration: int = properties.sleep_duration or 5 * 60
 
-  def wait_for_signing(self, instructions_list):
+  def wait_for_signing(self, instructions_list: List[str]
+                      ) -> Dict[str, InstructionsMetadata]:
     """Wait for signing to complete for a set of instructions files.
 
     This method polls each instructions file for metadata, and waits for that
@@ -41,7 +46,7 @@ class SigningApi(recipe_api.RecipeApi):
     timeout has elapsed.
 
     Args:
-      instructions_list (list[str]): List of GS URIs for instructions files.
+      instructions_list: List of GS URIs for instructions files.
 
     Returns
       A dict of instruction file location -> instruction metadata for all
@@ -85,7 +90,8 @@ class SigningApi(recipe_api.RecipeApi):
             continue
           # Try to parse the json contents of the metadata.
           try:
-            instructions_info = json.loads(metadata.stdout.strip())
+            instructions_info: InstructionsMetadata = json.loads(
+                metadata.stdout.strip())
           # TODO(b/217973271) - this needs to be updated to JSONDecodeError as
           # part of py3 migration.
           except ValueError:
@@ -111,13 +117,15 @@ class SigningApi(recipe_api.RecipeApi):
 
     return instructions_metadata
 
-  def get_signed_build_metadata(self, instructions_metadata):
+  def get_signed_build_metadata(
+      self, instructions_metadata: Dict[str, InstructionsMetadata]
+  ) -> List[InstructionsMetadata]:
     """Get the metadata of the signed build.
 
     Note - this requires that wait_for_signing has been called and is complete.
 
     Args:
-      instructions_metadata (dict): The metadata dict returned from
+      instructions_metadata: The metadata dict returned from
         wait_for_signing.
 
     Returns:
@@ -133,7 +141,9 @@ class SigningApi(recipe_api.RecipeApi):
 
     return list(instructions_metadata.values())
 
-  def verify_signing_success(self, instructions_metadata, pres):
+  def verify_signing_success(
+      self, instructions_metadata: Dict[str, InstructionsMetadata],
+      pres: StepPresentation):
     """Verifies that the signing operation succeeded."""
     failed = False
     for (instructions, metadata) in instructions_metadata.items():
@@ -155,11 +165,11 @@ class SigningApi(recipe_api.RecipeApi):
           'step "parse metadata".')
 
   @staticmethod
-  def signing_succeeded(metadata):
+  def signing_succeeded(metadata: Dict[str, InstructionsMetadata]) -> bool:
     """Whether the provided metadata contains a successful signing operation.
 
     Args:
-      metadata (dict): Metadata from the instructions file.
+      metadata: Metadata from the instructions file.
 
     Returns:
       True/False whether the signing succeeded.
@@ -167,11 +177,11 @@ class SigningApi(recipe_api.RecipeApi):
     return SigningApi.get_status_from_instructions(metadata) == _PASSED
 
   @staticmethod
-  def signing_failed(metadata):
+  def signing_failed(metadata: Dict[str, InstructionsMetadata]) -> bool:
     """Whether the provided metadata contains a failed signing operation.
 
     Args:
-      metadata (dict): Metadata from the instructions file.
+      metadata: Metadata from the instructions file.
 
     Returns:
       True/False whether the signing failed.
@@ -179,41 +189,42 @@ class SigningApi(recipe_api.RecipeApi):
     return SigningApi.get_status_from_instructions(metadata) == _FAILED
 
   @staticmethod
-  def get_status_from_instructions(instructions):
+  def get_status_from_instructions(metadata: Dict[str, InstructionsMetadata]
+                                  ) -> Optional[str]:
     """Given an instructions file, pull out the status of the signing operation.
 
     Args:
-      instructions (dict): An instructions metadata file.
+      metadata: An instructions metadata file.
 
     Returns:
       The status of the signing, or None if not available.
     """
-    if instructions is None or not _STATUS_OBJECT in instructions or not _SIGNING_STATUS in instructions[
+    if metadata is None or not _STATUS_OBJECT in metadata or not _SIGNING_STATUS in metadata[
         _STATUS_OBJECT]:
       return None
-    return instructions[_STATUS_OBJECT][_SIGNING_STATUS]
+    return metadata[_STATUS_OBJECT][_SIGNING_STATUS]
 
   @staticmethod
-  def get_failure(instructions):
+  def get_failure(metadata: Dict[str, InstructionsMetadata]) -> Optional[str]:
     """Given an instructions file, pull out the failure of signing.
 
     Args:
-      instructions (dict): An instructions metadata file.
+      metadata: An instructions metadata file.
 
     Returns:
       The failure of the signing, or None if not available.
     """
-    if instructions is None or not _STATUS_OBJECT in instructions or not _DETAILS in instructions[
+    if metadata is None or not _STATUS_OBJECT in metadata or not _DETAILS in metadata[
         _STATUS_OBJECT]:
       return None
-    return instructions[_STATUS_OBJECT][_DETAILS]
+    return metadata[_STATUS_OBJECT][_DETAILS]
 
   @staticmethod
-  def _any_empty(instructions_meta):
+  def _any_empty(instructions_meta: Dict[str, InstructionsMetadata]) -> bool:
     """Checks to see if any values in the provided dict are None.
 
     Args:
-      instructions_meta (dict): Dict of instructions url -> metadata.
+      instructions_meta: Dict of instructions url -> metadata.
 
     Returns:
       True if any are None, otherwise false.

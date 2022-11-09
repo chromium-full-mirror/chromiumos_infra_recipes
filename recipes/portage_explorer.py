@@ -11,9 +11,12 @@ and uploads the output from calling the endpoint to GS.
 import json
 
 from google.protobuf import json_format
+
 from PB.chromite.api.portage_explorer import RunSpidersRequest
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'depot_tools/gsutil',
@@ -33,7 +36,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   try:
     with api.build_menu.configure_builder(missing_ok=True), \
         api.build_menu.setup_workspace_and_chroot():
@@ -44,7 +47,7 @@ def RunSteps(api):
     raise sf
 
 
-def RunSpiders(api):
+def RunSpiders(api: RecipeApi):
   """Call the RunSpiders endpoint and upload to GS.
 
   Call the RunSpiders endpoint from the PortageExplorerService. Store the
@@ -66,7 +69,7 @@ def RunSpiders(api):
     presentation.logs['response'] = [output_json]
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       'portage-explorer-test',
       api.post_check(

@@ -2,13 +2,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import json
+from typing import Any, Dict
 
 from recipe_engine import recipe_test_api
+from recipe_engine.recipe_test_api import TestData
 
 
 class SigningTestApi(recipe_test_api.RecipeTestApi):
 
-  def setup_mocks(self):
+  def setup_mocks(self) -> TestData:
     data = []
     # Set up mocks based on the instructions files from the build_api.
     for instructions in self.m.cros_build_api.INSTRUCTIONS:
@@ -63,15 +65,16 @@ class SigningTestApi(recipe_test_api.RecipeTestApi):
       result += dd
     return result
 
-  def mock_meta(self, file_name, data, retcode=0, run=1, prestep=''):
+  def mock_meta(self, file_name: str, data: Dict[str, Any], retcode: int = 0,
+                run: int = 1, prestep: str = '') -> TestData:
     """Mock the response for looking up a provided instructions file.
 
     Args:
-      file_name (str): File being looked up from GS.
-      data (dict): Dict of data to be the response (in JSON).
-      retcode (int): Return code of the lookup (default 0).
-      run (int): Number of the run (default 1) for the step name.
-      prestep (str): A parent step wrapping the gsutil call.
+      file_name: File being looked up from GS.
+      data: Dict of data to be the response (in JSON).
+      retcode: Return code of the lookup (default 0).
+      run: Number of the run (default 1) for the step name.
+      prestep: A parent step wrapping the gsutil call.
 
     Returns:
       TestData object (for chaining within `yield` statements).
@@ -79,15 +82,16 @@ class SigningTestApi(recipe_test_api.RecipeTestApi):
     return self.mock_meta_str(file_name, json.dumps(data), retcode=retcode,
                               run=run, prestep=prestep)
 
-  def mock_meta_str(self, file_name, data_string, retcode=0, run=1, prestep=''):
+  def mock_meta_str(self, file_name: str, data_string: str, retcode: int = 0,
+                    run: int = 1, prestep: str = '') -> TestData:
     """Mock the response for looking up a provided instructions file.
 
     Args:
-      file_name (str): File being looked up from GS.
-      data_string (str): String of JSON to be returned.
-      retcode (int): Return code of the lookup (default 0).
-      run (int): Number of the run (default 1) for the step name.
-      prestep (str): A parent step wrapping the gsutil call.
+      file_name: File being looked up from GS.
+      data_string: String of JSON to be returned.
+      retcode: Return code of the lookup (default 0).
+      run: Number of the run (default 1) for the step name.
+      prestep: A parent step wrapping the gsutil call.
 
     Returns:
       TestData object (for chaining within `yield` statements).

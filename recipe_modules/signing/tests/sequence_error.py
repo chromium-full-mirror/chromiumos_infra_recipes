@@ -7,6 +7,8 @@
 metadata."""
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -17,12 +19,12 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   with api.assertions.assertRaises(api.step.StepFailure):
     api.signing.get_signed_build_metadata(None)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'fails-when-get_signed_build_metadata-is-called-first',
       api.post_check(post_process.DoesNotRun, 'parse metadata'),

@@ -6,10 +6,13 @@
 """Success workflow tests for the signing recipe module."""
 
 import functools
+from typing import Any, Callable, Dict, List
 
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
-
 from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -53,7 +56,7 @@ _FAILED_COMPLETE = {
 }
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   metadata = api.signing.wait_for_signing([
       'gs://bucket/directory1/directory2/releases/file1.instructions',
       'gs://bucket/directory1/directory2/releases/file2.instructions'
@@ -64,14 +67,17 @@ def RunSteps(api):
     api.signing.verify_signing_success(metadata, child_step)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def StepMetaEquals(check, step_odict, step, expected):
+  def StepMetaEquals(check: Callable[[bool], bool], step_odict: Dict[str, Step],
+                     step: str, expected: List[Dict[str, Any]]):
     """Check that the step's meta_list equals given value.
 
     Assumes order does not matter.
 
     Args:
+      check (function) - the check function as provided by the recipes engine.
+      step_odict (dict) - dict of steps that have run.
       step (str) - The step to check the meta_list of.
       expected (array) - The expected value of the meta_list.
 

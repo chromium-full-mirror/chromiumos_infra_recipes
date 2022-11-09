@@ -7983,68 +7983,68 @@ Validate the caller's service version if they sent one.
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SigningApi](/recipe_modules/signing/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SigningApi](/recipe_modules/signing/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to encapsulate communication with the signing fleet.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#196)(instructions):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#207)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the failure of signing.
 
 Args:
-  instructions (dict): An instructions metadata file.
+  metadata: An instructions metadata file.
 
 Returns:
   The failure of the signing, or None if not available.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#114)(self, instructions_metadata):**
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#120)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
 
 Get the metadata of the signed build.
 
 Note - this requires that wait_for_signing has been called and is complete.
 
 Args:
-  instructions_metadata (dict): The metadata dict returned from
+  instructions_metadata: The metadata dict returned from
     wait_for_signing.
 
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#181)(instructions):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#191)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the status of the signing operation.
 
 Args:
-  instructions (dict): An instructions metadata file.
+  metadata: An instructions metadata file.
 
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#169)(metadata):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#179)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a failed signing operation.
 
 Args:
-  metadata (dict): Metadata from the instructions file.
+  metadata: Metadata from the instructions file.
 
 Returns:
   True/False whether the signing failed.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#157)(metadata):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#167)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a successful signing operation.
 
 Args:
-  metadata (dict): Metadata from the instructions file.
+  metadata: Metadata from the instructions file.
 
 Returns:
   True/False whether the signing succeeded.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#136)(self, instructions_metadata, pres):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#144)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
 
 Verifies that the signing operation succeeded.
 
-&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#34)(self, instructions_list):**
+&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#38)(self, instructions_list: List[str]):**
 
 Wait for signing to complete for a set of instructions files.
 
@@ -8055,7 +8055,7 @@ is complete for all of the provided instructions files, or b) the configured
 timeout has elapsed.
 
 Args:
-  instructions_list (list[str]): List of GS URIs for instructions files.
+  instructions_list: List of GS URIs for instructions files.
 
 Returns
   A dict of instruction file location -> instruction metadata for all
@@ -11949,7 +11949,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/portage/tests/prebuilt_metrics.py#52)(api, properties):**
 ### *recipes* / [portage\_explorer](/recipes/portage_explorer.py)
 
-[DEPS](/recipes/portage_explorer.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/portage_explorer.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -11958,7 +11958,7 @@ Recipe for Portage Explorer.
 Portage Explorer calls the RunSpiders endpoint from the PortageExplorerService
 and uploads the output from calling the endpoint to GS.
 
-&mdash; **def [RunSpiders](/recipes/portage_explorer.py#47)(api):**
+&mdash; **def [RunSpiders](/recipes/portage_explorer.py#50)(api: RecipeApi):**
 
 Call the RunSpiders endpoint and upload to GS.
 
@@ -11966,7 +11966,7 @@ Call the RunSpiders endpoint from the PortageExplorerService. Store the
 output as a json in a tmp dir and upload to the portage_explorer bucket in
 GS.
 
-&mdash; **def [RunSteps](/recipes/portage_explorer.py#36)(api):**
+&mdash; **def [RunSteps](/recipes/portage_explorer.py#39)(api: RecipeApi):**
 ### *recipes* / [presubmit\_cq](/recipes/presubmit_cq.py)
 
 [DEPS](/recipes/presubmit_cq.py#14): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -12186,41 +12186,41 @@ Recipe for signing ChromeOS images.
 Run steps.
 ### *recipes* / [signing:tests/full](/recipe_modules/signing/tests/full.py)
 
-[DEPS](/recipe_modules/signing/tests/full.py#14): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/signing/tests/full.py#17): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Success workflow tests for the signing recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/signing/tests/full.py#56)(api):**
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/full.py#59)(api: RecipeApi):**
 ### *recipes* / [signing:tests/get\_failure](/recipe_modules/signing/tests/get_failure.py)
 
-[DEPS](/recipe_modules/signing/tests/get_failure.py#11): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/signing/tests/get_failure.py#14): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Verify that method get_failure has error handling.
 
-&mdash; **def [RunSteps](/recipe_modules/signing/tests/get_failure.py#26)(api, instructions, expected):**
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/get_failure.py#29)(api: RecipeApi, instructions: Dict[(str, Any)], expected: Optional[str]):**
 ### *recipes* / [signing:tests/invalid\_file\_format](/recipe_modules/signing/tests/invalid_file_format.py)
 
-[DEPS](/recipe_modules/signing/tests/invalid_file_format.py#10): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/signing/tests/invalid_file_format.py#12): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Verify that instructions files are in the appropriate format.
 
-&mdash; **def [RunSteps](/recipe_modules/signing/tests/invalid_file_format.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/invalid_file_format.py#21)(api: RecipeApi):**
 ### *recipes* / [signing:tests/sequence\_error](/recipe_modules/signing/tests/sequence_error.py)
 
-[DEPS](/recipe_modules/signing/tests/sequence_error.py#11): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/signing/tests/sequence_error.py#13): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Verify that wait_for_signing is required before retrieving signed build
 metadata.
 
-&mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#22)(api: RecipeApi):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#12): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
