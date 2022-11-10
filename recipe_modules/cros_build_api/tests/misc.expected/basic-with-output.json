@@ -10,7 +10,9 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"result\": \"good\", \"ye_unknown_field\": \"foobar\"}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_LOG_LINE@stdout@Logfile contents for failing case of build_cmd.@@@",
+      "@@@STEP_LOG_END@stdout@@@"
     ]
   },
   {

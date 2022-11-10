@@ -471,8 +471,11 @@ class CrosBuildApiApi(RecipeApi):
               file_contents = self.m.file.read_raw('read tee output file',
                                                    logfile_path,
                                                    test_data=test_teelog_data)
+              # Much of the build api calls emerge, collect stats!
               self.m.portage.publish_prebuilt_stats(
                   endpoint, file_contents.decode('utf-8'))
+              if file_contents:
+                presentation.logs['stdout'] = file_contents
 
           # If no test data is provided, see if we have our own.
           test_output_data = (
