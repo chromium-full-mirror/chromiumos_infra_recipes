@@ -149,3 +149,9 @@ class ParallelRunner(object):
     for f in self._futures_module.iwait(self._futures):
       results.append(f.result())
     return results
+
+  def wait_for_and_throw(self):
+    """Wait for all futures to resolve and throw any exceptions."""
+    for f in self._futures_module.iwait(self._futures):
+      if f.result().errored:
+        raise f.result().resp

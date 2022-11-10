@@ -22,6 +22,7 @@ DEPS = [
     'cros_infra_config',
     'cros_tags',
     'easy',
+    'future_utils',
     'test_util',
 ]
 
@@ -72,7 +73,10 @@ def DoRunSteps(api, config):
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
-      api.build_menu.create_containers(config)
+      # Create the test containers async.
+      test_containers_runner = api.future_utils.create_parallel_runner()
+      test_containers_runner.run_function_async(
+          lambda cfg, _: api.build_menu.create_containers(cfg), config)
       # TODO(b/253642578): Experiment running unit tests on only packages
       # which are affected by the CLs in the CQ run.
       if api.cros_infra_config.is_staging:
@@ -83,6 +87,8 @@ def DoRunSteps(api, config):
         # We have no steps following build_and_test_images, so we don't need to
         # check the return value.
         api.build_menu.build_and_test_images(config)
+      # Pause and throw if test containers failed to upload.
+      test_containers_runner.wait_for_and_throw()
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (as stated above there is value in uploading the artifact even

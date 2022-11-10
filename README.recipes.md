@@ -370,6 +370,7 @@
   * [future_utils:tests/happy_path](#recipes-future_utils_tests_happy_path) (Python3 ✅) &mdash; Tests to verify future_utils happy path.
   * [future_utils:tests/retries](#recipes-future_utils_tests_retries) (Python3 ✅) &mdash; Tests to verify future_utils retries.
   * [future_utils:tests/success_handler](#recipes-future_utils_tests_success_handler) (Python3 ✅) &mdash; Tests to verify future_utils success handler.
+  * [future_utils:tests/wait_for_and_throw](#recipes-future_utils_tests_wait_for_and_throw) (Python3 ✅) &mdash; Tests to verify future_utils error handling.
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) (Python3 ✅) &mdash; An experimental recipe for running GCE tests.
@@ -9127,15 +9128,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipes/build_compilation_database.py#16)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#57)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#58)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#31)(api):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#32)(api):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#13): [build\_menu](#recipe_modules-build_menu), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11099,6 +11100,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Tests to verify future_utils success handler.
 
 &mdash; **def [RunSteps](/recipe_modules/future_utils/tests/success_handler.py#18)(api):**
+### *recipes* / [future\_utils:tests/wait\_for\_and\_throw](/recipe_modules/future_utils/tests/wait_for_and_throw.py)
+
+[DEPS](/recipe_modules/future_utils/tests/wait_for_and_throw.py#9): [future\_utils](#recipe_modules-future_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests to verify future_utils error handling.
+
+&mdash; **def [RunSteps](/recipe_modules/future_utils/tests/wait_for_and_throw.py#18)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
 [DEPS](/recipe_modules/gce_provider/examples/full.py#8): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
