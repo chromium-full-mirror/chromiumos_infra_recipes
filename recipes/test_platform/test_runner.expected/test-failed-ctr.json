@@ -591,6 +591,7 @@
     "cmd": [
       "sudo",
       "--non-interactive",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "provision",
       "-docker_key_file",
@@ -700,6 +701,7 @@
     "cmd": [
       "sudo",
       "--non-interactive",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "test",
       "-docker_key_file",

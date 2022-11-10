@@ -72,6 +72,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
       cmd = [
           "sudo",
           "--non-interactive",
+          "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST",
           self._cmd,
           subcommand,
           '-docker_key_file',
