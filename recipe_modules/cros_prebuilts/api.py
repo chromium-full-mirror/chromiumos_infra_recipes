@@ -376,32 +376,44 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       uri (str): The new binhost URI.
     """
     with self.m.step.nest('update binhost conf file'):
-      request = binhost_pb.SetBinhostRequest(build_target=target,
-                                             private=private, key=key, uri=uri,
-                                             max_uris=self._max_binhost_uris)
-      response = self.m.cros_build_api.BinhostService.SetBinhost(
-          request, infra_step=True)
-      binhost_path = self.m.path.abs_to_path(response.output_file)
-      binhost_data = self.m.file.read_text('read binhost conf', binhost_path)
-
+      # In order to avoid any merge conflicts we first pull the latest changes
+      # from remote, update the conf flie locally, and then push the
+      # changes remotely.
+      path_request = binhost_pb.GetBinhostConfPathRequest(
+          build_target=target, private=private, key=key)
+      path_response = self.m.cros_build_api.BinhostService.GetBinhostConfPath(
+          path_request, infra_step=True)
+      binhost_path = self.m.path.abs_to_path(path_response.conf_path)
       projects = self.m.repo.project_infos(projects=[binhost_path])
       assert len(projects) == 1, '%s must belong to 1 project' % binhost_path
       project = projects[0]
-
       with self.m.context(
           cwd=self.m.cros_source.workspace_path.join(project.path)):
-        # Staging doesn't have ACLs to push conf files to the real branch.
-        # Instead, use a branch with the last component named 'staging'
         branch = project.branch
         if branch:
+          # The unit tests needs the ebuilds to be the same version we build them at.
+          # so after we pull the latest and commit our changes, we checkout the
+          # the commit from which we started. Here we are saving the current commit
+          # so we can checkout again after we push our updates.
           current_commit = self.m.git.head_commit()
+
+          # Staging doesn't have ACLs to push conf files to the real branch.
+          # Instead, use a branch with the last component named 'staging'
           if self._use_staging_branch:
             branch_parts = branch.split('/')
             branch_parts[-1] = 'staging'
             branch = '/'.join(branch_parts)
 
-            self.m.git.fetch_ref(project.remote, branch)
-            self.m.git.checkout('FETCH_HEAD', force=True)
+          self.m.git.fetch_ref(project.remote, branch)
+          self.m.git.checkout('FETCH_HEAD', force=True)
+
+          request = binhost_pb.SetBinhostRequest(
+              build_target=target, private=private, key=key, uri=uri,
+              max_uris=self._max_binhost_uris)
+          self.m.cros_build_api.BinhostService.SetBinhost(
+              request, infra_step=True)
+          binhost_data = self.m.file.read_text('read binhost conf',
+                                               binhost_path)
 
           self.m.git_txn.update_ref_write_file(
               project.remote,

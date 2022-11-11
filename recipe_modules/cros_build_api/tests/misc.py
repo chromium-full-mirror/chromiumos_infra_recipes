@@ -108,6 +108,8 @@ def RunSteps(api):
               binhost.AclArgsResponse,
           'RegenBuildCache':
               binhost.RegenBuildCacheResponse,
+          'GetBinhostConfPath':
+              binhost.GetBinhostConfPathResponse,
       },
       'DependencyService': {
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,

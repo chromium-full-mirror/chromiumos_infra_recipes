@@ -149,6 +149,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['RegenBuildCache'] = jsonify(modified_overlays=[{
         'path': self.src_path('src/overlay')
     }])
+    responses['GetBinhostConfPath'] = jsonify(
+        conf_path=self.path('BINHOST.conf'))
     return responses
 
   @property
