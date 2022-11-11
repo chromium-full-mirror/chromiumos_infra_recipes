@@ -15,6 +15,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
+    "recipe_engine/buildbucket",
     "recipe_engine/step",
     "recipe_engine/time",
     "build_menu",
@@ -26,7 +27,6 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = "PY3"
 
-BUILDER = "chromeos/cq/chromeos-sdk-cq"
 PREBUILT_UPLOAD_BUCKET = "gs://chromeos-prebuilt"
 # The chromeos-sdk builder uses 'chroot' as VERSION_PREFIX.
 # We use a different prefix to avoid conflicts.
@@ -97,8 +97,9 @@ def RunSteps(api):
     #
     central_cl = None
     binhost_cls = {}
-    trybot_re = re.compile(r"^Cq-Include-Trybots: %s\b" % (re.escape(BUILDER),),
-                           re.MULTILINE)
+    trybot_re = re.compile(
+        r"^Cq-Include-Trybots: %s\b" %
+        (re.escape(api.buildbucket.builder_full_name),), re.MULTILINE)
     patch_sets = api.gerrit.fetch_patch_sets(api.build_menu.gerrit_changes,
                                              include_commit_info=True)
 
@@ -117,15 +118,18 @@ def RunSteps(api):
             central_cl = change
 
     if conflicting_cls:
-      raise StepFailure(("multiple CLs have Cq-Include-Trybots: %s set"
-                         ": %s") % (BUILDER, ", ".join(conflicting_cls)))
+      raise StepFailure(
+          ("multiple CLs have Cq-Include-Trybots: %s set"
+           ": %s") %
+          (api.buildbucket.builder_full_name, ", ".join(conflicting_cls)))
 
     if central_cl is None:
       # If there is only one non-binhost CL, make it the central CL.
       if len(non_binhost_cls) == 1:
         central_cl = non_binhost_cls[0]
         description = central_cl.commit_info["message"]
-        trybots_str = "Cq-Include-Trybots: %s\n" % (BUILDER,)
+        trybots_str = "Cq-Include-Trybots: %s\n" % (
+            api.buildbucket.builder_full_name,)
         description = _insert_before_change_id(central_cl.display_id,
                                                description, trybots_str)
         api.gerrit.set_change_description(central_cl.to_gerrit_change_proto(),
@@ -136,7 +140,7 @@ def RunSteps(api):
       raise StepFailure(
           ("Could not determine central CL."
            " Please set Cq-Include-Trybots: %s on exactly one CL.") %
-          (BUILDER,))
+          (api.buildbucket.builder_full_name,))
 
   with api.build_menu.configure_builder(
   ), api.build_menu.setup_workspace_and_chroot():
@@ -299,6 +303,7 @@ def GenTests(api):
   def builder_args(**kwargs):
     """Generate a test build."""
     kwargs.setdefault("cq", True)
+    kwargs.setdefault("builder", "chromeos-sdk-cq")
     return kwargs
 
   yield api.build_menu.test(
@@ -364,7 +369,7 @@ def GenTests(api):
       ]))
 
   yield api.build_menu.test(
-      "sucessful-run",
+      "successful-run",
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
@@ -379,7 +384,7 @@ def GenTests(api):
       **builder_args(gerrit_changes=[single_change_with_trybots]))
 
   yield api.build_menu.test(
-      "sucessful-run-no-include-trybots",
+      "successful-run-no-include-trybots",
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_without_trybots],
@@ -394,7 +399,7 @@ def GenTests(api):
       **builder_args(gerrit_changes=[single_change_without_trybots]))
 
   yield api.build_menu.test(
-      "sucessful-run-with-binhost-cl",
+      "successful-run-with-binhost-cl",
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_without_trybots, prebuilt_binhost_change],

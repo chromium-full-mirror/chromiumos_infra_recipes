@@ -9372,7 +9372,7 @@ Recipe for building and testing a BuildTarget's packages.
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#31)(api):**
 ### *recipes* / [build\_toolchain](/recipes/build_toolchain.py)
 
-[DEPS](/recipes/build_toolchain.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_toolchain.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 

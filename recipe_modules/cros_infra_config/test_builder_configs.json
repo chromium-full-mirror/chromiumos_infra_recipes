@@ -2798,6 +2798,21 @@
         },
         "child_specs": []
       }
+    },
+    {
+      "id": {
+        "name": "chromeos-sdk-cq",
+        "type": "CQ",
+        "bucket": "cq"
+      },
+      "general": {
+        "critical": false,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE"
+      },
+      "build": {
+        "applyGerritChanges": true
+      }
     }
   ]
 }
