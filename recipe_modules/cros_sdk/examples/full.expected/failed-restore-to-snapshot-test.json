@@ -163,7 +163,7 @@
       ]
     },
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
-    "timeout": 10800,
+    "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

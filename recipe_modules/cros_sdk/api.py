@@ -431,7 +431,9 @@ class CrosSdkApi(RecipeApi):
       try:
         self.build_chmod_chroot()
         if timeout_sec == 'DEFAULT':
-          timeout_sec = None if bootstrap else 180 * 60
+          # TODO(b/258838458): Doubled the timeout to 360 minutes to debug an
+          # issue with SdkService.Create() timing out while rebuilding LLVM.
+          timeout_sec = None if bootstrap else 360 * 60
 
         # Determine whether a cached root could be reused.
         # If we're requesting a specific SDK version, we probably want to
