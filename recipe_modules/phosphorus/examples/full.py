@@ -12,6 +12,8 @@ from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
 
+from recipe_engine.post_process import DropExpectation, StatusSuccess
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -78,3 +80,14 @@ def GenTests(api):
                   skylab_local_state.load.LoadResponse(
                       results_dir='placeholder-results-dir')))),
   )
+  yield (api.test(
+      'with-bot-prefix',
+      api.phosphorus.properties(dut_name='placeholder',
+                                bot_prefix='someprefix'),
+      api.step_data(
+          'call `phosphorus` (12).load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                      results_dir='placeholder-results-dir')))),
+  ) + api.post_process(StatusSuccess) +  # recipe should pass
+         api.post_process(DropExpectation))

@@ -12,8 +12,13 @@ message CrosToolRunnerProperties {
         // Use the CIPD version with this label.
         string cipd_label = 1;
     }
-
+    // Config defines recipe configuration parameters of cros_tool_runner.
+    message Config {
+        // Swarming bot prefix to be used on the drone
+        string bot_prefix = 1;
+    }
     Version version = 1;
+    Config config = 2;
 }
 
 message CrosToolRunnerEnvProperties {

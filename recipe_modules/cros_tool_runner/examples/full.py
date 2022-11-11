@@ -6,6 +6,8 @@
 from PB.chromiumos.build.api import container_metadata
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 
+from recipe_engine.post_process import DropExpectation, StatusSuccess
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -78,3 +80,10 @@ def GenTests(api):
       api.cros_tool_runner.properties(
           bot_id='chromeos-test-crostfe-us-east1-d-x1-1061-de02',
           bot_is_dut=False))
+  yield (api.test(
+      'with-bot-prefix',
+      api.cros_tool_runner.properties(
+          bot_id='chromeos-test-crostfe-us-east1-d-x1-1061-de02',
+          bot_is_dut=False, bot_prefix='someprefix')) +
+         api.post_process(StatusSuccess) +  # recipe should pass
+         api.post_process(DropExpectation))

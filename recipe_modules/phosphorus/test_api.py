@@ -14,26 +14,34 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
 class PhosphorusTestApi(recipe_test_api.RecipeTestApi):
   """Test data for phosphorus api."""
 
-  def properties(self, dut_name=None):
+  def properties(self, dut_name=None, bot_prefix=None):
     """Gets properties to pass to api.test().
 
     For use in recipes and modules using phosphorus.
     """
+    config = {
+        'admin_service': 'foo-service',
+        'cros_inventory_service': 'inv-service',
+        'cros_ufs_service': 'ufs-service',
+        'autotest_dir': '/path/to/autotest',
+    }
+    default_prefix = 'crossk-'
+
     if not dut_name:  # pragma: nocover
       dut_name = 'placeholder-dut-name'
+
+    if bot_prefix:
+      config['bot_prefix'] = bot_prefix
+      default_prefix = bot_prefix
+
     return self.m.properties(
         **{
             '$chromeos/phosphorus':
                 PhosphorusProperties(
                     version=PhosphorusProperties.Version(
                         cipd_label='some-cipd-label',
-                    ), config={
-                        'admin_service': 'foo-service',
-                        'cros_inventory_service': 'inv-service',
-                        'cros_ufs_service': 'ufs-service',
-                        'autotest_dir': '/path/to/autotest',
-                    }),
+                    ), config=config),
         }) + self.m.properties.environ(
-            PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-' + dut_name,
+            PhosphorusEnvProperties(SWARMING_BOT_ID=default_prefix + dut_name,
                                     SWARMING_TASK_ID='placeholder-task-id',
                                     SKYLAB_DUT_ID='placeholder-dut-id'))

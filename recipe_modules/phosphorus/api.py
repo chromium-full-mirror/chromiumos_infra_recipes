@@ -281,10 +281,16 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     Raises:
       * AssertionError if the Swarming bot ID env var is missing or invalid.
     """
-    expected_prefix = 'crossk-'
+    expected_prefix = self._read_bot_prefix()
     assert swarming_bot_id.startswith(expected_prefix)
     return swarming_bot_id[len(expected_prefix):]
 
   def read_dut_hostname(self):
     """"Return the DUT hostname."""
     return self._dut_hostname
+
+  def _read_bot_prefix(self):
+    """Extract the bot prefix from the config properties."""
+    if self._config and self._config.bot_prefix:
+      return str(self._config.bot_prefix)
+    return 'crossk-'

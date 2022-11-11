@@ -14,7 +14,7 @@ from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import \
 class CrosToolRunnerTestApi(recipe_test_api.RecipeTestApi):
   """Test data for CrosToolRunner api."""
 
-  def properties(self, bot_id=None, bot_is_dut=False):
+  def properties(self, bot_id=None, bot_is_dut=False, bot_prefix=None):
     """Gets properties to pass to api.test().
 
     For use in recipes and modules using cros_tool_runner.
@@ -23,14 +23,19 @@ class CrosToolRunnerTestApi(recipe_test_api.RecipeTestApi):
       bot_id = 'placeholder-bot-name'
     if bot_is_dut:
       bot_id = 'crossk-' + bot_id
-    return self.m.properties(
-        **{
-            '$chromeos/cros_tool_runner':
-                CrosToolRunnerProperties(
-                    version=CrosToolRunnerProperties.Version(
-                        cipd_label='some-cipd-label',
-                    ))
-        }) + self.m.properties.environ(
+    if not bot_prefix:
+      ctr_properties = CrosToolRunnerProperties(
+          version=CrosToolRunnerProperties.Version(
+              cipd_label='some-cipd-label',
+          ))
+    else:
+      ctr_properties = CrosToolRunnerProperties(
+          version=CrosToolRunnerProperties.Version(
+              cipd_label='some-cipd-label',
+          ), config=CrosToolRunnerProperties.Config(bot_prefix=bot_prefix))
+
+    return self.m.properties(**{'$chromeos/cros_tool_runner':
+        ctr_properties}) + self.m.properties.environ(
             CrosToolRunnerEnvProperties(SWARMING_BOT_ID=bot_id,
                                         SWARMING_TASK_ID='placeholder-task-id',
                                         SKYLAB_DUT_ID='placeholder-dut-id'))

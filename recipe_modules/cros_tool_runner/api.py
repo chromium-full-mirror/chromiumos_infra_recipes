@@ -16,6 +16,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     super(CrosToolRunnerCommand, self).__init__(**kwargs)
     self._cmd = None
     self._version = str(properties.version.cipd_label)
+    self._config = properties.config
     # dut_hostname represents schedulable unit from inventory(e.g. UFS),
     # which can be hostname of a DUT itself(single DUT use case), or
     # name of a scheduling unit(multi-DUTs use case).
@@ -205,7 +206,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
         Raises:
           * AssertionError if the Swarming bot ID env var is missing or invalid.
         """
-    expected_prefix = 'crossk-'
+    expected_prefix = self._read_bot_prefix()
     if swarming_bot_id.startswith(expected_prefix):
       return swarming_bot_id[len(expected_prefix):]
     return swarming_bot_id
@@ -213,3 +214,9 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
   def read_dut_hostname(self):
     """"Return the DUT hostname."""
     return self._dut_hostname
+
+  def _read_bot_prefix(self):
+    """Extract the bot prefix from the config properties."""
+    if self._config and self._config.bot_prefix:
+      return str(self._config.bot_prefix)
+    return 'crossk-'
