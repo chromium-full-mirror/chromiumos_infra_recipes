@@ -286,6 +286,17 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
       """
     raise NotImplementedError
 
+  def process_test_responses(self, cros_test_responses):
+    """Process test responses from run_test.
+
+    Args:
+    * cros_test_responses (TestResponse):  Test responses from run_test.
+
+    Returns:
+      processed test responses tuple: (test_responses_for_output_props, test_response_for_result_uploading)
+    """
+    raise NotImplementedError
+
   def parse_test_results(self, metadata):
     with self._api.step.nest('Phosphorus: get test results'):
       with self._api.context(infra_steps=True):

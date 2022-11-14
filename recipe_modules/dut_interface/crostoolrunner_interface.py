@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 from collections import namedtuple
+from collections import defaultdict
 
 from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDUTResponse, CrosToolRunnerTestDUTResponse
 
@@ -20,6 +21,8 @@ RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
                                    ['test_dut_responses', 'any_test_failed'])
 PrejobResponsesTuple = namedtuple(
     'PrejobResponsesTuple', ['prejob_dut_responses', 'any_provision_failed'])
+
+
 
 
 class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
@@ -748,6 +751,74 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     return PrejobResponsesTuple(
         [CrosToolRunnerPrejobDUTResponse.build_aborted_response('dut')], True)
+
+  def process_test_responses(self, cros_test_responses):
+    """Process test responses from run_test.
+
+    Args:
+    * cros_test_responses (TestResponse):  Test responses from run_test.
+
+    Returns:
+      processed test responses tuple: (test_responses_for_output_props, test_response_for_result_uploading)
+    """
+    with self._api.step.nest("Processing CTR Test Responses") as step:
+      ret1_ids = []
+      ret2_ids = []
+
+      path_to_tauto_dut_resp_dict = defaultdict(list)
+      path_to_tast_dut_resp_dict = defaultdict(list)
+
+      for test_dut_response in cros_test_responses.test_dut_responses:
+        ctr_test_response = test_dut_response.data
+        test_harness_type = ctr_test_response.test_harness.WhichOneof(
+            'test_harness_type')
+        results_dir = ctr_test_response.result_dir_path.path
+        #test_case_id = ctr_test_response.test_case_id.value
+        if test_harness_type == CrosToolRunnerInterface.TEST_HARNESS_TAUTO:
+          path_to_tauto_dut_resp_dict[results_dir].append(test_dut_response)
+        elif test_harness_type == CrosToolRunnerInterface.TEST_HARNESS_TAST:
+          path_to_tast_dut_resp_dict[results_dir].append(test_dut_response)
+
+      tast_via_tauto = False
+      # Independent Tauto and Tast tests. [For reporting back to CTP/CQ via output props]
+      ret1 = []
+      # All tauto (independent tauto and tast via tauto) and tast tests. [For result uploading]
+      ret2 = []
+
+      # Identify if tast_via_tauto exists and start constructing new response.
+      for path, resp_list in path_to_tauto_dut_resp_dict.items():
+        if path in path_to_tast_dut_resp_dict:
+          # This means we have tast via tauto test case(s).
+          tast_via_tauto = True
+
+        for resp in resp_list:
+          ret2.append(resp)
+          ret2_ids.append(resp.data.test_case_id.value)
+          if path not in path_to_tast_dut_resp_dict:
+            ret1.append(resp)
+            ret1_ids.append(resp.data.test_case_id.value)
+
+      if not tast_via_tauto:
+        # If no tast_via_tauto in test cases, keep the responses as is.
+        step.presentation.logs[
+            "Output"] = "No tast_via_tauto found. So no processing required."
+        return cros_test_responses, cros_test_responses
+
+      for path, resp_list in path_to_tast_dut_resp_dict.items():
+        for resp in resp_list:
+          ret1.append(resp)
+          ret1_ids.append(resp.data.test_case_id.value)
+          if path not in path_to_tauto_dut_resp_dict:
+            # If not tast_via_tauto, add this independant tast result to response.
+            ret2.append(resp)
+            ret2_ids.append(resp.data.test_case_id.value)
+
+      step.presentation.logs["For_Output_Props_Test_Ids"] = ret1_ids
+      step.presentation.logs["For_Result_Uploading_Test_Ids"] = ret2_ids
+
+      return RunTestResponsesTuple(
+          ret1, cros_test_responses.any_test_failed), RunTestResponsesTuple(
+              ret2, cros_test_responses.any_test_failed)
 
   @staticmethod
   def _read_dut_hostname(api):

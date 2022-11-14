@@ -729,6 +729,15 @@
   },
   {
     "cmd": [],
+    "name": "execution steps.Processing CTR Test Responses",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@Output@No tast_via_tauto found. So no processing required.@@@",
+      "@@@STEP_LOG_END@Output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execution steps.CrosToolRunner: upload to TKO",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1101,7 +1110,7 @@
       "@@@STEP_LOG_LINE@skylab_result@  \"autotestResult\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@skylab_result@      {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.stub_Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.dummy_id\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_PASS\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@      }@@@",
       "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
@@ -1125,7 +1134,7 @@
       "@@@STEP_LOG_LINE@skylab_result@    \"original_test\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@      \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@skylab_result@        {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.stub_Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.dummy_id\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_PASS\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@        }@@@",
       "@@@STEP_LOG_LINE@skylab_result@      ]@@@",
@@ -1140,7 +1149,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkL0KwjAUhekg4oXSUnFxdHBL0x9F8CnEFyhpDWkgyS25acV39KG04NjRbzic6TtwYAdbSIIYA+YUxra5CaI0yhKIYTN4nDRpdGm0f0dwV3TlvOs9WonEgqTADCriHVqLjkk38aooK1acWXnixQ+2EDNlXV+yqQ9hmLUUhHZGEuUd+iFXiMrIb7e89fgk+d/dwxpWXorHqzpCjF4r7YRpZnO2fMgHkSBU/A==\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkE0KwjAUhOlCxAfVEly5FFym6Y8ieAwvILENaSDJK3lppXf0UFpw2aXfYpjVNzCwBwbbKIeIeTs4Nz1MmyVsByls+oCjIYM+Sw7vBO6abkI0XUCnkHhUFLlFTaJB59Bz5UdRFWXFiwsvz6L4wRdipqzrKxu7GPtZS1EabxVR3mDoc42orfp2J54BX6T+u3tcwyoo2U7VCVIMRhsv7WM2s8U/Ps8hVD0=\"@@@"
     ]
   },
   {

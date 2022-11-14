@@ -257,6 +257,17 @@ class DUTInterface(object):  # pragma: no cover
       dut_results.DUTResult
     """
 
+  @abstractmethod
+  def process_test_responses(self, test_responses):
+    """process test responses from run_test.
+
+    Args:
+    * test_responses (object): test responses from run_test.
+
+    Returns:
+      processed test responses: (test_responses_for_output_props, test_response_for_result_uploading)
+    """
+
   def is_within_deadline(self):
     """Determines if a test is within deadline.
 

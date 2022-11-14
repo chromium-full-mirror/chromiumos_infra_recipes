@@ -1341,8 +1341,10 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
   Raises:
   * InfraFailure.
   """
-  result = None
+  result_for_uploading = None
+  result_for_output_props = None
   run_test_response = None
+  run_test_resp_for_output_props = None
   results_dir = ""
 
   try:
@@ -1350,6 +1352,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     if not prejob_response.any_provision_failed:
       run_test_response = interface.run_test(test_metadata,
                                              container_image_info)
+      run_test_resp_for_output_props, run_test_response = interface.process_test_responses(
+          run_test_response)
       test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
       interface.upload_to_tko(test_metadata, run_test_response)
@@ -1385,13 +1389,20 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       # above.
       interface.upload_to_rdb(test_metadata, run_test_response)
 
-    result = interface.parse_test_results(test_metadata)
-    result.add_prejob_response(prejob_response)
-    result.add_test_response(run_test_response)
+    # Result for uploading
+    result_for_uploading = interface.parse_test_results(test_metadata)
+    result_for_uploading.add_prejob_response(prejob_response)
+    result_for_uploading.add_test_response(run_test_response)
+
+    # Result for output props
+    result_for_output_props = interface.parse_test_results(test_metadata)
+    result_for_output_props.add_prejob_response(prejob_response)
+    result_for_output_props.add_test_response(run_test_resp_for_output_props)
+    result_for_output_props.update_log_urls(test_metadata)
   finally:
     interface.submit_post_job()
     archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                     result=result)
+                     result=result_for_uploading)
     # TODO(b/252945582): Handle multiple test results if needed
     if results_dir:
       # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
@@ -1408,10 +1419,11 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     # result.data is not used anywhere else so
     # it's okay to create an empty one for only this purpose
     new_result = interface.parse_test_results(test_metadata)
-    new_result.data = create_skylab_result(api, result, properties, dut_state)
+    new_result.data = create_skylab_result(api, result_for_output_props,
+                                           properties, dut_state)
     set_output_properties(api, result=new_result)
 
-  return result
+  return result_for_output_props
 
 
 def create_skylab_result(api, ctr_result, properties, dut_state):
@@ -1436,28 +1448,36 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
     is_incomplete = True
     test_verdict = Result.Autotest.TestCase.VERDICT_NO_VERDICT
     log_data = TaskLogData()
+    test_cases = []
 
     # Parsing required only when prejob is successful
     if ctr_result and ctr_result.prejob_response and not ctr_result.prejob_response.any_provision_failed:
       # Parse prejob result
       prejob_verdict = Result.Prejob.Step.VERDICT_PASS
       # Parse test results
-      is_incomplete = False
-      if ctr_result.test_responses and ctr_result.test_responses[0].is_failure(
-      ):
-        test_verdict = Result.Autotest.TestCase.VERDICT_FAIL
-      else:
-        test_verdict = Result.Autotest.TestCase.VERDICT_PASS
+      if ctr_result.test_responses:
+        is_incomplete = False
+        for resp in ctr_result.test_responses:
+          if resp.is_failure():
+            test_verdict = Result.Autotest.TestCase.VERDICT_FAIL
+          else:
+            test_verdict = Result.Autotest.TestCase.VERDICT_PASS
+          test_cases.append(
+              Result.Autotest.TestCase(name=resp.data.test_case_id.value,
+                                       verdict=test_verdict))
       # Parse log data
       if ctr_result.gs_url:
         log_data.gs_url = ctr_result.gs_url
       if ctr_result.stainless_url:
         log_data.stainless_url = ctr_result.stainless_url
 
-    autotest_result = Result.Autotest(
-        test_cases=[
-            Result.Autotest.TestCase(name=test_name, verdict=test_verdict)
-        ], incomplete=is_incomplete)
+    if not test_cases:
+      # if prejob failed, add the default test case
+      test_cases = [
+          Result.Autotest.TestCase(name=test_name, verdict=test_verdict)
+      ]
+    autotest_result = Result.Autotest(test_cases=test_cases,
+                                      incomplete=is_incomplete)
 
     skylab_result = Result(
         prejob=Result.Prejob(
