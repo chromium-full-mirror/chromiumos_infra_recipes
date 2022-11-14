@@ -63,18 +63,25 @@ def DoBorealisBuild(api, use_cache=True, skip_termina=False, stage=None):
   api.step('Borealis build_full.py', build_command)
 
 
-def _CommitChanges(api, project, commit_message):
+def _CommitChanges(api, project, commit_message, branch_name=None):
   """Commit changes to the Borealis build/ directory.
 
   Args:
     api: The recipe modules API.
     project: Project object obtained from api.repo.project_info
     commit_message: Git commit message to use.
+    branch_name: Name for the local branch for repo start
   """
   borealis_repo_path = api.cros_source.workspace_path.join(_BOREALIS_REPO_PATH)
   with api.step.nest('commit changes'), \
           api.context(cwd=borealis_repo_path):
-    api.repo.start('uprev-borealis-deps', projects=[project.name])
+    # Add a branch to avoid re-using the old commit and creating a
+    # patchseries (we want unique and separate CLs)
+    repo_branch = 'uprev-borealis-deps'
+    if branch_name:
+      # Remove all non-alphabetical characters to ensure valid branch name
+      repo_branch = ''.join([char for char in branch_name if char.isalpha()])
+    api.repo.start(repo_branch, projects=[project.name])
 
     # Commit all changes in platform/borealis/build/
     api.git.add(['build/'])
@@ -113,7 +120,7 @@ def CommitChangesAndCreateCL(api, step_name, commit_message):
   project = api.repo.project_info(project=api.git.repository_root())
 
   with api.step.nest(step_name) as presentation:
-    _CommitChanges(api, project, commit_message)
+    _CommitChanges(api, project, commit_message, step_name)
     _CreateCL(api, project, presentation)
 
 

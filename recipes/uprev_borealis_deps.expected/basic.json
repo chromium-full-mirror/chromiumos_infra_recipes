@@ -2055,7 +2055,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "uprev-borealis-deps",
+      "createArchmirrorCL",
       "[CLEANUP]/chromiumos_workspace/src/platform/borealis/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
@@ -2465,7 +2465,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
-      "uprev-borealis-deps",
+      "createPKGBUILDsCL",
       "[CLEANUP]/chromiumos_workspace/src/platform/borealis/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
