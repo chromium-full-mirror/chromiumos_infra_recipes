@@ -321,10 +321,16 @@ class FirmwareBuilder(object):
         ]
       self.sdk_call('setup board', cmd=cmd)
 
-      cmd = [
-          './build_packages', board_arg, '--accept_licenses=@CHROMEOS',
-          '--skip_chroot_upgrade'
-      ]
+      if self._is_after('14950.0.0'):
+        cmd = [
+            'build_packages', board_arg, '--accept-licenses=@CHROMEOS',
+            '--skip-chroot-upgrade'
+        ]
+      else:
+        cmd = [
+            './build_packages', board_arg, '--accept_licenses=@CHROMEOS',
+            '--skip_chroot_upgrade'
+        ]
       if self._config.build.install_packages.compile_source:
         cmd.append('--nousepkg')
       # --withdebugsymbols was added to build_packages in 6302.0.0
@@ -514,7 +520,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def test(name, *args, **kwargs):
-    version_str = kwargs.pop('version', 'R91-13874.10.0')
+    version_str = kwargs.pop('version', 'R109-15236.0.0')
     version = api.cros_version.workspace_version(version_str)
     cq = kwargs.get('cq', False)
     kwargs.setdefault('builder',
@@ -547,6 +553,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'create buildspec'),
       suite_scheduling(True),
       api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['build_packages']),
+      api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepCommandContains,
@@ -565,6 +573,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'create buildspec'),
       suite_scheduling(False),
       api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['build_packages']),
+      api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
       api.post_check(StepCommandLacks, 'push image.call pushimage', ['-n']),
       api.post_check(post_process.StepCommandContains,
@@ -582,6 +592,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'bump version'),
       api.post_check(post_process.MustRun, 'create buildspec'),
       suite_scheduling(False),
+      api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['./build_packages']),
       api.post_check(StepCommandLacks, 'build target.install packages',
                      ['--withdebugsymbols']),
       api.post_check(post_process.StepCommandContains,
@@ -600,6 +612,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
       suite_scheduling(False),
       api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['build_packages']),
+      api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
       api.post_check(post_process.StatusSuccess))
 
@@ -611,6 +625,8 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
       suite_scheduling(False),
       api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['build_packages']),
+      api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
       api.post_check(post_process.StatusSuccess))
 
@@ -620,6 +636,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
+      api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['./build_packages']),
       api.post_check(StepCommandLacks, 'build target.install packages',
                      '--withdebugsymbols'),
       api.repo.project_infos_step_data(

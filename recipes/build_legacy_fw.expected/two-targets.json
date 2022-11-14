@@ -2148,7 +2148,7 @@
     "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found version: R91-13874.10.0-101@@@"
+      "@@@STEP_TEXT@found version: R109-15236.0.0-101@@@"
     ]
   },
   {
@@ -2269,7 +2269,7 @@
     "cmd": [],
     "name": "set chromeos_version",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R91-13874.10.0-101\"@@@"
+      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R109-15236.0.0-101\"@@@"
     ]
   },
   {
@@ -2412,7 +2412,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/partial-metadata.json@@@"
     ]
   },
   {
@@ -2423,7 +2423,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"board1\": {}, \n        \"board2\": {}\n    }, \n    \"boards\": [\n        \"board1\", \n        \"board2\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"board1\": {}, \n        \"board2\": {}\n    }, \n    \"boards\": [\n        \"board1\", \n        \"board2\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R109-15236.0.0\", \n        \"milestone\": 109, \n        \"platform\": \"15236.0.0\", \n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2467,10 +2467,10 @@
       "@@@STEP_LOG_LINE@partial-metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"unibuild\": false, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"version\": {@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@        \"full\": \"R91-13874.10.0\", @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@        \"milestone\": 91, @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@        \"platform\": \"13874.10.0\", @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@        \"with_snapshot\": \"R91-13874.10.0-101\"@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"full\": \"R109-15236.0.0\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"milestone\": 109, @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"platform\": \"15236.0.0\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"with_snapshot\": \"R109-15236.0.0-101\"@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    }@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@}@@@",
       "@@@STEP_LOG_END@partial-metadata.json@@@"
@@ -2486,7 +2486,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2798,7 +2798,7 @@
     "name": "determine ec firmware_version.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@bcs_version@\"R91-13874.10.0-101\"@@@",
+      "@@@SET_BUILD_PROPERTY@bcs_version@\"R109-15236.0.0-101\"@@@",
       "@@@SET_BUILD_PROPERTY@firmware_version@{\"BUILDER\": \"ldap@machine.example.com\", \"CROS_ECTOOL_VERSION\": \"v0.0.3733-0612ae7\", \"CROS_EC_VERSION32\": \"_v0.0.3733-0612ae7\", \"CROS_STM32MON_VERSION\": \"v0.0.3733-0612ae7\", \"DATE\": \"2021-03-10 20:52:43\", \"VERSION\": \"_v0.0.3733-0612ae7\"}@@@"
     ]
   },
@@ -2862,10 +2862,10 @@
       "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "./build_packages",
+      "build_packages",
       "--board=board1",
-      "--accept_licenses=@CHROMEOS",
-      "--skip_chroot_upgrade",
+      "--accept-licenses=@CHROMEOS",
+      "--skip-chroot-upgrade",
       "--nousepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
@@ -2904,9 +2904,9 @@
     "name": "board1.upload artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1@@@"
     ]
   },
   {
@@ -3168,7 +3168,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"bcs_version_info\": {\n    \"version_string\": \"R91-13874.10.0-101\"\n  },\n  \"objects\": [\n    {\n      \"file_name\": \"board1/firmware_from_source.tar.bz2\",\n      \"tarball_info\": {\n        \"firmware_image_name\": \"board1\",\n        \"firmware_version_info\": {\n          \"version_string\": \"v0.0.3733-0612ae7\"\n        },\n        \"type\": \"EC\"\n      }\n    }\n  ]\n}",
+      "{\n  \"bcs_version_info\": {\n    \"version_string\": \"R109-15236.0.0-101\"\n  },\n  \"objects\": [\n    {\n      \"file_name\": \"board1/firmware_from_source.tar.bz2\",\n      \"tarball_info\": {\n        \"firmware_image_name\": \"board1\",\n        \"firmware_version_info\": {\n          \"version_string\": \"v0.0.3733-0612ae7\"\n        },\n        \"type\": \"EC\"\n      }\n    }\n  ]\n}",
       "[CLEANUP]/artifacts_tmp_1/board1/firmware_metadata.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3198,7 +3198,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"bcs_version_info\": {@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    \"version_string\": \"R91-13874.10.0-101\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    \"version_string\": \"R109-15236.0.0-101\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  },@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"objects\": [@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
@@ -3221,7 +3221,7 @@
     "name": "board1.upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -3238,7 +3238,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3273,7 +3273,7 @@
     "name": "board1.upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board1/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board1/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board1/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board1/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -3281,8 +3281,8 @@
     "name": "board1.upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1@@@"
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1@@@"
     ]
   },
   {
@@ -3296,8 +3296,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board1/firmware_from_source.tar.bz2",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1/"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board1/firmware_from_source.tar.bz2",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3338,8 +3338,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board1/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1/"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board1/firmware_metadata.jsonpb",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3374,7 +3374,7 @@
     "name": "board1.upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"board1/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"board1/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board1\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"board1/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"board1/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board1\"}]}@@@"
     ]
   },
   {
@@ -3387,10 +3387,10 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board1",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board1",
       "--yes",
       "--board=board1",
-      "--version=R91-13874.10.0",
+      "--version=R109-15236.0.0",
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
       "-n",
@@ -3486,10 +3486,10 @@
       "debug",
       "USE=chrome_internal -cros-debug chromeless_tty",
       "--",
-      "./build_packages",
+      "build_packages",
       "--board=board2",
-      "--accept_licenses=@CHROMEOS",
-      "--skip_chroot_upgrade",
+      "--accept-licenses=@CHROMEOS",
+      "--skip-chroot-upgrade",
       "--nousepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
@@ -3528,9 +3528,9 @@
     "name": "board2.upload artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2@@@"
     ]
   },
   {
@@ -3792,7 +3792,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"bcs_version_info\": {\n    \"version_string\": \"R91-13874.10.0-101\"\n  },\n  \"objects\": [\n    {\n      \"file_name\": \"board2/firmware_from_source.tar.bz2\",\n      \"tarball_info\": {\n        \"firmware_image_name\": \"board2\",\n        \"firmware_version_info\": {\n          \"version_string\": \"v0.0.3733-0612ae7\"\n        },\n        \"type\": \"EC\"\n      }\n    }\n  ]\n}",
+      "{\n  \"bcs_version_info\": {\n    \"version_string\": \"R109-15236.0.0-101\"\n  },\n  \"objects\": [\n    {\n      \"file_name\": \"board2/firmware_from_source.tar.bz2\",\n      \"tarball_info\": {\n        \"firmware_image_name\": \"board2\",\n        \"firmware_version_info\": {\n          \"version_string\": \"v0.0.3733-0612ae7\"\n        },\n        \"type\": \"EC\"\n      }\n    }\n  ]\n}",
       "[CLEANUP]/artifacts_tmp_2/board2/firmware_metadata.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3822,7 +3822,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"bcs_version_info\": {@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    \"version_string\": \"R91-13874.10.0-101\"@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    \"version_string\": \"R109-15236.0.0-101\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  },@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"objects\": [@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
@@ -3845,7 +3845,7 @@
     "name": "board2.upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -3862,7 +3862,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_2",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3897,7 +3897,7 @@
     "name": "board2.upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board2/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board2/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board2/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board2/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -3905,8 +3905,8 @@
     "name": "board2.upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2@@@"
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2@@@"
     ]
   },
   {
@@ -3920,8 +3920,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2/"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3962,8 +3962,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2/"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board2/firmware_metadata.jsonpb",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3998,7 +3998,7 @@
     "name": "board2.upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"board2/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"board2/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R91-13874.10.0/board2\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"board2/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"board2/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/board2\"}]}@@@"
     ]
   },
   {
@@ -4011,10 +4011,10 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/board2",
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board2",
       "--yes",
       "--board=board2",
-      "--version=R91-13874.10.0",
+      "--version=R109-15236.0.0",
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
       "-n",
@@ -4191,7 +4191,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -4202,7 +4202,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"board1\": {}, \n        \"board2\": {}\n    }, \n    \"boards\": [\n        \"board1\", \n        \"board2\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R91-13874.10.0\", \n        \"milestone\": 91, \n        \"platform\": \"13874.10.0\", \n        \"with_snapshot\": \"R91-13874.10.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"board1\": {}, \n        \"board2\": {}\n    }, \n    \"boards\": [\n        \"board1\", \n        \"board2\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R109-15236.0.0\", \n        \"milestone\": 109, \n        \"platform\": \"15236.0.0\", \n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -4272,10 +4272,10 @@
       "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"unibuild\": false, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"version\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"full\": \"R91-13874.10.0\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"milestone\": 91, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"platform\": \"13874.10.0\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"with_snapshot\": \"R91-13874.10.0-101\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"full\": \"R109-15236.0.0\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"milestone\": 109, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"platform\": \"15236.0.0\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"with_snapshot\": \"R109-15236.0.0-101\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    }@@@",
       "@@@STEP_LOG_LINE@metadata.json@}@@@",
       "@@@STEP_LOG_END@metadata.json@@@"
@@ -4291,7 +4291,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -4458,7 +4458,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board1/firmware_from_source.tar.bz2\", \"board2/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board1/firmware_metadata.jsonpb\", \"board2/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R91-13874.10.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"board1/firmware_from_source.tar.bz2\", \"board2/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"board1/firmware_metadata.jsonpb\", \"board2/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
