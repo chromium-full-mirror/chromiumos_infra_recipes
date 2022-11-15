@@ -263,7 +263,7 @@ class OrchMenuApi(RecipeApi):
                 gs_location=self._properties.buildspec_gs_path, **kwargs)
             branch = config.orchestrator.gitiles_commit.ref
             if branch.startswith('refs/heads/'):
-              branch = branch[len('refs/heads'):]
+              branch = branch[len('refs/heads/'):]
             if self.m.cros_source.is_tot or branch.startswith('release-'):
               self.m.cros_lkgm.schedule_public_build()
 
