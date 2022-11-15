@@ -840,7 +840,8 @@ def set_output_properties(api, responses):
     marshalled = api.skylab.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
-    # request cannot handle compressed responses, see crbug.com/1086075.
+    # request cannot handle compressed responses, see crbug.com/1086075 or
+    # http://b/187792377.
     if 'default' in marshalled:
       step.properties['response'] = json.dumps(marshalled['default'],
                                                separators=(',', ': '), indent=2,

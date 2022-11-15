@@ -12511,7 +12511,7 @@ Args:
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#913)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#914)(task_results):**
 
 &mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#766)(api, enumerations, responses, error_in_requests):**
 
