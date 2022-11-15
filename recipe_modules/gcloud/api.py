@@ -63,12 +63,14 @@ class GcloudApi(recipe_api.RecipeApi):
         properties.source_cache_action or
         SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE)
     self._specific_image_to_mount = properties.specific_image_to_mount
-    self._not_latest_sync = self.cache_action is not SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE
+
 
   def initialize(self):
     self._infra_host = (
         _DEFAULT_TEST_BOT_ID
         if self._test_data.enabled else self.m.swarming.bot_id)
+    not_latest_sync = self.cache_action is not SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE
+    self._dont_reuse_mounted_cache = not_latest_sync or 'chromeos.gcloud.dont_reuse_cache' in self.m.cros_infra_config.experiments
 
   @property
   def cache_action(self):
@@ -957,8 +959,8 @@ class GcloudApi(recipe_api.RecipeApi):
           snapshot = recovery_snapshot
         self.m.easy.set_properties_step(snapshot_version=snapshot)
         disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
-        if disk_exists and (recipe_mount or self._not_latest_sync):
-          if disk_exists and self._not_latest_sync:
+        if disk_exists and (recipe_mount or self._dont_reuse_mounted_cache):
+          if disk_exists and self._dont_reuse_mounted_cache:
             with self.m.step.nest('discarding mounted cache') as pres:
               pres.text = 'skipping reuse of mounted cache'
           if self.disk_attached(disk_name=self._short_name):
@@ -1092,7 +1094,7 @@ class GcloudApi(recipe_api.RecipeApi):
             '`disallow_previously_mounted` is True and the cache was already mounted'
         )
       # No cache case. In the case of break-glass, we treat it as a no-reuse.
-      if not self._cache_mounted or self._not_latest_sync:
+      if not self._cache_mounted or self._dont_reuse_mounted_cache:
         local_version_path = self.snapshot_version_path.join(self._version_file)
         snapshot = self._create_new_cache_disk(
             cache_name, disk_type, recipe_mount,
@@ -1101,7 +1103,7 @@ class GcloudApi(recipe_api.RecipeApi):
         self.attach_disk(name=self._short_name, instance=self.infra_host,
                          disk=self._disk, zone=self._zone)
 
-      if not self._cache_mounted or self._not_latest_sync or mount_existing:
+      if not self._cache_mounted or self._dont_reuse_mounted_cache or mount_existing:
         self.mount_disk(
             name=self._short_name,
             mount_path=mount_path,
@@ -1114,7 +1116,7 @@ class GcloudApi(recipe_api.RecipeApi):
         if not recipe_mount:
           self._setup_new_cache_mount_outside_path(recipe_mount_path)
 
-      if not self._cache_mounted or self._not_latest_sync:
+      if not self._cache_mounted or self._dont_reuse_mounted_cache:
         if disk_size:
           self.resize_disk(disk=self._disk, zone=self._zone, size=disk_size)
         if snapshot:

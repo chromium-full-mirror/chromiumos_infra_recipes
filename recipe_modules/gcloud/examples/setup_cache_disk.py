@@ -109,6 +109,20 @@ def GenTests(api):
   )
 
   yield api.test(
+      'dont-reuse-experiment',
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.gcloud.is_mount(True),
+      api.buildbucket.ci_build(builder='atlas-cq',
+                               experiments=['chromeos.gcloud.dont_reuse_cache'
+                                           ]),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.MustRun,
+          'source cache.setup source cache disk.create disk from snapshot image.discarding mounted cache'
+      ),
+  )
+
+  yield api.test(
       'is-mount',
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.gcloud.is_mount(True),
