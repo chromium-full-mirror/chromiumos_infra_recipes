@@ -27,6 +27,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = UprevBorealisDepsProperties
 GERRIT_CL_TOPIC = 'borealis-deps'
+GERRIT_CL_REVIEWERS = ['davidriley@google.com', 'pobega@google.com']
 
 _BOREALIS_REPO_PATH = 'src/platform/borealis/'
 
@@ -100,7 +101,8 @@ def _CreateCL(api, project, presentation):
   if not api.build_menu.is_staging:
     with api.step.nest('upload CL to gerrit') as nested_presentation:
       change = api.gerrit.create_change(project=project.name,
-                                        topic=GERRIT_CL_TOPIC)
+                                        topic=GERRIT_CL_TOPIC,
+                                        reviewers=GERRIT_CL_REVIEWERS)
       labels = {
           api.gerrit.Label.BOT_COMMIT: 1,
           api.gerrit.Label.COMMIT_QUEUE: 2,
