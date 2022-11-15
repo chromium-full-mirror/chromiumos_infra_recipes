@@ -1946,7 +1946,10 @@
   },
   {
     "cmd": [],
-    "name": "Arch mirror uprev"
+    "name": "Arch mirror uprev",
+    "~followup_annotations": [
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+    ]
   },
   {
     "cmd": [
@@ -2040,8 +2043,7 @@
     "cmd": [],
     "name": "Arch mirror uprev.create Arch mirror CL",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2152,7 +2154,8 @@
     "cmd": [],
     "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
     ]
   },
   {
@@ -2355,7 +2358,10 @@
   },
   {
     "cmd": [],
-    "name": "PKGBUILDs uprev"
+    "name": "PKGBUILDs uprev",
+    "~followup_annotations": [
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+    ]
   },
   {
     "cmd": [
@@ -2450,8 +2456,7 @@
     "cmd": [],
     "name": "PKGBUILDs uprev.create PKGBUILDs CL",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2562,7 +2567,8 @@
     "cmd": [],
     "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
     ]
   },
   {
