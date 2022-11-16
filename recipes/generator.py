@@ -15,7 +15,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 import json
 import re
 from collections import defaultdict
-from collections import namedtuple
+from typing import DefaultDict, List, NamedTuple, Optional
 
 import six
 from six.moves.urllib import parse as urlparse
@@ -23,6 +23,7 @@ from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromite.api.packages import UprevVersionedPackageResponse
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -50,7 +51,12 @@ from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
 from PB.recipes.chromeos.generator import SendToCqPolicy
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+from RECIPE_MODULES.chromeos.git.api import Reference
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -88,7 +94,23 @@ PROPERTIES = GeneratorProperties
 UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
 
 
-def serializeVersions(versions):
+class Ebuild(NamedTuple):
+  path: str
+  version: str
+  commit_info: str
+
+
+class PolicyInfo(NamedTuple):
+  policy: BranchPolicy
+  branch: str = ''
+  reference: Optional[Reference] = None
+
+
+EbuildsByPinfo = DefaultDict[ProjectInfo, List[Ebuild]]
+
+
+def serializeVersions(versions: List[UprevVersionedPackageRequest.GitRef]
+                     ) -> str:
   """ Serialize versions information.
 
   Args:
@@ -107,7 +129,7 @@ def serializeVersions(versions):
   return json.dumps(o)
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: GeneratorProperties):
   api.cros_source.configure_builder(api.src_state.gitiles_commit,
                                     api.src_state.gerrit_changes)
   workspace_path = api.cros_source.workspace_path
@@ -214,6 +236,7 @@ def RunSteps(api, properties):
         return
 
       if policy_info.branch:
+        assert policy_info.reference is not None
         pres.step_text = 'using {} {}'.format(policy_info.branch,
                                               policy_info.reference.hash)
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
@@ -254,8 +277,6 @@ def RunSteps(api, properties):
       with api.context(cwd=workspace_path):
         api.cros_sdk.create_chroot(use_image=False)
 
-    Ebuilds = namedtuple('Ebuilds', 'path version commit_info')
-
     topic = policy.topic or base_topic_name
     no_existing_cls_policy = policy.no_existing_cls_policy
     outdated_cls_policy = policy.outdated_cls_policy
@@ -273,7 +294,6 @@ def RunSteps(api, properties):
       ]
       ebuilds_by_pinfo = _do_uprev(
           api, properties, workspace_path, versions, packages, cpv, topic,
-          Ebuilds,
           additional_commit_message=properties.additional_commit_message,
           allow_partial_uprev=properties.allow_partial_uprev)
       if ebuilds_by_pinfo is None:
@@ -281,6 +301,7 @@ def RunSteps(api, properties):
 
     pinfos_by_remote = defaultdict(list)
     if not retry_only_run:
+      assert ebuilds_by_pinfo is not None
       for info in sorted(ebuilds_by_pinfo.keys()):
         pinfos_by_remote[info.remote].append(info)
     else:
@@ -295,7 +316,7 @@ def RunSteps(api, properties):
       ]
 
     with api.step.nest('find open uprev CLs'):
-      open_changes = []
+      open_changes: List[GerritChange] = []
       for host, remote in (('chromium', 'cros'), ('chrome-internal',
                                                   'cros-internal')):
         with api.step.nest('find CLs from {} host'.format(host)):
@@ -342,7 +363,8 @@ def RunSteps(api, properties):
               presentation.step_text = 'no merged CLs found'
               presentation.status = api.step.WARNING
 
-    outdated_cls, abandoned_cls = [], []
+    outdated_cls: List[PatchSet] = []
+    abandoned_cls: List[PatchSet] = []
     if mrm:
       open_ci = api.gerrit.fetch_patch_sets(open_changes)
       with api.step.nest('outdated CLs') as presentation:
@@ -358,7 +380,7 @@ def RunSteps(api, properties):
         _abandon_cls(api, outdated_cls, mrm, outdated_cls_policy, \
             retry_only_run, abandoned_cls)
 
-    existing_cls = open_changes and len(abandoned_cls) < len(open_changes)
+    existing_cls = bool(open_changes and len(abandoned_cls) < len(open_changes))
 
     if retry_cl_policy != NO_RETRY:
       with api.step.nest('apply retry policy {}'.format(
@@ -401,11 +423,13 @@ def RunSteps(api, properties):
                     _abandon_cls(api, cls_to_abandon, retry_ci, \
                         outdated_cls_policy, retry_only_run)
     if not retry_only_run:
+      assert ebuilds_by_pinfo is not None
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
                         existing_cls)
 
 
-def _get_policy(api, policies, tag):
+def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
+                tag: str) -> PolicyInfo:
   """Find the applicable policy for the trigger.
 
   The policy used is the first policy where policy.pattern matches the tag, and
@@ -419,20 +443,19 @@ def _get_policy(api, policies, tag):
       (e.g. 123.456.789.0)
 
   Returns:
-    (PolicyInfo) namedtuple with:
-    - policy (BranchPolicy): The selected policy
-    - branch (str): the branch to checkout.  Empty if there is no branch to
+    PolicyInfo namedtuple with:
+    - policy: The selected policy
+    - branch: the branch to checkout.  Empty if there is no branch to
       checkout.
-    - reference (git.Reference): the reference that matched, or None.
+    - reference: the reference that matched, or None.
   """
-  PolicyInfo = namedtuple('PolicyInfo', ['policy', 'branch', 'reference'])
   manifest = api.src_state.internal_manifest
   with api.context(cwd=manifest.path):
     for policy in policies:
       if re.match(policy.pattern, six.ensure_str(tag)):
         query = re.sub(policy.pattern, policy.repl, six.ensure_str(tag))
         if not query:
-          return PolicyInfo(policy, '', None)
+          return PolicyInfo(policy)
         refs = api.git.ls_remote([query])
         if len(refs) == 1:
           ref = refs[0]
@@ -447,8 +470,9 @@ def _get_policy(api, policies, tag):
 
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
 # to work correctly with api.git.diff_check.
-def response_has_changes(api, response):
-  """Returns whether the given `UprevPackagesResponse` contains changes."""
+def response_has_changes(api: RecipeApi,
+                         response: UprevVersionedPackageResponse) -> bool:
+  """Returns whether the given `UprevVersionedPackageResponse` contains changes."""
   for ebuild in response.modified_ebuilds:
     path = ebuild.path
     with api.context(cwd=api.path.abs_to_path(api.path.dirname(path))):
@@ -457,8 +481,10 @@ def response_has_changes(api, response):
   return False
 
 
-def _abandon_cls(api, outdated_cls, most_recent_merged_uprev,
-                 outdated_cls_policy, retry_only_run, abandoned_cls=None):
+def _abandon_cls(api: RecipeApi, outdated_cls: List[PatchSet],
+                 most_recent_merged_uprev: PatchSet,
+                 outdated_cls_policy: OutdatedClsPolicy, retry_only_run: bool,
+                 abandoned_cls: Optional[List[PatchSet]] = None):
   """Abandon uprev CLs according to the outdated_cls_policy.
 
   Args:
@@ -491,27 +517,30 @@ def _abandon_cls(api, outdated_cls, most_recent_merged_uprev,
         abandoned_cls.append(outdated_cl)
 
 
-def _do_uprev(api, properties, workspace_path, versions, packages, cpvs, topic,
-              Ebuilds, additional_commit_message='', allow_partial_uprev=False):
+def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
+              workspace_path: str,
+              versions: List[UprevVersionedPackageRequest.GitRef],
+              packages: List[PackageInfo], cpvs: List[str], topic: str,
+              additional_commit_message: str = '',
+              allow_partial_uprev: bool = False) -> Optional[EbuildsByPinfo]:
   """Try the uprev for the given package. If successful, commit the uprev.
 
   Args:
     properties (GeneratorProperties): Current properties for the recipe run.
     workspace_path (string): Workspace checkout path where the build is
       processed.
-    versions (List[UpdateVersionedPackageRequest.GitRef]): The versions to consider for an update.
+    versions (List[UprevVersionedPackageRequest.GitRef]): The versions to consider for an update.
     triggers (scheduler.Trigger): Triggers which invoked the recipe.
     packages (List[chromiumos.PackageInfo]): Information describing the package.
     cpv (List[string]): Package title. Must be in a matching order to packages.
     topic (string): Topic describing package. Defaults to package title.
       can be same as cpv.
-    Ebuilds (namedtuple): Contains path and version.
     additional_commit_message: Additional message to add to the commit description.
     allow_partial_uprev: Whether to continue operation when either of the packages
       has no modified files.
 
   Returns:
-    (dict): ebuilds_by_pinfo. If None, pupr should return immediately.
+    (dict): ebuilds_by_pinfo, or None. If None, pupr should return immediately.
   """
   assert len(packages) == len(cpvs)
   modified_package_names = []
@@ -561,14 +590,14 @@ def _do_uprev(api, properties, workspace_path, versions, packages, cpvs, topic,
 
   with api.step.nest('commit uprev'):
     # Flatten the list of modified files, and get the project info for them.
-    modified_ebuilds = []
+    modified_ebuilds: List[Ebuild] = []
     for uprev_resp in all_valid_responses:
       modified_ebuilds.extend(
-          Ebuilds(path=ebuild.path, version=uprev_resp.version,
-                  commit_info=uprev_resp.additional_commit_info)
+          Ebuild(path=ebuild.path, version=uprev_resp.version,
+                 commit_info=uprev_resp.additional_commit_info)
           for ebuild in uprev_resp.modified_ebuilds)
     with api.context(cwd=workspace_path):
-      ebuilds_by_pinfo = defaultdict(list)
+      ebuilds_by_pinfo = EbuildsByPinfo(list)
       for ebuild in modified_ebuilds:
         dirname = api.path.dirname(ebuild.path)
         info = api.repo.project_infos(projects=[dirname])[0]
@@ -624,10 +653,10 @@ def _do_uprev(api, properties, workspace_path, versions, packages, cpvs, topic,
   return ebuilds_by_pinfo
 
 
-def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
-                      existing_cls):
-  """Create appropriate CLs for the uprevs.
-  """
+def _create_uprev_cls(api: RecipeApi, policy: BranchPolicy,
+                      ebuilds_by_pinfo: EbuildsByPinfo, topic: str,
+                      open_changes: List[GerritChange], existing_cls: bool):
+  """Create appropriate CLs for the uprevs."""
   send_to_cq_policy = (
       policy.existing_cls_policy
       if existing_cls else policy.no_existing_cls_policy)
@@ -710,7 +739,7 @@ def _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
         api.gerrit.submit_change(change)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   def _policy(**kwargs):
     """Create a BranchPolicy, with defaults."""
@@ -746,7 +775,7 @@ def GenTests(api):
       ),
   )
 
-  def _with_infos(name, *args, **kwargs):
+  def _with_infos(name: str, *args, **kwargs):
     return api.test(
         name,
         api.repo.project_infos_step_data('commit uprev', data=[
