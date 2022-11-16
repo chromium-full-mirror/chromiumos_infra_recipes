@@ -134,32 +134,7 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
                                     api.src_state.gerrit_changes)
   workspace_path = api.cros_source.workspace_path
 
-  policies = list(properties.branch_policies)
-
-  with api.step.nest('validate properties') as presentation:
-    if ((not properties.HasField('package_info') and not properties.packages) or
-        (properties.HasField('package_info') and properties.packages)):
-      raise StepFailure(
-          'must set exactly one of {package_info, non-empty packages}')
-
-    # Retrieve version information from Gitiles API.
-    if properties.HasField('gitiles_info'):
-      if not (properties.gitiles_info.host and
-              properties.gitiles_info.project and properties.gitiles_info.path):
-        raise StepFailure('gitiles fetch requested with no fetch '
-                          'infomation supplied')
-
-    for policy in policies:
-      if not policy.pattern:
-        raise StepFailure('must specify pattern')
-      if not policy.reviewers:
-        raise StepFailure('need at least one reviewer')
-
-      for reviewer in policy.reviewers:
-        if not reviewer.email:
-          raise StepFailure('must set reviewer email')
-
-    presentation.step_text = 'all properties good'
+  _validate_properties(api, properties)
 
   retry_only_run = False
   triggers = properties.triggers or api.scheduler.triggers
@@ -220,7 +195,7 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
         # If we we recieved a target version from Gitiles, override the tag
         # argument.
         tag = gitiles_response or trigger.gitiles.ref
-        policy_info = _get_policy(api, policies, tag)
+        policy_info = _get_policy(api, properties.branch_policies, tag)
         if policy_info not in trigger_policies:
           trigger_policies.append(policy_info)
       # If we match more than one policy with the triggers, that is an error.
@@ -426,6 +401,38 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
       assert ebuilds_by_pinfo is not None
       _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
                         existing_cls)
+
+
+def _validate_properties(api: RecipeApi, properties: GeneratorProperties):
+  """Ensure the input properties look OK.
+
+  Raises:
+    StepFailure: if there are any issues with the input properties.
+  """
+  with api.step.nest('validate properties') as presentation:
+    if ((not properties.HasField('package_info') and not properties.packages) or
+        (properties.HasField('package_info') and properties.packages)):
+      raise StepFailure(
+          'must set exactly one of {package_info, non-empty packages}')
+
+    # Retrieve version information from Gitiles API.
+    if properties.HasField('gitiles_info'):
+      if not (properties.gitiles_info.host and
+              properties.gitiles_info.project and properties.gitiles_info.path):
+        raise StepFailure('gitiles fetch requested with no fetch '
+                          'infomation supplied')
+
+    for policy in properties.branch_policies:
+      if not policy.pattern:
+        raise StepFailure('must specify pattern')
+      if not policy.reviewers:
+        raise StepFailure('need at least one reviewer')
+
+      for reviewer in policy.reviewers:
+        if not reviewer.email:
+          raise StepFailure('must set reviewer email')
+
+    presentation.step_text = 'all properties good'
 
 
 def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
