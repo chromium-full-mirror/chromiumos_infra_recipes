@@ -22,7 +22,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = {
     'passed_tests': Property(default=[]),
     'is_retry': Property(default=False),
-    'expected_tests_run_count': Property(default=6),
+    'expected_tests_run_count': Property(default=7),
 }
 
 
@@ -48,7 +48,9 @@ def GenTests(api):
   passed_tests = [
       'htarget.hw.bvt-cq',
       'htarget.hw.some-suite',
-      'ttarget.tast.sweet',
+      'ttarget.tast_gce.sweet',
+      'ttarget.tast.sweet_shard_1_of_2',
+      'ttarget.tast.sweet_shard_2_of_2',
       'vtarget.vm.auto',
       'vtarget.vm.another-auto',
   ]

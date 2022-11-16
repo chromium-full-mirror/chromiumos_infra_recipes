@@ -9,6 +9,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TastGceTestCfg
+from PB.testplans.target_test_requirements_config import TastTestShard
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import BuildPayload
@@ -120,13 +121,21 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         tast_vm_test_cfg=TastVmTestCfg(
             tast_vm_test=[
                 TastVmTestCfg.TastVmTest(
-                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
-                                           critical={'value': True}),
-                    suite_name='tast-suite',
+                    common=TestSuiteCommon(
+                        display_name='ttarget.tast.sweet_shard_1_of_2',
+                        critical={'value': True}), suite_name='tast-suite',
                     tast_test_expr=[
                         TastVmTestCfg.TastTestExpr(test_expr='!informational'),
-                    ],
-                ),
+                    ], tast_test_shard=TastTestShard(total_shards=2,
+                                                     shard_index=0)),
+                TastVmTestCfg.TastVmTest(
+                    common=TestSuiteCommon(
+                        display_name='ttarget.tast.sweet_shard_2_of_2',
+                        critical={'value': True}), suite_name='tast-suite',
+                    tast_test_expr=[
+                        TastVmTestCfg.TastTestExpr(test_expr='!informational'),
+                    ], tast_test_shard=TastTestShard(total_shards=2,
+                                                     shard_index=1)),
             ],
         ),
     )
@@ -156,8 +165,9 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         tast_gce_test_cfg=TastGceTestCfg(
             tast_gce_test=[
                 TastGceTestCfg.TastGceTest(
-                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
-                                           critical={'value': True}),
+                    common=TestSuiteCommon(
+                        display_name='ttarget.tast_gce.sweet',
+                        critical={'value': True}),
                     suite_name='tast-suite',
                     tast_test_expr=[
                         TastGceTestCfg.TastTestExpr(test_expr='!informational'),
@@ -181,8 +191,9 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
         tast_gce_test_cfg=TastGceTestCfg(
             tast_gce_test=[
                 TastGceTestCfg.TastGceTest(
-                    common=TestSuiteCommon(display_name='ttarget.tast.sweet',
-                                           critical={'value': False}),
+                    common=TestSuiteCommon(
+                        display_name='ttarget.tast_gce.sweet',
+                        critical={'value': False}),
                     suite_name='tast-suite-informational',
                     tast_test_expr=[
                         TastGceTestCfg.TastTestExpr(test_expr='informational'),

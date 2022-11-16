@@ -555,6 +555,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           test_name = test.common.display_name
           build_target = unit.common.build_target
           expressions = [t.test_expr for t in test.tast_test_expr]
+          total_shards = test.tast_test_shard.total_shards
+          shard_index = test.tast_test_shard.shard_index
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
@@ -565,7 +567,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                           TastVmProperties(
                               name=test_name, build_target=build_target,
                               build_payload=unit.common.build_payload,
-                              expressions=expressions))),
+                              expressions=expressions,
+                              total_shards=total_shards,
+                              shard_index=shard_index))),
                   tags=self.m.cros_tags.make_schedule_tags(snapshot),
                   swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
@@ -602,6 +606,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           test_name = test.common.display_name
           build_target = unit.common.build_target
           expressions = [t.test_expr for t in test.tast_test_expr]
+          total_shards = test.tast_test_shard.total_shards
+          shard_index = test.tast_test_shard.shard_index
           gce_metadata = test.gce_metadata
           properties_gce_metadata = GceTestProperties.GceMetadata(
               project=gce_metadata.project,
@@ -621,6 +627,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               name=test_name, build_target=build_target,
                               build_payload=unit.common.build_payload,
                               expressions=expressions,
+                              total_shards=total_shards,
+                              shard_index=shard_index,
                               gce_metadata=properties_gce_metadata))),
                   tags=self.m.cros_tags.make_schedule_tags(snapshot),
                   swarming_parent_run_id=None if run_async else
