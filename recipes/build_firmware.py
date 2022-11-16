@@ -29,6 +29,7 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'easy',
@@ -61,6 +62,28 @@ def UploadTestResults(api, location, builder_name):
       except StepFailure:
         pres.status = api.step.FAILURE
         pres.step_text = 'Failed to upload test results'
+
+
+def CreateContainers(api, config):
+  with api.step.nest('Create test containers') as pres:
+    try:
+      if not (api.cros_infra_config.should_run(
+          config.build.install_packages.run_spec) and
+              api.build_menu.container_version):
+        pres.step_text = 'Skipping due to missing builder configs.'
+        return
+
+      env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+
+      packages = env_info.packages
+
+      api.build_menu.bootstrap_sysroot(config)
+      if api.build_menu.install_packages(config=config, packages=packages):
+        api.build_menu.create_containers(config)
+
+    except StepFailure as e:
+      pres.status = api.step.WARNING
+      pres.step_text = 'Failed to create containers: ' + str(e)
 
 
 def RunSteps(api, properties):
@@ -145,6 +168,8 @@ def RunSteps(api, properties):
         api.buildbucket.schedule(requests)
 
     UploadTestResults(api, location, build.builder.builder)
+
+    CreateContainers(api, config)
 
 
 def _read_chromiumos_sdk_pin(api, properties):
@@ -297,3 +322,46 @@ def GenTests(api):
       input_properties=dict(firmware_location=3,
                             chromiumos_sdk_pin_file=sdk_pin_path,
                             manifest_branch="factory-firmware-ti50-B"))
+
+  yield test(
+      'create test containers', api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.MustRun,
+          'Create test containers.create test service containers.upload container metadata.gsutil upload'
+      ), builder='amd64-generic-postsubmit', input_properties=dict(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'amd64-generic-postsubmit',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+              },
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              }
+          }))
+
+  yield test(
+      'create test containers exception',
+      api.post_check(post_process.StatusSuccess),
+      api.step_data('Create test containers.set target_versions', retcode=1),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Create test containers.create test service containers.upload container metadata.gsutil upload'
+      ),
+      api.post_check(post_process.StepTextContains, 'Create test containers',
+                     ['Failed to create containers']),
+      builder='amd64-generic-postsubmit', input_properties=dict(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'amd64-generic-postsubmit',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+              },
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              }
+          }))

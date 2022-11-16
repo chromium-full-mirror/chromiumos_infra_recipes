@@ -4474,6 +4474,13 @@
   },
   {
     "cmd": [],
+    "name": "Create test containers",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Skipping due to missing builder configs.@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {
