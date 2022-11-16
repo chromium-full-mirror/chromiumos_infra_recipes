@@ -92,7 +92,7 @@ def GenTests(api):
                      'upload artifacts.publish artifacts'))
 
   yield api.test(
-      'dry-run', api.cq(run_mode=api.cq.DRY_RUN),
+      'dry-run', api.cq(run_mode=api.cq.DRY_RUN), api.buildbucket.try_build(),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'))
 

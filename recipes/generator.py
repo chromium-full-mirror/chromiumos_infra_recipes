@@ -941,9 +941,8 @@ def GenTests(api):
       api.git.diff_check(True), api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
-      api.test_util.test_build(
-          revision=None, extra_changes=[],
-          created_by='user:lamontjones@chromium.org').build)
+      api.test_util.test_build(revision=None, extra_changes=[],
+                               created_by='project:chromiumos').build)
 
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
   package_chrome = PackageInfo(category='chromeos-base',

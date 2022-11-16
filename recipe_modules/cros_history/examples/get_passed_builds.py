@@ -57,7 +57,7 @@ def GenTests(api):
           _build_with_changes(
               build_pb2.Build(
                   builder=builder_common_pb2.BuilderID(builder='cq-orch'),
-                  tags=[{
+                  created_by='project:chromeos', tags=[{
                       'key': 'cq_equivalent_cl_group_key',
                       'value': 'GROUP_KEY'
                   }]))),

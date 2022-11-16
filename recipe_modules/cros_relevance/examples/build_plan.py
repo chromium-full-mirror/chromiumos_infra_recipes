@@ -123,7 +123,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'cq', api.cq(run_mode=api.cq.FULL_RUN),
+      'cq', api.cq(run_mode=api.cq.FULL_RUN), api.buildbucket.try_build(),
       api.properties(
           BuildPlanTest(
               test_builder_ids=[BuilderConfig.Id(name='amd64-generic-slim-cq')],

@@ -1712,7 +1712,7 @@
     "name": "apply gerrit changes.update policy.set policy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"ABANDON\", \"noExistingClsPolicy\": \"ABANDON\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"lamontjones@chromium.org\"}], \"topic\": \"testing-chromeos-base/chromite\"}@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"ABANDON\", \"noExistingClsPolicy\": \"ABANDON\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"project:chromiumos\"}], \"topic\": \"testing-chromeos-base/chromite\"}@@@"
     ]
   },
   {
@@ -2887,7 +2887,7 @@
       "--topic",
       "testing-chromeos-base/chromite",
       "--reviewers",
-      "lamontjones@chromium.org",
+      "project:chromiumos",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/src/overlay",
@@ -3047,7 +3047,7 @@
       "--topic",
       "testing-chromeos-base/chromite",
       "--reviewers",
-      "lamontjones@chromium.org",
+      "project:chromiumos",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/src/private-overlay",

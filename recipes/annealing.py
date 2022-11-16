@@ -834,9 +834,9 @@ def GenTests(api):
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build',
-      api.buildbucket.ci_build(project='chromeos',
-                               git_repo=api.src_state.internal_manifest.url,
-                               git_ref='refs/heads/snapshot'),
+      api.buildbucket.try_build(project='chromeos',
+                                git_repo=api.src_state.internal_manifest.url,
+                                git_ref='refs/heads/snapshot'),
       api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
@@ -862,9 +862,9 @@ def GenTests(api):
 
   yield api.test(
       'cq-build-no-footer',
-      api.buildbucket.ci_build(project='chromeos',
-                               git_repo=api.src_state.internal_manifest.url,
-                               git_ref='refs/heads/snapshot'),
+      api.buildbucket.try_build(project='chromeos',
+                                git_repo=api.src_state.internal_manifest.url,
+                                git_ref='refs/heads/snapshot'),
       api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data('recreating older run.read git footers',

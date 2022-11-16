@@ -86,20 +86,18 @@ def GenTests(api):
       api.properties(
           TestInputProperties(cq_cl_group_key=group,
                               cq_equivalent_cl_group_key=equiv)),
-      api.buildbucket.ci_build(
-          project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator',
+      api.buildbucket.try_build(
+          project='chromeos', bucket='cq', builder='cq-orchestrator',
           tags=api.cros_tags.tags(cq_cl_group_key=group,
                                   cq_equivalent_cl_group_key=equiv)))
 
   yield api.test(
       'no-group-key-tags', api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'))
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='cq-orchestrator'))
 
   yield api.test(
       'cq-inactive',
-      api.buildbucket.ci_build(
-          project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator',
+      api.buildbucket.try_build(
+          project='chromeos', bucket='cq', builder='cq-orchestrator',
           tags=api.cros_tags.tags(cq_equivalent_cl_group_key=equiv)))

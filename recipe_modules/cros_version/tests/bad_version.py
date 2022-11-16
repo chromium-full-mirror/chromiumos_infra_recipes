@@ -7,6 +7,7 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/file',
     'cros_version',
@@ -26,6 +27,6 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'empty-file',
+      'empty-file', api.buildbucket.try_build(),
       api.step_data('read chromeos version.read chromeos_version.sh',
                     api.file.read_text('')), api.cq(run_mode=api.cq.DRY_RUN))
