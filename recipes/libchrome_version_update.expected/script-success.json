@@ -1601,7 +1601,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/main%r=fqj@google.com,r=hscham@chromium.org,l=Commit-Queue+2,l=Bot-Commit+1"
+      "HEAD:refs/for/main%cc=chromeos-libchrome@google.com,submit"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
