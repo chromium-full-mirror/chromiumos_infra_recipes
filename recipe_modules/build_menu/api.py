@@ -221,7 +221,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       return []
 
     packages = packages or self.config_or_default.build.install_packages.packages
-    if self._cl_affected_sysroot_packages:
+    if self._cl_affected_sysroot_packages is not None:
       return list(self._cl_affected_sysroot_packages)
     self._cl_affected_sysroot_packages = self.m.cros_relevance.get_package_dependencies(
         sysroot=self.sysroot, chroot=self.chroot,
@@ -639,6 +639,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 if PackageInfo(category=x.category, package_name=x.package_name)
                 in list(unit_tests.packages)
             ]
+
+          # Exit early if there are no relevant packages.
+          if not relevant_testable_packages:
+            presentation.step_text = 'no relevant packages to test'
+            return
+
         request = BuildTargetUnitTestRequest(
             build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
             package_blocklist=unit_tests.package_blocklist,

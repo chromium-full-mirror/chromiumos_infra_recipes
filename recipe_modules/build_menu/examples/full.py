@@ -59,7 +59,7 @@ def DoRunSteps(api, config, properties):
       api.build_menu.bootstrap_sysroot()
       api.build_menu.install_packages()
       api.build_menu.run_unittests_cl_affected_deps(config)
-      api.build_menu.build_and_test_images()
+      api.build_menu.build_and_test_images(config)
       api.build_menu.build_and_test_images(include_version=True)
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
@@ -420,6 +420,25 @@ def GenTests(api):
       data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
     ),
     cq=True,
+  )
+
+  yield api.test(
+      'ebuild-tests-no-relevant-packages',
+      api.buildbucket.try_build(
+          builder='atlas-slim-cq', gerrit_changes=[
+              GerritChange(host='chrome-internal-review.googlesource.com',
+                           project='project-a', change=1235)
+          ]),
+      api.properties(**{'$recipe_engine/cq': {
+          'active': True
+      }}),
+      api.cros_build_api.set_api_return('get package dependencies',
+                                        endpoint='DependencyService/List',
+                                        data='{}'),
+      api.post_check(post_process.MustRun, 'get package dependencies'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest'),
   )
 
   yield api.build_menu.test(
