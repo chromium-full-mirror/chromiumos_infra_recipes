@@ -15,7 +15,7 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 import json
 import re
 from collections import defaultdict
-from typing import DefaultDict, List, NamedTuple, Optional
+from typing import DefaultDict, List, NamedTuple, Optional, Tuple
 
 import six
 from six.moves.urllib import parse as urlparse
@@ -135,29 +135,7 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
   workspace_path = api.cros_source.workspace_path
 
   _validate_properties(api, properties)
-
-  retry_only_run = False
-  triggers = properties.triggers or api.scheduler.triggers
-  with api.step.nest('validate triggers') as presentation:
-    if not triggers:
-      raise StepFailure('found no scheduler triggers')
-
-    has_cron_trigger = False
-    for trigger in triggers:
-      if trigger.HasField('cron'):
-        has_cron_trigger = True
-        break
-    if has_cron_trigger:
-      retry_only_run = True
-      triggers = [Trigger(gitiles=GitilesTrigger(ref=properties.retry_ref.ref))]
-      presentation.step_text = 'has cron trigger, runnning in retry-only mode'
-    else:
-      for trigger in triggers:
-        if not trigger.HasField('gitiles'):
-          raise StepFailure('found non-gitiles trigger: %r' % trigger)
-
-      presentation.step_text = 'found {} good triggers'.format(len(triggers))
-      presentation.logs['list of triggers'] = map(MessageToJson, triggers)
+  triggers, retry_only_run = _validate_triggers(api, properties)
 
   if properties.HasField('package_info'):
     packages = [properties.package_info]
@@ -433,6 +411,40 @@ def _validate_properties(api: RecipeApi, properties: GeneratorProperties):
           raise StepFailure('must set reviewer email')
 
     presentation.step_text = 'all properties good'
+
+
+def _validate_triggers(api: RecipeApi, properties: GeneratorProperties
+                      ) -> Tuple[List[Trigger], bool]:
+  """Check whether the build's triggers are OK.
+
+  Returns:
+    A tuple (triggers, retry_only_run), where triggers is a List[Trigger]
+    which all have the gitiles field set, and retry_only_run is a bool declaring
+    whether this build is for retries only.
+
+  Raises:
+    StepFailure: If no triggers are found, or if any non-cron, non-gitiles
+    triggers are found.
+  """
+  retry_only_run = False
+  triggers = properties.triggers or api.scheduler.triggers
+  with api.step.nest('validate triggers') as presentation:
+    if not triggers:
+      raise StepFailure('found no scheduler triggers')
+
+    has_cron_trigger = any(trigger.HasField('cron') for trigger in triggers)
+    if has_cron_trigger:
+      retry_only_run = True
+      triggers = [Trigger(gitiles=GitilesTrigger(ref=properties.retry_ref.ref))]
+      presentation.step_text = 'has cron trigger, runnning in retry-only mode'
+    else:
+      for trigger in triggers:
+        if not trigger.HasField('gitiles'):
+          raise StepFailure('found non-gitiles trigger: %r' % trigger)
+
+      presentation.step_text = 'found {} good triggers'.format(len(triggers))
+      presentation.logs['list of triggers'] = map(MessageToJson, triggers)
+    return triggers, retry_only_run
 
 
 def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
