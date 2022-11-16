@@ -12,6 +12,7 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'build_menu',
+    'cros_sdk',
     'cros_source',
     'src_state',
     'git',
@@ -40,9 +41,9 @@ def RunSteps(api):
           'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
-        step_data = api.step('generate uprev commit', [
+        step_data = api.cros_sdk.run('generate uprev commit', [
             'vpython3',
-            'libchrome_tools/developer-tools/uprev/automated_uprev.py',
+            '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
             '--head',
             '--recipe',
         ], stdout=api.raw_io.output_text())
