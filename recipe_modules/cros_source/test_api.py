@@ -12,6 +12,19 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
   # Number of seconds to wait on gitiles file download.
   gitiles_timeout_seconds = 3 * 60
 
+  def __init__(self, *args, **kwargs):
+    super(CrosSourceTestApi, self).__init__(*args, **kwargs)
+    self._manifest_branch = None
+
+  @property
+  def manifest_branch(self):
+    """Returns any non-default manifest branch that is checked out."""
+    return self._manifest_branch
+
+  @manifest_branch.setter
+  def manifest_branch(self, val):
+    self._manifest_branch = val
+
   def test(self, name, manifest_branch, *args, **kwargs):  # pylint: disable=arguments-differ
     """Create a test with properties.
 

@@ -51,6 +51,9 @@ def RunSteps(api, properties):
   else:
     api.assertions.assertNotEqual(snapshot_xml,
                                   api.cros_source.branch_manifest_file)
+  api.cros_source.test_api.manifest_branch = 'some-other-branch'
+  api.assertions.assertEqual('some-other-branch',
+                             api.cros_source.manifest_branch)
 
 
 def GenTests(api):

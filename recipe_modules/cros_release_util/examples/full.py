@@ -15,16 +15,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   api.assertions.assertEqual(
-      api.cros_release_util.release_builder_name('zork'), 'zork-release-main')
-  api.assertions.assertEqual(
-      api.cros_release_util.release_builder_name('zork', staging=True),
-      'staging-zork-release-main')
-  api.assertions.assertEqual(
-      api.cros_release_util.release_builder_name('zork',
-                                                 branch='release-R98-14388.B'),
-      'zork-release-R98-14388.B')
-
-  api.assertions.assertEqual(
       api.cros_release_util.channel_strip_prefix(
           common_pb2.Channel.CHANNEL_BETA), 'beta')
   api.assertions.assertEqual(

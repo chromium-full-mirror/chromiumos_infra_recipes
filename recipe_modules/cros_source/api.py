@@ -135,6 +135,8 @@ class CrosSourceApi(RecipeApi):
   @property
   def manifest_branch(self):
     """Returns any non-default manifest branch that is checked out."""
+    if self._test_data.enabled and self.test_api.manifest_branch:
+      return self.test_api.manifest_branch
     return self._manifest_branch
 
   @property
