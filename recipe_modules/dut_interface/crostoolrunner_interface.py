@@ -468,12 +468,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.bot.autotest_dir = self.AUTOTEST_PACKAGE_PATH
     return tko_metadata
 
-  def upload_to_rdb(self, metadata, run_test_response):
+  def upload_to_rdb(self, metadata, run_test_response,
+                    force_current_realm=False):
     """Uploads test results to resultDB.
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test job.
     * run_test_response (DUTTestResponse): The response to the test run.
+    * force_current_realm (Boolean): Whether to force publishing to rdb in the current realm
     """
     tast_results_dirs = []
     skylab_test_results = []
@@ -529,13 +531,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         autotest_rdb_config = self._autotest_results_rdb_config(
             skylab_test_runner_result,
             (self._api.path.mkdtemp()).join(self.TEST_RUNNER_RESULT_JSON),
-            metadata)
+            metadata, force_current_realm)
         self._api.cros_resultdb.upload(autotest_rdb_config,
                                        str(metadata.stainless_logs_url))
       # Process tast/tast_via_tauto tests
       for tast_result_dir in tast_results_dirs:
         tast_rdb_config = self._tast_results_rdb_config(tast_result_dir,
-                                                        metadata)
+                                                        metadata,
+                                                        force_current_realm)
         self._api.cros_resultdb.upload(tast_rdb_config,
                                        str(metadata.stainless_logs_url))
       # Process missing tast tests if any
@@ -567,7 +570,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return Skylab_Result.Autotest.TestCase(
         name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict)
 
-  def _tast_results_rdb_config(self, tast_results_dir, metadata):
+  def _tast_results_rdb_config(self, tast_results_dir, metadata,
+                               force_current_realm=False):
     """Build rdb config for tast test results.
 
     Args:
@@ -590,11 +594,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             self._api.path.join(tast_results_dir, self.STREAMED_RESULTS_JSON),
         'artifact_directory':
             artifact_dir,
+        'force_current_realm':
+            force_current_realm
     }
     return config
 
   def _autotest_results_rdb_config(self, test_runner_result,
-                                   test_runner_result_file_path, metadata):
+                                   test_runner_result_file_path, metadata,
+                                   force_current_realm=False):
     """Build rdb config for tauto test results.
 
     Args:
@@ -613,6 +620,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'base_tags': metadata.rdb_base_tags,
         'result_file': test_runner_result_file_path,
         'artifact_directory': None,
+        'force_current_realm': force_current_realm
     }
     return config
 

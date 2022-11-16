@@ -1397,6 +1397,11 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
           properties.cft_test_request.parent_request_uid, autotest_keyvals)
+
+      # If this builder is configured to be private-partner, we don't want to
+      # publish to the board-model realm
+      force_current_realm = properties.common_config.partner_private
+
       # TODO(b/246473902): Populate additional info to Tauto results for CFT
       # MVP, e.g. timestamps, full test name. The logic would be added to
       # crostoolrunner_interface.py and could be similar to the
@@ -1406,7 +1411,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
       # could be similar to the `_upload_incomplete_test_to_resultdb()` method
       # above.
-      interface.upload_to_rdb(test_metadata, run_test_response)
+      interface.upload_to_rdb(test_metadata, run_test_response,
+                              force_current_realm)
 
     # Result for uploading
     result_for_uploading = interface.parse_test_results(test_metadata)

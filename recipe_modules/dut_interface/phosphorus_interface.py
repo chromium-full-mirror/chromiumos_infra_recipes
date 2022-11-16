@@ -274,12 +274,13 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.task.results_dir = test_results_dir
     return tko_metadata
 
-  def upload_to_rdb(self, metadata, run_test_response):
+  def upload_to_rdb(self, metadata, run_test_response, force_current_realm):
     """Uploads test results to resultDB.
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test job.
     * run_test_response (DUTTestResponse): The response to the test run.
+    * force_current_realm (Boolean): Whether to force publishing to rdb in the current realm
 
       Raises:
       * InfraFailure.

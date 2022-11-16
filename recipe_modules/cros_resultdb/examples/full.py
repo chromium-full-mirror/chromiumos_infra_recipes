@@ -102,6 +102,30 @@ def GenTests(api):
   )
 
   yield api.test(
+      'use-current-realm',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'gtest',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'brya'),
+                  ('model', 'taeko'),
+                  ('image', 'brya-cq/R11-123.45'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'brya',
+                  'build': 'brya-cq/R11-123.45',
+              },
+              'force_current_realm': True,
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
       'variant-per-model-realm',
       api.buildbucket.ci_build(),
       api.properties(

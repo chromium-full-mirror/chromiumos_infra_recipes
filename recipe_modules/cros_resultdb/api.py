@@ -289,9 +289,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
     rdb_cmd = result_adapter + ['--'] + ['echo']
 
     base_tags = config.get('base_tags', [])
+
     # See if this test result should be uploaded into a board-model realm
     # so that partners working on that model can see it.
-    realm = self._get_board_model_realm(base_tags)
+    realm = ''
+    if not config.get('force_current_realm'):
+      realm = self._get_board_model_realm(base_tags)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
