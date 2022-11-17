@@ -1215,24 +1215,6 @@
   },
   {
     "cmd": [],
-    "name": "validate branch"
-  },
-  {
-    "cmd": [],
-    "name": "validate branch.validate release branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "validate CL settings",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{}@@@"
@@ -1291,10 +1273,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "no reviewers specified and auto submit is false"
-    },
     "name": "$result"
   }
 ]

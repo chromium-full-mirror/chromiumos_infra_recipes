@@ -28,10 +28,13 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BrancherProperties
 
 
+def is_108_or_greater(source_version):
+  return int(source_version.split('-')[1].split('.')[0]) >= 15183
+
+
 def is_unsupported_rubik_build(api, source_version):
-  major = int(source_version.split('-')[1].split('.')[0])
   # Support all builds associated with milestones >= 108.
-  if major >= 15183:
+  if is_108_or_greater(source_version):
     return False
   # Otherwise, only allow legacy builds.
   # Legacy build does not generate build_report.json but Rubik build does.
@@ -72,7 +75,12 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(
         projects=[api.cros_release_config.CONFIG_PROJECT])
 
-    api.cros_release_config.update_config(branch_name)
+    # Don't need to update config for stabilize branches from < R108,
+    # as this is only for `cros try` and `cros try` doesn't support
+    # builds < R108.
+    if properties.branch_info.type == Branch.RELEASE or is_108_or_greater(
+        properties.source_version):
+      api.cros_release_config.update_config(branch_name)
 
 
 def GenTests(api):
