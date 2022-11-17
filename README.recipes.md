@@ -514,6 +514,7 @@
   * [pupr_gerrit_interface:tests/upload_new_patch_set](#recipes-pupr_gerrit_interface_tests_upload_new_patch_set) (Python3 ✅) &mdash; Verify that upload_new_patch_set() runs the expected process.
   * [pupr_local_uprev:tests/rebase_cl](#recipes-pupr_local_uprev_tests_rebase_cl) (Python3 ✅) &mdash; Verify that rebase_cl() locally rebases existing commits as expected.
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
+  * [pvs_upload_mappings](#recipes-pvs_upload_mappings) (Python3 ✅) &mdash; Recipe for uploading mappings to the PVS database.
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
   * [regen_build_cache](#recipes-regen_build_cache) (Python3 ✅) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full) (Python3 ✅)
@@ -12735,6 +12736,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Verify that uprev_packages() creates local uprev commits as expected.
 
 &mdash; **def [RunSteps](/recipe_modules/pupr_local_uprev/tests/uprev_packages.py#51)(api: RecipeApi, additional_commit_message: str, allow_partial_uprev: bool, expect_none_response: bool):**
+### *recipes* / [pvs\_upload\_mappings](/recipes/pvs_upload_mappings.py)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for uploading mappings to the PVS database.
+
+&mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#17)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
