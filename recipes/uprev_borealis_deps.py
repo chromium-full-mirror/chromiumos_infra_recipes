@@ -51,9 +51,7 @@ def DoBorealisBuild(api, use_cache=True, skip_termina=False, stage=None):
     stage: The name of the step from the Dockerfile to build. Does not
       perform a full build, will stop after the specified stage is built.
   """
-  build_command = [
-      './tools/build_full.py', '--licenses-html', "''", '--no-run-tests'
-  ]
+  build_command = ['./tools/build_full.py', '--licenses-html', "''"]
   if stage:
     build_command.append('--stage')
     build_command.append(stage)
@@ -184,7 +182,6 @@ def GenTests(api):
           [
               '--licenses-html',
               "''",
-              '--no-run-tests',
               '--stage',
               'initial',
               '--no-cache',
@@ -196,7 +193,6 @@ def GenTests(api):
           [
               '--licenses-html',
               "''",
-              '--no-run-tests',
               '--skip-termina',
           ],
       ),
@@ -206,7 +202,6 @@ def GenTests(api):
           [
               '--licenses-html',
               "''",
-              '--no-run-tests',
               '--skip-termina',
           ],
       ), api.post_check(post_process.StatusSuccess),

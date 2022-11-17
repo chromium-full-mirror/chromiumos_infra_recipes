@@ -1928,7 +1928,6 @@
       "./tools/build_full.py",
       "--licenses-html",
       "''",
-      "--no-run-tests",
       "--stage",
       "initial",
       "--no-cache"
@@ -1974,7 +1973,6 @@
       "./tools/build_full.py",
       "--licenses-html",
       "''",
-      "--no-run-tests",
       "--skip-termina"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
@@ -2391,7 +2389,6 @@
       "./tools/build_full.py",
       "--licenses-html",
       "''",
-      "--no-run-tests",
       "--skip-termina"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
