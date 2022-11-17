@@ -1926,8 +1926,7 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--licenses-html",
-      "''",
+      "--skip-license-report",
       "--stage",
       "initial",
       "--no-cache"
@@ -1971,8 +1970,7 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--licenses-html",
-      "''",
+      "--skip-license-report",
       "--skip-termina"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
@@ -2387,8 +2385,7 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--licenses-html",
-      "''",
+      "--skip-license-report",
       "--skip-termina"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",

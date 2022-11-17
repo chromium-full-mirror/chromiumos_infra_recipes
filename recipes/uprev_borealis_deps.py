@@ -51,7 +51,9 @@ def DoBorealisBuild(api, use_cache=True, skip_termina=False, stage=None):
     stage: The name of the step from the Dockerfile to build. Does not
       perform a full build, will stop after the specified stage is built.
   """
-  build_command = ['./tools/build_full.py', '--licenses-html', "''"]
+  # --skip-license-report is needed for early stage builds to work without
+  # error since they don't run `build/usr/bin/stamp-lsb-release.sh`
+  build_command = ['./tools/build_full.py', '--skip-license-report']
   if stage:
     build_command.append('--stage')
     build_command.append(stage)
@@ -180,8 +182,7 @@ def GenTests(api):
           post_process.StepCommandContains,
           'Borealis build_full.py',
           [
-              '--licenses-html',
-              "''",
+              '--skip-license-report',
               '--stage',
               'initial',
               '--no-cache',
@@ -191,8 +192,7 @@ def GenTests(api):
           post_process.StepCommandContains,
           'Arch mirror uprev.Borealis build_full.py',
           [
-              '--licenses-html',
-              "''",
+              '--skip-license-report',
               '--skip-termina',
           ],
       ),
@@ -200,8 +200,7 @@ def GenTests(api):
           post_process.StepCommandContains,
           'PKGBUILDs uprev.Borealis build_full.py',
           [
-              '--licenses-html',
-              "''",
+              '--skip-license-report',
               '--skip-termina',
           ],
       ), api.post_check(post_process.StatusSuccess),
