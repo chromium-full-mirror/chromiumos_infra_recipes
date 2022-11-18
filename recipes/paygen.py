@@ -123,8 +123,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
         paygen_parallel_runner.run_function_async(
             do_a_paygen, request, success_handler=lambda resp, req=request,
             api=api: report_paygen_success_to_snoopy(api, req, resp)
-            if resp.success and not resp.failure_reason else None,
-            try_count=_PAYGEN_TRY_COUNT)
+            if not resp.failure_reason else None, try_count=_PAYGEN_TRY_COUNT)
 
     errors, total_retries = [], 0
     for paygen_response in paygen_parallel_runner.wait_for_and_get_responses():
