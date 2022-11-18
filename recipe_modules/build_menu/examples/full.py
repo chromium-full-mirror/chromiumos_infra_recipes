@@ -58,7 +58,6 @@ def DoRunSteps(api, config, properties):
     else:
       api.build_menu.bootstrap_sysroot()
       api.build_menu.install_packages()
-      api.build_menu.run_unittests_cl_affected_deps(config)
       api.build_menu.build_and_test_images(config)
       api.build_menu.build_and_test_images(include_version=True)
       if properties.upload_prebuilts:
@@ -518,80 +517,4 @@ def GenTests(api):
           'upload artifacts.upload code coverage data'
       ),
     cq=True,
-  )
-
-  yield api.test(
-    'unit-test-experiment',
-    api.buildbucket.try_build(builder='staging-amd64-generic-cq',
-      gerrit_changes=[
-      GerritChange(host='chrome-internal-review.googlesource.com',
-          project='project-a', change=1235)
-      ]
-    ),
-    api.properties(
-      **api.test_util.build_menu_properties(
-        build_target_name='staging-amd64-generic',
-        container_version_format=\
-        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
-      )
-    ),
-    api.properties(
-          **{
-              '$recipe_engine/cq':
-                  {'active': True}
-          }),
-    # Simulate a failure when installing packages.
-    api.cros_build_api.set_api_return(
-      'run ebuild tests',
-      endpoint='TestService/BuildTargetUnitTest',
-      data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
-    ),
-    api.cros_build_api.set_api_return(
-      'run ebuild tests for cl affected packages',
-      endpoint='TestService/BuildTargetUnitTest',
-      data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
-    ),
-    api.post_check(
-          post_process.MustRun,
-          'get package dependencies'
-      ),
-    api.post_check(
-          post_process.MustRun,
-          'run ebuild tests for cl affected packages'
-      ),
-  )
-
-  yield api.test(
-    'unit-test-experiment-no-relevant-packages',
-    api.buildbucket.try_build(builder='staging-amd64-generic-cq',
-      gerrit_changes=[
-      GerritChange(host='chrome-internal-review.googlesource.com',
-          project='project-a', change=1235)
-      ]
-    ),
-    api.properties(
-      **api.test_util.build_menu_properties(
-        build_target_name='staging-amd64-generic',
-        container_version_format=\
-        '{staging?}{build-target}-cq.{cros-version}-{bbid}'
-      )
-    ),
-    api.properties(
-          **{
-              '$recipe_engine/cq':
-                  {'active': True}
-          }),
-    api.cros_build_api.set_api_return(
-      'get package dependencies',
-      endpoint='DependencyService/List',
-      data='{}'
-    ),
-    api.post_check(
-          post_process.MustRun,
-          'get package dependencies'
-      ),
-    api.post_check(
-          post_process.DoesNotRun,
-          'run ebuild tests for cl affected packages|call chromite.api.TestService/BuildTargetUnitTest'
-      ),
   )

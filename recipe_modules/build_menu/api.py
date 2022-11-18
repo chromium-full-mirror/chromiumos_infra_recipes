@@ -663,68 +663,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
                                                      self.m.file.read_raw)
-        # TODO(b/253642578): Remove once experiment is done.
-        if self.m.cros_infra_config.is_staging and self.m.cq.active:
-          failed_pkgs = sorted('%s/%s' % (p.name.category, p.name.package_name)
-                               for p in response.failed_package_data)
-          presentation.properties['unit_test_failed_packages'] = failed_pkgs
         self.m.failures.set_test_failed_packages(presentation, pkgs)
-
-  # TODO(b/253642578): Remove once experiment is done.
-  def run_unittests_cl_affected_deps(self, config):
-    """Run ebuild tests as if CL_AFFECTED_DEPENDENCIES was specified in config.
-
-    Args:
-      config (BuilderConfig): The Builder Config for the build, or None.
-    """
-    if not self.m.cros_infra_config.should_run(
-        config.unit_tests.ebuilds_run_spec):
-      return
-
-    with self.m.step.nest(
-        'run ebuild tests for cl affected packages') as presentation:
-
-      # Limit testing to the subset of affected packages which were compiled.
-      relevant_testable_packages = self.get_cl_affected_sysroot_packages(
-          packages=config.build.install_packages.packages,
-          include_rev_deps=True)
-
-      # If the config specifies packages to test, only test the specified
-      # packages which were affected by the CL.
-      # The PackageInfo objects returned by the depgraph contain versions
-      # while the ones in the config do not, therefore only compare category
-      # and package_name fields.
-      if config.unit_tests.packages:
-        relevant_testable_packages = [
-            x for x in relevant_testable_packages
-            if PackageInfo(category=x.category, package_name=x.package_name) in
-            list(config.unit_tests.packages)
-        ]
-
-      if not relevant_testable_packages:
-        presentation.step_text = 'no relevant packages'
-        return
-
-      request = BuildTargetUnitTestRequest(
-          build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
-          package_blocklist=config.unit_tests.package_blocklist,
-          packages=relevant_testable_packages,
-          flags=BuildTargetUnitTestRequest.Flags(
-              code_coverage=self._test_with_code_coverage,
-              rust_code_coverage=self._test_with_rust_code_coverage,
-              empty_sysroot=config.unit_tests.empty_sysroot,
-              testable_packages_optional=True, filter_only_cros_workon=True))
-
-      response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
-          request,
-          # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
-          timeout=3 * 60 * 60,
-          response_lambda=self.m.cros_build_api.failed_pkg_data_names,
-          pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
-
-      failed_pkgs = sorted('%s/%s' % (p.name.category, p.name.package_name)
-                           for p in response.failed_package_data)
-      presentation.properties['unit_test_exp_failed_packages'] = failed_pkgs
 
   def upload_artifacts(self, config=None, private_bundle_func=None,
                        sysroot=None, report_to_spike=False):

@@ -77,16 +77,11 @@ def DoRunSteps(api, config):
       test_containers_runner = api.future_utils.create_parallel_runner()
       test_containers_runner.run_function_async(
           lambda cfg, _: api.build_menu.create_containers(cfg), config)
-      # TODO(b/253642578): Experiment running unit tests on only packages
-      # which are affected by the CLs in the CQ run.
-      if api.cros_infra_config.is_staging:
-        api.build_menu.build_images(config)
-        api.build_menu.run_unittests_cl_affected_deps(config)
-        api.build_menu.unit_test_images(config)
-      else:
-        # We have no steps following build_and_test_images, so we don't need to
-        # check the return value.
-        api.build_menu.build_and_test_images(config)
+
+      # We have no steps following build_and_test_images, so we don't need to
+      # check the return value.
+      api.build_menu.build_and_test_images(config)
+
       # Pause and throw if test containers failed to upload.
       test_containers_runner.wait_for_and_throw()
   except StepFailure as sf:
@@ -206,9 +201,6 @@ def GenTests(api):
       'staging-cq-build',
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
-      # TODO(b/253642578): Remove check when experiment is done.
-      api.post_check(post_process.MustRun,
-                     'run ebuild tests for cl affected packages'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),

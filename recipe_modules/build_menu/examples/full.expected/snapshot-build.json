@@ -5009,13 +5009,6 @@
   },
   {
     "cmd": [],
-    "name": "run ebuild tests for cl affected packages",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no relevant packages@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "build images"
   },
   {
