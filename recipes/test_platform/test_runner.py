@@ -470,9 +470,8 @@ def _convert_to_task_request_id(swarming_task_run_id):
 
 
 def _generate_resultdb_base_tags(api, properties, test_metadata,
-                                 autotest_keyvals, autotest_keyval_file,
-                                 crossystem_keyvals, kernel_version,
-                                 cft_is_enabled):
+                                 autotest_keyval_file, crossystem_keyvals,
+                                 kernel_version, cft_is_enabled):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
@@ -541,7 +540,6 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     * properties (TestRunnerProperties): Recipe input properties.
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
-    * autotest_keyvals (dict): The keyval labels for autotest test results.
     * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
     * crossystem_keyvals (dict): The keyval labels for crossystem.
     * kernel_version (string): The kernel version.
@@ -675,7 +673,7 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     # CFT test request has 'autotest_keyvals' instead of
     # 'prejob.softwareDependencies.chromeosBuild'. CFT test request example:
     # https://logs.chromium.org/logs/chromeos/buildbucket/cr-buildbucket/8802533370122261697/+/u/inputs/cft_test_request
-    build_tag = autotest_keyvals.get('build')
+    build_tag = autotest_keyval_file.get('build')
   if build_tag:
     base_tags.append(('image', build_tag))
     base_tags.append(('build', build_tag.split('/')[-1]))
@@ -687,10 +685,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   # Fetches the following information from autotest keyvals.
   # TODO(b/259613599): Consolidate autotest_keyval_file and autotest_keyval as
   # the information in autotest_keyval_file should be a superset.
-  branch = autotest_keyvals.get('branch')
+  branch = autotest_keyval_file.get('branch')
   if branch:
     base_tags.append(('branch', branch))
-  main_builder_name = autotest_keyvals.get('master_build_config')
+  main_builder_name = autotest_keyval_file.get('master_build_config')
   if main_builder_name:
     base_tags.append(('main_builder_name', main_builder_name))
   if 'ash_version' in autotest_keyval_file:
@@ -719,14 +717,14 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
 
 
 def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
-                                   autotest_keyvals):
+                                   autotest_keyval_file):
   """Generate the variant defintions for the test results.
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
     * build_target (str): Build target.
     * parent_request_uid (str): parent request uid.
-    * autotest_keyvals (dict): The keyval labels for autotest test results.
+    * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
 
     Returns:
     * base_variant (dict): Variant attributes for the test results.
@@ -755,7 +753,7 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
     base_variant['test_config'] = test_config_display_name
 
   # Fetches the following information from the autotest.keyvals in the request.
-  suite = autotest_keyvals['suite']
+  suite = autotest_keyval_file.get('suite')
   if not suite:
     # Fallback to Buildbucket tags because CFT test request doesn't populate
     # `suite` in autotest_keyvals.
@@ -764,7 +762,7 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
   if suite:
     base_variant['suite'] = suite
 
-  builder_name = autotest_keyvals['build_config']
+  builder_name = autotest_keyval_file.get('build_config')
   if builder_name:
     base_variant['builder_name'] = builder_name
 
@@ -1016,7 +1014,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       break
 
   # Fetches rich information from log artifacts.
-  autotest_keyvals = test_metadata.test.autotest.keyvals
+  # Fallback to the autotest keyval in the input test metadata.
+  if not autotest_keyval_file or len(autotest_keyval_file) == 0:
+    autotest_keyval_file = test_metadata.test.autotest.keyvals
   # For Tauto, read files from the parent result dir and then the first test
   # case dir if files don't exist because some files might be missing in the
   # parent result dir or in the first test case dir. Thus, we will need to read
@@ -1041,9 +1041,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
 
   base_variant = _generate_resultdb_variant_def(
       api, properties.request.prejob.software_attributes.build_target.name,
-      properties.request.parent_request_uid, autotest_keyvals)
+      properties.request.parent_request_uid, autotest_keyval_file)
   base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
-                                           autotest_keyvals,
                                            autotest_keyval_file,
                                            crossystem_keyvals, kernel_version,
                                            cft_is_enabled=False)
@@ -1386,17 +1385,16 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       autotest_keyvals = test_metadata.autotest_keyvals
       # TODO(b/259569300): Provisioning error during CFT provisioning
       # This prevents the validation of adding ash_versoin and lacros_version
-      # to RDB through the CFT route. For now, we will pass in an empty map
-      # to adhere to the interface.
-      autotest_keyval_file = {}
+      # to RDB through the CFT route. For now, we will pass autotest_keyvals
+      # from the input test metadata to adhere to the interface.
+      autotest_keyval_file = autotest_keyvals
 
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
-          api, properties, test_metadata, autotest_keyvals,
-          autotest_keyval_file, crossystem_keyvals, kernel_version,
-          cft_is_enabled=True)
+          api, properties, test_metadata, autotest_keyval_file,
+          crossystem_keyvals, kernel_version, cft_is_enabled=True)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
-          properties.cft_test_request.parent_request_uid, autotest_keyvals)
+          properties.cft_test_request.parent_request_uid, autotest_keyval_file)
 
       # If this builder is configured to be private-partner, we don't want to
       # publish to the board-model realm
