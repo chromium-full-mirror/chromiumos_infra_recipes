@@ -109,8 +109,8 @@ class PolicyInfo(NamedTuple):
 EbuildsByPinfo = DefaultDict[ProjectInfo, List[Ebuild]]
 
 
-def serializeVersions(versions: List[UprevVersionedPackageRequest.GitRef]
-                     ) -> str:
+def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
+                       ) -> str:
   """ Serialize versions information.
 
   Args:
@@ -489,8 +489,8 @@ def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
 
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
 # to work correctly with api.git.diff_check.
-def response_has_changes(api: RecipeApi,
-                         response: UprevVersionedPackageResponse) -> bool:
+def _response_has_changes(api: RecipeApi,
+                          response: UprevVersionedPackageResponse) -> bool:
   """Returns whether the given `UprevVersionedPackageResponse` contains changes."""
   for ebuild in response.modified_ebuilds:
     path = ebuild.path
@@ -584,7 +584,7 @@ def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
       with api.step.nest('verify updates'):
         # only act on files that are actually modified
         for uprev_resp in response.responses:
-          if response_has_changes(api, uprev_resp):
+          if _response_has_changes(api, uprev_resp):
             valid_responses.append(uprev_resp)
 
       if not valid_responses:
@@ -655,7 +655,7 @@ def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
           'TEST=CQ',
           '',
           '{label}: {versions}'.format(label=UPREV_VERSION_LABEL,
-                                       versions=serializeVersions(versions)),
+                                       versions=_serialize_versions(versions)),
           'Cq-Cl-Tag: pupr:{topic}'.format(topic=topic),
       ]
       if api.src_state.gerrit_changes:
