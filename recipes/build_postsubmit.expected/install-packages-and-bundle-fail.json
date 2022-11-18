@@ -4785,6 +4785,13 @@
   },
   {
     "cmd": [],
+    "name": "collect image size data",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Skipped: Image size publishing disabled.@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"

@@ -908,7 +908,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config: A BuilderConfig object.
     """
-    with self.m.failures.ignore_exceptions():
-      self.m.observability_image_size.publish(config, self.build_target,
-                                              self.target_versions,
-                                              self._built_images)
+    self.m.observability_image_size.publish(config, self.build_target,
+                                            self.target_versions,
+                                            self._built_images)

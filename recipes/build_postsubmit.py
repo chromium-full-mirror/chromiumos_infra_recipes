@@ -13,6 +13,7 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'bot_scaling',
     'build_menu',
@@ -53,6 +54,14 @@ def DoRunSteps(api, config):
     # still occur (there is value in uploading the artifact even in cases of
     # build failure for debug purposes).
     failing_build_exception = sf
+
+  try:
+    api.build_menu.publish_image_size_data(config)
+  except StepFailure as sf:
+    # Swallow the exception unilaterally, since this should never be a blocker
+    # for postsubmit builds or release builds.
+    # TODO(b/259704135): set up monitoring.
+    pass
 
   try:
     api.build_menu.upload_artifacts(config)
@@ -141,6 +150,26 @@ def GenTests(api):
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1))
+
+  yield api.build_menu.test(
+      'publish-image-size-fail',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}), api.post_check(post_process.StatusSuccess),
+      api.build_menu.set_build_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData', retcode=1),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.call build API script',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.read output file',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )), builder='amd64-generic-postsubmit-publish-img-sizes')
 
   yield api.build_menu.test(
       'run-exit-install',
