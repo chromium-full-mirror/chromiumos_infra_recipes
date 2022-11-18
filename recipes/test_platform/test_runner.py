@@ -470,8 +470,9 @@ def _convert_to_task_request_id(swarming_task_run_id):
 
 
 def _generate_resultdb_base_tags(api, properties, test_metadata,
-                                 autotest_keyvals, crossystem_keyvals,
-                                 kernel_version, cft_is_enabled):
+                                 autotest_keyvals, autotest_keyval_file,
+                                 crossystem_keyvals, kernel_version,
+                                 cft_is_enabled):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
@@ -530,7 +531,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "katsu_MT8183_0B"
     * carrier:
         e.g. "CARRIER_ESIM"
-
+    * ash_version: Ash Chrome browser version,
+        e.g. "109.0.5391.0"
+    * lacros_version: Lacros browser version,
+        e.g. "109.0.5391.0"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -538,6 +542,7 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
     * autotest_keyvals (dict): The keyval labels for autotest test results.
+    * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
     * crossystem_keyvals (dict): The keyval labels for crossystem.
     * kernel_version (string): The kernel version.
     * cft_is_enabled (bool): Whether CFT feature is enabled.
@@ -680,12 +685,18 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     base_tags.append(('logs_url', logs_url))
 
   # Fetches the following information from autotest keyvals.
+  # TODO(b/259613599): Consolidate autotest_keyval_file and autotest_keyval as
+  # the information in autotest_keyval_file should be a superset.
   branch = autotest_keyvals.get('branch')
   if branch:
     base_tags.append(('branch', branch))
   main_builder_name = autotest_keyvals.get('master_build_config')
   if main_builder_name:
     base_tags.append(('main_builder_name', main_builder_name))
+  if 'ash_version' in autotest_keyval_file:
+    base_tags.append(('ash_version', autotest_keyval_file['ash_version']))
+  if 'lacros_version' in autotest_keyval_file:
+    base_tags.append(('lacros_version', autotest_keyval_file['lacros_version']))
 
   # Fetches the following information from crossystem keyvals.
   if crossystem_keyvals is not None:
@@ -1032,8 +1043,10 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       api, properties.request.prejob.software_attributes.build_target.name,
       properties.request.parent_request_uid, autotest_keyvals)
   base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
-                                           autotest_keyvals, crossystem_keyvals,
-                                           kernel_version, cft_is_enabled=False)
+                                           autotest_keyvals,
+                                           autotest_keyval_file,
+                                           crossystem_keyvals, kernel_version,
+                                           cft_is_enabled=False)
   config = {
       'result_format': result_format,
       'base_variant': base_variant,
@@ -1371,10 +1384,16 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       kernel_log_file_path = os.path.join(results_dir, 'sysinfo', 'uname')
       kernel_version = _read_kernel_version(api, kernel_log_file_path)
       autotest_keyvals = test_metadata.autotest_keyvals
+      # TODO(b/259569300): Provisioning error during CFT provisioning
+      # This prevents the validation of adding ash_versoin and lacros_version
+      # to RDB through the CFT route. For now, we will pass in an empty map
+      # to adhere to the interface.
+      autotest_keyval_file = {}
 
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
-          api, properties, test_metadata, autotest_keyvals, crossystem_keyvals,
-          kernel_version, cft_is_enabled=True)
+          api, properties, test_metadata, autotest_keyvals,
+          autotest_keyval_file, crossystem_keyvals, kernel_version,
+          cft_is_enabled=True)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, properties.cft_test_request.primary_dut.dut_model.build_target,
           properties.cft_test_request.parent_request_uid, autotest_keyvals)
@@ -1612,6 +1631,8 @@ branch=main
 label=board-cq/R00-0.0.0/sweet-cq/test-case
 build_config=eve-release
 master_build_config=master-release
+ash_version=109.0.5391.0
+lacros_version=109.0.5391.0
 drone=skylab-drone-xyz
 hostname=chromeos0-row0-rack0-host0
 job_started=1651467359
