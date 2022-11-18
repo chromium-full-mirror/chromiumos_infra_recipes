@@ -7,10 +7,13 @@ syntax = "proto3";
 package recipe_modules.chromeos.observability_image_size;
 
 message ObservabilityImageSizeProperties {
-  // TODO(build): Document defaults.
   // The Cloud Pub/Sub project to publish events to.
+  // Defaults to 'cros-build-telemetry'.
   string pubsub_project_id = 1;
 
   // The Cloud Pub/Sub topic to publish events to.
+  // Defaults to 'image-size-events'. This default will be overridden for jobs
+  // running on staging machines, and will use 'image-size-events-staging'
+  // instead.
   string pubsub_topic_id = 2;
 }
