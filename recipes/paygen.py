@@ -69,7 +69,7 @@ def RunSteps(api, properties):
 
 def DoRunSteps(api, properties):
   # Set up builder state.
-  initialize_directories(api)
+  initialize_directories(api, properties)
   # Set up holder objects.
   paygen_test_configs, payloads = [], []
 
@@ -172,13 +172,14 @@ def DoRunSteps(api, properties):
       api.paygen_testing.schedule_au_tests(paygen_test_configs)
 
 
-def initialize_directories(api):
+def initialize_directories(api, properties):
   """Set up all the directories needed to do paygen.
 
   Args:
     api (RecipesApi): api object to use.
+    properties (dict): recipe properties.
   """
-  with api.step.nest('initialization'):
+  with api.step.nest('initialization') as presentation:
     # Sync the paygen manifest group.
     api.cros_source.ensure_synced_cache(
         init_opts={'groups': ['paygen']},
@@ -204,12 +205,26 @@ def initialize_directories(api):
           branch=config_internal_branch, target_path=config_path, depth=1)
 
     # Create chroot, with retries!
-    @exponential_retry(retries=3, delay=datetime.timedelta(seconds=300))
-    def _retry_chroot_init_wrapper():
-      api.cros_sdk.create_chroot(version=None, use_image=False,
-                                 timeout_sec=None)
+    timeout = properties.init_sdk_timeout_secs or None
 
-    _retry_chroot_init_wrapper()
+    @exponential_retry(
+        retries=3,
+        delay=datetime.timedelta(seconds=properties.sdk_retry_delay or 300))
+    def _retry_chroot_init_wrapper():
+      try:
+        api.cros_sdk.create_chroot(version=None, use_image=False,
+                                   timeout_sec=timeout)
+      except Exception as e:
+        if "timeout" in str(e):
+          presentation.step_text = 'SDK initialization timed out'
+          presentation.status = api.step.FAILURE
+          return StepFailure(presentation.step_text)
+        raise e
+      return None
+
+    exception = _retry_chroot_init_wrapper()
+    if exception:
+      raise exception  # pylint: disable-msg=E0702
 
 
 def report_paygen_success_to_snoopy(api, req, resp):
@@ -224,6 +239,38 @@ def report_paygen_success_to_snoopy(api, req, resp):
 # between the mock data and the Recipe logic. For example, a call to
 # GeneratePayloads with no request still returns a successful response.
 def GenTests(api):
+
+  yield api.test(
+      'chroot-timeout',
+      api.properties(PaygenProperties(init_sdk_timeout_secs=5)),
+      api.step_data(
+          'initialization.init sdk.call chromite.api.SdkService/Create.call build API script',
+          times_out_after=10),
+      api.post_check(post_process.StepFailure, 'initialization'),
+      api.post_check(post_process.StepTextEquals, 'initialization',
+                     'SDK initialization timed out'),
+      api.post_check(post_process.DoesNotRun, 'doing paygen'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'chroot-failure-no-timeout',
+      api.properties(PaygenProperties(sdk_retry_delay=1)),
+      api.step_data(
+          'initialization.init sdk.call chromite.api.SdkService/Create.call build API script',
+          retcode=1),
+      api.step_data(
+          'initialization.init sdk (2).call chromite.api.SdkService/Create.call build API script',
+          retcode=1),
+      api.step_data(
+          'initialization.init sdk (3).call chromite.api.SdkService/Create.call build API script',
+          retcode=1),
+      api.post_check(post_process.StepFailure, 'initialization'),
+      api.post_check(post_process.DoesNotRun, 'doing paygen'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
+  )
 
   def generate_payload_response(api, is_success=True, local_path='',
                                 remote_uri='', failure_reason=None, retcode=0,

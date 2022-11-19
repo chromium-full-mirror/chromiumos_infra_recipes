@@ -11812,14 +11812,15 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 
 &mdash; **def [RunSteps](/recipes/paygen.py#55)(api, properties):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#175)(api):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#175)(api, properties):**
 
 Set up all the directories needed to do paygen.
 
 Args:
   api (RecipesApi): api object to use.
+  properties (dict): recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#215)(api, req, resp):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#230)(api, req, resp):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/examples/full.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

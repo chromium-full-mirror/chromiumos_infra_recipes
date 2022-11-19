@@ -44,4 +44,11 @@ message PaygenProperties {
 
   // The maximum number of paygen requests to run in parallel.
   int32 max_concurrent_requests = 2;
+
+  // Timeout (in seconds) for sdk initialization. If not set, no timeout will
+  // be passed.
+  uint32 init_sdk_timeout_secs = 3;
+
+  // Time to wait between SDK initialization retries. Defaults to 300.
+  uint32 sdk_retry_delay = 4;
 }
