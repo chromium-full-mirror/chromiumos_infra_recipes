@@ -363,7 +363,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
-  def _set_binhost(self, target, private, key, uri):
+  def _set_binhost(self, target, private, key, uri, push_retries):
     """Set the target's Portage binhost to point to the given URI.
 
     This function updates a conf file within the target's overlay, commits the
@@ -374,6 +374,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       private (bool): Whether the target's binhost is private.
       key (BinhostKey): The binhost key, e.g. POSTSUBMIT_BINHOST.
       uri (str): The new binhost URI.
+      push_retries (int): Number of times to retry pushing the changes.
     """
     with self.m.step.nest('update binhost conf file'):
       # In order to avoid any merge conflicts we first pull the latest changes
@@ -404,22 +405,30 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
             branch_parts[-1] = 'staging'
             branch = '/'.join(branch_parts)
 
-          self.m.git.fetch_ref(project.remote, branch)
-          self.m.git.checkout('FETCH_HEAD', force=True)
-
-          request = binhost_pb.SetBinhostRequest(
-              build_target=target, private=private, key=key, uri=uri,
-              max_uris=self._max_binhost_uris)
-          self.m.cros_build_api.BinhostService.SetBinhost(
-              request, infra_step=True)
-          binhost_data = self.m.file.read_text('read binhost conf',
-                                               binhost_path)
-
-          self.m.git_txn.update_ref_write_file(
-              project.remote,
-              'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
-              binhost_path, binhost_data, automerge=True, ref=branch)
-          self.m.git.checkout(current_commit)
+          # There are instances when, in between fetching from remote and then
+          # commiting our changes, a different builder can commit its changes.
+          # This can cause merging issues(see ex:http://shortn/_WtgjVa2ayK).
+          # We can retry few times to avoid it.
+          for attempt in range(push_retries + 1):
+            self.m.git.fetch_ref(project.remote, branch)
+            self.m.git.checkout('FETCH_HEAD', force=True)
+            request = binhost_pb.SetBinhostRequest(
+                build_target=target, private=private, key=key, uri=uri,
+                max_uris=self._max_binhost_uris)
+            self.m.cros_build_api.BinhostService.SetBinhost(
+                request, infra_step=True)
+            binhost_data = self.m.file.read_text('read binhost conf',
+                                                 binhost_path)
+            try:
+              self.m.git_txn.update_ref_write_file(
+                  project.remote,
+                  'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
+                  binhost_path, binhost_data, automerge=True, ref=branch)
+              self.m.git.checkout(current_commit)
+              return
+            except recipe_api.StepFailure as ex:
+              if attempt == push_retries:
+                raise ex
 
   def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.
@@ -511,7 +520,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           self._profile_or_default(profile) == self._profile_or_default(None))
 
       if overlay_commit:
-        self._set_binhost(target, private, binhost_key, upload_uri)
+        self._set_binhost(target, private, binhost_key, upload_uri,
+                          push_retries=3)
 
       if self._enable_snapshot_prebuilts:
         self._upload_metadata(target, profile, kind, gs_bucket, acls,

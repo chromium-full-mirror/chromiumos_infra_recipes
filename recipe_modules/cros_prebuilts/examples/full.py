@@ -10,7 +10,7 @@ from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuil
 from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import FullProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 
-from recipe_engine.post_process import MustRun, DoesNotRun
+from recipe_engine.post_process import MustRun, DoesNotRun, StepException
 
 DEPS = [
     'recipe_engine/assertions',
@@ -79,7 +79,7 @@ def GenTests(api):
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
                 commit_overlay_binhost=True, profile=None,
                 expected_package_indexes=None, dirty_source=False,
-                max_binhost_uris=1):
+                max_binhost_uris=1, upload_metadata=True):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
@@ -125,8 +125,8 @@ def GenTests(api):
         MustRun if private and not dirty_source else DoesNotRun,
         'upload prebuilts.read gs acls')
     check = (
-        MustRun
-        if enable_snapshot_prebuilts and not dirty_source else DoesNotRun)
+        MustRun if upload_metadata and enable_snapshot_prebuilts and
+        not dirty_source else DoesNotRun)
     ret += api.post_check(check, 'upload prebuilts.upload metadata')
     ret += api.post_check(check, 'upload prebuilts.upload metadata.gsutil acl')
     check = MustRun if expect_commit else DoesNotRun
@@ -164,6 +164,33 @@ def GenTests(api):
               api.post_process(StepTextEquals,
                                'upload devinstall prebuilts (2)',
                                'no bucket specified, skipping'))
+  yield api.test(
+      'update-retry-exhaustion', test_data(upload_metadata=False),
+      api.step_data(
+          'upload prebuilts.update binhost conf file.'
+          'update ref.gerrit transaction.diff check.git diff', retcode=1),
+      api.step_data(
+          'upload prebuilts.update binhost conf file.'
+          'update ref (2).gerrit transaction.diff check.git diff', retcode=1),
+      api.step_data(
+          'upload prebuilts.update binhost conf file.'
+          'update ref (3).gerrit transaction.diff check.git diff', retcode=1),
+      api.step_data(
+          'upload prebuilts.update binhost conf file.'
+          'update ref (4).gerrit transaction.diff check.git diff', retcode=1),
+      api.post_check(StepException,
+                     'upload prebuilts.update binhost conf file'))
+
+  yield api.test(
+      'update-retry-not-called', test_data(),
+      api.step_data(
+          ('upload prebuilts.update binhost conf file.update ref'
+           '.gerrit transaction.git push'), stderr=api.raw_io.output_text(
+               ('remote:   https://chromium-review.googlesource'
+                '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
+      api.post_check(
+          DoesNotRun,
+          'upload prebuilts.update binhost conf file.update ref (2)'))
 
   yield api.test('disable-overlay-commits',
                  test_data(commit_overlay_binhost=False))
