@@ -131,8 +131,8 @@ def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
   return json.dumps(o)
 
 
-def deserializeVersions(json_str: str
-                       ) -> List[UprevVersionedPackageRequest.GitRef]:
+def _deserialize_versions(json_str: str
+                         ) -> List[UprevVersionedPackageRequest.GitRef]:
   """ Deserializes versions information.
 
   Args:
@@ -169,7 +169,7 @@ def rebase_cl(api: RecipeApi, open_changes: List[GerritChange], change_id: str,
     # Extract Change-Id from commit message
     description = api.gerrit.get_change_description(retry_change)
     change_id = extractMetadata(description, 'Change-Id: (.*)')
-    existing_versions = deserializeVersions(
+    existing_versions = _deserialize_versions(
         extractMetadata(description, UPREV_VERSION_LABEL + ': (.*)'))
     ebuilds_by_pinfo = _do_uprev(
         api, properties, workspace_path, existing_versions, packages, cpv,

@@ -11193,16 +11193,6 @@ See go/pupr and go/pupr-generator for rationale and design decisions.
 
 &mdash; **def [RunSteps](/recipes/generator.py#186)(api: RecipeApi, properties: GeneratorProperties):**
 
-&mdash; **def [deserializeVersions](/recipes/generator.py#134)(json_str: str):**
-
-Deserializes versions information.
-
-Args:
-  json_str (str): A string serialized by serializeVersions().
-
-Returns:
-  List[UprevVersionedPackageRequest.Gitref]: The versions to consider for an uprev.
-
 &mdash; **def [extractMetadata](/recipes/generator.py#152)(description: str, pattern: str):**
 
 &mdash; **def [rebase\_cl](/recipes/generator.py#161)(api: RecipeApi, open_changes: List[GerritChange], change_id: str, properties: GeneratorProperties, workspace_path: str, packages: List[PackageInfo], cpv: List[str], topic: str, additional_commit_message: str=''):**
