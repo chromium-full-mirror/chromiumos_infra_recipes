@@ -42,7 +42,8 @@ class UrlsApi(recipe_api.RecipeApi):
         For direct-vm tests, the individual failing tests are listed.
     """
     link_url = self.m.buildbucket.build_url(build_id=vm_test.id)
-    if 'failed_test_cases' in vm_test.output.properties:
+    if 'failed_test_cases' in vm_test.output.properties and len(
+        vm_test.output.properties['failed_test_cases']) > 0:
       prop_struct = vm_test.output.properties['failed_test_cases']
       failed_test_cases_json = json_format.MessageToDict(prop_struct)
       link_map = {}

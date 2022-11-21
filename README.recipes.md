@@ -8678,7 +8678,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#122)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#123)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -8689,7 +8689,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#67)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#68)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
 
@@ -8700,7 +8700,7 @@ Returns:
   str->str map: title to URL to the skylab swarming task page
   if the suite succeeded or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#56)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#57)(self, skylab_task):**
 
 Returns the URL to the given skylab task.
 
@@ -8710,7 +8710,7 @@ Args:
 Returns:
   str: URL pointing to the skylab swarming task page.
 
-&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#101)(self, task_state):**
+&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#102)(self, task_state):**
 
 String suffix to supply info about the task.
 
