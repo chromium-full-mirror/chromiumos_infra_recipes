@@ -183,7 +183,8 @@ class TastExecApi(RecipeApi):
       tast_inputs.expressions = tests_to_retry
       retry_task_result = self._retry_iter(suite_name, vm_context, tast_inputs,
                                            'second')
-      all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
+      if retry_task_result.test_cases:
+        all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       retry_failures, retry_tcs = self.m.tast_results.get_failures(
           retry_task_result)
       empty_result = \
