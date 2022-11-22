@@ -4430,6 +4430,8 @@
     "cmd": [
       "rdb",
       "stream",
+      "-var",
+      "builder_name:fw-ec-cq",
       "--",
       "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",

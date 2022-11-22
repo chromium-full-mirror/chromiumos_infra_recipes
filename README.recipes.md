@@ -9142,9 +9142,9 @@ Recipe that builds and tests firmware.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/build_firmware.py#66)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_firmware.py#65)(api, properties):**
 
-&mdash; **def [UploadTestResults](/recipes/build_firmware.py#44)(api, location):**
+&mdash; **def [UploadTestResults](/recipes/build_firmware.py#44)(api, location, builder_name):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#13): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)

@@ -3857,6 +3857,8 @@
     "cmd": [
       "rdb",
       "stream",
+      "-var",
+      "builder_name:fw-ec-postsubmit",
       "--",
       "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",

@@ -41,7 +41,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BuildFirmwareProperties
 
 
-def UploadTestResults(api, location):
+def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
     test_results = cros_src_path.join(
@@ -49,14 +49,13 @@ def UploadTestResults(api, location):
 
     with api.step.nest('Upload EC Firmware test results') as pres:
       try:
-        api.step(
-            'run',
-            api.resultdb.wrap([
-                'vpython3',
-                cros_src_path.join(
-                    'src/platform/ec/util/zephyr_to_resultdb.py'),
-                '--result=' + str(test_results), '--upload=True'
-            ]))
+        rdb_cmd = [
+            'vpython3',
+            cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
+            '--result=' + str(test_results), '--upload=True'
+        ]
+        base_variant = {'builder_name': builder_name}
+        api.step('run', api.resultdb.wrap(rdb_cmd, base_variant=base_variant))
 
       except StepFailure:
         pres.status = api.step.FAILURE
@@ -100,13 +99,14 @@ def RunSteps(api, properties):
     api.easy.set_properties_step(got_revision=snapshot_sha,
                                  step_name='output got_revision')
 
+    build = api.buildbucket.build
     try:
       service.TestAllFirmware(
           TestAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                  code_coverage=properties.code_coverage),
           name='test firmware')
     except StepFailure as ex:
-      UploadTestResults(api, location)
+      UploadTestResults(api, location, build.builder.builder)
       raise ex
 
     uploaded_artifacts = api.build_menu.upload_artifacts(
@@ -116,7 +116,6 @@ def RunSteps(api, properties):
       api.bcid_reporter.report_stage('upload-complete')
 
     # Invoke signing if applies.
-    build = api.buildbucket.build
     if _invoke_signing_for_current_build(build.builder.builder,
                                          uploaded_artifacts, properties):
       with api.step.nest('schedule signing build'):
@@ -135,7 +134,7 @@ def RunSteps(api, properties):
 
         api.buildbucket.schedule(requests)
 
-    UploadTestResults(api, location)
+    UploadTestResults(api, location, build.builder.builder)
 
 
 def _read_chromiumos_sdk_pin(api, properties):
