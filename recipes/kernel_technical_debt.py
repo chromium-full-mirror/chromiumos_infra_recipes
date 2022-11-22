@@ -49,6 +49,12 @@ def RunSteps(api):
     patch_set = api.m.gerrit.fetch_patch_set_from_change(
         gerrit_changes[0], include_commit_info=True, include_files=True)
 
+  with api.step.nest('check branch') as presentation:
+    branch = patch_set.branch
+    if not branch.startswith("chromeos-"):
+      presentation.step_text = 'Branch not reviewed'
+      return
+
   with api.step.nest('check if tech debt') as presentation:
     subject = patch_set.subject
     if subject.startswith(
@@ -90,10 +96,11 @@ def GenTests(api):
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_build(**kwargs).build
 
-  def gen_patch_sets(message, filename):
+  def gen_patch_sets(message, filename, branch="chromeos-5.4"):
     return {
         1: {
             'subject': message.splitlines()[0],
+            'branch': branch,
             'revision_info': {
                 'commit': {
                     'message': message,
@@ -134,7 +141,7 @@ def GenTests(api):
   ]
   yield api.test('unknown project', test_builder(gerrit_changes=changes),
                  api.post_check(post_process.StepSuccess, 'known project'),
-                 api.post_check(post_process.DoesNotRun, 'check tag'),
+                 api.post_check(post_process.DoesNotRun, 'check branch'),
                  api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))
 
@@ -142,6 +149,17 @@ def GenTests(api):
       GerritChange(change=1, project='chromiumos/third_party/kernel',
                    host='chromium-review.googlesource.com', patchset=1),
   ]
+
+  yield api.test(
+      'unchecked branch', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile', branch='kcam')),
+      api.post_check(post_process.StepSuccess, 'check branch'),
+      api.post_check(post_process.DoesNotRun, 'check if tech debt'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
   yield api.test(
       'upstream', test_builder(gerrit_changes=changes),
       api.gerrit.set_gerrit_fetch_changes_response(
