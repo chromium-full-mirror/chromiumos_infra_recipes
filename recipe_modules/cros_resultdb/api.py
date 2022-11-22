@@ -125,7 +125,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     return rdb_config
 
   def get_drone_result_file(self, base_dir, result_format,
-                            autotest_name_for_gtest='chromium'):
+                            autotest_name='chromium'):
     """Get the path to the test results file on the drone.
 
     There are hardcoded for tast and gtest in this module.
@@ -135,7 +135,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
           For example, Chromium gtest result can be found at
           base_dir/autoserv_test/chromium/results.
       result_format (str): The format of the test results.
-      autotest_name_for_gtest: The autotest name for gtest. By default,
+      autotest_name: The autotest name for non-tast tests. By default,
           it is 'chromium', the generic wrapper name for browser gtests.
 
     Returns:
@@ -147,8 +147,10 @@ class ResultDBCommand(recipe_api.RecipeApi):
     base = os.path.join(base_dir, 'autoserv_test')
     result_file_by_type = {
         'gtest':
-            os.path.join(
-                base, '{}/results/output.json'.format(autotest_name_for_gtest)),
+            os.path.join(base, '{}/results/output.json'.format(autotest_name)),
+        'json':
+            os.path.join(base,
+                         '{}/results/json_results.json'.format(autotest_name)),
         'tast':
             os.path.join(base, 'tast/results/streamed_results.jsonl'),
     }

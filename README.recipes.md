@@ -3271,7 +3271,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#439)(self, invocation_ids):**
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#441)(self, invocation_ids):**
 
 Exonerate already exonerated test failures for the given invocations.
 
@@ -3279,7 +3279,7 @@ Args:
   invocation_ids (list(str)): The ids of the invocation whose results we
     should try to exonerate.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#349)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#351)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3341,7 +3341,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#157)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#159)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -3360,7 +3360,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#127)(self, base_dir, result_format, autotest_name_for_gtest='chromium'):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#127)(self, base_dir, result_format, autotest_name='chromium'):**
 
 Get the path to the test results file on the drone.
 
@@ -3371,13 +3371,13 @@ Args:
       For example, Chromium gtest result can be found at
       base_dir/autoserv_test/chromium/results.
   result_format (str): The format of the test results.
-  autotest_name_for_gtest: The autotest name for gtest. By default,
+  autotest_name: The autotest name for non-tast tests. By default,
       it is 'chromium', the generic wrapper name for browser gtests.
 
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#493)(self, test_names, base_variant, base_tags=None):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#495)(self, test_names, base_variant, base_tags=None):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -3390,7 +3390,7 @@ Args:
       results.
   base_tags (list[tuples]): List of tags to attach to the test results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#181)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#183)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 
