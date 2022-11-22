@@ -6,6 +6,8 @@ import PB.chromiumos.common as common_pb2
 from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import TestPaygenProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,7 +20,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TestPaygenProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestPaygenProperties):
   api.assertions.assertEqual(
       len(
           api.paygen_orchestration.get_builder_configs(
@@ -31,7 +33,7 @@ def RunSteps(api, properties):
   ])
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   good_json, bad_json, not_json = map(
       api.paygen_orchestration.test_paygen, ['get paygen json.gsutil cat'] *
       len(api.paygen_orchestration.ALL_EXAMPLE_JSONS),

@@ -7186,40 +7186,35 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for orchestrating payload generation. Used by paygen_orchestrator.
 
-#### **class [PaygenOrchestrationApi](/recipe_modules/paygen_orchestration/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PaygenOrchestrationApi](/recipe_modules/paygen_orchestration/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen orchestration steps.
 
-&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#282)(self, gen_req, configured_payloads, au_testing_models, au_fsi_testing_models, delta_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#294)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
 
 Determine which hardware tests need to be run for the given payload.
 
 Args:
-  gen_req (GenerationRequest): Proto defining the payload-to-be for which to
-    find tests.
-  configured_payloads (list[dict]): Configs for the payloads we are
-    generating and testing.
-  au_testing_models (list[str]): The au testing models configured.
-  au_fsi_testing_models (list[str]): The au fsi testing models configured.
-  delta_test_override (PayloadTestsOverride): Option to override
-    the configured delta payload testing policy.
-  full_test_override (PayloadTestsOverride): Option to override the
-    configured full payload testing policy.
+  gen_req: Proto defining the payload-to-be for which to find tests.
+  configured_payloads: Configs for the payloads we are generating and testing.
+  au_testing_models: The au testing models configured.
+  au_fsi_testing_models: The au fsi testing models configured.
+  delta_test_override: Option to override the configured delta payload testing policy.
+  full_test_override: Option to override the configured full payload testing policy.
 
 Returns:
-  list[AutoupdateTestConfig]: Test configs that should be
-    run for the requested payload.
+  Test configs that should be run for the requested payload.
 
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/paygen_orchestration/api.py#93)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/paygen_orchestration/api.py#100)(self):**
 
-&mdash; **def [get\_builder\_configs](/recipe_modules/paygen_orchestration/api.py#97)(self, builder_name, \*\*kwargs):**
+&mdash; **def [get\_builder\_configs](/recipe_modules/paygen_orchestration/api.py#104)(self, builder_name: str, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
 Note that all comparisons are made _in lower case_!
 
 Args:
-  builder_name (str): The name of the builders to return configuration for.
+  builder_name: The name of the builders to return configuration for.
   **kwargs: Match keyword to top level dictionary contents. For example
             passing delta_payload_tests=true will match only if matched.
 
@@ -7245,7 +7240,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#167)(self, payload_def, src_artifacts, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#176)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -7254,30 +7249,30 @@ If there isn't a matching source and target available, then return [].
 bucket, verify, and dryrun are all used to fill out the GenerationRequest().
 
 Args:
-  payload_def (dict): A singular configuration from pulled config.
-  src_artifacts (list[cros_storage.Image]): Available src images.
-  tgt_artifacts (list[cros_storage.Image]): Available tgt images.
-  bucket (str): The bucket containing the requests (and destination).
-  verify (bool): Should we run payload verification.
-  dryrun (bool): Should we not upload resulting artifacts.
+  payload_def: A singular configuration from pulled config.
+  src_artifacts: Available src images.
+  tgt_artifacts: Available tgt images.
+  bucket: The bucket containing the requests (and destination).
+  verify: Should we run payload verification.
+  dryrun: Should we not upload resulting artifacts.
 
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#240)(self, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#251)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
 
 Get the configured full requests for a set of artifacts.
 
 Args:
-  tgt_artifacts (list[cros_storage.Image]): Available tgt images.
-  bucket (str): The bucket containing the requests (and destination).
-  verify (bool): Should we run payload verification.
-  dryrun (bool): Should we not upload resulting artifacts.
+  tgt_artifacts: Available tgt images.
+  bucket: The bucket containing the requests (and destination).
+  verify: Should we run payload verification.
+  dryrun: Should we not upload resulting artifacts.
 
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#137)(self, tgt_artifacts, bucket, verify, dryrun):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#145)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
 
 Generate a N2N testing payloads.
 
@@ -7286,19 +7281,19 @@ test images and generate n2n requests (a request that updates to
 and from the same version.
 
 Args:
-  tgt_artifacts (list[cros_storage.Image]): Available tgt images.
-  bucket (str): The bucket containing the requests (and destination).
-  verify (bool): Should we run payload verification.
-  dryrun (bool): Should we not upload resulting artifacts.
+  tgt_artifacts: Available tgt images.
+  bucket: The bucket containing the requests (and destination).
+  verify: Should we run payload verification.
+  dryrun: Should we not upload resulting artifacts.
 
 Returns:
   A list[GenerationRequest] or [].
 
-&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#45)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#51)(self):**
 
 Get the currently configured paygen timeout in seconds.
 
-&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#56)(self):**
 
 Get the currently configured paygen orchestrator timeout in seconds.
 
@@ -7307,13 +7302,12 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#335)(self, paygen_reqs):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#345)(self, paygen_reqs: List[PaygenProperties.PaygenRequest]):**
 
 Launch paygen builders to generate payloads and run configured tests.
 
 Args:
-  paygen_reqs (list[PaygenRequest]): Protos containing the payloads to
-    generate and the corresponding tests to launch.
+  paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
 
 Returns:
   A list of completed builds.
@@ -11837,60 +11831,60 @@ Args:
 &mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#215)(api, req, resp):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/examples/full.py#10): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/paygen_orchestration/examples/full.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/full.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/full.py#23)(api: RecipeApi, properties: TestPaygenProperties):**
 ### *recipes* / [paygen\_orchestration:examples/get\_delta\_requests](/recipe_modules/paygen_orchestration/examples/get_delta_requests.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/examples/get_delta_requests.py#13): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/paygen_orchestration/examples/get_delta_requests.py#15): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/get_delta_requests.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/get_delta_requests.py#26)(api: RecipeApi, properties: GetRequestTestInputProperties):**
 ### *recipes* / [paygen\_orchestration:examples/get\_full\_requests](/recipe_modules/paygen_orchestration/examples/get_full_requests.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/examples/get_full_requests.py#10): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/paygen_orchestration/examples/get_full_requests.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/get_full_requests.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/get_full_requests.py#23)(api: RecipeApi, properties: GetRequestTestInputProperties):**
 ### *recipes* / [paygen\_orchestration:examples/get\_n2n\_requests](/recipe_modules/paygen_orchestration/examples/get_n2n_requests.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/examples/get_n2n_requests.py#10): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/paygen_orchestration/examples/get_n2n_requests.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/get_n2n_requests.py#21)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/get_n2n_requests.py#23)(api: RecipeApi, properties: GetRequestTestInputProperties):**
 ### *recipes* / [paygen\_orchestration:examples/run\_paygen\_builders](/recipe_modules/paygen_orchestration/examples/run_paygen_builders.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/examples/run_paygen_builders.py#11): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/paygen_orchestration/examples/run_paygen_builders.py#13): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/run_paygen_builders.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/examples/run_paygen_builders.py#21)(api: RecipeApi):**
 ### *recipes* / [paygen\_orchestration:tests/batch\_paygen\_request\_dicts\_batching](/recipe_modules/paygen_orchestration/tests/batch_paygen_request_dicts_batching.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/tests/batch_paygen_request_dicts_batching.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/paygen_orchestration/tests/batch_paygen_request_dicts_batching.py#15): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/batch_paygen_request_dicts_batching.py#39)(api, max_batch_size, paygen_requests, expected_batches):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/batch_paygen_request_dicts_batching.py#42)(api: RecipeApi, max_batch_size: int, paygen_requests: Tuple[(str, str)], expected_batches: Tuple[(str, str)]):**
 ### *recipes* / [paygen\_orchestration:tests/create\_au\_test\_configs](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py#16): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py#19): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py#72)(api, gen_req_ser, expected_test_configs_ser, delta_test_override, full_test_override, fsi, au_testing_models, au_fsi_testing_models):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py#75)(api: RecipeApi, gen_req_ser: str, expected_test_configs_ser: Tuple[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride, fsi: bool, au_testing_models: List[str], au_fsi_testing_models: List[str]):**
 ### *recipes* / [paygen\_orchestration:tests/verify\_paygen\_timeout](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py)
 
-[DEPS](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#9): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#11): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#19)(api: RecipeApi):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
 [DEPS](/recipes/paygen_orchestrator.py#27): [build\_reporting](#recipe_modules-build_reporting), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

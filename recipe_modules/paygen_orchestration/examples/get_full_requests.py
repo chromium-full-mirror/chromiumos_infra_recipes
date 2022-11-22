@@ -6,6 +6,8 @@
 from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import GetRequestTestInputProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,7 +20,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = GetRequestTestInputProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
   if properties.request_type == GetRequestTestInputProperties.SIGNED:
     tgts = properties.signed_tgts
   elif properties.request_type == GetRequestTestInputProperties.UNSIGNED:
@@ -33,7 +35,7 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(x, y)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic-signed',
       api.paygen_orchestration.props(

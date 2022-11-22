@@ -5,13 +5,16 @@
 # pylint: disable=protected-access
 
 import json
+from typing import List, Tuple
 
 from PB.chromite.api.payload import GenerationRequest
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/assertions',
@@ -69,8 +72,11 @@ PROPERTIES = {
 }
 
 
-def RunSteps(api, gen_req_ser, expected_test_configs_ser, delta_test_override,
-             full_test_override, fsi, au_testing_models, au_fsi_testing_models):
+def RunSteps(
+    api: RecipeApi, gen_req_ser: str, expected_test_configs_ser: Tuple[str],
+    delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride,
+    full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride,
+    fsi: bool, au_testing_models: List[str], au_fsi_testing_models: List[str]):
   api.assertions.maxDiff = None
   with api.step.nest('setup'):
     configured_payloads = [
@@ -97,11 +103,16 @@ def RunSteps(api, gen_req_ser, expected_test_configs_ser, delta_test_override,
     api.assertions.assertCountEqual(actual_test_configs, expected_test_configs)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def create_properties(gen_req, expected_test_configs, delta_test_override=0,
-                        full_test_override=0, fsi=False, au_testing_models=None,
-                        au_fsi_testing_models=None):
+  def create_properties(
+      gen_req: GenerationRequest,
+      expected_test_configs: List[AutoupdateTestConfig],
+      delta_test_override: PaygenOrchestratorProperties
+      .PayloadTestsOverride = 0,
+      full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride = 0,
+      fsi: bool = False, au_testing_models: List[str] = None,
+      au_fsi_testing_models: List[str] = None) -> TestData:
     au_testing_models = au_testing_models or []
     au_fsi_testing_models = au_fsi_testing_models or []
     gen_req_ser = gen_req.SerializeToString()

@@ -3,11 +3,14 @@
 # found in the LICENSE file.
 
 # pylint: disable=protected-access
+from typing import Tuple
 
 from PB.chromite.api.payload import GenerationRequest
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -36,7 +39,9 @@ PROPERTIES = {
 }
 
 
-def RunSteps(api, max_batch_size, paygen_requests, expected_batches):
+def RunSteps(api: RecipeApi, max_batch_size: int,
+             paygen_requests: Tuple[str, str],
+             expected_batches: Tuple[str, str]):
   # Handle test setup (object parsing and whatnot).
   with api.step.nest('deserialize paygen_requests'):
     requests = []
@@ -67,7 +72,7 @@ def RunSteps(api, max_batch_size, paygen_requests, expected_batches):
     api.assertions.assertEqual(batches, actual_batches)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'basic-no-max-batch-size',

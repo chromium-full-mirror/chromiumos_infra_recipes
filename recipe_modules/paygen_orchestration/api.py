@@ -8,20 +8,24 @@
 """API for orchestrating payload generation. Used by paygen_orchestrator."""
 
 import collections
-from copy import deepcopy
 import json
 import math
+from copy import deepcopy
+from typing import Any, Dict, List, NewType
 
 from google.protobuf.json_format import MessageToDict
 
+import PB.chromiumos.common as common_pb2
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
-import PB.chromiumos.common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.go.chromium.org.luci.buildbucket.proto.builds_service import ScheduleBuildRequest
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
+from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-
+from RECIPE_MODULES.chromeos.cros_storage.api import Image
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
@@ -32,23 +36,25 @@ DEFAULT_DELTA_TYPES = [
 
 PAYGEN_JSON_GS_PATH = 'gs://chromeos-build-release-console/paygen.json'
 
+PaygenConfig = NewType('PaygenConfig', Any)
+
 
 class PaygenOrchestrationApi(recipe_api.RecipeApi):
   """A module for CrOS-specific paygen orchestration steps."""
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, properties: PaygenOrchestratorProperties, *args, **kwargs):
     super(PaygenOrchestrationApi, self).__init__(*args, **kwargs)
     self._internal_config = None
     self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
     self._max_dlc_batch_size = properties.max_dlc_batch_size or None
 
   @property
-  def paygen_children_timeout_sec(self):
+  def paygen_children_timeout_sec(self) -> int:
     """Get the currently configured paygen timeout in seconds."""
     return 6 * 60 * 60
 
   @property
-  def paygen_orchestrator_timeout_sec(self):
+  def paygen_orchestrator_timeout_sec(self) -> int:
     """Get the currently configured paygen orchestrator timeout in seconds.
 
     This contains the duration expected for paygen children.
@@ -59,7 +65,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return self.paygen_children_timeout_sec + 1 * 60 * 60
 
   @property
-  def _config(self):
+  def _config(self) -> PaygenConfig:
     """Lazily loaded copy of the entire configuration in paygen.json."""
     if not self._internal_config:
       raw_config = self._get_gs_config()
@@ -74,7 +80,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     # Returns immutable copy.
     return deepcopy(self._internal_config)
 
-  def _get_gs_config(self):
+  def _get_gs_config(self) -> str:
     """Pull and load the current paygen configuration as a string."""
     with self.m.step.nest('get paygen json') as pres:
       cat_res = self.m.gsutil.cat(self._paygen_json_gs_path, infra_step=True,
@@ -83,7 +89,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       pres.logs['paygen.json'] = ret
       return ret
 
-  def _flatten_config(self, board_config):
+  @staticmethod
+  def _flatten_config(board_config: PaygenConfig) -> PaygenConfig:
     """Flatten a board_config so we can query it more easily."""
     new_b = deepcopy(board_config)
     new_b.update(board_config['board'])
@@ -91,16 +98,17 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return new_b
 
   @property
-  def default_delta_types(self):
+  def default_delta_types(self) -> List["common_pb2.DeltaType"]:
     return DEFAULT_DELTA_TYPES
 
-  def get_builder_configs(self, builder_name, **kwargs):
+  def get_builder_configs(self, builder_name: str,
+                          **kwargs) -> List[PaygenConfig]:
     """Return the configs matching the query or [].
 
     Note that all comparisons are made _in lower case_!
 
     Args:
-      builder_name (str): The name of the builders to return configuration for.
+      builder_name: The name of the builders to return configuration for.
       **kwargs: Match keyword to top level dictionary contents. For example
                 passing delta_payload_tests=true will match only if matched.
 
@@ -134,7 +142,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
           match_boards.append(b)
     return match_boards
 
-  def get_n2n_requests(self, tgt_artifacts, bucket, verify, dryrun):
+  def get_n2n_requests(self, tgt_artifacts: List[Image], bucket: str,
+                       verify: bool, dryrun: bool) -> List[GenerationRequest]:
     """Generate a N2N testing payloads.
 
     We will examine all the artifacts in tgt artifacts for unsigned
@@ -142,10 +151,10 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     and from the same version.
 
     Args:
-      tgt_artifacts (list[cros_storage.Image]): Available tgt images.
-      bucket (str): The bucket containing the requests (and destination).
-      verify (bool): Should we run payload verification.
-      dryrun (bool): Should we not upload resulting artifacts.
+      tgt_artifacts: Available tgt images.
+      bucket: The bucket containing the requests (and destination).
+      verify: Should we run payload verification.
+      dryrun: Should we not upload resulting artifacts.
 
     Returns:
       A list[GenerationRequest] or [].
@@ -164,8 +173,10 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                               chroot=self.m.cros_sdk.chroot, minios=True))
     return reqs
 
-  def get_delta_requests(self, payload_def, src_artifacts, tgt_artifacts,
-                         bucket, verify, dryrun):
+  def get_delta_requests(self, payload_def: PaygenConfig,
+                         src_artifacts: List[Image], tgt_artifacts: List[Image],
+                         bucket: str, verify: bool,
+                         dryrun: bool) -> List[GenerationRequest]:
     """Examine def, source, and target and return list(GenerationRequests).
 
     If there isn't a matching source and target available, then return [].
@@ -173,12 +184,12 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     bucket, verify, and dryrun are all used to fill out the GenerationRequest().
 
     Args:
-      payload_def (dict): A singular configuration from pulled config.
-      src_artifacts (list[cros_storage.Image]): Available src images.
-      tgt_artifacts (list[cros_storage.Image]): Available tgt images.
-      bucket (str): The bucket containing the requests (and destination).
-      verify (bool): Should we run payload verification.
-      dryrun (bool): Should we not upload resulting artifacts.
+      payload_def: A singular configuration from pulled config.
+      src_artifacts: Available src images.
+      tgt_artifacts: Available tgt images.
+      bucket: The bucket containing the requests (and destination).
+      verify: Should we run payload verification.
+      dryrun: Should we not upload resulting artifacts.
 
     Returns:
       A completed list[GenerationRequest] or [].
@@ -237,14 +248,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                                 chroot=self.m.cros_sdk.chroot))
     return reqs
 
-  def get_full_requests(self, tgt_artifacts, bucket, verify, dryrun):
+  def get_full_requests(self, tgt_artifacts: List[Image], bucket: str,
+                        verify: bool, dryrun: bool) -> List[GenerationRequest]:
     """Get the configured full requests for a set of artifacts.
 
     Args:
-      tgt_artifacts (list[cros_storage.Image]): Available tgt images.
-      bucket (str): The bucket containing the requests (and destination).
-      verify (bool): Should we run payload verification.
-      dryrun (bool): Should we not upload resulting artifacts.
+      tgt_artifacts: Available tgt images.
+      bucket: The bucket containing the requests (and destination).
+      verify: Should we run payload verification.
+      dryrun: Should we not upload resulting artifacts.
 
     Returns:
       A completed list[GenerationRequest] or [].
@@ -280,27 +292,25 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return reqs
 
   def create_au_test_configs(
-      self, gen_req, configured_payloads, au_testing_models,
-      au_fsi_testing_models,
-      delta_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG,
-      full_test_override=PaygenOrchestratorProperties.RESPECT_CONFIG):
+      self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig],
+      au_testing_models: List[str], au_fsi_testing_models: List[str],
+      delta_test_override: PaygenOrchestratorProperties
+      .PayloadTestsOverride = PaygenOrchestratorProperties.RESPECT_CONFIG,
+      full_test_override: PaygenOrchestratorProperties
+      .PayloadTestsOverride = PaygenOrchestratorProperties.RESPECT_CONFIG
+  ) -> List[AutoupdateTestConfig]:
     """Determine which hardware tests need to be run for the given payload.
 
     Args:
-      gen_req (GenerationRequest): Proto defining the payload-to-be for which to
-        find tests.
-      configured_payloads (list[dict]): Configs for the payloads we are
-        generating and testing.
-      au_testing_models (list[str]): The au testing models configured.
-      au_fsi_testing_models (list[str]): The au fsi testing models configured.
-      delta_test_override (PayloadTestsOverride): Option to override
-        the configured delta payload testing policy.
-      full_test_override (PayloadTestsOverride): Option to override the
-        configured full payload testing policy.
+      gen_req: Proto defining the payload-to-be for which to find tests.
+      configured_payloads: Configs for the payloads we are generating and testing.
+      au_testing_models: The au testing models configured.
+      au_fsi_testing_models: The au fsi testing models configured.
+      delta_test_override: Option to override the configured delta payload testing policy.
+      full_test_override: Option to override the configured full payload testing policy.
 
     Returns:
-      list[AutoupdateTestConfig]: Test configs that should be
-        run for the requested payload.
+      Test configs that should be run for the requested payload.
     """
     # Skip testing entirely for minios.
     if gen_req.minios:
@@ -332,12 +342,13 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                                                        au_fsi_testing_models,
                                                        force_tests=force_tests)
 
-  def run_paygen_builders(self, paygen_reqs):
+  def run_paygen_builders(self,
+                          paygen_reqs: List[PaygenProperties.PaygenRequest]
+                         ) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
-      paygen_reqs (list[PaygenRequest]): Protos containing the payloads to
-        generate and the corresponding tests to launch.
+      paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
 
     Returns:
       A list of completed builds.
@@ -353,7 +364,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     ]
 
     # Define a function to split requests into chunks.
-    def _split_large_requests(schedule_requests, max_elements=200):
+    def _split_large_requests(schedule_requests: List[ScheduleBuildRequest],
+                              max_elements: int = 200):
       """Split large requests into chunks, bb's max is 200 per schedule."""
       split_reqs = []
 
@@ -384,7 +396,9 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
           step_name='collect', url_title_fn=lambda b: None)
     return [build_dict[b.id] for b in builds]
 
-  def _present_paygen_request_urls(self, paygen_request_batches, builds):
+  def _present_paygen_request_urls(
+      self, paygen_request_batches: List[List[PaygenProperties.PaygenRequest]],
+      builds: List[Build]):
     """Show descriptive URLs about each batch of PaygenRequests.
 
     Args:
@@ -410,21 +424,18 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       for (key, value) in title_to_url_dict.items():
         presentation.links[key] = value
 
-  def _get_au_test_configs_for_full_payload(self, gen_req, configured_payloads,
-                                            au_testing_models,
-                                            au_fsi_testing_models,
-                                            force_tests=False):
+  def _get_au_test_configs_for_full_payload(
+      self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig],
+      au_testing_models: List[str], au_fsi_testing_models: List[str],
+      force_tests: bool = False) -> List[AutoupdateTestConfig]:
     """Create AutoupdateTestConfigs for a test-image's full paygen request.
 
     Args:
-      gen_req (GenerationRequest): The delta test payload GenerationRequest
-        for which to find tests and schedule.
-      configured_payloads (list[dict]): Configs for the payloads we are
-        generating and testing.
-      au_testing_models (list[str]): The au testing models configured.
-      au_fsi_testing_models (list[str]): The au fsi testing models configured.
-      force_tests (bool): Whether to override the configured full payload
-        testing policy.
+      gen_req: The delta test payload GenerationRequest for which to find tests and schedule.
+      configured_payloads: Configs for the payloads we aregenerating and testing.
+      au_testing_models: The au testing models configured.
+      au_fsi_testing_models: The au fsi testing models configured.
+      force_tests: Whether to override the configured full payload testing policy.
 
     Returns:
       List[AutoupdateTestConfig] corresponding to the GenerationRequest.
@@ -451,21 +462,18 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                 applicable_models=applicable_models))
     return test_configs
 
-  def _get_au_test_configs_for_delta_payload(self, gen_req, configured_payloads,
-                                             au_testing_models,
-                                             au_fsi_testing_models,
-                                             force_tests=False):
+  def _get_au_test_configs_for_delta_payload(
+      self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig],
+      au_testing_models: List[str], au_fsi_testing_models: List[str],
+      force_tests: bool = False) -> List[AutoupdateTestConfig]:
     """Create AutoupdateTestConfigs for a test-image's delta paygen request.
 
     Args:
-      gen_req (GenerationRequest): The full test payload GenerationRequest
-        for which to find tests and schedule.
-      configured_payloads (list[dict]): Configs for the payloads we are
-        generating and testing.
-      au_testing_models (list[str]): The au testing models configured.
-      au_fsi_testing_models (list[str]): The au fsi testing models configured.
-      force_tests (bool): Whether to override the configured full payload
-        testing policy.
+      gen_req: The full test payload GenerationRequest for which to find tests and schedule.
+      configured_payloads: Configs for the payloads we are generating and testing.
+      au_testing_models: The au testing models configured.
+      au_fsi_testing_models: The au fsi testing models configured.
+      force_tests: Whether to override the configured full payload testing policy.
 
     Returns:
       List[AutoupdateTestConfig] corresponding to the GenerationRequest.
@@ -489,19 +497,19 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                 applicable_models=applicable_models))
     return test_configs
 
-  def _match_gen_req_to_configured_payloads(self, gen_req, configured_payloads):
+  def _match_gen_req_to_configured_payloads(
+      self, gen_req: GenerationRequest,
+      configured_payloads: List[PaygenConfig]) -> List[PaygenConfig]:
     """Determine which paygen configs correlate with the GenerationRequest.
 
     Match on channel and (for delta payloads) source image version.
 
     Args:
-      gen_req (GenerationRequest): The test payload GenerationRequest for which
-        to find tests and schedule.
-      configured_payloads (list[dict]): Configs for the payloads we are
-        generating and testing.
+      gen_req: The test payload GenerationRequest for which to find tests and schedule.
+      configured_payloads: Configs for the payloads we are generating and testing.
 
     Returns:
-      list[dict]: Configs matching the GenerationRequest.
+      Configs matching the GenerationRequest.
     """
     tgt_img = getattr(gen_req, gen_req.WhichOneof('tgt_image_oneof'))
     src_img = getattr(gen_req, gen_req.WhichOneof('src_image_oneof'))
@@ -518,14 +526,14 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return cfgs
 
   @staticmethod
-  def _create_paygen_request_dict(generation_request, test_requests=None):
+  def _create_paygen_request_dict(
+      generation_request: GenerationRequest,
+      test_requests: List[AutoupdateTestConfig] = None) -> Dict[str, dict]:
     """Create a dict of a PaygenRequest for a Paygen builder.
 
     Args:
-      generation_request (GenerationRequest): Request to generate the desired
-        payload.
-      test_requests ([AutoupdateTestConfigs]): A list of tests to perform with
-        the generated payload.
+      generation_request: Request to generate the desired payload.
+      test_requests: A list of tests to perform with the generated payload.
 
     Returns:
       A dict of the PaygenRequest for a Paygen builder of the provided
@@ -540,7 +548,9 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
         ]
     }
 
-  def _batch_paygen_request_dicts(self, prds):
+  def _batch_paygen_request_dicts(
+      self, prds: List[PaygenProperties.PaygenRequest]
+  ) -> List[List[PaygenProperties.PaygenRequest]]:
     """Separate dicts of PaygenRequests into groups to run together.
 
     This method separates all the requests into the following batches:
@@ -551,31 +561,32 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       - All other requests are sent through in a batch of 1.
 
     Args:
-      prds (List[dict]): Dicts representing PaygenRequests to run.
+      prds: Dicts representing PaygenRequests to run.
 
     Returns:
-      List[List[dict]]: Each element returned contains a group of
-          dicts representing PaygenRequests that should be run by the same
-          Paygen builder.
+      Each element returned contains a group of dicts representing PaygenRequests that should be run by the same Paygen builder.
     """
 
-    def _gen_req(paygen_request_dict):
+    def _gen_req(paygen_request_dict: PaygenProperties.PaygenRequest
+                ) -> GenerationRequest:
       return paygen_request_dict.get('generation_request', {})
 
-    def _tgt_unsigned(paygen_request_dict):
+    def _tgt_unsigned(paygen_request_dict: PaygenProperties.PaygenRequest
+                     ) -> UnsignedImage_pb2:
       return _gen_req(paygen_request_dict).get('tgtUnsignedImage', {})
 
-    def _is_dlc(paygen_request_dict):
+    def _is_dlc(paygen_request_dict: PaygenProperties.PaygenRequest) -> bool:
       return 'tgtDlcImage' in _gen_req(paygen_request_dict)
 
-    def _is_minios(paygen_request_dict):
+    def _is_minios(paygen_request_dict: PaygenProperties.PaygenRequest) -> bool:
       return _gen_req(paygen_request_dict).get('minios', False)
 
-    def _is_full_unsigned(paygen_request_dict):
+    def _is_full_unsigned(paygen_request_dict: PaygenProperties.PaygenRequest
+                         ) -> bool:
       return 'tgtUnsignedImage' in _gen_req(paygen_request_dict) and _gen_req(
           paygen_request_dict).get('fullUpdate', False)
 
-    def _is_n2n(paygen_request_dict):
+    def _is_n2n(paygen_request_dict: PaygenProperties.PaygenRequest) -> bool:
       gen_req = _gen_req(paygen_request_dict)
       return 'srcUnsignedImage' in gen_req and 'tgtUnsignedImage' in gen_req and gen_req[
           'srcUnsignedImage'] == gen_req['tgtUnsignedImage']
@@ -632,12 +643,13 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
 
     return batches
 
-  def _create_bb_schedule_request(self, paygen_requests):
+  def _create_bb_schedule_request(
+      self, paygen_requests: List[PaygenProperties.PaygenRequest]
+  ) -> ScheduleBuildRequest:
     """Create a ScheduleBuildRequest for list of paygen requests.
 
     Args:
-      paygen_requests ([PaygenRequest]): Requests to generate the desired
-        payload.
+      paygen_requests: Requests to generate the desired payload.
 
     Returns:
       A ScheduleBuildRequest for a Paygen builder.

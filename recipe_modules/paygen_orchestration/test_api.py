@@ -11,35 +11,36 @@ consistent.
 
 import json
 import os
-from recipe_engine import recipe_test_api
+from typing import Callable, List
 
+import PB.chromiumos.common as common_pb2
 from PB.chromite.api.payload import Build as Build_pb2
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
-from PB.chromite.api.payload import GenerationRequest as GenerationRequest_pb2
+from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
-import PB.chromiumos.common as common_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import GetRequestTestInputProperties
+from PB.recipes.chromeos.paygen import AutoupdateTestConfig
+from recipe_engine import recipe_test_api
+from recipe_engine.recipe_test_api import TestData
 
 
-def _read_test_file(filename):
+def _read_test_file(filename: str) -> str:
   """Read the content of a file in this directory.
 
   Args:
-    filename (str): The basename of the file (located in this directory) to
-        read.
+    filename: The basename of the file (located in this directory) to read.
 
   Returns:
-    (str): The contents of the file.
+    The contents of the file.
   """
   with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
                          filename)) as f:
     return f.read().strip()
 
 
-def _example_big_config():
+def _example_big_config() -> str:
   """Multiply paygen config for summary markdown truncate testing."""
   data = json.loads(_read_test_file('test_paygen.json'))
   # 99 total.
@@ -127,9 +128,9 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
   )
 
   @property
-  def EXAMPLE_GEN_REQUESTS_DELTA_SIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_DELTA_SIGNED(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             src_signed_image=self.SIGNED_SRC,
             tgt_signed_image=self.SIGNED_TGT,
             bucket='b',
@@ -137,16 +138,16 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         ),
-        GenerationRequest_pb2(src_signed_image=self.SIGNED_SRC,
-                              tgt_signed_image=self.SIGNED_TGT, bucket='b',
-                              verify=True, dryrun=False,
-                              chroot=self.m.cros_sdk.chroot(), minios=True)
+        GenerationRequest(src_signed_image=self.SIGNED_SRC,
+                          tgt_signed_image=self.SIGNED_TGT, bucket='b',
+                          verify=True, dryrun=False,
+                          chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             src_unsigned_image=self.UNSIGNED_SRC,
             tgt_unsigned_image=self.UNSIGNED_TGT,
             bucket='b',
@@ -154,16 +155,16 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         ),
-        GenerationRequest_pb2(src_unsigned_image=self.UNSIGNED_SRC,
-                              tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
-                              verify=True, dryrun=False,
-                              chroot=self.m.cros_sdk.chroot(), minios=True)
+        GenerationRequest(src_unsigned_image=self.UNSIGNED_SRC,
+                          tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                          verify=True, dryrun=False,
+                          chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUEST_DELTA_DLC(self):
+  def EXAMPLE_GEN_REQUEST_DELTA_DLC(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             src_dlc_image=self.DLC_SRC,
             tgt_dlc_image=self.DLC_TGT,
             bucket='b',
@@ -174,9 +175,9 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
     ]
 
   @property
-  def EXAMPLE_GEN_REQUESTS_FULL_SIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_FULL_SIGNED(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             full_update=True,
             tgt_signed_image=self.SIGNED_TGT,
             bucket='b',
@@ -184,16 +185,15 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
         ),
-        GenerationRequest_pb2(full_update=True,
-                              tgt_signed_image=self.SIGNED_TGT, bucket='b',
-                              verify=True, dryrun=True,
-                              chroot=self.m.cros_sdk.chroot(), minios=True)
+        GenerationRequest(full_update=True, tgt_signed_image=self.SIGNED_TGT,
+                          bucket='b', verify=True, dryrun=True,
+                          chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED(self):
+  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             full_update=True,
             tgt_unsigned_image=self.UNSIGNED_TGT,
             bucket='b',
@@ -201,16 +201,17 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
         ),
-        GenerationRequest_pb2(full_update=True,
-                              tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
-                              verify=True, dryrun=True,
-                              chroot=self.m.cros_sdk.chroot(), minios=True)
+        GenerationRequest(full_update=True,
+                          tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                          verify=True, dryrun=True,
+                          chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_RECOVERY(self):
+  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_RECOVERY(self
+                                                 ) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             full_update=True,
             tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
             bucket='b',
@@ -218,16 +219,16 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
         ),
-        GenerationRequest_pb2(full_update=True,
-                              tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
-                              bucket='b', verify=True, dryrun=True,
-                              chroot=self.m.cros_sdk.chroot(), minios=True)
+        GenerationRequest(full_update=True,
+                          tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
+                          bucket='b', verify=True, dryrun=True,
+                          chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUEST_FULL_DLC(self):
+  def EXAMPLE_GEN_REQUEST_FULL_DLC(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             full_update=True,
             tgt_dlc_image=self.DLC_TGT,
             bucket='b',
@@ -238,9 +239,9 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
     ]
 
   @property
-  def EXAMPLE_GEN_REQUESTS_DELTA_N2N(self):
+  def EXAMPLE_GEN_REQUESTS_DELTA_N2N(self) -> List[GenerationRequest]:
     return [
-        GenerationRequest_pb2(
+        GenerationRequest(
             src_unsigned_image=self.UNSIGNED_TGT,
             tgt_unsigned_image=self.UNSIGNED_TGT,
             bucket='b',
@@ -248,14 +249,14 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
         ),
-        GenerationRequest_pb2(src_unsigned_image=self.UNSIGNED_TGT,
-                              tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
-                              verify=True, dryrun=False,
-                              chroot=self.m.cros_sdk.chroot(), minios=True)
+        GenerationRequest(src_unsigned_image=self.UNSIGNED_TGT,
+                          tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
+                          verify=True, dryrun=False,
+                          chroot=self.m.cros_sdk.chroot(), minios=True)
     ]
 
   @property
-  def EXAMPLE_GEN_REQUESTS(self):
+  def EXAMPLE_GEN_REQUESTS(self) -> List[GenerationRequest]:
     return [
         self.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
         self.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED[0],
@@ -323,13 +324,16 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
       'full_update': False,
   }
 
-  def test_paygen(self, step_name, json_return):
+  def test_paygen(self, step_name: str, json_return: str) -> TestData:
     """Mock up step results for the GS cat."""
     test_response = self.m.step.step_data(
         step_name, stdout=self.m.raw_io.output(json_return))
     return test_response
 
-  def props(self, api_props, request_type, expected_reqs, **kwargs):
+  def props(self,
+            api_props: Callable[[GetRequestTestInputProperties], TestData],
+            request_type: GetRequestTestInputProperties.GetRequestType,
+            expected_reqs: List[GenerationRequest], **kwargs) -> TestData:
     """Define a test prop from a request_type and incoming kwargs."""
     return api_props(
         GetRequestTestInputProperties(
