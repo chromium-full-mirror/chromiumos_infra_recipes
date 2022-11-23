@@ -1082,7 +1082,6 @@
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ], @@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
-      "@@@STEP_LOG_LINE@config@        \"build_target\": \"fake_board\", @@@",
       "@@@STEP_LOG_LINE@config@        \"builder_name\": \"guybrush-release\", @@@",
       "@@@STEP_LOG_LINE@config@        \"suite\": \"bvt-perbuild\", @@@",
       "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
@@ -1187,8 +1186,6 @@
     "cmd": [
       "rdb",
       "stream",
-      "-var",
-      "build_target:fake_board",
       "-var",
       "builder_name:guybrush-release",
       "-var",

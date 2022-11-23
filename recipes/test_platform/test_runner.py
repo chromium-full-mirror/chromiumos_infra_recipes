@@ -716,13 +716,12 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   return base_tags
 
 
-def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
+def _generate_resultdb_variant_def(api, parent_request_uid,
                                    autotest_keyval_file):
   """Generate the variant defintions for the test results.
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
-    * build_target (str): Build target.
     * parent_request_uid (str): parent request uid.
     * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
 
@@ -739,9 +738,6 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
   model = api.cros_tags.get_values('label-model')
   if model:
     base_variant['model'] = model[0]
-
-  if build_target:
-    base_variant['build_target'] = build_target
 
   # The template of a parent_request_uid is
   # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
@@ -765,6 +761,10 @@ def _generate_resultdb_variant_def(api, build_target, parent_request_uid,
   builder_name = autotest_keyval_file.get('build_config')
   if builder_name:
     base_variant['builder_name'] = builder_name
+
+  build_target = autotest_keyval_file.get('build_target')
+  if build_target:
+    base_variant['build_target'] = build_target
 
   return base_variant
 
@@ -1040,8 +1040,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     kernel_version = _read_kernel_version(api, kernel_log_file_path)
 
   base_variant = _generate_resultdb_variant_def(
-      api, properties.request.prejob.software_attributes.build_target.name,
-      properties.request.parent_request_uid, autotest_keyval_file)
+      api, properties.request.parent_request_uid, autotest_keyval_file)
   base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
                                            autotest_keyval_file,
                                            crossystem_keyvals, kernel_version,
@@ -1393,8 +1392,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
           api, properties, test_metadata, autotest_keyval_file,
           crossystem_keyvals, kernel_version, cft_is_enabled=True)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
-          api, properties.cft_test_request.primary_dut.dut_model.build_target,
-          properties.cft_test_request.parent_request_uid, autotest_keyval_file)
+          api, properties.cft_test_request.parent_request_uid,
+          autotest_keyval_file)
 
       # If this builder is configured to be private-partner, we don't want to
       # publish to the board-model realm
@@ -1635,6 +1634,7 @@ branch=main
 label=board-cq/R00-0.0.0/sweet-cq/test-case
 build_config=eve-release
 master_build_config=master-release
+build_target=target
 ash_version=109.0.5391.0
 lacros_version=109.0.5391.0
 drone=skylab-drone-xyz

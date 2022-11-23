@@ -1081,7 +1081,6 @@
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ], @@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
-      "@@@STEP_LOG_LINE@config@        \"build_target\": \"fake_board\", @@@",
       "@@@STEP_LOG_LINE@config@        \"test_config\": \"fake_board-cq.hw.bvt-tast-cq\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
@@ -1184,8 +1183,6 @@
     "cmd": [
       "rdb",
       "stream",
-      "-var",
-      "build_target:fake_board",
       "-var",
       "test_config:fake_board-cq.hw.bvt-tast-cq",
       "-tag",
