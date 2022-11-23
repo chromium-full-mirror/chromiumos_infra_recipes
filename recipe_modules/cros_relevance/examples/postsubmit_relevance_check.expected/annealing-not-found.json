@@ -19,7 +19,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"my hash\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"my hash\"}]}"
     ],
     "infra_step": true,
     "name": "postsubmit relevance check.buildbucket.search",

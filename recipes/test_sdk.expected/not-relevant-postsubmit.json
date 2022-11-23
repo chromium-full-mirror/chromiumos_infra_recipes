@@ -3246,7 +3246,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"snapshot-HEAD-SHA\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"snapshot-HEAD-SHA\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

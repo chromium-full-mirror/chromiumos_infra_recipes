@@ -61,6 +61,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # staging-Annealing builds. Tags are indexed by Buildbucket so this
     # should be fast.
     predicate = builds_service_pb2.BuildPredicate(tags=tags)
+    predicate.builder.project = 'chromeos'
     return self.m.buildbucket.search(predicate, limit=1,
                                      url_title_fn=self.m.naming.get_build_title)
 
