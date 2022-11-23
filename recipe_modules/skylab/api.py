@@ -154,9 +154,14 @@ class SkylabApi(recipe_api.RecipeApi):
       request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
       req.params.decorations.tags.extend(request_tags)
 
-      autotest_keyvals = self._get_autotest_keyvals(uht)
-      if autotest_keyvals:
-        for k, v in autotest_keyvals.items():
+      release_autotest_keyvals = self._get_release_autotest_keyvals(uht)
+      if release_autotest_keyvals:
+        for k, v in release_autotest_keyvals.items():
+          req.params.decorations.autotest_keyvals[k] = v
+
+      resultdb_autotest_keyvals = self._get_resultdb_autotest_keyvals(uht)
+      if resultdb_autotest_keyvals:
+        for k, v in resultdb_autotest_keyvals.items():
           req.params.decorations.autotest_keyvals[k] = v
 
       self._enable_test_retries(req)
@@ -246,7 +251,10 @@ class SkylabApi(recipe_api.RecipeApi):
       result['label-model'] = test.skylab_model
     return result
 
-  def _get_autotest_keyvals(self, uht):
+  def _get_resultdb_autotest_keyvals(self, uht):
+    return {'build_target': uht.unit.common.build_target.name}
+
+  def _get_release_autotest_keyvals(self, uht):
     builder_name = uht.unit.common.builder_name
 
     config = self.m.cros_infra_config.config
