@@ -72,8 +72,10 @@ def RunSteps(api, properties):
     api.easy.set_properties_step(branch_name=branch_name)
 
   with api.workspace_util.setup_workspace():
-    api.cros_source.ensure_synced_cache(
-        projects=[api.cros_release_config.CONFIG_PROJECT])
+    api.cros_source.ensure_synced_cache(projects=[
+        api.cros_release_config.LEGACY_CONFIG_PROJECT,
+        api.cros_release_config.CONFIG_PROJECT
+    ])
 
     # Don't need to update config for stabilize branches from < R108,
     # as this is only for `cros try` and `cros try` doesn't support

@@ -910,6 +910,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "chromiumos/chromite",
       "chromeos/infra/config",
       "--ignore-missing",
       "-j",
@@ -939,6 +940,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "chromiumos/chromite",
       "chromeos/infra/config",
       "--ignore-missing",
       "-j",
@@ -983,6 +985,7 @@
       "--verbose",
       "--force-remove-dirty",
       "--prune",
+      "chromiumos/chromite",
       "chromeos/infra/config"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -1073,6 +1076,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "info",
+      "chromiumos/chromite",
       "chromeos/infra/config"
     ],
     "cwd": "[CACHE]/chromeos",
