@@ -41,12 +41,14 @@ def _GetRelevantPatchsetsByLinter(api, properties):
       patchset (Dict[linter:Text, Dict[patchset:PatchSet, files:List[Text]]]).
   """
   with api.step.nest('get relevant patches') as presentation:
+    cpp_extensions = [
+        'c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hh', 'hpp', 'hxx', 'h++'
+    ]
     relevant_extensions = {
         'clippy': ['rs'],
         'golint': ['go'],
-        'tidy': [
-            'c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hh', 'hpp', 'hxx', 'h++'
-        ]
+        'tidy': cpp_extensions,
+        'iwyu': cpp_extensions,
     }
     patch_sets = [
         patchset for patchset in (
@@ -118,6 +120,7 @@ def _GetLints(api, linter, affected_packages):
         'tidy': LinterFinding.Linters.CLANG_TIDY,
         'clippy': LinterFinding.Linters.CARGO_CLIPPY,
         'golint': LinterFinding.Linters.GO_LINT,
+        'iwyu': LinterFinding.Linters.IWYU,
     }
     enabled_linter = linters[linter]
 
@@ -153,6 +156,14 @@ def _GetLints(api, linter, affected_packages):
             'line_end': 1
         }],
         'linter': LinterFinding.Linters.CLANG_TIDY
+    }, {
+        'message': 'test message',
+        'locations': [{
+            'filepath': '/build/atlas/usr/include/chromeos/file.cpp',
+            'line_start': 1,
+            'line_end': 1
+        }],
+        'linter': LinterFinding.Linters.IWYU
     }]
 
     test_data = json.dumps(
@@ -181,6 +192,7 @@ def _WriteComments(api, findings):
         LinterFinding.Linters.CLANG_TIDY: 'ClangTidy',
         LinterFinding.Linters.CARGO_CLIPPY: 'CargoClippy',
         LinterFinding.Linters.GO_LINT: 'Golint',
+        LinterFinding.Linters.IWYU: 'Include What You Use',
     }
     for finding in findings:
       for location in finding.locations:
@@ -313,6 +325,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.StatusSuccess), revision=None, cq=False)
 
   # No changes to relevant projects
@@ -324,6 +337,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
       api.post_check(post_process.StatusSuccess),
@@ -338,6 +352,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.StatusSuccess),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get relevant patches', changes[:1],
@@ -367,9 +382,11 @@ def GenTests(api):
       api.post_check(post_process.StepSuccess,
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -395,9 +412,11 @@ def GenTests(api):
       api.post_check(post_process.StepSuccess,
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
       api.post_check(post_process.StepSuccess, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -420,9 +439,12 @@ def GenTests(api):
                      'get affected packages for golint'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for tidy'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for iwyu'),
       api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
       api.post_check(post_process.StepSuccess, 'linting packages with golint'),
       api.post_check(post_process.StepSuccess, 'linting packages with tidy'),
+      api.post_check(post_process.StepSuccess, 'linting packages with iwyu'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -436,6 +458,8 @@ def GenTests(api):
       api.repo.project_infos_step_data('get affected packages for golint',
                                        data=project_info, iteration=2),
       api.repo.project_infos_step_data('get affected packages for tidy',
+                                       data=project_info),
+      api.repo.project_infos_step_data('get affected packages for iwyu',
                                        data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    [changes[0]],
@@ -455,9 +479,11 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.StatusFailure),
@@ -491,6 +517,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -513,9 +540,11 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.StepFailure, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
