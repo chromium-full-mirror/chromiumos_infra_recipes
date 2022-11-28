@@ -41,6 +41,7 @@ def _GetRelevantPatchsetsByLinter(api, properties):
       patchset (Dict[linter:Text, Dict[patchset:PatchSet, files:List[Text]]]).
   """
   with api.step.nest('get relevant patches') as presentation:
+
     cpp_extensions = [
         'c', 'cc', 'cpp', 'cxx', 'c++', 'h', 'hh', 'hpp', 'hxx', 'h++'
     ]
@@ -48,7 +49,9 @@ def _GetRelevantPatchsetsByLinter(api, properties):
         'clippy': ['rs'],
         'golint': ['go'],
         'tidy': cpp_extensions,
-        'iwyu': cpp_extensions,
+        # FIXME(b/260476356): Temporarily disabling IWYU so that we can enable
+        # it in the Chromie API and then test it in build_linters with led
+        'iwyu': [],
     }
     patch_sets = [
         patchset for patchset in (
@@ -439,12 +442,11 @@ def GenTests(api):
                      'get affected packages for golint'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for tidy'),
-      api.post_check(post_process.StepSuccess,
-                     'get affected packages for iwyu'),
+      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
       api.post_check(post_process.StepSuccess, 'linting packages with golint'),
       api.post_check(post_process.StepSuccess, 'linting packages with tidy'),
-      api.post_check(post_process.StepSuccess, 'linting packages with iwyu'),
+      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -458,8 +460,6 @@ def GenTests(api):
       api.repo.project_infos_step_data('get affected packages for golint',
                                        data=project_info, iteration=2),
       api.repo.project_infos_step_data('get affected packages for tidy',
-                                       data=project_info),
-      api.repo.project_infos_step_data('get affected packages for iwyu',
                                        data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    [changes[0]],
