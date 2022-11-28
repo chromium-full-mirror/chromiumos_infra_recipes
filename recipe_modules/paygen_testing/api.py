@@ -10,15 +10,24 @@ import collections
 import json
 from datetime import timedelta
 from os import path
+from typing import Dict, List, Optional, Tuple
 
 from RECIPE_MODULES.chromeos.util import util
+from RECIPE_MODULES.chromeos.cros_storage.api import FullPayload
+from RECIPE_MODULES.chromeos.cros_storage.api import Payload
 from google.protobuf import duration_pb2
 from google.protobuf.json_format import MessageToDict
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api import test_metadata
+from PB.chromite.api.payload import GenerationRequest
+from PB.chromite.api.payload import GenerationResponse
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.build_report import URI
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.recipe_modules.chromeos.paygen_testing.paygen_testing import PaygenTestingProperties
+from PB.recipe_modules.chromeos.paygen_testing.paygen_testing import TestRequestOpts
+from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.test_platform.request import Request
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -69,31 +78,33 @@ class PaygenTestConfig(object):
   _REQUEST_WITH_MODEL_TAG_TEMPLATE = (
       '%(chromeos_build_name)s-%(tgt_channel)s-%(update_type)s-%(model)s')
 
-  def __init__(self, test_build_target, build_target_name, tgt_channel,
-               tgt_version, tgt_payload_uri, tgt_archive_uri,
-               tgt_container_metadata_uri, is_delta_update, delta_type,
-               src_version, src_payload_uri, src_artifact_uri,
-               applicable_models=None, quota_scheduler_account=QS_ACCOUNT,
-               quota_scheduler_label_pool=LABEL_POOL):
+  def __init__(self, test_build_target: str, build_target_name: str,
+               tgt_channel: str, tgt_version: str, tgt_payload_uri: str,
+               tgt_archive_uri: str, tgt_container_metadata_uri: str,
+               is_delta_update: bool, delta_type: common_pb2.DeltaType,
+               src_version: str, src_payload_uri: str, src_artifact_uri: str,
+               applicable_models: List[str] = None,
+               quota_scheduler_account: str = QS_ACCOUNT,
+               quota_scheduler_label_pool: str = LABEL_POOL):
     """Initialize a test configuration.
 
     Args:
-      test_build_target (str): The name of the physical board being tested
+      test_build_target: The name of the physical board being tested
         (e.g. auron_paine), must be matched for scheduling in the lab.
-      build_target_name (str): The name of the build target (e.g.
+      build_target_name: The name of the build target (e.g.
         kevin or kevin-kernelnext).
-      tgt_channel (str): The channel of the target payload
+      tgt_channel: The channel of the target payload
         (e.g. 'canary-channel').
-      tgt_version (str): The target image version (e.g. '13373.0.0').
-      tgt_payload_uri (str): The target payload URI.
-      tgt_archive_uri (str): The location of target build archive artifacts.
-      tgt_container_metadata_uri (str): The location of target container metadata.
-      is_delta_update (bool): Whether this is a delta update test.
-      delta_type (DeltaType): The type of update to do with the payload.
-      src_version (str): The source image version (e.g. '13373.0.0').
-      src_payload_uri (str): The source payload URI.
-      src_artifact_uri (str): The location of source build artifacts.
-      applicable_models (list[str]): A list of models that this config should
+      tgt_version: The target image version (e.g. '13373.0.0').
+      tgt_payload_uri: The target payload URI.
+      tgt_archive_uri: The location of target build archive artifacts.
+      tgt_container_metadata_uri: The location of target container metadata.
+      is_delta_update: Whether this is a delta update test.
+      delta_type: The type of update to do with the payload.
+      src_version: The source image version (e.g. '13373.0.0').
+      src_payload_uri: The source payload URI.
+      src_artifact_uri: The location of source build artifacts.
+      applicable_models: A list of models that this config should
         run against. None indicates it can run on any build_target.
     """
     self._test_build_target = test_build_target
@@ -138,14 +149,14 @@ class PaygenTestConfig(object):
     self._quota_scheduler_label_pool = quota_scheduler_label_pool
 
   @property
-  def build_target_name(self):
+  def build_target_name(self) -> str:
     return self._build_target_name
 
   @property
-  def test_build_target(self):
+  def test_build_target(self) -> str:
     return self._test_build_target
 
-  def _get_test_plan(self):
+  def _get_test_plan(self) -> Request.TestPlan:
     """A test_platform TestPlan proto with the enumerated test request."""
     autotest_invocation = Request.Enumeration.AutotestInvocation(
         test=test_metadata.AutotestTest(
@@ -159,7 +170,7 @@ class PaygenTestConfig(object):
         enumeration=Request.Enumeration(
             autotest_invocations=[autotest_invocation]))
 
-  def _get_test_args(self):
+  def _get_test_args(self) -> str:
     """Test arguments with which to invoke the autotest control file."""
     template = '%s=%s'
     arg_values = [('name', self._suite_name),
@@ -174,15 +185,15 @@ class PaygenTestConfig(object):
 
     return ' '.join(template % (key, val) for key, val in arg_values)
 
-  def to_ctp_tagged_requests(self, request_opts=None):
+  def to_ctp_tagged_requests(self, request_opts: TestRequestOpts = None
+                            ) -> Dict[str, Dict]:
     """Turn self into a dict of tagged test_platform.Requests.
 
     Creates one request per testable model or one request with no model
     specified if self._applicable_models and models is None.
 
     Args:
-      models (list(str)): A list of models to run paygen AU tests on.
-      request_opts (TestRequestOpts): Overrides for the test_platform.Request.
+      request_opts: Overrides for the test_platform.Request.
 
     Returns:
        A dictionary of string to test_platform.Request objects.
@@ -196,12 +207,14 @@ class PaygenTestConfig(object):
           self._create_tagged_request(model=model, request_opts=request_opts))
     return tagged_requests
 
-  def _create_tagged_request(self, model=None, request_opts=None):
+  def _create_tagged_request(self, model: str = None,
+                             request_opts: TestRequestOpts = None
+                            ) -> Dict[str, Dict]:
     """Create a tagged test_platform.Request for the given model.
 
     Args:
-      model (str): A model to run paygen AU tests on.
-      request_opts (TestRequestOpts): Overrides for the test_platform.Request.
+      model: A model to run paygen AU tests on.
+      request_opts: Overrides for the test_platform.Request.
 
     Returns:
       A dictionary mapping a string to a test_platform.Request.
@@ -227,12 +240,14 @@ class PaygenTestConfig(object):
                     test_plan=self._get_test_plan()))
     }
 
-  def _get_request_params(self, model=None, request_opts=None):
+  def _get_request_params(self, model: str = None,
+                          request_opts: TestRequestOpts = None
+                         ) -> Request.Params:
     """Return test_platform.Params for the given model.
 
     Args:
-      model (str): A model to run paygen AU tests on.
-      request_opts (TestRequestOpts): Overrides for the test_platform.Request.
+      model: A model to run paygen AU tests on.
+      request_opts: Overrides for the test_platform.Request.
 
     Returns:
       A test_platform.Request.Params specific to the model.
@@ -273,11 +288,11 @@ class PaygenTestConfig(object):
 
     return params
 
-  def get_test_runner_tags(self, model=None):
+  def get_test_runner_tags(self, model: str = None) -> Dict[str, str]:
     """Generates test_runner build tags for the given model.
 
     Args:
-      model (str): A model to run paygen AU tests on.
+      model: A model to run paygen AU tests on.
 
     Returns:
       A dictionary of test_runner build tags specific to the model.
@@ -294,13 +309,13 @@ class PaygenTestConfig(object):
     return tags
 
 
-class CrosPaygenApi(recipe_api.RecipeApi):
-  """A module for CrOS-specific paygen steps."""
+class PaygenTestingApi(recipe_api.RecipeApi):
+  """A module for CrOS-specific paygen testing steps."""
 
   PaygenTestConfig = PaygenTestConfig
 
-  def __init__(self, properties, *args, **kwargs):
-    super(CrosPaygenApi, self).__init__(*args, **kwargs)
+  def __init__(self, properties: PaygenTestingProperties, *args, **kwargs):
+    super(PaygenTestingApi, self).__init__(*args, **kwargs)
     self._test_request_opts = properties.test_request_opts
     self._quota_scheduler_account = QS_ACCOUNT
     self._quota_scheduler_label_pool = LABEL_POOL
@@ -312,7 +327,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           properties.quota_scheduler_config.label_pool or \
           self._quota_scheduler_label_pool
 
-  def _get_channel_from_paygen_request(self, gen_req):
+  def _get_channel_from_paygen_request(self, gen_req: GenerationRequest
+                                      ) -> Optional["common_pb2.Channel"]:
     """Get the target channel from a paygen request input properties.
 
     When creating a build report we look at the input arguments of the finished
@@ -321,8 +337,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     found.
 
     Args:
-      gen_req (GenerationRequest struct): A GenerationRequest struct, as
-        extracted from a broader build_pb2.Build request.
+      gen_req: A GenerationRequest struct, as extracted from a broader build_pb2.Build request.
     Returns:
       A chromiumos.Channel.
     """
@@ -337,15 +352,18 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           gen_req.tgt_dlc_image.build.channel)
     return None  #pragma: nocover
 
-  def create_paygen_build_report_payload(self, req, payload_uri):
+  def create_paygen_build_report_payload(self,
+                                         req: PaygenProperties.PaygenRequest,
+                                         payload_uri: str
+                                        ) -> BuildReport.Payload:
     """Prepare payload information for the release pubsub.
 
     Args:
-      req (PaygenRequest): The paygen request that was used.
-      payload_uri (str): The uri of the generated payload.
+      req: The paygen request that was used.
+      payload_uri: The uri of the generated payload.
 
     Returns:
-      A list[BuildReport.Payload] containing payload information for the pubsub.
+      A Payload containing payload information for the pubsub.
     """
 
     # If paygen was skipped (minios) this will be empty, so skip it.
@@ -386,7 +404,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         size=payload_info['size'])
 
   @util.exponential_retry(retries=6, delay=timedelta(minutes=2))
-  def _discover_source_test_full_payload(self, root_uri):
+  def _discover_source_test_full_payload(self, root_uri: str) -> FullPayload:
     """Find a source full unsigned image to act as starting image for tests.
 
     This is wrapped in an exponential retry because it's possible that the full
@@ -414,23 +432,26 @@ class CrosPaygenApi(recipe_api.RecipeApi):
           'no source full test payload found: {}'.format(root_uri))
     return src_payload
 
-  def create_paygen_test_config(self, tgt_payload, delta_type, src_version=None,
-                                src_channel=None, applicable_models=None,
-                                src_bucket=None):
+  def create_paygen_test_config(self, tgt_payload: Payload,
+                                delta_type: common_pb2.DeltaType,
+                                src_version: str = None,
+                                src_channel: str = None,
+                                applicable_models: List[str] = None,
+                                src_bucket: str = None) -> "PaygenTestConfig":
     """Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
     Args:
-      tgt_payload (Payload): The payload to be tested.
-      delta_type (DeltaType): The type of update we are doing with this payload.
-      src_version (str): The version of the image to test updating from
+      tgt_payload: The payload to be tested.
+      delta_type: The type of update we are doing with this payload.
+      src_version: The version of the image to test updating from
         (e.g. '13373.0.0'). Required if the payload is a FullPayload, required
         to be None if it's a DeltaPayload.
-      src_channel (str): The channel of the image to test updating from
+      src_channel: The channel of the image to test updating from
         (e.g. 'canary-channel'). Required if the payload is a FullPayload,
         required to be None if it's a DeltaPayload.
-      applicable_models (list(str)): A list of models that a paygen test should
+      applicable_models: A list of models that a paygen test should
         run against.
-      src_bucket (str): A bucket to use as src_image bucket instead of pulling
+      src_bucket: A bucket to use as src_image bucket instead of pulling
         bucket from the tgt. This is useful in environments where the bucket
         being written to doesn't contain older images (i.e. in staging).
 
@@ -510,7 +531,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
         quota_scheduler_account=self._quota_scheduler_account,
         quota_scheduler_label_pool=self._quota_scheduler_label_pool)
 
-  def set_up_paygen_test_configs(self, request, response):
+  def set_up_paygen_test_configs(self, request: PaygenProperties.PaygenRequest,
+                                 response: GenerationResponse
+                                ) -> Optional[List[PaygenTestConfig]]:
     """Set up test configs for a paygen response, if applicable.
 
     Given a PaygenRequest and a GenerationResponse, determine if this payload
@@ -518,12 +541,11 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     to be scheduled.
 
     Args:
-      api (RecipeApi): recipe api to use for step operations.
-      request (PaygenRequest): request object to introspect.
-      response (GenerationResponse): response from payload generation.
+      request: request object to introspect.
+      response: response from payload generation.
 
     Returns:
-      [PaygenTestConfig] list of paygen test configs to schedule.
+      List of paygen test configs to schedule.
     """
     with self.m.step.nest('setting up paygen test config') as presentation:
       if request.generation_request.dryrun:
@@ -565,7 +587,9 @@ class CrosPaygenApi(recipe_api.RecipeApi):
 
       return paygen_test_configs
 
-  def create_au_test_tagged_requests(self, paygen_test_configs):
+  def create_au_test_tagged_requests(self,
+                                     paygen_test_configs: List[PaygenTestConfig]
+                                    ) -> Tuple[Dict[str, str], Dict[str, Dict]]:
     """Takes in paygen test configs and creates au test requests.
 
     This is its own method mainly for testing.
@@ -597,7 +621,8 @@ class CrosPaygenApi(recipe_api.RecipeApi):
       bb_tags.update(ptc.get_test_runner_tags())
     return bb_tags, tagged_requests
 
-  def schedule_au_tests(self, paygen_test_configs):
+  def schedule_au_tests(self, paygen_test_configs: List[PaygenTestConfig]
+                       ) -> Optional[List[Build]]:
     """Schedule Paygen autoupdate (AU) tests.
 
     Create a cros_test_platform build request to launch AU tests. This
@@ -606,11 +631,10 @@ class CrosPaygenApi(recipe_api.RecipeApi):
     size which is currently 1MB, see crbug.com/1336469.
 
     Args:
-      paygen_test_configs (list[PaygenTestConfig]): A list of PaygenTestConfigs
-        for which to schedule au_tests.
+      paygen_test_configs: A list of PaygenTestConfigs for which to schedule au_tests.
 
     Returns:
-      The scheduled buildbucket build.
+      The scheduled buildbucket builds.
     """
     # bb_tags here doesn't include label-model so it applies universally
     # even though we're scheduling per model below we can apply it to each
@@ -623,7 +647,7 @@ class CrosPaygenApi(recipe_api.RecipeApi):
 
     # This is definitely an inefficient loop to break the requests up,
     # but N should remain small. See doc string for why we do this.
-    def _get_label_model_from_ptc(ptc):
+    def _get_label_model_from_ptc(ptc: Dict[str, Dict]) -> str:
       tags = ptc.get('params', {}).get('decorations', {}).get('tags', [])
       # Pull the matching label-model field or None.
       return next(

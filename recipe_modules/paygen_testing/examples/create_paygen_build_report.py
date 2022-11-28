@@ -11,6 +11,8 @@ from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.build_report import URI
 import PB.chromiumos.common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,7 +24,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
 
   class dotdict(dict):
     """dot.notation access to dictionary attributes.
@@ -118,7 +120,7 @@ def RunSteps(api):
   api.assertions.assertEqual(build_report, expected_build_report)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   json_data = """{
   "appid": "appid",
   "metadata_signature": "signature",

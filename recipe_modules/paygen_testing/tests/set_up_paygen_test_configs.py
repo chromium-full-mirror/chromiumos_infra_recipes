@@ -5,9 +5,11 @@
 
 """Tests to verify paygen_testing.set_up_paygen_test_configs."""
 import PB.chromiumos.common as common_pb2
-from recipe_engine import post_process
 from PB.recipe_modules.chromeos.paygen_testing.tests.set_up_paygen_test import AutoupdateTestConfig
 from PB.recipe_modules.chromeos.paygen_testing.tests.set_up_paygen_test import SetUpPaygenTestRequest
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -34,7 +36,7 @@ class dotdict(dict):
   __delattr__ = dict.__delitem__
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: SetUpPaygenTestRequest):
   api.paygen_testing.set_up_paygen_test_configs(
       properties,
       dotdict(
@@ -44,7 +46,7 @@ def RunSteps(api, properties):
                   'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc'))))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'dryrun',

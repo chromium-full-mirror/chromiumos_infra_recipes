@@ -9,6 +9,8 @@ from PB.chromiumos.common import ImageType
 from PB.recipe_modules.chromeos.paygen_testing.examples.test import TestPaygenProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -25,7 +27,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TestPaygenProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestPaygenProperties):
   test_artifact_root = api.cros_storage.ArtifactRoot('test-bucket',
                                                      'canary-channel',
                                                      properties.builder_name,
@@ -93,7 +95,7 @@ def RunSteps(api, properties):
       properties.expected_quota_scheduler_account or 'legacypool-bvt')
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic',
       api.properties(builder_name='zork', expected_test_build_target='zork'),

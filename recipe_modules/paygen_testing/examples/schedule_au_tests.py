@@ -10,6 +10,8 @@ from PB.chromiumos.common import DeltaType
 from PB.recipe_modules.chromeos.paygen_testing.paygen_testing import PaygenTestingProperties
 from PB.recipe_modules.chromeos.paygen_testing.paygen_testing import TestRequestOpts
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,7 +22,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   build_target_name = 'octopus-kernelnext'
   test_build_target = 'octopus'
   tgt_channel = 'canary-channel'
@@ -103,7 +105,7 @@ def RunSteps(api):
       len(requests.keys()))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('basic', api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))
 
