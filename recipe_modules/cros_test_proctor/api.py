@@ -299,23 +299,23 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def _get_non_informational(self, tast_unit):
     test_cfg = tast_unit.tast_vm_test_cfg
-    tast_unit.tast_vm_test_cfg.ClearField('tast_vm_test')
     filtered_tests = [
         test for test in test_cfg.tast_vm_test
         if 'informational' not in test.suite_name
     ]
-    tast_unit.tast_vm_test_cfg.tast_vm_test.extend(filtered_tests)
+    test_cfg.ClearField('tast_vm_test')
+    test_cfg.tast_vm_test.extend(filtered_tests)
     return tast_unit
 
   def _filter_tast_gce_informational(self, tast_gce_unit):
     """Modifies test plan unit to not include informational tests."""
     test_cfg = tast_gce_unit.tast_gce_test_cfg
-    tast_gce_unit.tast_gce_test_cfg.ClearField('tast_gce_test')
     filtered_tests = [
         test for test in test_cfg.tast_gce_test
         if 'informational' not in test.suite_name
     ]
-    tast_gce_unit.tast_gce_test_cfg.tast_gce_test.extend(filtered_tests)
+    test_cfg.ClearField('tast_gce_test')
+    test_cfg.tast_gce_test.extend(filtered_tests)
     return tast_gce_unit
 
   def _filter_snapshot_hw_test_units(self, hw_test_units):
@@ -484,6 +484,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[SkylabTask] of the tests scheduled.
     """
     skylab_tasks = []
+
+    # Record the names of all the tests that are scheduled. This will be set as
+    # an output property when testing Recipes only.
+    scheduled_test_names = []
+
     with self.m.step.nest('schedule hardware tests'):
       # A map from {build_target_name: [test_name]}.
       tests_to_run = defaultdict(list)
@@ -498,6 +503,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             tests_to_run[build_target.name].append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             hw_build_targets.add(build_target.name)
+            scheduled_test_names.append(test.common.display_name)
 
       _ALL_BUILD_TARGETS = 'all build targets'
       if tests_to_run:
@@ -519,6 +525,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           hw_test_build_targets=len(hw_build_targets))
       self.m.easy.set_properties_step(
           hw_test_suites=len(sum(tests_to_run.values(), [])))
+      if self._test_data.enabled:
+        scheduled_test_names.sort()
+        self.m.easy.set_properties_step(scheduled_hw_tests=scheduled_test_names)
     return skylab_tasks
 
   def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,
@@ -545,6 +554,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self.m.src_state.gerrit_changes, CROS_EXPERIMENTS_FOOTER,
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
+
+    # Record the names of all the tests that are scheduled. This will be set as
+    # an output property when testing Recipes only.
+    scheduled_test_names = []
 
     for unit in test_plan.direct_tast_vm_test_units:
       for test in unit.tast_vm_test_cfg.tast_vm_test:
@@ -573,9 +586,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                   tags=self.m.cros_tags.make_schedule_tags(snapshot),
                   swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
+          scheduled_test_names.append(test.common.display_name)
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_build_title)
+    if self._test_data.enabled:
+      scheduled_test_names.sort()
+      self.m.easy.set_properties_step(
+          scheduled_tast_vm_tests=scheduled_test_names)
     return vm_tests
 
   def _schedule_tast_gce_tests(self, test_plan, passed_tests, snapshot,
@@ -596,6 +614,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[Build] objects of the GCE tests scheduled.
     """
     requests = []
+
+    # Record the names of all the tests that are scheduled. This will be set as
+    # an output property when testing Recipes only.
+    scheduled_test_names = []
 
     for unit in test_plan.tast_gce_test_units:
       for test in unit.tast_gce_test_cfg.tast_gce_test:
@@ -633,9 +655,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                   tags=self.m.cros_tags.make_schedule_tags(snapshot),
                   swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
+          scheduled_test_names.append(test.common.display_name)
     gce_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast GCE tests',
         url_title_fn=self.m.naming.get_build_title)
+    if self._test_data.enabled:
+      scheduled_test_names.sort()
+      self.m.easy.set_properties_step(
+          scheduled_tast_gce_tests=scheduled_test_names)
     return gce_tests
 
   def _generate_test_summary(self, test_plan, passed_test_names):
