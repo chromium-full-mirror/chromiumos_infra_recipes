@@ -1929,6 +1929,7 @@
       "--skip-license-report",
       "--stage",
       "initial",
+      "--no-run-tests",
       "--no-cache"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",

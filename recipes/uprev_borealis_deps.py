@@ -57,6 +57,9 @@ def DoBorealisBuild(api, use_cache=True, skip_termina=False, stage=None):
   if stage:
     build_command.append('--stage')
     build_command.append(stage)
+    # When building a stage directly there's no guarantee the tests will
+    # exist, so skip running tests if a stage is specified.
+    build_command.append('--no-run-tests')
   if not use_cache:
     build_command.append('--no-cache')
   if skip_termina:
@@ -185,6 +188,7 @@ def GenTests(api):
               '--skip-license-report',
               '--stage',
               'initial',
+              '--no-run-tests',
               '--no-cache',
           ],
       ),
