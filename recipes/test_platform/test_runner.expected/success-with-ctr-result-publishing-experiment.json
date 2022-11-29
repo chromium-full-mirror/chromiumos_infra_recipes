@@ -33,7 +33,6 @@
       "@@@STEP_LOG_LINE@cft_test_request@      }@@@",
       "@@@STEP_LOG_LINE@cft_test_request@    }@@@",
       "@@@STEP_LOG_LINE@cft_test_request@  ],@@@",
-      "@@@STEP_LOG_LINE@cft_test_request@  \"deadline\": \"2045-02-03T00:00:55Z\",@@@",
       "@@@STEP_LOG_LINE@cft_test_request@  \"parentBuildId\": \"12345\",@@@",
       "@@@STEP_LOG_LINE@cft_test_request@  \"autotestKeyvals\": {@@@",
       "@@@STEP_LOG_LINE@cft_test_request@    \"branch\": \"main\",@@@",
@@ -112,7 +111,13 @@
   },
   {
     "cmd": [],
-    "name": "execution steps"
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@result upload deadline info@start: Mon May 14 12:53:26 2012@@@",
+      "@@@STEP_LOG_LINE@result upload deadline info@end: Mon May 14 14:53:26 2012@@@",
+      "@@@STEP_LOG_LINE@result upload deadline info@total_seconds: 7200@@@",
+      "@@@STEP_LOG_END@result upload deadline info@@@"
+    ]
   },
   {
     "cmd": [],
@@ -133,6 +138,18 @@
       "[CLEANUP]/container_images_tmp_1"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: create images file.writing container metadata to file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -163,8 +180,101 @@
     "cmd": [],
     "name": "execution steps.publish build ID",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID.call `result_flow`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID.call `result_flow`.ensure result_flow",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_flow",
+      "-ensure-file",
+      "chromiumos/infra/result_flow/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.publish build ID.call `result_flow`.ensure result_flow.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/result_flow/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.publish build ID.call `result_flow`.publish",
+    "stdin": "{\n  \"buildId\": \"42\",\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -258,6 +368,18 @@
       "USE_DUT_TOPO": "True"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -287,6 +409,18 @@
       "USE_DUT_TOPO": "True"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: Phosphorus: load skylab local state.call `phosphorus`.load",
     "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"dummy\",\n  \"runId\": \"dummy-task-id1\",\n  \"dutId\": \"dummy-dut-id\",\n  \"testId\": \"original_test\"\n}",
     "~followup_annotations": [
@@ -328,6 +462,18 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
     "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"needs_repair\"\n}",
     "~followup_annotations": [
@@ -416,6 +562,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.ensure cros-tool-runner.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -449,6 +607,18 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
     "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"id\": {\n          \"value\": \"fake_host\"\n        },\n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host\"\n          },\n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\",\n            \"modelName\": \"fake_model\"\n          }\n        },\n        \"cacheServer\": {\n          \"address\": {\n            \"address\": \"0.0.0.0\",\n            \"port\": 123\n          }\n        }\n      },\n      \"provisionState\": {},\n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
     "~followup_annotations": [
@@ -548,6 +718,18 @@
       "-output",
       "/dev/stdout"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test",
     "stdin": "{\n  \"testSuites\": [\n    {\n      \"name\": \"suite1\",\n      \"testCaseIds\": {\n        \"testCaseIds\": [\n          {\n            \"value\": \"tauto.stub_Pass\"\n          },\n          {\n            \"value\": \"tast.example.Fail\"\n          },\n          {\n            \"value\": \"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ],\n  \"primaryDut\": {\n    \"dut\": {\n      \"id\": {\n        \"value\": \"fake_host\"\n      },\n      \"chromeos\": {\n        \"ssh\": {\n          \"address\": \"fake_host\"\n        },\n        \"dutModel\": {\n          \"buildTarget\": \"fake_board\",\n          \"modelName\": \"fake_model\"\n        }\n      },\n      \"cacheServer\": {\n        \"address\": {\n          \"address\": \"0.0.0.0\",\n          \"port\": 123\n        }\n      }\n    },\n    \"containerMetadataKey\": \"kevin\"\n  },\n  \"artifactDir\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
     "~followup_annotations": [
@@ -575,9 +757,35 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.read crossystem keyval file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@crossystem@@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_prev_result          = success                        # [RO/str] Firmware result of previous boot@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_result               = success                        # [RW/str] Firmware result this boot@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_tried                = B                              # [RO/str] Firmware tried this boot (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_try_count            = 0                              # [RW/int] Number of times to try fw_try_next@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_try_next             = B                              # [RW/str] Firmware to try next (A or B)@@@",
+      "@@@STEP_LOG_LINE@crossystem@fw_vboot2               = 1                              # [RO/int] 1 if firmware was selected by vboot2 or 0 otherwise@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwb_tries               = 0                              # [RW/int] Try firmware B count@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)@@@",
+      "@@@STEP_LOG_LINE@crossystem@hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID@@@",
+      "@@@STEP_LOG_LINE@crossystem@    @@@",
       "@@@STEP_LOG_END@crossystem@@@"
     ]
   },
@@ -593,9 +801,24 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.read kernel log file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@uname@@@@",
+      "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
+      "@@@STEP_LOG_LINE@uname@    @@@",
       "@@@STEP_LOG_END@uname@@@"
     ]
   },
@@ -656,7 +879,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -674,8 +897,24 @@
       "/dev/stdout"
     ],
     "infra_step": true,
+    "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337007206.0
+      },
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
-    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
+    "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -701,6 +940,22 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337007206.0
+      },
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.Archive CTS results.prepare uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -739,6 +994,22 @@
       "gs://fake-bucket/fake-folder"
     ],
     "infra_step": true,
+    "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337007206.0
+      },
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -780,6 +1051,22 @@
       "/dev/stdin"
     ],
     "infra_step": true,
+    "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337007206.0
+      },
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "execution steps.CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`.save",
     "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"ready\",\n  \"sealResultsDir\": true\n}",
     "~followup_annotations": [
@@ -790,8 +1077,57 @@
     "cmd": [],
     "name": "execution steps.publish build ID (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.publish build ID (2).call `result_flow`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"project\": \"foo-proj\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"topic\": \"foo-topic\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"shouldPollForCompletion\": true@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/result_flow/result_flow",
+      "publish",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337007206.0
+      },
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.publish build ID (2).call `result_flow`.publish",
+    "stdin": "{\n  \"buildId\": \"42\",\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  },\n  \"shouldPollForCompletion\": true\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -817,8 +1153,8 @@
       "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
@@ -842,14 +1178,14 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkEEKwjAUROlCxA/VEly5FFymia0ieAwvUGob0kCSX/LTSu/oobTgskvfYpjVGxjYA4NtrIeIeTs4N1WmzRK2gxQ2fcDRkEGfJYd3Ag9NdyGaLqBTSDwqityiJtGgc+i58qMo5OXKZcFlKeQPvhAz57K8sbGLsZ+1FGvjrSLKGwx9rhG1Vd/uxDPgi9R/d49rWAVVt1NxghSD0cbXtprNbPGPD9B/VD8=\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkE0KwjAUhOlCxAfVEly5FFym6Y8ieAwvILENaSDJK3lppXf0UFpw2aXfYpjVNzCwBwbbKIeIeTs4Nz1MmyVsByls+oCjIYM+Sw7vBO6abkI0XUCnkHhUFLlFTaJB59Bz5UdRFWXFiwsvz6L4wRdipqzrKxu7GPtZS1EabxVR3mDoc42orfp2J54BX6T+u3tcwyoo2U7VCVIMRhsv7WM2s8U/Ps8hVD0=\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {

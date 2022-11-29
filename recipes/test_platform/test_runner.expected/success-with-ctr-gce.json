@@ -810,22 +810,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "execution steps.CrosToolRunner: upload to TKO",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.CrosToolRunner: upload to TKO.tauto.dummy_id",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'tauto.dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
-      "@@@STEP_LOG_END@TKO upload skipped@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -900,6 +884,22 @@
       "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
       "@@@STEP_LOG_LINE@uname@    @@@",
       "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to TKO",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to TKO.tauto.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'tauto.dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
+      "@@@STEP_LOG_END@TKO upload skipped@@@"
     ]
   },
   {

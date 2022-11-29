@@ -8,8 +8,9 @@ import base64
 import datetime
 import json
 import os
-
+import time
 import six
+
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 from RECIPE_MODULES.chromeos.dut_interface import error_messages
 from google.protobuf import duration_pb2
@@ -22,6 +23,7 @@ from PB.chromiumos.test import api as ctr_api
 from PB.chromiumos.test.lab import api as lab_api
 from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
   import CrosToolRunnerEnvProperties
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
@@ -56,6 +58,7 @@ DEPS = [
     'recipe_engine/swarming',
     'recipe_engine/time',
     'recipe_engine/uuid',
+    'cros_infra_config',
     'cros_resultdb',
     'cros_tags',
     'cros_test_runner',
@@ -69,12 +72,14 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+HOUR = 60 * 60
 
 PROPERTIES = TestRunnerProperties
 _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
 _DUT_STATE_READY = 'ready'
-_24_HOURS = 24 * 60 * 60
+_24_HOURS = 24 * HOUR
+_RESULT_PUBLISHING_LIMIT = 2 * HOUR
 
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 TAST_TEST_NAME_PREFIX = 'tast.'
@@ -226,7 +231,11 @@ def set_output_properties(api, result):
     """
   with api.context(infra_steps=True):
     with api.step.nest('set output properties') as step:
-      step.properties['compressed_result'] = six.ensure_str(result.serialize())
+      if result is None:
+        step.step_text = 'Empty Results'
+      else:
+        step.properties['compressed_result'] = six.ensure_str(
+            result.serialize())
 
 
 def _collect_tests_for_phosphorus(request):
@@ -1078,7 +1087,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
 
 def _execution_steps_for_test_with_phosphorus(api, properties, interface,
                                               test_metadata, max_duration_sec,
-                                              dut_state, container_image_info):
+                                              dut_state, container_image_info,
+                                              step):
   """Execute all the required steps for a single test.
 
   Run the following steps required for a test:
@@ -1097,6 +1107,7 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
   * dut_state (str): The current state of the DUT.
   * container_image_info (ContainerImageInfo): If set, info on a Docker
   container for use by the DUTInterface.
+  * step (StepPresentation): The step to add this log under.
 
   Returns: DUTResult: a constructed result for this test.
 
@@ -1122,8 +1133,6 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
       except api.step.StepFailure:  # pragma: no cover
         pass
 
-      interface.upload_to_tko(test_metadata, run_test_response)
-
     # The autotest result object returned here is populated with the
     # "autotest_result" field instead of the "autotest_results" field.
     result = interface.parse_test_results(test_metadata)
@@ -1133,30 +1142,133 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
     if not prejob_response.is_failure():
       dut_state = result.get_dut_state()
   finally:
-    try:
-      # Must complete synchronous logs upload before sealing the results
-      # directory. Once the results directory is sealed, gs_offloader may delete
-      # the result files.
-      archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                       result=result)
+    _upload_steps_with_phosphorus(api, properties, interface, result,
+                                  test_metadata, dut_state, run_test_response,
+                                  step)
 
-      api.cts_results_archive.archive(
-          interface.get_results_directory(test_metadata))
-    finally:
-      # We'd want to prioritize CTS artifact upload as much as possible since
-      # it would be fairly expensive to rerun CTS tests if it fails only on
-      # the upload step. Even though the GCS artifact upload fails, the
-      # ResultDB upload will still be executed.
-      _upload_to_resultdb(api, result, properties, interface, test_metadata)
-
-      interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
-
-      publish_to_result_flow(api, properties.config,
-                             properties.request.parent_request_uid,
-                             should_poll_for_completion=True)
-
-  set_output_properties(api, result=result)
   return result
+
+
+def _format_time(given_time):
+  """Uniformally format time into a human readable form.
+
+  Args:
+    * time (float): Float time in time.time() form.
+    * step (StepPresentation): The step to add this log under.
+
+  Return:
+    string: locally formatting time in the form of (day_of_week month day
+    hour:time:second year)
+  """
+  utctime = time.gmtime(given_time)
+  return time.asctime(utctime)
+
+
+def _get_context_deadline(api, limit_seconds, step):
+  """Form a deadline to be used by recipe_engine/context.
+
+  Args:
+    * limit_seconds (int): Number of seconds that the process will be allowed to
+      run.
+    step (StepPresentation): The step to add this log under.
+
+  Returns:
+    * sections_pb2.Deadline: A luci representation of a deadline. Includes a UTC
+      time and a grace period.
+  """
+  current_time = api.time.time()
+
+  # Make the deadline
+  deadline = sections_pb2.Deadline()
+  deadline.soft_deadline = current_time + limit_seconds
+  deadline.grace_period = 30.0
+
+  # Add deadline information to the step logs.
+  step.presentation.logs[
+      'result upload deadline info'] = "start: %s\nend: %s\ntotal_seconds: %s\n" % (
+          _format_time(current_time), _format_time(
+              deadline.soft_deadline), str(limit_seconds))
+
+  return deadline
+
+
+def _upload_steps_with_phosphorus(api, properties, interface, result,
+                                  test_metadata, dut_state, run_test_response,
+                                  step):
+  """Publish results from Phosphorus test run.
+
+  Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * properties (TestRunnerProperties): recipe input properties.
+      * interface (DUTInterface): The interface to run commands on the DUT.
+      * result (DUTResult): results to be uploaded for later analysis.
+      * test_metadata (DUTTestMetadata): All metadata needed for the interface
+        to access a test.
+      * upload_to_tko (bool): Flag to determine if results should be sent to
+        tko.
+      * run_test_response (PhosphorusTestDUTResponse): Test response from the
+        DUT.
+      * step (StepPresentation): The step to add this log under.
+  """
+  deadline = _get_context_deadline(api, _RESULT_PUBLISHING_LIMIT, step) if (
+      'chromeos.cros_infra_config.use_result_publishing_limit' in
+      api.cros_infra_config.experiments or
+      TestRunnerProperties.USE_RESULT_PUBLISHING_LIMIT in properties.experiments
+  ) else None
+
+  try:
+    with api.context(deadline=deadline):
+      try:
+        if result is not None and not result.prejob_response.is_failure():
+          interface.upload_to_tko(test_metadata, run_test_response)
+        archive_all_logs(api, interface=interface, test_metadata=test_metadata,
+                         result=result)
+
+        api.cts_results_archive.archive(
+            interface.get_results_directory(test_metadata))
+      finally:
+        # We'd want to prioritize CTS artifact upload as much as possible since
+        # it would be fairly expensive to rerun CTS tests if it fails only on
+        # the upload step. Even though the GCS artifact upload fails, the
+        # ResultDB upload will still be executed.
+        _upload_to_resultdb(api, result, properties, interface, test_metadata)
+
+        interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+
+        publish_to_result_flow(api, properties.config,
+                               properties.request.parent_request_uid,
+                               should_poll_for_completion=True)
+  # Set output properties whether or not we encounter a timeout. This is
+  # required because CQ only reads results from output props and not
+  # ResultsDB.
+  except StepFailure as e:  # pragma: nocover
+    if (e.exc_result is not None and e.exc_result.had_timeout):
+      # This will make sure that the failure doesn't incorrectly present as an
+      # infra_failure. We don't want to present an infra_failure because
+      # nothing on our end has gone wrong and this will shield us from
+      # potential misfiled bugs.
+      step.presentation.staus = api.step.FAILURE
+      e = StepFailure(
+          "Result upload execution timelimit of %.1f hours reached" %
+          (_RESULT_PUBLISHING_LIMIT / HOUR))
+
+    # Regardless of the error we'd like to set the output properties. They
+    # will likely be incomplete but since CQ relies on them anything is
+    # better than empty results.
+    set_output_properties(api, result=result)
+    raise e
+  except Exception as e:  # pragma: nocover
+    # Regardless of the error we'd like to set the output properties. They
+    # will likely be incomplete but since CQ relies on them anything is
+    # better than empty results.
+    set_output_properties(api, result=result)
+    raise e
+
+  # NOTE: It may seem chaotic since we call this in 3 different places but this
+  # is done to ensure that no matter what we always upload results to
+  # output_properties.
+  set_output_properties(api, result=result)
+
 
 
 def publish_to_result_flow(api, config, parent_request_uid,
@@ -1224,7 +1336,7 @@ def execution_steps_with_phosphorus(api, properties):
                            properties.request.parent_request_uid)
 
     for test_id, test in tests.items():
-      with api.step.nest(test_id):
+      with api.step.nest(test_id) as test_step:
         validate_request(api, test)
         if 'build' in test.autotest.keyvals and test.autotest.keyvals[
             'build'].startswith('betty'):
@@ -1248,7 +1360,9 @@ def execution_steps_with_phosphorus(api, properties):
               dut_state=dut_state,
               container_image_info=properties.request.execution_param
               .container_image_info,
+              step=test_step,
           )
+
           global_result.add_result(test_id, result)
         else:
           prejob_response = interface.build_aborted_prejob_response(
@@ -1298,7 +1412,7 @@ def execution_steps_with_ctr(api, properties):
   with api.step.nest('execution steps') as step:
     # create the container images file
     # that will be used later by CTR commands.
-    with api.step.nest('CrosToolRunner: create images file') as step:
+    with api.step.nest('CrosToolRunner: create images file'):
       api.cros_tool_runner.create_file_with_container_metadata(
           properties.cft_test_request.container_metadata)
     publish_to_result_flow(api, properties.config,
@@ -1316,7 +1430,8 @@ def execution_steps_with_ctr(api, properties):
       result = _execution_steps_for_test_with_ctr(
           api=api, properties=properties, interface=interface,
           test_metadata=test_metadata, max_duration_sec=max_duration_sec,
-          dut_state=dut_state, container_image_info=None)
+          dut_state=dut_state, container_image_info=None, step=step)
+
       global_result.add_result("original_test", result)
     else:
       prejob_response = interface.build_aborted_prejob_response(test_metadata)
@@ -1329,7 +1444,7 @@ def execution_steps_with_ctr(api, properties):
 
 def _execution_steps_for_test_with_ctr(api, properties, interface,
                                        test_metadata, max_duration_sec,
-                                       dut_state, container_image_info):
+                                       dut_state, container_image_info, step):
   """Execute all the required steps for a single test using ctr.
 
   Run the following steps required for a test:
@@ -1346,6 +1461,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
   * dut_state (str): The current state of the DUT.
   * container_image_info (ContainerImageInfo): If set, info on a Docker
   container for use by the DUTInterface.
+  * step (StepPresentation): The step to add this log under.
 
   Returns: DUTResult: a constructed result for this test.
 
@@ -1367,7 +1483,6 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
           run_test_response)
       test_metadata.job_finished = int(api.time.time())
       dut_state = _DUT_STATE_READY
-      interface.upload_to_tko(test_metadata, run_test_response)
 
       # Gets the result dir path for the first test case result,
       # e.g. "/home/chromeos-test/skylab_bots/c6-r1-r24-h11.584871424/w/ir/x/w
@@ -1395,22 +1510,6 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
           api, properties.cft_test_request.parent_request_uid,
           autotest_keyval_file)
 
-      # If this builder is configured to be private-partner, we don't want to
-      # publish to the board-model realm
-      force_current_realm = properties.common_config.partner_private
-
-      # TODO(b/246473902): Populate additional info to Tauto results for CFT
-      # MVP, e.g. timestamps, full test name. The logic would be added to
-      # crostoolrunner_interface.py and could be similar to the
-      # `_post_process_tauto_result()` method above.
-      #
-      # TODO(b/245017288): Upload incomplete Tauto and Tast result to ResultDB
-      # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
-      # could be similar to the `_upload_incomplete_test_to_resultdb()` method
-      # above.
-      interface.upload_to_rdb(test_metadata, run_test_response,
-                              force_current_realm)
-
     # Result for uploading
     result_for_uploading = interface.parse_test_results(test_metadata)
     result_for_uploading.add_prejob_response(prejob_response)
@@ -1422,21 +1521,44 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     result_for_output_props.add_test_response(run_test_resp_for_output_props)
     result_for_output_props.update_log_urls(test_metadata)
   finally:
-    interface.submit_post_job()
-    archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                     result=result_for_uploading)
-    # TODO(b/252945582): Handle multiple test results if needed
-    if results_dir:
-      # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
-      # results. To align with that, we need to pass the directory
-      # .../cros-test/artifacts/tauto/, not its sub directory.
-      api.cts_results_archive.archive(os.path.dirname(results_dir))
+    _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
+                           result_for_uploading, results_dir, test_metadata,
+                           dut_state, step)
 
-    interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+  return result_for_output_props
 
-    publish_to_result_flow(api, properties.config,
-                           properties.cft_test_request.parent_request_uid,
-                           should_poll_for_completion=True)
+
+def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
+                           result_for_uploading, results_dir, test_metadata,
+                           dut_state, step):
+  """Publish results from Phosphorus test run.
+
+  Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * properties (TestRunnerProperties): Recipe input properties.
+    * interface (DUTInterface): The interface to run commands on the DUT.
+    * result_for_output_props (DUTResult): Results to be sent to bq output
+      properties.
+    * result_for_uploading (DUTResult): Results to be uploaded for later
+      analysis.
+    * run_test_response (CrosToolRunnerTestDUTResponse): Response from the test
+      execution, specifically in the phosphorus environment.
+    * results_dir (str): Local(to bot) path where results are stored.
+    * test_metadata (DUTTestMetadata): All metadata needed for the interface
+        to access a test.
+    * dut_state (str): The current state of the DUT.
+    * step (StepPresentation): The step to add this log under.
+  """
+  # If the experiment is set then form a deadline.
+  deadline = _get_context_deadline(api, _RESULT_PUBLISHING_LIMIT, step) if (
+      'chromeos.cros_infra_config.use_result_publishing_limit' in
+      api.cros_infra_config.experiments or
+      TestRunnerProperties.USE_RESULT_PUBLISHING_LIMIT in properties.experiments
+  ) else None
+
+  def _prep_and_set_output_props():
+    """Inline function to allow us to set output props.
+    """
     # Get an empty result for setting output property
     # result.data is not used anywhere else so
     # it's okay to create an empty one for only this purpose
@@ -1445,7 +1567,70 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
                                            properties, dut_state)
     set_output_properties(api, result=new_result)
 
-  return result_for_output_props
+  # Upload results with context
+  try:
+    with api.context(deadline=deadline):
+      if (result_for_uploading is not None and
+          not result_for_uploading.prejob_response.any_provision_failed):
+        # TODO(b/246473902): Populate additional info to Tauto results for CFT
+        # MVP, e.g. timestamps, full test name. The logic would be added to
+        # crostoolrunner_interface.py and could be similar to the
+        # `_post_process_tauto_result()` method above.
+
+        # TODO(b/245017288): Upload incomplete Tauto and Tast result to ResultDB
+        # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
+        # could be similar to the `_upload_incomplete_test_to_resultdb()` method
+        # above.
+        # If this builder is configured to be private-partner, we don't want to
+        # publish to the board-model realm
+        interface.upload_to_tko(test_metadata,
+                                result_for_uploading.test_responses)
+        interface.upload_to_rdb(test_metadata,
+                                result_for_uploading.test_responses,
+                                properties.common_config.partner_private)
+
+      interface.submit_post_job()
+      archive_all_logs(api, interface=interface, test_metadata=test_metadata,
+                       result=result_for_uploading)
+      # TODO(b/252945582): Handle multiple test results if needed
+      if results_dir:
+        # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
+        # results. To align with that, we need to pass the directory
+        # .../cros-test/artifacts/tauto/, not its sub directory.
+        api.cts_results_archive.archive(os.path.dirname(results_dir))
+
+      interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+
+      publish_to_result_flow(api, properties.config,
+                             properties.cft_test_request.parent_request_uid,
+                             should_poll_for_completion=True)
+    # Set output properties whether or not we encounter a timeout. This is
+    # required because CQ only reads results from output props and not
+    # ResultsDB.
+  except StepFailure as e:  # pragma: nocover
+    if (e.exc_result is not None and e.exc_result.had_timeout):
+      # This will make sure that the failure doesn't incorrectly present as an
+      # infra_failure. We don't want to present an infra_failure because
+      # nothing on our end has gone wrong and this will shield us from
+      # potential misfiled bugs.
+      step.presentation.staus = api.step.FAILURE
+      e = StepFailure(
+          "Result upload execution timelimit of %.1f hours reached" %
+          (_RESULT_PUBLISHING_LIMIT / HOUR))
+
+    # Regardless of the error we'd like to set the output properties. They
+    # will likely be incomplete but since CQ relies on them anything is
+    # better than empty results.
+    _prep_and_set_output_props()
+    raise e
+  except Exception as e:  # pragma: nocover
+    _prep_and_set_output_props()
+    raise e
+
+  # NOTE: It may seem chaotic since we call this in 3 different places but this
+  # is done to ensure that no matter what we always upload results to
+  # output_properties.
+  _prep_and_set_output_props()
 
 
 def create_skylab_result(api, ctr_result, properties, dut_state):
@@ -1828,37 +2013,43 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     """))
 
   # Required for initial module set up.
-  def _misc_properties(cft_is_enabled=False):
+  def _misc_properties(cft_is_enabled=False, use_result_publishing_limit=False):
     if cft_is_enabled:
-      return _misc_properties_for_ctr()
-    return _misc_properties_for_phosphorus()
+      return _misc_properties_for_ctr(
+          use_result_publishing_limit=use_result_publishing_limit)
+    return _misc_properties_for_phosphorus(
+        use_result_publishing_limit=use_result_publishing_limit)
 
-  def _misc_properties_for_ctr():
+  def _misc_properties_for_ctr(use_result_publishing_limit=False):
     return (api.properties(
-        _get_test_runner_properties(), **{
-            '$chromeos/phosphorus':
-                PhosphorusProperties(
-                    version=PhosphorusProperties.Version(
-                        cipd_label='phosphorus_prod'), config={
-                            'admin_service': 'foo-service',
-                            'cros_inventory_service': 'inv-service',
-                            'cros_ufs_service': 'ufs-service',
-                            'autotest_dir': '/path/to/autotest',
-                        }),
-            '$chromeos/cros_tool_runner':
-                CrosToolRunnerProperties(
-                    version=CrosToolRunnerProperties.Version(
-                        cipd_label='cros_tool_runner_prod'))
-        }) + api.properties.environ(
-            PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
-                                    SWARMING_TASK_ID='dummy-task-id1',
-                                    SKYLAB_DUT_ID='dummy-dut-id')) +
+        _get_test_runner_properties(
+            use_result_publishing_limit=use_result_publishing_limit), **{
+                '$chromeos/phosphorus':
+                    PhosphorusProperties(
+                        version=PhosphorusProperties.Version(
+                            cipd_label='phosphorus_prod'), config={
+                                'admin_service': 'foo-service',
+                                'cros_inventory_service': 'inv-service',
+                                'cros_ufs_service': 'ufs-service',
+                                'autotest_dir': '/path/to/autotest',
+                            }),
+                '$chromeos/cros_tool_runner':
+                    CrosToolRunnerProperties(
+                        version=CrosToolRunnerProperties.Version(
+                            cipd_label='cros_tool_runner_prod'))
+            }) + api.properties.environ(
+                PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                        SWARMING_TASK_ID='dummy-task-id1',
+                                        SKYLAB_DUT_ID='dummy-dut-id')) +
             api.properties.environ(
                 CrosToolRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                             SWARMING_TASK_ID='dummy-task-id1',
                                             SKYLAB_DUT_ID='dummy-dut-id')))
 
-  def _get_test_runner_properties():
+  def _get_test_runner_properties(use_result_publishing_limit=False):
+    experiments = []
+    if use_result_publishing_limit:
+      experiments.append(TestRunnerProperties.USE_RESULT_PUBLISHING_LIMIT)
     return TestRunnerProperties(
         config={
             'lab': {
@@ -1877,22 +2068,22 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                 'project': 'foo-proj',
                 'topic': 'foo-topic',
             },
-        })
+        }, experiments=experiments)
 
-  def _misc_properties_for_phosphorus():
+  def _misc_properties_for_phosphorus(use_result_publishing_limit=False):
     return (api.properties(
-        _get_test_runner_properties(), **{
-            '$chromeos/phosphorus':
-                PhosphorusProperties(
-                    version=PhosphorusProperties.Version(
-                        cipd_label='phosphorus_prod'), config={
-                            'admin_service': 'foo-service',
-                            'cros_inventory_service': 'inv-service',
-                            'cros_ufs_service': 'ufs-service',
-                            'autotest_dir': '/path/to/autotest',
-                        })
-        }) +  #
-            api.properties.environ(
+        _get_test_runner_properties(
+            use_result_publishing_limit=use_result_publishing_limit), **{
+                '$chromeos/phosphorus':
+                    PhosphorusProperties(
+                        version=PhosphorusProperties.Version(
+                            cipd_label='phosphorus_prod'), config={
+                                'admin_service': 'foo-service',
+                                'cros_inventory_service': 'inv-service',
+                                'cros_ufs_service': 'ufs-service',
+                                'autotest_dir': '/path/to/autotest',
+                            })
+            }) + api.properties.environ(
                 PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                         SWARMING_TASK_ID='dummy-task-id1',
                                         SKYLAB_DUT_ID='dummy-dut-id')))
@@ -2415,6 +2606,21 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       'success',
       _set_build(bid=42),
       _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-result-publishing-experiment-success',
+      _set_build(bid=42),
+      _misc_properties(use_result_publishing_limit=True),
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
@@ -3639,7 +3845,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   ############ CTR Test Cases ##########
 
-  yield api.test('success-with-ctr', _set_build(bid=42), _misc_properties(True),
+  yield api.test('success-with-ctr', _set_build(bid=42),
+                 _misc_properties(cft_is_enabled=True),
                  _crossystem_keyval_file_step_data_for_ctr(),
                  _kernel_log_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
@@ -3647,7 +3854,16 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _successful_run_test_step_for_ctr())
 
   yield api.test(
-      'success-with-ctr-gce', _set_build(bid=42), _misc_properties(True),
+      'success-with-ctr-result-publishing-experiment', _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True, use_result_publishing_limit=True),
+      _crossystem_keyval_file_step_data_for_ctr(),
+      _kernel_log_file_step_data_for_ctr(), _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
+      _successful_run_test_step_for_ctr())
+
+  yield api.test(
+      'success-with-ctr-gce', _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
       _crossystem_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(),
       _request_properties_for_ctr(
@@ -3663,21 +3879,23 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               }]))))
 
   yield api.test(
-      'within-deadline-ctr', api.time.seed(2369692800), _misc_properties(True),
+      'within-deadline-ctr', api.time.seed(2369692800),
+      _misc_properties(cft_is_enabled=True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_within_deadline(
               current_time_sec=2369692800)), _mock_load_step_for_ctr(),
       _successful_prejob_step_for_ctr(), _successful_run_test_step_for_ctr())
 
   yield api.test(
-      'deadline-passed-ctr', api.time.seed(2369692800), _misc_properties(True),
+      'deadline-passed-ctr', api.time.seed(2369692800),
+      _misc_properties(cft_is_enabled=True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_passed_deadline(
               current_time_sec=2369692800)), _mock_load_step_for_ctr())
 
   yield api.test(
       'primary-dut-missing',
-      _misc_properties(True),
+      _misc_properties(cft_is_enabled=True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
               missing_field_name='primary_dut')),
@@ -3686,7 +3904,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   yield api.test(
       'test-suites-missing',
-      _misc_properties(True),
+      _misc_properties(cft_is_enabled=True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
               missing_field_name='test_suites')),
@@ -3694,14 +3912,15 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
-      'provision-crash-ctr', _set_build(bid=42), _misc_properties(True),
-      _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+      'provision-crash-ctr', _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True), _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(),
       api.step_data(
           'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
           retcode=1), api.post_check(post_process.StatusException))
 
   yield api.test(
-      'run-test-crash-ctr', _misc_properties(True),
+      'run-test-crash-ctr', _misc_properties(cft_is_enabled=True),
       _request_properties_for_ctr(), _mock_load_step_for_ctr(),
       _successful_prejob_step_for_ctr(),
       api.step_data(
@@ -3709,11 +3928,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           retcode=1), api.post_check(post_process.StatusFailure))
 
   yield api.test('provision-failed-ctr', _set_build(bid=42),
-                 _misc_properties(True), _request_properties_for_ctr(),
-                 _mock_load_step_for_ctr(), _failed_prejob_step_for_ctr(),
+                 _misc_properties(cft_is_enabled=True),
+                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+                 _failed_prejob_step_for_ctr(),
                  api.post_check(post_process.StatusFailure))
 
-  yield api.test('test-failed-ctr', _set_build(bid=42), _misc_properties(True),
+  yield api.test('test-failed-ctr', _set_build(bid=42),
+                 _misc_properties(cft_is_enabled=True),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _failed_run_test_step_for_ctr(),

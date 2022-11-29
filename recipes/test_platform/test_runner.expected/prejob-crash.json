@@ -708,6 +708,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.original_test.set output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Empty Results@@@"
+    ]
+  },
+  {
     "failure": {
       "humanReason": "Infra Failure: Step('execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob') (retcode: 1)"
     },

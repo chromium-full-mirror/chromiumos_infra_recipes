@@ -378,7 +378,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test.
-    * run_test_response (DUTTestResponse): The response to the test run.
+    * run_test_response (List[DUTTestResponse]): The response to the test run.
 
     Raises:
     * InfraFailure.
@@ -388,7 +388,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
       # Retrieve ctr_test_response(TestCaseResult type) and check which test cases are of harness type 'tauto'.
       # For 'tauto' harness type, try to upload test results to TKO.
-      for test_dut_response in run_test_response.test_dut_responses:
+      for test_dut_response in run_test_response:
         ctr_test_response = test_dut_response.data
         test_harness_type = ctr_test_response.test_harness.WhichOneof(
             'test_harness_type')
@@ -485,7 +485,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest('CrosToolRunner: upload to rdb'):
       # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
       # Retrieve ctr_test_response(TestCaseResult type).
-      for test_dut_response in run_test_response.test_dut_responses:
+      for test_dut_response in run_test_response:
         ctr_test_response = test_dut_response.data
         test_harness_type = ctr_test_response.test_harness.WhichOneof(
             'test_harness_type')
