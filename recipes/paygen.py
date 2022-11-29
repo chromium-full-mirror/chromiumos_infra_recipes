@@ -7,18 +7,23 @@
 
 import datetime
 import json
-
-from google.protobuf.json_format import MessageToDict, MessageToJson
-
-from PB.chromite.api.payload import GenerationResponse
-import PB.chromiumos.common as common_pb2
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
-from PB.recipes.chromeos.paygen import PaygenProperties
-from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
+from typing import Callable, Dict, Optional
 
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
-from recipe_engine.recipe_api import StepFailure
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
+
+import PB.chromiumos.common as common_pb2
+from PB.chromite.api.payload import GenerationResponse
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
+from PB.recipes.chromeos.paygen import AutoupdateTestConfig
+from PB.recipes.chromeos.paygen import PaygenProperties
 from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -52,7 +57,8 @@ PROPERTIES = PaygenProperties
 # Number of total tries on individual paygen jobs to attempt.
 _PAYGEN_TRY_COUNT = 2
 
-def RunSteps(api, properties):
+
+def RunSteps(api: RecipeApi, properties: PaygenProperties):
   api.easy.log_parent_step()
   with api.failures.ignore_exceptions():
     api.bcid_reporter.report_stage('start')
@@ -67,7 +73,7 @@ def RunSteps(api, properties):
     DoRunSteps(api, properties)
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
   # Set up builder state.
   initialize_directories(api, properties)
   # Set up holder objects.
@@ -90,12 +96,13 @@ def DoRunSteps(api, properties):
     with api.step.nest('running paygen operations in parallel') as pres:
 
       # Function to do a single paygen, given a request object.
-      def do_a_paygen(req, tries):
+      def do_a_paygen(req: PaygenProperties.PaygenRequest,
+                      tries: int) -> GenerationResponse:
         """Generate a single payload, given a request object.
 
         Args:
-          req (PaygenRequest): the request object to generate for.
-          tries (int): the number try we're on.
+          req: the request object to generate for.
+          tries: the number try we're on.
 
         Returns:
           GenerationResponse from payload generation.
@@ -172,12 +179,12 @@ def DoRunSteps(api, properties):
       api.paygen_testing.schedule_au_tests(paygen_test_configs)
 
 
-def initialize_directories(api, properties):
+def initialize_directories(api: RecipeApi, properties: PaygenProperties):
   """Set up all the directories needed to do paygen.
 
   Args:
-    api (RecipesApi): api object to use.
-    properties (dict): recipe properties.
+    api: api object to use.
+    properties: recipe properties.
   """
   with api.step.nest('initialization') as presentation:
     # Sync the paygen manifest group.
@@ -210,7 +217,7 @@ def initialize_directories(api, properties):
     @exponential_retry(
         retries=3,
         delay=datetime.timedelta(seconds=properties.sdk_retry_delay or 300))
-    def _retry_chroot_init_wrapper():
+    def _retry_chroot_init_wrapper() -> Optional[StepFailure]:
       try:
         api.cros_sdk.create_chroot(version=None, use_image=False,
                                    timeout_sec=timeout)
@@ -227,7 +234,9 @@ def initialize_directories(api, properties):
       raise exception  # pylint: disable-msg=E0702
 
 
-def report_paygen_success_to_snoopy(api, req, resp):
+def report_paygen_success_to_snoopy(api: RecipeApi,
+                                    req: PaygenProperties.PaygenRequest,
+                                    resp: GenerationResponse):
   with api.failures.ignore_exceptions():
     abspath = api.path.join(req.generation_request.chroot.path,
                             resp.local_path.lstrip('/'))
@@ -238,7 +247,7 @@ def report_paygen_success_to_snoopy(api, req, resp):
 # TODO(crbug.com/1157719): Improve testing mock data. There is a disconnect
 # between the mock data and the Recipe logic. For example, a call to
 # GeneratePayloads with no request still returns a successful response.
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'chroot-timeout',
@@ -272,9 +281,11 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  def generate_payload_response(api, is_success=True, local_path='',
-                                remote_uri='', failure_reason=None, retcode=0,
-                                retry=0):
+  def generate_payload_response(
+      api: RecipeTestApi, is_success: bool = True, local_path: str = '',
+      remote_uri: str = '',
+      failure_reason: GenerationResponse.FailureReason = None, retcode: int = 0,
+      retry: int = 0) -> TestData:
     suffix = '' if not retry else ' retry ({})'.format(retry)
     data = json.dumps(
         dict(success=is_success, local_path=local_path, remote_uri=remote_uri,
@@ -284,12 +295,13 @@ def GenTests(api):
         step_name='making single payload{}'.format(suffix), data=data,
         retcode=retcode)
 
-  def StepTextEquals(check, step_odict, step, expected):
+  def StepTextEquals(check: Callable[[bool], bool], step_odict: Dict[str, Step],
+                     step: str, expected: str):
     """Check that the step's text equals given value.
 
     Args:
-      step (str) - The step to check the step text of.
-      expected (str) - The expected text of the step.
+      step: The step to check the step text of.
+      expected: The expected text of the step.
 
     Usage:
       yield TEST + \

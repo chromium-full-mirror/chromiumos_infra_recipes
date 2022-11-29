@@ -11802,25 +11802,25 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#16)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_testing](#recipe_modules-paygen_testing), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen.py#30): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_testing](#recipe_modules-paygen_testing), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [DoRunSteps](/recipes/paygen.py#70)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/paygen.py#76)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [RunSteps](/recipes/paygen.py#55)(api, properties):**
+&mdash; **def [RunSteps](/recipes/paygen.py#61)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#175)(api, properties):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#182)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
 
 Args:
-  api (RecipesApi): api object to use.
-  properties (dict): recipe properties.
+  api: api object to use.
+  properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#230)(api, req, resp):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#237)(api: RecipeApi, req: PaygenProperties.PaygenRequest, resp: GenerationResponse):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/examples/full.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11879,13 +11879,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#19)(api: RecipeApi):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#27): [build\_reporting](#recipe_modules-build_reporting), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#34): [build\_reporting](#recipe_modules-build_reporting), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#43)(api, properties):**
+&mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#51)(api: RecipeApi, properties: PaygenOrchestratorProperties):**
 ### *recipes* / [paygen\_testing:examples/create\_paygen\_build\_report](/recipe_modules/paygen_testing/examples/create_paygen_build_report.py)
 
 [DEPS](/recipe_modules/paygen_testing/examples/create_paygen_build_report.py#17): [paygen\_testing](#recipe_modules-paygen_testing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

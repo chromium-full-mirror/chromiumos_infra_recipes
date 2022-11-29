@@ -8,21 +8,28 @@
 import itertools
 import json
 from os import path
+from typing import Callable, Dict, List
 
-from google.protobuf.json_format import MessageToDict, MessageToJson, Parse
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import Parse
 
-from PB.chromite.api.payload import Build
+from PB.chromite.api.payload import Build as ChromiteBuild
 from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import DeltaType
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.recipe_engine import result as result_pb2
-from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from PB.recipes.chromeos.paygen import PaygenProperties
-
+from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -40,7 +47,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = PaygenOrchestratorProperties
 
-def RunSteps(api, properties):
+
+def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Parse all properties, defaulting the values if not set.
   delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
   au_testing_models = properties.au_testing_models or []
@@ -208,7 +216,7 @@ def RunSteps(api, properties):
   return None
 
 
-def _summarize_failed_builds(failures):
+def _summarize_failed_builds(failures: List[Build]) -> str:
   # Truncate the list of failures per section to keep the summary under
   # Buildbucket's 4000 byte limit on the summary_markdown field.
   # To be removed when https://crbug.com/1063398 is resolved.
@@ -219,11 +227,13 @@ def _summarize_failed_builds(failures):
   return summary_markdown
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def get_props(delta_types=None, builder_name='coral',
-                target_chromeos_version='13505.15.0', channels=None,
-                pubsub=False, bbid=None):
+  def get_props(delta_types: List[str] = None, builder_name: str = 'coral',
+                target_chromeos_version: str = '13505.15.0',
+                channels: List[str] = None, pubsub: bool = False,
+                bbid: int = None
+               ) -> Callable[[PaygenOrchestratorProperties], TestData]:
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
     return api.properties(delta_types=delta_types, builder_name=builder_name,
@@ -235,7 +245,7 @@ def GenTests(api):
       'discovering payload configuration.get paygen json.gsutil cat',
       api.paygen_orchestration.EXAMPLE_PAYGEN_JSON)
 
-  def paygen_child_data(child_num):
+  def paygen_child_data(child_num: int) -> Build:
     paygen_child_data = build_pb2.Build(id=8922054662172514000 + child_num,
                                         status='SUCCESS')
     paygen_child_data.output.properties['payloads'] = [{
@@ -454,13 +464,14 @@ def GenTests(api):
                 MessageToDict(
                     GenerationRequest(
                         tgt_signed_image=SignedImage(
-                            build=Build(channel='canary-channel'))))
+                            build=ChromiteBuild(channel='canary-channel'))))
         },
     ]
 
     return paygen_child_data
 
-  def SummaryMarkdownLength(check, step_odict):
+  def SummaryMarkdownLength(check: Callable[[str, bool], bool],
+                            step_odict: Dict[str, Step]):
     """Assert that the summary markdown is less than 4000 chars."""
     summary_markdown = step_odict['$result']['failure']['humanReason']
     check('summary markdown < 4000 chars', len(summary_markdown) < 4000)
