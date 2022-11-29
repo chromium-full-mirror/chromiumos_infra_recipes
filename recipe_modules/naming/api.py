@@ -89,7 +89,6 @@ class NamingApi(recipe_api.RecipeApi):
     input_properties = json_format.Parse(
         json_format.MessageToJson(all_properties), TastVmProperties(),
         ignore_unknown_fields=True)
-    assert input_properties.name, 'missing name: %r' % input_properties
     return input_properties.name
 
   def get_commit_title(self, commit):

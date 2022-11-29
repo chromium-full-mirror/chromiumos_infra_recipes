@@ -6787,8 +6787,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-direct-tast-vm@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@target-tast-vm-informational@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },
   {
@@ -7319,8 +7318,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@target-tast-gce@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
-      "@@@STEP_LINK@target-tast-gce-informational@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {

@@ -589,7 +589,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           scheduled_test_names.append(test.common.display_name)
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
-        url_title_fn=self.m.naming.get_build_title)
+        url_title_fn=self.m.naming.get_vm_test_title)
     if self._test_data.enabled:
       scheduled_test_names.sort()
       self.m.easy.set_properties_step(
@@ -658,7 +658,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           scheduled_test_names.append(test.common.display_name)
     gce_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast GCE tests',
-        url_title_fn=self.m.naming.get_build_title)
+        url_title_fn=self.m.naming.get_vm_test_title)
     if self._test_data.enabled:
       scheduled_test_names.sort()
       self.m.easy.set_properties_step(
