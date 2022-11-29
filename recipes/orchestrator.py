@@ -62,6 +62,10 @@ def DoRunSteps(api):
     if api.orch_menu.skip_paygen:
       extra_child_props['skip_paygen'] = True
 
+  if api.orch_menu.is_factory_orchestrator:
+    extra_child_props['$chromeos/cros_source'] = MessageToDict(
+        CrosSourceProperties(sync_to_manifest=api.cros_release.buildspec))
+
   if api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
         CrosRelevanceProperties(force_postsubmit_relevance=True))
@@ -149,6 +153,19 @@ def GenTests(api):
                   CrosSourceProperties(use_external_source_cache=True)
           }), api.post_check(post_process.StatusSuccess),
       builder='public-main-orchestrator', with_history=True,
+      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
+
+  yield api.orch_menu.test(
+      'factory-orchestrator', data.ctp_normal,
+      api.properties(
+          **{
+              "$chromeos/cros_source":
+                  CrosSourceProperties(
+                      sync_to_manifest=ManifestLocation(
+                          manifest_gs_path='gs://foo/bar.xml'),
+                      use_external_source_cache=True)
+          }), api.post_check(post_process.StatusSuccess),
+      builder='factory-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test('bisecting-orchestrator', data.ctp_normal,

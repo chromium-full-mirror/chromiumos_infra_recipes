@@ -54,6 +54,7 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(api.orch_menu.is_release_orchestrator,
                                properties.is_release_orchestrator)
     _ = api.orch_menu.is_public_orchestrator
+    _ = api.orch_menu.is_factory_orchestrator
     is_postsubmit_orch = build.builder.builder == 'postsubmit-orchestrator'
     api.assertions.assertEqual(api.orch_menu.is_postsubmit_orchestrator,
                                is_postsubmit_orch)
@@ -242,6 +243,20 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       builder='public-main-orchestrator',
       with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+  )
+
+  # TODO(b/245326818): Add useful assertions
+  yield api.orch_menu.test(
+      'factory-orchestrator',
+      data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test'),
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='main'),
+      builder='factory-orchestrator',
       with_history=True,
       bot_size='medium',
   )

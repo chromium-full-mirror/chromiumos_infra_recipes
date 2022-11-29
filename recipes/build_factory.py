@@ -3,65 +3,34 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe that builds factory images/artifacts on a factory branch."""
+"""Recipe for generating artifacts for Factory builders.
 
-from contextlib import contextmanager
+This recipe supports the workflow necessary to support factory builders."""
 
-from PB.recipes.chromeos.build_factory import BuildFactoryProperties
 from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/context',
-    'recipe_engine/properties',
     'build_menu',
-    'src_state',
+    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = BuildFactoryProperties
 
-
-class FactoryBuilder(object):
-  """Class to contain useful information about the factory builder."""
-
-  def __init__(self, api, props):
-    """Set up a FactoryBuilder instance."""
-    self.m = api
-    self.props = props
-    self._config = None
-
-  def run(self):
-    """Run the builder."""
-    with self._setup():
-      pass
-
-  @contextmanager
-  def _setup(self):
-    """Context manager to configure the builder."""
-    # If we do not have a gitiles_commit from buildbucket, use the manifest_branch
-    # has manifest_branch, use that branch of the internal manifest.
-    commit = self.m.src_state.gitiles_commit
-    if not commit.project:
-      commit = self.m.src_state.internal_manifest.as_gitiles_commit_proto
-      commit.ref = 'refs/heads/{}'.format(self.props.manifest_branch)
-    # TODO(b/241108061): Once factory builderconfigs have been created,
-    # remove missing_ok=True.
-    with self.m.build_menu.configure_builder(commit=commit, disable_sdk=True,
-                                             targets=self.props.build_targets,
-                                             missing_ok=True) as config:
-      self._config = config
-      with self.m.build_menu.setup_workspace(), \
-          self.m.context(cwd=self.m.src_state.workspace_path):
-        yield
-
-
-def RunSteps(api, properties):
-  FactoryBuilder(api, properties).run()
+def RunSteps(api):
+  with api.build_menu.configure_builder() as config, \
+      api.build_menu.setup_workspace_and_chroot():
+    env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+    api.build_menu.bootstrap_sysroot(config)
+    api.build_menu.install_packages(config, env_info.packages)
+    api.build_menu.build_and_test_images(config, include_version=True)
+    api.build_menu.upload_artifacts(config)
 
 
 def GenTests(api):
-  yield api.test('basic',
-                 api.properties(manifest_branch='factory-brya-14909.B'),
-                 api.post_check(post_process.StatusSuccess),
-                 api.post_process(post_process.DropExpectation))
+
+  yield api.build_menu.test(
+      'basic', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      builder='factory-corsola-15196.B-branch')

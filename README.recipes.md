@@ -134,9 +134,10 @@
   * [build_chromiumos](#recipes-build_chromiumos) (Python3 ✅) &mdash; Recipe for building public ChromiumOS images.
   * [build_compilation_database](#recipes-build_compilation_database) (Python3 ✅)
   * [build_cq](#recipes-build_cq) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for CQ.
-  * [build_factory](#recipes-build_factory) (Python3 ✅) &mdash; Recipe that builds factory images/artifacts on a factory branch.
+  * [build_factory](#recipes-build_factory) (Python3 ✅) &mdash; Recipe for generating artifacts for Factory builders.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
+  * [build_legacy_factory](#recipes-build_legacy_factory) (Python3 ✅) &mdash; Recipe that builds factory images/artifacts on a factory branch.
   * [build_legacy_fw](#recipes-build_legacy_fw) (Python3 ✅) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
   * [build_linters](#recipes-build_linters) (Python3 ✅) &mdash; Recipe for linting CLs.
   * [build_menu:examples/full](#recipes-build_menu_examples_full) (Python3 ✅)
@@ -6984,7 +6985,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#849)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#866)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -6997,15 +6998,15 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#157)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#158)(self):**
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#185)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#190)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#177)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#182)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#137)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#138)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#304)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#321)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -7018,25 +7019,27 @@ Args:
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#145)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#146)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#149)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#150)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#141)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#142)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#133)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#134)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_bisecting\_orchestrator](/recipe_modules/orch_menu/api.py#173)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_bisecting\_orchestrator](/recipe_modules/orch_menu/api.py#178)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#153)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#154)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#169)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#166)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#165)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#174)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#161)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#170)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#508)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#162)(self):**
+
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#525)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -7050,7 +7053,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#778)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#795)(self, testable_builds=None, container_metadata=None):**
 
 Plan, schedule, and run tests.
 
@@ -7065,11 +7068,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#706)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#723)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#712)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#729)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -7086,7 +7089,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#209)(self, test_footers=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#214)(self, test_footers=None):**
 
 Initial setup steps for the orchestrator.
 
@@ -7105,7 +7108,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#181)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#186)(self):**
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9125,13 +9128,15 @@ Recipe for building a BuildTarget image for CQ.
 &mdash; **def [RunSteps](/recipes/build_cq.py#32)(api):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
-[DEPS](/recipes/build_factory.py#13): [build\_menu](#recipe_modules-build_menu), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/build_factory.py#12): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-Recipe that builds factory images/artifacts on a factory branch.
+Recipe for generating artifacts for Factory builders.
 
-&mdash; **def [RunSteps](/recipes/build_factory.py#59)(api, properties):**
+This recipe supports the workflow necessary to support factory builders.
+
+&mdash; **def [RunSteps](/recipes/build_factory.py#20)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9157,6 +9162,15 @@ This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles.
 
 &mdash; **def [RunSteps](/recipes/build_informational.py#21)(api):**
+### *recipes* / [build\_legacy\_factory](/recipes/build_legacy_factory.py)
+
+[DEPS](/recipes/build_legacy_factory.py#13): [build\_menu](#recipe_modules-build_menu), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe that builds factory images/artifacts on a factory branch.
+
+&mdash; **def [RunSteps](/recipes/build_legacy_factory.py#59)(api, properties):**
 ### *recipes* / [build\_legacy\_fw](/recipes/build_legacy_fw.py)
 
 [DEPS](/recipes/build_legacy_fw.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [metadata\_json](#recipe_modules-metadata_json), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

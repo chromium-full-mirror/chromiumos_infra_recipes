@@ -2813,6 +2813,93 @@
       "build": {
         "applyGerritChanges": true
       }
+    },
+    {
+      "id": {
+        "name": "factory-orchestrator",
+        "type": "FACTORY",
+        "bucket": "factory"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": [
+          {
+            "name": "factory-corsola-15196.B-branch",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "factory-corsola-15196.B-branch",
+        "bucket": "factory"
+      },
+      "general": {
+        "manifest": "PRIVATE"
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_FACTORY",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "GCE_TARBALL",
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES"
+                ],
+                "gsLocations": []
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FACTORY_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
     }
   ]
 }

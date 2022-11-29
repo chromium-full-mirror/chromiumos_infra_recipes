@@ -125,6 +125,7 @@ class OrchMenuApi(RecipeApi):
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
     self._is_release_orchestrator = False
+    self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
     self._is_bisecting_orchestrator = False
@@ -161,6 +162,10 @@ class OrchMenuApi(RecipeApi):
   @property
   def is_release_orchestrator(self):
     return self._is_release_orchestrator
+
+  @property
+  def is_factory_orchestrator(self):
+    return self._is_factory_orchestrator
 
   @property
   def is_public_orchestrator(self):
@@ -248,10 +253,11 @@ class OrchMenuApi(RecipeApi):
         # We cannot push manifest refs to unpinned branches.
         self._update_manifest_refs &= (external_commit.id != '')
 
+        is_staging = self.m.cros_infra_config.is_staging
+
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           self._is_release_orchestrator = True
-          is_staging = self.m.cros_infra_config.is_staging
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             bump_version = self._properties.bump_version and not is_staging
             self.m.cros_version.bump_version(dry_run=not bump_version)
@@ -267,9 +273,20 @@ class OrchMenuApi(RecipeApi):
             if self.m.cros_source.is_tot or branch.startswith('release-'):
               self.m.cros_lkgm.schedule_public_build()
 
+        if config and config.id.type == BuilderConfig.Id.FACTORY:
+          self._is_factory_orchestrator = True
+          with self.m.workspace_util.sync_to_commit(staging=is_staging):
+            bump_version = self._properties.bump_version and not is_staging
+            self.m.cros_version.bump_version(dry_run=not bump_version)
+            kwargs = {}
+            if self._properties.manifest_versions_branch:
+              kwargs['branch'] = self._properties.manifest_versions_branch
+            self.m.cros_release.create_buildspec(
+                dry_run=is_staging,
+                gs_location=self._properties.buildspec_gs_path, **kwargs)
+
         if config and config.id.type == BuilderConfig.Id.PUBLIC:
           self._is_public_orchestrator = True
-          is_staging = self.m.cros_infra_config.is_staging
           # Need to sync to buildspec in the public orchestrator so that
           # chromeos_version.sh accurately reflects the version.
           # b/238330273 for context.
