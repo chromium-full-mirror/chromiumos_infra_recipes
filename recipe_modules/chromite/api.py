@@ -292,8 +292,6 @@ class ChromiteApi(recipe_api.RecipeApi):
       cbb_args.extend(['--master-build-id', self.c.cbb.build_id])
 
     cbb_args.extend(['--git-cache-dir', self.m.path['cache'].join('git')])
-    # Use preloaded chrome cache present on the nightly image for chrome sync.
-    cbb_args.extend(['--chrome-preload-dir', '/preload/chrome_cache'])
 
     if goma_dir is None:
       goma_dir = self.m.goma.goma_dir

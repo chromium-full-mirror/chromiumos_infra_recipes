@@ -746,8 +746,6 @@
       "main",
       "--git-cache-dir",
       "[CACHE]/git",
-      "--chrome-preload-dir",
-      "/preload/chrome_cache",
       "--goma_dir",
       "[START_DIR]/cipd/goma",
       "--goma_client_json",
