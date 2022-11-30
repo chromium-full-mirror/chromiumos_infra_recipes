@@ -12,7 +12,7 @@ import re
 from collections import defaultdict, namedtuple
 from google.protobuf.json_format import MessageToDict
 
-from recipe_engine.recipe_api import RecipeApi, StepFailure
+from recipe_engine.recipe_api import RecipeApi, InfraFailure, StepFailure
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 from PB.chromite.api.packages import UprevPackagesRequest
@@ -57,7 +57,6 @@ class CrosSourceApi(RecipeApi):
         properties.snapshot_cas
         if properties.HasField('snapshot_cas') else None)
     self._is_source_dirty = bool(self._snapshot_cas)
-    self._enable_custom_overlays = properties.enable_custom_overlays
     self._sync_to_manifest = properties.sync_to_manifest
     self._recovery_snapshot = properties.recovery_source_cache_snapshot
     self._use_external_source_cache = properties.use_external_source_cache
@@ -79,9 +78,6 @@ class CrosSourceApi(RecipeApi):
 
   def initialize(self):
     """Initialization that follows all module loading."""
-    self._enable_custom_overlays |= (
-        'chromeos.cros_source.enable_custom_overlays' in
-        self.m.cros_infra_config.experiments)
     # Check if there is already a workspace directory, and note that.
     # See b/188555398.
     workspace = self.m.path['start_dir'].join('chromiumos_workspace')
@@ -174,15 +170,6 @@ class CrosSourceApi(RecipeApi):
     been moved to a branch.
     """
     return self._is_source_dirty
-
-  @property
-  def preload_path(self):
-    """The cached image checkout path.
-
-    This is the cached version of source that is included in the base image of
-    the bot, used as an initial reference path.
-    """
-    return '/preload/' + self._cache_name
 
   @property
   def cache_path(self):
@@ -388,25 +375,6 @@ class CrosSourceApi(RecipeApi):
       return 'INTERNAL'
     return 'CUSTOM'
 
-  def _retry_checkout_sync_verification(self, cache_path, manifest_url=None,
-                                        init_opts=None, sync_opts=None,
-                                        projects=None):
-    with self.m.step.nest('retry cache sync'):
-      # If the checkout sync failed then we'll unmount and try again.
-      self.m.overlayfs.unmount('workspace', self.workspace_path)
-      self.m.overlayfs.unmount(self._cache_name, self.cache_path)
-      self.m.file.rmtree("Destroying cache at {}".format(self.cache_path),
-                         self.cache_path)
-      self.m.overlayfs.mount(self._cache_name, self.preload_path,
-                             self.cache_path, persist=True)
-      self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
-      clean = self.m.repo.ensure_synced_checkout(cache_path, manifest_url,
-                                                 init_opts=init_opts,
-                                                 sync_opts=sync_opts,
-                                                 projects=projects)
-      if not clean:
-        raise StepFailure('Cache failed to sync')
-
   def ensure_synced_cache(self, manifest_url=None, init_opts=None,
                           sync_opts=None, cache_path_override=None,
                           is_staging=False, projects=None, gitiles_commit=None,
@@ -449,11 +417,6 @@ class CrosSourceApi(RecipeApi):
       self.m.git.set_global_config(['gc.packRefs', 'false'])
 
     assert self._is_configured, 'cros_source not configured'
-    if self._enable_custom_overlays:
-      self.m.overlayfs.mount(self._cache_name, self.preload_path,
-                             self.cache_path, persist=True)
-      self.m.path.mock_add_paths(self.cache_path.join('.repo'))
-
     cache_path = cache_path_override or self.cache_path
     manifest_url = manifest_url or (self.m.src_state.internal_manifest.url
                                     if self._cache_name == 'chromeos' else
@@ -508,8 +471,7 @@ class CrosSourceApi(RecipeApi):
       if not self.m.repo.ensure_synced_checkout(
           cache_path, manifest_url, init_opts=init_opts, sync_opts=sync_opts,
           projects=projects):
-        self._retry_checkout_sync_verification(cache_path, manifest_url,
-                                               init_opts, sync_opts, projects)
+        raise InfraFailure('failed to sync checkout')
 
       # Sync all branches of the build manifest, so that we can find branches.
       # If groups were specified, then the manifest project is probably not
@@ -765,8 +727,7 @@ class CrosSourceApi(RecipeApi):
       if not self.m.repo.ensure_synced_checkout(
           sync_path, manifest.url, init_opts=init_opts, sync_opts=sync_opts,
           projects=projects):
-        self._retry_checkout_sync_verification(sync_path, manifest.url,
-                                               init_opts, sync_opts, projects)
+        raise InfraFailure('failed to sync checkout')
 
       # Sync all branches of the internal manifest, so that we
       # can find branches.
@@ -775,36 +736,20 @@ class CrosSourceApi(RecipeApi):
         self.m.git.remote_update(step_name=step_name)
 
   @contextlib.contextmanager
-  def checkout_overlays_context(self, mount_cache=True, snapshot_mount=False,
-                                disk_type='pd-ssd'):
+  def checkout_overlays_context(self, mount_cache=True, disk_type='pd-ssd'):
     """Returns a context where overlays can be mounted.
 
     Args:
       mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
-      snapshot_mount (bool): Whether to utilize the snapshot mount location,
-        rather than the image preload directory.  Default: False
       disk_type (str): GCE disk type to use.  Default: pd-ssd
     """
     with self.m.overlayfs.cleanup_context():
       self._have_overlayfs_cleanup_context = True
-      if not self._enable_custom_overlays and mount_cache:
-        lower_dir = self.preload_path
-        if snapshot_mount:
-          branch = self.manifest_branch or 'main'
-          lower_dir = self.m.gcloud.setup_cache_disk(
-              cache_name=self._cache_name, branch=branch, disk_type=disk_type,
-              recovery_snapshot=self._recovery_snapshot)
-          self.m.easy.set_properties_step(snapshot_mount=snapshot_mount)
-        # TODO(mikenichols): Remove once source cache lands and is not reverted.
-        if lower_dir == self.preload_path and len(
-            self.m.file.listdir('check for existing verison file',
-                                self.m.gcloud.snapshot_version_path)) > 0:
-          self.m.overlayfs.cleanup_overlay_directories(
-              cache_name=self._cache_name
-          )  # pragma: nocover, no way to simulate in tests.
-          self.m.file.rmcontents(
-              'removing version files', self.m.gcloud.snapshot_version_path
-          )  # pragma: nocover, no way to simulate in tests.
+      if mount_cache:
+        branch = self.manifest_branch or 'main'
+        lower_dir = self.m.gcloud.setup_cache_disk(
+            cache_name=self._cache_name, branch=branch, disk_type=disk_type,
+            recovery_snapshot=self._recovery_snapshot)
         self.m.overlayfs.mount(self._cache_name, lower_dir, self.cache_path,
                                persist=True)
         self.m.path.mock_add_paths(self.cache_path.join('.repo'))
@@ -1095,9 +1040,7 @@ class CrosSourceApi(RecipeApi):
         if not self.m.repo.ensure_synced_checkout(
             self.workspace_path, manifest_url, init_opts=dict(init_opts),
             sync_opts=dict(sync_opts)):
-          self._retry_checkout_sync_verification(self.workspace_path,
-                                                 manifest_url, dict(init_opts),
-                                                 dict(sync_opts))
+          raise InfraFailure('failed to sync checkout')
 
       # 4. Move the manifest directory (or both) back to the correct position.
       with self.m.step.nest('restore manifest patches'):
@@ -1345,9 +1288,10 @@ class CrosSourceApi(RecipeApi):
                        force_sync=True, manifest_name=manifest_relpath)
       sync_opts.update(kwargs)
 
-      self.m.repo.ensure_synced_checkout(self.m.src_state.workspace_path,
-                                         manifest_url, init_opts=init_opts,
-                                         sync_opts=sync_opts)
+      if not self.m.repo.ensure_synced_checkout(
+          self.m.src_state.workspace_path, manifest_url, init_opts=init_opts,
+          sync_opts=sync_opts):
+        raise InfraFailure('failed to sync checkout')  #pragma: no cover
 
       self._pinned_manifest = (
           self.m.repo.ensure_pinned_manifest(test_data='') or manifest_xml)

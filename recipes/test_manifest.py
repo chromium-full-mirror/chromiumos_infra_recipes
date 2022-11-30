@@ -42,7 +42,7 @@ def RunSteps(api, properties):
     # This will set up api.src_state properties for us.
     api.cros_source.configure_builder(api.src_state.gitiles_commit)
 
-    with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+    with api.cros_source.checkout_overlays_context():
       api.cros_source.ensure_synced_cache()
       api.cros_source.sync_to_gitiles_commit(api.src_state.gitiles_commit)
       with api.context(cwd=api.src_state.workspace_path):

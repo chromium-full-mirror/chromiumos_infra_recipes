@@ -27,8 +27,7 @@ def GenTests(api):
       'apply-gerrit-changes-fail',
       manifest_branch,
       api.repo.fail_repo_sync(True),
-      api.post_check(post_process.StepFailure,
-                     'patch manifest.get patched manifest.retry cache sync'),
+      api.post_check(post_process.StatusException),
   )
 
   yield api.cros_source.test(

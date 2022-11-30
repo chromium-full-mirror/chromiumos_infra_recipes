@@ -25,7 +25,7 @@ PROPERTIES = CheckoutBranchProperties
 def RunSteps(api, properties):
 
   api.cros_source.configure_builder(default_main=False)
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+  with api.cros_source.checkout_overlays_context():
     with api.context(cwd=api.cros_source.workspace_path):
       api.cros_source.ensure_synced_cache(is_staging=properties.is_staging)
       branch_name = 'staging-snapshot' if properties.is_staging else 'snapshot'

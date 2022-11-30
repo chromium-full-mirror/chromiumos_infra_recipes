@@ -263,7 +263,7 @@ def commit_pin_uprev(api, properties, package, new_version_pin):
     new_version_pin (VersionPin): the new version pin data.
   """
   with api.step.nest('update VERSION-PIN') as presentation:
-    with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+    with api.cros_source.checkout_overlays_context():
       api.cros_source.ensure_synced_cache()
       set_version_pin(api, properties, new_version_pin)
 

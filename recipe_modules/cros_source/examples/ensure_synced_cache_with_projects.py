@@ -18,7 +18,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   api.cros_source.configure_builder(default_main=True)
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True), \
+  with api.cros_source.checkout_overlays_context(), \
       api.context(cwd=api.cros_source.workspace_path):
     api.cros_source.ensure_synced_cache(projects=['chromiumos/config'])
 
@@ -26,7 +26,5 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic-success')
 
-  yield api.test(
-      'basic-failure', api.repo.fail_repo_sync(True),
-      api.post_check(post_process.StepFailure,
-                     'sync cached directory.retry cache sync'))
+  yield api.test('basic-failure', api.repo.fail_repo_sync(True),
+                 api.post_check(post_process.StatusException))

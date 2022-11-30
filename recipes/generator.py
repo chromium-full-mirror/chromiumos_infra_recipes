@@ -197,7 +197,7 @@ def RunSteps(api: RecipeApi, properties: GeneratorProperties):
     packages = properties.packages
   cpv = [api.naming.get_package_title(package) for package in packages]
 
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True), \
+  with api.cros_source.checkout_overlays_context(), \
       api.cros_sdk.cleanup_context():
     api.cros_source.ensure_synced_cache(manifest_branch_override='main')
 

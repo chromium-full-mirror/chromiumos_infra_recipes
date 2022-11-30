@@ -53,7 +53,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     """
     if not self.m.cros_infra_config.is_configured:
       self.m.cros_source.configure_builder(default_main=default_main)
-    with self.m.cros_source.checkout_overlays_context(snapshot_mount=True):
+    with self.m.cros_source.checkout_overlays_context():
       yield
 
   @contextlib.contextmanager

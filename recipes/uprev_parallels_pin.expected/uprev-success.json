@@ -843,14 +843,6 @@
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.set snapshot_mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@true@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "build chromiumos with upreved Parallels.mount overlay chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -7871,14 +7863,6 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
       "@@@STEP_LOG_END@overlay_branch.txt@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update VERSION-PIN.set snapshot_mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@true@@@"
     ]
   },
   {

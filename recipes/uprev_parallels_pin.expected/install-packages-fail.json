@@ -843,14 +843,6 @@
   },
   {
     "cmd": [],
-    "name": "build chromiumos with upreved Parallels.set snapshot_mount",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@true@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "build chromiumos with upreved Parallels.mount overlay chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

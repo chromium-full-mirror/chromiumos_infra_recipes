@@ -78,10 +78,9 @@ def GenTests(api):
   yield api.cros_source.test('basic-success', manifest_branch,
                              api.post_check(post_process.StatusSuccess))
 
-  yield api.cros_source.test(
-      'basic-failure', manifest_branch, api.repo.fail_repo_sync(True),
-      api.post_check(post_process.StepFailure,
-                     'sync cached directory.retry cache sync'))
+  yield api.cros_source.test('basic-failure', manifest_branch,
+                             api.repo.fail_repo_sync(True),
+                             api.post_check(post_process.StatusException))
 
   yield api.cros_source.test(
       'chrome-ref', manifest_branch, api.post_check(post_process.StatusSuccess),
@@ -128,8 +127,7 @@ def GenTests(api):
       'with-custom-snapshot-cas-failure', manifest_branch,
       api.properties(FullProperties(expected_snapshot_cas_digest='xxx')),
       api.repo.fail_repo_sync(True),
-      api.post_check(post_process.StepFailure,
-                     'sync cached directory.retry cache sync'),
+      api.post_check(post_process.StatusException),
       cros_source_properties=CrosSourceProperties(
           snapshot_cas=CrosSourceProperties.SnapshotCas(
               digest='xxx',
@@ -293,6 +291,7 @@ def GenTests(api):
 
   manifest_internal_url = (
       'https://chrome-internal.googlesource.com/chromeos/manifest-versions')
+
   yield api.cros_source.test(
       'sync-to-manifest-gitiles', manifest_branch,
       api.post_check(post_process.StatusSuccess),

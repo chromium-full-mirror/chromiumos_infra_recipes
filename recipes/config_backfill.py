@@ -525,7 +525,7 @@ def RunSteps(api, properties):
   api.cros_source.configure_builder(default_main=True)
 
   # setup overlays, sync projects and move to tip-of-tree
-  with api.cros_source.checkout_overlays_context(snapshot_mount=True):
+  with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache()
 
     with api.context(cwd=api.cros_source.workspace_path):

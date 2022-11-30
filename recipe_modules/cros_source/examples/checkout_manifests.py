@@ -70,8 +70,8 @@ def GenTests(api):
       'basic-failure', manifest_branch,
       api.properties(CheckoutManifestsProperties(checkout_external=True)),
       api.repo.fail_repo_sync(True),
-      api.post_check(post_process.StepFailure, 'retry cache sync'),
-      revision=None, cq=False, git_ref=None)
+      api.post_check(post_process.StatusException), revision=None, cq=False,
+      git_ref=None)
 
   # Running on an unpinned branch.
   release_branch = 'release-R88-13597.B'

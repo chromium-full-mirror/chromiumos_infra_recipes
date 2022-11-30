@@ -780,13 +780,6 @@
   },
   {
     "cmd": [],
-    "name": "set snapshot_mount",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@snapshot_mount@true@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "mount overlay chromeos"
   },
   {
