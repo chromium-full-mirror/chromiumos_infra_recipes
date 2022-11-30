@@ -247,23 +247,21 @@ class FailuresApi(RecipeApi):
     Returns:
       RawResult: The recipe result, including a human-readable failure summary.
     """
-    failures = [failure for failure in failures if failure.fatal]
+
+    fatal_failures = [failure for failure in failures if failure.fatal]
+    non_fatal_failures = [
+        failure.kind for failure in failures if not failure.fatal
+    ]
     exoneration_summary = self.m.exonerate.get_exoneration_markdown()
 
-    # If there were no fatal failures, then the recipe succeeded and there is
-    # no need for a summary.
-    if not failures:
-      return result_pb2.RawResult(status=common_pb2.SUCCESS,
-                                  summary_markdown=exoneration_summary)
-
-    # Otherwise, we need to create a detailed failure summary.
+    non_fatal_failures_count_by_kind = collections.Counter(non_fatal_failures)
     failures_by_kind = collections.defaultdict(list)
-    for failure in failures:
+    for failure in fatal_failures:
       failures_by_kind[failure.kind].append(failure)
 
     # The summary markdown will look roughly as follows:
     #
-    # 1 build failed:
+    # 1 build failed (1 additional non-critical failure)
     # - chromeos.cq.nami-cq: <a>build page<\a>
     #
     # 2 hw tests failed
@@ -275,8 +273,15 @@ class FailuresApi(RecipeApi):
       failure_group = sorted(failures_by_kind[kind],
                              key=operator.attrgetter('title'))
       count = len(failure_group)
-      lines = ['{} {} failed'.format(count, kind + 's' if count > 1 else kind)]
+      main_line = '{} {} failed'.format(count,
+                                        kind + 's' if count > 1 else kind)
+      if kind in non_fatal_failures_count_by_kind:
+        non_fatal_count = non_fatal_failures_count_by_kind[kind]
+        main_line += ' ({} additional non-critical failure{})'.format(
+            non_fatal_count, 's' if non_fatal_count > 1 else '')
+        del non_fatal_failures_count_by_kind[kind]
 
+      lines = [main_line]
       truncate_max = 10
       failures_to_print = failure_group[0:truncate_max]
       for failure in failures_to_print:
@@ -288,9 +293,16 @@ class FailuresApi(RecipeApi):
         lines.append('- ...and {} others'.format(count - truncate_max))
       summary_lines.extend(lines)
 
+    for kind in non_fatal_failures_count_by_kind:
+      non_fatal_count = non_fatal_failures_count_by_kind[kind]
+      summary_lines.append('{} non-critical {} failed'.format(
+          non_fatal_count, kind + 's' if non_fatal_count > 1 else kind))
+
     summary_markdown = self._format_summary_markdown(summary_lines)
 
-    status = common_pb2.SUCCESS if ignore_build_test_failures else common_pb2.FAILURE
+    status = common_pb2.SUCCESS if (
+        (not fatal_failures) or
+        ignore_build_test_failures) else common_pb2.FAILURE
     return result_pb2.RawResult(status=status,
                                 summary_markdown=summary_markdown)
 

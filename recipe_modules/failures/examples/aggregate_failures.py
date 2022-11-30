@@ -18,13 +18,15 @@ def RunSteps(api):
   failures = []
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
-
+  api.assertions.assertEqual(result.summary_markdown, '')
   failures = [
       api.failures.Failure(kind='kind', title='title',
                            link_map={'title': 'url'}, fatal=False, id='my id'),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
+  api.assertions.assertEqual(result.summary_markdown,
+                             '1 non-critical kind failed')
 
   failures = [
       api.failures.Failure(kind='build', title='build-a',
@@ -39,20 +41,38 @@ def RunSteps(api):
       api.failures.Failure(kind='test', title='test-b',
                            link_map={'test-b': 'test-b.com'}, fatal=False,
                            id='id-3'),
+      api.failures.Failure(kind='build', title='build-c',
+                           link_map={'test-c': 'test-c.com'}, fatal=False,
+                           id='id-4'),
+      api.failures.Failure(kind='test', title='test-c',
+                           link_map={'test-c': 'test-c.com'}, fatal=False,
+                           id='id-5'),
+      api.failures.Failure(kind='different_kind_of_test', title='test-x',
+                           link_map={'test-x': 'test-x.com'}, fatal=True,
+                           id='id-6'),
+      api.failures.Failure(kind='very_different_kind_of_test', title='test-y',
+                           link_map={'test-y': 'test-y.com'}, fatal=False,
+                           id='id-7'),
   ]
   result = api.failures.aggregate_failures(failures)
   api.assertions.assertEqual(result.status, common_pb2.FAILURE)
   api.assertions.assertEqual(
       result.summary_markdown, '''\
-2 builds failed
+2 builds failed (1 additional non-critical failure)
 
 - build-a: [build page](build-a.com)
 
 - build-b: [build page](build-b.com)
 
-1 test failed
+1 different_kind_of_test failed
 
-- test-a: [subtest-1](test-a.com)''')
+- test-x: [test-x](test-x.com)
+
+1 test failed (2 additional non-critical failures)
+
+- test-a: [subtest-1](test-a.com)
+
+1 non-critical very_different_kind_of_test failed''')
 
   failures = [
       api.failures.Failure(kind='build', title='build-a', link_map={

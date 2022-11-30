@@ -4939,7 +4939,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#577)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#589)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -4948,9 +4948,9 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#363)(self, not_runnable_addtnl_tests):**
+&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#375)(self, not_runnable_addtnl_tests):**
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#325)(self, builds, refresh_configs=False):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#337)(self, builds, refresh_configs=False):**
 
 Verify all builds completed successfully.
 
@@ -4961,7 +4961,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#409)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#421)(self, build):**
 
 Retrieve the status of the build.
 
@@ -4971,7 +4971,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#347)(self, hw_tests):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#359)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -4982,7 +4982,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#435)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#447)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -4992,7 +4992,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#393)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#405)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -5010,7 +5010,7 @@ Catches exceptions and logs them instead.
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#457)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#469)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -5020,7 +5020,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#469)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#481)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -5030,7 +5030,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#420)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#432)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -5040,7 +5040,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#446)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#458)(self, hw_test):**
 
 Determine if the vm test was critical.
 
@@ -5069,7 +5069,7 @@ Raises:
 
 &mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#205)(self, enclosing_step, packages):**
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#498)(self, failures, fresh_builder_configs, presentation=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#510)(self, failures, fresh_builder_configs, presentation=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
@@ -5084,7 +5084,7 @@ Returns:
   updated_failures (list[Failure]): The list of Failures with 'fatal'
       statuses possibly updated.
 
-&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#535)(self, failures, test_plan_summary, presentation=None):**
+&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#547)(self, failures, test_plan_summary, presentation=None):**
 
 If tests are now non-critical, failures are non-fatal.
 

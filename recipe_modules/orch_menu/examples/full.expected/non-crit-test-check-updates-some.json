@@ -13496,7 +13496,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 hw test failed\n\n- htarget.hw.some-other-suite:"
+      "humanReason": "1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:"
     },
     "name": "$result"
   }

@@ -312,7 +312,9 @@ def GenTests(api):
                                             resultdb_common_pb2.Variant())),
           ]),
   }
-  summary = ('1 hw test failed\n\n- htarget.hw.some-other-suite:')
+  summary = (
+      '1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:'
+  )
   yield api.orch_menu.test(
       'non-crit-test-check-updates-some', data.ctp_failure,
       api.step_data(
@@ -333,6 +335,7 @@ def GenTests(api):
                                                summary_markdown=summary))),
       api.post_check(post_process.StatusAnyFailure))
 
+  summary = '3 non-critical hw tests failed'
   yield api.orch_menu.test(
       'non-crit-test-check-updates-all', data.ctp_failure,
       api.step_data(
@@ -352,7 +355,8 @@ def GenTests(api):
           'non-critical test check.exonerate ResultDB results (3).rdb query'),
       api.properties(
           FullProperties(
-              expected_recipe_result=RawResult(status=common_pb2.SUCCESS))),
+              expected_recipe_result=RawResult(status=common_pb2.SUCCESS,
+                                               summary_markdown=summary))),
       api.post_check(post_process.StatusSuccess))
 
   yield api.orch_menu.test(
@@ -376,12 +380,17 @@ def GenTests(api):
       api.gerrit.simulated_changes_are_submittable(submittable=False), cq=True,
       with_history=True)
 
+  one_non_crit_fail_summary = ('1 non-critical build failed')
   # Annealing builds.
   yield api.orch_menu.test(
       'existing-annealing-builds', data.ctp_normal,
       api.properties(
-          FullProperties(expected_completed_builds=data.builds,
-                         expected_enable_history=True)),
+          FullProperties(
+              expected_completed_builds=data.builds,
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary),
+              expected_enable_history=True)),
       annealing_builds=data.annealing_builds, collect_builds=data.builds,
       history_builds=data.history_builds, with_history=True,
       with_manifest_refs=True)
@@ -396,6 +405,9 @@ def GenTests(api):
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + data.after_builds,
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary),
               expected_enable_history=True)), cq=True,
       collect_builds=data.builds, history_builds=data.history_builds,
       collect_after_builds=data.after_builds, with_history=True, git_footers=[],
@@ -407,23 +419,35 @@ def GenTests(api):
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + data.after_builds,
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary),
               expected_enable_history=True)), cq=True,
       collect_builds=data.builds, history_builds=data.history_builds,
       collect_after_builds=data.after_builds, with_history=True, git_footers=[],
       inflight_orch=[])
 
   # Collect times out
-  yield api.orch_menu.test('collect-children-timeout', data.ctp_normal,
-                           api.step_data('run builds.collect.wait',
-                                         retcode=1), collect_builds=data.builds,
-                           history_builds=data.history_builds,
-                           collect_timeout=True, with_manifest_refs=True,
-                           with_history=True)
+  yield api.orch_menu.test(
+      'collect-children-timeout', data.ctp_normal,
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary))),
+      api.step_data('run builds.collect.wait', retcode=1),
+      collect_builds=data.builds, history_builds=data.history_builds,
+      collect_timeout=True, with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'quota-scheduler-override', data.ctp_normal, collect_builds=data.builds,
-      history_builds=data.history_builds, cq=True, with_history=True,
-      git_footers=[],
+      'quota-scheduler-override', data.ctp_normal,
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary))),
+      collect_builds=data.builds, history_builds=data.history_builds, cq=True,
+      with_history=True, git_footers=[],
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'))
 
   yield api.orch_menu.test(
@@ -447,6 +471,9 @@ def GenTests(api):
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + [data.process_child],
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary),
               process_child=data.process_child.builder.builder,
           )), collect_builds=data.builds, history_builds=data.history_builds,
       process_child=data.process_child,
@@ -459,6 +486,9 @@ def GenTests(api):
       api.properties(
           FullProperties(
               expected_completed_builds=data.builds + [data.process_child],
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary),
               process_child=data.process_child.builder.builder,
           )), collect_builds=data.builds, history_builds=data.history_builds,
       process_child=data.process_child, process_child_timeout=True,
@@ -469,8 +499,11 @@ def GenTests(api):
   yield api.orch_menu.test(
       'with-follow-on', data.ctp_normal,
       api.properties(
-          FullProperties(expected_completed_builds=data.builds +
-                         [data.follow_on_orchestrator])),
+          FullProperties(
+              expected_completed_builds=data.builds +
+              [data.follow_on_orchestrator], expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary))),
       collect_builds=data.builds, history_builds=data.history_builds,
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
       builder='orderfile-generate-orchestrator')
@@ -479,8 +512,11 @@ def GenTests(api):
   yield api.orch_menu.test(
       'with-follow-on-timeout', data.ctp_normal,
       api.properties(
-          FullProperties(expected_completed_builds=data.builds +
-                         [data.follow_on_orchestrator])),
+          FullProperties(
+              expected_completed_builds=data.builds +
+              [data.follow_on_orchestrator], expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary))),
       collect_builds=data.builds, history_builds=data.history_builds,
       follow_on_orch=data.follow_on_orchestrator, follow_on_timeout=True,
       bucket='toolchain', builder='orderfile-generate-orchestrator')
@@ -508,6 +544,11 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'chromium-src-ref-cq-cl-tag', data.ctp_normal,
+      api.properties(
+          FullProperties(
+              expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown=one_non_crit_fail_summary))),
       api.post_check(post_process.StatusSuccess),
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',
