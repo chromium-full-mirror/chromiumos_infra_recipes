@@ -299,7 +299,26 @@ def _should_enumerate_via_ctf(r):
 
   Returns: bool
   """
-  return r.params.run_via_cft
+  return r.params.run_via_cft and _build_supports_cros_test_finder(r)
+
+
+# TODO(b/261051011): Remove this workaround.
+def _build_supports_cros_test_finder(r):
+  """Whether the given request supports cros-test-finder enumeration; only
+  R104 and newer support it.
+
+  Args:
+    * r: test_platform.Request
+
+  Returns: bool
+  """
+  for dep in r.params.software_dependencies:
+    if dep.WhichOneof('dep') == 'chromeos_build':
+      build_number_matches = re.findall(r'/R(\d{2,3})-\d*', dep.chromeos_build)
+      if build_number_matches:
+        return int(build_number_matches[0]) >= 104
+      break  # pragma: no cover
+  return False  # pragma: no cover
 
 
 def _enumerate_non_cft_tests(api, requests):
@@ -333,7 +352,7 @@ def _enumerate_non_cft_tests(api, requests):
 
 
 def _enumerate_cft_tests(api, requests):
-  """Resolve non-CFT requests into list of tests and their metadata.
+  """Resolve CFT requests into list of tests and their metadata.
 
   Args:
     * api (object): See RunSteps documentation.
