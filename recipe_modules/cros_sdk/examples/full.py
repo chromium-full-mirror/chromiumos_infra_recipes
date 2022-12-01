@@ -6,7 +6,6 @@
 from PB.chromiumos import common
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.cros_sdk.cros_sdk import CrosSdkProperties
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
@@ -231,30 +230,6 @@ def GenTests(api):
       api.step_data(
           ('restoring chroot from snapshot.call chromite.api.SdkService/'
            'RestoreSnapshot.call build API script'), retcode=1))
-
-  yield api.test(
-      'mount-cache-off',
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }),
-      api.post_check(post_process.DoesNotRun, 'mount overlay cros_chroot'))
-
-  yield api.test(
-      'mount-cache-on',
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }),
-      api.properties(
-          **{"$chromeos/cros_sdk": CrosSdkProperties(mount_named_cache=True)}),
-      api.post_check(post_process.MustRun, 'mount overlay cros_chroot'))
 
   yield api.test(
       'remaining-test-data', api.cros_sdk.is_chroot_usable([False, True]),

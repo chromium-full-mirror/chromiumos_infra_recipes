@@ -23,8 +23,6 @@ from PB.chromite.api.sdk import RestoreSnapshotRequest
 
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
-_PRELOAD_PATH = '/preload'
-_PRELOAD_CACHE_PATH = '/preload/chromeos-sdk'
 
 _SDK_VERSION_PROJECT_PATH = 'src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf'
 _SDK_VERSION_CONF_TEST_DATA = 'SDK_LATEST_VERSION="foo"\nTC_PATH="bar"\n'
@@ -37,15 +35,12 @@ class CrosSdkApi(RecipeApi):
     super(CrosSdkApi, self).__init__(*args, **kwargs)
     # TODO(b/169266654): Make this a git footer configurable value.
     self._force_off_toolchain_changed = props.force_off_toolchain_changed
-    self._mount_named_cache = props.mount_named_cache
     self._chroot_initialized = False
 
   def initialize(self):
     """Cache the chroot path."""
     self._long_timeouts = False
     self.configure(self.m.path['cache'])
-    self._mount_named_cache |= ('chromeos.cros_sdk.mount_named_cache' in
-                                self.m.cros_infra_config.experiments)
 
   @property
   def force_off_toolchain_changed(self):
@@ -59,9 +54,6 @@ class CrosSdkApi(RecipeApi):
       chroot_parent_path (Path): Parent for chroot directory.
     """
     with self.m.step.nest('configure chroot path'):
-      self._preload_cache_path = None
-      self._preload_cache_state_file = None
-      self._configure_preload_if_exists()
       self._cache_path = chroot_parent_path.join('cros_chroot')
       self._chroot_path = self._cache_path.join('chroot')
       self._sdk_cache_state = None
@@ -78,18 +70,6 @@ class CrosSdkApi(RecipeApi):
       self._goma_counterz_file = None
       self._use_flags = None
       self._sdk_is_dirty = False
-
-  def _configure_preload_if_exists(self):
-    """Configures the preload cache path if the the preload directory exists."""
-    if self._test_data.enabled and self._test_data.get('preload_path_exists',
-                                                       True):
-      self.m.path.mock_add_paths(_PRELOAD_PATH)
-    if self.m.path.exists(_PRELOAD_PATH):
-      self._preload_cache_path = _PRELOAD_CACHE_PATH
-      self.m.file.ensure_directory('create preload path',
-                                   self._preload_cache_path)
-      self._preload_cache_state_file = self._preload_cache_path.join(
-          'sdk_cache_state.json')
 
   @property
   def sdk_is_dirty(self):
@@ -368,31 +348,9 @@ class CrosSdkApi(RecipeApi):
                                      presentation.logs)
       if reuse:
         presentation.properties['sdk_cache'] = 'cros_chroot'
-        return reuse
-
-      # TODO(crbug.com/1167322): Remove check for self_mount_named_cache when
-      # mount_named_cache is no longer an experiment and all prod builders use
-      # an image with the preload SDK.
-      if not self._preload_cache_path or not self._mount_named_cache:
+      else:
         presentation.properties['sdk_cache'] = 'none'
-        return reuse
 
-    with self.m.step.nest('check SDK in preload cache') as presentation:
-      preload_cache = self._read_sdk_cache_state_file(
-          self._preload_cache_state_file)
-      reuse = self._is_chroot_usable(preload_cache, version, presentation.logs)
-      if not reuse:
-        presentation.properties['sdk_cache'] = 'none'
-        return reuse
-
-      presentation.properties['sdk_cache'] = 'preload'
-      self._remove_chroot('delete SDK in named cache')
-      self.unlink_chroot(self.m.cros_source.workspace_path)
-      self.m.overlayfs.unmount('cros_chroot', self._cache_path)
-      self.m.step('deleting named cache',
-                  ['sudo', '-n', 'rm', '-rf', self._cache_path])
-      self.m.overlayfs.mount('cros_chroot', self._preload_cache_path,
-                             self._cache_path, persist=True)
       return reuse
 
   def create_chroot(self, version=None, use_image=True, bootstrap=False,
@@ -545,9 +503,6 @@ class CrosSdkApi(RecipeApi):
       checkout_path (Path): Path to source checkout.  Default:
           cros_source.workspace_path.
     """
-    if self._mount_named_cache and self._preload_cache_path:
-      self.m.overlayfs.mount('cros_chroot', self._preload_cache_path,
-                             self._cache_path, persist=True)
     self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
     try:
       yield
@@ -565,8 +520,6 @@ class CrosSdkApi(RecipeApi):
 
           self.unlink_chroot(checkout_path or self.m.cros_source.workspace_path)
           self.swarming_chmod_chroot()
-          if self._mount_named_cache and self._preload_cache_path:
-            self.m.overlayfs.unmount('cros_chroot', self._cache_path)
 
           if not self._test_data.get('is_chroot_usable', []) == []:
             raise StepFailure('not all input test data used')
