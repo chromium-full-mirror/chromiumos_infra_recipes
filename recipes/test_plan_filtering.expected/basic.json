@@ -1623,6 +1623,18 @@
   {
     "cmd": [
       "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
+    "infra_step": true,
+    "name": "update ref.gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "-b",
       "main",
@@ -1643,7 +1655,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git branch",
+    "name": "update ref.gerrit transaction.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

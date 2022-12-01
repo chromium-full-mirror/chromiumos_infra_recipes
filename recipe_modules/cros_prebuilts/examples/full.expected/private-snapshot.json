@@ -1694,6 +1694,30 @@
   {
     "cmd": [
       "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "-b",
       "main",
@@ -1738,7 +1762,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch",
+    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

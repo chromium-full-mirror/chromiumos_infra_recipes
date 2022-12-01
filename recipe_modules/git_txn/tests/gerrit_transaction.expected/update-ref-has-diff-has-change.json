@@ -13,6 +13,18 @@
   {
     "cmd": [
       "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "update ref.gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "-b",
       "ref",
@@ -33,7 +45,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.git branch",
+    "name": "update ref.gerrit transaction.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -209,6 +221,18 @@
   {
     "cmd": [
       "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "update ref (2).gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "-b",
       "ref",
@@ -229,7 +253,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (2).gerrit transaction.git branch",
+    "name": "update ref (2).gerrit transaction.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -247,6 +271,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
+    "infra_step": true,
+    "name": "update ref (3).gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -272,7 +308,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref (3).gerrit transaction.git branch",
+    "name": "update ref (3).gerrit transaction.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

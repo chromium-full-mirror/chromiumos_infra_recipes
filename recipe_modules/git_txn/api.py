@@ -70,6 +70,9 @@ class GitTxnApi(recipe_api.RecipeApi):
     dest_ref = 'HEAD:%s' % ref
     branch = dest_ref.split('/')[-1]
     with self.m.step.nest('gerrit transaction') as presentation:
+      # Delete local branch if it already exists
+      self.m.git.delete_local_branch(branch)
+
       self.m.git.checkout('HEAD', branch=branch)
       self.m.git.set_upstream(remote, branch)
       if update_callback() is False:

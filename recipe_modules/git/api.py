@@ -852,3 +852,14 @@ class GitApi(recipe_api.RecipeApi):
   def stash(self):
     """Stash changes."""
     self._step(['stash'])
+
+  def delete_local_branch(self, branch):
+    """Deletes the local branch (if it exists).
+      Args:
+        branch (str): Name of the branch to be deleted.
+      """
+    if not self.branch_exists(branch):
+      return
+
+    cmd = ['branch', '-D', branch]
+    self._step(cmd, name='git branch -D ' + branch)

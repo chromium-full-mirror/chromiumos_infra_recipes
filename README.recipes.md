@@ -398,6 +398,7 @@
   * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change) (Python3 ✅)
   * [git:examples/bad_ref](#recipes-git_examples_bad_ref) (Python3 ✅)
   * [git:examples/branch_exists](#recipes-git_examples_branch_exists) (Python3 ✅)
+  * [git:examples/delete_local_branch](#recipes-git_examples_delete_local_branch) (Python3 ✅)
   * [git:examples/fetch_refs](#recipes-git_examples_fetch_refs) (Python3 ✅)
   * [git:examples/full](#recipes-git_examples_full) (Python3 ✅)
   * [git:examples/remote](#recipes-git_examples_remote) (Python3 ✅)
@@ -5902,6 +5903,12 @@ Returns:
   (str): The branch name pointed to by HEAD.
   None: If HEAD is detached.
 
+&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#856)(self, branch):**
+
+Deletes the local branch (if it exists).
+Args:
+  branch (str): Name of the branch to be deleted.
+
 &mdash; **def [diff\_check](/recipe_modules/git/api.py#94)(self, path):**
 
 Check if the given file changed from HEAD.
@@ -6383,7 +6390,7 @@ API for updating remote git repositories transactionally.
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#140)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#143)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
 
 Transactionally update a remote git repository ref.
 
@@ -6416,7 +6423,7 @@ Args:
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#183)(self, remote, message, dest, data, automerge=False, ref=None):**
+&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#186)(self, remote, message, dest, data, automerge=False, ref=None):**
 
 Transactionally update a file in a remote git repository ref.
 
@@ -11291,6 +11298,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/git/examples/branch_exists.py#15)(api):**
+### *recipes* / [git:examples/delete\_local\_branch](/recipe_modules/git/examples/delete_local_branch.py)
+
+[DEPS](/recipe_modules/git/examples/delete_local_branch.py#7): [git](#recipe_modules-git), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/git/examples/delete_local_branch.py#15)(api):**
 ### *recipes* / [git:examples/fetch\_refs](/recipe_modules/git/examples/fetch_refs.py)
 
 [DEPS](/recipe_modules/git/examples/fetch_refs.py#9): [git](#recipe_modules-git), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

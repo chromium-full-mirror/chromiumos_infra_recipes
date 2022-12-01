@@ -2218,6 +2218,18 @@
   {
     "cmd": [
       "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "checkout",
       "-b",
       "main",
@@ -2238,7 +2250,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
-    "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git branch",
+    "name": "update metadata.commit and push metadata.update ref.gerrit transaction.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

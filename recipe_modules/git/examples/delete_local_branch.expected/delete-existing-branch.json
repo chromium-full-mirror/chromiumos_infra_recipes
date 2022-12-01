@@ -1,0 +1,23 @@
+[
+  {
+    "cmd": [
+      "git",
+      "branch"
+    ],
+    "infra_step": true,
+    "name": "git branch"
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "-D",
+      "mybranch"
+    ],
+    "infra_step": true,
+    "name": "git branch -D mybranch"
+  },
+  {
+    "name": "$result"
+  }
+]
