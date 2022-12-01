@@ -21,9 +21,9 @@ from PB.goma.goma_stats import TimeStats
 _BQUPLOAD_VERSION = 'git_revision:643892f957c8e106dff793468101f2ecfc31abb7'
 
 _GOMA_COMPILER_PROXY_LOG_URL_TEMPLATE = (
-    'https://chromium-build-stats.appspot.com/compiler_proxy_log/%s/%s')
+    'https://chromium-build-stats.appspot.com/compiler_proxy_log/%s')
 _GOMA_NINJA_LOG_URL_TEMPLATE = (
-    'https://chromium-build-stats.appspot.com/ninja_log/%s/%s')
+    'https://chromium-build-stats.appspot.com/ninja_log/%s')
 
 # GsDestination stores GS bucket and path.
 GsDestination = namedtuple('GsDestination', ['bucket', 'path'])
@@ -262,11 +262,11 @@ class GomaApi(recipe_api.RecipeApi):
           num_logs_uploaded += 1
 
           if basename.startswith('ninja_log'):
-            presentation.links['ninja_log'] = _GOMA_NINJA_LOG_URL_TEMPLATE % (
-                gs_path, basename)
+            presentation.links['ninja_log'] = \
+                _GOMA_NINJA_LOG_URL_TEMPLATE % gs_path
           if basename.startswith('compiler_proxy'):
             presentation.links['compiler_proxy'] = \
-                _GOMA_COMPILER_PROXY_LOG_URL_TEMPLATE % (gs_path, basename)
+                _GOMA_COMPILER_PROXY_LOG_URL_TEMPLATE % gs_path
 
         presentation.logs['num_logs_uploaded'] = str(num_logs_uploaded)
         return GsDestination(gs_bucket, gs_path_base)
