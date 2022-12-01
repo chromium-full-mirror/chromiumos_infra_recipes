@@ -9,6 +9,8 @@ from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,7 +24,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   output = build_pb2.Build.Output()
   output.properties['build_cost'] = 10.0
   child_builds = [
@@ -37,7 +39,7 @@ def RunSteps(api):
       api.assertions.assertEqual(['125'], log)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   orch_build = build_pb2.Build(id=123, status=common_pb2.STARTED,
                                start_time=timestamp_pb2.Timestamp(seconds=0),
                                update_time=timestamp_pb2.Timestamp(seconds=0))

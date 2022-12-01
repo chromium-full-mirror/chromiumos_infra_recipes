@@ -9,6 +9,8 @@ from google.protobuf import timestamp_pb2
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.sysroot import InstallPackagesResponse
 from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions', 'recipe_engine/buildbucket',
@@ -43,7 +45,7 @@ INSTALL_PACKAGES_RESPONSE = """
 """
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   test_step_data = api.step('basic_with_stdout', cmd=['echo', 'hello world'],
                             stdout=api.raw_io.output(),
                             stderr=api.raw_io.output())
@@ -110,7 +112,7 @@ def RunSteps(api):
                               step_data=test_step_data)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic',
       api.buildbucket.ci_build(),

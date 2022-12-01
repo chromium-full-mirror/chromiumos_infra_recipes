@@ -6,6 +6,8 @@
 # pylint: disable=protected-access
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -17,14 +19,14 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(api.bot_cost._bot_size, None)
   api.assertions.assertRaises(ValueError, api.bot_cost.set_build_cost)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def test(name, status, bot_size):
+  def test(name: str, status: str, bot_size: str):
     bld_msg = build_pb2.Build(id=123, status=status)
     bld_msg.infra.swarming.bot_dimensions.extend(
         api.cros_tags.tags(bot_size=bot_size))

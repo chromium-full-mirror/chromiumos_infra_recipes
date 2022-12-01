@@ -565,9 +565,9 @@
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#61)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#65)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#187)(self, request, response):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#192)(self, request: Any, response: Any):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -586,9 +586,9 @@ Args:
     log
 
 Return:
-  bool
+  Whether an event can be published.
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#211)(self, request, response, request_time, response_time, step_data, step_output=None):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#216)(self, request: Any, response: Any, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: str=None):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -616,93 +616,93 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [AndroidApi](/recipe_modules/android/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AndroidApi](/recipe_modules/android/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#115)(self, android_package):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#122)(self, android_package: str):**
 
 Retrieves the latest Android version for the given Android package.
 
 Args:
-  android_package (str): The Android package.
+  android_package: The Android package.
 
 Returns:
-  str: The latest Android version (build ID).
+  The latest Android version (build ID).
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#81)(self, chroot, sysroot, android_package, android_version):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#87)(self, chroot: Chroot, sysroot: Sysroot, android_package: str, android_version: str):**
 
 Uprev the given Android package to the given version.
 
 Args:
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  sysroot (Sysroot): The Sysroot being used.
-  android_package (str): The Android package to uprev (e.g. android-vm-rvc).
-  android_version (str): The Android version to uprev to (e.g. 7123456).
+  chroot: Information on the chroot for the build.
+  sysroot: The Sysroot being used.
+  android_package: The Android package to uprev (e.g. android-vm-rvc).
+  android_version: The Android version to uprev to (e.g. 7123456).
 
 Returns:
-  bool: If the android package has been uprevved.
+  If the android package has been uprevved.
 
-&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#46)(self, chroot, sysroot, patch_sets):**
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#51)(self, chroot: Chroot, sysroot: Sysroot, patch_sets: List[PatchSet]):**
 
 Uprev Android if changes are found in the unstable ebuild.
 
 Args:
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  sysroot (Sysroot): The Sysroot being used.
-  patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
+  chroot: Information on the chroot for the build.
+  sysroot: The Sysroot being used.
+  patch_sets: List of patch sets (with FileInfo).
 
-&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#132)(self, android_package, android_version):**
+&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#139)(self, android_package: str, android_version: str):**
 
 Sets LKGB of given Android package to given version.
 
 Args:
-  android_package (str): The Android package to set LKGB for.
-  android_version (str): The LKGB Android version.
+  android_package: The Android package to set LKGB for.
+  android_version: The LKGB Android version.
 
 Returns:
-  List[str]: list of modified files.
+  List of modified files.
 ### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
 
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate the cost of running bots.
 
-&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#53)(self):**
+&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#56)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#66)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#69)(self):**
 
 Set build cost after running.
 
 Returns:
   A context that sets build_cost on exit.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#78)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#81)(self):**
 
 Set cq cost after running.
 
 Returns:
   A context that sets cq_run_cost on exit.
 
-&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#46)(self):**
+&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#49)(self):**
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#90)(self):**
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#93)(self):**
 
 Wrapper function to calculate and set the cost of creating the build.
 
 Calculate the cost of creating the build and set it as a build output
 property.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#148)(self, child_builds=None):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#148)(self, child_builds: List[Build]=None):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
 Calculate the cost of the cq run and set it as a build output property.
 
 Args:
-  child_builds (list[build_pb2.Build]): The child builds for this cq run.
+  child_builds: The child builds for this cq run.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8882,32 +8882,32 @@ Recipe for building an AFDO benchmark profile.
 &mdash; **def [RunSteps](/recipes/afdo_process.py#25)(api, properties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
-[DEPS](/recipe_modules/analysis_service/examples/full.py#13): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/analysis_service/examples/full.py#15): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#46)(api):**
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#48)(api: RecipeApi):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
-[DEPS](/recipe_modules/android/examples/full.py#11): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/android/examples/full.py#16): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#23)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/full.py#28)(api: RecipeApi, properties: TestProperties):**
 ### *recipes* / [android:examples/misc](/recipe_modules/android/examples/misc.py)
 
-[DEPS](/recipe_modules/android/examples/misc.py#5): [android](#recipe_modules-android), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/android/examples/misc.py#7): [android](#recipe_modules-android), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/misc.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/misc.py#15)(api: RecipeApi):**
 ### *recipes* / [android:examples/uprev](/recipe_modules/android/examples/uprev.py)
 
-[DEPS](/recipe_modules/android/examples/uprev.py#11): [android](#recipe_modules-android)
+[DEPS](/recipe_modules/android/examples/uprev.py#12): [android](#recipe_modules-android)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#19)(api: RecipeApi):**
 ### *recipes* / [android\_uprev\_orchestrator](/recipes/android_uprev_orchestrator.py)
 
 [DEPS](/recipes/android_uprev_orchestrator.py#22): [android](#recipe_modules-android), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8948,25 +8948,25 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipes/annealing.py#61)(api, properties):**
 ### *recipes* / [bot\_cost:examples/calculate\_build\_cost](/recipe_modules/bot_cost/examples/calculate_build_cost.py)
 
-[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#13): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#16): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#30)(api: RecipeApi, properties: TestProperties):**
 ### *recipes* / [bot\_cost:examples/calculate\_cq\_run\_cost](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py)
 
-[DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#13): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#15): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#27)(api: RecipeApi):**
 ### *recipes* / [bot\_cost:tests/bot\_size](/recipe_modules/bot_cost/tests/bot_size.py)
 
-[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#10): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#12): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#22)(api: RecipeApi):**
 ### *recipes* / [bot\_scaling:examples/drop\_cpus](/recipe_modules/bot_scaling/examples/drop_cpus.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/drop_cpus.py#11): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

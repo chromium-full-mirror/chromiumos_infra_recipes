@@ -9,6 +9,9 @@ from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.bot_cost.examples.test import TestProperties
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/assertions',
@@ -24,7 +27,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TestProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestProperties):
   with api.bot_cost.build_cost_context():
     with api.step.nest(properties.name):
       build_cost = api.bot_cost._calculate_build_cost()
@@ -34,10 +37,11 @@ def RunSteps(api, properties):
         api.assertions.assertEqual(0, build_cost)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def test(name, status, start_time=None, end_time=None, update_time=None,
-           bot_size='small', expect_cost=True, extra=None):
+  def test(name: str, status: str, start_time: int = None, end_time: int = None,
+           update_time: int = None, bot_size: str = 'small',
+           expect_cost: bool = True) -> TestData:
     if start_time:
       start_time = timestamp_pb2.Timestamp(seconds=start_time)
     if end_time:
@@ -54,7 +58,7 @@ def GenTests(api):
           bld_msg, step_name='%s.calculate build cost.buildbucket.get' % name)
     build += api.properties(
         TestProperties(name=name, bot_size=bot_size, expect_cost=expect_cost))
-    return api.test(name, build, *(extra or []))
+    return api.test(name, build, *[])
 
   yield test('terminal-build', status='SUCCESS', start_time=5000,
              end_time=15000)

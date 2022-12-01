@@ -4,23 +4,28 @@
 # found in the LICENSE file.
 
 import base64
+from typing import Any, Optional, Tuple
 
 import six
 from google.protobuf import json_format
+from google.protobuf.timestamp_pb2 import Timestamp
 
 from PB.analysis_service.analysis_service import AnalysisServiceEvent
+from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
 from recipe_engine import recipe_api
+from recipe_engine.step_data import StepData
 
 
-def _truncate_output(full_output, max_output_bytes):
+def _truncate_output(full_output: str,
+                     max_output_bytes: int) -> Tuple[str, int]:
   """Truncate full_output if needed for sending/storing/querying.
 
   When truncating full_output, the last |max_output_bytes| are kept rather
   than the first.
 
   Args:
-    full_output (str): The full output captured from a step.
-    max_output_bytes (int): Max number of bytes in returned string.
+    full_output: The full output captured from a step.
+    max_output_bytes: Max number of bytes in returned string.
   Return:
     A tuple of truncated string, bytes removed.
   """
@@ -33,13 +38,13 @@ def _truncate_output(full_output, max_output_bytes):
   return full_output[-max_output_bytes:], output_length - max_output_bytes
 
 
-def _set_step_execution_result_fields(analysis_service_event, step_data):
+def _set_step_execution_result_fields(
+    analysis_service_event: AnalysisServiceEvent, step_data: StepData):
   """Set the StepExecutionResult fields on an AnalysisServiceEvent.
 
   Args:
-    analysis_sevice_event (AnalysisServiceEvent): The AnalysisServiceEvent to be
-      modified
-    step_data (recipe_engine.StepData): Data from the step being logged.
+    analysis_sevice_event: The AnalysisServiceEvent to be modified.
+    step_data: Data from the step being logged.
   """
   src = step_data.exc_result
   dst = analysis_service_event.step_execution_result
@@ -57,21 +62,21 @@ def _set_step_execution_result_fields(analysis_service_event, step_data):
     dst.was_cancelled = src.was_cancelled
 
 
-# TODO(crbug.com/964444): Rename to cros_analysis_service.
 class AnalysisServiceApi(recipe_api.RecipeApi):
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, properties: AnalysisServiceProperties, *args, **kwargs):
     super(AnalysisServiceApi, self).__init__(*args, **kwargs)
     self._pubsub_project_id = properties.pubsub_project_id or "chromeos-bot"
     self._pubsub_topic_id = (
         properties.pubsub_topic_id or "analysis-service-events")
     self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
-  def _get_field_name_by_matching_type(self, oneof_name, message):
+  def _get_field_name_by_matching_type(self, oneof_name: str,
+                                       message: Any) -> Optional[str]:
     """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.
 
     Args:
-      oneof_name (str): The name of a oneof on 'analysis_service_event'.
+      oneof_name: The name of a oneof on 'analysis_service_event'.
       message (proto in an AnalysisServiceEvent oneof): The proto that will be
         copied to 'analysis_service_event'.
 
@@ -105,14 +110,14 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     return (matching_field_descriptors[0].name
             if matching_field_descriptors else None)
 
-  def _set_oneof_by_matching_type(self, analysis_service_event, oneof_name,
-                                  message):
+  def _set_oneof_by_matching_type(self,
+                                  analysis_service_event: AnalysisServiceEvent,
+                                  oneof_name: str, message: Any):
     """Set the appropriate oneof by searching on type.
 
     Args:
-      analysis_service_event (AnalysisServiceEvent): The proto that will be
-        mutated.
-      oneof_name (str): The name of a oneof on 'analysis_service_event'.
+      analysis_service_event: The proto that will be mutated.
+      oneof_name: The name of a oneof on 'analysis_service_event'.
       message (proto in an AnalysisServiceEvent oneof): The proto that will be
         copied to 'analysis_service_event'.
 
@@ -160,13 +165,13 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     assert analysis_service_event.WhichOneof(
         oneof_name) is not None, 'Expected {} to be set.'.format(oneof_name)
 
-  def _set_step_output(self, analysis_service_event, step_output):
+  def _set_step_output(self, analysis_service_event: AnalysisServiceEvent,
+                       step_output: str):
     """Set the step_data to store stdout and stderr information.
 
     Args:
-      analysis_sevice_event (AnalysisServiceEvent): The AnalysisServiceEvent to
-        be modified.
-      step_output (str): Log output of the step being logged.
+      analysis_service_event: The AnalysisServiceEvent to be modified.
+      step_output: Log output of the step being logged.
     """
     step = self.m.step.active_result
     if step_output:
@@ -184,7 +189,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
                 len(step_output), self._max_stdout_stderr_bytes)
         ]
 
-  def can_publish_event(self, request, response):
+  def can_publish_event(self, request: Any, response: Any) -> bool:
     """Return whether 'request' and 'response' can be published.
 
     Based on whether the types are both part of AnalysisServiceEvent. For
@@ -202,14 +207,15 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
         log
 
     Return:
-      bool
+      Whether an event can be published.
     """
     return self._get_field_name_by_matching_type(
         'request', request) and self._get_field_name_by_matching_type(
             'response', response)
 
-  def publish_event(self, request, response, request_time, response_time,
-                    step_data, step_output=None):
+  def publish_event(self, request: Any, response: Any, request_time: Timestamp,
+                    response_time: Timestamp, step_data: StepData,
+                    step_output: str = None):
     """Publish request and response on Cloud Pub/Sub.
 
     Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'

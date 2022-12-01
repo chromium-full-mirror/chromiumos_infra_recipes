@@ -2,11 +2,16 @@
 # Copyright 2020 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from typing import List
 
-from PB.recipe_modules.chromeos.android.examples.test import TestProperties
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
+from PB.recipe_modules.chromeos.android.examples.test import TestProperties
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/properties',
@@ -20,16 +25,16 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TestProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestProperties):
 
-  def patch_set(files):
+  def patch_set(files: List[str]) -> PatchSet:
     """Return a patchset.
 
     Args:
-      files (list[str]): list of modified files.
+      files: list of modified files.
 
     Returns:
-      A gerrit.PatchSet.
+      A patch set.
     """
     project = 'chromeos/overlays/project-cheets-private'
     return api.gerrit.PatchSet(
@@ -45,7 +50,7 @@ def RunSteps(api, properties):
   api.android.uprev_if_unstable_ebuild_changed(chroot, sysroot, patch_sets)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('no-changes-with-android')
   yield api.test('changes-with-android', api.properties(changes=True))
   yield api.test(
