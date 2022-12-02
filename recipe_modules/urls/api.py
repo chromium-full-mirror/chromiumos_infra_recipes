@@ -5,7 +5,7 @@
 
 """API for creating task URLs out of complex data structures."""
 
-from recipe_engine import recipe_api
+from recipe_engine import recipe_api, step_data
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -135,3 +135,48 @@ class UrlsApi(recipe_api.RecipeApi):
       raise ValueError('gs_path argument must start with "gs://"')
 
     return 'https://storage.cloud.google.com/' + gs_path[len('gs://'):]
+
+  _LOGDOG_URL_TEMPLATE = (
+      'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
+      '+/u/%(step_name)s/%(log_name)s')
+
+  def get_logdog_url(self, step: step_data.StepData, log_name: str,
+                     use_top_level_step: bool = True) -> str:
+    """Returns the LogDog URL for a step's log.
+
+    buildbucket.build.infra.logdog is used to find the LogDog hostname, project,
+    and prefix.
+
+    Args:
+      step: The step containing the log. Note that this should be the StepData
+        for the step that actually ran, even if the log is attached to a
+        higher-level nested step, see use_top_level_step.
+      log_name: The name of the log added to a step. This can be a log that is
+        automatically added to the step (e.g. "stdout") or a log added to
+        StepPresentation.logs by the recipe.
+      use_top_level_step: If true, point the URL to the highest-level step,
+        otherwise point the URL to the step that actually ran (which may be
+        nested). For example, the step is "outer step|run cmd" and
+        use_top_level_step is true, the URL will be ".../outer_step/<log_name>",
+        otherwise it will be ".../outer_step/run_cmd/<log_name>".
+
+    Returns:
+      The LogDog URL.
+    """
+    # If use_top_level_step, only take the first token, otherwise take all of
+    # them.
+    name_tokens = [step.name_tokens[0]
+                  ] if use_top_level_step else step.name_tokens
+    # Replace " " and "/" with "_", then join the tokens with "/".
+    sanitized_name_tokens = [
+        t.replace(" ", "_").replace("/", "_") for t in name_tokens
+    ]
+    step_name = "/".join(sanitized_name_tokens)
+
+    return self._LOGDOG_URL_TEMPLATE % {
+        'logdog_hostname': self.m.buildbucket.build.infra.logdog.hostname,
+        'logdog_project': self.m.buildbucket.build.infra.logdog.project,
+        'logdog_prefix': self.m.buildbucket.build.infra.logdog.prefix,
+        'step_name': step_name,
+        'log_name': log_name,
+    }

@@ -1,5 +1,34 @@
 [
   {
+    "cmd": [],
+    "name": "outer step",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@customlog@new info@@@",
+      "@@@STEP_LOG_END@customlog@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ls"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "outer step.run cmd on a/b",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

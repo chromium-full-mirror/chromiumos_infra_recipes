@@ -1,0 +1,17 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.dirmd;
+
+message DirmdProperties {
+  // CIPD package to use for dirmd.
+  // Defaults to "infra/tools/dirmd/{$platform}".
+  string dirmd_cipd_package = 1;
+
+  // CIPD ref to use for dirmd.
+  // Defaults to "latest"
+  string dirmd_cipd_ref = 2;
+}

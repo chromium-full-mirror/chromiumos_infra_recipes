@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'skylab',
     'urls',
 ]
@@ -97,6 +98,30 @@ def RunSteps(api):
     api.urls.get_state_suffix(
         TaskState(life_cycle=life_cycle, verdict=TaskState.VERDICT_FAILED))
 
+  with api.step.nest('outer step') as pres:
+    step_result = api.step('run cmd on a/b', ['ls'])
+    pres.logs['customlog'] = 'new info'
+    api.assertions.assertEqual(
+        api.urls.get_logdog_url(step_result, 'customlog',
+                                use_top_level_step=True),
+        'https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/outer_step/customlog',
+    )
+    api.assertions.assertEqual(
+        api.urls.get_logdog_url(step_result, 'customlog',
+                                use_top_level_step=False),
+        'https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/outer_step/run_cmd_on_a_b/customlog',
+    )
+
 
 def GenTests(api):
-  yield api.test('basic')
+  # Populate logdog fields on the build message so link components are filled
+  # out.
+  build_message = api.buildbucket.ci_build_message(build_id=123)
+  build_message.infra.logdog.hostname = 'logs.chromium.org'
+  build_message.infra.logdog.project = 'chromeos'
+  build_message.infra.logdog.prefix = 'logdog/prefix'
+
+  yield api.test(
+      'basic',
+      api.buildbucket.build(build_message),
+  )

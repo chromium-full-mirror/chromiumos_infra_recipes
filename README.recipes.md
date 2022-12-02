@@ -52,6 +52,7 @@
   * [cts_results_archive](#recipe_modules-cts_results_archive) (Python3 ✅) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) (Python3 ✅) &mdash; Module for working with debug symbols.
   * [deferrals](#recipe_modules-deferrals) (Python3 ✅) &mdash; API for deferring things (mainly failures).
+  * [dirmd](#recipe_modules-dirmd) (Python3 ✅)
   * [disk_usage](#recipe_modules-disk_usage) (Python3 ✅)
   * [dlc_utils](#recipe_modules-dlc_utils) (Python3 ✅)
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
@@ -334,6 +335,7 @@
   * [deferrals:tests/defer_exceptions_by_type](#recipes-deferrals_tests_defer_exceptions_by_type) (Python3 ✅)
   * [deferrals:tests/defer_exceptions_infra_fail](#recipes-deferrals_tests_defer_exceptions_infra_fail) (Python3 ✅)
   * [deferrals:tests/defer_exceptions_uncaught](#recipes-deferrals_tests_defer_exceptions_uncaught) (Python3 ✅)
+  * [dirmd:examples/full](#recipes-dirmd_examples_full) (Python3 ✅)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full) (Python3 ✅)
   * [dlc_utils:tests/get_dlcs_in_path](#recipes-dlc_utils_tests_get_dlcs_in_path) (Python3 ✅) &mdash; Tests to verify dlc_utils.
   * [dupit](#recipes-dupit) (Python3 ✅) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -551,6 +553,7 @@
   * [urls:examples/full](#recipes-urls_examples_full) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [util:tests/util](#recipes-util_tests_util) (Python3 ✅)
+  * [validate_dirmd](#recipes-validate_dirmd) (Python3 ✅) &mdash; Recipe to validate DIR_METADATA files in the ChromeOS source tree.
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full) (Python3 ✅)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch) (Python3 ✅)
   * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups) (Python3 ✅)
@@ -4163,16 +4166,16 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#82)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#83)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#67)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#68)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#298)(self, starlark_packages, generate_test_plan_request=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#316)(self, starlark_packages, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4191,7 +4194,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#49)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#159)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#174)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -4201,6 +4204,17 @@ Args:
 
 Returns:
   A list of relevant SourceTestPlans
+
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#160)(self, directory: str):**
+
+Call test_plan validate on directory.
+
+Raises a StepFailure if validation fails, otherwise returns None.
+
+Args:
+  directory: Path to a directory to validate. Note that this should be a
+      directory, not a DIR_METADATA file. Any DIR_METADATA files in a
+      subdirectory of directory will also be validated.
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
 [DEPS](/recipe_modules/cros_test_platform/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4605,6 +4619,26 @@ Note: while using this context manager, if an exception is thrown that is
 *not* caught by the defer_exceptions call above, that exception will take
 precendence over the deferred one. However, the deferred one will still be
 logged.
+### *recipe_modules* / [dirmd](/recipe_modules/dirmd)
+
+[DEPS](/recipe_modules/dirmd/__init__.py#7): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [DirmdApi](/recipe_modules/dirmd/api.py#10)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for using the dirmd tool.
+
+&mdash; **def [validate\_dir](/recipe_modules/dirmd/api.py#36)(self, directory: str):**
+
+Find and validate all DIR_METADATA files in a directory.
+
+Raises a StepFailure if validation fails, otherwise returns None.
+
+Args:
+  directory: Path to a directory to validate. Note that this should be a
+      directory, not a DIR_METADATA file. Any DIR_METADATA files in a
+      subdirectory of directory will also be validated.
 ### *recipe_modules* / [disk\_usage](/recipe_modules/disk_usage)
 
 [DEPS](/recipe_modules/disk_usage/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -4856,7 +4890,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#237)(self, failures, ignore_build_test_failures=False):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#222)(self, failures, ignore_build_test_failures=False):**
 
 Returns a recipe result based on the given failures.
 
@@ -4870,7 +4904,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#589)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#574)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -4879,9 +4913,9 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#375)(self, not_runnable_addtnl_tests):**
+&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#360)(self, not_runnable_addtnl_tests):**
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#337)(self, builds, refresh_configs=False):**
+&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#322)(self, builds, refresh_configs=False):**
 
 Verify all builds completed successfully.
 
@@ -4892,7 +4926,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given runs.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#421)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#406)(self, build):**
 
 Retrieve the status of the build.
 
@@ -4902,7 +4936,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#359)(self, hw_tests):**
+&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#344)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -4913,7 +4947,7 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#447)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#432)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -4923,7 +4957,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#405)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#390)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -4934,14 +4968,14 @@ Returns:
   list[Failure]: All failures discovered in the given runs filtered
   by baseline failures.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#112)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#108)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#469)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#454)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -4951,7 +4985,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#481)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#466)(self, hw_test):**
 
 Determine if the vm test failed and was critical.
 
@@ -4961,7 +4995,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#432)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#417)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -4971,7 +5005,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#458)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#443)(self, hw_test):**
 
 Determine if the vm test was critical.
 
@@ -4981,7 +5015,7 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#211)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#196)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -4996,11 +5030,11 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#208)(self, enclosing_step, packages):**
+&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#193)(self, enclosing_step, packages):**
 
-&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#205)(self, enclosing_step, packages):**
+&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#190)(self, enclosing_step, packages):**
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#510)(self, failures, fresh_builder_configs, presentation=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#495)(self, failures, fresh_builder_configs, presentation=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
@@ -5015,7 +5049,7 @@ Returns:
   updated_failures (list[Failure]): The list of Failures with 'fatal'
       statuses possibly updated.
 
-&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#547)(self, failures, test_plan_summary, presentation=None):**
+&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#532)(self, failures, test_plan_summary, presentation=None):**
 
 If tests are now non-critical, failures are non-fatal.
 
@@ -8604,6 +8638,29 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
+&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#143)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
+
+Returns the LogDog URL for a step's log.
+
+buildbucket.build.infra.logdog is used to find the LogDog hostname, project,
+and prefix.
+
+Args:
+  step: The step containing the log. Note that this should be the StepData
+    for the step that actually ran, even if the log is attached to a
+    higher-level nested step, see use_top_level_step.
+  log_name: The name of the log added to a step. This can be a log that is
+    automatically added to the step (e.g. "stdout") or a log added to
+    StepPresentation.logs by the recipe.
+  use_top_level_step: If true, point the URL to the highest-level step,
+    otherwise point the URL to the step that actually ran (which may be
+    nested). For example, the step is "outer step|run cmd" and
+    use_top_level_step is true, the URL will be ".../outer_step/<log_name>",
+    otherwise it will be ".../outer_step/run_cmd/<log_name>".
+
+Returns:
+  The LogDog URL.
+
 &mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#68)(self, skylab_result):**
 
 Returns the URL to the given skylab result page.
@@ -10610,11 +10667,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/fallback_to_default.py#22)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/full](/recipe_modules/cros_test_plan_v2/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#13): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/full.py#13): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#25)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#12): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10752,6 +10809,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_uncaught.py#17)(api):**
+### *recipes* / [dirmd:examples/full](/recipe_modules/dirmd/examples/full.py)
+
+[DEPS](/recipe_modules/dirmd/examples/full.py#7): [dirmd](#recipe_modules-dirmd), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/dirmd/examples/full.py#16)(api):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#6): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -12828,13 +12892,13 @@ Args:
   to_version: the version to uprev to.
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
-[DEPS](/recipe_modules/urls/examples/full.py#13): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/urls/examples/full.py#13): [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Basic tests for the urls recipe module.
 
-&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/urls/examples/full.py#25)(api):**
 ### *recipes* / [urls:examples/get\_vm\_test\_link\_map](/recipe_modules/urls/examples/get_vm_test_link_map.py)
 
 [DEPS](/recipe_modules/urls/examples/get_vm_test_link_map.py#16): [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -12851,6 +12915,18 @@ Basic tests for the urls recipe module.
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#17)(api):**
+### *recipes* / [validate\_dirmd](/recipes/validate_dirmd.py)
+
+[DEPS](/recipes/validate_dirmd.py#14): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe to validate DIR_METADATA files in the ChromeOS source tree.
+
+This recipe will call `dirmd validate` and `test_plan validate` on DIR_METADATA
+files in projects touched by the input CLs.
+
+&mdash; **def [RunSteps](/recipes/validate_dirmd.py#30)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#9): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

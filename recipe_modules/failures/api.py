@@ -35,10 +35,6 @@ class FailuresApi(RecipeApi):
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
 
-  _LOGDOG_URL_TEMPLATE = (
-      'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
-      '+/u/%(step_name)s/%(log_name)s')
-
   def _proto_to_step_status(self, proto_status):
     """Convert from common_pb2.Status to api.step status.
 
@@ -141,18 +137,7 @@ class FailuresApi(RecipeApi):
 
       log_name = '%s_%s_log' % (package_info.category,
                                 package_info.package_name)
-      log_url = self._LOGDOG_URL_TEMPLATE % {
-          'logdog_hostname':
-              self.m.buildbucket.build.infra.logdog.hostname,
-          'logdog_project':
-              self.m.buildbucket.build.infra.logdog.project,
-          'logdog_prefix':
-              self.m.buildbucket.build.infra.logdog.prefix,
-          'step_name':
-              self.m.step.active_result.name_tokens[0].replace(" ", "_"),
-          'log_name':
-              log_name,
-      }
+      log_url = self.m.urls.get_logdog_url(self.m.step.active_result, log_name)
       markdown_link = '[%s](%s)' % (
           self.m.naming.get_package_title(package_info), log_url)
 

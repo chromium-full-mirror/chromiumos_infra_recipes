@@ -1,0 +1,101 @@
+[
+  {
+    "cmd": [],
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_1"
+  },
+  {
+    "cmd": [],
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_1.ensure dirmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd_dirmd",
+      "-ensure-file",
+      "infra/tools/dirmd/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_1.ensure dirmd.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/dirmd/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[CLEANUP]/tmp_tmp_1",
+      "**/DIR_METADATA"
+    ],
+    "infra_step": true,
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_1.find DIR_METADATA files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd_dirmd/dirmd",
+      "validate",
+      "[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA"
+    ],
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_1.dirmd validate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_2",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@No DIR_METADATA files found@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[CLEANUP]/tmp_tmp_2",
+      "**/DIR_METADATA"
+    ],
+    "infra_step": true,
+    "name": "dirmd validate [CLEANUP]/tmp_tmp_2.find DIR_METADATA files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

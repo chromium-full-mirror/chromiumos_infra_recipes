@@ -63,6 +63,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         default_ref)
     self._docker_image = "{}:{}".format(docker_image_name, docker_tag)
     self._migration_configs = self._properties.migration_configs
+    self._test_plan_path = None
 
   @property
   def generate_ctpv1_format(self):
@@ -156,6 +157,20 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       presentation.step_text = 'enabling test planning v2'
       return True
 
+  def validate(self, directory: str) -> None:
+    """Call test_plan validate on directory.
+
+    Raises a StepFailure if validation fails, otherwise returns None.
+
+    Args:
+      directory: Path to a directory to validate. Note that this should be a
+          directory, not a DIR_METADATA file. Any DIR_METADATA files in a
+          subdirectory of directory will also be validated.
+    """
+    self._ensure_test_plan()
+    self.m.step('test_plan validate {}'.format(directory),
+                [self._test_plan_path, 'validate', directory])
+
   def relevant_plans(self, gerrit_changes):
     """Call test_plan relevant-plans.
 
@@ -238,6 +253,9 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     Source code for test_plan is under
     https://source.corp.google.com/chromium_infra/go/src/infra/cros/cmd/test_plan/.
     """
+    if self._test_plan_path:
+      return
+
     with self.m.step.nest('ensure test_plan'):
       with self.m.context(infra_steps=True):
         cipd_dir = self.m.path['start_dir'].join('cipd')

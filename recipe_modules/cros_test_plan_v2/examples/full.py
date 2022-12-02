@@ -13,6 +13,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'cros_test_plan_v2',
@@ -71,6 +72,9 @@ def RunSteps(api):
           ),
       ],
   )
+
+  testdir = api.path.mkdtemp()
+  api.cros_test_plan_v2.validate(testdir)
 
 
 def GenTests(api):
