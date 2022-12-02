@@ -1995,7 +1995,7 @@
     ],
     "infra_step": true,
     "name": "running children.collect.wait",
-    "timeout": 21600,
+    "timeout": 28800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

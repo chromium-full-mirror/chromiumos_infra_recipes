@@ -19,7 +19,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi):
   # Test timeout settings (includes individual runs and orch).
   api.assertions.assertEqual(
-      7 * 60 * 60, api.paygen_orchestration.paygen_orchestrator_timeout_sec)
+      9 * 60 * 60, api.paygen_orchestration.paygen_orchestrator_timeout_sec)
 
 
 def GenTests(api: RecipeTestApi):

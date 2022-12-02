@@ -7184,7 +7184,7 @@ API for orchestrating payload generation. Used by paygen_orchestrator.
 
 A module for CrOS-specific paygen orchestration steps.
 
-&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#294)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#296)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
 
 Determine which hardware tests need to be run for the given payload.
 
@@ -7199,9 +7199,9 @@ Args:
 Returns:
   Test configs that should be run for the requested payload.
 
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/paygen_orchestration/api.py#100)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/paygen_orchestration/api.py#102)(self):**
 
-&mdash; **def [get\_builder\_configs](/recipe_modules/paygen_orchestration/api.py#104)(self, builder_name: str, \*\*kwargs):**
+&mdash; **def [get\_builder\_configs](/recipe_modules/paygen_orchestration/api.py#106)(self, builder_name: str, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -7234,7 +7234,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#176)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#178)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -7253,7 +7253,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#251)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
+&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#253)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -7266,7 +7266,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#145)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#147)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
 
 Generate a N2N testing payloads.
 
@@ -7283,11 +7283,11 @@ Args:
 Returns:
   A list[GenerationRequest] or [].
 
-&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#51)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#53)(self):**
 
 Get the currently configured paygen timeout in seconds.
 
-&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#56)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#58)(self):**
 
 Get the currently configured paygen orchestrator timeout in seconds.
 
@@ -7296,7 +7296,7 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#345)(self, paygen_reqs: List[PaygenProperties.PaygenRequest]):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#347)(self, paygen_reqs: List[PaygenProperties.PaygenRequest]):**
 
 Launch paygen builders to generate payloads and run configured tests.
 

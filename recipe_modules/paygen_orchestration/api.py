@@ -47,11 +47,13 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     self._internal_config = None
     self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
     self._max_dlc_batch_size = properties.max_dlc_batch_size or None
+    self._paygen_children_timeout_sec = (
+        properties.paygen_children_timeout_sec or 8 * 60 * 60)
 
   @property
   def paygen_children_timeout_sec(self) -> int:
     """Get the currently configured paygen timeout in seconds."""
-    return 6 * 60 * 60
+    return self._paygen_children_timeout_sec
 
   @property
   def paygen_orchestrator_timeout_sec(self) -> int:

@@ -12,4 +12,7 @@ message PaygenOrchestrationProperties {
   // If not provided, dlc payloads will be sent in a single batch.
   int32 max_dlc_batch_size = 1;
 
+  // The time (in seconds) to wait for paygenie builds to finish.
+  // Defaults to 8 hours.
+  uint32 paygen_children_timeout_sec = 2;
 }
