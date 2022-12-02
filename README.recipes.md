@@ -11407,13 +11407,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/gitiles/examples/full.py#18)(api):**
 ### *recipes* / [gitiles\_triggerer](/recipes/gitiles_triggerer.py)
 
-[DEPS](/recipes/gitiles_triggerer.py#18): [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/gitiles_triggerer.py#20): [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe that schedules jobs based on its triggers.
 
-&mdash; **def [RunSteps](/recipes/gitiles_triggerer.py#43)(api, properties):**
+&mdash; **def [RunSteps](/recipes/gitiles_triggerer.py#45)(api, properties):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#11): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

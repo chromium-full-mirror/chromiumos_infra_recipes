@@ -12,6 +12,8 @@ from google.protobuf.json_format import MessageToDict
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
 from PB.recipes.chromeos.gitiles_triggerer import GitilesTriggererProperties
+from PB.recipe_engine import result as result_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from recipe_engine import post_process
 
@@ -57,8 +59,10 @@ def RunSteps(api, properties):
   with api.step.nest('sleep configured delay'):
     api.time.sleep(properties.delay_trigger_seconds)
 
+  refs_triggered = []
   # Call emit_triggers once for each unique key in the dictionary.
   for key, value in triggers.items():
+    refs_triggered.append(value.ref)
     # Only send one trigger: the last (most recent) one in the list.
     trigger = api.scheduler.GitilesTrigger(repo=value.repo, ref=value.ref,
                                            revision=value.revision,
@@ -67,6 +71,10 @@ def RunSteps(api, properties):
     jobs = [_expand(x.name, key) for x in properties.jobs]
     api.scheduler.emit_trigger(trigger, project, jobs,
                                step_name='trigger {} jobs'.format(project))
+  return result_pb2.RawResult(
+      status=common_pb2.Status.SUCCESS,
+      summary_markdown='Triggered jobs for refs:\n{}'.format('\n'.join(
+          ['- {}'.format(ref) for ref in refs_triggered])))
 
 
 def GenTests(api):
