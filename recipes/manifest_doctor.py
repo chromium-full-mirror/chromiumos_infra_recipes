@@ -8,7 +8,9 @@
 from PB.recipes.chromeos.manifest_doctor import ManifestDoctorProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -31,7 +33,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = ManifestDoctorProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
   with api.step.nest('validate properties'):
     if bool(properties.internal_buildspecs_bucket) != bool(
         properties.external_buildspecs_bucket):
@@ -121,7 +123,7 @@ def RunSteps(api, properties):
           api.manifest_doctor(cmd)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   _test_build_id = 8812345
 
   yield api.test(

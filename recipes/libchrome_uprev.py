@@ -8,7 +8,9 @@
 import re
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
@@ -29,7 +31,7 @@ PUSH_OPTION_LABEL_RE = re.compile(
     r'(Auto-Submit|Verified|Commit-Queue)([+-][12])')
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   commit = api.src_state.gitiles_commit
   if not commit.project:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
@@ -75,7 +77,7 @@ def RunSteps(api):
                        dry_run=api.build_menu.is_staging)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'script-success',
       api.step_data(

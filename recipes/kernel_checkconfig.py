@@ -10,9 +10,11 @@ https://www.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-configur
 and go/mini-splitconfigs.
 """
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.kernel_checkconfig import KernelCheckconfigProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/properties',
@@ -28,7 +30,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = KernelCheckconfigProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: KernelCheckconfigProperties):
   with api.step.nest('validate properties') as presentation:
     if not properties.source_path:
       raise StepFailure('must set source_path')
@@ -46,7 +48,7 @@ def RunSteps(api, properties):
     ])
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   props = {
       'source_path': 'src/third_party/kernel/v5.15',
   }

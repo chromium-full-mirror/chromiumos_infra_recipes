@@ -9,13 +9,14 @@ from collections import namedtuple
 
 from google.protobuf.json_format import MessageToDict
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
-from PB.recipes.chromeos.gitiles_triggerer import GitilesTriggererProperties
 from PB.recipe_engine import result as result_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
+from PB.recipes.chromeos.gitiles_triggerer import GitilesTriggererProperties
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -30,19 +31,21 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = GitilesTriggererProperties
 
+Key = namedtuple('_Key', [u'repo', u'ref', u'branch'])
 
-def _make_key(trigger):
+
+def _make_key(trigger: Trigger) -> Key:
   """Create a key from the trigger."""
-  _Key = namedtuple('_Key', [u'repo', u'ref', u'branch'])
-  return _Key(trigger.repo, trigger.ref, trigger.ref.replace('refs/heads/', ''))
+  return Key(trigger.repo, trigger.ref, trigger.ref.replace('refs/heads/', ''))
 
 
-def _expand(item, key):
+def _expand(item: str, key: Key):
   """Expand item based on the trigger."""
   return item.format(**key._asdict())
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi,
+             properties: GitilesTriggererProperties) -> result_pb2.RawResult:
   # Recipe_engine does a poor job of gathering errors if they occur before a
   # step is created.  We do this step first thing, so that any errors can be
   # reported as more than a contentless INFRA-FAIL.
@@ -77,7 +80,7 @@ def RunSteps(api, properties):
           ['- {}'.format(ref) for ref in refs_triggered])))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   triggers = [
       Trigger(
           gitiles=GitilesTrigger(

@@ -4,6 +4,9 @@
 # found in the LICENSE file.
 
 """Recipe for updating libchrome-version.eclass"""
+from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
@@ -22,7 +25,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 _LIBCHROME_ECLASS_PATH = 'eclass/libchrome-version.eclass'
 
 
-def get_latest_version(api, project_dir, pkg_group, pkg_name):
+def get_latest_version(api: RecipeApi, project_dir: Path, pkg_group: str,
+                       pkg_name: str) -> int:
   files = api.file.listdir(
       'list %s ebuilds' % (pkg_name), project_dir.join(pkg_group, pkg_name),
       test_data=[
@@ -44,7 +48,8 @@ def get_latest_version(api, project_dir, pkg_group, pkg_name):
       stable_ebuild[len(stable_ebuild_prefix):-len(stable_ebuild_suffix)])
 
 
-def update_eclass(api, project_dir, pkg_group, pkg_name):
+def update_eclass(api: RecipeApi, project_dir: Path, pkg_group: str,
+                  pkg_name: str):
   with api.step.nest('update for %s/%s' % (pkg_group, pkg_name)):
     pkg_ebuild_revision = get_latest_version(api, project_dir, pkg_group,
                                              pkg_name)
@@ -56,7 +61,7 @@ def update_eclass(api, project_dir, pkg_group, pkg_name):
     ])
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   commit = api.src_state.gitiles_commit
   if not commit.project:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
@@ -86,5 +91,5 @@ def RunSteps(api):
               dry_run=api.build_menu.is_staging)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('script-success')

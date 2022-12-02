@@ -9,13 +9,19 @@ All builders run against the same source tree.
 """
 
 import json
+from typing import Callable, Dict
 
 from google.protobuf.json_format import MessageToDict
+
+from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
-from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
@@ -32,7 +38,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api)
@@ -45,7 +51,7 @@ def RunSteps(api):
         ignore_build_test_failures=is_release)
 
 
-def DoRunSteps(api):
+def DoRunSteps(api: RecipeApi):
 
   # Run the child builders.
   extra_child_props = {}
@@ -114,7 +120,7 @@ def DoRunSteps(api):
   api.orch_menu.run_follow_on_orchestrator()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   data = api.orch_menu.standard_test_data()
 
@@ -251,7 +257,8 @@ def GenTests(api):
                            collect_builds=data.builds, revision=None, cq=True,
                            with_history=True, git_footers=[])
 
-  def verify_qs_account_pupr(check, steps):
+  def verify_qs_account_pupr(check: Callable[[bool], bool],
+                             steps: Dict[str, Step]) -> bool:
     data = json.loads(
         steps['run tests.schedule tests.schedule hardware tests.'
               'schedule skylab tests v2.buildbucket.schedule'].stdin)

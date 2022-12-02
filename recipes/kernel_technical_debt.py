@@ -6,9 +6,13 @@
 """Recipe to enforce go/kernel-upstream-tracking-process"""
 
 import re
+from typing import Dict
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = {
     'step': 'recipe_engine/step',
@@ -25,7 +29,7 @@ TECH_DEBT_MSG_TAG = 'This patch is not fully upstream. Please open a tracking bu
 TECH_DEBT_PROJECTS = {'chromiumos/third_party/kernel'}
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   gerrit_changes = api.src_state.gerrit_changes
 
   with api.step.nest('validate inputs') as presentation:
@@ -86,9 +90,9 @@ def RunSteps(api):
     api.tricium.write_comments()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def test_builder(**kwargs):
+  def test_builder(**kwargs) -> TestData:
     '''Generate a test build.'''
     kwargs.setdefault('builder', 'infra-presubmit')
     kwargs.setdefault('cq', True)
@@ -96,7 +100,8 @@ def GenTests(api):
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_build(**kwargs).build
 
-  def gen_patch_sets(message, filename, branch="chromeos-5.4"):
+  def gen_patch_sets(message: str, filename: str,
+                     branch: str = "chromeos-5.4") -> Dict[int, Dict]:
     return {
         1: {
             'subject': message.splitlines()[0],
