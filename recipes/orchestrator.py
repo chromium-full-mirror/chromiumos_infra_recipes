@@ -76,10 +76,6 @@ def DoRunSteps(api: RecipeApi):
     extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
         CrosRelevanceProperties(force_postsubmit_relevance=True))
 
-  if api.orch_menu.is_bisecting_orchestrator:
-    extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
-        CrosRelevanceProperties(force_postsubmit_relevance=True))
-
   if api.orch_menu.chromium_src_ref_cl_tag:
     extra_child_props[
         '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()

@@ -10,7 +10,6 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
-from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import CrosBisectProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,7 +19,6 @@ DEPS = [
     'recipe_engine/swarming',
     'recipe_engine/step',
     'build_menu',
-    'cros_bisect',
     'cros_build_api',
     'cros_history',
     'test_util',
@@ -266,35 +264,6 @@ def GenTests(api):
       }))
 
   yield api.build_menu.test('no-config', builder='no-config')
-
-  yield api.build_menu.test(
-      'with-findit-bisect',
-      api.properties(
-          FullProperties(expected_packages=[
-              common.PackageInfo(category='cat1', package_name='foo',
-                                 version='1'),
-              common.PackageInfo(category='cat1', package_name='bar',
-                                 version='2'),
-              common.PackageInfo(category='cat2', package_name='baz',
-                                 version='3')
-          ])),
-      api.properties(
-          **{
-              '$chromeos/cros_relevance':
-                  dict(force_postsubmit_relevance=True),
-              '$chromeos/cros_bisect':
-                  CrosBisectProperties(
-                      compile={
-                          'targets': [
-                              api.cros_bisect.serialized_package_info(
-                                  'foo', 'cat1', '1'),
-                              api.cros_bisect.serialized_package_info(
-                                  'bar', 'cat1', '2'),
-                              api.cros_bisect.serialized_package_info(
-                                  'baz', 'cat2', '3'),
-                          ]
-                      })
-          }), bucket='bisect')
 
   yield api.build_menu.test(
       'missing-ok-config',

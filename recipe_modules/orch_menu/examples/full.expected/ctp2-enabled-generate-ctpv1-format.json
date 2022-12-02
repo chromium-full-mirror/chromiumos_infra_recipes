@@ -892,14 +892,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set up orchestrator.set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"bisecting-orchestrator\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "git",
       "config",

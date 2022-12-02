@@ -59,10 +59,6 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(api.orch_menu.is_postsubmit_orchestrator,
                                is_postsubmit_orch)
 
-    is_bisecting_orch = build.builder.builder == 'bisecting-orchestrator'
-    api.assertions.assertEqual(api.orch_menu.is_bisecting_orchestrator,
-                               is_bisecting_orch)
-
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
     expected_changes.extend([
@@ -455,15 +451,6 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'run builds|schedule new builds'),
       builder='release-R90-13816.B-cq-orchestrator', cq=True,
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'))
-
-  # Bisection
-  yield api.orch_menu.test(
-      'with-test-bisection',
-      api.properties(
-          FullProperties(expected_completed_builds=data.bisect_builds)),
-      data.bisect_properties, data.ctp_bisect,
-      collect_builds=data.bisect_builds, with_history=True, bucket='bisect',
-      builder='bisecting-orchestrator')
 
   # Process-child
   yield api.orch_menu.test(

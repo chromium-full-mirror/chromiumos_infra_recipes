@@ -502,13 +502,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"staging-amd64-generic-bisect\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

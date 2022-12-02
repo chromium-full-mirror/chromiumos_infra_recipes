@@ -19,7 +19,6 @@ DEPS = [
     'build_menu',
     'build_plan',
     'cros_artifacts',
-    'cros_bisect',
     'cros_history',
     'cros_infra_config',
     'cros_lkgm',

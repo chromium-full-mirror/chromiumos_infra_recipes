@@ -256,10 +256,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       GenerateTestPlanResponse: the test plan.
     """
-    test_plan = self.m.cros_bisect.get_test_plan(builds)
-    if test_plan:
-      return test_plan
-
     if use_test_plan_v2:
       relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
 

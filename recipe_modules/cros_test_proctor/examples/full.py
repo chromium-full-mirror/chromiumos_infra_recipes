@@ -3,16 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import json_format
-
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
-from PB.recipe_modules.chromeos.cros_bisect.cros_bisect import (
-    CrosBisectProperties)
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
 from PB.test_platform.taskstate import TaskState
@@ -25,7 +21,6 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/properties',
-    'cros_bisect',
     'cros_history',
     'cros_relevance',
     'cros_test_proctor',
@@ -262,7 +257,6 @@ def GenTests(api):
           ], task_state=TaskState(verdict=TaskState.VERDICT_FAILED)),
   ]
 
-  hw_test_unit = api.cros_bisect.hw_test_unit('amd64-generic')
   hw_tests = [
       api.skylab.test_with_multi_response(
           bid=1234, names=[
@@ -275,28 +269,6 @@ def GenTests(api):
       api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
                                        status='SUCCESS')
   ]
-  api.cros_bisect.add_properties(builds[0], 'amd64-generic')
-
-  yield api.test(
-      'with-test-bisection-invocation',
-      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
-      api.properties(
-          **{
-              '$chromeos/cros_bisect':
-                  CrosBisectProperties(
-                      test_bisection_percent=20, test_bisection_count=10, test={
-                          'hw_test_failures': [{
-                              'test_spec':
-                                  json_format.MessageToJson(hw_test_unit)
-                          },],
-                      })
-          }),
-      api.buildbucket.simulated_schedule_output(
-          ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
-          'schedule skylab tests v2.buildbucket.schedule'),
-      api.buildbucket.simulated_collect_output(
-          hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks v2.buildbucket.collect'))
 
   yield api.test(
       'with-async-enabled',

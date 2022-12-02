@@ -387,13 +387,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"eve-bisect\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

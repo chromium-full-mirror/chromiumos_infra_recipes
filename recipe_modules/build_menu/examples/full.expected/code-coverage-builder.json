@@ -343,13 +343,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"sarien-code-coverage-bisect\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

@@ -273,13 +273,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"cloudready-release-R90-13816.B-bisect\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",

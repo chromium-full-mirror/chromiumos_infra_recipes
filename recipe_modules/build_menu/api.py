@@ -270,8 +270,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       if changes and config and not config.build.apply_gerrit_changes:
         raise recipe_api.StepFailure(
             'Changes provided, but builder does not apply changes')
-      if config and config.id.name and self.build_target.name:
-        self.m.cros_bisect.set_bisect_builder(self.build_target.name)
       if config:
         self.m.cros_sdk.set_use_flags(config.build.use_flags)
       if not config and not missing_ok:
@@ -436,8 +434,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # TODO(crbug/1081828): After 2020-11-12, if there is no sysroot, that's ok.
     # Note: the dependency graph requires a sysroot prior to
     # crrev.com/c/2197226.
-    packages = packages or (self.m.cros_bisect.get_packages() or
-                            config.build.install_packages.packages)
+    packages = packages or config.build.install_packages.packages
     dep_graph = self.get_dep_graph(packages)
 
     if config.id.type == BuilderConfig.Id.POSTSUBMIT:

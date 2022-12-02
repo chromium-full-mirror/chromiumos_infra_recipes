@@ -128,7 +128,6 @@ class OrchMenuApi(RecipeApi):
     self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
-    self._is_bisecting_orchestrator = False
     self._chromium_src_ref_cl_tag = None
 
   def initialize(self):
@@ -174,10 +173,6 @@ class OrchMenuApi(RecipeApi):
   @property
   def is_postsubmit_orchestrator(self):
     return self._is_postsubmit_orchestrator
-
-  @property
-  def is_bisecting_orchestrator(self):
-    return self._is_bisecting_orchestrator
 
   @property
   def chromium_src_ref_cl_tag(self):
@@ -238,7 +233,6 @@ class OrchMenuApi(RecipeApi):
             self.m.buildbucket.gitiles_commit,
             self.m.buildbucket.build.input.gerrit_changes)
 
-        self.m.cros_bisect.set_orchestrator_bisect_builder()
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
 
@@ -296,10 +290,6 @@ class OrchMenuApi(RecipeApi):
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
-
-        if self.m.buildbucket.build.builder.builder.endswith(
-            'bisecting-orchestrator'):
-          self._is_bisecting_orchestrator = True
 
         self._chromium_src_ref_cl_tag = self.m.cros_tags.cq_cl_tag_value(
             'chromium_src_ref', self.m.buildbucket.build.tags)
@@ -606,11 +596,6 @@ class OrchMenuApi(RecipeApi):
             name=cb,
             collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT)
         for cb in self._properties.child_builds
-    ] or [
-        BuilderConfig.Orchestrator.ChildSpec(
-            name=cb,
-            collect_handling=BuilderConfig.Orchestrator.ChildSpec.COLLECT)
-        for cb in self.m.cros_bisect.get_test_child_builders()
     ] or self.config.orchestrator.child_specs
 
   def _filter_schedule_wait_builds(self, parent_step, child_specs,

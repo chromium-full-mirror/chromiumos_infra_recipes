@@ -11,8 +11,6 @@ consistent.
 
 from collections import namedtuple
 
-from google.protobuf.json_format import MessageToJson
-
 from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
@@ -211,17 +209,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         process_child (Build): Build message for a process-child.
         follow_on_orchestrator (Build): Build message for a follow-on
           orchestrator.
-        bisect_builds (list): List of builds for bisect test.
-        bisect_properties (StepData): Properties for cros_bisect module.
         ctp_normal (StepTestData): StepTestData for normal buildset.
-        ctp_bisect (StepTestData): StepTestData for bisect build.
         ctp_failure (StepTestData): StepTestData for build failing tests.
     """
     _ret = namedtuple('_standard_test_data', [
         'orchestrator', 'inflight_orchestrator', 'annealing_builds', 'builds',
         'history_builds', 'after_builds', 'crit_fail', 'non_crit_fail',
-        'process_child', 'follow_on_orchestrator', 'bisect_builds',
-        'bisect_properties', 'ctp_normal', 'ctp_bisect', 'ctp_failure'
+        'process_child', 'follow_on_orchestrator', 'ctp_normal', 'ctp_failure'
     ])
 
     def _child_build_msg(name, **kwargs):
@@ -286,20 +280,11 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                          start_time=1562475245, revision=None, critical='YES',
                          output_properties=_output_properties()),
     ]
-    bisect_build = _child_build_msg('amd64-generic')
-    self.m.cros_bisect.add_properties(bisect_build, 'amd64-generic')
 
     process_child = _child_build_msg('chell', build_id=8922054662172514501,
                                      status='SUCCESS', bucket='toolchain',
                                      builder='benchmark-afdo-process')
 
-    bisect_dict = dict(
-        test=dict(hw_test_failures=[
-            dict(
-                test_spec=MessageToJson(
-                    self.m.cros_bisect.hw_test_unit('amd64-generic')))
-        ]))
-    bisect_props = self.m.properties(**{'$chromeos/cros_bisect': bisect_dict})
 
     crit_fail = [
         _child_build_msg('amd64-generic', build_id=8922054662172514000,
@@ -315,9 +300,16 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ]
 
     values = [
-        orchestrator, inflight_orchestrator, annealing_builds, collect_builds,
-        history_builds, after_builds, crit_fail, non_crit_fail, process_child,
-        follow_on_orchestrator, [bisect_build], bisect_props
+        orchestrator,
+        inflight_orchestrator,
+        annealing_builds,
+        collect_builds,
+        history_builds,
+        after_builds,
+        crit_fail,
+        non_crit_fail,
+        process_child,
+        follow_on_orchestrator,
     ]
 
     def _ctp_sched_resp(build_id):
@@ -332,10 +324,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     id1 = 1234
     id2 = 4321
     ctp_normal = self.m.buildbucket.simulated_schedule_output(
-        _ctp_sched_resp(id1),
-        'run tests.schedule tests.schedule hardware tests.'
-        'schedule skylab tests v2.buildbucket.schedule')
-    ctp_bisect = self.m.buildbucket.simulated_schedule_output(
         _ctp_sched_resp(id1),
         'run tests.schedule tests.schedule hardware tests.'
         'schedule skylab tests v2.buildbucket.schedule')
@@ -368,9 +356,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                 'htarget.hw.some-other-suite',
             ])
     ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
-    ctp_bisect += self.m.buildbucket.simulated_collect_output(
-        [_skylab_resp(id1, suite_names=['kip.hw.bvt-cq'])],
-        'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
     ctp_failure += self.m.buildbucket.simulated_collect_output([
         _skylab_resp(
             id2, suite_names=[
@@ -398,5 +383,5 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ctp_failure += self.m.buildbucket.simulated_collect_output(
         [], 'run tests.collect tests.collect tast GCE tests')
 
-    values.extend([ctp_normal, ctp_bisect, ctp_failure])
+    values.extend([ctp_normal, ctp_failure])
     return _ret(*values)

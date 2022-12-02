@@ -350,13 +350,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "set BISECT_BUILDER",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@BISECT_BUILDER@\"coral-bisect\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",
