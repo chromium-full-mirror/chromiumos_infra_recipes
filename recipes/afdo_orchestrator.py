@@ -9,8 +9,10 @@ All builders run against the same source tree.
 """
 
 from recipe_engine import post_process
-
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 from PB.chromiumos.common import ArtifactsByService
+from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
 
 DEPS = [
@@ -24,14 +26,15 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = AfdoOrchestratorProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi,
+             properties: AfdoOrchestratorProperties) -> result_pb2.RawResult:
   with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api, properties)
     return api.orch_menu.create_recipe_result()
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
 
   # Run the child builders.
   api.orch_menu.plan_and_run_children()
@@ -74,7 +77,7 @@ def DoRunSteps(api, properties):
   api.orch_menu.run_follow_on_orchestrator()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   data = api.orch_menu.standard_test_data(
       extra_output_properties=dict(

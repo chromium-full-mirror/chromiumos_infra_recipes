@@ -5,8 +5,14 @@
 
 """Recipe for building an AFDO benchmark profile."""
 
+from typing import List, Optional
+
 from google.protobuf.json_format import MessageToDict
 
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
 from PB.recipes.chromeos.afdo_process import AfdoProcessProperties
 
@@ -22,14 +28,15 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = AfdoProcessProperties
 
 
-def RunSteps(api, properties):  # pylint: disable=inconsistent-return-statements
+def RunSteps(api: RecipeApi, properties: AfdoProcessProperties):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot() as is_relevant:
     if is_relevant:
-      return DoRunSteps(api, config, properties)
+      DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, config, properties):
+def DoRunSteps(api: RecipeApi, config: BuilderConfig,
+               properties: AfdoProcessProperties):
   # If we received any extra input_artifacts, add them to the values
   # from the config.
   config.artifacts.artifacts_info.toolchain.input_artifacts.extend(
@@ -47,10 +54,12 @@ def DoRunSteps(api, config, properties):
   api.build_menu.upload_artifacts(config)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def test(name, builder='benchmark-afdo-process', input_artifacts=None,
-           artifact_pointless=False, **kwargs):
+  def test(name: str, builder: str = 'benchmark-afdo-process',
+           input_artifacts: Optional[List[
+               ArtifactsByService.Toolchain.ArtifactInfo]] = None,
+           artifact_pointless: bool = False, **kwargs) -> TestData:
     kwargs['builder'] = builder
 
     afdo_props = AfdoProcessProperties(artifact_build=True)

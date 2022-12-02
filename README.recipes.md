@@ -8861,7 +8861,7 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#16): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/afdo_orchestrator.py#18): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -8869,20 +8869,20 @@ Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#34)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#37)(api: RecipeApi, properties: AfdoOrchestratorProperties):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#29)(api: RecipeApi, properties: AfdoOrchestratorProperties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
-[DEPS](/recipes/afdo_process.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
+[DEPS](/recipes/afdo_process.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building an AFDO benchmark profile.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_process.py#32)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_process.py#38)(api: RecipeApi, config: BuilderConfig, properties: AfdoProcessProperties):**
 
-&mdash; **def [RunSteps](/recipes/afdo_process.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipes/afdo_process.py#31)(api: RecipeApi, properties: AfdoProcessProperties):**
 ### *recipes* / [analysis\_service:examples/full](/recipe_modules/analysis_service/examples/full.py)
 
 [DEPS](/recipe_modules/analysis_service/examples/full.py#15): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
