@@ -7,16 +7,21 @@
 
 from collections import OrderedDict
 import contextlib
+from typing import Dict, Generator, List, Optional, Tuple
 import six
 
+from recipe_engine import post_process
+from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import BuildPredicate
 from PB.go.chromium.org.luci.led.job import job as job_pb2
 from PB.recipes.chromeos.test_recipes import TestRecipesProperties
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.recipe_engine.led.api import LedApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -48,14 +53,14 @@ PROJECT = 'chromeos'
 BUCKET = 'staging'
 
 
-class VerifierRunInfo(object):
+class VerifierRunInfo:
   """All of the information about a verifier."""
 
-  def __init__(self, verifier):
+  def __init__(self, verifier: TestRecipesProperties.Verifier):
     """Collect all of the state for a verifier in one place.
 
     Args:
-      verifier (TestRecipesProperties.Verifier): The verifier.
+      verifier: The verifier.
     """
     self.verifier = verifier
     self.skipped = False
@@ -64,19 +69,20 @@ class VerifierRunInfo(object):
     self.swarming_result = None
 
   @property
-  def name(self):
+  def name(self) -> str:
     return self.verifier.name
 
   @property
-  def critical(self):
+  def critical(self) -> bool:
     return self.verifier.critical
 
   @property
-  def always_launch(self):
+  def always_launch(self) -> bool:
     return self.verifier.always_launch
 
 
-def _verifier(name, critical=False, always_launch=False):
+def _verifier(name, critical: bool = False,
+              always_launch: bool = False) -> TestRecipesProperties.Verifier:
   """Return a TestRecipesProperties.Verifier."""
   return TestRecipesProperties.Verifier(name=name, critical=critical,
                                         always_launch=always_launch)
@@ -105,11 +111,11 @@ SKIP_BUILDERS_FOOTER = 'Test-Recipes-Skip-Builder'
 
 
 @contextlib.contextmanager
-def _checkout_recipes_repo(api):
+def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
   """Yields a context where the cwd is the root of the recipes repo.
 
   Args:
-    * api (object): See RunSteps documentation.
+    api: See RunSteps documentation.
   """
   # Just use a temporary dir for the checkout, as it is small. Caching is
   # probably not worth the complexity (because changes are patched in).
@@ -137,11 +143,11 @@ def _checkout_recipes_repo(api):
     yield
 
 
-def _apply_gerrit_changes(api):
+def _apply_gerrit_changes(api: RecipeApi) -> None:
   """Cherry-picks the gerrit changes for the build into the cwd.
 
   Args:
-    * api (object): See RunSteps documentation.
+    api: See RunSteps documentation.
   """
   with api.step.nest('apply gerrit changes'):
     patch_sets = api.gerrit.fetch_patch_sets([
@@ -155,12 +161,12 @@ def _apply_gerrit_changes(api):
       api.git.cherry_pick(commit_id, infra_step=False)
 
 
-def _get_last_successful_build(api, builder):
+def _get_last_successful_build(api: RecipeApi, builder: str) -> build_pb2.Build:
   """Find the most recent successful build for 'builder'.
 
   Args:
-    * api (object): See RunSteps documentation.
-    * builder (string): The name of the builder to search for.
+    api: See RunSteps documentation.
+    builder: The name of the builder to search for.
   Returns:
     A Build proto.
   Raises:
@@ -183,7 +189,8 @@ def _get_last_successful_build(api, builder):
   return successful_builds[0]
 
 
-def _launch_verifiers(api, verifiers, head):
+def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
+                      head: str) -> Dict[str, VerifierRunInfo]:
   """Launch verifiers with recipe changes patched in.
 
   Verifiers are only launched if the files in the patched changes affect the
@@ -192,12 +199,12 @@ def _launch_verifiers(api, verifiers, head):
   modules it depends on, and the .gitattributes file in the root of the repo.
 
   Args:
-    * api (object): See RunSteps documentation.
-    * verifiers (dict{name:VerifierRunInfo): Verifiers to consider.
-    * head (str): The HEAD commit before applying patches.
+    api: See RunSteps documentation.
+    verifiers:VerifierRunInfo): Verifiers to consider.
+    head: The HEAD commit before applying patches.
 
   Returns:
-    A list of led.LedLaunchData.
+    verifiers dict, mutated to include led and launch results.
   """
   with api.step.nest('analyze and launch builders') as launch_pres:
     results = []
@@ -209,7 +216,7 @@ def _launch_verifiers(api, verifiers, head):
       affected_files_pres.logs['affected files'] = affected_files
 
     # TODO(crbug/1012763) small bots do not work well with led launch.
-    def _bad_bot_size(swarm):
+    def _bad_bot_size(swarm: build_pb2.BuildInfra.Swarming) -> bool:
       for d in swarm.task_dimensions:
         if d.key == "bot_size":
           if d.value and d.value != "small":
@@ -283,17 +290,18 @@ def _launch_verifiers(api, verifiers, head):
     return verifiers
 
 
-def _extract_host_name(api, led_results):
+def _extract_host_name(api: RecipeApi,
+                       led_results: List[LedApi.LedLaunchData]) -> str:
   """Extract host name from the results of 'led launch'.
 
   Asserts there is only one host name.
 
   Args:
-    * api (object): See RunSteps documentation.
-    * led_results (list[led.LedLaunchData])
+    api: See RunSteps documentation.
+    led_results: List of led results.
 
   Returns:
-    A str.
+    The swarming host name.
   """
   with api.step.nest('extract host name'):
     host_names = set(result.swarming_hostname for result in led_results)
@@ -307,15 +315,16 @@ def _extract_host_name(api, led_results):
     return list(host_names)[0]
 
 
-def _collect_results(api, verifiers):
+def _collect_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]
+                    ) -> Dict[str, VerifierRunInfo]:
   """Collect results from swarming, blocking if necessary.
 
   Args:
-    api (object): See RunSteps documentation.
-    verifiers (dict{name:VerifierRunInfo}): The verifiers
+    api: See RunSteps documentation.
+    verifiers: The verifiers.
 
   Returns:
-    A list of swarming TaskResult.
+    verifiers dict, mutated to include swarming results.
   """
   verifier_by_id = OrderedDict((v.led_launch_result.task_id, v)
                                for v in verifiers.values()
@@ -330,15 +339,17 @@ def _collect_results(api, verifiers):
     return verifiers
 
 
-def _update_skipped_verifiers(api, verifiers):
+def _update_skipped_verifiers(api: RecipeApi,
+                              verifiers: Dict[str, VerifierRunInfo]
+                             ) -> Dict[str, VerifierRunInfo]:
   """Return a subset of 'builders' that are not skipped by CL footers.
 
   Args:
-    * api (object): See RunSteps documentation.
-    * verifiers (dict{name:VerifierRunInfo}): A dictionary of verifiers.
+    api: See RunSteps documentation.
+    verifiers: A dictionary of verifiers.
 
   Returns:
-    (dict): updated verifiers.
+    verifiers dict, mutated to mark skipped builders.
   """
   with api.step.nest('get non-skipped builders') as presentation:
     # TODO(crbug/1039875): tryserver.get_footer only supports one CL.  When a
@@ -368,12 +379,13 @@ def _update_skipped_verifiers(api, verifiers):
     return verifiers
 
 
-def _analyze_swarming_results(api, verifiers):
+def _analyze_swarming_results(api: RecipeApi,
+                              verifiers: Dict[str, VerifierRunInfo]):
   """Raise a StepFailure if any swarming task was unsuccessful.
 
   Args:
-    api(object): See RunSteps documentation.
-    verifiers (dict{name:VerifierRunInfo}): The verifiers.
+    api: See RunSteps documentation.
+    verifiers: The verifiers.
 
   Raises:
     StepFailure
@@ -404,7 +416,7 @@ def _analyze_swarming_results(api, verifiers):
     presentation.step_text = 'all tasks succeeded'
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestRecipesProperties) -> None:
   api.step.nest('set up')
   verifier_list = properties.verifiers or DEFAULT_VERIFIERS
   verifiers = OrderedDict(((v.name, VerifierRunInfo(v)) for v in verifier_list))
@@ -430,27 +442,27 @@ def RunSteps(api, properties):
     _analyze_swarming_results(api, verifiers)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
-  def launch_step_name(builder, step_name):
+  def launch_step_name(builder: str, step_name: str) -> str:
     """Get the full name of a step used during the launch of a builder.
 
     Args:
-      * builder (str): The name of the builder.
-      * step_name (str): The name of the step (e.g. 'led launch').
+      builder: The name of the builder.
+      step_name: The name of the step (e.g. 'led launch').
 
     Returns:
-      A str
+      The full name of the step.
     """
     return 'analyze and launch builders.analyze and launch {}.{}'.format(
         builder, step_name)
 
-  def get_non_skipped_builders_test_data(skipped_builders=None):
+  def get_non_skipped_builders_test_data(
+      skipped_builders: Optional[List[str]] = None) -> Tuple[TestData]:
     """Get step data for the 'gerrit changes' and 'parse description' steps.
 
     Args:
-      * skipped_builders (list[str] or None): If not none, a list of builders to
-          skip with a CL footer.
+      skipped_builders: A list of builders to skip with a CL footer, or None.
 
     Returns:
       A tuple of TestData objects.
@@ -485,7 +497,8 @@ def GenTests(api):
                         if skipped_builders else {}))
     return ret
 
-  def _mock_edit(job, cmd, _cwd):
+  def _mock_edit(job: job_pb2.Definition, cmd: List[str],
+                 _cwd: Path) -> job_pb2.Definition:
     """Handler for `led edit -d` (set task_dimension).
 
     We use this to mock setting the bot_size in the recipe.
@@ -502,7 +515,8 @@ def GenTests(api):
     dim.value = v
     return job
 
-  def buildbucket_search_and_get_build(builder, recipe_name, fake_id):
+  def buildbucket_search_and_get_build(builder: str, recipe_name: str,
+                                       fake_id: int) -> TestData:
     fake_build = job_pb2.Definition()
     build_proto = fake_build.buildbucket.bbagent_args.build
     build_proto.input.properties['recipe'] = recipe_name
@@ -519,12 +533,12 @@ def GenTests(api):
     ret += api.led.mock_edit(_mock_edit, cmd_filter=['edit', '-d'])
     return ret + api.led.mock_get_build(fake_build, fake_id)
 
-  def recipe_analyze_test_data(builder, recipes):
+  def recipe_analyze_test_data(builder: str, recipes: List[str]) -> TestData:
     """Get step data for a 'recipes.py analyze' command.
 
     Args:
-      * builder (str): The name of the builder.
-      * recipes (list[str]): The recipes to return in the Output proto.
+      builder: The name of the builder.
+      recipes: The recipes to return in the Output proto.
 
     Returns:
       A TestData object.
@@ -533,7 +547,7 @@ def GenTests(api):
         launch_step_name(builder, 'recipe analyze'),
         api.json.output({'recipes': recipes}))
 
-  def collect_results_failed_test_data():
+  def collect_results_failed_test_data() -> TestData:
     """Get step data for failures in a 'swarming.collect' command.
 
     Returns:
@@ -547,21 +561,21 @@ def GenTests(api):
             api.swarming.task_result(id='fake-id-2', name="Another task")
         ]))
 
-  def try_build(project, bucket, builder):
+  def try_build(project: str, bucket: str, builder: str) -> TestData:
     """Return a tryb_build for the recipes repo.
 
     Returns:
-      recipe_test_api.TestData object.
+      A TestData object.
     """
     return api.buildbucket.try_build(project=project, bucket=bucket,
                                      builder=builder, git_repo=RECIPE_REPO_URL,
                                      priority=30)
 
-  def two_cl_try_build(project, bucket, builder):
+  def two_cl_try_build(project: str, bucket: str, builder: str) -> TestData:
     """Return a try_build with two CLs attached to it.
 
     Returns:
-      recipe_test_api.TestData object.
+      A TestData object.
     """
     msg = api.buildbucket.try_build_message(project, bucket, builder,
                                             git_repo=RECIPE_REPO_URL)
@@ -573,11 +587,12 @@ def GenTests(api):
     ])
     return api.buildbucket.build(msg)
 
-  def two_cl_try_build_with_other_repo(project, bucket, builder):
+  def two_cl_try_build_with_other_repo(project: str, bucket: str,
+                                       builder: str) -> TestData:
     """Return a try_build with two CLs attached to it.
 
     Returns:
-      recipe_test_api.TestData object.
+      A TestData object.
     """
     msg = api.buildbucket.try_build_message(project, bucket, builder,
                                             git_repo=RECIPE_REPO_URL)
