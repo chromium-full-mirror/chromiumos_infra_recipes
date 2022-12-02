@@ -2345,7 +2345,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
+      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
@@ -2366,6 +2366,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@go/bbid/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
   },
@@ -2975,7 +2976,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
+      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
@@ -2996,6 +2997,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@go/bbid/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
@@ -3605,7 +3607,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
+      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
@@ -3626,6 +3628,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@go/bbid/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
     ]
   },
@@ -4235,7 +4238,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.",
+      "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_4"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
@@ -4256,6 +4259,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_4@Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@go/bbid/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_4@@@"
     ]
   },

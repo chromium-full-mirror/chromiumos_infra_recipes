@@ -419,11 +419,16 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
                 request, infra_step=True)
             binhost_data = self.m.file.read_text('read binhost conf',
                                                  binhost_path)
+            lines = [
+                'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
+                'go/bbid/%s' % self._build_id
+            ]
+
             try:
-              self.m.git_txn.update_ref_write_file(
-                  project.remote,
-                  'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
-                  binhost_path, binhost_data, automerge=True, ref=branch)
+              self.m.git_txn.update_ref_write_file(project.remote,
+                                                   '\n'.join(lines),
+                                                   binhost_path, binhost_data,
+                                                   automerge=True, ref=branch)
               self.m.git.checkout(current_commit)
               return
             except recipe_api.StepFailure as ex:
