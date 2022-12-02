@@ -10,6 +10,8 @@ from google.protobuf import json_format as jsonpb
 
 from PB.recipes.chromeos.robocrop import RoboCropProperties
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/properties',
@@ -25,7 +27,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = RoboCropProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: RoboCropProperties):
   application = properties.application or 'ChromeOS'
 
   with api.deferrals.raise_exceptions_at_end(), api.step.nest(
@@ -101,7 +103,7 @@ def RunSteps(api, properties):
       raise swarming_fetch_error
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('basic', api.properties(commit_changes=True))
   yield api.test('no-commit-changes', api.properties(commit_changes=False))
   yield api.test('basic-chrome',
