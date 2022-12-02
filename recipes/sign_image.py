@@ -16,6 +16,7 @@
 
 import os
 import re
+from typing import Any, OrderedDict
 import string
 
 from PB.chromiumos import sign_image as sign_image_os
@@ -27,6 +28,9 @@ from PB.recipes.chromeos.sign_image import SignImageProperties
 from PB.recipe_engine import result as result_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import post_process
+from recipe_engine.internal.test.magic_check_fn import Checker
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'depot_tools/gsutil',
@@ -49,35 +53,35 @@ PROPERTIES = SignImageProperties
 
 class _BucketBase(object):
 
-  def __init__(self, bucket, base):
+  def __init__(self, bucket: str, base: str):
     self.bucket = bucket.strip('/')
     self.base = base.lstrip('/')
 
-  def gs_path(self, *args):
+  def gs_path(self, *args) -> str:
     """Returns the full gs:// path for |name|."""
     path = os.path.join(self.bucket, self.base, *[x.strip('/') for x in args])
     return 'gs://' + path
 
-  def rel_path(self, path=None):
+  def rel_path(self, path: str) -> str:
     """Returns the relative path for |name|.
 
     Args:
-      path (str): gs://url to remove the prefix from.
+      path: gs://url to remove the prefix from.
 
     Returns:
-      str: path relative to the bucket prefix.
+      Path relative to the bucket prefix.
     """
     assert path.startswith(self.gs_path())
     return path[len(self.gs_path()):]
 
-  def path_in_bucket(self, path):
+  def path_in_bucket(self, path: str) -> bool:
     """Is this gs:// path in this bucket/base.
 
     Args:
-      path (str): gs:// url to check.
+      path: gs:// url to check.
 
     Returns:
-      bool: whether the url is in this bucket/base.
+      Whether the url is in this bucket/base.
     """
     return path.startswith(self.gs_path())
 
@@ -113,7 +117,7 @@ _channel_to_name = {
 }
 
 
-def _get_trigger_file_contents(api):
+def _get_trigger_file_contents(api: RecipeApi) -> str:
   """Generate trigger file contents.
 
   The signer does not actually use the contents of the trigger file, it just
@@ -121,7 +125,7 @@ def _get_trigger_file_contents(api):
   info about the build that generated it.
 
   Args:
-    api (RecipesApi): the recipes api to use.
+    api: the recipes api to use.
 
   Returns:
     A raw string of the file contents.
@@ -146,7 +150,7 @@ def _get_trigger_file_contents(api):
   return contents.format(**values)
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: SignImageProperties):
   """Run steps."""
   api.easy.log_parent_step()
 
@@ -290,13 +294,15 @@ def RunSteps(api, properties):
   return None
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def props(**kwargs):
+  def props(**kwargs) -> SignImageProperties:
     return api.properties(SignImageProperties(**kwargs))
 
-  def check_build_output(check, steps, output_prop, value):
-    check(post_process.GetBuildProperties(steps).get(output_prop) == value)
+  def check_build_output(check: Checker, steps: OrderedDict, output_prop: str,
+                         value: Any) -> bool:
+    return check(
+        post_process.GetBuildProperties(steps).get(output_prop) == value)
 
   yield api.test('basic')
 
