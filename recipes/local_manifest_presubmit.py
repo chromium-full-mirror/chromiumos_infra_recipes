@@ -4,14 +4,18 @@
 # found in the LICENSE file.
 
 """Runs the presubmit for a project with checkout per local manifest."""
+from typing import List
 
-from recipe_engine import post_process
-
+from PB.chromiumos.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.project_mgmt.project import LocalManifest
 from PB.recipes.chromeos.local_manifest_presubmit import (
     LocalManifestPresubmitProperties)
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 PROPERTIES = LocalManifestPresubmitProperties
 
@@ -37,7 +41,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 # local manifest, but that is optional now.
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: LocalManifestPresubmitProperties):
   # Because we use workspace_util to handle the source checkout, we need to call
   # configure_builder even though we don't have a builder config.
   commit = api.src_state.gitiles_commit
@@ -112,9 +116,11 @@ def RunSteps(api, properties):
                  stdout=api.raw_io.output(name='stdout', add_output_log=True))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def project_config_cq_build(api, extra_changes=None):
+  def project_config_cq_build(api: RecipeTestApi,
+                              extra_changes: List[GerritChange] = None
+                             ) -> Build:
     """Returns a sample buildbucket project config cq build"""
     message = api.buildbucket.try_build_message(
         project='chromeos',
@@ -125,7 +131,7 @@ def GenTests(api):
     message.input.gerrit_changes.extend(extra_changes or [])
     return api.buildbucket.build(message)
 
-  def checked_out_projects(api):
+  def checked_out_projects(api: RecipeTestApi) -> TestData:
     """Returns StepData for the command used to find checked out projects.
 
     Note that the project name lines up with the project specified by
@@ -135,7 +141,7 @@ def GenTests(api):
         'cherry-pick gerrit changes.apply gerrit patch sets',
         [dict(project='project1')])
 
-  def presubmit_with_output():
+  def presubmit_with_output() -> TestData:
     """Returns StepData for a presubmit step with stdout."""
     return api.step_data('prepare and execute presubmit.presubmit_support',
                          stdout=api.raw_io.output('Test stdout from presubmit'))

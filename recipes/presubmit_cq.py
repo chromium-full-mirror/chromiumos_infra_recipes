@@ -9,7 +9,9 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_cq import PresubmitCqProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -29,7 +31,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = PresubmitCqProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: PresubmitCqProperties):
   commit = api.buildbucket.build.input.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
   input_props = {}
@@ -95,7 +97,7 @@ def RunSteps(api, properties):
         api.failures.get_build_failures([output]))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   props = PresubmitCqProperties(runhooks=True, timeout_s=3)
 

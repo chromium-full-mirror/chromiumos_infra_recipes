@@ -13,24 +13,28 @@ caller is responsible for ensuring this is only invoked in contexts
 where the necessary license(s) have been obtained.
 """
 
-from collections import namedtuple
 import json
 import re
+from collections import namedtuple
+from typing import Dict, Optional
 
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
+from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.build_parallels_image import BuildParallelsImageProperties
 from PB.recipes.chromeos.uprev_parallels_pin import UprevParallelsPinProperties
-
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -68,7 +72,7 @@ BuildPath = namedtuple('BuildPath', ['bucket', 'path'])
 VersionPin = namedtuple('VersionPin', ['version', 'test_image'])
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: UprevParallelsPinProperties):
   with api.step.nest('validate properties') as presentation:
     if not properties.HasField('package_info'):
       raise StepFailure('must set package_info')
@@ -101,17 +105,19 @@ def RunSteps(api, properties):
     commit_pin_uprev(api, properties, package, new_pin)
 
 
-def build_os_with_uprev(api, properties, package, upstream_version):
+def build_os_with_uprev(api: RecipeApi, properties: UprevParallelsPinProperties,
+                        package: PackageInfo,
+                        upstream_version: str) -> Optional[BuildPath]:
   """Builds a version of Chrome OS with given version of the Parallels package.
 
   The build will still contain an old VM image for testing.
 
   Args:
-    package (chromiumos.PackageInfo): the identify of the Parallels package.
-    upstream_version (str): the version of Parallels to include in the build.
+    package: the identify of the Parallels package.
+    upstream_version: the version of Parallels to include in the build.
 
   Returns:
-    BuildPath: where the build artifacts were uploaded.
+    Where the build artifacts were uploaded.
   """
   with api.step.nest(_BUILD_STEP_NAME) as presentation:
     commit = get_latest_green_snapshot_commit(api,
@@ -149,15 +155,16 @@ def build_os_with_uprev(api, properties, package, upstream_version):
         return BuildPath(config.artifacts.artifacts_gs_bucket, gs_path)
 
 
-def uprev_package(api, properties, package, to_version):
+def uprev_package(api: RecipeApi, properties: UprevParallelsPinProperties,
+                  package: PackageInfo, to_version: str):
   """Uprevs the Parallels package to the given version.
 
   The Parallels package will be upreved on the local checkout to the given
   version.
 
   Args:
-    package (chromiumos.PackageInfo): the package to uprev.
-    to_version (str): the version to uprev to.
+    package: the package to uprev.
+    to_version: the version to uprev to.
   """
   package_title = api.naming.get_package_title(package)
   with api.step.nest('try uprev {}'.format(package_title)) as presentation:
@@ -183,19 +190,20 @@ def uprev_package(api, properties, package, to_version):
     presentation.logs['uprev versions'] = [
         response.version for response in response.responses
     ]
-    return
 
 
 @exponential_retry(retries=2)
-def build_vm_image(api, properties, artifacts_path, parallels_version):
+def build_vm_image(api: RecipeApi, properties: UprevParallelsPinProperties,
+                   artifacts_path: BuildPath,
+                   parallels_version: str) -> Dict[str, str]:
   """Builds a new VM image for testing.
 
   Args:
-    artifacts_path (BuildPath): The location of build output artifacts.
-    parallels_version (str): The Parallels version included in the given build.
+    artifacts_path: The location of build output artifacts.
+    parallels_version: The Parallels version included in the given build.
 
   Returns:
-    dict: The details of the new test image.
+    The details of the new test image.
   """
   with api.step.nest(_IMAGE_STEP_NAME) as presentation:
     presentation.links['destination directory'] = '{}/{}/{}'.format(
@@ -254,13 +262,13 @@ def build_vm_image(api, properties, artifacts_path, parallels_version):
     return image_details
 
 
-def commit_pin_uprev(api, properties, package, new_version_pin):
+def commit_pin_uprev(api: RecipeApi, properties: UprevParallelsPinProperties,
+                     package: PackageInfo, new_version_pin: VersionPin):
   """Commits and uploads the uprev of the version-pin file.
 
   Args:
-    package (chromiumos.PackageInfo): the package to include in the
-        commit message.
-    new_version_pin (VersionPin): the new version pin data.
+    package: the package to include in the commit message.
+    new_version_pin: the new version pin data.
   """
   with api.step.nest('update VERSION-PIN') as presentation:
     with api.cros_source.checkout_overlays_context():
@@ -296,11 +304,12 @@ def commit_pin_uprev(api, properties, package, new_version_pin):
               'uploaded CL'] = api.gerrit.parse_gerrit_change_url(change)
 
 
-def get_upstream_version(api, properties):
+def get_upstream_version(api: RecipeApi,
+                         properties: UprevParallelsPinProperties) -> str:
   """Gets the latest version of Parallels from the upstream bucket.
 
   Returns:
-    string: the latest upstream version of Parallels.
+    The latest upstream version of Parallels.
   """
   with api.step.nest('find latest upstream version') as presentation:
     presentation.links['upstream directory'] = '{}/{}/{}'.format(
@@ -336,14 +345,15 @@ def get_upstream_version(api, properties):
     return result
 
 
-def get_version_pin(api, properties):
+def get_version_pin(api: RecipeApi,
+                    properties: UprevParallelsPinProperties) -> VersionPin:
   """Reads and returns the content of the VERSION-PIN file.
 
   Before calling this function, ensure a synced version of the source must
   have been checked out.
 
   Returns:
-    VersionPin: the pinned version data.
+    The pinned version data.
   """
   with api.step.nest('read pinned version file') as presentation:
     version_path = get_version_path(api, properties)
@@ -359,14 +369,15 @@ def get_version_pin(api, properties):
     return result
 
 
-def set_version_pin(api, properties, new_version):
+def set_version_pin(api: RecipeApi, properties: UprevParallelsPinProperties,
+                    new_version: VersionPin):
   """Sets the content of the VERSION-PIN file.
 
   Before calling this function, ensure a synced version of the source must
   have been checked out.
 
   Args:
-    new_version (VersionPin): the new version pin data.
+    new_version: the new version pin data.
   """
   with api.step.nest('write pinned version file'):
     version_path = get_version_path(api, properties)
@@ -377,19 +388,19 @@ def set_version_pin(api, properties, new_version):
         }, indent=2)
 
 
-def get_version_path(api, properties):
+def get_version_path(api: RecipeApi, properties: UprevParallelsPinProperties):
   """Gets the path of the VERSION-PIN file."""
   return api.cros_source.workspace_path.join(properties.version_file)
 
 
-def is_version_after(version, previous_version):
+def is_version_after(version: str, previous_version: str) -> bool:
   """Returns if version occurs logically after pervious_version.
 
   For example, is_version_after('1.0.3.1', '1.0.2.2') returns true.
 
   Args:
-    version (str): The version to compare.
-    previous_version (str): The previous version to compare with.
+    version: The version to compare.
+    previous_version: The previous version to compare with.
   """
   parts = list(map(int, version.split('.')))
   previous_parts = list(map(int, previous_version.split('.')))
@@ -397,12 +408,13 @@ def is_version_after(version, previous_version):
   return parts > previous_parts
 
 
-def get_latest_green_snapshot_commit(api, build_target):
+def get_latest_green_snapshot_commit(api: RecipeApi,
+                                     build_target: str) -> GitilesCommit:
   """Finds the latest green snapshot build for the given build target
   and returns the corresponding manifest gitiles (input) commit.
 
   Args:
-    build_target (str): The name of the build target."""
+    build_target: The name of the build target."""
   with api.step.nest(_SNAPSHOT_STEP_NAME) as presentation:
     fields = frozenset({'id', 'builder', 'status', 'input'})
     # Returns the latest green snapshot build (limited to
@@ -429,7 +441,7 @@ def get_latest_green_snapshot_commit(api, build_target):
     return builds[0].input.gitiles_commit
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   good_props = {
       '$chromeos/cros_relevance': {
         'force_postsubmit_relevance': True

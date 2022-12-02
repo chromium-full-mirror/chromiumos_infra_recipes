@@ -4,9 +4,15 @@
 # found in the LICENSE file.
 
 """Recipe for running tricium on CLs."""
+from typing import Tuple
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange, Trinary
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -32,7 +38,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   with api.bot_cost.build_cost_context():
 
     # This builder should not usually block CQ.
@@ -48,7 +54,7 @@ def RunSteps(api):
     _FullCheckout(api)
 
 
-def _FullCheckout(api):
+def _FullCheckout(api: RecipeApi):
   gerrit_changes = api.src_state.gerrit_changes
   is_staging = api.cros_infra_config.is_staging
 
@@ -138,9 +144,9 @@ def _FullCheckout(api):
     api.tricium.run_legacy(analyzers, project_path, files, commit_message)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
-  def test_builder(**kwargs):
+  def test_builder(**kwargs) -> Tuple[Build, TestData]:
     """Generate a test build."""
     kwargs.setdefault('builder', 'infra-presubmit')
     kwargs.setdefault('cq', True)

@@ -7,6 +7,8 @@
 
 from PB.recipes.chromeos.project_buildspec import ProjectBuildspecProperties
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/cipd',
@@ -26,7 +28,7 @@ PROPERTIES = ProjectBuildspecProperties
 # See go/per-project-buildspecs for more context.
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: ProjectBuildspecProperties):
   with api.bot_cost.build_cost_context():
     with api.step.nest("create program/project buildspec(s)"):
       cmd = ["project-buildspec"]
@@ -38,7 +40,7 @@ def RunSteps(api, properties):
       api.manifest_doctor(cmd)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic',
       api.properties(

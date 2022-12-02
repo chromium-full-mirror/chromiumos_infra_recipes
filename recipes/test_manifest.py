@@ -10,6 +10,8 @@ import contextlib
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.test_manifest import TestManifestProperties
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -31,7 +33,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TestManifestProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestManifestProperties):
   test_branch_projects = properties.test_branch_projects or [
       api.src_state.internal_manifest.project
   ]
@@ -112,7 +114,7 @@ def RunSteps(api, properties):
               push=False)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   internal_exists = api.path.exists(
       api.src_state.workspace_path.join(
           'src/chromeos/manifest-internal/default.xml'))

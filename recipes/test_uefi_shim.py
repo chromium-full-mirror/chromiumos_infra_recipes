@@ -6,8 +6,13 @@
 """Recipe to test the UEFI shim for the reven board."""
 
 import hashlib
+from typing import List
+
+from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import post_process
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -29,7 +34,7 @@ REPO_URL = 'https://chromium.googlesource.com/chromiumos/shim-review'
 SHIM_FILE_NAMES = ['shimia32.efi', 'shimx64.efi']
 
 
-def _calc_sha256_digest(api, repo_dir, name):
+def _calc_sha256_digest(api: RecipeApi, repo_dir: Path, name: str) -> str:
   """Calculate the SHA256 digest for the contents of the file at `name`."""
   # The shim binaries are fairly small (currently less than one MB) so
   # no need to chunk the read.
@@ -38,12 +43,12 @@ def _calc_sha256_digest(api, repo_dir, name):
   return hashlib.sha256(content).hexdigest()
 
 
-def _get_shim_sha256_digests(api, repo_dir):
+def _get_shim_sha256_digests(api: RecipeApi, repo_dir: Path) -> List[str]:
   """Calculate the SHA256 digests for the shim files as a list of strings."""
   return [_calc_sha256_digest(api, repo_dir, name) for name in SHIM_FILE_NAMES]
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   repo_dir = api.path.mkdtemp()
   api.git.clone(REPO_URL, target_path=repo_dir, timeout_sec=3 * 60)
 
@@ -76,7 +81,7 @@ def RunSteps(api):
       raise StepFailure('shim binaries are stale')
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'success', api.buildbucket.try_build(project='chromeos',
                                            git_repo=REPO_URL),

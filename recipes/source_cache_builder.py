@@ -5,14 +5,15 @@
 
 """Recipe for generating ChromeOS source cache snapshots."""
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-
-from PB.recipe_engine import result as result_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
 from PB.recipes.chromeos.source_cache_builder import (
     SourceCacheBuilderProperties)
-from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -41,7 +42,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = SourceCacheBuilderProperties
 
 
-def _determine_if_full_sync(api, fsm):
+def _determine_if_full_sync(api: RecipeApi, fsm: int) -> bool:
   """Inspect the trigger properties to determine if we full sync."""
   with api.step.nest('determine if full sync') as pres:
     if fsm == 0:
@@ -63,7 +64,7 @@ def _determine_if_full_sync(api, fsm):
     return False
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
   full_sync = _determine_if_full_sync(api, properties.full_sync_modulo)
   api.easy.set_properties_step(full_sync=full_sync)
   if full_sync:
@@ -180,7 +181,7 @@ def RunSteps(api, properties):
           step_failures=step_failures))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   yield api.test('basic')
 

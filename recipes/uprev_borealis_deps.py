@@ -4,10 +4,16 @@
 # found in the LICENSE file.
 
 """Recipe for upreving Borealis build dependencies."""
+from typing import Optional
 
-from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
+
 from PB.recipes.chromeos.uprev_borealis_deps import (UprevBorealisDepsProperties
                                                     )
+from recipe_engine import post_process
+from recipe_engine.engine_types import StepPresentation
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -32,7 +38,7 @@ GERRIT_CL_REVIEWERS = ['davidriley@google.com', 'pobega@google.com']
 _BOREALIS_REPO_PATH = 'src/platform/borealis/'
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
   with api.build_menu.configure_builder(missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
     api.cros_sdk.create_chroot(version=None, use_image=False, timeout_sec=None)
@@ -41,7 +47,8 @@ def RunSteps(api, properties):
     return DoRunSteps(api, properties)
 
 
-def DoBorealisBuild(api, use_cache=True, skip_termina=False, stage=None):
+def DoBorealisBuild(api: RecipeApi, use_cache: bool = True,
+                    skip_termina: bool = False, stage: Optional[str] = None):
   """Perform a Borealis build_full.
 
   Args:
@@ -67,7 +74,8 @@ def DoBorealisBuild(api, use_cache=True, skip_termina=False, stage=None):
   api.step('Borealis build_full.py', build_command)
 
 
-def _CommitChanges(api, project, commit_message, branch_name=None):
+def _CommitChanges(api: RecipeApi, project: ProjectInfo, commit_message: str,
+                   branch_name: str = None):
   """Commit changes to the Borealis build/ directory.
 
   Args:
@@ -92,7 +100,8 @@ def _CommitChanges(api, project, commit_message, branch_name=None):
     api.git.commit(commit_message)
 
 
-def _CreateCL(api, project, presentation):
+def _CreateCL(api: RecipeApi, project: ProjectInfo,
+              presentation: StepPresentation):
   """Upload Git changes as a Gerrit CL.
 
   Args:
@@ -118,7 +127,9 @@ def _CreateCL(api, project, presentation):
           'Gerrit CL'] = api.gerrit.parse_gerrit_change_url(change)
 
 
-def CommitChangesAndCreateCL(api, step_name, commit_message, presentation):
+def CommitChangesAndCreateCL(api: RecipeApi, step_name: str,
+                             commit_message: str,
+                             presentation: StepPresentation):
   """Create Git commit from changes and upload Gerrit CL.
 
   Args:
@@ -134,7 +145,7 @@ def CommitChangesAndCreateCL(api, step_name, commit_message, presentation):
     _CreateCL(api, project, presentation)
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
   chroot_path = api.cros_source.workspace_path
   borealis_path = chroot_path.join(_BOREALIS_REPO_PATH)
   with api.depot_tools.on_path(), api.context(cwd=borealis_path):
@@ -174,7 +185,7 @@ def DoRunSteps(api, properties):
                                  presentation)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   good_props = {'uprev_arch_mirror': True, 'uprev_pkgbuilds': True}
   yield api.test('basic', api.properties(**good_props),
                  api.post_check(post_process.StatusSuccess))

@@ -11,22 +11,26 @@ localmirror and then modifies the Guest VM's version pin to match this version.
 """
 
 from collections import defaultdict
+from typing import Dict, List
 
-from google.protobuf import json_format, timestamp_pb2
+from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
 from google.protobuf.struct_pb2 import Struct
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.builder_config import BuilderConfig as bc
-
 from PB.go.chromium.org.luci.buildbucket.proto import build as bb_build
 from PB.go.chromium.org.luci.buildbucket.proto \
   import builder_common as bb_builder_common
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        bb_service)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
-from PB.recipes.chromeos.uprev_guest_vm_pin import \
-  (UprevGuestVmPinProperties, VmBoardImage)
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.recipes.chromeos.uprev_guest_vm_pin import UprevGuestVmPinProperties
+from PB.recipes.chromeos.uprev_guest_vm_pin import VmBoardImage
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -58,12 +62,12 @@ _legacy_release_branches = [
 ]
 
 
-def _gs_path(bucket, path):
+def _gs_path(bucket: str, path: str) -> str:
   """Returns the full gs:// path for bucket and path."""
   return 'gs://' + bucket + '/' + path
 
 
-def _version_comparator(a, b):
+def _version_comparator(a: str, b: str) -> bool:
   """ Returns true if version |a| is greater than or equal to |b|
 
   |a| and |b| are expected to be strings of numbers separated by |.|
@@ -73,7 +77,7 @@ def _version_comparator(a, b):
   return a_parts > b_parts
 
 
-def _sanitize_version_number(version):
+def _sanitize_version_number(version: str) -> str:
   """ Removes the R prefix and converts the '- to ebuild compatible '.'
       e.g. R80-1234.0.1 -> 80.1234.0.1
   """
@@ -81,7 +85,7 @@ def _sanitize_version_number(version):
   return sanitized_version.replace('-', '.')
 
 
-def _validate_properties(properties):
+def _validate_properties(properties: UprevGuestVmPinProperties):
   """ Helper function that validates all necessary fields are present in the
       |properties| struct. If they are not, StepFailures are raised.
   """
@@ -106,7 +110,9 @@ def _validate_properties(properties):
       raise StepFailure('must set destination_gs_path for {}'.format(board))
 
 
-def FindPostsubmitBuilds(api, board, version_build_map):
+def FindPostsubmitBuilds(
+    api: RecipeApi, board: str,
+    version_build_map: Dict[str, Dict[str, Dict[str, Build]]]):
   # Find successful builds that started within the last 36 hours. This
   # should cover everything we're interested in, since we run once per
   # day.
@@ -128,7 +134,9 @@ def FindPostsubmitBuilds(api, board, version_build_map):
 
 
 # TODO(b/253353543) Remove code relating to legacy release builds once M102 is no longer supported.
-def FindLegacyReleaseBuilds(api, board, version_build_map):
+def FindLegacyReleaseBuilds(
+    api: RecipeApi, board: str,
+    version_build_map: Dict[str, Dict[str, Dict[str, Build]]]):
   # For release builds we're interested in builds from multiple
   # branches that don't all build equally often, so instead ask for
   # builds more recent then 3 days ago.
@@ -155,7 +163,9 @@ def FindLegacyReleaseBuilds(api, board, version_build_map):
     version_build_map[branch][version][board] = build
 
 
-def FindRubikReleaseBuilds(api, board, version_build_map):
+def FindRubikReleaseBuilds(
+    api: RecipeApi, board: str,
+    version_build_map: Dict[str, Dict[str, Dict[str, Build]]]):
   prefix = '{}-'.format(board)
   for builder in api.buildbucket.list_builders('chromeos', 'release'):
     if not builder.startswith(prefix):
@@ -197,7 +207,9 @@ def FindRubikReleaseBuilds(api, board, version_build_map):
         version_build_map[branch][version][board] = build
 
 
-def CopyPostsubmitImage(api, board, build, vm_property_map, sanitized_version):
+def CopyPostsubmitImage(api: RecipeApi, board: str, build: Build,
+                        vm_property_map: Dict[str, Struct],
+                        sanitized_version: str):
   tmp_dir = api.path.mkdtemp(prefix='archive-staging')
   with api.context(cwd=tmp_dir):
     build_artifact_bucket = str(
@@ -225,7 +237,9 @@ def CopyPostsubmitImage(api, board, build, vm_property_map, sanitized_version):
     api.gsutil.upload("*.tbz", dst_bucket, dst_path)
 
 
-def CopyReleaseImage(api, board, build, vm_property_map, sanitized_version):
+def CopyReleaseImage(api: RecipeApi, board: str, build: Build,
+                     vm_property_map: Dict[str, Struct],
+                     sanitized_version: str):
   build_artifact_path = build.output.properties['artifact_link']
 
   # The gsutil API takes the bucket name and object path as seperate
@@ -253,7 +267,7 @@ def CopyReleaseImage(api, board, build, vm_property_map, sanitized_version):
                   name='copy {} test image'.format(board))
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
   with api.step.nest('validate properties') as presentation:
     _validate_properties(properties)
     presentation.step_text = 'all properties good'
@@ -379,7 +393,7 @@ def RunSteps(api, properties):
           api.gerrit.submit_change(change)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   sludge_properties = json_format.MessageToDict(
       UprevGuestVmPinProperties(
           version_file=('src/private-overlays/project-wilco-private/'
@@ -752,7 +766,7 @@ def GenTests(api):
 
 
 # Helper function to create a set of parameterized buildbucket build objects.
-def _generate_postsubmit_build_set(ids, board):
+def _generate_postsubmit_build_set(ids: List[int], board: str) -> List[Build]:
   builds = []
   for index, bb_id in enumerate(ids):
     build_artifacts = {
@@ -773,7 +787,9 @@ def _generate_postsubmit_build_set(ids, board):
   return builds
 
 
-def _generate_legacy_release_build_set(board, ids_by_branch):
+def _generate_legacy_release_build_set(board: str,
+                                       ids_by_branch: Dict[str, List[int]]
+                                      ) -> List[Build]:
   builds = []
   idx = 1
   for (branch, build_ids) in sorted(ids_by_branch.items()):
@@ -795,7 +811,8 @@ def _generate_legacy_release_build_set(board, ids_by_branch):
   return builds
 
 
-def _generate_rubik_release_build_set(board, branch, ids):
+def _generate_rubik_release_build_set(board: str, branch: str,
+                                      ids: List[int]) -> List[Build]:
   builds = []
   for idx, build_id in enumerate(ids, 1):
     input_ = Struct()

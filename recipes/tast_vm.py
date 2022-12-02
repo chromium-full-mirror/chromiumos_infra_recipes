@@ -9,6 +9,8 @@
 """
 
 from PB.recipes.chromeos.tast_vm import TastVmProperties
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/path',
@@ -24,7 +26,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TastVmProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TastVmProperties):
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
   api.tast_exec.download_tast(properties.build_payload, test_artifacts_dir)
 
@@ -53,7 +55,7 @@ def RunSteps(api, properties):
   return api.failures.aggregate_failures(failures)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic',
       api.properties(

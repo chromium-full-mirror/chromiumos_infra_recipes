@@ -14,6 +14,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -31,7 +33,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), \
       api.build_menu.setup_workspace_and_chroot():
     dep_graph = api.build_menu.get_dep_graph([])
@@ -66,7 +68,7 @@ def RunSteps(api):
     return None
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'not-relevant-cq',

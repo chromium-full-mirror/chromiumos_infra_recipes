@@ -9,6 +9,8 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 from PB.chromite.api.test import RulesCrosUnitTestRequest
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
@@ -20,7 +22,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), \
       api.build_menu.setup_workspace_and_chroot():
     request = RulesCrosUnitTestRequest(chroot=api.cros_sdk.chroot)
@@ -28,7 +30,7 @@ def RunSteps(api):
         request, name='run rules_cros tests')
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
 
   def test(name, **kwargs):
     return api.test(name, api.test_util.test_child_build(None, **kwargs).build)

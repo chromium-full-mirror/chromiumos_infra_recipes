@@ -7,6 +7,9 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -32,7 +35,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = PresubmitTestsProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: PresubmitTestsProperties):
   with api.bot_cost.build_cost_context():
     # This builder doesn't have a builder config, but we want the shared
     # handling of gitiles_commit and gerrit_changes, and enough of a config to
@@ -44,7 +47,7 @@ def RunSteps(api, properties):
     _FullCheckout(api, properties)
 
 
-def _FullCheckout(api, properties):
+def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
   gerrit_changes = api.src_state.gerrit_changes
   is_staging = api.cros_infra_config.is_staging
   project_names = properties.project_names
@@ -118,7 +121,7 @@ def _FullCheckout(api, properties):
             api.step('branch cleanup', ['git', 'branch', '-D', '__presubmit'])
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   mock_CLs = [
       common_pb2.GerritChange(host='chromium.googlesource.com', project='p1',
                               change=1234),
@@ -128,7 +131,7 @@ def GenTests(api):
                               project='p2', change=2341),
   ]
 
-  def test_builder(**kwargs):
+  def test_builder(**kwargs) -> TestData:
     """Generate a test build."""
     kwargs.setdefault('builder', 'infra-presubmit')
     kwargs.setdefault('cq', True)

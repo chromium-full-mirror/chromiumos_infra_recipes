@@ -4,13 +4,13 @@
 # found in the LICENSE file.
 
 """Recipe for the Chrome OS Build Metadata Cache Regnerator."""
-
-from recipe_engine.recipe_api import StepFailure
-
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.chromite.api.binhost import RegenBuildCacheRequest
-from PB.recipe_engine import result as result_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/context',
@@ -30,7 +30,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
 
   def _add_and_commit():
     api.git.add(['.'])
@@ -75,5 +75,5 @@ def RunSteps(api):
           step_failures=step_failures))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('basic')
