@@ -12452,13 +12452,13 @@ Verifies a repo manifest.
 &mdash; **def [RunSteps](/recipes/test_manifest.py#36)(api: RecipeApi, properties: TestManifestProperties):**
 ### *recipes* / [test\_plan\_filtering](/recipes/test_plan_filtering.py)
 
-[DEPS](/recipes/test_plan_filtering.py#36): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_plan_filtering.py#40): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-Updates test plan rules to reflect new risk-based rules
+Updates test plan rules to reflect new risk-based rules.
 
-&mdash; **def [RunSteps](/recipes/test_plan_filtering.py#232)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_plan_filtering.py#239)(api: RecipeApi, _: TestPlanFilteringProperties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
 [DEPS](/recipes/test_platform/cros_test_platform.py#45): [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [easy](#recipe_modules-easy), [result\_flow](#recipe_modules-result_flow), [service\_version](#recipe_modules-service_version), [skylab](#recipe_modules-skylab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
