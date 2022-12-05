@@ -26,6 +26,7 @@ from google.protobuf.json_format import MessageToJson
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromite.api.packages import UprevVersionedPackageResponse
+from PB.chromite.api.packages import UprevPackagesResponse
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -463,49 +464,16 @@ class GeneratorRun:
     Returns:
       ebuilds_by_pinfo, or None. If None, pupr should return immediately.
     """
-    assert len(self.packages) == len(self.cpvs)
-    modified_package_names = []
-    all_valid_responses = []
-    for package, cpv in zip(self.packages, self.cpvs):
-      with self.m.step.nest('try uprev {}'.format(cpv)) as presentation:
-        request = UprevVersionedPackageRequest(
-            chroot=self.m.cros_sdk.chroot,
-            package_info=package,
-            versions=versions,
-            build_targets=self.properties.build_targets,
-        )
-        presentation.logs['request'] = str(request)
-        response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
-            request, name='uprev versioned package')
-
-        if not response.responses:
-          presentation.step_text = 'no new versions for {}'.format(cpv)
-          return None
-
-        valid_responses = []
-        with self.m.step.nest('verify updates'):
-          # only act on files that are actually modified
-          for uprev_resp in response.responses:
-            if _response_has_changes(self.m, uprev_resp):
-              valid_responses.append(uprev_resp)
-
-        if not valid_responses:
-          presentation.step_text = (
-              'skipping uprev for {}. no modified files'.format(cpv))
-          if not allow_partial_uprev:
-            return None
-          presentation.logs['partial_uprev'] = [
-              'no modified file for {}. continue because allow_partial_uprev=True'
-              .format(cpv)
-          ]
-          continue
-        all_valid_responses.extend(valid_responses)
+    modified_package_names: List[str] = []
+    all_valid_responses: List[UprevPackagesResponse] = []
+    for package in self.packages:
+      package_responses = self.uprev_package(package, versions,
+                                             allow_partial_uprev)
+      if package_responses:
+        all_valid_responses.extend(package_responses)
         modified_package_names.append(package.package_name)
-
-        presentation.logs['uprev versions'] = [
-            response.version for response in valid_responses
-        ]
-
+      elif not allow_partial_uprev:
+        return None
     if not all_valid_responses:
       return None
 
@@ -579,6 +547,59 @@ class GeneratorRun:
           self.m.git.commit(commit_message)
 
     return ebuilds_by_pinfo
+
+  def uprev_package(self, package: PackageInfo,
+                    versions: List[UprevVersionedPackageRequest.GitRef],
+                    allow_partial_uprev: bool) -> List[UprevPackagesResponse]:
+    """Locally uprev a single package.
+
+    Args:
+      package: The package to uprev.
+      versions: The versions to consider for an update.
+      allow_partial_uprev: Whether to continue operations if this package has
+        no modified files.
+
+    Returns:
+      List of UprevPackageResponses that actually changed code.
+    """
+    cpv = self.m.naming.get_package_title(package)
+    with self.m.step.nest('try uprev {}'.format(cpv)) as presentation:
+      request = UprevVersionedPackageRequest(
+          chroot=self.m.cros_sdk.chroot,
+          package_info=package,
+          versions=versions,
+          build_targets=self.properties.build_targets,
+      )
+      presentation.logs['request'] = str(request)
+      response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
+          request, name='uprev versioned package')
+
+      if not response.responses:
+        presentation.step_text = 'no new versions for {}'.format(cpv)
+        return None
+
+      valid_responses: List[UprevPackagesResponse] = []
+      with self.m.step.nest('verify updates'):
+        # only act on files that are actually modified
+        for uprev_resp in response.responses:
+          if _response_has_changes(self.m, uprev_resp):
+            valid_responses.append(uprev_resp)
+
+      if not valid_responses:
+        presentation.step_text = (
+            'skipping uprev for {}. no modified files'.format(cpv))
+        if not allow_partial_uprev:
+          return []
+        presentation.logs['partial_uprev'] = [
+            'no modified file for {}. continue because allow_partial_uprev=True'
+            .format(cpv)
+        ]
+        return []
+
+      presentation.logs['uprev versions'] = [
+          response.version for response in valid_responses
+      ]
+    return valid_responses
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
