@@ -111,6 +111,293 @@ class PolicyInfo(NamedTuple):
 EbuildsByPinfo = DefaultDict[ProjectInfo, List[Ebuild]]
 
 
+class GeneratorRun:
+  """A single run of a Generator builder."""
+
+  def __init__(self, api: RecipeApi, properties: GeneratorProperties):
+    """Initialize the builder."""
+    self.m = api
+    self.properties = properties
+
+  def run(self):
+    """Run the Generator."""
+    self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
+                                         self.m.src_state.gerrit_changes)
+    workspace_path = self.m.cros_source.workspace_path
+
+    _validate_properties(self.m, self.properties)
+    triggers, retry_only_run = _validate_triggers(self.m, self.properties)
+
+    if self.properties.HasField('package_info'):
+      packages = [self.properties.package_info]
+    else:
+      packages = self.properties.packages
+    cpv = [self.m.naming.get_package_title(package) for package in packages]
+
+    with self.m.cros_source.checkout_overlays_context(), \
+        self.m.cros_sdk.cleanup_context():
+      self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
+
+      # If we see gitiles_info populated in the recipe properties, we will be
+      # performing a fetch from the Gitiles API for the package's target uprev
+      # version. This information will be used in branch determination and sent to
+      # the uprev handler.
+      gitiles_response = None
+
+      # Check out the appropriate branch, and use the appropriate policy.
+      # If gitiles_info is given to us then we will determine the branch based on
+      # the information returned by the Gitiles API. Otherwise, use the gitles.ref
+      # seen in the trigger.
+      with self.m.step.nest('determine branch') as pres:
+        trigger_policies = []
+        for trigger in triggers:
+          # Retrieve version information from Gitiles API.
+          if self.properties.HasField('gitiles_info'):
+            gitiles_response = self.m.gitiles.get_file(
+                str(self.properties.gitiles_info.host),
+                str(self.properties.gitiles_info.project),
+                str(self.properties.gitiles_info.path),
+                ref=str(trigger.gitiles.ref),
+                test_output_data='MTIzLjQ1Ni43ODkuMAo=')
+            if gitiles_response:
+              gitiles_response = gitiles_response.strip()
+
+          # If we we recieved a target version from Gitiles, override the tag
+          # argument.
+          tag = gitiles_response or trigger.gitiles.ref
+          policy_info = _get_policy(self.m, self.properties.branch_policies,
+                                    tag)
+          if policy_info not in trigger_policies:
+            trigger_policies.append(policy_info)
+        # If we match more than one policy with the triggers, that is an error.
+        # For Chrome, we are launched with properties.triggers, for exactly one
+        # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+        if len(trigger_policies) > 1:
+          raise StepFailure('too many triggers')
+        policy_info = trigger_policies.pop()
+        policy = policy_info.policy
+
+        if policy.ignore:
+          pres.step_text = 'policy set to ignore.'
+          return
+
+        if policy_info.branch:
+          assert policy_info.reference is not None
+          pres.step_text = 'using {} {}'.format(policy_info.branch,
+                                                policy_info.reference.hash)
+          self.m.cros_source.checkout_branch(
+              self.m.src_state.internal_manifest.url, policy_info.branch)
+        else:
+          pres.step_text = 'using default branch'
+      self.m.easy.set_properties_step(policy=MessageToDict(policy))
+
+      base_topic_name = self.properties.topic or cpv[0]
+      if self.m.cq.active or self.m.src_state.gerrit_changes:
+        # Use case: Developer is working on the versioned uprev code for a
+        # package, such as Chrome, and wants to test the changes prior to landing
+        # them in chromite.  While launching a build with the correct polcies and
+        # triggers is difficult in CQ, it is rather straightforward for the dev to
+        # manually launch the build with "correct" inputs.  On the other hand, we
+        # should not produce production effects with uncommitted changes.
+        #
+        # If there are gerrit_changes to apply, log the chosen policy, and then
+        # override the policy so that we do not submit, abandon, or comment on
+        # anything.
+        with self.m.step.nest('apply gerrit changes'):
+          if self.m.src_state.gerrit_changes:
+            self.m.cros_source.apply_gerrit_changes(
+                self.m.src_state.gerrit_changes)
+          with self.m.step.nest('update policy') as pres:
+            user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
+            self.m.easy.set_properties_step(
+                original_policy=MessageToDict(policy))
+            del policy.reviewers[:]
+            policy.reviewers.add().email = user
+            policy.existing_cls_policy = ABANDON
+            policy.no_existing_cls_policy = ABANDON
+            policy.outdated_cls_policy = OUTDATED_DO_NOTHING
+            policy.retry_cl_policy = NO_RETRY
+            policy.topic = '{}-{}'.format('testing', policy.topic or
+                                          base_topic_name)
+            self.m.easy.set_properties_step(policy=MessageToDict(policy))
+
+      if self.properties.init_sdk:
+        with self.m.context(cwd=workspace_path):
+          self.m.cros_sdk.create_chroot(use_image=False)
+
+      topic = policy.topic or base_topic_name
+      no_existing_cls_policy = policy.no_existing_cls_policy
+      outdated_cls_policy = policy.outdated_cls_policy
+      retry_cl_policy = policy.retry_cl_policy or NO_RETRY
+
+      if not retry_only_run:
+        # If earlier we fetched for a target version through Gitiles, pass along
+        # the retrieved value.
+        versions = [
+            UprevVersionedPackageRequest.GitRef(
+                repository=urlparse.urlparse(trigger.gitiles.repo).path,
+                ref=trigger.gitiles.ref, revision=(gitiles_response or
+                                                   trigger.gitiles.revision))
+            for trigger in triggers
+        ]
+        ebuilds_by_pinfo = _do_uprev(
+            self.m, self.properties, workspace_path, versions, packages, cpv,
+            topic,
+            additional_commit_message=self.properties.additional_commit_message,
+            change_id=None,
+            allow_partial_uprev=self.properties.allow_partial_uprev)
+        if ebuilds_by_pinfo is None:
+          return
+
+      pinfos_by_remote = defaultdict(list)
+      if not retry_only_run:
+        assert ebuilds_by_pinfo is not None
+        for info in sorted(ebuilds_by_pinfo.keys()):
+          pinfos_by_remote[info.remote].append(info)
+      else:
+        pinfos_by_remote[self.properties.retry_ref.remote] = [
+            self.m.repo.ProjectInfo(
+                remote=self.properties.retry_ref.remote,
+                name=self.properties.retry_ref.name,
+                branch=self.properties.retry_ref.ref,
+                rrev=self.properties.retry_ref.ref,
+                path=self.properties.retry_ref.path,
+            )
+        ]
+
+      with self.m.step.nest('find open uprev CLs'):
+        open_changes: List[GerritChange] = []
+        for host, remote in (('chromium', 'cros'), ('chrome-internal',
+                                                    'cros-internal')):
+          with self.m.step.nest('find CLs from {} host'.format(host)):
+            host_url = 'https://{}-review.googlesource.com'.format(host)
+            for info in pinfos_by_remote[remote]:
+              open_changes.extend(
+                  self.m.gerrit.query_changes(host_url,
+                                              [('topic', topic),
+                                               ('project', info.name),
+                                               ('branch', info.branch_name),
+                                               ('status', 'open')]))
+
+      mrm = None  # Most recently merged uprev.
+      if open_changes:
+        with self.m.step.nest('examine outdated CLs'):
+          for host, remote in (('chromium', 'cros'), ('chrome-internal',
+                                                      'cros-internal')):
+            with self.m.step.nest(
+                'merged CLs from {} host (within 30 days)'.format(
+                    host)) as presentation:
+              host_url = 'https://{}-review.googlesource.com'.format(host)
+              merged_changes = []
+              for info in pinfos_by_remote[remote]:
+                merged_changes.extend(
+                    self.m.gerrit.query_changes(host_url,
+                                                [('topic', topic),
+                                                 ('project', info.name),
+                                                 ('branch', info.branch_name),
+                                                 ('status', 'merged'),
+                                                 ('-age', '30d')]))
+
+              if merged_changes:
+                presentation.logs['merged CLs'] = [
+                    self.m.gerrit.parse_gerrit_change_url(cl)
+                    for cl in merged_changes
+                ]
+
+                # Must fetch to get submitted times from the "PatchSets", which
+                # are really instances of ChangeInfo.
+                merged_ci = self.m.gerrit.fetch_patch_sets(merged_changes)
+                list.sort(merged_ci, key=lambda ci: ci.submitted, reverse=True)
+                mrm = merged_ci[0] if merged_ci else None
+                presentation.logs['most recent merged cl'] = [mrm.display_id]
+              else:
+                presentation.step_text = 'no merged CLs found'
+                presentation.status = self.m.step.WARNING
+
+      outdated_cls: List[PatchSet] = []
+      abandoned_cls: List[PatchSet] = []
+      if mrm:
+        open_ci = self.m.gerrit.fetch_patch_sets(open_changes)
+        with self.m.step.nest('outdated CLs') as presentation:
+          d = mrm.created if self.properties.rebase_before_retry else mrm.submitted
+          outdated_cls.extend([ci for ci in open_ci if ci.created < d])
+          presentation.logs['outdated CLs'] = [
+              ci.display_id for ci in outdated_cls
+          ]
+
+      if outdated_cls:
+        with self.m.step.nest('act on outdated CLs with policy: {}'.format(
+            OutdatedClsPolicy.Name(outdated_cls_policy))) as pres:
+          _abandon_cls(self.m, outdated_cls, mrm, outdated_cls_policy, \
+              retry_only_run, abandoned_cls)
+
+      existing_cls = bool(
+          open_changes and len(abandoned_cls) < len(open_changes))
+
+      if retry_cl_policy != NO_RETRY:
+        with self.m.step.nest('apply retry policy {}'.format(
+            RetryClPolicy.Name(retry_cl_policy))) as presentation:
+          if open_changes:
+            open_ci = self.m.gerrit.fetch_patch_sets(open_changes,
+                                                     include_messages=True)
+            # Filter out outdated CLs, sort by recency
+            d = mrm.created if self.properties.rebase_before_retry else mrm.submitted
+            if mrm:
+              open_ci = [ci for ci in open_ci if ci.created > d]
+            open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
+
+            if not self.m.pupr.retries_frozen(open_ci):
+              retry_ci, cq_label, message, retry_cl_is_passed = self.m.pupr.identify_retry(
+                  retry_cl_policy, no_existing_cls_policy, open_ci)
+              presentation.step_text = message
+
+              if retry_ci:
+                if self.properties.rebase_before_retry:
+                  rebase_cl(self.m, open_changes, retry_ci.change_id,
+                            self.properties, workspace_path, packages, cpv,
+                            topic, self.properties.additional_commit_message)
+                  with self.m.step.nest(
+                      "upload patchset for Change-Id {}".format(
+                          retry_ci.change_id)):
+                    with self.m.context(cwd=workspace_path):
+                      retry_cl = retry_ci.to_gerrit_change_proto()
+                      project_info = self.m.repo.project_info(retry_cl.project)
+                      repository_path = self.m.path.join(
+                          workspace_path, project_info.path)
+                      with self.m.context(
+                          cwd=self.m.path.abs_to_path(repository_path)):
+                        self.m.git_cl.upload(send_mail=False)
+
+                with self.m.step.nest("retry CL {}".format(retry_ci.change_id)):
+                  labels = {
+                      self.m.gerrit.Label.BOT_COMMIT: 1,
+                      self.m.gerrit.Label.COMMIT_QUEUE: cq_label,
+                  }
+                  retry_cl = retry_ci.to_gerrit_change_proto()
+                  # Find path of appropriate project in local checkout, then set labels.
+                  with self.m.context(cwd=workspace_path):
+                    project_info = self.m.repo.project_info(retry_cl.project)
+                    repository_path = self.m.path.join(workspace_path,
+                                                       project_info.path)
+                    with self.m.context(
+                        cwd=self.m.path.abs_to_path(repository_path)):
+                      self.m.gerrit.set_change_labels_remote(
+                          retry_cl,
+                          labels,
+                      )
+                if retry_cl_is_passed:
+                  cls_to_abandon = [cl for cl in open_ci \
+                      if cl.created < retry_ci.created]
+                  if cls_to_abandon:
+                    with self.m.step.nest("abandon CLs before passed CQ+1 CL"):
+                      _abandon_cls(self.m, cls_to_abandon, retry_ci, \
+                          outdated_cls_policy, retry_only_run)
+      if not retry_only_run:
+        assert ebuilds_by_pinfo is not None
+        _create_uprev_cls(self.m, policy, ebuilds_by_pinfo, topic, open_changes,
+                          existing_cls)
+
+
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
                        ) -> str:
   """ Serialize versions information.
@@ -184,270 +471,7 @@ def rebase_cl(api: RecipeApi, open_changes: List[GerritChange], change_id: str,
 
 
 def RunSteps(api: RecipeApi, properties: GeneratorProperties):
-  api.cros_source.configure_builder(api.src_state.gitiles_commit,
-                                    api.src_state.gerrit_changes)
-  workspace_path = api.cros_source.workspace_path
-
-  _validate_properties(api, properties)
-  triggers, retry_only_run = _validate_triggers(api, properties)
-
-  if properties.HasField('package_info'):
-    packages = [properties.package_info]
-  else:
-    packages = properties.packages
-  cpv = [api.naming.get_package_title(package) for package in packages]
-
-  with api.cros_source.checkout_overlays_context(), \
-      api.cros_sdk.cleanup_context():
-    api.cros_source.ensure_synced_cache(manifest_branch_override='main')
-
-    # If we see gitiles_info populated in the recipe properties, we will be
-    # performing a fetch from the Gitiles API for the package's target uprev
-    # version. This information will be used in branch determination and sent to
-    # the uprev handler.
-    gitiles_response = None
-
-    # Check out the appropriate branch, and use the appropriate policy.
-    # If gitiles_info is given to us then we will determine the branch based on
-    # the information returned by the Gitiles API. Otherwise, use the gitles.ref
-    # seen in the trigger.
-    with api.step.nest('determine branch') as pres:
-      trigger_policies = []
-      for trigger in triggers:
-        # Retrieve version information from Gitiles API.
-        if properties.HasField('gitiles_info'):
-          gitiles_response = api.gitiles.get_file(
-              str(properties.gitiles_info.host),
-              str(properties.gitiles_info.project),
-              str(properties.gitiles_info.path), ref=str(trigger.gitiles.ref),
-              test_output_data='MTIzLjQ1Ni43ODkuMAo=')
-          if gitiles_response:
-            gitiles_response = gitiles_response.strip()
-
-        # If we we recieved a target version from Gitiles, override the tag
-        # argument.
-        tag = gitiles_response or trigger.gitiles.ref
-        policy_info = _get_policy(api, properties.branch_policies, tag)
-        if policy_info not in trigger_policies:
-          trigger_policies.append(policy_info)
-      # If we match more than one policy with the triggers, that is an error.
-      # For Chrome, we are launched with properties.triggers, for exactly one
-      # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-      if len(trigger_policies) > 1:
-        raise StepFailure('too many triggers')
-      policy_info = trigger_policies.pop()
-      policy = policy_info.policy
-
-      if policy.ignore:
-        pres.step_text = 'policy set to ignore.'
-        return
-
-      if policy_info.branch:
-        assert policy_info.reference is not None
-        pres.step_text = 'using {} {}'.format(policy_info.branch,
-                                              policy_info.reference.hash)
-        api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
-                                        policy_info.branch)
-      else:
-        pres.step_text = 'using default branch'
-    api.easy.set_properties_step(policy=MessageToDict(policy))
-
-    base_topic_name = properties.topic or cpv[0]
-    if api.cq.active or api.src_state.gerrit_changes:
-      # Use case: Developer is working on the versioned uprev code for a
-      # package, such as Chrome, and wants to test the changes prior to landing
-      # them in chromite.  While launching a build with the correct polcies and
-      # triggers is difficult in CQ, it is rather straightforward for the dev to
-      # manually launch the build with "correct" inputs.  On the other hand, we
-      # should not produce production effects with uncommitted changes.
-      #
-      # If there are gerrit_changes to apply, log the chosen policy, and then
-      # override the policy so that we do not submit, abandon, or comment on
-      # anything.
-      with api.step.nest('apply gerrit changes'):
-        if api.src_state.gerrit_changes:
-          api.cros_source.apply_gerrit_changes(api.src_state.gerrit_changes)
-        with api.step.nest('update policy') as pres:
-          user = api.buildbucket.build.created_by.replace('user:', '', 1)
-          api.easy.set_properties_step(original_policy=MessageToDict(policy))
-          del policy.reviewers[:]
-          policy.reviewers.add().email = user
-          policy.existing_cls_policy = ABANDON
-          policy.no_existing_cls_policy = ABANDON
-          policy.outdated_cls_policy = OUTDATED_DO_NOTHING
-          policy.retry_cl_policy = NO_RETRY
-          policy.topic = '{}-{}'.format('testing', policy.topic or
-                                        base_topic_name)
-          api.easy.set_properties_step(policy=MessageToDict(policy))
-
-    if properties.init_sdk:
-      with api.context(cwd=workspace_path):
-        api.cros_sdk.create_chroot(use_image=False)
-
-    topic = policy.topic or base_topic_name
-    no_existing_cls_policy = policy.no_existing_cls_policy
-    outdated_cls_policy = policy.outdated_cls_policy
-    retry_cl_policy = policy.retry_cl_policy or NO_RETRY
-
-    if not retry_only_run:
-      # If earlier we fetched for a target version through Gitiles, pass along
-      # the retrieved value.
-      versions = [
-          UprevVersionedPackageRequest.GitRef(
-              repository=urlparse.urlparse(trigger.gitiles.repo).path,
-              ref=trigger.gitiles.ref, revision=(gitiles_response or
-                                                 trigger.gitiles.revision))
-          for trigger in triggers
-      ]
-      ebuilds_by_pinfo = _do_uprev(
-          api, properties, workspace_path, versions, packages, cpv, topic,
-          additional_commit_message=properties.additional_commit_message,
-          change_id=None, allow_partial_uprev=properties.allow_partial_uprev)
-      if ebuilds_by_pinfo is None:
-        return
-
-    pinfos_by_remote = defaultdict(list)
-    if not retry_only_run:
-      assert ebuilds_by_pinfo is not None
-      for info in sorted(ebuilds_by_pinfo.keys()):
-        pinfos_by_remote[info.remote].append(info)
-    else:
-      pinfos_by_remote[properties.retry_ref.remote] = [
-          api.repo.ProjectInfo(
-              remote=properties.retry_ref.remote,
-              name=properties.retry_ref.name,
-              branch=properties.retry_ref.ref,
-              rrev=properties.retry_ref.ref,
-              path=properties.retry_ref.path,
-          )
-      ]
-
-    with api.step.nest('find open uprev CLs'):
-      open_changes: List[GerritChange] = []
-      for host, remote in (('chromium', 'cros'), ('chrome-internal',
-                                                  'cros-internal')):
-        with api.step.nest('find CLs from {} host'.format(host)):
-          host_url = 'https://{}-review.googlesource.com'.format(host)
-          for info in pinfos_by_remote[remote]:
-            open_changes.extend(
-                api.gerrit.query_changes(host_url,
-                                         [('topic', topic),
-                                          ('project', info.name),
-                                          ('branch', info.branch_name),
-                                          ('status', 'open')]))
-
-    mrm = None  # Most recently merged uprev.
-    if open_changes:
-      with api.step.nest('examine outdated CLs'):
-        for host, remote in (('chromium', 'cros'), ('chrome-internal',
-                                                    'cros-internal')):
-          with api.step.nest('merged CLs from {} host (within 30 days)'.format(
-              host)) as presentation:
-            host_url = 'https://{}-review.googlesource.com'.format(host)
-            merged_changes = []
-            for info in pinfos_by_remote[remote]:
-              merged_changes.extend(
-                  api.gerrit.query_changes(host_url,
-                                           [('topic', topic),
-                                            ('project', info.name),
-                                            ('branch', info.branch_name),
-                                            ('status', 'merged'),
-                                            ('-age', '30d')]))
-
-            if merged_changes:
-              presentation.logs['merged CLs'] = [
-                  api.gerrit.parse_gerrit_change_url(cl)
-                  for cl in merged_changes
-              ]
-
-              # Must fetch to get submitted times from the "PatchSets", which
-              # are really instances of ChangeInfo.
-              merged_ci = api.gerrit.fetch_patch_sets(merged_changes)
-              list.sort(merged_ci, key=lambda ci: ci.submitted, reverse=True)
-              mrm = merged_ci[0] if merged_ci else None
-              presentation.logs['most recent merged cl'] = [mrm.display_id]
-            else:
-              presentation.step_text = 'no merged CLs found'
-              presentation.status = api.step.WARNING
-
-    outdated_cls: List[PatchSet] = []
-    abandoned_cls: List[PatchSet] = []
-    if mrm:
-      open_ci = api.gerrit.fetch_patch_sets(open_changes)
-      with api.step.nest('outdated CLs') as presentation:
-        d = mrm.created if properties.rebase_before_retry else mrm.submitted
-        outdated_cls.extend([ci for ci in open_ci if ci.created < d])
-        presentation.logs['outdated CLs'] = [
-            ci.display_id for ci in outdated_cls
-        ]
-
-    if outdated_cls:
-      with api.step.nest('act on outdated CLs with policy: {}'.format(
-          OutdatedClsPolicy.Name(outdated_cls_policy))) as pres:
-        _abandon_cls(api, outdated_cls, mrm, outdated_cls_policy, \
-            retry_only_run, abandoned_cls)
-
-    existing_cls = bool(open_changes and len(abandoned_cls) < len(open_changes))
-
-    if retry_cl_policy != NO_RETRY:
-      with api.step.nest('apply retry policy {}'.format(
-          RetryClPolicy.Name(retry_cl_policy))) as presentation:
-        if open_changes:
-          open_ci = api.gerrit.fetch_patch_sets(open_changes,
-                                                include_messages=True)
-          # Filter out outdated CLs, sort by recency
-          d = mrm.created if properties.rebase_before_retry else mrm.submitted
-          if mrm:
-            open_ci = [ci for ci in open_ci if ci.created > d]
-          open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
-
-          if not api.pupr.retries_frozen(open_ci):
-            retry_ci, cq_label, message, retry_cl_is_passed = api.pupr.identify_retry(
-                retry_cl_policy, no_existing_cls_policy, open_ci)
-            presentation.step_text = message
-
-            if retry_ci:
-              if properties.rebase_before_retry:
-                rebase_cl(api, open_changes, retry_ci.change_id, properties,
-                          workspace_path, packages, cpv, topic,
-                          properties.additional_commit_message)
-                with api.step.nest("upload patchset for Change-Id {}".format(
-                    retry_ci.change_id)):
-                  with api.context(cwd=workspace_path):
-                    retry_cl = retry_ci.to_gerrit_change_proto()
-                    project_info = api.repo.project_info(retry_cl.project)
-                    repository_path = api.path.join(workspace_path,
-                                                    project_info.path)
-                    with api.context(cwd=api.path.abs_to_path(repository_path)):
-                      api.git_cl.upload(send_mail=False)
-
-              with api.step.nest("retry CL {}".format(retry_ci.change_id)):
-                labels = {
-                    api.gerrit.Label.BOT_COMMIT: 1,
-                    api.gerrit.Label.COMMIT_QUEUE: cq_label,
-                }
-                retry_cl = retry_ci.to_gerrit_change_proto()
-                # Find path of appropriate project in local checkout, then set labels.
-                with api.context(cwd=workspace_path):
-                  project_info = api.repo.project_info(retry_cl.project)
-                  repository_path = api.path.join(workspace_path,
-                                                  project_info.path)
-                  with api.context(cwd=api.path.abs_to_path(repository_path)):
-                    api.gerrit.set_change_labels_remote(
-                        retry_cl,
-                        labels,
-                    )
-              if retry_cl_is_passed:
-                cls_to_abandon = [cl for cl in open_ci \
-                    if cl.created < retry_ci.created]
-                if cls_to_abandon:
-                  with api.step.nest("abandon CLs before passed CQ+1 CL"):
-                    _abandon_cls(api, cls_to_abandon, retry_ci, \
-                        outdated_cls_policy, retry_only_run)
-    if not retry_only_run:
-      assert ebuilds_by_pinfo is not None
-      _create_uprev_cls(api, policy, ebuilds_by_pinfo, topic, open_changes,
-                        existing_cls)
+  GeneratorRun(api, properties).run()
 
 
 def _validate_properties(api: RecipeApi, properties: GeneratorProperties):
