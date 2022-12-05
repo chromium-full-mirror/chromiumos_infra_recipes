@@ -427,8 +427,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     remote_uri = ('gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
                   'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
     responses['GeneratePayload'] = jsonify(
-        success=True, local_path='/tmp/aohiwdadoi/delta.bin',
-        remote_uri=remote_uri)
+        local_path='/tmp/aohiwdadoi/delta.bin', remote_uri=remote_uri)
     return responses
 
   @property

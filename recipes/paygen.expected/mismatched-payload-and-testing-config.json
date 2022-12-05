@@ -1583,7 +1583,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\", \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
