@@ -264,10 +264,8 @@ class GeneratorRun:
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
         ]
-        ebuilds_by_pinfo = self.uprev_packages(
-            workspace_path, versions, topic,
-            additional_commit_message=self.properties.additional_commit_message,
-            change_id=None)
+        ebuilds_by_pinfo = self.uprev_packages(workspace_path, versions, topic,
+                                               change_id=None)
         if ebuilds_by_pinfo is None:
           return
 
@@ -376,8 +374,7 @@ class GeneratorRun:
               if retry_ci:
                 if self.properties.rebase_before_retry:
                   self.rebase_cl(open_changes, retry_ci.change_id,
-                                 workspace_path, topic,
-                                 self.properties.additional_commit_message)
+                                 workspace_path, topic)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
                           retry_ci.change_id)):
@@ -420,8 +417,7 @@ class GeneratorRun:
                           existing_cls)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
-                workspace_path: str, topic: str,
-                additional_commit_message: str = ''):
+                workspace_path: str, topic: str):
     with self.m.step.nest("rebase CL {}".format(change_id)):
       retry_changes = [p for p in open_changes if p.change == change_id]
       assert len(retry_changes) == 1
@@ -432,8 +428,7 @@ class GeneratorRun:
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
       ebuilds_by_pinfo = self.uprev_packages(workspace_path, existing_versions,
-                                             topic, additional_commit_message,
-                                             change_id)
+                                             topic, change_id)
       if not ebuilds_by_pinfo:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_pinfo.keys()) > 1:
@@ -443,7 +438,7 @@ class GeneratorRun:
 
   def uprev_packages(self, workspace_path: str,
                      versions: List[UprevVersionedPackageRequest.GitRef],
-                     topic: str, additional_commit_message: str = '',
+                     topic: str,
                      change_id: str = None) -> Optional[EbuildsByPinfo]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
@@ -451,8 +446,6 @@ class GeneratorRun:
       workspace_path: Workspace checkout path where the build is processed.
       versions: The versions to consider for an update.
       topic: Topic describing package. Defaults to package title.
-      additional_commit_message: Additional message to add to the commit
-        description.
       change_id: If not None, set Change-Id to the commit message, so that the
         commit is uploaded as a new patchset of an existing Change. When this is
         set, the uprev should not span multiple repositories.
@@ -501,8 +494,9 @@ class GeneratorRun:
         vers = ', '.join(sorted({e.version for e in ebuilds}))
 
         additional_msg = ''
-        if additional_commit_message and additional_commit_message != '':
-          additional_msg = additional_commit_message + '\n'
+        if self.properties.additional_commit_message \
+            and self.properties.additional_commit_message != '':
+          additional_msg = self.properties.additional_commit_message + '\n'
 
         additional_commit_info = [
             e.commit_info for e in ebuilds if e.commit_info
