@@ -267,8 +267,7 @@ class GeneratorRun:
         ebuilds_by_pinfo = self.uprev_packages(
             workspace_path, versions, topic,
             additional_commit_message=self.properties.additional_commit_message,
-            change_id=None,
-            allow_partial_uprev=self.properties.allow_partial_uprev)
+            change_id=None)
         if ebuilds_by_pinfo is None:
           return
 
@@ -432,9 +431,9 @@ class GeneratorRun:
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_pinfo = self.uprev_packages(
-          workspace_path, existing_versions, topic, additional_commit_message,
-          change_id, allow_partial_uprev=self.properties.allow_partial_uprev)
+      ebuilds_by_pinfo = self.uprev_packages(workspace_path, existing_versions,
+                                             topic, additional_commit_message,
+                                             change_id)
       if not ebuilds_by_pinfo:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_pinfo.keys()) > 1:
@@ -445,8 +444,7 @@ class GeneratorRun:
   def uprev_packages(self, workspace_path: str,
                      versions: List[UprevVersionedPackageRequest.GitRef],
                      topic: str, additional_commit_message: str = '',
-                     change_id: str = None, allow_partial_uprev: bool = False
-                    ) -> Optional[EbuildsByPinfo]:
+                     change_id: str = None) -> Optional[EbuildsByPinfo]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
     Args:
@@ -458,8 +456,6 @@ class GeneratorRun:
       change_id: If not None, set Change-Id to the commit message, so that the
         commit is uploaded as a new patchset of an existing Change. When this is
         set, the uprev should not span multiple repositories.
-      allow_partial_uprev: Whether to continue operation when either of the
-        packages has no modified files.
 
     Returns:
       ebuilds_by_pinfo, or None. If None, pupr should return immediately.
@@ -467,12 +463,11 @@ class GeneratorRun:
     modified_package_names: List[str] = []
     all_valid_responses: List[UprevPackagesResponse] = []
     for package in self.packages:
-      package_responses = self.uprev_package(package, versions,
-                                             allow_partial_uprev)
+      package_responses = self.uprev_package(package, versions)
       if package_responses:
         all_valid_responses.extend(package_responses)
         modified_package_names.append(package.package_name)
-      elif not allow_partial_uprev:
+      elif not self.properties.allow_partial_uprev:
         return None
     if not all_valid_responses:
       return None
@@ -548,16 +543,16 @@ class GeneratorRun:
 
     return ebuilds_by_pinfo
 
-  def uprev_package(self, package: PackageInfo,
-                    versions: List[UprevVersionedPackageRequest.GitRef],
-                    allow_partial_uprev: bool) -> List[UprevPackagesResponse]:
+  def uprev_package(
+      self,
+      package: PackageInfo,
+      versions: List[UprevVersionedPackageRequest.GitRef],
+  ) -> List[UprevPackagesResponse]:
     """Locally uprev a single package.
 
     Args:
       package: The package to uprev.
       versions: The versions to consider for an update.
-      allow_partial_uprev: Whether to continue operations if this package has
-        no modified files.
 
     Returns:
       List of UprevPackageResponses that actually changed code.
@@ -588,7 +583,7 @@ class GeneratorRun:
       if not valid_responses:
         presentation.step_text = (
             'skipping uprev for {}. no modified files'.format(cpv))
-        if not allow_partial_uprev:
+        if not self.properties.allow_partial_uprev:
           return []
         presentation.logs['partial_uprev'] = [
             'no modified file for {}. continue because allow_partial_uprev=True'
