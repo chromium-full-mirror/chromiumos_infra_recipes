@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import Dict, List, Optional
+
 from recipe_engine import recipe_api
 
 
@@ -14,26 +16,24 @@ class IPCApi(recipe_api.RecipeApi):
     self._bin = None
     self._version = 'latest'
 
-  def make_subscription(self, topic, sub_name):
+  def make_subscription(self, topic: str, sub_name: str) -> None:
     """Create a subscription within a topic
 
     Args:
-      topic: Pubsub topic name (string)
-      sub_name: Pubsub subscription name (string)
-    Returns:
-      nothing
+      topic: Pubsub topic name.
+      sub_name: Pubsub subscription name.
     """
     self._execute("setup", ["-topic", topic, "-sub-name", sub_name])
 
-  def send(self, topic, message_body, attributes=None):
+  def send(self, topic: str, message_body: bytes,
+           attributes: Optional[Dict[str, str]] = None) -> None:
     """Send a pubsub message on the given topic.
 
     Args:
-      topic: Pubsub topic name (string)
-      message_body: byte string of message to send
-      attributes: dict of {strings: strings} encoding a 'subtopic'; subscribers
-      will take no action on messages outside their subtopic.
-    Returns: nothing
+      topic: Pubsub topic name.
+      message_body: Message to send.
+      attributes: dict encoding a 'subtopic'; subscribers, will take no action
+        on messages outside their subtopic.
     """
     if attributes:
       attributes = {}
@@ -43,17 +43,18 @@ class IPCApi(recipe_api.RecipeApi):
         "-topic", topic, "-file", '/dev/stdin', "-attributes", json_attributes
     ], stdin_data=message_body)
 
-  def receive(self, topic, sub_name, filter_attributes=None):
+  def receive(self, topic: str, sub_name: str,
+              filter_attributes: Dict[str, str] = None) -> bytes:
     """Receive one message from the filtered subscription specified.
 
     Args:
-      topic: Pubsub topic name (string)
-      sub_name: Pubsub subscription name (string)
-      filter_attributes: dict of {strings: strings} encoding a 'subtopic';
+      topic: Pubsub topic name.
+      sub_name: Pubsub subscription name.
+      filter_attributes: dict encoding a 'subtopic';
         messages which do not include the required attributes will be
-        acknowledged but the message body will be ignored
+        acknowledged but the message body will be ignored.
     Returns:
-      Message body, as a byte string.
+      The message body.
     """
     if not filter_attributes:
       filter_attributes = {}
@@ -62,7 +63,7 @@ class IPCApi(recipe_api.RecipeApi):
         "subscribe",
         ["-topic", topic, "-sub-name", sub_name, "-attributes", json_filter])
 
-  def _ensure_binary_present(self):
+  def _ensure_binary_present(self) -> None:
     """Ensure the IPC pubsub CLI is installed."""
     if self._bin:
       return
@@ -77,7 +78,8 @@ class IPCApi(recipe_api.RecipeApi):
 
         self._bin = cipd_dir.join('ipcpubsub')
 
-  def _execute(self, subcommand, args, stdin_data=None):
+  def _execute(self, subcommand: List[str], args: List[str],
+               stdin_data: bytes = None) -> bytes:
     """Execute command with specified args"""
     self._ensure_binary_present()
     if not stdin_data:

@@ -6889,45 +6889,42 @@ Args:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [IPCApi](/recipe_modules/ipc/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [IPCApi](/recipe_modules/ipc/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for inter-process communication.
 
-&mdash; **def [initialize](/recipe_modules/ipc/api.py#12)(self):**
+&mdash; **def [initialize](/recipe_modules/ipc/api.py#14)(self):**
 
-&mdash; **def [make\_subscription](/recipe_modules/ipc/api.py#17)(self, topic, sub_name):**
+&mdash; **def [make\_subscription](/recipe_modules/ipc/api.py#19)(self, topic: str, sub_name: str):**
 
 Create a subscription within a topic
 
 Args:
-  topic: Pubsub topic name (string)
-  sub_name: Pubsub subscription name (string)
-Returns:
-  nothing
+  topic: Pubsub topic name.
+  sub_name: Pubsub subscription name.
 
-&mdash; **def [receive](/recipe_modules/ipc/api.py#46)(self, topic, sub_name, filter_attributes=None):**
+&mdash; **def [receive](/recipe_modules/ipc/api.py#46)(self, topic: str, sub_name: str, filter_attributes: Dict[(str, str)]=None):**
 
 Receive one message from the filtered subscription specified.
 
 Args:
-  topic: Pubsub topic name (string)
-  sub_name: Pubsub subscription name (string)
-  filter_attributes: dict of {strings: strings} encoding a 'subtopic';
+  topic: Pubsub topic name.
+  sub_name: Pubsub subscription name.
+  filter_attributes: dict encoding a 'subtopic';
     messages which do not include the required attributes will be
-    acknowledged but the message body will be ignored
+    acknowledged but the message body will be ignored.
 Returns:
-  Message body, as a byte string.
+  The message body.
 
-&mdash; **def [send](/recipe_modules/ipc/api.py#28)(self, topic, message_body, attributes=None):**
+&mdash; **def [send](/recipe_modules/ipc/api.py#28)(self, topic: str, message_body: bytes, attributes: Optional[Dict[(str, str)]]=None):**
 
 Send a pubsub message on the given topic.
 
 Args:
-  topic: Pubsub topic name (string)
-  message_body: byte string of message to send
-  attributes: dict of {strings: strings} encoding a 'subtopic'; subscribers
-  will take no action on messages outside their subtopic.
-Returns: nothing
+  topic: Pubsub topic name.
+  message_body: Message to send.
+  attributes: dict encoding a 'subtopic'; subscribers, will take no action
+    on messages outside their subtopic.
 ### *recipe_modules* / [iterutils](/recipe_modules/iterutils)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
@@ -12153,25 +12150,25 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/gs_step_logging/examples/full.py#17)(api):**
 ### *recipes* / [ipc:examples/falsy\_attrs](/recipe_modules/ipc/examples/falsy_attrs.py)
 
-[DEPS](/recipe_modules/ipc/examples/falsy_attrs.py#6): [ipc](#recipe_modules-ipc)
+[DEPS](/recipe_modules/ipc/examples/falsy_attrs.py#11): [ipc](#recipe_modules-ipc)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/ipc/examples/falsy_attrs.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/ipc/examples/falsy_attrs.py#16)(api: RecipeApi):**
 ### *recipes* / [ipc:examples/full](/recipe_modules/ipc/examples/full.py)
 
-[DEPS](/recipe_modules/ipc/examples/full.py#6): [ipc](#recipe_modules-ipc)
+[DEPS](/recipe_modules/ipc/examples/full.py#11): [ipc](#recipe_modules-ipc)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/ipc/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/ipc/examples/full.py#16)(api: RecipeApi):**
 ### *recipes* / [ipc:examples/no\_attrs](/recipe_modules/ipc/examples/no_attrs.py)
 
-[DEPS](/recipe_modules/ipc/examples/no_attrs.py#6): [ipc](#recipe_modules-ipc)
+[DEPS](/recipe_modules/ipc/examples/no_attrs.py#11): [ipc](#recipe_modules-ipc)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/ipc/examples/no_attrs.py#16)(api: RecipeApi):**
 ### *recipes* / [iterutils:examples/full](/recipe_modules/iterutils/examples/full.py)
 
 [DEPS](/recipe_modules/iterutils/examples/full.py#6): [iterutils](#recipe_modules-iterutils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
