@@ -193,7 +193,7 @@
     "cmd": [],
     "name": "validate triggers",
     "~followup_annotations": [
-      "@@@STEP_TEXT@has cron trigger, runnning in retry-only mode@@@"
+      "@@@STEP_TEXT@has cron trigger, running in retry-only mode@@@"
     ]
   },
   {

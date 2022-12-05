@@ -16,7 +16,8 @@ import json
 import copy
 import re
 from collections import defaultdict
-from typing import DefaultDict, List, NamedTuple, Optional, Tuple
+from functools import cached_property
+from typing import DefaultDict, List, NamedTuple, Optional
 
 import six
 from six.moves.urllib import parse as urlparse
@@ -119,6 +120,20 @@ class GeneratorRun:
     self.m = api
     self.properties = properties
 
+  @cached_property
+  def triggers(self) -> List[Trigger]:
+    """Get this run's triggers, all of which have the gitiles field set."""
+    if self._has_cron_trigger:
+      return [
+          Trigger(gitiles=GitilesTrigger(ref=self.properties.retry_ref.ref))
+      ]
+    return self._raw_triggers
+
+  @property
+  def retry_only_run(self) -> bool:
+    """Check whether this is a retry-only run."""
+    return self._has_cron_trigger
+
   def run(self):
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
@@ -126,7 +141,7 @@ class GeneratorRun:
     workspace_path = self.m.cros_source.workspace_path
 
     _validate_properties(self.m, self.properties)
-    triggers, retry_only_run = self._validate_triggers()
+    self._validate_triggers()
 
     if self.properties.HasField('package_info'):
       packages = [self.properties.package_info]
@@ -150,7 +165,7 @@ class GeneratorRun:
       # seen in the trigger.
       with self.m.step.nest('determine branch') as pres:
         trigger_policies = []
-        for trigger in triggers:
+        for trigger in self.triggers:
           # Retrieve version information from Gitiles API.
           if self.properties.HasField('gitiles_info'):
             gitiles_response = self.m.gitiles.get_file(
@@ -230,7 +245,7 @@ class GeneratorRun:
       outdated_cls_policy = policy.outdated_cls_policy
       retry_cl_policy = policy.retry_cl_policy or NO_RETRY
 
-      if not retry_only_run:
+      if not self.retry_only_run:
         # If earlier we fetched for a target version through Gitiles, pass along
         # the retrieved value.
         versions = [
@@ -238,7 +253,7 @@ class GeneratorRun:
                 repository=urlparse.urlparse(trigger.gitiles.repo).path,
                 ref=trigger.gitiles.ref, revision=(gitiles_response or
                                                    trigger.gitiles.revision))
-            for trigger in triggers
+            for trigger in self.triggers
         ]
         ebuilds_by_pinfo = _do_uprev(
             self.m, self.properties, workspace_path, versions, packages, cpv,
@@ -250,7 +265,7 @@ class GeneratorRun:
           return
 
       pinfos_by_remote = defaultdict(list)
-      if not retry_only_run:
+      if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
         for info in sorted(ebuilds_by_pinfo.keys()):
           pinfos_by_remote[info.remote].append(info)
@@ -329,7 +344,7 @@ class GeneratorRun:
         with self.m.step.nest('act on outdated CLs with policy: {}'.format(
             OutdatedClsPolicy.Name(outdated_cls_policy))) as pres:
           _abandon_cls(self.m, outdated_cls, mrm, outdated_cls_policy, \
-              retry_only_run, abandoned_cls)
+              self.retry_only_run, abandoned_cls)
 
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
@@ -391,45 +406,43 @@ class GeneratorRun:
                   if cls_to_abandon:
                     with self.m.step.nest("abandon CLs before passed CQ+1 CL"):
                       _abandon_cls(self.m, cls_to_abandon, retry_ci, \
-                          outdated_cls_policy, retry_only_run)
-      if not retry_only_run:
+                          outdated_cls_policy, self.retry_only_run)
+      if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
         _create_uprev_cls(self.m, policy, ebuilds_by_pinfo, topic, open_changes,
                           existing_cls)
 
-  def _validate_triggers(self) -> Tuple[List[Trigger], bool]:
+  def _validate_triggers(self):
     """Check whether the build's triggers are OK.
-
-    Returns:
-      A tuple (triggers, retry_only_run), where triggers is a List[Trigger]
-      which all have the gitiles field set, and retry_only_run is a bool declaring
-      whether this build is for retries only.
 
     Raises:
       StepFailure: If no triggers are found, or if any non-cron, non-gitiles
       triggers are found.
     """
-    retry_only_run = False
-    triggers = self.properties.triggers or self.m.scheduler.triggers
     with self.m.step.nest('validate triggers') as presentation:
-      if not triggers:
+      if not self.triggers:
         raise StepFailure('found no scheduler triggers')
-
-      has_cron_trigger = any(trigger.HasField('cron') for trigger in triggers)
-      if has_cron_trigger:
-        retry_only_run = True
-        triggers = [
-            Trigger(gitiles=GitilesTrigger(ref=self.properties.retry_ref.ref))
-        ]
-        presentation.step_text = 'has cron trigger, runnning in retry-only mode'
+      if self._has_cron_trigger:
+        presentation.step_text = 'has cron trigger, running in retry-only mode'
       else:
-        for trigger in triggers:
+        for trigger in self.triggers:
           if not trigger.HasField('gitiles'):
             raise StepFailure('found non-gitiles trigger: %r' % trigger)
 
-        presentation.step_text = 'found {} good triggers'.format(len(triggers))
-        presentation.logs['list of triggers'] = map(MessageToJson, triggers)
-      return triggers, retry_only_run
+        presentation.step_text = 'found {} good triggers'.format(
+            len(self.triggers))
+        presentation.logs['list of triggers'] = map(MessageToJson,
+                                                    self.triggers)
+
+  @property
+  def _raw_triggers(self) -> List[Trigger]:
+    """Get the triggers which actually launched this run."""
+    return self.properties.triggers or self.m.scheduler.triggers
+
+  @property
+  def _has_cron_trigger(self) -> bool:
+    """Check whether any of this build's triggers is a cron trigger."""
+    return any(trigger.HasField('cron') for trigger in self._raw_triggers)
 
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
