@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
@@ -20,11 +22,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 BUILD_WITH_PARENT_ID = build_pb2.Build()
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   api.easy.log_parent_step()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   PARENT_ID = 123456
 
   PARENT_BUILD_STEP = 'Parent build: {}'.format(PARENT_ID)

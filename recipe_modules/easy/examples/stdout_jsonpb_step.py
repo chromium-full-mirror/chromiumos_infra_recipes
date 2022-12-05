@@ -5,6 +5,9 @@
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+
 DEPS = [
     'recipe_engine/assertions',
     'easy',
@@ -13,11 +16,11 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   out = api.easy.stdout_jsonpb_step('foo', ['foo'], Int32Value)
   api.assertions.assertEqual(out.value, 1)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('basic',
                  api.easy.simulate_jsonpb_step('foo', Int32Value(value=1)))

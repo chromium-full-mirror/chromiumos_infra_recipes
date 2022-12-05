@@ -4805,11 +4805,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 APIs for easy steps.
 
-#### **class [EasyApi](/recipe_modules/easy/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [EasyApi](/recipe_modules/easy/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for easy steps.
 
-&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#159)(self, log_if_no_parent=True):**
+&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#164)(self, log_if_no_parent: bool=True):**
 
 Creates a short step to log the current builder's parent build ID.
 
@@ -4818,12 +4818,12 @@ Args:
     step stating that there's no parent build. If False and there is no
     parent build, do nothing.
 
-&mdash; **def [set\_properties\_step](/recipe_modules/easy/api.py#15)(self, step_name=None, \*\*kwargs):**
+&mdash; **def [set\_properties\_step](/recipe_modules/easy/api.py#17)(self, step_name: Optional[str]=None, \*\*kwargs):**
 
 An empty step to set properties in output.properties.
 
 Args:
-  step_name (str): The name of the step.
+  step_name: The name of the step.
   kwargs: Keyword arguments to set as properties, key is property name
       and value is property value. Key must be a string, value may be
       str, int, float, list, or dict.
@@ -4832,21 +4832,22 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#100)(self, name, cmd, step_test_data=None, test_stdout=None, ignore_exceptions=False, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#102)(self, name: str, cmd: List[str], step_test_data: Optional[Any]=None, test_stdout: Optional[Union[(str, Any)]]=None, ignore_exceptions: bool=False, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
 Args:
-  * name (str): The name of the step.
-  * cmd (list[str]): The command to run.
-  * step_test_data (func): See 'step.__call__'.
-  * test_stdout (dict|list|Callable): Data to return in tests.
+  * name: The name of the step.
+  * cmd: The command to run.
+  * step_test_data: Should be 'callable', See 'step.__call__'.
+  * test_stdout: Data to return in tests.a
+  * ignore_exceptions: Should we ignore any exceptions.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#128)(self, name, cmd, message_type, test_output=None, parse_before_str='', \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#133)(self, name: str, cmd: List[str], message_type: type, test_output: Optional[Any]=None, parse_before_str: str='', \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
@@ -4854,39 +4855,39 @@ Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 * cmd (list[str]): The command to run.
 * message_type: A type (and also constructor) of proto message, indicating
   the type of proto to be returned.
-* test_output (message_type): Data to return in tests.
-* parse_before_str (str): Parse value only upto this str. Used to bypass random binaries appended with protos.
+* test_output: Data, of type(message_type), to return in tests.
+* parse_before_str: Parse value only upto this str. Used to bypass random binaries appended with protos.
 * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   message_type: JSON-pb deserialized proto message.
 
-&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#72)(self, name, cmd, step_test_data=None, test_stdout=None, \*\*kwargs):**
+&mdash; **def [stdout\_step](/recipe_modules/easy/api.py#76)(self, name: str, cmd: List[str], step_test_data: Optional[Any]=None, test_stdout: Optional[Union[(str, Any)]]=None, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data.
 
 Args:
-  * name (str): The name of the step.
-  * cmd (list[str]): The command to run.
-  * step_test_data (Callable): See 'step.__call__'.
-  * test_stdout (str|Callable): Data to return in tests.
+  * name: The name of the step.
+  * cmd: The command to run.
+  * step_test_data: Should be 'callable', See 'step.__call__'.
+  * test_stdout: Data to return in tests.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   bytes: Raw stdout data.
 
-&mdash; **def [step](/recipe_modules/easy/api.py#44)(self, name, cmd, stdin=None, stdin_data=None, stdin_json=None, \*\*kwargs):**
+&mdash; **def [step](/recipe_modules/easy/api.py#47)(self, name: str, cmd: List[str], stdin: Optional[Any]=None, stdin_data: Optional[str]=None, stdin_json: Optional[Any]=None, \*\*kwargs):**
 
 Convenience features on top of the normal 'step' call.
 
 At most one of |stdin|, |stdin_data|, or |stdin_json| may be specified.
 
 Args:
-  * name (str): The name of the step.
-  * cmd (list[str]): The command to run.
-  * stdin (Placeholder): Placeholder to read step stdin from.
-  * stdin_data (str): Bytes to pass to stdin.
-  * stdin_json (dict|list): Object to JSON-serialize to stdin.
+  * name: The name of the step.
+  * cmd: The command to run.
+  * stdin: Placeholder to read step stdin from.
+  * stdin_data: Bytes to pass to stdin.
+  * stdin_json: Object to JSON-serialize to stdin.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
@@ -11233,32 +11234,32 @@ json files.
 &mdash; **def [RunSteps](/recipes/dut_tracker.py#26)(api):**
 ### *recipes* / [easy:examples/full](/recipe_modules/easy/examples/full.py)
 
-[DEPS](/recipe_modules/easy/examples/full.py#8): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/easy/examples/full.py#11): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/full.py#21)(api: RecipeApi):**
 ### *recipes* / [easy:examples/stdout\_json\_step](/recipe_modules/easy/examples/stdout_json_step.py)
 
-[DEPS](/recipe_modules/easy/examples/stdout_json_step.py#6): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/easy/examples/stdout_json_step.py#9): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_json_step.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_json_step.py#17)(api: RecipeApi):**
 ### *recipes* / [easy:examples/stdout\_jsonpb\_step](/recipe_modules/easy/examples/stdout_jsonpb_step.py)
 
-[DEPS](/recipe_modules/easy/examples/stdout_jsonpb_step.py#8): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/easy/examples/stdout_jsonpb_step.py#11): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/examples/stdout_jsonpb_step.py#19)(api: RecipeApi):**
 ### *recipes* / [easy:tests/log\_parent\_step](/recipe_modules/easy/tests/log_parent_step.py)
 
-[DEPS](/recipe_modules/easy/tests/log_parent_step.py#10): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/easy/tests/log_parent_step.py#12): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/easy/tests/log_parent_step.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/easy/tests/log_parent_step.py#25)(api: RecipeApi):**
 ### *recipes* / [exonerate:examples/disabled\_hw\_exoneration](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py)
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#13): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -5,6 +5,9 @@
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/json',
@@ -15,7 +18,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   api.easy.step('passthru', ['cat'], ok_ret=(0, 1))
 
   stdout = api.easy.stdout_step('raw', ['gzip'], stdin_data='uncompressed',
@@ -35,5 +38,5 @@ def RunSteps(api):
   api.easy.set_properties_step(property1=b'my_bytes', property2=[b'your_bytes'])
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi):
   yield api.test('basic')
