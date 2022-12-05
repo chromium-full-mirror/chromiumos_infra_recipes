@@ -154,7 +154,7 @@ class GeneratorRun:
                                          self.m.src_state.gerrit_changes)
     workspace_path = self.m.cros_source.workspace_path
 
-    _validate_properties(self.m, self.properties)
+    self._validate_properties()
     self._validate_triggers()
 
     with self.m.cros_source.checkout_overlays_context(), \
@@ -421,6 +421,40 @@ class GeneratorRun:
         _create_uprev_cls(self.m, policy, ebuilds_by_pinfo, topic, open_changes,
                           existing_cls)
 
+  def _validate_properties(self):
+    """Ensure the input properties look OK.
+
+    Raises:
+      StepFailure: if there are any issues with the input properties.
+    """
+    with self.m.step.nest('validate properties') as presentation:
+      if ((not self.properties.HasField('package_info') and
+           not self.properties.packages) or
+          (self.properties.HasField('package_info') and
+           self.properties.packages)):
+        raise StepFailure(
+            'must set exactly one of {package_info, non-empty packages}')
+
+      # Retrieve version information from Gitiles API.
+      if self.properties.HasField('gitiles_info'):
+        if not (self.properties.gitiles_info.host and
+                self.properties.gitiles_info.project and
+                self.properties.gitiles_info.path):
+          raise StepFailure('gitiles fetch requested with no fetch '
+                            'infomation supplied')
+
+      for policy in self.properties.branch_policies:
+        if not policy.pattern:
+          raise StepFailure('must specify pattern')
+        if not policy.reviewers:
+          raise StepFailure('need at least one reviewer')
+
+        for reviewer in policy.reviewers:
+          if not reviewer.email:
+            raise StepFailure('must set reviewer email')
+
+      presentation.step_text = 'all properties good'
+
   def _validate_triggers(self):
     """Check whether the build's triggers are OK.
 
@@ -528,38 +562,6 @@ def rebase_cl(api: RecipeApi, open_changes: List[GerritChange], change_id: str,
 
 def RunSteps(api: RecipeApi, properties: GeneratorProperties):
   GeneratorRun(api, properties).run()
-
-
-def _validate_properties(api: RecipeApi, properties: GeneratorProperties):
-  """Ensure the input properties look OK.
-
-  Raises:
-    StepFailure: if there are any issues with the input properties.
-  """
-  with api.step.nest('validate properties') as presentation:
-    if ((not properties.HasField('package_info') and not properties.packages) or
-        (properties.HasField('package_info') and properties.packages)):
-      raise StepFailure(
-          'must set exactly one of {package_info, non-empty packages}')
-
-    # Retrieve version information from Gitiles API.
-    if properties.HasField('gitiles_info'):
-      if not (properties.gitiles_info.host and
-              properties.gitiles_info.project and properties.gitiles_info.path):
-        raise StepFailure('gitiles fetch requested with no fetch '
-                          'infomation supplied')
-
-    for policy in properties.branch_policies:
-      if not policy.pattern:
-        raise StepFailure('must specify pattern')
-      if not policy.reviewers:
-        raise StepFailure('need at least one reviewer')
-
-      for reviewer in policy.reviewers:
-        if not reviewer.email:
-          raise StepFailure('must set reviewer email')
-
-    presentation.step_text = 'all properties good'
 
 
 def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
