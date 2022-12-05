@@ -142,7 +142,7 @@ class GeneratorRun:
     return self.properties.packages
 
   @property
-  def cpv(self) -> List[str]:
+  def cpvs(self) -> List[str]:
     """Get the category-package-version for this build's packages."""
     return [
         self.m.naming.get_package_title(package) for package in self.packages
@@ -214,7 +214,7 @@ class GeneratorRun:
           pres.step_text = 'using default branch'
       self.m.easy.set_properties_step(policy=MessageToDict(policy))
 
-      base_topic_name = self.properties.topic or self.cpv[0]
+      base_topic_name = self.properties.topic or self.cpvs[0]
       if self.m.cq.active or self.m.src_state.gerrit_changes:
         # Use case: Developer is working on the versioned uprev code for a
         # package, such as Chrome, and wants to test the changes prior to landing
@@ -263,9 +263,8 @@ class GeneratorRun:
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
         ]
-        ebuilds_by_pinfo = _do_uprev(
-            self.m, self.properties, workspace_path, versions, self.packages,
-            self.cpv, topic,
+        ebuilds_by_pinfo = self.uprev_packages(
+            workspace_path, versions, topic,
             additional_commit_message=self.properties.additional_commit_message,
             change_id=None,
             allow_partial_uprev=self.properties.allow_partial_uprev)
@@ -432,16 +431,154 @@ class GeneratorRun:
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_pinfo = _do_uprev(
-          self.m, self.properties, workspace_path, existing_versions,
-          self.packages, self.cpv, topic, additional_commit_message, change_id,
-          allow_partial_uprev=self.properties.allow_partial_uprev)
+      ebuilds_by_pinfo = self.uprev_packages(
+          workspace_path, existing_versions, topic, additional_commit_message,
+          change_id, allow_partial_uprev=self.properties.allow_partial_uprev)
       if not ebuilds_by_pinfo:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_pinfo.keys()) > 1:
         raise StepFailure(
             'The uprev requires multi-repo commit. Cannot be rebased. {}'
             .format(sorted(ebuilds_by_pinfo.keys())))
+
+  def uprev_packages(self, workspace_path: str,
+                     versions: List[UprevVersionedPackageRequest.GitRef],
+                     topic: str, additional_commit_message: str = '',
+                     change_id: str = None, allow_partial_uprev: bool = False
+                    ) -> Optional[EbuildsByPinfo]:
+    """Try the uprev for the given packages. If successful, commit the uprev.
+
+    Args:
+      workspace_path: Workspace checkout path where the build is processed.
+      versions: The versions to consider for an update.
+      topic: Topic describing package. Defaults to package title.
+      additional_commit_message: Additional message to add to the commit
+        description.
+      change_id: If not None, set Change-Id to the commit message, so that the
+        commit is uploaded as a new patchset of an existing Change. When this is
+        set, the uprev should not span multiple repositories.
+      allow_partial_uprev: Whether to continue operation when either of the
+        packages has no modified files.
+
+    Returns:
+      ebuilds_by_pinfo, or None. If None, pupr should return immediately.
+    """
+    assert len(self.packages) == len(self.cpvs)
+    modified_package_names = []
+    all_valid_responses = []
+    for package, cpv in zip(self.packages, self.cpvs):
+      with self.m.step.nest('try uprev {}'.format(cpv)) as presentation:
+        request = UprevVersionedPackageRequest(
+            chroot=self.m.cros_sdk.chroot,
+            package_info=package,
+            versions=versions,
+            build_targets=self.properties.build_targets,
+        )
+        presentation.logs['request'] = str(request)
+        response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
+            request, name='uprev versioned package')
+
+        if not response.responses:
+          presentation.step_text = 'no new versions for {}'.format(cpv)
+          return None
+
+        valid_responses = []
+        with self.m.step.nest('verify updates'):
+          # only act on files that are actually modified
+          for uprev_resp in response.responses:
+            if _response_has_changes(self.m, uprev_resp):
+              valid_responses.append(uprev_resp)
+
+        if not valid_responses:
+          presentation.step_text = (
+              'skipping uprev for {}. no modified files'.format(cpv))
+          if not allow_partial_uprev:
+            return None
+          presentation.logs['partial_uprev'] = [
+              'no modified file for {}. continue because allow_partial_uprev=True'
+              .format(cpv)
+          ]
+          continue
+        all_valid_responses.extend(valid_responses)
+        modified_package_names.append(package.package_name)
+
+        presentation.logs['uprev versions'] = [
+            response.version for response in valid_responses
+        ]
+
+    if not all_valid_responses:
+      return None
+
+    with self.m.step.nest('commit uprev'):
+      # Flatten the list of modified files, and get the project info for them.
+      modified_ebuilds: List[Ebuild] = []
+      for uprev_resp in all_valid_responses:
+        modified_ebuilds.extend(
+            Ebuild(path=ebuild.path, version=uprev_resp.version,
+                   commit_info=uprev_resp.additional_commit_info)
+            for ebuild in uprev_resp.modified_ebuilds)
+      with self.m.context(cwd=workspace_path):
+        ebuilds_by_pinfo = EbuildsByPinfo(list)
+        for ebuild in modified_ebuilds:
+          dirname = self.m.path.dirname(ebuild.path)
+          info = self.m.repo.project_infos(projects=[dirname])[0]
+          ebuilds_by_pinfo[info].append(ebuild)
+
+        # Checkout git branches via repo so they track correctly.  Create them
+        # by path instead of project name, because they may be checked out
+        # multiple times.
+        self.m.repo.start(
+            'pupr',
+            projects=[info.path for info in sorted(ebuilds_by_pinfo.keys())])
+
+      # For each repository, make the CL.
+      for info, ebuilds in sorted(ebuilds_by_pinfo.items()):
+        name = self.m.path.basename(info.path)
+        root = workspace_path.join(info.path)
+        vers = ', '.join(sorted({e.version for e in ebuilds}))
+
+        additional_msg = ''
+        if additional_commit_message and additional_commit_message != '':
+          additional_msg = additional_commit_message + '\n'
+
+        additional_commit_info = [
+            e.commit_info for e in ebuilds if e.commit_info
+        ]
+        if additional_commit_info:
+          additional_msg += '\n'.join(sorted(
+              set(additional_commit_info))) + '\n'
+
+        commit_lines = [
+            '{package_name}: Automatic uprev to {versions}.'.format(
+                package_name=', '.join(modified_package_names), versions=vers),
+            '',
+            '{additional_msg}Generated by PUpr, see {build_url} for job details.'
+            .format(additional_msg=additional_msg,
+                    build_url=self.m.buildbucket.build_url()),
+            '',
+            'BUG=None',
+            'TEST=CQ',
+            '',
+            '{label}: {versions}'.format(
+                label=UPREV_VERSION_LABEL,
+                versions=_serialize_versions(versions)),
+            'Cq-Cl-Tag: pupr:{topic}'.format(topic=topic),
+        ]
+        if self.m.src_state.gerrit_changes:
+          commit_lines.append('Cq-Depend: {}'.format(','.join(
+              '{}:{}'.format(
+                  x.host.split('.', 1)[0].replace('-review', ''), x.change)
+              for x in self.m.src_state.gerrit_changes)))
+        if change_id is not None:
+          commit_lines.append('Change-Id: ' + change_id)
+        commit_message = '\n'.join(commit_lines) + '\n'
+
+        with self.m.step.nest(
+            'commit in {}'.format(name)), self.m.context(cwd=root):
+          self.m.git.add([e.path for e in ebuilds])
+          self.m.git.commit(commit_message)
+
+    return ebuilds_by_pinfo
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -654,147 +791,6 @@ def _abandon_cls(api: RecipeApi, outdated_cls: List[PatchSet],
                                 message=outdated_comment_message)
       if abandoned_cls is not None:
         abandoned_cls.append(outdated_cl)
-
-
-def _do_uprev(api: RecipeApi, properties: GeneratorProperties,
-              workspace_path: str,
-              versions: List[UprevVersionedPackageRequest.GitRef],
-              packages: List[PackageInfo], cpvs: List[str], topic: str,
-              additional_commit_message: str = '', change_id: str = None,
-              allow_partial_uprev: bool = False) -> Optional[EbuildsByPinfo]:
-  """Try the uprev for the given package. If successful, commit the uprev.
-
-  Args:
-    properties (GeneratorProperties): Current properties for the recipe run.
-    workspace_path (string): Workspace checkout path where the build is
-      processed.
-    versions (List[UprevVersionedPackageRequest.GitRef]): The versions to consider for an update.
-    triggers (scheduler.Trigger): Triggers which invoked the recipe.
-    packages (List[chromiumos.PackageInfo]): Information describing the package.
-    cpvs (List[string]): Package title. Must be in a matching order to packages.
-    topic (string): Topic describing package. Defaults to package title.
-      can be same as cpv.
-    additional_commit_message: Additional message to add to the commit description.
-    change_id (string): If not None, set Change-Id to the commit message,
-      so that the commit is uploaded as a new patchset of an existing Change.
-      When this is set, the uprev should not span multiple repositories.
-    allow_partial_uprev: Whether to continue operation when either of the packages
-      has no modified files.
-
-  Returns:
-    (dict): ebuilds_by_pinfo, or None. If None, pupr should return immediately.
-  """
-  assert len(packages) == len(cpvs)
-  modified_package_names = []
-  all_valid_responses = []
-  for package, cpv in zip(packages, cpvs):
-    with api.step.nest('try uprev {}'.format(cpv)) as presentation:
-      request = UprevVersionedPackageRequest(
-          chroot=api.cros_sdk.chroot,
-          package_info=package,
-          versions=versions,
-          build_targets=properties.build_targets,
-      )
-      presentation.logs['request'] = str(request)
-      response = api.cros_build_api.PackageService.UprevVersionedPackage(
-          request, name='uprev versioned package')
-
-      if not response.responses:
-        presentation.step_text = 'no new versions for {}'.format(cpv)
-        return None
-
-      valid_responses = []
-      with api.step.nest('verify updates'):
-        # only act on files that are actually modified
-        for uprev_resp in response.responses:
-          if _response_has_changes(api, uprev_resp):
-            valid_responses.append(uprev_resp)
-
-      if not valid_responses:
-        presentation.step_text = (
-            'skipping uprev for {}. no modified files'.format(cpv))
-        if not allow_partial_uprev:
-          return None
-        presentation.logs['partial_uprev'] = [
-            'no modified file for {}. continue because allow_partial_uprev=True'
-            .format(cpv)
-        ]
-        continue
-      all_valid_responses.extend(valid_responses)
-      modified_package_names.append(package.package_name)
-
-      presentation.logs['uprev versions'] = [
-          response.version for response in valid_responses
-      ]
-
-  if not all_valid_responses:
-    return None
-
-  with api.step.nest('commit uprev'):
-    # Flatten the list of modified files, and get the project info for them.
-    modified_ebuilds: List[Ebuild] = []
-    for uprev_resp in all_valid_responses:
-      modified_ebuilds.extend(
-          Ebuild(path=ebuild.path, version=uprev_resp.version,
-                 commit_info=uprev_resp.additional_commit_info)
-          for ebuild in uprev_resp.modified_ebuilds)
-    with api.context(cwd=workspace_path):
-      ebuilds_by_pinfo = EbuildsByPinfo(list)
-      for ebuild in modified_ebuilds:
-        dirname = api.path.dirname(ebuild.path)
-        info = api.repo.project_infos(projects=[dirname])[0]
-        ebuilds_by_pinfo[info].append(ebuild)
-
-      # Checkout git branches via repo so they track correctly.  Create them
-      # by path instead of project name, because they may be checked out
-      # multiple times.
-      api.repo.start(
-          'pupr',
-          projects=[info.path for info in sorted(ebuilds_by_pinfo.keys())])
-
-    # For each repository, make the CL.
-    for info, ebuilds in sorted(ebuilds_by_pinfo.items()):
-      name = api.path.basename(info.path)
-      root = workspace_path.join(info.path)
-      vers = ', '.join(sorted({e.version for e in ebuilds}))
-
-      additional_msg = ''
-      if additional_commit_message and additional_commit_message != '':
-        additional_msg = additional_commit_message + '\n'
-
-      additional_commit_info = [e.commit_info for e in ebuilds if e.commit_info]
-      if additional_commit_info:
-        additional_msg += '\n'.join(sorted(set(additional_commit_info))) + '\n'
-
-      commit_lines = [
-          '{package_name}: Automatic uprev to {versions}.'.format(
-              package_name=', '.join(modified_package_names), versions=vers),
-          '',
-          '{additional_msg}Generated by PUpr, see {build_url} for job details.'
-          .format(additional_msg=additional_msg,
-                  build_url=api.buildbucket.build_url()),
-          '',
-          'BUG=None',
-          'TEST=CQ',
-          '',
-          '{label}: {versions}'.format(label=UPREV_VERSION_LABEL,
-                                       versions=_serialize_versions(versions)),
-          'Cq-Cl-Tag: pupr:{topic}'.format(topic=topic),
-      ]
-      if api.src_state.gerrit_changes:
-        commit_lines.append('Cq-Depend: {}'.format(','.join(
-            '{}:{}'.format(
-                x.host.split('.', 1)[0].replace('-review', ''), x.change)
-            for x in api.src_state.gerrit_changes)))
-      if change_id is not None:
-        commit_lines.append('Change-Id: ' + change_id)
-      commit_message = '\n'.join(commit_lines) + '\n'
-
-      with api.step.nest('commit in {}'.format(name)), api.context(cwd=root):
-        api.git.add([e.path for e in ebuilds])
-        api.git.commit(commit_message)
-
-  return ebuilds_by_pinfo
 
 
 def _create_uprev_cls(api: RecipeApi, policy: BranchPolicy,
