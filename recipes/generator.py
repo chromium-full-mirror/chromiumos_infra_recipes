@@ -429,9 +429,9 @@ class GeneratorRun:
       retry_change = retry_changes[0]
       # Extract Change-Id from commit message
       description = self.m.gerrit.get_change_description(retry_change)
-      change_id = extractMetadata(description, 'Change-Id: (.*)')
+      change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
-          extractMetadata(description, UPREV_VERSION_LABEL + ': (.*)'))
+          _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
       ebuilds_by_pinfo = _do_uprev(
           self.m, self.properties, workspace_path, existing_versions,
           self.packages, self.cpv, topic, additional_commit_message, change_id,
@@ -548,7 +548,13 @@ def _deserialize_versions(json_str: str
   ]
 
 
-def extractMetadata(description: str, pattern: str) -> str:
+def _extract_metadata(description: str, pattern: str) -> str:
+  """Retrieves a single piece of metadata from a CL description.
+
+  Args:
+    description: The CL's commit message.
+    pattern: A string representing a regex pattern, with a single capture group.
+  """
   m = re.findall(pattern, description)
   if len(m) != 1:
     raise StepFailure(
