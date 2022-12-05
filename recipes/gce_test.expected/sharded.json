@@ -322,7 +322,6 @@
       "--",
       "true"
     ],
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:cron"
@@ -450,6 +449,7 @@
       }
     },
     "name": "run tast tests.first tast iteration.connect via ssh (2)",
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

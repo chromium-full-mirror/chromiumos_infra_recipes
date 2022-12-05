@@ -235,10 +235,7 @@ class TastExecApi(RecipeApi):
       # b/219966100: Occasionally the `tast run` step will leave the VM in an
       # unresponsive state. Make sure we can establish an SSH connection before
       # attempting to archive artifacts.
-      self.m.step(
-          'connect via ssh',
-          self._get_ssh_cmd(vm.host, vm.port, tast_inputs.private_key_path,
-                            ['true']))
+      self._test_ssh_conn(vm.host, vm.port, tast_inputs.private_key_path)
 
       # Add logs and other artifacts from DUT into the test results directory.
       self._archive_vm_artifacts(vm.host, vm.port, tast_inputs.private_key_path,
@@ -534,4 +531,11 @@ class TastExecApi(RecipeApi):
 
   def _test_ssh_conn(self, host, port, private_key_path):
     cmd = self._get_ssh_cmd(host, port, private_key_path, ['true'])
-    self.m.step('connect via ssh', cmd, infra_step=True, timeout=5 * 60)
+    try:
+      self.m.step('connect via ssh', cmd, timeout=5 * 60)
+    except StepFailure as e:
+      raise StepFailure(
+          'Could not connect to the vm instance. This can be '
+          'because the change being tested caused an error '
+          'during boot or potentially an infrastructure '
+          'failure.', e)

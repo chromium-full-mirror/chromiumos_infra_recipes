@@ -305,7 +305,6 @@
       "--",
       "true"
     ],
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -430,6 +429,7 @@
       }
     },
     "name": "first tast iteration.connect via ssh (2)",
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1190,7 +1190,6 @@
       "--",
       "true"
     ],
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -1305,7 +1304,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "connect via ssh (2)"
+    "name": "connect via ssh (2)",
+    "timeout": 300
   },
   {
     "cmd": [
@@ -1673,7 +1673,6 @@
       "--",
       "true"
     ],
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -1789,7 +1788,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "connect via ssh (4)"
+    "name": "connect via ssh (4)",
+    "timeout": 300
   },
   {
     "cmd": [
@@ -2147,7 +2147,6 @@
       "--",
       "true"
     ],
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -2438,7 +2437,6 @@
       "--",
       "true"
     ],
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -2563,6 +2561,7 @@
       }
     },
     "name": "first tast iteration (2).connect via ssh (2)",
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

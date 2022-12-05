@@ -114,6 +114,15 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run VM context.kill vm'),
       api.post_process(post_process.DropExpectation),
   )
+
+  yield api.test(
+      'ssh does not connect',
+      api.step_data('connect via ssh', retcode=1),
+      api.step_data('connect via ssh (2)', retcode=1),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
+  )
+
   yield api.test(
       'run VM context',
       api.step_data('run VM context.check if VM running', retcode=1),
