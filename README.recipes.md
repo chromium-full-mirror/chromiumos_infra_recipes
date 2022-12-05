@@ -11188,11 +11188,11 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#520)(api: RecipeApi, properties: GeneratorProperties):**
+&mdash; **def [RunSteps](/recipes/generator.py#529)(api: RecipeApi, properties: GeneratorProperties):**
 
-&mdash; **def [extractMetadata](/recipes/generator.py#486)(description: str, pattern: str):**
+&mdash; **def [extractMetadata](/recipes/generator.py#495)(description: str, pattern: str):**
 
-&mdash; **def [rebase\_cl](/recipes/generator.py#495)(api: RecipeApi, open_changes: List[GerritChange], change_id: str, properties: GeneratorProperties, workspace_path: str, packages: List[PackageInfo], cpv: List[str], topic: str, additional_commit_message: str=''):**
+&mdash; **def [rebase\_cl](/recipes/generator.py#504)(api: RecipeApi, open_changes: List[GerritChange], change_id: str, properties: GeneratorProperties, workspace_path: str, packages: List[PackageInfo], cpv: List[str], topic: str, additional_commit_message: str=''):**
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)

@@ -134,6 +134,20 @@ class GeneratorRun:
     """Check whether this is a retry-only run."""
     return self._has_cron_trigger
 
+  @property
+  def packages(self) -> List[PackageInfo]:
+    """Get the packages that this build should uprev."""
+    if self.properties.HasField('package_info'):
+      return [self.properties.package_info]
+    return self.properties.packages
+
+  @property
+  def cpv(self) -> List[str]:
+    """Get the category-package-version for this build's packages."""
+    return [
+        self.m.naming.get_package_title(package) for package in self.packages
+    ]
+
   def run(self):
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
@@ -142,12 +156,6 @@ class GeneratorRun:
 
     _validate_properties(self.m, self.properties)
     self._validate_triggers()
-
-    if self.properties.HasField('package_info'):
-      packages = [self.properties.package_info]
-    else:
-      packages = self.properties.packages
-    cpv = [self.m.naming.get_package_title(package) for package in packages]
 
     with self.m.cros_source.checkout_overlays_context(), \
         self.m.cros_sdk.cleanup_context():
@@ -206,7 +214,7 @@ class GeneratorRun:
           pres.step_text = 'using default branch'
       self.m.easy.set_properties_step(policy=MessageToDict(policy))
 
-      base_topic_name = self.properties.topic or cpv[0]
+      base_topic_name = self.properties.topic or self.cpv[0]
       if self.m.cq.active or self.m.src_state.gerrit_changes:
         # Use case: Developer is working on the versioned uprev code for a
         # package, such as Chrome, and wants to test the changes prior to landing
@@ -256,8 +264,8 @@ class GeneratorRun:
             for trigger in self.triggers
         ]
         ebuilds_by_pinfo = _do_uprev(
-            self.m, self.properties, workspace_path, versions, packages, cpv,
-            topic,
+            self.m, self.properties, workspace_path, versions, self.packages,
+            self.cpv, topic,
             additional_commit_message=self.properties.additional_commit_message,
             change_id=None,
             allow_partial_uprev=self.properties.allow_partial_uprev)
@@ -369,8 +377,9 @@ class GeneratorRun:
               if retry_ci:
                 if self.properties.rebase_before_retry:
                   rebase_cl(self.m, open_changes, retry_ci.change_id,
-                            self.properties, workspace_path, packages, cpv,
-                            topic, self.properties.additional_commit_message)
+                            self.properties, workspace_path, self.packages,
+                            self.cpv, topic,
+                            self.properties.additional_commit_message)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
                           retry_ci.change_id)):
