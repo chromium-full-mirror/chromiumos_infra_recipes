@@ -376,10 +376,9 @@ class GeneratorRun:
 
               if retry_ci:
                 if self.properties.rebase_before_retry:
-                  rebase_cl(self.m, open_changes, retry_ci.change_id,
-                            self.properties, workspace_path, self.packages,
-                            self.cpv, topic,
-                            self.properties.additional_commit_message)
+                  self.rebase_cl(open_changes, retry_ci.change_id,
+                                 workspace_path, topic,
+                                 self.properties.additional_commit_message)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
                           retry_ci.change_id)):
@@ -420,6 +419,29 @@ class GeneratorRun:
         assert ebuilds_by_pinfo is not None
         _create_uprev_cls(self.m, policy, ebuilds_by_pinfo, topic, open_changes,
                           existing_cls)
+
+  def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
+                workspace_path: str, topic: str,
+                additional_commit_message: str = ''):
+    with self.m.step.nest("rebase CL {}".format(change_id)):
+      retry_changes = [p for p in open_changes if p.change == change_id]
+      assert len(retry_changes) == 1
+      retry_change = retry_changes[0]
+      # Extract Change-Id from commit message
+      description = self.m.gerrit.get_change_description(retry_change)
+      change_id = extractMetadata(description, 'Change-Id: (.*)')
+      existing_versions = _deserialize_versions(
+          extractMetadata(description, UPREV_VERSION_LABEL + ': (.*)'))
+      ebuilds_by_pinfo = _do_uprev(
+          self.m, self.properties, workspace_path, existing_versions,
+          self.packages, self.cpv, topic, additional_commit_message, change_id,
+          allow_partial_uprev=self.properties.allow_partial_uprev)
+      if not ebuilds_by_pinfo:
+        raise StepFailure('The uprev had no file.')
+      if len(ebuilds_by_pinfo.keys()) > 1:
+        raise StepFailure(
+            'The uprev requires multi-repo commit. Cannot be rebased. {}'
+            .format(sorted(ebuilds_by_pinfo.keys())))
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -533,31 +555,6 @@ def extractMetadata(description: str, pattern: str) -> str:
         'failed to find a single pattern {} in the Change description (found {}): {}'
         .format(pattern, len(m), description))
   return m[0]
-
-
-def rebase_cl(api: RecipeApi, open_changes: List[GerritChange], change_id: str,
-              properties: GeneratorProperties, workspace_path: str,
-              packages: List[PackageInfo], cpv: List[str], topic: str,
-              additional_commit_message: str = ''):
-  with api.step.nest("rebase CL {}".format(change_id)):
-    retry_changes = [p for p in open_changes if p.change == change_id]
-    assert len(retry_changes) == 1
-    retry_change = retry_changes[0]
-    # Extract Change-Id from commit message
-    description = api.gerrit.get_change_description(retry_change)
-    change_id = extractMetadata(description, 'Change-Id: (.*)')
-    existing_versions = _deserialize_versions(
-        extractMetadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-    ebuilds_by_pinfo = _do_uprev(
-        api, properties, workspace_path, existing_versions, packages, cpv,
-        topic, additional_commit_message, change_id,
-        allow_partial_uprev=properties.allow_partial_uprev)
-    if not ebuilds_by_pinfo:
-      raise StepFailure('The uprev had no file.')
-    if len(ebuilds_by_pinfo.keys()) > 1:
-      raise StepFailure(
-          'The uprev requires multi-repo commit. Cannot be rebased. {}'.format(
-              sorted(ebuilds_by_pinfo.keys())))
 
 
 def RunSteps(api: RecipeApi, properties: GeneratorProperties):
