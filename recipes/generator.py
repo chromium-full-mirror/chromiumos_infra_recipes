@@ -19,8 +19,7 @@ from collections import defaultdict
 from functools import cached_property
 from typing import DefaultDict, List, NamedTuple, Optional
 
-import six
-from six.moves.urllib import parse as urlparse
+from urllib import parse
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
@@ -182,7 +181,7 @@ class GeneratorRun:
                 str(self.properties.gitiles_info.project),
                 str(self.properties.gitiles_info.path),
                 ref=str(trigger.gitiles.ref),
-                test_output_data='MTIzLjQ1Ni43ODkuMAo=')
+                test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
             if gitiles_response:
               gitiles_response = gitiles_response.strip()
 
@@ -259,7 +258,7 @@ class GeneratorRun:
         # the retrieved value.
         versions = [
             UprevVersionedPackageRequest.GitRef(
-                repository=urlparse.urlparse(trigger.gitiles.repo).path,
+                repository=parse.urlparse(trigger.gitiles.repo).path,
                 ref=trigger.gitiles.ref, revision=(gitiles_response or
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
@@ -692,8 +691,6 @@ def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
   Returns:
     A JSON string that encodes the input.
   """
-
-  # Keys sorted in the alphabetical order to make the results consistent between Python 2 and 3.
   o = [{
       'ref': v.ref,
       'repository': v.repository,
@@ -762,8 +759,8 @@ def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
   manifest = api.src_state.internal_manifest
   with api.context(cwd=manifest.path):
     for policy in policies:
-      if re.match(policy.pattern, six.ensure_str(tag)):
-        query = re.sub(policy.pattern, policy.repl, six.ensure_str(tag))
+      if re.match(policy.pattern, tag):
+        query = re.sub(policy.pattern, policy.repl, tag)
         if not query:
           return PolicyInfo(policy)
         refs = api.git.ls_remote([query])
