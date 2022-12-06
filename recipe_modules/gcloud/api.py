@@ -413,7 +413,10 @@ class GcloudApi(recipe_api.RecipeApi):
     try:
       self.create_disk(disk, zone, image, disk_type, size)
     except self.m.step.StepFailure as e:
-      if not e.result.stderr or not _RE_DISK_EXISTS.search(e.result.stderr):
+      disk_exists = (e.result.stderr and _RE_DISK_EXISTS.search(
+          e.result.stderr)) or (e.result.stdout and _RE_DISK_EXISTS.search(
+              e.result.stdout.decode('utf-8')))
+      if not disk_exists:
         raise e
       self._disk_exists_count += 1
       self.m.easy.set_properties_step(
