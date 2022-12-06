@@ -97,6 +97,10 @@ PROPERTIES = GeneratorProperties
 UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
 
 
+def RunSteps(api: RecipeApi, properties: GeneratorProperties):
+  GeneratorRun(api, properties).run()
+
+
 class Ebuild(NamedTuple):
   path: str
   version: str
@@ -766,10 +770,6 @@ def _extract_metadata(description: str, pattern: str) -> str:
         'failed to find a single pattern {} in the Change description (found {}): {}'
         .format(pattern, len(m), description))
   return m[0]
-
-
-def RunSteps(api: RecipeApi, properties: GeneratorProperties):
-  GeneratorRun(api, properties).run()
 
 
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
