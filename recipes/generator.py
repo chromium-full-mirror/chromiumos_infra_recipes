@@ -188,8 +188,7 @@ class GeneratorRun:
           # If we we recieved a target version from Gitiles, override the tag
           # argument.
           tag = gitiles_response or trigger.gitiles.ref
-          policy_info = _get_policy(self.m, self.properties.branch_policies,
-                                    tag)
+          policy_info = self._get_policy(tag)
           if policy_info not in trigger_policies:
             trigger_policies.append(policy_info)
         # If we match more than one policy with the triggers, that is an error.
@@ -680,6 +679,43 @@ class GeneratorRun:
     """Check whether any of this build's triggers is a cron trigger."""
     return any(trigger.HasField('cron') for trigger in self._raw_triggers)
 
+  def _get_policy(self, tag: str) -> PolicyInfo:
+    """Find the applicable policy for the trigger.
+
+    The policy used is the first policy where policy.pattern matches the tag,
+    and either:
+    - the substitution result is the empty string (default branch, aka legacy),
+      or
+    - a remote reference is in manifest-internal for the substitution result.
+
+    Args:
+      tag: Version information used to generate the branch name.
+        (e.g. 123.456.789.0)
+
+    Returns:
+      PolicyInfo namedtuple with:
+      - policy: The selected policy.
+      - branch: The branch to checkout. Empty if there is no branch to checkout.
+      - reference: The reference that matched, or None.
+    """
+    manifest = self.m.src_state.internal_manifest
+    with self.m.context(cwd=manifest.path):
+      for policy in self.properties.branch_policies:
+        if re.match(policy.pattern, tag):
+          query = re.sub(policy.pattern, policy.repl, tag)
+          if not query:
+            return PolicyInfo(policy)
+          refs = self.m.git.ls_remote([query])
+          if len(refs) == 1:
+            ref = refs[0]
+            return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
+          if refs:
+            raise StepFailure('multiple branches matched {}: {}'.format(
+                query, ' '.join(x.ref for x in refs)))
+          # If we found no references, this policy does not apply.
+
+      raise StepFailure('No matching policy found for tag {}'.format(tag))
+
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
                        ) -> str:
@@ -734,45 +770,6 @@ def _extract_metadata(description: str, pattern: str) -> str:
 
 def RunSteps(api: RecipeApi, properties: GeneratorProperties):
   GeneratorRun(api, properties).run()
-
-
-def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
-                tag: str) -> PolicyInfo:
-  """Find the applicable policy for the trigger.
-
-  The policy used is the first policy where policy.pattern matches the tag, and
-  either:
-  - the substitution result is the empty string (default branch, aka legacy), or
-  - a remote reference is in manifest-internal for the substitution result.
-
-  Args:
-    policies: The package's branch policy.
-    tag: Version information used to generate the branch name.
-      (e.g. 123.456.789.0)
-
-  Returns:
-    PolicyInfo namedtuple with:
-    - policy: The selected policy
-    - branch: the branch to checkout.  Empty if there is no branch to checkout.
-    - reference: the reference that matched, or None.
-  """
-  manifest = api.src_state.internal_manifest
-  with api.context(cwd=manifest.path):
-    for policy in policies:
-      if re.match(policy.pattern, tag):
-        query = re.sub(policy.pattern, policy.repl, tag)
-        if not query:
-          return PolicyInfo(policy)
-        refs = api.git.ls_remote([query])
-        if len(refs) == 1:
-          ref = refs[0]
-          return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
-        if refs:
-          raise StepFailure('multiple branches matched {}: {}'.format(
-              query, ' '.join(x.ref for x in refs)))
-        # If we found no references, this policy does not apply.
-
-    raise StepFailure('No matching policy found for tag {}'.format(tag))
 
 
 # TODO(dburger): deleted files should be at the end of the modified_ebuilds list
