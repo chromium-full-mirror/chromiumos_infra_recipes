@@ -438,8 +438,8 @@ class GeneratorRun:
 
   def uprev_packages(self, workspace_path: str,
                      versions: List[UprevVersionedPackageRequest.GitRef],
-                     topic: str,
-                     change_id: str = None) -> Optional[EbuildsByPinfo]:
+                     topic: str, change_id: Optional[str] = None
+                    ) -> Optional[EbuildsByPinfo]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
     Args:
@@ -464,11 +464,89 @@ class GeneratorRun:
         return None
     if not all_valid_responses:
       return None
+    return self.commit_uprevs(workspace_path, versions, topic,
+                              all_valid_responses, modified_package_names,
+                              change_id=change_id)
 
+  def uprev_package(
+      self,
+      package: PackageInfo,
+      versions: List[UprevVersionedPackageRequest.GitRef],
+  ) -> List[UprevPackagesResponse]:
+    """Locally uprev a single package.
+
+    Args:
+      package: The package to uprev.
+      versions: The versions to consider for an update.
+
+    Returns:
+      List of UprevPackageResponses that actually changed code.
+    """
+    cpv = self.m.naming.get_package_title(package)
+    with self.m.step.nest('try uprev {}'.format(cpv)) as presentation:
+      request = UprevVersionedPackageRequest(
+          chroot=self.m.cros_sdk.chroot,
+          package_info=package,
+          versions=versions,
+          build_targets=self.properties.build_targets,
+      )
+      presentation.logs['request'] = str(request)
+      response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
+          request, name='uprev versioned package')
+
+      if not response.responses:
+        presentation.step_text = 'no new versions for {}'.format(cpv)
+        return None
+
+      valid_responses: List[UprevPackagesResponse] = []
+      with self.m.step.nest('verify updates'):
+        # only act on files that are actually modified
+        for uprev_resp in response.responses:
+          if _response_has_changes(self.m, uprev_resp):
+            valid_responses.append(uprev_resp)
+
+      if not valid_responses:
+        presentation.step_text = (
+            'skipping uprev for {}. no modified files'.format(cpv))
+        if not self.properties.allow_partial_uprev:
+          return []
+        presentation.logs['partial_uprev'] = [
+            'no modified file for {}. continue because allow_partial_uprev=True'
+            .format(cpv)
+        ]
+        return []
+
+      presentation.logs['uprev versions'] = [
+          response.version for response in valid_responses
+      ]
+    return valid_responses
+
+  def commit_uprevs(self, workspace_path: str,
+                    versions: List[UprevVersionedPackageRequest.GitRef],
+                    topic: str,
+                    uprev_packages_responses: List[UprevPackagesResponse],
+                    modified_package_names: List[str],
+                    change_id: Optional[str] = None):
+    """Commit the uprevs on the local filesystem.
+
+    Args:
+      workspace_path: Workspace checkout path where the build is processed.
+      versions: The versions to consider for an update.
+      topic: Topic describing package. Defaults to package title.
+      uprev_packages_responses: BAPI responses for all uprevs that actually
+          produced code changes.
+      modified_package_names: The names of packages that are modified.
+      change_id: If not None, set Change-Id to the commit message, so that the
+        commit is uploaded as a new patchset of an existing Change. When this is
+        set, the uprev should not span multiple repositories.
+
+    Returns:
+      ebuilds_by_pinfo, or None. If None, pupr should return immediately.
+    """
     with self.m.step.nest('commit uprev'):
       # Flatten the list of modified files, and get the project info for them.
       modified_ebuilds: List[Ebuild] = []
-      for uprev_resp in all_valid_responses:
+      for uprev_resp in uprev_packages_responses:
         modified_ebuilds.extend(
             Ebuild(path=ebuild.path, version=uprev_resp.version,
                    commit_info=uprev_resp.additional_commit_info)
@@ -536,59 +614,6 @@ class GeneratorRun:
           self.m.git.commit(commit_message)
 
     return ebuilds_by_pinfo
-
-  def uprev_package(
-      self,
-      package: PackageInfo,
-      versions: List[UprevVersionedPackageRequest.GitRef],
-  ) -> List[UprevPackagesResponse]:
-    """Locally uprev a single package.
-
-    Args:
-      package: The package to uprev.
-      versions: The versions to consider for an update.
-
-    Returns:
-      List of UprevPackageResponses that actually changed code.
-    """
-    cpv = self.m.naming.get_package_title(package)
-    with self.m.step.nest('try uprev {}'.format(cpv)) as presentation:
-      request = UprevVersionedPackageRequest(
-          chroot=self.m.cros_sdk.chroot,
-          package_info=package,
-          versions=versions,
-          build_targets=self.properties.build_targets,
-      )
-      presentation.logs['request'] = str(request)
-      response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
-          request, name='uprev versioned package')
-
-      if not response.responses:
-        presentation.step_text = 'no new versions for {}'.format(cpv)
-        return None
-
-      valid_responses: List[UprevPackagesResponse] = []
-      with self.m.step.nest('verify updates'):
-        # only act on files that are actually modified
-        for uprev_resp in response.responses:
-          if _response_has_changes(self.m, uprev_resp):
-            valid_responses.append(uprev_resp)
-
-      if not valid_responses:
-        presentation.step_text = (
-            'skipping uprev for {}. no modified files'.format(cpv))
-        if not self.properties.allow_partial_uprev:
-          return []
-        presentation.logs['partial_uprev'] = [
-            'no modified file for {}. continue because allow_partial_uprev=True'
-            .format(cpv)
-        ]
-        return []
-
-      presentation.logs['uprev versions'] = [
-          response.version for response in valid_responses
-      ]
-    return valid_responses
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -662,7 +687,7 @@ def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
   """ Serialize versions information.
 
   Args:
-    versions (List[UprevVersionedPackageRequest.GitRef]): The versions to consider for an update.
+    versions: The versions to consider for an update.
 
   Returns:
     A JSON string that encodes the input.
@@ -682,7 +707,7 @@ def _deserialize_versions(json_str: str
   """ Deserializes versions information.
 
   Args:
-    json_str (str): A string serialized by serializeVersions().
+    json_str: A string serialized by serializeVersions().
 
   Returns:
     List[UprevVersionedPackageRequest.Gitref]: The versions to consider for an uprev.
@@ -724,15 +749,14 @@ def _get_policy(api: RecipeApi, policies: List[BranchPolicy],
   - a remote reference is in manifest-internal for the substitution result.
 
   Args:
-    policies (list(BranchPolicy): The package's branch policy.
-    tag (string): Version information used to generate the branch name.
+    policies: The package's branch policy.
+    tag: Version information used to generate the branch name.
       (e.g. 123.456.789.0)
 
   Returns:
     PolicyInfo namedtuple with:
     - policy: The selected policy
-    - branch: the branch to checkout.  Empty if there is no branch to
-      checkout.
+    - branch: the branch to checkout.  Empty if there is no branch to checkout.
     - reference: the reference that matched, or None.
   """
   manifest = api.src_state.internal_manifest
@@ -774,16 +798,15 @@ def _abandon_cls(api: RecipeApi, outdated_cls: List[PatchSet],
   """Abandon uprev CLs according to the outdated_cls_policy.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    outdated_cls (list[PatchSet]): Open uprev CLs that are behind the most
-        recent merge.
-    most_recent_merged_uprev (PatchSet): The most recent merged uprev CL.
-    outdated_cls_policy (OutdatedClsPolicy): Policy to follow when for CLs that
-        are still open but behind a merge.
-    retry_only_run (bool): Whether this run only applies retries to existing CLs
-        (i.e. does not create a new uprev CL).
-    abandoned_cls (list[PatchSet]): List of CLs which have been abandoned. This
-        value is mutated by the function call.
+    api: See RunSteps documentation.
+    outdated_cls: Open uprev CLs that are behind the most recent merge.
+    most_recent_merged_uprev: The most recent merged uprev CL.
+    outdated_cls_policy: Policy to follow when for CLs that are still open but
+        behind a merge.
+    retry_only_run: Whether this run only applies retries to existing CLs (i.e.
+        does not create a new uprev CL).
+    abandoned_cls: List of CLs which have been abandoned. This value is mutated
+        by the function call.
   """
   for outdated_cl in outdated_cls:
     if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not retry_only_run:
