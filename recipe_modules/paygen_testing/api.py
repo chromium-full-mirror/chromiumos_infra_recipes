@@ -649,24 +649,23 @@ class PaygenTestingApi(recipe_api.RecipeApi):
     # but N should remain small. See doc string for why we do this.
     def _get_label_model_from_ptc(ptc: Dict[str, Dict]) -> str:
       tags = ptc.get('params', {}).get('decorations', {}).get('tags', [])
-      # Pull the matching label-model field or None.
+      # Pull the matching label-model field or 'no-model-found'.
       return next(
           iter([x for x in tags if x.startswith('label-model:')]),
           'no-model-found')
 
     models = [_get_label_model_from_ptc(v) for k, v in tagged_requests.items()]
 
-    model_tagged_requests = []
+    skylab_requests = []
     for m in sorted(set(models)):
       model_tagged_request = collections.OrderedDict()
       for k, v in tagged_requests.items():
         if _get_label_model_from_ptc(v) == m:
           model_tagged_request[k] = v
-      model_tagged_requests.append(model_tagged_request)
-
-    skylab_requests = []
-    for mtr in model_tagged_requests:
+      bb_tags['label-model'] = m[len('label-model:'):].strip()
       skylab_requests.append(
-          self.m.skylab.schedule_ctp_requests(mtr, bb_tags=bb_tags))
+          self.m.skylab.schedule_ctp_requests(model_tagged_request,
+                                              bb_tags=bb_tags))
+      del bb_tags['label-model']
 
     return skylab_requests

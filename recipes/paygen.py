@@ -542,6 +542,12 @@ def GenTests(api: RecipeTestApi):
       # since there are two woomax test requests.
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule (3)'),
+      api.post_check(post_process.LogContains,
+                     'testing paygen.buildbucket.schedule', 'request',
+                     ['"key": "label-model",', '"value": "other"']),
+      api.post_check(post_process.LogContains,
+                     'testing paygen.buildbucket.schedule (2)', 'request',
+                     ['"key": "label-model",', '"value": "woomax"']),
       api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
