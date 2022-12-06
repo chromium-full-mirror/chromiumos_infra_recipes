@@ -206,6 +206,23 @@ def GenTests(api):
                        'upload test results to rdb.run rdb'),
   )
 
+  rdb_config['result_format'] = 'native'
+  rdb_config_json = api.json.dumps(rdb_config)
+
+  yield api.test(
+      'basic-chromium_GPU_tests',
+      api.buildbucket.ci_build(),
+      api.properties(rdb_config=rdb_config_json),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload test results to rdb.run rdb', [
+              '-result-file',
+              '/base/dir/autoserv_test/chromium/results/native_results.jsonl'
+          ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
   rdb_config['result_format'] = 'skylab-test-runner'
   rdb_config_json = api.json.dumps(rdb_config)
 

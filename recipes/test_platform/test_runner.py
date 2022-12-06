@@ -961,7 +961,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
         test_metadata.test.autotest.test_args)
     result_format = config.get('result_format')
     artifact_directory = config.get('artifact_directory')
-    if result_format in {'tast', 'gtest', 'json'}:
+    if result_format in {'tast', 'gtest', 'native'}:
       config['result_file'] = api.cros_resultdb.get_drone_result_file(
           base_dir, result_format,
           autotest_name=test_metadata.test.autotest.name)

@@ -30,7 +30,7 @@ TEST_EXEC_BEHAVIOR_ORDERING = {
 }
 
 RESULT_ADAPTER_FORMATS = [
-    'gtest', 'json', 'single', 'tast', 'skylab-test-runner'
+    'gtest', 'json', 'single', 'tast', 'skylab-test-runner', 'native'
 ]
 
 # Max size allowed is 500. Keeping it 490 to be safer.
@@ -148,9 +148,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
     result_file_by_type = {
         'gtest':
             os.path.join(base, '{}/results/output.json'.format(autotest_name)),
-        'json':
-            os.path.join(base,
-                         '{}/results/json_results.json'.format(autotest_name)),
+        'native':
+            os.path.join(
+                base, '{}/results/native_results.jsonl'.format(autotest_name)),
         'tast':
             os.path.join(base, 'tast/results/streamed_results.jsonl'),
     }

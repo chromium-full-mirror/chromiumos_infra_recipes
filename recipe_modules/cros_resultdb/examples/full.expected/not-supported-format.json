@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_TEXT@result_format must be one of gtest, json, single, tast, skylab-test-runner got not-supported@@@",
+      "@@@STEP_TEXT@result_format must be one of gtest, json, single, tast, skylab-test-runner, native got not-supported@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
       "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"/base/dir/autoserv_test/\", @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
