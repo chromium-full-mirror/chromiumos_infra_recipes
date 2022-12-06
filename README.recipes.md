@@ -11671,7 +11671,7 @@ All builders run against the same source tree.
 &mdash; **def [RunSteps](/recipes/orchestrator.py#41)(api: RecipeApi):**
 ### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
 
-[DEPS](/recipes/os_install_vm.py#47): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/os_install_vm.py#56): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -11709,9 +11709,9 @@ Here's how the recipe operates:
    VM boots back up the test will reconnect to it and verify if
    installation succeeded.
 
-&mdash; **def [RunSteps](/recipes/os_install_vm.py#140)(api, properties):**
+&mdash; **def [RunSteps](/recipes/os_install_vm.py#151)(api: RecipeApi, properties: OsInstallVmProperties):**
 
-&mdash; **def [make\_into\_installer](/recipes/os_install_vm.py#66)(api, image_path):**
+&mdash; **def [make\_into\_installer](/recipes/os_install_vm.py#75)(api: RecipeApi, image_path: Path):**
 
 Modify the raw disk image at `image_path` to make it installable.
 
@@ -11722,7 +11722,7 @@ installed image by checking if the ROOT-A and ROOT-B partitions have
 different sizes, so to make the image being tested look like an
 installer, shrink the ROOT-B partition down to a single block.
 
-&mdash; **def [run\_tast](/recipes/os_install_vm.py#122)(api, properties, vm, tast_inputs, test_results_dir):**
+&mdash; **def [run\_tast](/recipes/os_install_vm.py#131)(api: RecipeApi, properties: OsInstallVmProperties, vm: TastExecApi.VmInfo, tast_inputs: TastExecApi.TastInputs, test_results_dir: Path):**
 ### *recipes* / [overlayfs:examples/full](/recipe_modules/overlayfs/examples/full.py)
 
 [DEPS](/recipe_modules/overlayfs/examples/full.py#6): [overlayfs](#recipe_modules-overlayfs), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

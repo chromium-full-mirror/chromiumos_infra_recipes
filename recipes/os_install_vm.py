@@ -38,11 +38,20 @@
 """
 
 import copy
+from typing import Generator, List
+
 import gevent
 
-from PB.recipes.chromeos.os_install_vm import OsInstallVmProperties
 from recipe_engine import post_process
+from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import StepTestData
+from recipe_engine.recipe_test_api import TestData
+from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.os_install_vm import OsInstallVmProperties
+from RECIPE_MODULES.chromeos.tast_exec.api import TastExecApi
 
 DEPS = [
     'recipe_engine/file',
@@ -63,7 +72,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = OsInstallVmProperties
 
 
-def make_into_installer(api, image_path):
+def make_into_installer(api: RecipeApi, image_path: Path) -> None:
   """Modify the raw disk image at `image_path` to make it installable.
 
   The disk layout of the reven-vmtest board is slightly different from
@@ -119,7 +128,9 @@ def make_into_installer(api, image_path):
         ])
 
 
-def run_tast(api, properties, vm, tast_inputs, test_results_dir):
+def run_tast(api: RecipeApi, properties: OsInstallVmProperties,
+             vm: TastExecApi.VmInfo, tast_inputs: TastExecApi.TastInputs,
+             test_results_dir: Path) -> result_pb2.RawResult:
   # If tast_timeout_in_seconds is set (which only happens in tests), use
   # gevent.sleep to make this function take some small amount of
   # time. This is necessary because the recipe expects the tast-run
@@ -137,7 +148,8 @@ def run_tast(api, properties, vm, tast_inputs, test_results_dir):
   return api.failures.aggregate_failures(failures)
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi,
+             properties: OsInstallVmProperties) -> result_pb2.RawResult:
   # Get timing values from properties or defaults. In normal usage the
   # defaults are used, but they are set to different values during
   # testing of the recipe itself.
@@ -215,7 +227,7 @@ def RunSteps(api, properties):
         return tast_future.result()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   good_root_b = '''Partition GUID code: 3CB8E202-3B7E-47DD-8A3C-7FF2A13CFCEC (ChromeOS root)
 Partition unique GUID: 43D905A3-811A-3548-8F2B-A4ECC2AABE59
 First sector: 233472 (at 114.0 MiB)
@@ -250,7 +262,7 @@ Partition name: 'ROOT-B'
   failure_json = copy.deepcopy(success_json)
   failure_json[0]['errors'] = [{"reason": "installer is broken"}]
 
-  def make_results_jsonl(src):
+  def make_results_jsonl(src: List[str]) -> StepTestData:
     jsonl = '\n'.join(api.json.dumps(x) for x in src)
     return api.file.read_text(jsonl)
 
