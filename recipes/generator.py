@@ -124,6 +124,12 @@ class GeneratorRun:
     self.m = api
     self.properties = properties
 
+    # If we see gitiles_info populated in the recipe properties, we will be
+    # performing a fetch from the Gitiles API for the package's target uprev
+    # version. This information will be used in branch determination and sent to
+    # the uprev handler.
+    self.gitiles_response = None
+
   @cached_property
   def triggers(self) -> List[Trigger]:
     """Get this run's triggers, all of which have the gitiles field set."""
@@ -165,12 +171,6 @@ class GeneratorRun:
         self.m.cros_sdk.cleanup_context():
       self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
 
-      # If we see gitiles_info populated in the recipe properties, we will be
-      # performing a fetch from the Gitiles API for the package's target uprev
-      # version. This information will be used in branch determination and sent to
-      # the uprev handler.
-      gitiles_response = None
-
       # Check out the appropriate branch, and use the appropriate policy.
       # If gitiles_info is given to us then we will determine the branch based on
       # the information returned by the Gitiles API. Otherwise, use the gitles.ref
@@ -187,11 +187,11 @@ class GeneratorRun:
                 ref=str(trigger.gitiles.ref),
                 test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
             if gitiles_response:
-              gitiles_response = gitiles_response.strip()
+              self.gitiles_response = gitiles_response.strip()
 
           # If we we recieved a target version from Gitiles, override the tag
           # argument.
-          tag = gitiles_response or trigger.gitiles.ref
+          tag = self.gitiles_response or trigger.gitiles.ref
           policy_info = self._get_policy(tag)
           if policy_info not in trigger_policies:
             trigger_policies.append(policy_info)
@@ -262,7 +262,7 @@ class GeneratorRun:
         versions = [
             UprevVersionedPackageRequest.GitRef(
                 repository=parse.urlparse(trigger.gitiles.repo).path,
-                ref=trigger.gitiles.ref, revision=(gitiles_response or
+                ref=trigger.gitiles.ref, revision=(self.gitiles_response or
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
         ]
@@ -723,7 +723,7 @@ class GeneratorRun:
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
                        ) -> str:
-  """ Serialize versions information.
+  """Serialize versions information.
 
   Args:
     versions: The versions to consider for an update.
@@ -741,13 +741,13 @@ def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
 
 def _deserialize_versions(json_str: str
                          ) -> List[UprevVersionedPackageRequest.GitRef]:
-  """ Deserializes versions information.
+  """Deserialize versions information.
 
   Args:
     json_str: A string serialized by serializeVersions().
 
   Returns:
-    List[UprevVersionedPackageRequest.Gitref]: The versions to consider for an uprev.
+    The versions to consider for an uprev.
   """
   objs = json.loads(json_str)
   return [
