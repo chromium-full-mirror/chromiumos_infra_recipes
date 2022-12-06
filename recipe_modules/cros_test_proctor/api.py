@@ -677,11 +677,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # * Assist analysis of test results by dashboards with access to the
     #   buildbucket tables.
     test_summary = (
-        self._extract_test_summary(
-            test_plan.hw_test_units, lambda unit: unit.hw_test_cfg, lambda cfg:
-            cfg.hw_test, passed_test_names) + self._extract_test_summary(
-                test_plan.vm_test_units, lambda unit: unit.vm_test_cfg, lambda
-                cfg: cfg.vm_test, passed_test_names) +
+        self._extract_test_summary(test_plan.hw_test_units, lambda unit: unit.
+                                   hw_test_cfg, lambda cfg: cfg.hw_test,
+                                   passed_test_names) +
         self._extract_test_summary(
             test_plan.direct_tast_vm_test_units, lambda unit: unit.
             tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test, passed_test_names) +
