@@ -5,6 +5,7 @@
 
 from collections import namedtuple
 from collections import defaultdict
+from google.protobuf import timestamp_pb2
 
 from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDUTResponse, CrosToolRunnerTestDUTResponse
 
@@ -567,8 +568,21 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     elif ctr_test_verdict == 'fail':
       skylab_test_verdict = Skylab_Result.Autotest.TestCase.VERDICT_FAIL
 
-    return Skylab_Result.Autotest.TestCase(
-        name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict)
+    start_time = ctr_test_result.start_time.ToSeconds()
+    duration = ctr_test_result.duration
+    skylab_result = None
+    if start_time and duration:
+      skylab_result = Skylab_Result.Autotest.TestCase(
+          name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict,
+          human_readable_summary=ctr_test_result.reason,
+          start_time=timestamp_pb2.Timestamp(seconds=start_time),
+          end_time=timestamp_pb2.Timestamp(start_time + duration.seconds))
+    else:
+      skylab_result = Skylab_Result.Autotest.TestCase(
+          name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict,
+          human_readable_summary=ctr_test_result.reason)
+
+    return skylab_result
 
   def _tast_results_rdb_config(self, tast_results_dir, metadata,
                                force_current_realm=False):

@@ -2371,7 +2371,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     test_case_result = ctr_api.test_case_result.TestCaseResult(
         test_case_id=ctr_api.test_case.TestCase.Id(value="tauto.dummy_id"),
         result_dir_path=StoragePath(host_type=StoragePath.HostType.LOCAL,
-                                    path="dummy-results-dir/subdir"))
+                                    path="dummy-results-dir/subdir"),
+        reason="reason", start_time=timestamp_pb2.Timestamp(seconds=2369692800),
+        duration=duration_pb2.Duration(seconds=3600))
     data = {state: {}}
     return json_format.ParseDict(data, test_case_result)
 
