@@ -420,6 +420,14 @@ class GeneratorRun:
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
                 workspace_path: str, topic: str):
+    """Upload a new uprev patch to change_id.
+
+    Args:
+      open_changes: List of currently open uprev CLs.
+      change_id: ID of the CL to upload a new patch set for.
+      workspace_path: Workspace checkout path where the build is processed.
+      topic: Topic describing the package.
+    """
     with self.m.step.nest("rebase CL {}".format(change_id)):
       retry_changes = [p for p in open_changes if p.change == change_id]
       assert len(retry_changes) == 1
