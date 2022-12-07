@@ -203,14 +203,25 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'BuildAllFirmware':
             jsonify(
                 metrics=dict(value=[
+                    # Sample of typical ti50 size
                     dict(
                         fw_section=[
                             dict(
                                 region="total-image-size",
                                 used=432012,
                                 track_on_gerrit=True,
-                            )
-                        ], platform_name="dauntless", target_name="ti50")
+                            ),
+                        ], platform_name="dauntless", target_name="ti50"),
+                    # Sample of typical EC size
+                    dict(
+                        fw_section=[
+                            dict(
+                                region="RW_FLASH",
+                                used=1234,
+                                total=3456,
+                                track_on_gerrit=True,
+                            ),
+                        ], platform_name="volteer", target_name="eldrid")
                 ])),
         'TestAllFirmware':
             jsonify(

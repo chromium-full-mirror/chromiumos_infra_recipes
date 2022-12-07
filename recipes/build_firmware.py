@@ -89,9 +89,18 @@ def RunSteps(api, properties):
     binary_sizes = {}
     if response.metrics and response.metrics.value:
       for fw_metric in response.metrics.value:
+        region_prefix = ""
+        if fw_metric.platform_name:
+          region_prefix += fw_metric.platform_name + "_"
+        if fw_metric.target_name:
+          region_prefix += fw_metric.target_name + "_"
         for fw_section in fw_metric.fw_section:
           if fw_section.track_on_gerrit:
-            binary_sizes[fw_section.region] = fw_section.used
+            if fw_section.used:
+              binary_sizes[region_prefix + fw_section.region] = fw_section.used
+            if fw_section.total:
+              binary_sizes[region_prefix + fw_section.region +
+                           ".budget"] = fw_section.total
 
     if binary_sizes:
       api.easy.set_properties_step(binary_sizes=binary_sizes,

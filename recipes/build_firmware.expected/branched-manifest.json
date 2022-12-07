@@ -3111,7 +3111,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"metrics\": {\"value\": [{\"fw_section\": [{\"region\": \"total-image-size\", \"track_on_gerrit\": true, \"used\": 432012}], \"platform_name\": \"dauntless\", \"target_name\": \"ti50\"}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"metrics\": {\"value\": [{\"fw_section\": [{\"region\": \"total-image-size\", \"track_on_gerrit\": true, \"used\": 432012}], \"platform_name\": \"dauntless\", \"target_name\": \"ti50\"}, {\"fw_section\": [{\"region\": \"RW_FLASH\", \"total\": 3456, \"track_on_gerrit\": true, \"used\": 1234}], \"platform_name\": \"volteer\", \"target_name\": \"eldrid\"}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3252,6 +3252,18 @@
       "@@@STEP_LOG_LINE@published event@              \"trackOnGerrit\": true@@@",
       "@@@STEP_LOG_LINE@published event@            }@@@",
       "@@@STEP_LOG_LINE@published event@          ]@@@",
+      "@@@STEP_LOG_LINE@published event@        },@@@",
+      "@@@STEP_LOG_LINE@published event@        {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"targetName\": \"eldrid\",@@@",
+      "@@@STEP_LOG_LINE@published event@          \"platformName\": \"volteer\",@@@",
+      "@@@STEP_LOG_LINE@published event@          \"fwSection\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"region\": \"RW_FLASH\",@@@",
+      "@@@STEP_LOG_LINE@published event@              \"used\": 1234,@@@",
+      "@@@STEP_LOG_LINE@published event@              \"total\": 3456,@@@",
+      "@@@STEP_LOG_LINE@published event@              \"trackOnGerrit\": true@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ]@@@",
       "@@@STEP_LOG_LINE@published event@        }@@@",
       "@@@STEP_LOG_LINE@published event@      ]@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
@@ -3265,7 +3277,7 @@
     "name": "build firmware.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIzYDE/QQQgMq17gEiBgjPgMT9BNAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugMgCAMSHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3TCAy8KLQorCgR0aTUwEglkYXVudGxlc3MaGAoQdG90YWwtaW1hZ2Utc2l6ZRCMrxogAQ==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIzYDE/QQQgMq17gEiBgjPgMT9BNAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugMgCAMSHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3TCA1YKVAorCgR0aTUwEglkYXVudGxlc3MaGAoQdG90YWwtaW1hZ2Utc2l6ZRCMrxogAQolCgZlbGRyaWQSB3ZvbHRlZXIaEgoIUldfRkxBU0gQ0gkYgBsgAQ==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -3297,7 +3309,7 @@
       }
     },
     "name": "build firmware.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BNAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugMgCAMSHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3TCAy8KLQorCgR0aTUwEglkYXVudGxlc3MaGAoQdG90YWwtaW1hZ2Utc2l6ZRCMrxogAQ==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BNAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugMgCAMSHAoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3TCA1YKVAorCgR0aTUwEglkYXVudGxlc3MaGAoQdG90YWwtaW1hZ2Utc2l6ZRCMrxogAQolCgZlbGRyaWQSB3ZvbHRlZXIaEgoIUldfRkxBU0gQ0gkYgBsgAQ==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3310,7 +3322,7 @@
     "cmd": [],
     "name": "output binary sizes",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@binary_sizes@{\"total-image-size\": 432012}@@@"
+      "@@@SET_BUILD_PROPERTY@binary_sizes@{\"dauntless_ti50_total-image-size\": 432012, \"volteer_eldrid_RW_FLASH\": 1234, \"volteer_eldrid_RW_FLASH.budget\": 3456}@@@"
     ]
   },
   {
