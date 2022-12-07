@@ -47,6 +47,7 @@ def RunSteps(api: RecipeApi):
             'vpython3',
             '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
             '--head',
+            '--track_active',
             '--recipe',
         ], stdout=api.raw_io.output_text())
 
