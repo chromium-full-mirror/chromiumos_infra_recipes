@@ -202,32 +202,7 @@ class GeneratorRun:
       self.checkout_branch(policy_info)
 
       if self.m.cq.active or self.m.src_state.gerrit_changes:
-        # Use case: Developer is working on the versioned uprev code for a
-        # package, such as Chrome, and wants to test the changes prior to landing
-        # them in chromite.  While launching a build with the correct polcies and
-        # triggers is difficult in CQ, it is rather straightforward for the dev to
-        # manually launch the build with "correct" inputs.  On the other hand, we
-        # should not produce production effects with uncommitted changes.
-        #
-        # If there are gerrit_changes to apply, log the chosen policy, and then
-        # override the policy so that we do not submit, abandon, or comment on
-        # anything.
-        with self.m.step.nest('apply gerrit changes'):
-          if self.m.src_state.gerrit_changes:
-            self.m.cros_source.apply_gerrit_changes(
-                self.m.src_state.gerrit_changes)
-          with self.m.step.nest('update policy'):
-            user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
-            self.m.easy.set_properties_step(
-                original_policy=MessageToDict(self.policy))
-            del self.policy.reviewers[:]
-            self.policy.reviewers.add().email = user
-            self.policy.existing_cls_policy = ABANDON
-            self.policy.no_existing_cls_policy = ABANDON
-            self.policy.outdated_cls_policy = OUTDATED_DO_NOTHING
-            self.policy.retry_cl_policy = NO_RETRY
-            self.policy.topic = '{}-{}'.format('testing', self.topic)
-            self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
+        self.apply_gerrit_changes()
 
       if self.properties.init_sdk:
         with self.m.context(cwd=workspace_path):
@@ -752,6 +727,36 @@ class GeneratorRun:
             self.m.src_state.internal_manifest.url, policy_info.branch)
       else:
         pres.step_text = 'using default branch'
+
+  def apply_gerrit_changes(self):
+    """Cherry-pick changes for CQ runs, and prevent production changes.
+
+    If there are gerrit_changes to apply, log the chosen policy, and then
+    override the policy so that we do not submit, abandon, or comment on
+    anything.
+
+    Use case: Developer is working on the versioned uprev code for a package,
+    such as Chrome, and wants to test the changes prior to landing them in
+    chromite.  While launching a build with the correct policies and triggers is
+    difficult in CQ, it is rather straightforward for the dev to manually launch
+    the build with "correct" inputs.  On the other hand, we should not produce
+    production effects with uncommitted changes.
+    """
+    with self.m.step.nest('apply gerrit changes'):
+      if self.m.src_state.gerrit_changes:
+        self.m.cros_source.apply_gerrit_changes(self.m.src_state.gerrit_changes)
+      with self.m.step.nest('update policy'):
+        user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
+        self.m.easy.set_properties_step(
+            original_policy=MessageToDict(self.policy))
+        del self.policy.reviewers[:]
+        self.policy.reviewers.add().email = user
+        self.policy.existing_cls_policy = ABANDON
+        self.policy.no_existing_cls_policy = ABANDON
+        self.policy.outdated_cls_policy = OUTDATED_DO_NOTHING
+        self.policy.retry_cl_policy = NO_RETRY
+        self.policy.topic = '{}-{}'.format('testing', self.topic)
+        self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
 
   def _create_uprev_cls(self, ebuilds_by_pinfo: EbuildsByPinfo,
                         open_changes: List[GerritChange], existing_cls: bool):
