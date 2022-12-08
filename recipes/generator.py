@@ -210,10 +210,6 @@ class GeneratorRun:
         with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot(use_image=False)
 
-      no_existing_cls_policy = self.policy.no_existing_cls_policy
-      outdated_cls_policy = self.policy.outdated_cls_policy
-      retry_cl_policy = self.policy.retry_cl_policy or NO_RETRY
-
       if not self.retry_only_run:
         # If earlier we fetched for a target version through Gitiles, pass along
         # the retrieved value.
@@ -306,16 +302,15 @@ class GeneratorRun:
 
       if outdated_cls:
         with self.m.step.nest('act on outdated CLs with policy: {}'.format(
-            OutdatedClsPolicy.Name(outdated_cls_policy))):
-          self._abandon_cls(outdated_cls, mrm, outdated_cls_policy,
-                            abandoned_cls)
+            OutdatedClsPolicy.Name(self.policy.outdated_cls_policy))):
+          self._abandon_cls(outdated_cls, mrm, abandoned_cls)
 
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
 
-      if retry_cl_policy != NO_RETRY:
+      if self.policy.retry_cl_policy != NO_RETRY:
         with self.m.step.nest('apply retry policy {}'.format(
-            RetryClPolicy.Name(retry_cl_policy))) as presentation:
+            RetryClPolicy.Name(self.policy.retry_cl_policy))) as presentation:
           if open_changes:
             open_ci = self.m.gerrit.fetch_patch_sets(open_changes,
                                                      include_messages=True)
@@ -327,7 +322,8 @@ class GeneratorRun:
 
             if not self.m.pupr.retries_frozen(open_ci):
               retry_ci, cq_label, message, retry_cl_is_passed = self.m.pupr.identify_retry(
-                  retry_cl_policy, no_existing_cls_policy, open_ci)
+                  self.policy.retry_cl_policy,
+                  self.policy.no_existing_cls_policy, open_ci)
               presentation.step_text = message
 
               if retry_ci:
@@ -367,8 +363,7 @@ class GeneratorRun:
                       if cl.created < retry_ci.created]
                   if cls_to_abandon:
                     with self.m.step.nest("abandon CLs before passed CQ+1 CL"):
-                      self._abandon_cls(cls_to_abandon, retry_ci,
-                                        outdated_cls_policy)
+                      self._abandon_cls(cls_to_abandon, retry_ci)
       if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
         self._create_uprev_cls(ebuilds_by_pinfo, open_changes, existing_cls)
@@ -840,27 +835,24 @@ class GeneratorRun:
 
   def _abandon_cls(self, outdated_cls: List[PatchSet],
                    most_recent_merged_uprev: PatchSet,
-                   outdated_cls_policy: OutdatedClsPolicy,
                    abandoned_cls: Optional[List[PatchSet]] = None):
     """Abandon uprev CLs according to the outdated_cls_policy.
 
     Args:
       outdated_cls: Open uprev CLs that are behind the most recent merge.
       most_recent_merged_uprev: The most recent merged uprev CL.
-      outdated_cls_policy: Policy to follow when for CLs that are still open but
-          behind a merge.
       abandoned_cls: List of CLs which have been abandoned. This value is
           mutated by the function call.
     """
     for outdated_cl in outdated_cls:
-      if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not self.retry_only_run:
+      if self.policy.outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not self.retry_only_run:
         outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                     'PUpr has been set to remind you that it'
                                     ' likely should be abandoned.').format(
                                         most_recent_merged_uprev.display_url)
         self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
                                          outdated_comment_message)
-      elif outdated_cls_policy == OUTDATED_ABANDON:
+      elif self.policy.outdated_cls_policy == OUTDATED_ABANDON:
         outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                     'PUpr has been set to abandon.').format(
                                         most_recent_merged_uprev.display_url)
