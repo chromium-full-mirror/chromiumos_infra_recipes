@@ -1974,7 +1974,8 @@
       "RECIPE_REPO[depot_tools]/git_cl.py",
       "upload",
       "--bypass-hooks",
-      "--force"
+      "--force",
+      "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {

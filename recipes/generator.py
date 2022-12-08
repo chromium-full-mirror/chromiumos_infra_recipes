@@ -387,7 +387,7 @@ class GeneratorRun:
                           workspace_path, project_info.path)
                       with self.m.context(
                           cwd=self.m.path.abs_to_path(repository_path)):
-                        self.m.git_cl.upload(send_mail=False)
+                        self.m.git_cl.upload(send_mail=True)
 
                 with self.m.step.nest("retry CL {}".format(retry_ci.change_id)):
                   labels = {
